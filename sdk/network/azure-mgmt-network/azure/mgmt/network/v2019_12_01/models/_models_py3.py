@@ -3267,7 +3267,7 @@ class FirewallPolicyRuleCondition(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.description = description
-        self.rule_condition_type = None  # type: Optional[str]
+        self.rule_condition_type: Optional[str] = None
 
 
 class ApplicationRuleCondition(FirewallPolicyRuleCondition):
@@ -3347,7 +3347,7 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         :paramtype source_ip_groups: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = "ApplicationRuleCondition"  # type: str
+        self.rule_condition_type: str = "ApplicationRuleCondition"
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
         self.protocols = protocols
@@ -11390,7 +11390,7 @@ class FirewallPolicyRule(_serialization.Model):
         :paramtype priority: int
         """
         super().__init__(**kwargs)
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
         self.name = name
         self.priority = priority
 
@@ -11448,7 +11448,7 @@ class FirewallPolicyFilterRule(FirewallPolicyRule):
          list[~azure.mgmt.network.v2019_12_01.models.FirewallPolicyRuleCondition]
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_type = "FirewallPolicyFilterRule"  # type: str
+        self.rule_type: str = "FirewallPolicyFilterRule"
         self.action = action
         self.rule_conditions = rule_conditions
 
@@ -11565,7 +11565,7 @@ class FirewallPolicyNatRule(FirewallPolicyRule):
         :paramtype rule_condition: ~azure.mgmt.network.v2019_12_01.models.FirewallPolicyRuleCondition
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_type = "FirewallPolicyNatRule"  # type: str
+        self.rule_type: str = "FirewallPolicyNatRule"
         self.action = action
         self.translated_address = translated_address
         self.translated_port = translated_port
@@ -14957,7 +14957,7 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         :paramtype source_ip_groups: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = "NatRuleCondition"  # type: str
+        self.rule_condition_type: str = "NatRuleCondition"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -16042,7 +16042,7 @@ class NetworkRuleCondition(FirewallPolicyRuleCondition):
         :paramtype destination_ip_groups: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_condition_type = "NetworkRuleCondition"  # type: str
+        self.rule_condition_type: str = "NetworkRuleCondition"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses

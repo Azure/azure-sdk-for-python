@@ -54,7 +54,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-05-01'
+    DEFAULT_API_VERSION = '2022-07-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -90,10 +90,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        api_version=None, # type: Optional[str]
+        api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = NetworkManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -142,7 +142,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.network.v2020_11_01.models>`
            * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.network.v2021_02_01.models>`
            * 2021-02-01-preview: :mod:`v2021_02_01_preview.models<azure.mgmt.network.v2021_02_01_preview.models>`
-           * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.network.v2022_05_01.models>`
+           * 2022-07-01: :mod:`v2022_07_01.models<azure.mgmt.network.v2022_07_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -240,8 +240,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2021-02-01-preview':
             from .v2021_02_01_preview import models
             return models
-        elif api_version == '2022-05-01':
-            from .v2022_05_01 import models
+        elif api_version == '2022-07-01':
+            from .v2022_07_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -292,13 +292,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`AdminRuleCollectionsOperations<azure.mgmt.network.v2021_02_01_preview.operations.AdminRuleCollectionsOperations>`
-           * 2022-05-01: :class:`AdminRuleCollectionsOperations<azure.mgmt.network.v2022_05_01.operations.AdminRuleCollectionsOperations>`
+           * 2022-07-01: :class:`AdminRuleCollectionsOperations<azure.mgmt.network.v2022_07_01.operations.AdminRuleCollectionsOperations>`
         """
         api_version = self._get_api_version('admin_rule_collections')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import AdminRuleCollectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AdminRuleCollectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AdminRuleCollectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'admin_rule_collections'".format(api_version))
         self._config.api_version = api_version
@@ -309,13 +309,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`AdminRulesOperations<azure.mgmt.network.v2021_02_01_preview.operations.AdminRulesOperations>`
-           * 2022-05-01: :class:`AdminRulesOperations<azure.mgmt.network.v2022_05_01.operations.AdminRulesOperations>`
+           * 2022-07-01: :class:`AdminRulesOperations<azure.mgmt.network.v2022_07_01.operations.AdminRulesOperations>`
         """
         api_version = self._get_api_version('admin_rules')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import AdminRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AdminRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AdminRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'admin_rules'".format(api_version))
         self._config.api_version = api_version
@@ -331,7 +331,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ApplicationGatewayPrivateEndpointConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.ApplicationGatewayPrivateEndpointConnectionsOperations>`
            * 2020-11-01: :class:`ApplicationGatewayPrivateEndpointConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.ApplicationGatewayPrivateEndpointConnectionsOperations>`
            * 2021-02-01: :class:`ApplicationGatewayPrivateEndpointConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.ApplicationGatewayPrivateEndpointConnectionsOperations>`
-           * 2022-05-01: :class:`ApplicationGatewayPrivateEndpointConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationGatewayPrivateEndpointConnectionsOperations>`
+           * 2022-07-01: :class:`ApplicationGatewayPrivateEndpointConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationGatewayPrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('application_gateway_private_endpoint_connections')
         if api_version == '2020-05-01':
@@ -346,8 +346,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ApplicationGatewayPrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ApplicationGatewayPrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationGatewayPrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationGatewayPrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -363,7 +363,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ApplicationGatewayPrivateLinkResourcesOperations<azure.mgmt.network.v2020_08_01.operations.ApplicationGatewayPrivateLinkResourcesOperations>`
            * 2020-11-01: :class:`ApplicationGatewayPrivateLinkResourcesOperations<azure.mgmt.network.v2020_11_01.operations.ApplicationGatewayPrivateLinkResourcesOperations>`
            * 2021-02-01: :class:`ApplicationGatewayPrivateLinkResourcesOperations<azure.mgmt.network.v2021_02_01.operations.ApplicationGatewayPrivateLinkResourcesOperations>`
-           * 2022-05-01: :class:`ApplicationGatewayPrivateLinkResourcesOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationGatewayPrivateLinkResourcesOperations>`
+           * 2022-07-01: :class:`ApplicationGatewayPrivateLinkResourcesOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationGatewayPrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('application_gateway_private_link_resources')
         if api_version == '2020-05-01':
@@ -378,8 +378,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ApplicationGatewayPrivateLinkResourcesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ApplicationGatewayPrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationGatewayPrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationGatewayPrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -389,11 +389,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def application_gateway_waf_dynamic_manifests(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ApplicationGatewayWafDynamicManifestsOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationGatewayWafDynamicManifestsOperations>`
+           * 2022-07-01: :class:`ApplicationGatewayWafDynamicManifestsOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationGatewayWafDynamicManifestsOperations>`
         """
         api_version = self._get_api_version('application_gateway_waf_dynamic_manifests')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationGatewayWafDynamicManifestsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationGatewayWafDynamicManifestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_waf_dynamic_manifests'".format(api_version))
         self._config.api_version = api_version
@@ -403,11 +403,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def application_gateway_waf_dynamic_manifests_default(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ApplicationGatewayWafDynamicManifestsDefaultOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationGatewayWafDynamicManifestsDefaultOperations>`
+           * 2022-07-01: :class:`ApplicationGatewayWafDynamicManifestsDefaultOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationGatewayWafDynamicManifestsDefaultOperations>`
         """
         api_version = self._get_api_version('application_gateway_waf_dynamic_manifests_default')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationGatewayWafDynamicManifestsDefaultOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationGatewayWafDynamicManifestsDefaultOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_waf_dynamic_manifests_default'".format(api_version))
         self._config.api_version = api_version
@@ -448,7 +448,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.ApplicationGatewaysOperations>`
            * 2020-11-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.ApplicationGatewaysOperations>`
            * 2021-02-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.ApplicationGatewaysOperations>`
-           * 2022-05-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationGatewaysOperations>`
+           * 2022-07-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationGatewaysOperations>`
         """
         api_version = self._get_api_version('application_gateways')
         if api_version == '2015-06-15':
@@ -513,8 +513,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ApplicationGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -550,7 +550,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2020_08_01.operations.ApplicationSecurityGroupsOperations>`
            * 2020-11-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2020_11_01.operations.ApplicationSecurityGroupsOperations>`
            * 2021-02-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2021_02_01.operations.ApplicationSecurityGroupsOperations>`
-           * 2022-05-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2022_05_01.operations.ApplicationSecurityGroupsOperations>`
+           * 2022-07-01: :class:`ApplicationSecurityGroupsOperations<azure.mgmt.network.v2022_07_01.operations.ApplicationSecurityGroupsOperations>`
         """
         api_version = self._get_api_version('application_security_groups')
         if api_version == '2017-10-01':
@@ -605,8 +605,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ApplicationSecurityGroupsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ApplicationSecurityGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ApplicationSecurityGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ApplicationSecurityGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_security_groups'".format(api_version))
         self._config.api_version = api_version
@@ -636,7 +636,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2020_08_01.operations.AvailableDelegationsOperations>`
            * 2020-11-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2020_11_01.operations.AvailableDelegationsOperations>`
            * 2021-02-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2021_02_01.operations.AvailableDelegationsOperations>`
-           * 2022-05-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2022_05_01.operations.AvailableDelegationsOperations>`
+           * 2022-07-01: :class:`AvailableDelegationsOperations<azure.mgmt.network.v2022_07_01.operations.AvailableDelegationsOperations>`
         """
         api_version = self._get_api_version('available_delegations')
         if api_version == '2018-08-01':
@@ -679,8 +679,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AvailableDelegationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AvailableDelegationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AvailableDelegationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AvailableDelegationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_delegations'".format(api_version))
         self._config.api_version = api_version
@@ -717,7 +717,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2020_08_01.operations.AvailableEndpointServicesOperations>`
            * 2020-11-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2020_11_01.operations.AvailableEndpointServicesOperations>`
            * 2021-02-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2021_02_01.operations.AvailableEndpointServicesOperations>`
-           * 2022-05-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2022_05_01.operations.AvailableEndpointServicesOperations>`
+           * 2022-07-01: :class:`AvailableEndpointServicesOperations<azure.mgmt.network.v2022_07_01.operations.AvailableEndpointServicesOperations>`
         """
         api_version = self._get_api_version('available_endpoint_services')
         if api_version == '2017-06-01':
@@ -774,8 +774,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AvailableEndpointServicesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AvailableEndpointServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AvailableEndpointServicesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AvailableEndpointServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_endpoint_services'".format(api_version))
         self._config.api_version = api_version
@@ -800,7 +800,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AvailablePrivateEndpointTypesOperations<azure.mgmt.network.v2020_08_01.operations.AvailablePrivateEndpointTypesOperations>`
            * 2020-11-01: :class:`AvailablePrivateEndpointTypesOperations<azure.mgmt.network.v2020_11_01.operations.AvailablePrivateEndpointTypesOperations>`
            * 2021-02-01: :class:`AvailablePrivateEndpointTypesOperations<azure.mgmt.network.v2021_02_01.operations.AvailablePrivateEndpointTypesOperations>`
-           * 2022-05-01: :class:`AvailablePrivateEndpointTypesOperations<azure.mgmt.network.v2022_05_01.operations.AvailablePrivateEndpointTypesOperations>`
+           * 2022-07-01: :class:`AvailablePrivateEndpointTypesOperations<azure.mgmt.network.v2022_07_01.operations.AvailablePrivateEndpointTypesOperations>`
         """
         api_version = self._get_api_version('available_private_endpoint_types')
         if api_version == '2019-04-01':
@@ -833,8 +833,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AvailablePrivateEndpointTypesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AvailablePrivateEndpointTypesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AvailablePrivateEndpointTypesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AvailablePrivateEndpointTypesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_private_endpoint_types'".format(api_version))
         self._config.api_version = api_version
@@ -864,7 +864,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2020_08_01.operations.AvailableResourceGroupDelegationsOperations>`
            * 2020-11-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2020_11_01.operations.AvailableResourceGroupDelegationsOperations>`
            * 2021-02-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2021_02_01.operations.AvailableResourceGroupDelegationsOperations>`
-           * 2022-05-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2022_05_01.operations.AvailableResourceGroupDelegationsOperations>`
+           * 2022-07-01: :class:`AvailableResourceGroupDelegationsOperations<azure.mgmt.network.v2022_07_01.operations.AvailableResourceGroupDelegationsOperations>`
         """
         api_version = self._get_api_version('available_resource_group_delegations')
         if api_version == '2018-08-01':
@@ -907,8 +907,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AvailableResourceGroupDelegationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_resource_group_delegations'".format(api_version))
         self._config.api_version = api_version
@@ -930,7 +930,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AvailableServiceAliasesOperations<azure.mgmt.network.v2020_08_01.operations.AvailableServiceAliasesOperations>`
            * 2020-11-01: :class:`AvailableServiceAliasesOperations<azure.mgmt.network.v2020_11_01.operations.AvailableServiceAliasesOperations>`
            * 2021-02-01: :class:`AvailableServiceAliasesOperations<azure.mgmt.network.v2021_02_01.operations.AvailableServiceAliasesOperations>`
-           * 2022-05-01: :class:`AvailableServiceAliasesOperations<azure.mgmt.network.v2022_05_01.operations.AvailableServiceAliasesOperations>`
+           * 2022-07-01: :class:`AvailableServiceAliasesOperations<azure.mgmt.network.v2022_07_01.operations.AvailableServiceAliasesOperations>`
         """
         api_version = self._get_api_version('available_service_aliases')
         if api_version == '2019-08-01':
@@ -957,8 +957,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AvailableServiceAliasesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AvailableServiceAliasesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AvailableServiceAliasesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AvailableServiceAliasesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_service_aliases'".format(api_version))
         self._config.api_version = api_version
@@ -988,7 +988,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2020_08_01.operations.AzureFirewallFqdnTagsOperations>`
            * 2020-11-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2020_11_01.operations.AzureFirewallFqdnTagsOperations>`
            * 2021-02-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2021_02_01.operations.AzureFirewallFqdnTagsOperations>`
-           * 2022-05-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2022_05_01.operations.AzureFirewallFqdnTagsOperations>`
+           * 2022-07-01: :class:`AzureFirewallFqdnTagsOperations<azure.mgmt.network.v2022_07_01.operations.AzureFirewallFqdnTagsOperations>`
         """
         api_version = self._get_api_version('azure_firewall_fqdn_tags')
         if api_version == '2018-08-01':
@@ -1031,8 +1031,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AzureFirewallFqdnTagsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AzureFirewallFqdnTagsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AzureFirewallFqdnTagsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AzureFirewallFqdnTagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'azure_firewall_fqdn_tags'".format(api_version))
         self._config.api_version = api_version
@@ -1065,7 +1065,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`AzureFirewallsOperations<azure.mgmt.network.v2020_08_01.operations.AzureFirewallsOperations>`
            * 2020-11-01: :class:`AzureFirewallsOperations<azure.mgmt.network.v2020_11_01.operations.AzureFirewallsOperations>`
            * 2021-02-01: :class:`AzureFirewallsOperations<azure.mgmt.network.v2021_02_01.operations.AzureFirewallsOperations>`
-           * 2022-05-01: :class:`AzureFirewallsOperations<azure.mgmt.network.v2022_05_01.operations.AzureFirewallsOperations>`
+           * 2022-07-01: :class:`AzureFirewallsOperations<azure.mgmt.network.v2022_07_01.operations.AzureFirewallsOperations>`
         """
         api_version = self._get_api_version('azure_firewalls')
         if api_version == '2018-04-01':
@@ -1114,8 +1114,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import AzureFirewallsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import AzureFirewallsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import AzureFirewallsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import AzureFirewallsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'azure_firewalls'".format(api_version))
         self._config.api_version = api_version
@@ -1140,7 +1140,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`BastionHostsOperations<azure.mgmt.network.v2020_08_01.operations.BastionHostsOperations>`
            * 2020-11-01: :class:`BastionHostsOperations<azure.mgmt.network.v2020_11_01.operations.BastionHostsOperations>`
            * 2021-02-01: :class:`BastionHostsOperations<azure.mgmt.network.v2021_02_01.operations.BastionHostsOperations>`
-           * 2022-05-01: :class:`BastionHostsOperations<azure.mgmt.network.v2022_05_01.operations.BastionHostsOperations>`
+           * 2022-07-01: :class:`BastionHostsOperations<azure.mgmt.network.v2022_07_01.operations.BastionHostsOperations>`
         """
         api_version = self._get_api_version('bastion_hosts')
         if api_version == '2019-04-01':
@@ -1173,8 +1173,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import BastionHostsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import BastionHostsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import BastionHostsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import BastionHostsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bastion_hosts'".format(api_version))
         self._config.api_version = api_version
@@ -1213,7 +1213,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2020_08_01.operations.BgpServiceCommunitiesOperations>`
            * 2020-11-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2020_11_01.operations.BgpServiceCommunitiesOperations>`
            * 2021-02-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2021_02_01.operations.BgpServiceCommunitiesOperations>`
-           * 2022-05-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2022_05_01.operations.BgpServiceCommunitiesOperations>`
+           * 2022-07-01: :class:`BgpServiceCommunitiesOperations<azure.mgmt.network.v2022_07_01.operations.BgpServiceCommunitiesOperations>`
         """
         api_version = self._get_api_version('bgp_service_communities')
         if api_version == '2016-12-01':
@@ -1274,8 +1274,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import BgpServiceCommunitiesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import BgpServiceCommunitiesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import BgpServiceCommunitiesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import BgpServiceCommunitiesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bgp_service_communities'".format(api_version))
         self._config.api_version = api_version
@@ -1285,11 +1285,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def configuration_policy_groups(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ConfigurationPolicyGroupsOperations<azure.mgmt.network.v2022_05_01.operations.ConfigurationPolicyGroupsOperations>`
+           * 2022-07-01: :class:`ConfigurationPolicyGroupsOperations<azure.mgmt.network.v2022_07_01.operations.ConfigurationPolicyGroupsOperations>`
         """
         api_version = self._get_api_version('configuration_policy_groups')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ConfigurationPolicyGroupsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ConfigurationPolicyGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'configuration_policy_groups'".format(api_version))
         self._config.api_version = api_version
@@ -1325,7 +1325,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2020_08_01.operations.ConnectionMonitorsOperations>`
            * 2020-11-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2020_11_01.operations.ConnectionMonitorsOperations>`
            * 2021-02-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2021_02_01.operations.ConnectionMonitorsOperations>`
-           * 2022-05-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2022_05_01.operations.ConnectionMonitorsOperations>`
+           * 2022-07-01: :class:`ConnectionMonitorsOperations<azure.mgmt.network.v2022_07_01.operations.ConnectionMonitorsOperations>`
         """
         api_version = self._get_api_version('connection_monitors')
         if api_version == '2017-10-01':
@@ -1380,8 +1380,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ConnectionMonitorsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ConnectionMonitorsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ConnectionMonitorsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ConnectionMonitorsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'connection_monitors'".format(api_version))
         self._config.api_version = api_version
@@ -1392,13 +1392,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`ConnectivityConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.operations.ConnectivityConfigurationsOperations>`
-           * 2022-05-01: :class:`ConnectivityConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.ConnectivityConfigurationsOperations>`
+           * 2022-07-01: :class:`ConnectivityConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.ConnectivityConfigurationsOperations>`
         """
         api_version = self._get_api_version('connectivity_configurations')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import ConnectivityConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ConnectivityConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ConnectivityConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'connectivity_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -1413,7 +1413,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`CustomIPPrefixesOperations<azure.mgmt.network.v2020_08_01.operations.CustomIPPrefixesOperations>`
            * 2020-11-01: :class:`CustomIPPrefixesOperations<azure.mgmt.network.v2020_11_01.operations.CustomIPPrefixesOperations>`
            * 2021-02-01: :class:`CustomIPPrefixesOperations<azure.mgmt.network.v2021_02_01.operations.CustomIPPrefixesOperations>`
-           * 2022-05-01: :class:`CustomIPPrefixesOperations<azure.mgmt.network.v2022_05_01.operations.CustomIPPrefixesOperations>`
+           * 2022-07-01: :class:`CustomIPPrefixesOperations<azure.mgmt.network.v2022_07_01.operations.CustomIPPrefixesOperations>`
         """
         api_version = self._get_api_version('custom_ip_prefixes')
         if api_version == '2020-06-01':
@@ -1426,8 +1426,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import CustomIPPrefixesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import CustomIPPrefixesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import CustomIPPrefixesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import CustomIPPrefixesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'custom_ip_prefixes'".format(api_version))
         self._config.api_version = api_version
@@ -1455,7 +1455,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2020_08_01.operations.DdosCustomPoliciesOperations>`
            * 2020-11-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2020_11_01.operations.DdosCustomPoliciesOperations>`
            * 2021-02-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2021_02_01.operations.DdosCustomPoliciesOperations>`
-           * 2022-05-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2022_05_01.operations.DdosCustomPoliciesOperations>`
+           * 2022-07-01: :class:`DdosCustomPoliciesOperations<azure.mgmt.network.v2022_07_01.operations.DdosCustomPoliciesOperations>`
         """
         api_version = self._get_api_version('ddos_custom_policies')
         if api_version == '2018-11-01':
@@ -1494,8 +1494,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import DdosCustomPoliciesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import DdosCustomPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import DdosCustomPoliciesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import DdosCustomPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ddos_custom_policies'".format(api_version))
         self._config.api_version = api_version
@@ -1529,7 +1529,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2020_08_01.operations.DdosProtectionPlansOperations>`
            * 2020-11-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2020_11_01.operations.DdosProtectionPlansOperations>`
            * 2021-02-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2021_02_01.operations.DdosProtectionPlansOperations>`
-           * 2022-05-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2022_05_01.operations.DdosProtectionPlansOperations>`
+           * 2022-07-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2022_07_01.operations.DdosProtectionPlansOperations>`
         """
         api_version = self._get_api_version('ddos_protection_plans')
         if api_version == '2018-02-01':
@@ -1580,8 +1580,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import DdosProtectionPlansOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import DdosProtectionPlansOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import DdosProtectionPlansOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import DdosProtectionPlansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ddos_protection_plans'".format(api_version))
         self._config.api_version = api_version
@@ -1618,7 +1618,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2020_08_01.operations.DefaultSecurityRulesOperations>`
            * 2020-11-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2020_11_01.operations.DefaultSecurityRulesOperations>`
            * 2021-02-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2021_02_01.operations.DefaultSecurityRulesOperations>`
-           * 2022-05-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2022_05_01.operations.DefaultSecurityRulesOperations>`
+           * 2022-07-01: :class:`DefaultSecurityRulesOperations<azure.mgmt.network.v2022_07_01.operations.DefaultSecurityRulesOperations>`
         """
         api_version = self._get_api_version('default_security_rules')
         if api_version == '2017-06-01':
@@ -1675,8 +1675,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import DefaultSecurityRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import DefaultSecurityRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import DefaultSecurityRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import DefaultSecurityRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'default_security_rules'".format(api_version))
         self._config.api_version = api_version
@@ -1691,7 +1691,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`DscpConfigurationOperations<azure.mgmt.network.v2020_08_01.operations.DscpConfigurationOperations>`
            * 2020-11-01: :class:`DscpConfigurationOperations<azure.mgmt.network.v2020_11_01.operations.DscpConfigurationOperations>`
            * 2021-02-01: :class:`DscpConfigurationOperations<azure.mgmt.network.v2021_02_01.operations.DscpConfigurationOperations>`
-           * 2022-05-01: :class:`DscpConfigurationOperations<azure.mgmt.network.v2022_05_01.operations.DscpConfigurationOperations>`
+           * 2022-07-01: :class:`DscpConfigurationOperations<azure.mgmt.network.v2022_07_01.operations.DscpConfigurationOperations>`
         """
         api_version = self._get_api_version('dscp_configuration')
         if api_version == '2020-06-01':
@@ -1704,8 +1704,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import DscpConfigurationOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import DscpConfigurationOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import DscpConfigurationOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import DscpConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dscp_configuration'".format(api_version))
         self._config.api_version = api_version
@@ -1774,7 +1774,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2020-11-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
            * 2021-02-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCircuitAuthorizationsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCircuitAuthorizationsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_authorizations')
         if api_version == '2015-06-15':
@@ -1839,8 +1839,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_authorizations'".format(api_version))
         self._config.api_version = api_version
@@ -1874,7 +1874,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCircuitConnectionsOperations>`
            * 2020-11-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCircuitConnectionsOperations>`
            * 2021-02-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCircuitConnectionsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCircuitConnectionsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCircuitConnectionsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_connections')
         if api_version == '2018-02-01':
@@ -1925,8 +1925,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_connections'".format(api_version))
         self._config.api_version = api_version
@@ -1967,7 +1967,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2020-11-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCircuitPeeringsOperations>`
            * 2021-02-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCircuitPeeringsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCircuitPeeringsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCircuitPeeringsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCircuitPeeringsOperations>`
         """
         api_version = self._get_api_version('express_route_circuit_peerings')
         if api_version == '2015-06-15':
@@ -2032,8 +2032,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_peerings'".format(api_version))
         self._config.api_version = api_version
@@ -2074,7 +2074,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCircuitsOperations>`
            * 2020-11-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCircuitsOperations>`
            * 2021-02-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCircuitsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCircuitsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCircuitsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCircuitsOperations>`
         """
         api_version = self._get_api_version('express_route_circuits')
         if api_version == '2015-06-15':
@@ -2139,8 +2139,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCircuitsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCircuitsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuits'".format(api_version))
         self._config.api_version = api_version
@@ -2170,7 +2170,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteConnectionsOperations>`
            * 2020-11-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteConnectionsOperations>`
            * 2021-02-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteConnectionsOperations>`
-           * 2022-05-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteConnectionsOperations>`
+           * 2022-07-01: :class:`ExpressRouteConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteConnectionsOperations>`
         """
         api_version = self._get_api_version('express_route_connections')
         if api_version == '2018-08-01':
@@ -2213,8 +2213,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_connections'".format(api_version))
         self._config.api_version = api_version
@@ -2248,7 +2248,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
            * 2020-11-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
            * 2021-02-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
         """
         api_version = self._get_api_version('express_route_cross_connection_peerings')
         if api_version == '2018-02-01':
@@ -2299,8 +2299,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_cross_connection_peerings'".format(api_version))
         self._config.api_version = api_version
@@ -2334,7 +2334,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteCrossConnectionsOperations>`
            * 2020-11-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteCrossConnectionsOperations>`
            * 2021-02-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteCrossConnectionsOperations>`
-           * 2022-05-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteCrossConnectionsOperations>`
+           * 2022-07-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteCrossConnectionsOperations>`
         """
         api_version = self._get_api_version('express_route_cross_connections')
         if api_version == '2018-02-01':
@@ -2385,8 +2385,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_cross_connections'".format(api_version))
         self._config.api_version = api_version
@@ -2416,7 +2416,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteGatewaysOperations>`
            * 2020-11-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteGatewaysOperations>`
            * 2021-02-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteGatewaysOperations>`
-           * 2022-05-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteGatewaysOperations>`
+           * 2022-07-01: :class:`ExpressRouteGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteGatewaysOperations>`
         """
         api_version = self._get_api_version('express_route_gateways')
         if api_version == '2018-08-01':
@@ -2459,8 +2459,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -2490,7 +2490,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteLinksOperations>`
            * 2020-11-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteLinksOperations>`
            * 2021-02-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteLinksOperations>`
-           * 2022-05-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteLinksOperations>`
+           * 2022-07-01: :class:`ExpressRouteLinksOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteLinksOperations>`
         """
         api_version = self._get_api_version('express_route_links')
         if api_version == '2018-08-01':
@@ -2533,8 +2533,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteLinksOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteLinksOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteLinksOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_links'".format(api_version))
         self._config.api_version = api_version
@@ -2544,11 +2544,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def express_route_port_authorizations(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ExpressRoutePortAuthorizationsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRoutePortAuthorizationsOperations>`
+           * 2022-07-01: :class:`ExpressRoutePortAuthorizationsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRoutePortAuthorizationsOperations>`
         """
         api_version = self._get_api_version('express_route_port_authorizations')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRoutePortAuthorizationsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRoutePortAuthorizationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_port_authorizations'".format(api_version))
         self._config.api_version = api_version
@@ -2578,7 +2578,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRoutePortsOperations>`
            * 2020-11-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRoutePortsOperations>`
            * 2021-02-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRoutePortsOperations>`
-           * 2022-05-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRoutePortsOperations>`
+           * 2022-07-01: :class:`ExpressRoutePortsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRoutePortsOperations>`
         """
         api_version = self._get_api_version('express_route_ports')
         if api_version == '2018-08-01':
@@ -2621,8 +2621,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRoutePortsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRoutePortsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRoutePortsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRoutePortsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_ports'".format(api_version))
         self._config.api_version = api_version
@@ -2652,7 +2652,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRoutePortsLocationsOperations>`
            * 2020-11-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRoutePortsLocationsOperations>`
            * 2021-02-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRoutePortsLocationsOperations>`
-           * 2022-05-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRoutePortsLocationsOperations>`
+           * 2022-07-01: :class:`ExpressRoutePortsLocationsOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRoutePortsLocationsOperations>`
         """
         api_version = self._get_api_version('express_route_ports_locations')
         if api_version == '2018-08-01':
@@ -2695,8 +2695,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRoutePortsLocationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRoutePortsLocationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRoutePortsLocationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRoutePortsLocationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_ports_locations'".format(api_version))
         self._config.api_version = api_version
@@ -2706,11 +2706,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def express_route_provider_ports_location(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ExpressRouteProviderPortsLocationOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteProviderPortsLocationOperations>`
+           * 2022-07-01: :class:`ExpressRouteProviderPortsLocationOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteProviderPortsLocationOperations>`
         """
         api_version = self._get_api_version('express_route_provider_ports_location')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteProviderPortsLocationOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteProviderPortsLocationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_provider_ports_location'".format(api_version))
         self._config.api_version = api_version
@@ -2751,7 +2751,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2020_08_01.operations.ExpressRouteServiceProvidersOperations>`
            * 2020-11-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2020_11_01.operations.ExpressRouteServiceProvidersOperations>`
            * 2021-02-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2021_02_01.operations.ExpressRouteServiceProvidersOperations>`
-           * 2022-05-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2022_05_01.operations.ExpressRouteServiceProvidersOperations>`
+           * 2022-07-01: :class:`ExpressRouteServiceProvidersOperations<azure.mgmt.network.v2022_07_01.operations.ExpressRouteServiceProvidersOperations>`
         """
         api_version = self._get_api_version('express_route_service_providers')
         if api_version == '2015-06-15':
@@ -2816,8 +2816,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_service_providers'".format(api_version))
         self._config.api_version = api_version
@@ -2841,7 +2841,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2020_08_01.operations.FirewallPoliciesOperations>`
            * 2020-11-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2020_11_01.operations.FirewallPoliciesOperations>`
            * 2021-02-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2021_02_01.operations.FirewallPoliciesOperations>`
-           * 2022-05-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2022_05_01.operations.FirewallPoliciesOperations>`
+           * 2022-07-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2022_07_01.operations.FirewallPoliciesOperations>`
         """
         api_version = self._get_api_version('firewall_policies')
         if api_version == '2019-06-01':
@@ -2872,8 +2872,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import FirewallPoliciesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import FirewallPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import FirewallPoliciesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import FirewallPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policies'".format(api_version))
         self._config.api_version = api_version
@@ -2883,11 +2883,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def firewall_policy_idps_signatures(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`FirewallPolicyIdpsSignaturesOperations<azure.mgmt.network.v2022_05_01.operations.FirewallPolicyIdpsSignaturesOperations>`
+           * 2022-07-01: :class:`FirewallPolicyIdpsSignaturesOperations<azure.mgmt.network.v2022_07_01.operations.FirewallPolicyIdpsSignaturesOperations>`
         """
         api_version = self._get_api_version('firewall_policy_idps_signatures')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import FirewallPolicyIdpsSignaturesOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import FirewallPolicyIdpsSignaturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures'".format(api_version))
         self._config.api_version = api_version
@@ -2897,11 +2897,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def firewall_policy_idps_signatures_filter_values(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`FirewallPolicyIdpsSignaturesFilterValuesOperations<azure.mgmt.network.v2022_05_01.operations.FirewallPolicyIdpsSignaturesFilterValuesOperations>`
+           * 2022-07-01: :class:`FirewallPolicyIdpsSignaturesFilterValuesOperations<azure.mgmt.network.v2022_07_01.operations.FirewallPolicyIdpsSignaturesFilterValuesOperations>`
         """
         api_version = self._get_api_version('firewall_policy_idps_signatures_filter_values')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import FirewallPolicyIdpsSignaturesFilterValuesOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import FirewallPolicyIdpsSignaturesFilterValuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures_filter_values'".format(api_version))
         self._config.api_version = api_version
@@ -2911,11 +2911,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def firewall_policy_idps_signatures_overrides(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`FirewallPolicyIdpsSignaturesOverridesOperations<azure.mgmt.network.v2022_05_01.operations.FirewallPolicyIdpsSignaturesOverridesOperations>`
+           * 2022-07-01: :class:`FirewallPolicyIdpsSignaturesOverridesOperations<azure.mgmt.network.v2022_07_01.operations.FirewallPolicyIdpsSignaturesOverridesOperations>`
         """
         api_version = self._get_api_version('firewall_policy_idps_signatures_overrides')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import FirewallPolicyIdpsSignaturesOverridesOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import FirewallPolicyIdpsSignaturesOverridesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures_overrides'".format(api_version))
         self._config.api_version = api_version
@@ -2931,7 +2931,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`FirewallPolicyRuleCollectionGroupsOperations<azure.mgmt.network.v2020_08_01.operations.FirewallPolicyRuleCollectionGroupsOperations>`
            * 2020-11-01: :class:`FirewallPolicyRuleCollectionGroupsOperations<azure.mgmt.network.v2020_11_01.operations.FirewallPolicyRuleCollectionGroupsOperations>`
            * 2021-02-01: :class:`FirewallPolicyRuleCollectionGroupsOperations<azure.mgmt.network.v2021_02_01.operations.FirewallPolicyRuleCollectionGroupsOperations>`
-           * 2022-05-01: :class:`FirewallPolicyRuleCollectionGroupsOperations<azure.mgmt.network.v2022_05_01.operations.FirewallPolicyRuleCollectionGroupsOperations>`
+           * 2022-07-01: :class:`FirewallPolicyRuleCollectionGroupsOperations<azure.mgmt.network.v2022_07_01.operations.FirewallPolicyRuleCollectionGroupsOperations>`
         """
         api_version = self._get_api_version('firewall_policy_rule_collection_groups')
         if api_version == '2020-05-01':
@@ -2946,8 +2946,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import FirewallPolicyRuleCollectionGroupsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import FirewallPolicyRuleCollectionGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import FirewallPolicyRuleCollectionGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import FirewallPolicyRuleCollectionGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_rule_collection_groups'".format(api_version))
         self._config.api_version = api_version
@@ -3002,7 +3002,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`FlowLogsOperations<azure.mgmt.network.v2020_08_01.operations.FlowLogsOperations>`
            * 2020-11-01: :class:`FlowLogsOperations<azure.mgmt.network.v2020_11_01.operations.FlowLogsOperations>`
            * 2021-02-01: :class:`FlowLogsOperations<azure.mgmt.network.v2021_02_01.operations.FlowLogsOperations>`
-           * 2022-05-01: :class:`FlowLogsOperations<azure.mgmt.network.v2022_05_01.operations.FlowLogsOperations>`
+           * 2022-07-01: :class:`FlowLogsOperations<azure.mgmt.network.v2022_07_01.operations.FlowLogsOperations>`
         """
         api_version = self._get_api_version('flow_logs')
         if api_version == '2019-11-01':
@@ -3025,8 +3025,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import FlowLogsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import FlowLogsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import FlowLogsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import FlowLogsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'flow_logs'".format(api_version))
         self._config.api_version = api_version
@@ -3043,7 +3043,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`HubRouteTablesOperations<azure.mgmt.network.v2020_08_01.operations.HubRouteTablesOperations>`
            * 2020-11-01: :class:`HubRouteTablesOperations<azure.mgmt.network.v2020_11_01.operations.HubRouteTablesOperations>`
            * 2021-02-01: :class:`HubRouteTablesOperations<azure.mgmt.network.v2021_02_01.operations.HubRouteTablesOperations>`
-           * 2022-05-01: :class:`HubRouteTablesOperations<azure.mgmt.network.v2022_05_01.operations.HubRouteTablesOperations>`
+           * 2022-07-01: :class:`HubRouteTablesOperations<azure.mgmt.network.v2022_07_01.operations.HubRouteTablesOperations>`
         """
         api_version = self._get_api_version('hub_route_tables')
         if api_version == '2020-04-01':
@@ -3060,8 +3060,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import HubRouteTablesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import HubRouteTablesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import HubRouteTablesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import HubRouteTablesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'hub_route_tables'".format(api_version))
         self._config.api_version = api_version
@@ -3094,7 +3094,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.HubVirtualNetworkConnectionsOperations>`
            * 2020-11-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.HubVirtualNetworkConnectionsOperations>`
            * 2021-02-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.HubVirtualNetworkConnectionsOperations>`
-           * 2022-05-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.HubVirtualNetworkConnectionsOperations>`
+           * 2022-07-01: :class:`HubVirtualNetworkConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.HubVirtualNetworkConnectionsOperations>`
         """
         api_version = self._get_api_version('hub_virtual_network_connections')
         if api_version == '2018-04-01':
@@ -3143,8 +3143,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import HubVirtualNetworkConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import HubVirtualNetworkConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import HubVirtualNetworkConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import HubVirtualNetworkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'hub_virtual_network_connections'".format(api_version))
         self._config.api_version = api_version
@@ -3181,7 +3181,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2020_08_01.operations.InboundNatRulesOperations>`
            * 2020-11-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2020_11_01.operations.InboundNatRulesOperations>`
            * 2021-02-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2021_02_01.operations.InboundNatRulesOperations>`
-           * 2022-05-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2022_05_01.operations.InboundNatRulesOperations>`
+           * 2022-07-01: :class:`InboundNatRulesOperations<azure.mgmt.network.v2022_07_01.operations.InboundNatRulesOperations>`
         """
         api_version = self._get_api_version('inbound_nat_rules')
         if api_version == '2017-06-01':
@@ -3238,8 +3238,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import InboundNatRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import InboundNatRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import InboundNatRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import InboundNatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'inbound_nat_rules'".format(api_version))
         self._config.api_version = api_version
@@ -3254,7 +3254,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`InboundSecurityRuleOperations<azure.mgmt.network.v2020_08_01.operations.InboundSecurityRuleOperations>`
            * 2020-11-01: :class:`InboundSecurityRuleOperations<azure.mgmt.network.v2020_11_01.operations.InboundSecurityRuleOperations>`
            * 2021-02-01: :class:`InboundSecurityRuleOperations<azure.mgmt.network.v2021_02_01.operations.InboundSecurityRuleOperations>`
-           * 2022-05-01: :class:`InboundSecurityRuleOperations<azure.mgmt.network.v2022_05_01.operations.InboundSecurityRuleOperations>`
+           * 2022-07-01: :class:`InboundSecurityRuleOperations<azure.mgmt.network.v2022_07_01.operations.InboundSecurityRuleOperations>`
         """
         api_version = self._get_api_version('inbound_security_rule')
         if api_version == '2020-06-01':
@@ -3267,8 +3267,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import InboundSecurityRuleOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import InboundSecurityRuleOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import InboundSecurityRuleOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import InboundSecurityRuleOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'inbound_security_rule'".format(api_version))
         self._config.api_version = api_version
@@ -3312,7 +3312,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`IpAllocationsOperations<azure.mgmt.network.v2020_08_01.operations.IpAllocationsOperations>`
            * 2020-11-01: :class:`IpAllocationsOperations<azure.mgmt.network.v2020_11_01.operations.IpAllocationsOperations>`
            * 2021-02-01: :class:`IpAllocationsOperations<azure.mgmt.network.v2021_02_01.operations.IpAllocationsOperations>`
-           * 2022-05-01: :class:`IpAllocationsOperations<azure.mgmt.network.v2022_05_01.operations.IpAllocationsOperations>`
+           * 2022-07-01: :class:`IpAllocationsOperations<azure.mgmt.network.v2022_07_01.operations.IpAllocationsOperations>`
         """
         api_version = self._get_api_version('ip_allocations')
         if api_version == '2020-03-01':
@@ -3331,8 +3331,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import IpAllocationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import IpAllocationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import IpAllocationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import IpAllocationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ip_allocations'".format(api_version))
         self._config.api_version = api_version
@@ -3353,7 +3353,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`IpGroupsOperations<azure.mgmt.network.v2020_08_01.operations.IpGroupsOperations>`
            * 2020-11-01: :class:`IpGroupsOperations<azure.mgmt.network.v2020_11_01.operations.IpGroupsOperations>`
            * 2021-02-01: :class:`IpGroupsOperations<azure.mgmt.network.v2021_02_01.operations.IpGroupsOperations>`
-           * 2022-05-01: :class:`IpGroupsOperations<azure.mgmt.network.v2022_05_01.operations.IpGroupsOperations>`
+           * 2022-07-01: :class:`IpGroupsOperations<azure.mgmt.network.v2022_07_01.operations.IpGroupsOperations>`
         """
         api_version = self._get_api_version('ip_groups')
         if api_version == '2019-09-01':
@@ -3378,8 +3378,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import IpGroupsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import IpGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import IpGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import IpGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ip_groups'".format(api_version))
         self._config.api_version = api_version
@@ -3416,7 +3416,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2020-11-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerBackendAddressPoolsOperations>`
            * 2021-02-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerBackendAddressPoolsOperations>`
-           * 2022-05-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerBackendAddressPoolsOperations>`
+           * 2022-07-01: :class:`LoadBalancerBackendAddressPoolsOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerBackendAddressPoolsOperations>`
         """
         api_version = self._get_api_version('load_balancer_backend_address_pools')
         if api_version == '2017-06-01':
@@ -3473,8 +3473,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_backend_address_pools'".format(api_version))
         self._config.api_version = api_version
@@ -3511,7 +3511,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2020-11-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
            * 2021-02-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
-           * 2022-05-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
+           * 2022-07-01: :class:`LoadBalancerFrontendIPConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerFrontendIPConfigurationsOperations>`
         """
         api_version = self._get_api_version('load_balancer_frontend_ip_configurations')
         if api_version == '2017-06-01':
@@ -3568,8 +3568,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_frontend_ip_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -3606,7 +3606,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2020-11-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerLoadBalancingRulesOperations>`
            * 2021-02-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerLoadBalancingRulesOperations>`
-           * 2022-05-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerLoadBalancingRulesOperations>`
+           * 2022-07-01: :class:`LoadBalancerLoadBalancingRulesOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerLoadBalancingRulesOperations>`
         """
         api_version = self._get_api_version('load_balancer_load_balancing_rules')
         if api_version == '2017-06-01':
@@ -3663,8 +3663,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_load_balancing_rules'".format(api_version))
         self._config.api_version = api_version
@@ -3701,7 +3701,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2020-11-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerNetworkInterfacesOperations>`
            * 2021-02-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerNetworkInterfacesOperations>`
-           * 2022-05-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerNetworkInterfacesOperations>`
+           * 2022-07-01: :class:`LoadBalancerNetworkInterfacesOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerNetworkInterfacesOperations>`
         """
         api_version = self._get_api_version('load_balancer_network_interfaces')
         if api_version == '2017-06-01':
@@ -3758,8 +3758,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_network_interfaces'".format(api_version))
         self._config.api_version = api_version
@@ -3789,7 +3789,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerOutboundRulesOperations>`
            * 2020-11-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerOutboundRulesOperations>`
            * 2021-02-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerOutboundRulesOperations>`
-           * 2022-05-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerOutboundRulesOperations>`
+           * 2022-07-01: :class:`LoadBalancerOutboundRulesOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerOutboundRulesOperations>`
         """
         api_version = self._get_api_version('load_balancer_outbound_rules')
         if api_version == '2018-08-01':
@@ -3832,8 +3832,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerOutboundRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerOutboundRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerOutboundRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerOutboundRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_outbound_rules'".format(api_version))
         self._config.api_version = api_version
@@ -3870,7 +3870,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancerProbesOperations>`
            * 2020-11-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancerProbesOperations>`
            * 2021-02-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancerProbesOperations>`
-           * 2022-05-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancerProbesOperations>`
+           * 2022-07-01: :class:`LoadBalancerProbesOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancerProbesOperations>`
         """
         api_version = self._get_api_version('load_balancer_probes')
         if api_version == '2017-06-01':
@@ -3927,8 +3927,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancerProbesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancerProbesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancerProbesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancerProbesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_probes'".format(api_version))
         self._config.api_version = api_version
@@ -3969,7 +3969,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2020_08_01.operations.LoadBalancersOperations>`
            * 2020-11-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2020_11_01.operations.LoadBalancersOperations>`
            * 2021-02-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2021_02_01.operations.LoadBalancersOperations>`
-           * 2022-05-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2022_05_01.operations.LoadBalancersOperations>`
+           * 2022-07-01: :class:`LoadBalancersOperations<azure.mgmt.network.v2022_07_01.operations.LoadBalancersOperations>`
         """
         api_version = self._get_api_version('load_balancers')
         if api_version == '2015-06-15':
@@ -4034,8 +4034,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LoadBalancersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LoadBalancersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LoadBalancersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancers'".format(api_version))
         self._config.api_version = api_version
@@ -4076,7 +4076,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.LocalNetworkGatewaysOperations>`
            * 2020-11-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.LocalNetworkGatewaysOperations>`
            * 2021-02-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.LocalNetworkGatewaysOperations>`
-           * 2022-05-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.LocalNetworkGatewaysOperations>`
+           * 2022-07-01: :class:`LocalNetworkGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.LocalNetworkGatewaysOperations>`
         """
         api_version = self._get_api_version('local_network_gateways')
         if api_version == '2015-06-15':
@@ -4141,8 +4141,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import LocalNetworkGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'local_network_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -4152,11 +4152,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def management_group_network_manager_connections(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ManagementGroupNetworkManagerConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ManagementGroupNetworkManagerConnectionsOperations>`
+           * 2022-07-01: :class:`ManagementGroupNetworkManagerConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ManagementGroupNetworkManagerConnectionsOperations>`
         """
         api_version = self._get_api_version('management_group_network_manager_connections')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ManagementGroupNetworkManagerConnectionsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ManagementGroupNetworkManagerConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'management_group_network_manager_connections'".format(api_version))
         self._config.api_version = api_version
@@ -4182,7 +4182,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NatGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.NatGatewaysOperations>`
            * 2020-11-01: :class:`NatGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.NatGatewaysOperations>`
            * 2021-02-01: :class:`NatGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.NatGatewaysOperations>`
-           * 2022-05-01: :class:`NatGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.NatGatewaysOperations>`
+           * 2022-07-01: :class:`NatGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.NatGatewaysOperations>`
         """
         api_version = self._get_api_version('nat_gateways')
         if api_version == '2019-02-01':
@@ -4217,8 +4217,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NatGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NatGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NatGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NatGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nat_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -4231,7 +4231,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NatRulesOperations<azure.mgmt.network.v2020_08_01.operations.NatRulesOperations>`
            * 2020-11-01: :class:`NatRulesOperations<azure.mgmt.network.v2020_11_01.operations.NatRulesOperations>`
            * 2021-02-01: :class:`NatRulesOperations<azure.mgmt.network.v2021_02_01.operations.NatRulesOperations>`
-           * 2022-05-01: :class:`NatRulesOperations<azure.mgmt.network.v2022_05_01.operations.NatRulesOperations>`
+           * 2022-07-01: :class:`NatRulesOperations<azure.mgmt.network.v2022_07_01.operations.NatRulesOperations>`
         """
         api_version = self._get_api_version('nat_rules')
         if api_version == '2020-08-01':
@@ -4240,8 +4240,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NatRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NatRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NatRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nat_rules'".format(api_version))
         self._config.api_version = api_version
@@ -4252,13 +4252,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`NetworkGroupsOperations<azure.mgmt.network.v2021_02_01_preview.operations.NetworkGroupsOperations>`
-           * 2022-05-01: :class:`NetworkGroupsOperations<azure.mgmt.network.v2022_05_01.operations.NetworkGroupsOperations>`
+           * 2022-07-01: :class:`NetworkGroupsOperations<azure.mgmt.network.v2022_07_01.operations.NetworkGroupsOperations>`
         """
         api_version = self._get_api_version('network_groups')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import NetworkGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_groups'".format(api_version))
         self._config.api_version = api_version
@@ -4295,7 +4295,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2020_08_01.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2020-11-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2020_11_01.operations.NetworkInterfaceIPConfigurationsOperations>`
            * 2021-02-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2021_02_01.operations.NetworkInterfaceIPConfigurationsOperations>`
-           * 2022-05-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.NetworkInterfaceIPConfigurationsOperations>`
+           * 2022-07-01: :class:`NetworkInterfaceIPConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.NetworkInterfaceIPConfigurationsOperations>`
         """
         api_version = self._get_api_version('network_interface_ip_configurations')
         if api_version == '2017-06-01':
@@ -4352,8 +4352,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_ip_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -4390,7 +4390,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2020_08_01.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2020-11-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2020_11_01.operations.NetworkInterfaceLoadBalancersOperations>`
            * 2021-02-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2021_02_01.operations.NetworkInterfaceLoadBalancersOperations>`
-           * 2022-05-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2022_05_01.operations.NetworkInterfaceLoadBalancersOperations>`
+           * 2022-07-01: :class:`NetworkInterfaceLoadBalancersOperations<azure.mgmt.network.v2022_07_01.operations.NetworkInterfaceLoadBalancersOperations>`
         """
         api_version = self._get_api_version('network_interface_load_balancers')
         if api_version == '2017-06-01':
@@ -4447,8 +4447,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_load_balancers'".format(api_version))
         self._config.api_version = api_version
@@ -4478,7 +4478,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2020_08_01.operations.NetworkInterfaceTapConfigurationsOperations>`
            * 2020-11-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2020_11_01.operations.NetworkInterfaceTapConfigurationsOperations>`
            * 2021-02-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2021_02_01.operations.NetworkInterfaceTapConfigurationsOperations>`
-           * 2022-05-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.NetworkInterfaceTapConfigurationsOperations>`
+           * 2022-07-01: :class:`NetworkInterfaceTapConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.NetworkInterfaceTapConfigurationsOperations>`
         """
         api_version = self._get_api_version('network_interface_tap_configurations')
         if api_version == '2018-08-01':
@@ -4521,8 +4521,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_tap_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -4563,7 +4563,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2020_08_01.operations.NetworkInterfacesOperations>`
            * 2020-11-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2020_11_01.operations.NetworkInterfacesOperations>`
            * 2021-02-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2021_02_01.operations.NetworkInterfacesOperations>`
-           * 2022-05-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2022_05_01.operations.NetworkInterfacesOperations>`
+           * 2022-07-01: :class:`NetworkInterfacesOperations<azure.mgmt.network.v2022_07_01.operations.NetworkInterfacesOperations>`
         """
         api_version = self._get_api_version('network_interfaces')
         if api_version == '2015-06-15':
@@ -4628,8 +4628,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkInterfacesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkInterfacesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkInterfacesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkInterfacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interfaces'".format(api_version))
         self._config.api_version = api_version
@@ -4640,13 +4640,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`NetworkManagerCommitsOperations<azure.mgmt.network.v2021_02_01_preview.operations.NetworkManagerCommitsOperations>`
-           * 2022-05-01: :class:`NetworkManagerCommitsOperations<azure.mgmt.network.v2022_05_01.operations.NetworkManagerCommitsOperations>`
+           * 2022-07-01: :class:`NetworkManagerCommitsOperations<azure.mgmt.network.v2022_07_01.operations.NetworkManagerCommitsOperations>`
         """
         api_version = self._get_api_version('network_manager_commits')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import NetworkManagerCommitsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkManagerCommitsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkManagerCommitsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_manager_commits'".format(api_version))
         self._config.api_version = api_version
@@ -4657,13 +4657,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`NetworkManagerDeploymentStatusOperations<azure.mgmt.network.v2021_02_01_preview.operations.NetworkManagerDeploymentStatusOperations>`
-           * 2022-05-01: :class:`NetworkManagerDeploymentStatusOperations<azure.mgmt.network.v2022_05_01.operations.NetworkManagerDeploymentStatusOperations>`
+           * 2022-07-01: :class:`NetworkManagerDeploymentStatusOperations<azure.mgmt.network.v2022_07_01.operations.NetworkManagerDeploymentStatusOperations>`
         """
         api_version = self._get_api_version('network_manager_deployment_status')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import NetworkManagerDeploymentStatusOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkManagerDeploymentStatusOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkManagerDeploymentStatusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_manager_deployment_status'".format(api_version))
         self._config.api_version = api_version
@@ -4688,13 +4688,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`NetworkManagersOperations<azure.mgmt.network.v2021_02_01_preview.operations.NetworkManagersOperations>`
-           * 2022-05-01: :class:`NetworkManagersOperations<azure.mgmt.network.v2022_05_01.operations.NetworkManagersOperations>`
+           * 2022-07-01: :class:`NetworkManagersOperations<azure.mgmt.network.v2022_07_01.operations.NetworkManagersOperations>`
         """
         api_version = self._get_api_version('network_managers')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import NetworkManagersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkManagersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkManagersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_managers'".format(api_version))
         self._config.api_version = api_version
@@ -4724,7 +4724,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkProfilesOperations<azure.mgmt.network.v2020_08_01.operations.NetworkProfilesOperations>`
            * 2020-11-01: :class:`NetworkProfilesOperations<azure.mgmt.network.v2020_11_01.operations.NetworkProfilesOperations>`
            * 2021-02-01: :class:`NetworkProfilesOperations<azure.mgmt.network.v2021_02_01.operations.NetworkProfilesOperations>`
-           * 2022-05-01: :class:`NetworkProfilesOperations<azure.mgmt.network.v2022_05_01.operations.NetworkProfilesOperations>`
+           * 2022-07-01: :class:`NetworkProfilesOperations<azure.mgmt.network.v2022_07_01.operations.NetworkProfilesOperations>`
         """
         api_version = self._get_api_version('network_profiles')
         if api_version == '2018-08-01':
@@ -4767,8 +4767,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkProfilesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkProfilesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkProfilesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkProfilesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_profiles'".format(api_version))
         self._config.api_version = api_version
@@ -4809,7 +4809,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2020_08_01.operations.NetworkSecurityGroupsOperations>`
            * 2020-11-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2020_11_01.operations.NetworkSecurityGroupsOperations>`
            * 2021-02-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2021_02_01.operations.NetworkSecurityGroupsOperations>`
-           * 2022-05-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2022_05_01.operations.NetworkSecurityGroupsOperations>`
+           * 2022-07-01: :class:`NetworkSecurityGroupsOperations<azure.mgmt.network.v2022_07_01.operations.NetworkSecurityGroupsOperations>`
         """
         api_version = self._get_api_version('network_security_groups')
         if api_version == '2015-06-15':
@@ -4874,8 +4874,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkSecurityGroupsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkSecurityGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_security_groups'".format(api_version))
         self._config.api_version = api_version
@@ -4908,7 +4908,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkVirtualAppliancesOperations<azure.mgmt.network.v2020_08_01.operations.NetworkVirtualAppliancesOperations>`
            * 2020-11-01: :class:`NetworkVirtualAppliancesOperations<azure.mgmt.network.v2020_11_01.operations.NetworkVirtualAppliancesOperations>`
            * 2021-02-01: :class:`NetworkVirtualAppliancesOperations<azure.mgmt.network.v2021_02_01.operations.NetworkVirtualAppliancesOperations>`
-           * 2022-05-01: :class:`NetworkVirtualAppliancesOperations<azure.mgmt.network.v2022_05_01.operations.NetworkVirtualAppliancesOperations>`
+           * 2022-07-01: :class:`NetworkVirtualAppliancesOperations<azure.mgmt.network.v2022_07_01.operations.NetworkVirtualAppliancesOperations>`
         """
         api_version = self._get_api_version('network_virtual_appliances')
         if api_version == '2019-12-01':
@@ -4929,8 +4929,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkVirtualAppliancesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkVirtualAppliancesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkVirtualAppliancesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkVirtualAppliancesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_virtual_appliances'".format(api_version))
         self._config.api_version = api_version
@@ -4970,7 +4970,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2020_08_01.operations.NetworkWatchersOperations>`
            * 2020-11-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2020_11_01.operations.NetworkWatchersOperations>`
            * 2021-02-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2021_02_01.operations.NetworkWatchersOperations>`
-           * 2022-05-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2022_05_01.operations.NetworkWatchersOperations>`
+           * 2022-07-01: :class:`NetworkWatchersOperations<azure.mgmt.network.v2022_07_01.operations.NetworkWatchersOperations>`
         """
         api_version = self._get_api_version('network_watchers')
         if api_version == '2016-09-01':
@@ -5033,8 +5033,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import NetworkWatchersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkWatchersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import NetworkWatchersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import NetworkWatchersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_watchers'".format(api_version))
         self._config.api_version = api_version
@@ -5196,7 +5196,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`Operations<azure.mgmt.network.v2020_08_01.operations.Operations>`
            * 2020-11-01: :class:`Operations<azure.mgmt.network.v2020_11_01.operations.Operations>`
            * 2021-02-01: :class:`Operations<azure.mgmt.network.v2021_02_01.operations.Operations>`
-           * 2022-05-01: :class:`Operations<azure.mgmt.network.v2022_05_01.operations.Operations>`
+           * 2022-07-01: :class:`Operations<azure.mgmt.network.v2022_07_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-10-01':
@@ -5251,8 +5251,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import Operations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import Operations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import Operations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -5282,7 +5282,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`P2SVpnGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.P2SVpnGatewaysOperations>`
            * 2020-11-01: :class:`P2SVpnGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.P2SVpnGatewaysOperations>`
            * 2021-02-01: :class:`P2SVpnGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.P2SVpnGatewaysOperations>`
-           * 2022-05-01: :class:`P2SVpnGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.P2SVpnGatewaysOperations>`
+           * 2022-07-01: :class:`P2SVpnGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.P2SVpnGatewaysOperations>`
         """
         api_version = self._get_api_version('p2_svpn_gateways')
         if api_version == '2018-08-01':
@@ -5325,8 +5325,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import P2SVpnGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import P2SVpnGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import P2SVpnGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import P2SVpnGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'p2_svpn_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -5401,7 +5401,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2020_08_01.operations.PacketCapturesOperations>`
            * 2020-11-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2020_11_01.operations.PacketCapturesOperations>`
            * 2021-02-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2021_02_01.operations.PacketCapturesOperations>`
-           * 2022-05-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2022_05_01.operations.PacketCapturesOperations>`
+           * 2022-07-01: :class:`PacketCapturesOperations<azure.mgmt.network.v2022_07_01.operations.PacketCapturesOperations>`
         """
         api_version = self._get_api_version('packet_captures')
         if api_version == '2016-09-01':
@@ -5464,8 +5464,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PacketCapturesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PacketCapturesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PacketCapturesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PacketCapturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'packet_captures'".format(api_version))
         self._config.api_version = api_version
@@ -5492,7 +5492,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
            * 2020-11-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
            * 2021-02-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
-           * 2022-05-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
+           * 2022-07-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
         """
         api_version = self._get_api_version('peer_express_route_circuit_connections')
         if api_version == '2018-12-01':
@@ -5529,8 +5529,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'peer_express_route_circuit_connections'".format(api_version))
         self._config.api_version = api_version
@@ -5562,7 +5562,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PrivateDnsZoneGroupsOperations<azure.mgmt.network.v2020_08_01.operations.PrivateDnsZoneGroupsOperations>`
            * 2020-11-01: :class:`PrivateDnsZoneGroupsOperations<azure.mgmt.network.v2020_11_01.operations.PrivateDnsZoneGroupsOperations>`
            * 2021-02-01: :class:`PrivateDnsZoneGroupsOperations<azure.mgmt.network.v2021_02_01.operations.PrivateDnsZoneGroupsOperations>`
-           * 2022-05-01: :class:`PrivateDnsZoneGroupsOperations<azure.mgmt.network.v2022_05_01.operations.PrivateDnsZoneGroupsOperations>`
+           * 2022-07-01: :class:`PrivateDnsZoneGroupsOperations<azure.mgmt.network.v2022_07_01.operations.PrivateDnsZoneGroupsOperations>`
         """
         api_version = self._get_api_version('private_dns_zone_groups')
         if api_version == '2020-03-01':
@@ -5581,8 +5581,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PrivateDnsZoneGroupsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PrivateDnsZoneGroupsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PrivateDnsZoneGroupsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PrivateDnsZoneGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_dns_zone_groups'".format(api_version))
         self._config.api_version = api_version
@@ -5607,7 +5607,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PrivateEndpointsOperations<azure.mgmt.network.v2020_08_01.operations.PrivateEndpointsOperations>`
            * 2020-11-01: :class:`PrivateEndpointsOperations<azure.mgmt.network.v2020_11_01.operations.PrivateEndpointsOperations>`
            * 2021-02-01: :class:`PrivateEndpointsOperations<azure.mgmt.network.v2021_02_01.operations.PrivateEndpointsOperations>`
-           * 2022-05-01: :class:`PrivateEndpointsOperations<azure.mgmt.network.v2022_05_01.operations.PrivateEndpointsOperations>`
+           * 2022-07-01: :class:`PrivateEndpointsOperations<azure.mgmt.network.v2022_07_01.operations.PrivateEndpointsOperations>`
         """
         api_version = self._get_api_version('private_endpoints')
         if api_version == '2019-04-01':
@@ -5640,8 +5640,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PrivateEndpointsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PrivateEndpointsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PrivateEndpointsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PrivateEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoints'".format(api_version))
         self._config.api_version = api_version
@@ -5666,7 +5666,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PrivateLinkServicesOperations<azure.mgmt.network.v2020_08_01.operations.PrivateLinkServicesOperations>`
            * 2020-11-01: :class:`PrivateLinkServicesOperations<azure.mgmt.network.v2020_11_01.operations.PrivateLinkServicesOperations>`
            * 2021-02-01: :class:`PrivateLinkServicesOperations<azure.mgmt.network.v2021_02_01.operations.PrivateLinkServicesOperations>`
-           * 2022-05-01: :class:`PrivateLinkServicesOperations<azure.mgmt.network.v2022_05_01.operations.PrivateLinkServicesOperations>`
+           * 2022-07-01: :class:`PrivateLinkServicesOperations<azure.mgmt.network.v2022_07_01.operations.PrivateLinkServicesOperations>`
         """
         api_version = self._get_api_version('private_link_services')
         if api_version == '2019-04-01':
@@ -5699,8 +5699,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PrivateLinkServicesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PrivateLinkServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PrivateLinkServicesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PrivateLinkServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_services'".format(api_version))
         self._config.api_version = api_version
@@ -5741,7 +5741,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2020_08_01.operations.PublicIPAddressesOperations>`
            * 2020-11-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2020_11_01.operations.PublicIPAddressesOperations>`
            * 2021-02-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2021_02_01.operations.PublicIPAddressesOperations>`
-           * 2022-05-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2022_05_01.operations.PublicIPAddressesOperations>`
+           * 2022-07-01: :class:`PublicIPAddressesOperations<azure.mgmt.network.v2022_07_01.operations.PublicIPAddressesOperations>`
         """
         api_version = self._get_api_version('public_ip_addresses')
         if api_version == '2015-06-15':
@@ -5806,8 +5806,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PublicIPAddressesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PublicIPAddressesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PublicIPAddressesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PublicIPAddressesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'public_ip_addresses'".format(api_version))
         self._config.api_version = api_version
@@ -5838,7 +5838,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`PublicIPPrefixesOperations<azure.mgmt.network.v2020_08_01.operations.PublicIPPrefixesOperations>`
            * 2020-11-01: :class:`PublicIPPrefixesOperations<azure.mgmt.network.v2020_11_01.operations.PublicIPPrefixesOperations>`
            * 2021-02-01: :class:`PublicIPPrefixesOperations<azure.mgmt.network.v2021_02_01.operations.PublicIPPrefixesOperations>`
-           * 2022-05-01: :class:`PublicIPPrefixesOperations<azure.mgmt.network.v2022_05_01.operations.PublicIPPrefixesOperations>`
+           * 2022-07-01: :class:`PublicIPPrefixesOperations<azure.mgmt.network.v2022_07_01.operations.PublicIPPrefixesOperations>`
         """
         api_version = self._get_api_version('public_ip_prefixes')
         if api_version == '2018-07-01':
@@ -5883,8 +5883,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import PublicIPPrefixesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import PublicIPPrefixesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PublicIPPrefixesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import PublicIPPrefixesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'public_ip_prefixes'".format(api_version))
         self._config.api_version = api_version
@@ -5910,7 +5910,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ResourceNavigationLinksOperations<azure.mgmt.network.v2020_08_01.operations.ResourceNavigationLinksOperations>`
            * 2020-11-01: :class:`ResourceNavigationLinksOperations<azure.mgmt.network.v2020_11_01.operations.ResourceNavigationLinksOperations>`
            * 2021-02-01: :class:`ResourceNavigationLinksOperations<azure.mgmt.network.v2021_02_01.operations.ResourceNavigationLinksOperations>`
-           * 2022-05-01: :class:`ResourceNavigationLinksOperations<azure.mgmt.network.v2022_05_01.operations.ResourceNavigationLinksOperations>`
+           * 2022-07-01: :class:`ResourceNavigationLinksOperations<azure.mgmt.network.v2022_07_01.operations.ResourceNavigationLinksOperations>`
         """
         api_version = self._get_api_version('resource_navigation_links')
         if api_version == '2019-02-01':
@@ -5945,8 +5945,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ResourceNavigationLinksOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ResourceNavigationLinksOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ResourceNavigationLinksOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ResourceNavigationLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_navigation_links'".format(api_version))
         self._config.api_version = api_version
@@ -5985,7 +5985,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2020_08_01.operations.RouteFilterRulesOperations>`
            * 2020-11-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2020_11_01.operations.RouteFilterRulesOperations>`
            * 2021-02-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2021_02_01.operations.RouteFilterRulesOperations>`
-           * 2022-05-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2022_05_01.operations.RouteFilterRulesOperations>`
+           * 2022-07-01: :class:`RouteFilterRulesOperations<azure.mgmt.network.v2022_07_01.operations.RouteFilterRulesOperations>`
         """
         api_version = self._get_api_version('route_filter_rules')
         if api_version == '2016-12-01':
@@ -6046,8 +6046,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import RouteFilterRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import RouteFilterRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import RouteFilterRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import RouteFilterRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_filter_rules'".format(api_version))
         self._config.api_version = api_version
@@ -6086,7 +6086,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2020_08_01.operations.RouteFiltersOperations>`
            * 2020-11-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2020_11_01.operations.RouteFiltersOperations>`
            * 2021-02-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2021_02_01.operations.RouteFiltersOperations>`
-           * 2022-05-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2022_05_01.operations.RouteFiltersOperations>`
+           * 2022-07-01: :class:`RouteFiltersOperations<azure.mgmt.network.v2022_07_01.operations.RouteFiltersOperations>`
         """
         api_version = self._get_api_version('route_filters')
         if api_version == '2016-12-01':
@@ -6147,8 +6147,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import RouteFiltersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import RouteFiltersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import RouteFiltersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import RouteFiltersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_filters'".format(api_version))
         self._config.api_version = api_version
@@ -6158,11 +6158,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def route_maps(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`RouteMapsOperations<azure.mgmt.network.v2022_05_01.operations.RouteMapsOperations>`
+           * 2022-07-01: :class:`RouteMapsOperations<azure.mgmt.network.v2022_07_01.operations.RouteMapsOperations>`
         """
         api_version = self._get_api_version('route_maps')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import RouteMapsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import RouteMapsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_maps'".format(api_version))
         self._config.api_version = api_version
@@ -6203,7 +6203,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`RouteTablesOperations<azure.mgmt.network.v2020_08_01.operations.RouteTablesOperations>`
            * 2020-11-01: :class:`RouteTablesOperations<azure.mgmt.network.v2020_11_01.operations.RouteTablesOperations>`
            * 2021-02-01: :class:`RouteTablesOperations<azure.mgmt.network.v2021_02_01.operations.RouteTablesOperations>`
-           * 2022-05-01: :class:`RouteTablesOperations<azure.mgmt.network.v2022_05_01.operations.RouteTablesOperations>`
+           * 2022-07-01: :class:`RouteTablesOperations<azure.mgmt.network.v2022_07_01.operations.RouteTablesOperations>`
         """
         api_version = self._get_api_version('route_tables')
         if api_version == '2015-06-15':
@@ -6268,8 +6268,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import RouteTablesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import RouteTablesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import RouteTablesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import RouteTablesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_tables'".format(api_version))
         self._config.api_version = api_version
@@ -6310,7 +6310,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`RoutesOperations<azure.mgmt.network.v2020_08_01.operations.RoutesOperations>`
            * 2020-11-01: :class:`RoutesOperations<azure.mgmt.network.v2020_11_01.operations.RoutesOperations>`
            * 2021-02-01: :class:`RoutesOperations<azure.mgmt.network.v2021_02_01.operations.RoutesOperations>`
-           * 2022-05-01: :class:`RoutesOperations<azure.mgmt.network.v2022_05_01.operations.RoutesOperations>`
+           * 2022-07-01: :class:`RoutesOperations<azure.mgmt.network.v2022_07_01.operations.RoutesOperations>`
         """
         api_version = self._get_api_version('routes')
         if api_version == '2015-06-15':
@@ -6375,8 +6375,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import RoutesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import RoutesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import RoutesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import RoutesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'routes'".format(api_version))
         self._config.api_version = api_version
@@ -6386,11 +6386,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def routing_intent(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`RoutingIntentOperations<azure.mgmt.network.v2022_05_01.operations.RoutingIntentOperations>`
+           * 2022-07-01: :class:`RoutingIntentOperations<azure.mgmt.network.v2022_07_01.operations.RoutingIntentOperations>`
         """
         api_version = self._get_api_version('routing_intent')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import RoutingIntentOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import RoutingIntentOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'routing_intent'".format(api_version))
         self._config.api_version = api_version
@@ -6400,11 +6400,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def scope_connections(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ScopeConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.ScopeConnectionsOperations>`
+           * 2022-07-01: :class:`ScopeConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.ScopeConnectionsOperations>`
         """
         api_version = self._get_api_version('scope_connections')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ScopeConnectionsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ScopeConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scope_connections'".format(api_version))
         self._config.api_version = api_version
@@ -6415,13 +6415,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01-preview: :class:`SecurityAdminConfigurationsOperations<azure.mgmt.network.v2021_02_01_preview.operations.SecurityAdminConfigurationsOperations>`
-           * 2022-05-01: :class:`SecurityAdminConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.SecurityAdminConfigurationsOperations>`
+           * 2022-07-01: :class:`SecurityAdminConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.SecurityAdminConfigurationsOperations>`
         """
         api_version = self._get_api_version('security_admin_configurations')
         if api_version == '2021-02-01-preview':
             from .v2021_02_01_preview.operations import SecurityAdminConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import SecurityAdminConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import SecurityAdminConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_admin_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -6439,7 +6439,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`SecurityPartnerProvidersOperations<azure.mgmt.network.v2020_08_01.operations.SecurityPartnerProvidersOperations>`
            * 2020-11-01: :class:`SecurityPartnerProvidersOperations<azure.mgmt.network.v2020_11_01.operations.SecurityPartnerProvidersOperations>`
            * 2021-02-01: :class:`SecurityPartnerProvidersOperations<azure.mgmt.network.v2021_02_01.operations.SecurityPartnerProvidersOperations>`
-           * 2022-05-01: :class:`SecurityPartnerProvidersOperations<azure.mgmt.network.v2022_05_01.operations.SecurityPartnerProvidersOperations>`
+           * 2022-07-01: :class:`SecurityPartnerProvidersOperations<azure.mgmt.network.v2022_07_01.operations.SecurityPartnerProvidersOperations>`
         """
         api_version = self._get_api_version('security_partner_providers')
         if api_version == '2020-03-01':
@@ -6458,8 +6458,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import SecurityPartnerProvidersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import SecurityPartnerProvidersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import SecurityPartnerProvidersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import SecurityPartnerProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_partner_providers'".format(api_version))
         self._config.api_version = api_version
@@ -6500,7 +6500,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2020_08_01.operations.SecurityRulesOperations>`
            * 2020-11-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2020_11_01.operations.SecurityRulesOperations>`
            * 2021-02-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2021_02_01.operations.SecurityRulesOperations>`
-           * 2022-05-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2022_05_01.operations.SecurityRulesOperations>`
+           * 2022-07-01: :class:`SecurityRulesOperations<azure.mgmt.network.v2022_07_01.operations.SecurityRulesOperations>`
         """
         api_version = self._get_api_version('security_rules')
         if api_version == '2015-06-15':
@@ -6565,8 +6565,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import SecurityRulesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import SecurityRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import SecurityRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import SecurityRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_rules'".format(api_version))
         self._config.api_version = api_version
@@ -6606,7 +6606,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ServiceAssociationLinksOperations<azure.mgmt.network.v2020_08_01.operations.ServiceAssociationLinksOperations>`
            * 2020-11-01: :class:`ServiceAssociationLinksOperations<azure.mgmt.network.v2020_11_01.operations.ServiceAssociationLinksOperations>`
            * 2021-02-01: :class:`ServiceAssociationLinksOperations<azure.mgmt.network.v2021_02_01.operations.ServiceAssociationLinksOperations>`
-           * 2022-05-01: :class:`ServiceAssociationLinksOperations<azure.mgmt.network.v2022_05_01.operations.ServiceAssociationLinksOperations>`
+           * 2022-07-01: :class:`ServiceAssociationLinksOperations<azure.mgmt.network.v2022_07_01.operations.ServiceAssociationLinksOperations>`
         """
         api_version = self._get_api_version('service_association_links')
         if api_version == '2019-02-01':
@@ -6641,8 +6641,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ServiceAssociationLinksOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ServiceAssociationLinksOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ServiceAssociationLinksOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ServiceAssociationLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_association_links'".format(api_version))
         self._config.api_version = api_version
@@ -6673,7 +6673,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2020_08_01.operations.ServiceEndpointPoliciesOperations>`
            * 2020-11-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2020_11_01.operations.ServiceEndpointPoliciesOperations>`
            * 2021-02-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2021_02_01.operations.ServiceEndpointPoliciesOperations>`
-           * 2022-05-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2022_05_01.operations.ServiceEndpointPoliciesOperations>`
+           * 2022-07-01: :class:`ServiceEndpointPoliciesOperations<azure.mgmt.network.v2022_07_01.operations.ServiceEndpointPoliciesOperations>`
         """
         api_version = self._get_api_version('service_endpoint_policies')
         if api_version == '2018-07-01':
@@ -6718,8 +6718,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ServiceEndpointPoliciesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ServiceEndpointPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ServiceEndpointPoliciesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ServiceEndpointPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_endpoint_policies'".format(api_version))
         self._config.api_version = api_version
@@ -6750,7 +6750,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2020_08_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
            * 2020-11-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2020_11_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
            * 2021-02-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2021_02_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
-           * 2022-05-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2022_05_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
+           * 2022-07-01: :class:`ServiceEndpointPolicyDefinitionsOperations<azure.mgmt.network.v2022_07_01.operations.ServiceEndpointPolicyDefinitionsOperations>`
         """
         api_version = self._get_api_version('service_endpoint_policy_definitions')
         if api_version == '2018-07-01':
@@ -6795,8 +6795,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_endpoint_policy_definitions'".format(api_version))
         self._config.api_version = api_version
@@ -6806,11 +6806,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def service_tag_information(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`ServiceTagInformationOperations<azure.mgmt.network.v2022_05_01.operations.ServiceTagInformationOperations>`
+           * 2022-07-01: :class:`ServiceTagInformationOperations<azure.mgmt.network.v2022_07_01.operations.ServiceTagInformationOperations>`
         """
         api_version = self._get_api_version('service_tag_information')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import ServiceTagInformationOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import ServiceTagInformationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_tag_information'".format(api_version))
         self._config.api_version = api_version
@@ -6835,7 +6835,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`ServiceTagsOperations<azure.mgmt.network.v2020_08_01.operations.ServiceTagsOperations>`
            * 2020-11-01: :class:`ServiceTagsOperations<azure.mgmt.network.v2020_11_01.operations.ServiceTagsOperations>`
            * 2021-02-01: :class:`ServiceTagsOperations<azure.mgmt.network.v2021_02_01.operations.ServiceTagsOperations>`
-           * 2022-05-01: :class:`ServiceTagsOperations<azure.mgmt.network.v2022_05_01.operations.ServiceTagsOperations>`
+           * 2022-07-01: :class:`ServiceTagsOperations<azure.mgmt.network.v2022_07_01.operations.ServiceTagsOperations>`
         """
         api_version = self._get_api_version('service_tags')
         if api_version == '2019-04-01':
@@ -6868,8 +6868,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import ServiceTagsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import ServiceTagsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ServiceTagsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import ServiceTagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_tags'".format(api_version))
         self._config.api_version = api_version
@@ -6879,11 +6879,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def static_members(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`StaticMembersOperations<azure.mgmt.network.v2022_05_01.operations.StaticMembersOperations>`
+           * 2022-07-01: :class:`StaticMembersOperations<azure.mgmt.network.v2022_07_01.operations.StaticMembersOperations>`
         """
         api_version = self._get_api_version('static_members')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import StaticMembersOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import StaticMembersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'static_members'".format(api_version))
         self._config.api_version = api_version
@@ -6924,7 +6924,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`SubnetsOperations<azure.mgmt.network.v2020_08_01.operations.SubnetsOperations>`
            * 2020-11-01: :class:`SubnetsOperations<azure.mgmt.network.v2020_11_01.operations.SubnetsOperations>`
            * 2021-02-01: :class:`SubnetsOperations<azure.mgmt.network.v2021_02_01.operations.SubnetsOperations>`
-           * 2022-05-01: :class:`SubnetsOperations<azure.mgmt.network.v2022_05_01.operations.SubnetsOperations>`
+           * 2022-07-01: :class:`SubnetsOperations<azure.mgmt.network.v2022_07_01.operations.SubnetsOperations>`
         """
         api_version = self._get_api_version('subnets')
         if api_version == '2015-06-15':
@@ -6989,8 +6989,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import SubnetsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import SubnetsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import SubnetsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import SubnetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subnets'".format(api_version))
         self._config.api_version = api_version
@@ -7000,11 +7000,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def subscription_network_manager_connections(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`SubscriptionNetworkManagerConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.SubscriptionNetworkManagerConnectionsOperations>`
+           * 2022-07-01: :class:`SubscriptionNetworkManagerConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.SubscriptionNetworkManagerConnectionsOperations>`
         """
         api_version = self._get_api_version('subscription_network_manager_connections')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import SubscriptionNetworkManagerConnectionsOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import SubscriptionNetworkManagerConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscription_network_manager_connections'".format(api_version))
         self._config.api_version = api_version
@@ -7045,7 +7045,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`UsagesOperations<azure.mgmt.network.v2020_08_01.operations.UsagesOperations>`
            * 2020-11-01: :class:`UsagesOperations<azure.mgmt.network.v2020_11_01.operations.UsagesOperations>`
            * 2021-02-01: :class:`UsagesOperations<azure.mgmt.network.v2021_02_01.operations.UsagesOperations>`
-           * 2022-05-01: :class:`UsagesOperations<azure.mgmt.network.v2022_05_01.operations.UsagesOperations>`
+           * 2022-07-01: :class:`UsagesOperations<azure.mgmt.network.v2022_07_01.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
         if api_version == '2015-06-15':
@@ -7110,8 +7110,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import UsagesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import UsagesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import UsagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usages'".format(api_version))
         self._config.api_version = api_version
@@ -7149,11 +7149,11 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     def vip_swap(self):
         """Instance depends on the API version:
 
-           * 2022-05-01: :class:`VipSwapOperations<azure.mgmt.network.v2022_05_01.operations.VipSwapOperations>`
+           * 2022-07-01: :class:`VipSwapOperations<azure.mgmt.network.v2022_07_01.operations.VipSwapOperations>`
         """
         api_version = self._get_api_version('vip_swap')
-        if api_version == '2022-05-01':
-            from .v2022_05_01.operations import VipSwapOperations as OperationClass
+        if api_version == '2022-07-01':
+            from .v2022_07_01.operations import VipSwapOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vip_swap'".format(api_version))
         self._config.api_version = api_version
@@ -7169,7 +7169,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualApplianceSitesOperations<azure.mgmt.network.v2020_08_01.operations.VirtualApplianceSitesOperations>`
            * 2020-11-01: :class:`VirtualApplianceSitesOperations<azure.mgmt.network.v2020_11_01.operations.VirtualApplianceSitesOperations>`
            * 2021-02-01: :class:`VirtualApplianceSitesOperations<azure.mgmt.network.v2021_02_01.operations.VirtualApplianceSitesOperations>`
-           * 2022-05-01: :class:`VirtualApplianceSitesOperations<azure.mgmt.network.v2022_05_01.operations.VirtualApplianceSitesOperations>`
+           * 2022-07-01: :class:`VirtualApplianceSitesOperations<azure.mgmt.network.v2022_07_01.operations.VirtualApplianceSitesOperations>`
         """
         api_version = self._get_api_version('virtual_appliance_sites')
         if api_version == '2020-05-01':
@@ -7184,8 +7184,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualApplianceSitesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualApplianceSitesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualApplianceSitesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualApplianceSitesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_appliance_sites'".format(api_version))
         self._config.api_version = api_version
@@ -7201,7 +7201,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualApplianceSkusOperations<azure.mgmt.network.v2020_08_01.operations.VirtualApplianceSkusOperations>`
            * 2020-11-01: :class:`VirtualApplianceSkusOperations<azure.mgmt.network.v2020_11_01.operations.VirtualApplianceSkusOperations>`
            * 2021-02-01: :class:`VirtualApplianceSkusOperations<azure.mgmt.network.v2021_02_01.operations.VirtualApplianceSkusOperations>`
-           * 2022-05-01: :class:`VirtualApplianceSkusOperations<azure.mgmt.network.v2022_05_01.operations.VirtualApplianceSkusOperations>`
+           * 2022-07-01: :class:`VirtualApplianceSkusOperations<azure.mgmt.network.v2022_07_01.operations.VirtualApplianceSkusOperations>`
         """
         api_version = self._get_api_version('virtual_appliance_skus')
         if api_version == '2020-05-01':
@@ -7216,8 +7216,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualApplianceSkusOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualApplianceSkusOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualApplianceSkusOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualApplianceSkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_appliance_skus'".format(api_version))
         self._config.api_version = api_version
@@ -7233,7 +7233,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualHubBgpConnectionOperations<azure.mgmt.network.v2020_08_01.operations.VirtualHubBgpConnectionOperations>`
            * 2020-11-01: :class:`VirtualHubBgpConnectionOperations<azure.mgmt.network.v2020_11_01.operations.VirtualHubBgpConnectionOperations>`
            * 2021-02-01: :class:`VirtualHubBgpConnectionOperations<azure.mgmt.network.v2021_02_01.operations.VirtualHubBgpConnectionOperations>`
-           * 2022-05-01: :class:`VirtualHubBgpConnectionOperations<azure.mgmt.network.v2022_05_01.operations.VirtualHubBgpConnectionOperations>`
+           * 2022-07-01: :class:`VirtualHubBgpConnectionOperations<azure.mgmt.network.v2022_07_01.operations.VirtualHubBgpConnectionOperations>`
         """
         api_version = self._get_api_version('virtual_hub_bgp_connection')
         if api_version == '2020-05-01':
@@ -7248,8 +7248,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualHubBgpConnectionOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualHubBgpConnectionOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualHubBgpConnectionOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualHubBgpConnectionOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_bgp_connection'".format(api_version))
         self._config.api_version = api_version
@@ -7265,7 +7265,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualHubBgpConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualHubBgpConnectionsOperations>`
            * 2020-11-01: :class:`VirtualHubBgpConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualHubBgpConnectionsOperations>`
            * 2021-02-01: :class:`VirtualHubBgpConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualHubBgpConnectionsOperations>`
-           * 2022-05-01: :class:`VirtualHubBgpConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualHubBgpConnectionsOperations>`
+           * 2022-07-01: :class:`VirtualHubBgpConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualHubBgpConnectionsOperations>`
         """
         api_version = self._get_api_version('virtual_hub_bgp_connections')
         if api_version == '2020-05-01':
@@ -7280,8 +7280,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualHubBgpConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualHubBgpConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualHubBgpConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualHubBgpConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_bgp_connections'".format(api_version))
         self._config.api_version = api_version
@@ -7297,7 +7297,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualHubIpConfigurationOperations<azure.mgmt.network.v2020_08_01.operations.VirtualHubIpConfigurationOperations>`
            * 2020-11-01: :class:`VirtualHubIpConfigurationOperations<azure.mgmt.network.v2020_11_01.operations.VirtualHubIpConfigurationOperations>`
            * 2021-02-01: :class:`VirtualHubIpConfigurationOperations<azure.mgmt.network.v2021_02_01.operations.VirtualHubIpConfigurationOperations>`
-           * 2022-05-01: :class:`VirtualHubIpConfigurationOperations<azure.mgmt.network.v2022_05_01.operations.VirtualHubIpConfigurationOperations>`
+           * 2022-07-01: :class:`VirtualHubIpConfigurationOperations<azure.mgmt.network.v2022_07_01.operations.VirtualHubIpConfigurationOperations>`
         """
         api_version = self._get_api_version('virtual_hub_ip_configuration')
         if api_version == '2020-05-01':
@@ -7312,8 +7312,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualHubIpConfigurationOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualHubIpConfigurationOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualHubIpConfigurationOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualHubIpConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_ip_configuration'".format(api_version))
         self._config.api_version = api_version
@@ -7334,7 +7334,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualHubRouteTableV2SOperations<azure.mgmt.network.v2020_08_01.operations.VirtualHubRouteTableV2SOperations>`
            * 2020-11-01: :class:`VirtualHubRouteTableV2SOperations<azure.mgmt.network.v2020_11_01.operations.VirtualHubRouteTableV2SOperations>`
            * 2021-02-01: :class:`VirtualHubRouteTableV2SOperations<azure.mgmt.network.v2021_02_01.operations.VirtualHubRouteTableV2SOperations>`
-           * 2022-05-01: :class:`VirtualHubRouteTableV2SOperations<azure.mgmt.network.v2022_05_01.operations.VirtualHubRouteTableV2SOperations>`
+           * 2022-07-01: :class:`VirtualHubRouteTableV2SOperations<azure.mgmt.network.v2022_07_01.operations.VirtualHubRouteTableV2SOperations>`
         """
         api_version = self._get_api_version('virtual_hub_route_table_v2_s')
         if api_version == '2019-09-01':
@@ -7359,8 +7359,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualHubRouteTableV2SOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualHubRouteTableV2SOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualHubRouteTableV2SOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualHubRouteTableV2SOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_route_table_v2_s'".format(api_version))
         self._config.api_version = api_version
@@ -7393,7 +7393,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualHubsOperations>`
            * 2020-11-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualHubsOperations>`
            * 2021-02-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualHubsOperations>`
-           * 2022-05-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualHubsOperations>`
+           * 2022-07-01: :class:`VirtualHubsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualHubsOperations>`
         """
         api_version = self._get_api_version('virtual_hubs')
         if api_version == '2018-04-01':
@@ -7442,8 +7442,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualHubsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualHubsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualHubsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualHubsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hubs'".format(api_version))
         self._config.api_version = api_version
@@ -7484,7 +7484,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2020-11-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualNetworkGatewayConnectionsOperations>`
            * 2021-02-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworkGatewayConnectionsOperations>`
-           * 2022-05-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworkGatewayConnectionsOperations>`
+           * 2022-07-01: :class:`VirtualNetworkGatewayConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworkGatewayConnectionsOperations>`
         """
         api_version = self._get_api_version('virtual_network_gateway_connections')
         if api_version == '2015-06-15':
@@ -7549,8 +7549,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateway_connections'".format(api_version))
         self._config.api_version = api_version
@@ -7561,13 +7561,13 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         """Instance depends on the API version:
 
            * 2021-02-01: :class:`VirtualNetworkGatewayNatRulesOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworkGatewayNatRulesOperations>`
-           * 2022-05-01: :class:`VirtualNetworkGatewayNatRulesOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworkGatewayNatRulesOperations>`
+           * 2022-07-01: :class:`VirtualNetworkGatewayNatRulesOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworkGatewayNatRulesOperations>`
         """
         api_version = self._get_api_version('virtual_network_gateway_nat_rules')
         if api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworkGatewayNatRulesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworkGatewayNatRulesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworkGatewayNatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateway_nat_rules'".format(api_version))
         self._config.api_version = api_version
@@ -7608,7 +7608,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.VirtualNetworkGatewaysOperations>`
            * 2020-11-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.VirtualNetworkGatewaysOperations>`
            * 2021-02-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworkGatewaysOperations>`
-           * 2022-05-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworkGatewaysOperations>`
+           * 2022-07-01: :class:`VirtualNetworkGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworkGatewaysOperations>`
         """
         api_version = self._get_api_version('virtual_network_gateways')
         if api_version == '2015-06-15':
@@ -7673,8 +7673,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -7714,7 +7714,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualNetworkPeeringsOperations>`
            * 2020-11-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualNetworkPeeringsOperations>`
            * 2021-02-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworkPeeringsOperations>`
-           * 2022-05-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworkPeeringsOperations>`
+           * 2022-07-01: :class:`VirtualNetworkPeeringsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworkPeeringsOperations>`
         """
         api_version = self._get_api_version('virtual_network_peerings')
         if api_version == '2016-09-01':
@@ -7777,8 +7777,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_peerings'".format(api_version))
         self._config.api_version = api_version
@@ -7808,7 +7808,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualNetworkTapsOperations>`
            * 2020-11-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualNetworkTapsOperations>`
            * 2021-02-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworkTapsOperations>`
-           * 2022-05-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworkTapsOperations>`
+           * 2022-07-01: :class:`VirtualNetworkTapsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworkTapsOperations>`
         """
         api_version = self._get_api_version('virtual_network_taps')
         if api_version == '2018-08-01':
@@ -7851,8 +7851,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualNetworkTapsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworkTapsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworkTapsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworkTapsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_taps'".format(api_version))
         self._config.api_version = api_version
@@ -7893,7 +7893,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2020_08_01.operations.VirtualNetworksOperations>`
            * 2020-11-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2020_11_01.operations.VirtualNetworksOperations>`
            * 2021-02-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2021_02_01.operations.VirtualNetworksOperations>`
-           * 2022-05-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2022_05_01.operations.VirtualNetworksOperations>`
+           * 2022-07-01: :class:`VirtualNetworksOperations<azure.mgmt.network.v2022_07_01.operations.VirtualNetworksOperations>`
         """
         api_version = self._get_api_version('virtual_networks')
         if api_version == '2015-06-15':
@@ -7958,8 +7958,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualNetworksOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualNetworksOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualNetworksOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualNetworksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_networks'".format(api_version))
         self._config.api_version = api_version
@@ -7982,7 +7982,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualRouterPeeringsOperations<azure.mgmt.network.v2020_08_01.operations.VirtualRouterPeeringsOperations>`
            * 2020-11-01: :class:`VirtualRouterPeeringsOperations<azure.mgmt.network.v2020_11_01.operations.VirtualRouterPeeringsOperations>`
            * 2021-02-01: :class:`VirtualRouterPeeringsOperations<azure.mgmt.network.v2021_02_01.operations.VirtualRouterPeeringsOperations>`
-           * 2022-05-01: :class:`VirtualRouterPeeringsOperations<azure.mgmt.network.v2022_05_01.operations.VirtualRouterPeeringsOperations>`
+           * 2022-07-01: :class:`VirtualRouterPeeringsOperations<azure.mgmt.network.v2022_07_01.operations.VirtualRouterPeeringsOperations>`
         """
         api_version = self._get_api_version('virtual_router_peerings')
         if api_version == '2019-07-01':
@@ -8011,8 +8011,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualRouterPeeringsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualRouterPeeringsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualRouterPeeringsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualRouterPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_router_peerings'".format(api_version))
         self._config.api_version = api_version
@@ -8035,7 +8035,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualRoutersOperations<azure.mgmt.network.v2020_08_01.operations.VirtualRoutersOperations>`
            * 2020-11-01: :class:`VirtualRoutersOperations<azure.mgmt.network.v2020_11_01.operations.VirtualRoutersOperations>`
            * 2021-02-01: :class:`VirtualRoutersOperations<azure.mgmt.network.v2021_02_01.operations.VirtualRoutersOperations>`
-           * 2022-05-01: :class:`VirtualRoutersOperations<azure.mgmt.network.v2022_05_01.operations.VirtualRoutersOperations>`
+           * 2022-07-01: :class:`VirtualRoutersOperations<azure.mgmt.network.v2022_07_01.operations.VirtualRoutersOperations>`
         """
         api_version = self._get_api_version('virtual_routers')
         if api_version == '2019-07-01':
@@ -8064,8 +8064,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualRoutersOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualRoutersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualRoutersOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualRoutersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_routers'".format(api_version))
         self._config.api_version = api_version
@@ -8098,7 +8098,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VirtualWansOperations<azure.mgmt.network.v2020_08_01.operations.VirtualWansOperations>`
            * 2020-11-01: :class:`VirtualWansOperations<azure.mgmt.network.v2020_11_01.operations.VirtualWansOperations>`
            * 2021-02-01: :class:`VirtualWansOperations<azure.mgmt.network.v2021_02_01.operations.VirtualWansOperations>`
-           * 2022-05-01: :class:`VirtualWansOperations<azure.mgmt.network.v2022_05_01.operations.VirtualWansOperations>`
+           * 2022-07-01: :class:`VirtualWansOperations<azure.mgmt.network.v2022_07_01.operations.VirtualWansOperations>`
         """
         api_version = self._get_api_version('virtual_wans')
         if api_version == '2018-04-01':
@@ -8147,8 +8147,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VirtualWansOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VirtualWansOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VirtualWansOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VirtualWansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_wans'".format(api_version))
         self._config.api_version = api_version
@@ -8181,7 +8181,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.VpnConnectionsOperations>`
            * 2020-11-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.VpnConnectionsOperations>`
            * 2021-02-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.VpnConnectionsOperations>`
-           * 2022-05-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.VpnConnectionsOperations>`
+           * 2022-07-01: :class:`VpnConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.VpnConnectionsOperations>`
         """
         api_version = self._get_api_version('vpn_connections')
         if api_version == '2018-04-01':
@@ -8230,8 +8230,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_connections'".format(api_version))
         self._config.api_version = api_version
@@ -8264,7 +8264,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2020_08_01.operations.VpnGatewaysOperations>`
            * 2020-11-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2020_11_01.operations.VpnGatewaysOperations>`
            * 2021-02-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2021_02_01.operations.VpnGatewaysOperations>`
-           * 2022-05-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2022_05_01.operations.VpnGatewaysOperations>`
+           * 2022-07-01: :class:`VpnGatewaysOperations<azure.mgmt.network.v2022_07_01.operations.VpnGatewaysOperations>`
         """
         api_version = self._get_api_version('vpn_gateways')
         if api_version == '2018-04-01':
@@ -8313,8 +8313,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnGatewaysOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnGatewaysOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnGatewaysOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_gateways'".format(api_version))
         self._config.api_version = api_version
@@ -8338,7 +8338,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnLinkConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.VpnLinkConnectionsOperations>`
            * 2020-11-01: :class:`VpnLinkConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.VpnLinkConnectionsOperations>`
            * 2021-02-01: :class:`VpnLinkConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.VpnLinkConnectionsOperations>`
-           * 2022-05-01: :class:`VpnLinkConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.VpnLinkConnectionsOperations>`
+           * 2022-07-01: :class:`VpnLinkConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.VpnLinkConnectionsOperations>`
         """
         api_version = self._get_api_version('vpn_link_connections')
         if api_version == '2019-06-01':
@@ -8369,8 +8369,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnLinkConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnLinkConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnLinkConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnLinkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_link_connections'".format(api_version))
         self._config.api_version = api_version
@@ -8392,7 +8392,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnServerConfigurationsOperations<azure.mgmt.network.v2020_08_01.operations.VpnServerConfigurationsOperations>`
            * 2020-11-01: :class:`VpnServerConfigurationsOperations<azure.mgmt.network.v2020_11_01.operations.VpnServerConfigurationsOperations>`
            * 2021-02-01: :class:`VpnServerConfigurationsOperations<azure.mgmt.network.v2021_02_01.operations.VpnServerConfigurationsOperations>`
-           * 2022-05-01: :class:`VpnServerConfigurationsOperations<azure.mgmt.network.v2022_05_01.operations.VpnServerConfigurationsOperations>`
+           * 2022-07-01: :class:`VpnServerConfigurationsOperations<azure.mgmt.network.v2022_07_01.operations.VpnServerConfigurationsOperations>`
         """
         api_version = self._get_api_version('vpn_server_configurations')
         if api_version == '2019-08-01':
@@ -8419,8 +8419,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnServerConfigurationsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnServerConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnServerConfigurationsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnServerConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_server_configurations'".format(api_version))
         self._config.api_version = api_version
@@ -8442,7 +8442,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnServerConfigurationsAssociatedWithVirtualWanOperations<azure.mgmt.network.v2020_08_01.operations.VpnServerConfigurationsAssociatedWithVirtualWanOperations>`
            * 2020-11-01: :class:`VpnServerConfigurationsAssociatedWithVirtualWanOperations<azure.mgmt.network.v2020_11_01.operations.VpnServerConfigurationsAssociatedWithVirtualWanOperations>`
            * 2021-02-01: :class:`VpnServerConfigurationsAssociatedWithVirtualWanOperations<azure.mgmt.network.v2021_02_01.operations.VpnServerConfigurationsAssociatedWithVirtualWanOperations>`
-           * 2022-05-01: :class:`VpnServerConfigurationsAssociatedWithVirtualWanOperations<azure.mgmt.network.v2022_05_01.operations.VpnServerConfigurationsAssociatedWithVirtualWanOperations>`
+           * 2022-07-01: :class:`VpnServerConfigurationsAssociatedWithVirtualWanOperations<azure.mgmt.network.v2022_07_01.operations.VpnServerConfigurationsAssociatedWithVirtualWanOperations>`
         """
         api_version = self._get_api_version('vpn_server_configurations_associated_with_virtual_wan')
         if api_version == '2019-08-01':
@@ -8469,8 +8469,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnServerConfigurationsAssociatedWithVirtualWanOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnServerConfigurationsAssociatedWithVirtualWanOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnServerConfigurationsAssociatedWithVirtualWanOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnServerConfigurationsAssociatedWithVirtualWanOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_server_configurations_associated_with_virtual_wan'".format(api_version))
         self._config.api_version = api_version
@@ -8494,7 +8494,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnSiteLinkConnectionsOperations<azure.mgmt.network.v2020_08_01.operations.VpnSiteLinkConnectionsOperations>`
            * 2020-11-01: :class:`VpnSiteLinkConnectionsOperations<azure.mgmt.network.v2020_11_01.operations.VpnSiteLinkConnectionsOperations>`
            * 2021-02-01: :class:`VpnSiteLinkConnectionsOperations<azure.mgmt.network.v2021_02_01.operations.VpnSiteLinkConnectionsOperations>`
-           * 2022-05-01: :class:`VpnSiteLinkConnectionsOperations<azure.mgmt.network.v2022_05_01.operations.VpnSiteLinkConnectionsOperations>`
+           * 2022-07-01: :class:`VpnSiteLinkConnectionsOperations<azure.mgmt.network.v2022_07_01.operations.VpnSiteLinkConnectionsOperations>`
         """
         api_version = self._get_api_version('vpn_site_link_connections')
         if api_version == '2019-06-01':
@@ -8525,8 +8525,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnSiteLinkConnectionsOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnSiteLinkConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnSiteLinkConnectionsOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnSiteLinkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_site_link_connections'".format(api_version))
         self._config.api_version = api_version
@@ -8550,7 +8550,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnSiteLinksOperations<azure.mgmt.network.v2020_08_01.operations.VpnSiteLinksOperations>`
            * 2020-11-01: :class:`VpnSiteLinksOperations<azure.mgmt.network.v2020_11_01.operations.VpnSiteLinksOperations>`
            * 2021-02-01: :class:`VpnSiteLinksOperations<azure.mgmt.network.v2021_02_01.operations.VpnSiteLinksOperations>`
-           * 2022-05-01: :class:`VpnSiteLinksOperations<azure.mgmt.network.v2022_05_01.operations.VpnSiteLinksOperations>`
+           * 2022-07-01: :class:`VpnSiteLinksOperations<azure.mgmt.network.v2022_07_01.operations.VpnSiteLinksOperations>`
         """
         api_version = self._get_api_version('vpn_site_links')
         if api_version == '2019-06-01':
@@ -8581,8 +8581,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnSiteLinksOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnSiteLinksOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnSiteLinksOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnSiteLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_site_links'".format(api_version))
         self._config.api_version = api_version
@@ -8615,7 +8615,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnSitesOperations<azure.mgmt.network.v2020_08_01.operations.VpnSitesOperations>`
            * 2020-11-01: :class:`VpnSitesOperations<azure.mgmt.network.v2020_11_01.operations.VpnSitesOperations>`
            * 2021-02-01: :class:`VpnSitesOperations<azure.mgmt.network.v2021_02_01.operations.VpnSitesOperations>`
-           * 2022-05-01: :class:`VpnSitesOperations<azure.mgmt.network.v2022_05_01.operations.VpnSitesOperations>`
+           * 2022-07-01: :class:`VpnSitesOperations<azure.mgmt.network.v2022_07_01.operations.VpnSitesOperations>`
         """
         api_version = self._get_api_version('vpn_sites')
         if api_version == '2018-04-01':
@@ -8664,8 +8664,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnSitesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnSitesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnSitesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnSitesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_sites'".format(api_version))
         self._config.api_version = api_version
@@ -8698,7 +8698,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2020_08_01.operations.VpnSitesConfigurationOperations>`
            * 2020-11-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2020_11_01.operations.VpnSitesConfigurationOperations>`
            * 2021-02-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2021_02_01.operations.VpnSitesConfigurationOperations>`
-           * 2022-05-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2022_05_01.operations.VpnSitesConfigurationOperations>`
+           * 2022-07-01: :class:`VpnSitesConfigurationOperations<azure.mgmt.network.v2022_07_01.operations.VpnSitesConfigurationOperations>`
         """
         api_version = self._get_api_version('vpn_sites_configuration')
         if api_version == '2018-04-01':
@@ -8747,8 +8747,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import VpnSitesConfigurationOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import VpnSitesConfigurationOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import VpnSitesConfigurationOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import VpnSitesConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_sites_configuration'".format(api_version))
         self._config.api_version = api_version
@@ -8775,7 +8775,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2020_08_01.operations.WebApplicationFirewallPoliciesOperations>`
            * 2020-11-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2020_11_01.operations.WebApplicationFirewallPoliciesOperations>`
            * 2021-02-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2021_02_01.operations.WebApplicationFirewallPoliciesOperations>`
-           * 2022-05-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2022_05_01.operations.WebApplicationFirewallPoliciesOperations>`
+           * 2022-07-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2022_07_01.operations.WebApplicationFirewallPoliciesOperations>`
         """
         api_version = self._get_api_version('web_application_firewall_policies')
         if api_version == '2018-12-01':
@@ -8812,8 +8812,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_application_firewall_policies'".format(api_version))
         self._config.api_version = api_version
@@ -8827,7 +8827,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
            * 2020-08-01: :class:`WebCategoriesOperations<azure.mgmt.network.v2020_08_01.operations.WebCategoriesOperations>`
            * 2020-11-01: :class:`WebCategoriesOperations<azure.mgmt.network.v2020_11_01.operations.WebCategoriesOperations>`
            * 2021-02-01: :class:`WebCategoriesOperations<azure.mgmt.network.v2021_02_01.operations.WebCategoriesOperations>`
-           * 2022-05-01: :class:`WebCategoriesOperations<azure.mgmt.network.v2022_05_01.operations.WebCategoriesOperations>`
+           * 2022-07-01: :class:`WebCategoriesOperations<azure.mgmt.network.v2022_07_01.operations.WebCategoriesOperations>`
         """
         api_version = self._get_api_version('web_categories')
         if api_version == '2020-07-01':
@@ -8838,8 +8838,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2020_11_01.operations import WebCategoriesOperations as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import WebCategoriesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import WebCategoriesOperations as OperationClass
+        elif api_version == '2022-07-01':
+            from .v2022_07_01.operations import WebCategoriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_categories'".format(api_version))
         self._config.api_version = api_version
