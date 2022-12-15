@@ -30,7 +30,6 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
-import six
 
 from .types import (
     TYPE,
@@ -302,11 +301,11 @@ def encode_uuid(
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
     """
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         value = uuid.UUID(value).bytes
     elif isinstance(value, uuid.UUID):
         value = value.bytes
-    elif isinstance(value, six.binary_type):
+    elif isinstance(value, bytes):
         value = uuid.UUID(bytes=value).bytes
     else:
         raise TypeError("Invalid UUID type: {}".format(type(value)))
@@ -342,7 +341,7 @@ def encode_string(output, value, with_constructor=True, use_smallest=True):
     <encoding name="str32-utf8" code="0xb1" category="variable" width="4"
         label="up to 2^32 - 1 octets worth of UTF-8 Unicode (with no byte order mark)"/>
     """
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         value = value.encode("utf-8")
     length = len(value)
     if use_smallest and length <= 255:
@@ -366,7 +365,7 @@ def encode_symbol(output, value, with_constructor=True, use_smallest=True):
     <encoding name="sym32" code="0xb3" category="variable" width="4"
         label="up to 2^32 - 1 seven bit ASCII characters representing a symbolic value"/>
     """
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         value = value.encode("utf-8")
     length = len(value)
     if use_smallest and length <= 255:
@@ -586,9 +585,9 @@ def encode_message_id(value):
         return {TYPE: AMQPTypes.ulong, VALUE: value}
     if isinstance(value, uuid.UUID):
         return {TYPE: AMQPTypes.uuid, VALUE: value}
-    if isinstance(value, six.binary_type):
+    if isinstance(value, bytes):
         return {TYPE: AMQPTypes.binary, VALUE: value}
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         return {TYPE: AMQPTypes.string, VALUE: value}
     raise TypeError("Unsupported Message ID type.")
 
@@ -677,15 +676,15 @@ def encode_unknown(output, value, **kwargs):
         encode_null(output, **kwargs)
     elif isinstance(value, bool):
         encode_boolean(output, value, **kwargs)
-    elif isinstance(value, six.string_types):
+    elif isinstance(value, str):
         encode_string(output, value, **kwargs)
     elif isinstance(value, uuid.UUID):
         encode_uuid(output, value, **kwargs)
-    elif isinstance(value, (bytearray, six.binary_type)):
+    elif isinstance(value, (bytearray, bytes)):
         encode_binary(output, value, **kwargs)
     elif isinstance(value, float):
         encode_double(output, value, **kwargs)
-    elif isinstance(value, six.integer_types):
+    elif isinstance(value, int):
         encode_int(output, value, **kwargs)
     elif isinstance(value, datetime):
         encode_timestamp(output, value, **kwargs)
