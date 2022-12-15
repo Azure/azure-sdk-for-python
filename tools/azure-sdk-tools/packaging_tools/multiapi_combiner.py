@@ -223,7 +223,9 @@ class OperationGroup(VersionedObject):
 
     def _get_og(self, api_version: str, async_mode: bool = False):
         folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
-        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}{'.aio' if async_mode else ''}")
+        module = importlib.import_module(
+            f"{self.code_model.module_name}.{folder_api_version}{'.aio' if async_mode else ''}"
+        )
         return getattr(module.operations, self.name)
 
     def generated_class(self, async_mode: bool):
@@ -254,12 +256,15 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+
 class Client:
     def __init__(self, code_model: "CodeModel") -> None:
         self.code_model = code_model
 
     def generated_module(self, async_mode: bool):
-        return importlib.import_module(f"{self.code_model.module_name}{'.aio' if async_mode else ''}.{self.generated_filename}")
+        return importlib.import_module(
+            f"{self.code_model.module_name}{'.aio' if async_mode else ''}.{self.generated_filename}"
+        )
 
     def generated_class(self, async_mode: bool):
         module = self.generated_module(async_mode)
@@ -285,9 +290,7 @@ class CodeModel:
             if dir.stem.startswith("v")
         }
         self.api_version_to_folder_api_version = {
-            _get_api_version(dir): dir.stem
-            for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v")
+            _get_api_version(dir): dir.stem for dir in self._root_of_code.iterdir() if dir.stem.startswith("v")
         }
         self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
@@ -330,8 +333,7 @@ class CodeModel:
                 name=f"{initial_metadata['client']['name']}OperationsMixin",
             )
             mixin.api_versions = [
-                a for a in self.sorted_api_versions
-                if self.api_version_to_metadata[a].get("operation_mixins")
+                a for a in self.sorted_api_versions if self.api_version_to_metadata[a].get("operation_mixins")
             ]
             ogs.append(mixin)
 
@@ -400,7 +402,9 @@ class Serializer:
         return self.code_model.get_root_of_code(False) / Path(module_stem.replace(".", "/"))
 
     def _get_operations_folder_module(self, async_mode: bool, *, api_version: Optional[str] = None) -> str:
-        folder_api_version = self.code_model.api_version_to_folder_api_version.get(api_version, self.code_model.default_folder_api_version)
+        folder_api_version = self.code_model.api_version_to_folder_api_version.get(
+            api_version, self.code_model.default_folder_api_version
+        )
         return f"{self.code_model.module_name}.{folder_api_version}.{'aio.' if async_mode else ''}operations"
 
     def _get_operations_folder(self, async_mode: bool, *, api_version: Optional[str] = None) -> Path:
@@ -413,7 +417,7 @@ class Serializer:
         operations_folder = self._get_operations_folder(async_mode)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
 
-        delimiter = "class " if async_mode else "def build_" # sync as request builders
+        delimiter = "class " if async_mode else "def build_"  # sync as request builders
         imports = inspect.getsource(operations_module).split(delimiter)[0] + "\n"  # get all imports
 
         imports_splitlines = imports.splitlines()
@@ -433,7 +437,10 @@ class Serializer:
 
                 if any(w for w in ["if ", "else:"] if w in i):
                     # we still want to do if else statements, check next line
-                    if idx != len(versioned_imports_splitlines) - 1 and versioned_imports_splitlines[idx + 1] not in imports:
+                    if (
+                        idx != len(versioned_imports_splitlines) - 1
+                        and versioned_imports_splitlines[idx + 1] not in imports
+                    ):
                         imports_to_add.append(i)
                 elif i not in imports_splitlines:
                     imports_to_add.append(i)
@@ -532,11 +539,21 @@ class Serializer:
             shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
             shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
             files_to_remove = [
-                "__init__.py", "_configuration.py", "_metadata.json", "_patch.py", "_vendor.py", "_version.py", "py.typed", f"{self.code_model.client.generated_filename}.py"
+                "__init__.py",
+                "_configuration.py",
+                "_metadata.json",
+                "_patch.py",
+                "_vendor.py",
+                "_version.py",
+                "py.typed",
+                f"{self.code_model.client.generated_filename}.py",
             ]
             for file in files_to_remove:
                 os.remove(f"{api_version_folder}/{file}")
 
+            # add empty init file so we can still see the models folder
+            with open(f"{api_version_folder}/__init__.py", w) as f:
+                f.write("")
 
     def remove_top_level_files(self, async_mode: bool):
         top_level_files = [self.code_model.client.generated_filename, "_operations_mixin"]
