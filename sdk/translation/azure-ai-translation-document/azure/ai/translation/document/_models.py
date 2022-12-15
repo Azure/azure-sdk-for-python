@@ -41,10 +41,10 @@ class TranslationGlossary:
         language pair is not present in the glossary, it will not be applied.
     :param str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :keyword str format_version: File format version. If not specified, the service will
+    :keyword Optional[str] format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
         :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+    :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
     :ivar str glossary_url: Required. Location of the glossary file. This should be a URL to
@@ -56,10 +56,10 @@ class TranslationGlossary:
         language pair is not present in the glossary, it will not be applied.
     :ivar str file_format: Required. Format of the glossary file. To see supported formats,
         call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :ivar str format_version: File format version. If not specified, the service will
+    :ivar Optional[str] format_version: File format version. If not specified, the service will
         use the default_version for the file format returned from the
         :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
+    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
 
@@ -114,10 +114,10 @@ class TranslationTarget:
     :param str language: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-    :keyword str category_id: Category / custom model ID for using custom translation.
+    :keyword Optional[str] category_id: Category / custom model ID for using custom translation.
     :keyword glossaries: Glossaries to apply to translation.
-    :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
-    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+    :paramtype glossaries: Optional[list[~azure.ai.translation.document.TranslationGlossary]]
+    :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
     :ivar str target_url: Required. The target location for your translated documents.
@@ -128,10 +128,10 @@ class TranslationTarget:
     :ivar str language: Required. Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
         https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-    :ivar str category_id: Category / custom model ID for using custom translation.
+    :ivar Optional[str] category_id: Category / custom model ID for using custom translation.
     :ivar glossaries: Glossaries to apply to translation.
-    :vartype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
-    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
+    :vartype glossaries: Optional[list[~azure.ai.translation.document.TranslationGlossary]]
+    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
 
@@ -197,17 +197,17 @@ class DocumentTranslationInput:
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :type targets: list[~azure.ai.translation.document.TranslationTarget]
-    :keyword str source_language: Language code for the source documents.
+    :keyword Optional[str] source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
-    :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+    :keyword Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
         translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
         sub folders for translation.
-    :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+    :keyword Optional[str] suffix: A case-sensitive suffix string to filter documents in the source path for
         translation. This is most often use for file extensions.
     :keyword storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
-    :keyword str storage_source: Storage Source. Default value: "AzureBlob".
+    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
+    :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
 
     :ivar str source_url: Required. Location of the folder / container or single file with your
@@ -218,17 +218,17 @@ class DocumentTranslationInput:
     :ivar targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
     :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
-    :ivar str source_language: Language code for the source documents.
+    :ivar Optional[str] source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
-    :ivar str prefix: A case-sensitive prefix string to filter documents in the source path for
+    :ivar Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
         translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
         sub folders for translation.
-    :ivar str suffix: A case-sensitive suffix string to filter documents in the source path for
+    :ivar Optional[str] suffix: A case-sensitive suffix string to filter documents in the source path for
         translation. This is most often use for file extensions.
     :ivar storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :vartype storage_type: str or ~azure.ai.translation.document.StorageInputType
-    :ivar str storage_source: Storage Source. Default value: "AzureBlob".
+    :vartype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
+    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """
 
@@ -308,7 +308,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
 
     :ivar error: Returned if there is an error with the translation operation.
         Includes error code, message, target.
-    :vartype error: ~azure.ai.translation.document.DocumentTranslationError
+    :vartype error: Optional[~azure.ai.translation.document.DocumentTranslationError]
     :ivar int documents_total_count: Number of translations to be made on documents in the operation.
     :ivar int documents_failed_count: Number of documents that failed translation.
     :ivar int documents_succeeded_count: Number of successful translations on documents.
@@ -322,16 +322,16 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        created_on: Optional[datetime.datetime] = None,
-        last_updated_on: Optional[datetime.datetime] = None,
-        status: Optional[str] = None,
-        documents_total_count: Optional[int] = None,
-        documents_failed_count: Optional[int] = None,
-        documents_succeeded_count: Optional[int] = None,
-        documents_in_progress_count: Optional[int] = None,
-        documents_not_started_count: Optional[int] = None,
-        documents_canceled_count: Optional[int] = None,
-        total_characters_charged: Optional[int] = None,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: str,
+        documents_total_count: int,
+        documents_failed_count: int,
+        documents_succeeded_count: int,
+        documents_in_progress_count: int,
+        documents_not_started_count: int,
+        documents_canceled_count: int,
+        total_characters_charged: int,
         error: Optional["DocumentTranslationError"] = None,
     ) -> None:
         self.id = id
@@ -396,7 +396,7 @@ class DocumentStatus:
 
     :ivar str source_document_url: Location of the source document in the source
         container. Note that any SAS tokens are removed from this path.
-    :ivar str translated_document_url: Location of the translated document in the target
+    :ivar Optional[str] translated_document_url: Location of the translated document in the target
         container. Note that any SAS tokens are removed from this path.
     :ivar created_on: The date time when the document was created.
     :vartype created_on: ~datetime.datetime
@@ -414,11 +414,11 @@ class DocumentStatus:
         if successful.
     :ivar error: Returned if there is an error with the particular document.
         Includes error code, message, target.
-    :vartype error: ~azure.ai.translation.document.DocumentTranslationError
+    :vartype error: Optional[~azure.ai.translation.document.DocumentTranslationError]
     :ivar float translation_progress: Progress of the translation if available.
         Value is between [0.0, 1.0].
     :ivar str id: Document Id.
-    :ivar int characters_charged: Characters charged for the document.
+    :ivar Optional[int] characters_charged: Characters charged for the document.
     """
 
     def __init__(
@@ -493,7 +493,7 @@ class DocumentTranslationError:
         "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
         "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
     :ivar str message: The error message associated with the failure.
-    :ivar str target: The source of the error.
+    :ivar Optional[str] target: The source of the error.
         For example it would be "documents" or "document id" in case of invalid document.
     """
 
@@ -539,7 +539,7 @@ class DocumentTranslationFileFormat:
     :ivar format_versions: Supported Version.
     :vartype format_versions: list[str]
     :ivar default_format_version: Default format version if none is specified.
-    :vartype default_format_version: str
+    :vartype default_format_version: Optional[str]
     """
 
     def __init__(
