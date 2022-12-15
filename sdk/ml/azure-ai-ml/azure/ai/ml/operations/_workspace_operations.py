@@ -483,8 +483,8 @@ class WorkspaceOperations:
                 app_insights_location = workspace.location
             # get name for default resource group and if it already exists
             rg_is_existing = default_resource_group_for_app_insights_exists(
-                self._credentials, 
-                self._subscription_id, 
+                self._credentials,
+                self._subscription_id,
                 app_insights_location)
             # if default resource group does not exist yet, create resource group with log analytics inside
             if not rg_is_existing:

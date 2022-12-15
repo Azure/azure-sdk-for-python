@@ -13,7 +13,10 @@ from azure.core.exceptions import (HttpResponseError)
 module_logger = logging.getLogger(__name__)
 
 
-def default_resource_group_for_app_insights_exists(credentials: TokenCredential, subscription_id: str, location: str) -> bool:
+def default_resource_group_for_app_insights_exists(
+    credentials: TokenCredential,
+    subscription_id: str,
+    location: str) -> bool:
     client = ResourceManagementClient(
         credential=credentials,
         subscription_id=subscription_id,
@@ -48,38 +51,50 @@ def default_log_analytics_workspace_exists(credentials: TokenCredential, subscri
     return False
 
 
-def get_default_log_analytics_arm_id(subscription_id: str, location: str) -> str:
-    return '/subscriptions/%s/resourceGroups/%s/providers/Microsoft.OperationalInsights/workspaces/%s'%(subscription_id, get_default_resource_group_name(location), get_default_log_analytics_name(location))
+def get_default_log_analytics_arm_id(
+    subscription_id: str,
+    location: str) -> str:
+    return '/subscriptions/%s/resourceGroups/%s/providers/Microsoft.OperationalInsights/workspaces/%s'%(
+        subscription_id,
+        get_default_resource_group_name(location),
+        get_default_log_analytics_name(location))
 
 
-def get_default_resource_group_deployment(deployment_name: str, location: str, subscription_id: str) -> dict:
+def get_default_resource_group_deployment(
+    deployment_name: str,
+    location: str,
+    subscription_id: str) -> dict:
     return {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": deployment_name,
-            "subscriptionId": subscription_id,
-            "location": location,
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
-                    "contentVersion": "1.0.0.1",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2018-05-01",
-                            "location": location,
-                            "name": get_default_resource_group_name(location),
-                            "properties": {}
-                        }]
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": deployment_name,
+        "subscriptionId": subscription_id,
+        "location": location,
+        "properties": {
+            "mode": "Incremental",
+            "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "contentVersion": "1.0.0.1",
+                "parameters": {},
+                "variables": {},
+                "resources": [
+                    {
+                        "type": "Microsoft.Resources/resourceGroups",
+                        "apiVersion": "2018-05-01",
+                        "location": location,
+                        "name": get_default_resource_group_name(location),
+                        "properties": {}
+                    }]
                 }
             }
         }
 
 
-def get_default_log_analytics_deployment(deployment_name: str, location: str, subscription_id: str, dependency: str = "") -> dict:
+def get_default_log_analytics_deployment(
+    deployment_name: str,
+    location: str,
+    subscription_id: str,
+    dependency: str = "") -> dict:
     if dependency!="":
         return {
             "type": "Microsoft.Resources/deployments",
