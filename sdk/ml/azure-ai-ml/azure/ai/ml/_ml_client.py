@@ -221,13 +221,6 @@ class MLClient(object):
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
-        self._service_client_10_2021 = ServiceClient102021(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
