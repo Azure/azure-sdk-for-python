@@ -2,6 +2,9 @@
 
 ## 1.3.0 (Unreleased)
 
+### Features Added
+- Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
+
 ### Bugs Fixed
 - Fixed issue with date-time format for utc_time_created field when creating models.
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
