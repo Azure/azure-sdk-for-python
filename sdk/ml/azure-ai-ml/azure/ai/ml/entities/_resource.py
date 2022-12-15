@@ -42,7 +42,7 @@ class Resource(ABC):
         :type description: str, optional
         :param tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
         :type tags: Dict, optional
-        :param properties: The asset property dictionary., defaults to None
+        :param properties: The asset property dictionary. Defaults to None
         :type properties: Dict, optional
         :param: print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
             False will force a more-compact printing style. By default, the YAML output is only used in jupyter
@@ -55,7 +55,10 @@ class Resource(ABC):
         self.description = description
         self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
-        self.print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
+        # Conditional assignment to prevent entity bloat when unused.
+        print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
+        if print_as_yaml:
+            self.print_as_yaml = True
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
@@ -192,7 +195,7 @@ class Resource(ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
-        if self.print_as_yaml:
+        if hasattr(self, "print_as_yaml") and self.print_as_yaml:
             # pylint: disable=no-member
             yaml_serialized = self._to_dict()
             return dump_yaml(yaml_serialized, default_flow_style=False)
