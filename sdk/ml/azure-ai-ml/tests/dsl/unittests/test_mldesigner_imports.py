@@ -9,8 +9,10 @@ from azure.ai.ml.entities import(
 from azure.ai.ml.dsl._mldesigner import(
     _AdditionalIncludes,
     InternalComponent,
-    ErrorTarget,
 )
+from azure.ai.ml.entities._builders.base_node import BaseNode
+from azure.ai.ml.entities._inputs_outputs import GroupInput
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -37,7 +39,6 @@ class TestMldesignerImports:
         assert hasattr(_AdditionalIncludes, "_includes")
         assert hasattr(ValidationResult, "passed")
         assert hasattr(ValidationResult, "error_messages")
-        assert hasattr(ErrorTarget, "PIPELINE")
 
     def test_necessary_attributes_for_input(self):
         input_obj = Input()
@@ -50,3 +51,9 @@ class TestMldesignerImports:
         assert hasattr(input_obj, "_is_literal")
         assert hasattr(input_obj, "_get_python_builtin_type_str")
         assert hasattr(input_obj, "_get_param_with_standard_annotation")
+
+    def test_class_names(self):
+        """These class are undirectly used in mldesigner by their class names"""
+        assert BaseNode.__name__ == "BaseNode"
+        assert GroupInput.__name__ == "GroupInput"
+        assert PipelineInput.__name__ == "PipelineInput"
