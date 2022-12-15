@@ -133,7 +133,9 @@ if __name__ == '__main__':
         form_training_client = FormTrainingClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = form_training_client.begin_training(os.getenv("CONTAINER_SAS_URL_V2"), use_training_labels=False).result()
-        model_id = model.model_id
+        container_sas_url = os.getenv("CONTAINER_SAS_URL_V2")
+        if container_sas_url is not None:
+            model = form_training_client.begin_training(container_sas_url, use_training_labels=False).result()
+            model_id = model.model_id
 
     sample.get_bounding_boxes(model_id)
