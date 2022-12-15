@@ -24,7 +24,6 @@ from azure.ai.ml._utils._asset_utils import (
     _build_metadata_dict,
     generate_asset_id,
     get_directory_size,
-    traverse_directory,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -173,8 +172,7 @@ class FileStorageClient:
 
         upload_paths = []
         for root, _, files in os.walk(source_path):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file))
-
+            raise NotImplementedError("See implementations for blob and gen2 upload_dir methods")
         upload_paths = sorted(upload_paths)
         self.total_file_count = len(upload_paths)
 
