@@ -1,5 +1,16 @@
 # Release History
 
+## 22.2.0 (2022-12-15)
+
+### Features Added
+
+  - Model BackendAddressPool has a new parameter virtual_network
+  - Model NetworkVirtualAppliance has a new parameter delegation
+  - Model NetworkVirtualAppliance has a new parameter deployment_type
+  - Model NetworkVirtualAppliance has a new parameter partner_managed_resource
+  - Model PolicySettings has a new parameter custom_block_response_body
+  - Model PolicySettings has a new parameter custom_block_response_status_code
+
 ## 22.1.0 (2022-10-24)
 
 ### Features Added
