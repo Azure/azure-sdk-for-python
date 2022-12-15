@@ -444,7 +444,7 @@ def construct_local_and_remote_paths(
         For symlinks, we need to use the symlink's relative path here because the user is expecting to see the
         folder or file the same way it appears in their project directory. e.g. if a user has a symlink
         /mnt/c/Users/dipeck/link.txt whose target is actually located at /mnt/c/Users/dipeck/target.txt, its remote
-        upload path will reflect the link -> LocalUpload/21fasj3289jf321373/dipeck/link.txt and *not* the target
+        upload path will reflect the link -> LocalUpload/<guid>/dipeck/link.txt and *not* the target
 
     :param source: Local path to project directory
     :type source: str
