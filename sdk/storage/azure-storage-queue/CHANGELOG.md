@@ -1,12 +1,6 @@
 # Release History
 
-## 12.5.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 12.6.0b1 (Unreleased)
 
 ### Other Changes
 - Removed `msrest` dependency.

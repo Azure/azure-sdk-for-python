@@ -26,6 +26,8 @@ vanilla: true
 clear-output-folder: true
 python: true
 version-tolerant: false
+modelerfour:
+    seal-single-value-enum-by-default: true
 ```
 
 ### Remove x-ms-pageable

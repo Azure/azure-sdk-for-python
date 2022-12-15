@@ -28,6 +28,7 @@ from ._compute.kubernetes_compute import KubernetesCompute
 from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
 from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
+from ._compute._image_metadata import ImageMetadata
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
 from ._datastore.datastore import Datastore
@@ -208,6 +209,7 @@ __all__ = [
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
+    "ImageMetadata",
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
     "ValidationResult",

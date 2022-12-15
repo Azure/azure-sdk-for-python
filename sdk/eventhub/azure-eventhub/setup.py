@@ -62,6 +62,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     python_requires=">=3.7",
@@ -69,7 +70,6 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
-        "uamqp>=1.6.0,<2.0.0",
         "typing-extensions>=4.0.1",
     ]
 )

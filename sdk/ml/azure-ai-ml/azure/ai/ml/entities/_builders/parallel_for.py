@@ -8,13 +8,15 @@ from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._component import ControlFlowType
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._component import ControlFlowType, ComponentParameterTypes
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
-from azure.ai.ml.entities._util import validate_attribute_type
+from azure.ai.ml.entities._util import validate_attribute_type, convert_ordered_dict_to_dict
+from azure.ai.ml.exceptions import UserErrorException
 
 
 class ParallelFor(LoopNode, NodeIOMixin):
@@ -31,6 +33,16 @@ class ParallelFor(LoopNode, NodeIOMixin):
         in parallel if not specified.
     :type max_concurrency: int
     """
+
+    OUT_TYPE_MAPPING = {
+        AssetTypes.URI_FILE: AssetTypes.MLTABLE,
+        AssetTypes.URI_FOLDER: AssetTypes.MLTABLE,
+        AssetTypes.MLTABLE: AssetTypes.MLTABLE,
+        ComponentParameterTypes.NUMBER: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.STRING: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.BOOLEAN: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.INTEGER: ComponentParameterTypes.STRING,
+    }
 
     def __init__(
             self,
@@ -52,14 +64,16 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # loop body is incomplete in submission time, so won't validate required inputs
         self.body._validate_required_input_not_provided = False
 
+        actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
         try:
             outputs = self.body._component.outputs
+            # transform body outputs to aggregate types when available
+            self._outputs = self._build_outputs_dict(output_definition_dict=self._convert_output_meta(outputs),
+                                                     outputs=actual_outputs)
         except AttributeError:
-            outputs = {}
-
-        # TODO: handle when body don't have component or component.outputs
-        self._outputs = self._build_outputs_dict_without_meta(outputs, none_data=True)
+            # when body output not available, create default output builder without meta
+            self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
 
         self._items = items
         self._validate_items(raise_error=True)
@@ -89,8 +103,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
-
-        return rest_node
+        rest_node.update(dict(
+            outputs=self._to_rest_outputs()
+        ))
+        return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
     def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "ParallelFor":
@@ -107,6 +123,28 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return cls(
             **loaded_data
         )
+
+    def _convert_output_meta(self, outputs):
+        """Convert output meta to aggregate types."""
+        # pylint: disable=protected-access
+        aggregate_outputs = {}
+        for name, output in outputs.items():
+            if output.type in self.OUT_TYPE_MAPPING:
+                new_type = self.OUT_TYPE_MAPPING[output.type]
+            else:
+                raise UserErrorException(
+                    "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
+                )
+            if isinstance(output, NodeOutput):
+                output = output._to_job_output()
+            if isinstance(output, Output):
+                out_dict = output._to_dict()
+                out_dict["type"] = new_type
+                resolved_output = Output(**out_dict)
+            else:
+                resolved_output = Output(type=new_type)
+            aggregate_outputs[name] = resolved_output
+        return aggregate_outputs
 
     def _validate_items(self, raise_error=True):
         validation_result = self._create_empty_validation_result()

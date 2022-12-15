@@ -25,6 +25,7 @@ from ._models_py3 import SourceModifiedAccessConditions
 from ._models_py3 import StorageError
 from ._models_py3 import StorageErrorError
 
+from ._azure_data_lake_storage_restapi_enums import LeaseAction
 from ._azure_data_lake_storage_restapi_enums import ListBlobsIncludeItem
 from ._azure_data_lake_storage_restapi_enums import PathExpiryOptions
 from ._azure_data_lake_storage_restapi_enums import PathGetPropertiesAction
@@ -56,6 +57,7 @@ __all__ = [
     "SourceModifiedAccessConditions",
     "StorageError",
     "StorageErrorError",
+    "LeaseAction",
     "ListBlobsIncludeItem",
     "PathExpiryOptions",
     "PathGetPropertiesAction",
