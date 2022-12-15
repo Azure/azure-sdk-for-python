@@ -1,5 +1,14 @@
 # Release History
 
+## 23.0.0b1 (2022-12-xx)
+
+- Preview package with the same multiapi support but much reduced package size.
+
+### Breaking Changes
+
+  - All query and header parameters are now keyword-only
+  - Can not individually access each API version's client and operations
+
 ## 22.2.0 (2022-12-15)
 
 ### Features Added
