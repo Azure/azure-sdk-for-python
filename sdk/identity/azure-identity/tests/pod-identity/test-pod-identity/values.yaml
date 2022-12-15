@@ -15,8 +15,8 @@ vaultUrl: ""
 
 # override values for aad-pod-identity
 aad-pod-identity:
-  azureIdentityBinding:
-    name: "pod-identity-test-binding"
-    selector: "pod-identity-test"
-  azureIdentity:
-    enabled: true
+  azureIdentities:
+    pod-identity-test-identity:
+      binding:
+        name: "pod-identity-test-identity-binding"
+        selector: "pod-identity-test"

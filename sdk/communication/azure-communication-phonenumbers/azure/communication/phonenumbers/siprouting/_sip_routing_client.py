@@ -5,11 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -210,9 +206,10 @@ class SipRoutingClient(object):
             if x.fqdn not in [o.fqdn for o in trunks]:
                 config.trunks[x.fqdn] = None
 
-        self._rest_service.patch_sip_configuration(
-            body=config, **kwargs
-        )
+        if len(config.trunks) > 0:
+            self._rest_service.patch_sip_configuration(
+                body=config, **kwargs
+            )
 
     @distributed_trace
     def set_routes(

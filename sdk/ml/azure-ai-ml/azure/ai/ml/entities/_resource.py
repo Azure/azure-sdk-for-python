@@ -7,12 +7,13 @@ import os
 from abc import ABC, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._restclient.v2021_10_01.models import SystemData
+
+from ._system_data import SystemData
 
 
 class Resource(ABC):
@@ -82,7 +83,7 @@ class Resource(ABC):
         """Creation context.
 
         :return: Creation metadata of the resource.
-        :rtype: Optional[SystemData]
+        :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
@@ -96,13 +97,31 @@ class Resource(ABC):
         return self._base_path
 
     @abstractmethod
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
-        :param path: Path to a local file as the target.
-        :type path: Union[PathLike, str]
+        :param dest: The destination to receive this object's data.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
         """
-        pass
+
+    @classmethod
+    # pylint: disable=unused-argument
+    def _resolve_cls_and_type(cls, data, params_override):
+        """Resolve the class to use for deserializing the data. Return current class if no override is provided.
+
+        :param data: Data to deserialize.
+        :type data: dict
+        :param params_override: Parameters to override.
+        :type params_override: List[dict]
+        :return: Class to use for deserializing the data & its "type". Type will be None if no override is provided.
+        :rtype: tuple[class, Optional[str]]
+        """
+        return cls, None
 
     @classmethod
     @abstractmethod
@@ -124,9 +143,12 @@ class Resource(ABC):
         :return: Resource
         :rtype: Resource
         """
-        pass
 
-    def _get_arm_resource(self, **kwargs):
+    # pylint: disable:unused-argument
+    def _get_arm_resource(
+        self,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         """Get arm resource.
 
         :param kwargs: A dictionary of additional configuration parameters.
@@ -137,7 +159,9 @@ class Resource(ABC):
         """
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
+        # pylint: disable=no-member
         template = get_template(resource_type=self._arm_type)
+        # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"
         return template
 
@@ -151,6 +175,7 @@ class Resource(ABC):
         :rtype: dict
         """
         resource = self._get_arm_resource(**kwargs)
+        # pylint: disable=no-member
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
 

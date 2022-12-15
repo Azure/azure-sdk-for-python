@@ -1,7 +1,6 @@
 import datetime
 from common import IssueProcess, Common
 from typing import Any, List
-import os
 
 # assignee dict which will be assigned to handle issues
 _JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk'}

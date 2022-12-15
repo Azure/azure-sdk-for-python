@@ -8,11 +8,11 @@ import subprocess
 import sys
 import time
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
 
 
 def _print_command_results(test_passed, time_taken, output):
-    print("Command {}.".format("successful" if test_passed else "failed"))
+    print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
     print("Output: \n{}\n".format(output))
 
 
@@ -67,7 +67,7 @@ def run_cli_command(
                 return json.loads(exclude_warnings(output))
             except Exception:
                 msg = "Expected JSON, instead got: \n{}\n"
-                raise MlException(
+                raise MLException(
                     message=msg.format(output),
                     no_personal_data_message=msg.format("[something else]"),
                     target=ErrorTarget.LOCAL_ENDPOINT,
@@ -100,7 +100,7 @@ def exclude_warnings(cmd_output):
 
     curr_index = 0
     for cmd_line in cmd_output.splitlines():
-        if (curr_index >= start_index) and (curr_index <= end_index):
+        if start_index <= curr_index <= end_index:
             if len(json_output) == 0:
                 json_output = cmd_line
             else:

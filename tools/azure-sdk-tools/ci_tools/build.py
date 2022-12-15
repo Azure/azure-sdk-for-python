@@ -9,7 +9,7 @@ from ci_tools.variables import DEFAULT_BUILD_ID
 from ci_tools.variables import discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
-
+from ci_tools.logging import initialize_logger, run_logged
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -114,7 +114,8 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
-    logging.info("Generating Package Using Python {}".format(sys.version))
+    logger = initialize_logger("build.py")
+    logger.log(level=logging.INFO, msg=f"Generating Package Using Python {sys.version}")
 
     for package_root in targeted_packages:
         setup_parsed = ParsedSetup.from_path(package_root)
@@ -127,8 +128,8 @@ def build_packages(
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
-            print("{0}: {1} -> {2}".format(setup_parsed.name, setup_parsed.version, new_version))
-
+            logger.log(level=logging.DEBUG, msg=f"{setup_parsed.name}: {setup_parsed.version} -> {new_version}")
+            
             set_version_py(setup_parsed.setup_filename, new_version)
             set_dev_classifier(setup_parsed.setup_filename, new_version)
 
@@ -149,6 +150,6 @@ def create_package(
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
     if enable_wheel:
-        run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_directory_or_file)
+        run_logged([sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file)
     if enable_sdist:
-        run([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], cwd=setup_directory_or_file)
+        run_logged([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], prefix="create_sdist", cwd=setup_directory_or_file)

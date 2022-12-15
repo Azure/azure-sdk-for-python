@@ -99,6 +99,7 @@ class HttpHeaders(object):
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
+    CorrelatedActivityId = "x-ms-cosmos-correlated-activityid"  # cspell:disable-line
     PreTriggerInclude = "x-ms-documentdb-pre-trigger-include"
     PreTriggerExclude = "x-ms-documentdb-pre-trigger-exclude"
     PostTriggerInclude = "x-ms-documentdb-post-trigger-include"
@@ -166,6 +167,7 @@ class HttpHeaders(object):
     # Offer type.
     OfferType = "x-ms-offer-type"
     OfferThroughput = "x-ms-offer-throughput"
+    AutoscaleSettings = "x-ms-cosmos-offer-autopilot-settings"
 
     # Custom RUs/minute headers
     DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"

@@ -249,3 +249,16 @@ class TestRoomsClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
         self.assertListEqual(response.participants, [self.room_participant])
+
+    def test_invalid_datetime_raises_valueError(self):
+        rooms_client = RoomsClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=None)
+
+        # verify value error on create room call
+        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until=self.valid_until)
+        self.assertRaises(ValueError, rooms_client.create_room, valid_from=self.valid_from, valid_until="dummy")
+        self.assertRaises(ValueError, rooms_client.create_room, valid_from="dummy", valid_until="dummy")
+
+        # verify ValueError on update_room calls
+        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until=self.valid_until)
+        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from=self.valid_from, valid_until="dummy")
+        self.assertRaises(ValueError, rooms_client.update_room, room_id=self.room_id, valid_from="dummy", valid_until="dummy")

@@ -29,7 +29,9 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceRequirements) -> "ResourceRequirementsSettings":
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, settings: ContainerResourceRequirements
+    ) -> "ResourceRequirementsSettings":
         requests = settings.container_resource_requests
         limits = settings.container_resource_limits
         return (

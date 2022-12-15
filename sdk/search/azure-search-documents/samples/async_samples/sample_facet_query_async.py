@@ -46,5 +46,4 @@ async def filter_query():
     # [END facet_query_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(filter_query())
+    asyncio.run(filter_query())

@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.0b1"
+VERSION = "1.1.0b2"
 
 SDK_MONIKER = "communication-networktraversal/{}".format(VERSION)  # type: str

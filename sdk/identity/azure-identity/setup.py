@@ -15,21 +15,6 @@ PACKAGE_PPRINT_NAME = "Identity"
 package_folder_path = PACKAGE_NAME.replace("-", "/")
 namespace_name = PACKAGE_NAME.replace("-", ".")
 
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-
-    try:
-        ver = azure.__version__  # type: ignore
-        raise Exception(
-            "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
-
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
     VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)  # type: ignore
 if not VERSION:
@@ -60,6 +45,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -74,7 +60,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
-        "msal<2.0.0,>=1.12.0",
+        "msal<2.0.0,>=1.20.0",
         "msal-extensions<2.0.0,>=0.3.0",
         "six>=1.12.0",
     ],

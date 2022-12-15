@@ -19,11 +19,7 @@ from utils import HTTP_REQUESTS
 
 import pytest
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    # python < 3.3
-    from mock import Mock
+from unittest.mock import Mock
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -274,7 +270,7 @@ def test_key_vault_regression(http_request):
     assert policy._credential is credential
 
     headers = {}
-    token = "alphanums"
+    token = "alphanums" # cspell:disable-line
     policy._update_headers(headers, token)
     assert headers["Authorization"] == "Bearer " + token
 

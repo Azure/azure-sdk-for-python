@@ -12,14 +12,14 @@ from typing import Optional
 from marshmallow import fields, post_load, pre_load
 from pydash import objects
 
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
+from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta, PatchedBaseSchema
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 
 
-class PathAwareSchema(metaclass=PatchedSchemaMeta):
+class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     schema_ignored = fields.Str(data_key="$schema", dump_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
         """
         if isinstance(data, str) or data is None:
             return data
-        for key, value in self.fields.items():
+        for key, value in self.fields.items():  # pylint: disable=no-member
             if value.dump_only:
                 schema_key = value.data_key or key
                 if data.get(schema_key, None) is not None:
@@ -88,7 +88,8 @@ class YamlFileSchema(PathAwareSchema):
         self._previous_base_path = None
         super().__init__(*args, **kwargs)
 
-    def resolve_path(self, data, base_path) -> Optional[Path]:
+    @classmethod
+    def _resolve_path(cls, data, base_path) -> Optional[Path]:
         if isinstance(data, str) and data.startswith(FILE_PREFIX):
             # Use directly if absolute path
             path = Path(data[len(FILE_PREFIX) :])
@@ -96,12 +97,11 @@ class YamlFileSchema(PathAwareSchema):
                 path = Path(base_path) / path
                 path.resolve()
             return path
-        else:
-            return None
+        return None
 
     @pre_load
     def load_from_file(self, data, **kwargs):
-        path = self.resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
+        path = self._resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
         if path is not None:
             self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Push update
@@ -115,7 +115,7 @@ class YamlFileSchema(PathAwareSchema):
 
     # Schemas are read depth-first, so push/pop to update current path
     @post_load
-    def reset_base_path(self, data, **kwargs):
+    def reset_base_path_post_load(self, data, **kwargs):
         if self._previous_base_path is not None:
             # pop state
             self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path

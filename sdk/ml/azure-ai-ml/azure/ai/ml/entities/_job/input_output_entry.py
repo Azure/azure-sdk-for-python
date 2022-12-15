@@ -14,7 +14,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class InputOutputEntry(DictMixin):
-    def __init__(self, data: Union[str, "Data"] = None, mode: Optional[str] = InputOutputModes.MOUNT, **kwargs):
+    def __init__(
+        self,
+        data: Union[str, "Data"] = None,
+        mode: Optional[str] = InputOutputModes.MOUNT,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         # Data will be either a dataset id, inline dataset definition
         self.data = data
         self.mode = mode

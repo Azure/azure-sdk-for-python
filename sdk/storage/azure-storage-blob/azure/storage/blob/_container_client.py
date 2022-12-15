@@ -6,20 +6,21 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, TypeVar, Union,
+from typing import (
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 
 import six
+from typing_extensions import Self
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -34,7 +35,13 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
+from ._list_blobs_helper import (
+    BlobNamesPaged,
+    BlobPrefix,
+    BlobPropertiesPaged,
+    FilteredBlobPaged,
+    IgnoreListBlobsDeserializer
+)
 from ._models import (
     ContainerProperties,
     BlobProperties,
@@ -44,6 +51,7 @@ from ._models import (
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -62,9 +70,6 @@ def _get_blob_name(blob):
         return blob.get('name')
     except AttributeError:
         return blob
-
-
-ClassType = TypeVar("ClassType")
 
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
@@ -132,12 +137,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -155,9 +159,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
+
+    def _build_generated_client(self):
+        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        client._config.version = self._api_version # pylint: disable=protected-access
+        return client
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -171,11 +180,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @classmethod
     def from_container_url(
-            cls,  # type: Type[ClassType]
-            container_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, container_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -200,11 +208,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_url = "https://" + container_url
         except AttributeError:
             raise ValueError("Container URL must be a string.")
-        parsed_url = urlparse(container_url.rstrip('/'))
+        parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
 
-        container_path = parsed_url.path.lstrip('/').split('/')
+        container_path = parsed_url.path.strip('/').split('/')
         account_path = ""
         if len(container_path) > 1:
             account_path = "/" + "/".join(container_path[:-1])
@@ -220,12 +228,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            container_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -755,7 +762,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :paramtype include: list[str] or str
+        :type include: list[str] or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -785,9 +792,46 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
+    def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
+        """Returns a generator to list the names of blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        Note that no additional properties or metadata will be returned when using this API.
+        Additionally, this API does not have an option to include additional blobs such as snapshots,
+        versions, soft-deleted blobs, etc. To get any of this data, use :func:`list_blobs()`.
+
+        :keyword str name_starts_with:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of blob names as strings.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        """
+        name_starts_with = kwargs.pop('name_starts_with', None)
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+
+        # For listing only names we need to create a one-off generated client and
+        # override its deserializer to prevent deserialization of the full response.
+        client = self._build_generated_client()
+        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
+
+        command = functools.partial(
+            client.container.list_blob_flat_segment,
+            timeout=timeout,
+            **kwargs)
+        return ItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            page_iterator_class=BlobNamesPaged)
+
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Any]
+            include=None, # type: Optional[Union[List[str], str]]
             delimiter="/", # type: str
             **kwargs # type: Optional[Any]
         ):
@@ -800,9 +844,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :type include: list[str] or str
         :param str delimiter:
             When the request includes this parameter, the operation returns a BlobPrefix
             element in the response body that acts as a placeholder for all blobs whose
@@ -864,14 +910,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def upload_blob(
-            self, name,  # type: Union[str, BlobProperties]
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, name: Union[str, BlobProperties],
+            data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> BlobClient
+        ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
         :param name: The blob with which to interact. If specified, this value will override

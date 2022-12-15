@@ -2,28 +2,29 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
+
+# pylint: disable=enum-must-be-uppercase
+
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CertificatePolicyAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificatePolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported action types for the lifetime of a certificate"""
 
     email_contacts = "EmailContacts"
     auto_renew = "AutoRenew"
 
 
-class CertificateContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type of the secrets as specified in Certificate Policy"""
 
     pkcs12 = "application/x-pkcs12"
     pem = "application/x-pem-file"
 
 
-class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported types of key usages"""
 
     digital_signature = "digitalSignature"
@@ -37,7 +38,7 @@ class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     decipher_only = "decipherOnly"
 
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported key types"""
 
     ec = "EC"  #: Elliptic Curve
@@ -55,7 +56,7 @@ class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
         raise ValueError(f"{value} is not a valid KeyType")
 
 
-class KeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported elliptic curves"""
 
     p_256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
@@ -64,7 +65,7 @@ class KeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     p_256_k = "P-256K"  #: The SECG SECP256K1 elliptic curve.
 
 
-class WellKnownIssuerNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WellKnownIssuerNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Collection of well-known issuer names"""
 
     self = "Self"  #: Use this issuer for a self-signed certificate

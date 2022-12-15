@@ -54,7 +54,7 @@ def analyze_tax_us_w2():
     w2s = poller.result()
 
     for idx, w2 in enumerate(w2s.documents):
-        print("--------Recognizing US Tax W-2 Form #{}--------".format(idx + 1))
+        print("--------Analyzing US Tax W-2 Form #{}--------".format(idx + 1))
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
             print(

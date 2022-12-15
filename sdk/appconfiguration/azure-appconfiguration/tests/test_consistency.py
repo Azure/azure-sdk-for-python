@@ -3,20 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
     FILTER_PERCENTAGE,
 )
 from testcase import AppConfigTestCase
 from preparers import app_config_decorator
-
+from devtools_testutils import recorded_by_proxy
 import json
 import pytest
 
 
-class AppConfigurationConsistencyTest(AppConfigTestCase):
+class TestAppConfigurationConsistency(AppConfigTestCase):
     @app_config_decorator
+    @recorded_by_proxy
     def test_update_json_by_value(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         key = self.get_resource_name("key")
@@ -66,6 +66,7 @@ class AppConfigurationConsistencyTest(AppConfigTestCase):
         client.delete_configuration_setting(set_flag)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_flag_invalid_json(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         key = self.get_resource_name("key")
@@ -79,6 +80,7 @@ class AppConfigurationConsistencyTest(AppConfigTestCase):
         client.delete_configuration_setting(feature_flag)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_flag_invalid_json_string(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         key = self.get_resource_name("key")
@@ -92,6 +94,7 @@ class AppConfigurationConsistencyTest(AppConfigTestCase):
         client.delete_configuration_setting(set_flag)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_flag_invalid_json_access_properties(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         key = self.get_resource_name("key")
@@ -104,7 +107,7 @@ class AppConfigurationConsistencyTest(AppConfigTestCase):
         client.delete_configuration_setting(feature_flag)
 
 
-class AppConfigurationConsistencyUnitTest(AzureTestCase):
+class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
     def test_feature_flag_set_value(self):
         key = self.get_resource_name("key")
         feature_flag = FeatureFlagConfigurationSetting(

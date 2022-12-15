@@ -13,6 +13,7 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultO
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -34,6 +35,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with pytest.raises(ValueError):
             client.begin_analyze_document(model_id="", document=b"xx")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -41,7 +43,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -79,6 +81,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -86,7 +89,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
         model = poller.result()
 
         responses = []
@@ -124,6 +127,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -131,7 +135,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
-        poller = client.begin_build_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
+        poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
         model = poller.result()
 
         with open(self.selection_form_pdf, "rb") as fd:
@@ -169,6 +173,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -179,7 +184,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_poller = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_poller = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = build_poller.result()
 
         poller = da_client.begin_analyze_document(model.model_id, my_file, pages="1")
@@ -187,6 +192,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         result = poller.result()
         assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -197,7 +203,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
 
-        build_polling = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_polling = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(
@@ -211,6 +217,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -221,7 +228,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with open(self.blank_pdf, "rb") as fd:
             my_file = fd.read()
 
-        build_polling = client.begin_build_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
+        build_polling = client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(

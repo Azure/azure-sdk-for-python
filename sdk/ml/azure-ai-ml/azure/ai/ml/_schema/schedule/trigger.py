@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, post_load, validate
+from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
 from azure.ai.ml._schema.core.fields import (
     DateTimeStr,
     DumpableIntegerField,
@@ -19,12 +19,13 @@ from azure.ai.ml.constants import TimeZone
 class TriggerSchema(metaclass=PatchedSchemaMeta):
     start_time = UnionField([fields.DateTime(), DateTimeStr()])
     end_time = UnionField([fields.DateTime(), DateTimeStr()])
-    time_zone = fields.Str(validate=validate.OneOf([o.value for o in TimeZone]))
+    time_zone = fields.Str()
 
     @post_dump(pass_original=True)
-    def resolve_time_zone(self, data, original_data, **kwargs):
+    def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable=no-self-use, unused-argument
         """
-        Auto-convert will get string like "TimeZone.UTC" for TimeZone enum object, while the valid result should be "UTC"
+        Auto-convert will get string like "TimeZone.UTC" for TimeZone enum object,
+        while the valid result should be "UTC"
         """
         if isinstance(original_data.time_zone, TimeZone):
             data["time_zone"] = original_data.time_zone.value
@@ -36,7 +37,7 @@ class CronTriggerSchema(TriggerSchema):
     expression = fields.Str(required=True)
 
     @post_load
-    def make(self, data, **kwargs) -> "CronTrigger":
+    def make(self, data, **kwargs) -> "CronTrigger":  # pylint: disable=no-self-use, unused-argument
         from azure.ai.ml.entities import CronTrigger
 
         data.pop("type")
@@ -52,9 +53,15 @@ class RecurrencePatternSchema(metaclass=PatchedSchemaMeta):
             fields.List(StringTransformedEnum(allowed_values=[o.value for o in WeekDay])),
         ]
     )
+    month_days = UnionField(
+        [
+            fields.Int(),
+            fields.List(fields.Int()),
+        ]
+    )
 
     @post_load
-    def make(self, data, **kwargs) -> "RecurrencePattern":
+    def make(self, data, **kwargs) -> "RecurrencePattern":  # pylint: disable=no-self-use, unused-argument
         from azure.ai.ml.entities import RecurrencePattern
 
         return RecurrencePattern(**data)
@@ -67,7 +74,7 @@ class RecurrenceTriggerSchema(TriggerSchema):
     schedule = NestedField(RecurrencePatternSchema())
 
     @post_load
-    def make(self, data, **kwargs) -> "RecurrenceTrigger":
+    def make(self, data, **kwargs) -> "RecurrenceTrigger":  # pylint: disable=no-self-use, unused-argument
         from azure.ai.ml.entities import RecurrenceTrigger
 
         data.pop("type")

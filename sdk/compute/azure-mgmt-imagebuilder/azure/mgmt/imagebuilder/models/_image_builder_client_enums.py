@@ -7,22 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ProvisioningErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Error code of the provisioning failure
-    """
+
+class ProvisioningErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error code of the provisioning failure."""
 
     BAD_SOURCE_TYPE = "BadSourceType"
     BAD_PIR_SOURCE = "BadPIRSource"
@@ -40,9 +38,9 @@ class ProvisioningErrorCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SERVER_ERROR = "ServerError"
     OTHER = "Other"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -50,7 +48,8 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the image template. The type 'None' will remove any identities
     from the image template.
     """
@@ -58,9 +57,9 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
-class RunState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the last run
-    """
+
+class RunState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the last run."""
 
     RUNNING = "Running"
     CANCELING = "Canceling"
@@ -69,9 +68,9 @@ class RunState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class RunSubState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Sub-state of the last run
-    """
+
+class RunSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sub-state of the last run."""
 
     QUEUED = "Queued"
     BUILDING = "Building"
@@ -79,7 +78,8 @@ class RunSubState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VALIDATING = "Validating"
     DISTRIBUTING = "Distributing"
 
-class SharedImageStorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SharedImageStorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage account type to be used to store the shared image. Omit to use the default
     (Standard_LRS).
     """

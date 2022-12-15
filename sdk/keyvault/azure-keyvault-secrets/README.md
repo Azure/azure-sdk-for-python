@@ -71,6 +71,7 @@ This section contains code snippets covering common tasks:
 * [Update secret metadata](#update-secret-metadata)
 * [Delete a secret](#delete-a-secret)
 * [List secrets](#list-secrets)
+* [Async API](#async-api)
 * [Asynchronously create a secret](#asynchronously-create-a-secret)
 * [Asynchronously list secrets](#asynchronously-list-secrets)
 

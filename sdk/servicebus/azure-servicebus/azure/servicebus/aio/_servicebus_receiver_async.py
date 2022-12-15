@@ -11,8 +11,6 @@ import logging
 import warnings
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
 
-import six
-
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
@@ -714,7 +712,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, six.integer_types):
+        if isinstance(sequence_numbers, int):
             sequence_numbers = [sequence_numbers]
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:

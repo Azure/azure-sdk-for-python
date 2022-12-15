@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
@@ -12,8 +12,6 @@ from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from .._internal import AadClientBase
 
@@ -36,9 +34,7 @@ class SharedTokenCacheCredential(object):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, username=None, **kwargs):
-        # type: (Optional[str], **Any) -> None
-
+    def __init__(self, username: str = None, **kwargs) -> None:
         if "authentication_record" in kwargs:
             self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
         else:
@@ -51,8 +47,7 @@ class SharedTokenCacheCredential(object):
     def __exit__(self, *args):
         self._credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
@@ -66,12 +61,11 @@ class SharedTokenCacheCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -80,8 +74,7 @@ class SharedTokenCacheCredential(object):
         return self._credential.get_token(*scopes, **kwargs)
 
     @staticmethod
-    def supported():
-        # type: () -> bool
+    def supported() -> bool:
         """Whether the shared token cache is supported on the current platform.
 
         :rtype: bool

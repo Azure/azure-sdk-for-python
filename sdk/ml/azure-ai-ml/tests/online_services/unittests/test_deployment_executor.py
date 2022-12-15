@@ -1,11 +1,13 @@
-from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
+from unittest.mock import Mock, PropertyMock, patch
+
 import pytest
 from pytest_mock import MockFixture
-from unittest.mock import Mock, patch, PropertyMock
+
 from azure.ai.ml import MLClient
-from azure.core.polling import LROPoller
+from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._vendor.azure_resources import ResourceManagementClient
 from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
+from azure.core.polling import LROPoller
 
 
 def _raise_exception():
@@ -21,6 +23,7 @@ def mock_poller() -> LROPoller:
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestDeploymentExecutor:
     def test_empty_resources_throws(self, mock_machinelearning_client: MLClient) -> None:
         with pytest.raises(Exception):

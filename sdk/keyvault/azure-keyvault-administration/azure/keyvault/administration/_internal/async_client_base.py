@@ -31,6 +31,9 @@ class AsyncKeyVaultClientBase(object):
 
         try:
             api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            # If API version was provided as an enum value, need to make a plain string for 3.11 compatibility
+            if hasattr(api_version, "value"):
+                api_version = api_version.value
             self._vault_url = vault_url.strip(" /")
             client = kwargs.get("generated_client")
             if client:
@@ -49,9 +52,10 @@ class AsyncKeyVaultClientBase(object):
                 }
             )
 
+            verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
                 api_version=api_version,
-                authentication_policy=AsyncChallengeAuthPolicy(credential),
+                authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
                 **kwargs

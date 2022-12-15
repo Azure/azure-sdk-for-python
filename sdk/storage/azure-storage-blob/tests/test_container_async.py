@@ -1159,6 +1159,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_list_blobs_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        await blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
+
+        # Act
+        async for blob_properties in container.list_blobs():
+            if blob_properties.name == blob_client.blob_name:
+                assert blob_properties.blob_tier == "Cold"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_list_blobs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2098,6 +2116,55 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_walk_blobs_with_prefix_delimiter_versions(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        c0 = container.get_blob_client('a/blob1')
+        await c0.upload_blob(data)
+        c1 = container.get_blob_client('a/blob2')
+        await c1.upload_blob(data)
+        c2 = container.get_blob_client('b/blob3')
+        await c2.upload_blob(data)
+
+        # Act
+        prefix_list = await self._to_list(container.walk_blobs(name_starts_with='a', delimiter='/', include=['versions']))
+
+        # Assert
+        assert len(prefix_list) == 1
+        a = await self._to_list(prefix_list[0])
+        assert len(a) == 2
+        assert a[0].name == 'a/blob1'
+        assert a[0].version_id
+        assert a[1].name == 'a/blob2'
+        assert a[1].version_id
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_walk_blobs_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        await container.get_blob_client('blob1').upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
+
+        # Act
+        resp = []
+        async for w in container.walk_blobs():
+            resp.append(w)
+
+        # Assert
+        assert resp[0].blob_tier == StandardBlobTier.Cold
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_list_blobs_with_include_multiple(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2306,4 +2373,63 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         assert downloaded_data == data
 
-#------------------------------------------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_list_blob_names(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+        data = b'hello world'
+
+        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('test1')).upload_blob(data, overwrite=True)
+
+        # Act
+        all_blobs = []
+        async for b in container.list_blob_names():
+            all_blobs.append(b)
+
+        test_blobs = []
+        async for b in container.list_blob_names(name_starts_with="test"):
+            test_blobs.append(b)
+
+        # Assert
+        assert len(all_blobs) == 3
+        assert all_blobs[0] == 'blob1'
+        assert all_blobs[1] == 'blob2'
+        assert all_blobs[2] == 'test1'
+        assert len(test_blobs) == 1
+        assert test_blobs[0] == 'test1'
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_list_blob_names_pagination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+        data = b'hello world'
+
+        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
+        await (container.get_blob_client('blob3')).upload_blob(data, overwrite=True)
+
+        # Act
+        blob_pages = container.list_blob_names(results_per_page=2).by_page()
+        items_on_page1 = []
+        async for b in await blob_pages.__anext__():
+            items_on_page1.append(b)
+        items_on_page2 = []
+        async for b in await blob_pages.__anext__():
+            items_on_page2.append(b)
+
+        # Assert
+        assert len(items_on_page1) == 2
+        assert items_on_page1[0] == 'blob1'
+        assert items_on_page1[1] == 'blob2'
+        assert len(items_on_page2) == 1
+        assert items_on_page2[0] == 'blob3'

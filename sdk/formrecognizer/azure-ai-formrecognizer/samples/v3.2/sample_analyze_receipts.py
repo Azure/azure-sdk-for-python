@@ -53,7 +53,7 @@ def analyze_receipts():
     receipts = poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
-        print("--------Recognizing receipt #{}--------".format(idx + 1))
+        print("--------Analysis of receipt #{}--------".format(idx + 1))
         print("Receipt type: {}".format(receipt.doc_type or "N/A"))
         merchant_name = receipt.fields.get("MerchantName")
         if merchant_name:
@@ -73,11 +73,11 @@ def analyze_receipts():
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.get("Items").value):
                 print("...Item #{}".format(idx + 1))
-                item_name = item.value.get("Name")
-                if item_name:
+                item_description = item.value.get("Description")
+                if item_description:
                     print(
-                        "......Item Name: {} has confidence: {}".format(
-                            item_name.value, item_name.confidence
+                        "......Item Description: {} has confidence: {}".format(
+                            item_description.value, item_description.confidence
                         )
                     )
                 item_quantity = item.value.get("Quantity")
@@ -108,9 +108,9 @@ def analyze_receipts():
                     subtotal.value, subtotal.confidence
                 )
             )
-        tax = receipt.fields.get("Tax")
+        tax = receipt.fields.get("TotalTax")
         if tax:
-            print("Tax: {} has confidence: {}".format(tax.value, tax.confidence))
+            print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
         tip = receipt.fields.get("Tip")
         if tip:
             print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))

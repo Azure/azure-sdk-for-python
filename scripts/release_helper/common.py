@@ -279,7 +279,7 @@ class IssueProcess:
     def get_target_date(self):
         body = self.get_issue_body()
         try:
-            self.target_date = [line.split(':')[-1].strip() for line in body if 'Target release date' in line][0]
+            self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
             self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:
             self.target_date = 'fail to get.'
@@ -359,15 +359,17 @@ class Common:
         for item in self.issues_package:
             issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
                                                 self.language_owner)
+
             try:
                 issue.run()
-                self.result.append(issue)
             except Exception as e:
                 self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
+            self.result.append(issue)
 
     def run(self):
         self.proc_issue()
         self.output()
+
 
 def common_process(issues: List[IssuePackage]):
     instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)

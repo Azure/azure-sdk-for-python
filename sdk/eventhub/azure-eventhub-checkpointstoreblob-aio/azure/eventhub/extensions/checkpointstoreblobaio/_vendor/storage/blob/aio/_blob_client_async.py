@@ -1453,7 +1453,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
-        access_conditions = get_access_conditions(kwargs.pop('kease', None))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = await self._client.block_blob.get_block_list(

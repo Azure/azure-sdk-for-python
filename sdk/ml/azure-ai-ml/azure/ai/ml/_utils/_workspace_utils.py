@@ -8,8 +8,8 @@ import uuid
 
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
-from azure.ai.ml.constants import ArmConstants
-from azure.identity import ChainedTokenCredential
+from azure.ai.ml.constants._common import ArmConstants
+from azure.core.credentials import TokenCredential
 
 module_logger = logging.getLogger(__name__)
 
@@ -29,9 +29,7 @@ def get_deployment_name(name: str):
     return f"{name}-{random.randint(1, 10000000)}"
 
 
-def get_resource_group_location(
-    credentials: ChainedTokenCredential, subscription_id: str, resource_group_name: str
-) -> str:
+def get_resource_group_location(credentials: TokenCredential, subscription_id: str, resource_group_name: str) -> str:
     client = ResourceManagementClient(
         credential=credentials,
         subscription_id=subscription_id,
@@ -43,7 +41,7 @@ def get_resource_group_location(
 
 
 def delete_resource_by_arm_id(
-    credentials: ChainedTokenCredential,
+    credentials: TokenCredential,
     subscription_id: str,
     arm_id: str,
     api_version: str,

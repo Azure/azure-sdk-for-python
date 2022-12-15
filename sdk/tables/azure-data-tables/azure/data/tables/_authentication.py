@@ -20,7 +20,7 @@ except ImportError:
     AsyncHttpTransport = None  # type: ignore
 
 try:
-    from yarl import URL
+    from yarl import URL # cspell:disable-line
 except ImportError:
     pass
 

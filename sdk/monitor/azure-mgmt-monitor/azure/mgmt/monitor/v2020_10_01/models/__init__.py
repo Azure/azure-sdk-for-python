@@ -16,21 +16,21 @@ from ._models_py3 import AlertRuleList
 from ._models_py3 import AlertRulePatchObject
 from ._models_py3 import AzureResource
 from ._models_py3 import ErrorResponse
-
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ActionGroup',
-    'ActionList',
-    'ActivityLogAlertResource',
-    'AlertRuleAllOfCondition',
-    'AlertRuleAnyOfOrLeafCondition',
-    'AlertRuleLeafCondition',
-    'AlertRuleList',
-    'AlertRulePatchObject',
-    'AzureResource',
-    'ErrorResponse',
+    "ActionGroup",
+    "ActionList",
+    "ActivityLogAlertResource",
+    "AlertRuleAllOfCondition",
+    "AlertRuleAnyOfOrLeafCondition",
+    "AlertRuleLeafCondition",
+    "AlertRuleList",
+    "AlertRulePatchObject",
+    "AzureResource",
+    "ErrorResponse",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -6,7 +6,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import time
-import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
 if TYPE_CHECKING:
@@ -22,7 +21,7 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self._endpoint = endpoint
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, six.string_types):
+        if not isinstance(name, str):
             raise TypeError("name must be a string.")
         self._name = name
         self._token_expiry_on = 0
