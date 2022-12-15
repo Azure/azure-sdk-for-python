@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.8.15 (Linux-5.15.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:13 GMT",
+        "Date": "Fri, 09 Dec 2022 10:33:52 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13006.6 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14167.14 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -86,7 +86,7 @@
           "email"
         ],
         "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
-        "tenant_region_scope": "NA",
+        "tenant_region_scope": "WW",
         "cloud_instance_name": "microsoftonline.com",
         "cloud_graph_host_name": "graph.windows.net",
         "msgraph_host": "graph.microsoft.com",
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.8.15 (Linux-5.15.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:13 GMT",
+        "Date": "Fri, 09 Dec 2022 10:33:52 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12890.7 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14167.14 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "ebf90235-a7f1-4cbd-b2cb-58d1c08d5ab3",
+        "client-request-id": "0727a15f-c2d6-498a-aef4-7b4ce9e5bf25",
         "Connection": "keep-alive",
-        "Content-Length": "289",
+        "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.11.0b2 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.13.0b1 Python/3.8.15 (Linux-5.15.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.18.0",
+        "x-client-ver": "1.20.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
       "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "ebf90235-a7f1-4cbd-b2cb-58d1c08d5ab3",
-        "Content-Length": "93",
+        "client-request-id": "0727a15f-c2d6-498a-aef4-7b4ce9e5bf25",
+        "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:13 GMT",
+        "Date": "Fri, 09 Dec 2022 10:33:52 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,24 +201,25 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.13006.6 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14167.14 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
-        "expires_in": 3599,
-        "ext_expires_in": 3599,
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
         "access_token": "access_token"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2021-12-01-preview",
+      "RequestUri": "https://management.azure.com/providers/Microsoft.OperationalInsights/operations?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-loganalytics/0.0.0 Python/3.8.12 (Linux-5.13.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-loganalytics/13.0.0 Python/3.8.15 (Linux-5.15.0-1023-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -226,7 +227,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Jun 2022 01:09:14 GMT",
+        "Date": "Fri, 09 Dec 2022 10:33:53 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -234,9 +235,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9b7b4d33-7822-4e4d-92a3-c9f14d8ee3a7",
+        "x-ms-correlation-request-id": "af3c3e28-caa6-4042-99dc-5d6188f638c1",
         "x-ms-ratelimit-remaining-tenant-reads": "11999",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20220624T010914Z:9b7b4d33-7822-4e4d-92a3-c9f14d8ee3a7",
+        "x-ms-routing-request-id": "EASTUS:20221209T103353Z:af3c3e28-caa6-4042-99dc-5d6188f638c1",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -2808,6 +2809,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSCallAutomationIncomingOperations/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSCallAutomationIncomingOperations",
+              "operation": "Read ACSCallAutomationIncomingOperations data",
+              "description": "Read data from the ACSCallAutomationIncomingOperations table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/ACSCallDiagnostics/read",
             "isDataAction": false,
             "display": {
@@ -2815,6 +2826,16 @@
               "resource": "ACSCallDiagnostics",
               "operation": "Read ACSCallDiagnostics data",
               "description": "Read data from the ACSCallDiagnostics table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSCallRecordingSummary/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSCallRecordingSummary",
+              "operation": "Read ACSCallRecordingSummary data",
+              "description": "Read data from the ACSCallRecordingSummary table"
             }
           },
           {
@@ -2838,6 +2859,36 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSEmailSendMailOperational/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSEmailSendMailOperational",
+              "operation": "Read ACSEmailSendMailOperational data",
+              "description": "Read data from the ACSEmailSendMailOperational table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSEmailStatusUpdateOperational/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSEmailStatusUpdateOperational",
+              "operation": "Read ACSEmailStatusUpdateOperational data",
+              "description": "Read data from the ACSEmailStatusUpdateOperational table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSEmailUserEngagementOperational/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSEmailUserEngagementOperational",
+              "operation": "Read ACSEmailUserEngagementOperational data",
+              "description": "Read data from the ACSEmailUserEngagementOperational table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/ACSNetworkTraversalDiagnostics/read",
             "isDataAction": false,
             "display": {
@@ -2855,6 +2906,16 @@
               "resource": "ACSNetworkTraversalIncomingOperations",
               "operation": "Read ACSNetworkTraversalIncomingOperations data",
               "description": "Read data from the ACSNetworkTraversalIncomingOperations table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ACSRoomsIncomingOperations/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ACSRoomsIncomingOperations",
+              "operation": "Read ACSRoomsIncomingOperations data",
+              "description": "Read data from the ACSRoomsIncomingOperations table"
             }
           },
           {
@@ -3138,6 +3199,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ADTDataHistoryOperation/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ADTDataHistoryOperation",
+              "operation": "Read ADTDataHistoryOperation data",
+              "description": "Read data from the ADTDataHistoryOperation table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/ADTDigitalTwinsOperation/read",
             "isDataAction": false,
             "display": {
@@ -3398,6 +3469,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AHDSMedTechDiagnosticLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AHDSMedTechDiagnosticLogs",
+              "operation": "Read AHDSMedTechDiagnosticLogs data",
+              "description": "Read data from the AHDSMedTechDiagnosticLogs table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/AirflowDagProcessingLogs/read",
             "isDataAction": false,
             "display": {
@@ -3578,6 +3659,26 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AmlOnlineEndpointEventLog/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AmlOnlineEndpointEventLog",
+              "operation": "Read AmlOnlineEndpointEventLog data",
+              "description": "Read data from the AmlOnlineEndpointEventLog table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AmlOnlineEndpointTrafficLog/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AmlOnlineEndpointTrafficLog",
+              "operation": "Read AmlOnlineEndpointTrafficLog data",
+              "description": "Read data from the AmlOnlineEndpointTrafficLog table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/AmlPipelineEvent/read",
             "isDataAction": false,
             "display": {
@@ -3605,6 +3706,56 @@
               "resource": "AmlRunStatusChangedEvent",
               "operation": "Read AmlRunStatusChangedEvent data",
               "description": "Read data from the AmlRunStatusChangedEvent table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AMSKeyDeliveryRequests/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AMSKeyDeliveryRequests",
+              "operation": "Read AMSKeyDeliveryRequests data",
+              "description": "Read data from the AMSKeyDeliveryRequests table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AMSLiveEventOperations/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AMSLiveEventOperations",
+              "operation": "Read AMSLiveEventOperations data",
+              "description": "Read data from the AMSLiveEventOperations table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AMSMediaAccountHealth/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AMSMediaAccountHealth",
+              "operation": "Read AMSMediaAccountHealth data",
+              "description": "Read data from the AMSMediaAccountHealth table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AMSStreamingEndpointRequests/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AMSStreamingEndpointRequests",
+              "operation": "Read AMSStreamingEndpointRequests data",
+              "description": "Read data from the AMSStreamingEndpointRequests table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ANFFileAccess/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ANFFileAccess",
+              "operation": "Read ANFFileAccess data",
+              "description": "Read data from the ANFFileAccess table"
             }
           },
           {
@@ -3878,6 +4029,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AppServiceServerlessSecurityPluginData/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AppServiceServerlessSecurityPluginData",
+              "operation": "Read AppServiceServerlessSecurityPluginData data",
+              "description": "Read data from the AppServiceServerlessSecurityPluginData table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/AppSystemEvents/read",
             "isDataAction": false,
             "display": {
@@ -3905,6 +4066,16 @@
               "resource": "ASimDnsActivityLogs",
               "operation": "Read ASimDnsActivityLogs data",
               "description": "Read data from the ASimDnsActivityLogs table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ASimNetworkSessionLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ASimNetworkSessionLogs",
+              "operation": "Read ASimNetworkSessionLogs data",
+              "description": "Read data from the ASimNetworkSessionLogs table"
             }
           },
           {
@@ -3968,6 +4139,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AVSSyslog/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AVSSyslog",
+              "operation": "Read AVSSyslog data",
+              "description": "Read data from the AVSSyslog table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/AWSCloudTrail/read",
             "isDataAction": false,
             "display": {
@@ -4025,6 +4206,26 @@
               "resource": "AZFWDnsQuery",
               "operation": "Read AZFWDnsQuery data",
               "description": "Read data from the AZFWDnsQuery table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AZFWFatFlow/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AZFWFatFlow",
+              "operation": "Read AZFWFatFlow data",
+              "description": "Read data from the AZFWFatFlow table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/AZFWFlowTrace/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "AZFWFlowTrace",
+              "operation": "Read AZFWFlowTrace data",
+              "description": "Read data from the AZFWFlowTrace table"
             }
           },
           {
@@ -4268,6 +4469,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/CCFApplicationLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "CCFApplicationLogs",
+              "operation": "Read CCFApplicationLogs data",
+              "description": "Read data from the CCFApplicationLogs table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/CDBCassandraRequests/read",
             "isDataAction": false,
             "display": {
@@ -4398,6 +4609,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ConfidentialWatchlist/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ConfidentialWatchlist",
+              "operation": "Read ConfidentialWatchlist data",
+              "description": "Read data from the ConfidentialWatchlist table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/ConfigurationChange/read",
             "isDataAction": false,
             "display": {
@@ -4415,6 +4636,26 @@
               "resource": "ConfigurationData",
               "operation": "Read ConfigurationData data",
               "description": "Read data from the ConfigurationData table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ContainerAppConsoleLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ContainerAppConsoleLogs",
+              "operation": "Read ContainerAppConsoleLogs data",
+              "description": "Read data from the ContainerAppConsoleLogs table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/ContainerAppSystemLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "ContainerAppSystemLogs",
+              "operation": "Read ContainerAppSystemLogs data",
+              "description": "Read data from the ContainerAppSystemLogs table"
             }
           },
           {
@@ -4518,6 +4759,36 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksCapsule8Dataplane/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksCapsule8Dataplane",
+              "operation": "Read DatabricksCapsule8Dataplane data",
+              "description": "Read data from the DatabricksCapsule8Dataplane table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksClamAVScan/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksClamAVScan",
+              "operation": "Read DatabricksClamAVScan data",
+              "description": "Read data from the DatabricksClamAVScan table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksClusterLibraries/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksClusterLibraries",
+              "operation": "Read DatabricksClusterLibraries data",
+              "description": "Read data from the DatabricksClusterLibraries table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksClusters/read",
             "isDataAction": false,
             "display": {
@@ -4575,6 +4846,16 @@
               "resource": "DatabricksGenie",
               "operation": "Read DatabricksGenie data",
               "description": "Read data from the DatabricksGenie table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksGitCredentials/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksGitCredentials",
+              "operation": "Read DatabricksGitCredentials data",
+              "description": "Read data from the DatabricksGitCredentials table"
             }
           },
           {
@@ -4658,6 +4939,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksPartnerHub/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksPartnerHub",
+              "operation": "Read DatabricksPartnerHub data",
+              "description": "Read data from the DatabricksPartnerHub table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksRemoteHistoryService/read",
             "isDataAction": false,
             "display": {
@@ -4685,6 +4976,16 @@
               "resource": "DatabricksSecrets",
               "operation": "Read DatabricksSecrets data",
               "description": "Read data from the DatabricksSecrets table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksServerlessRealTimeInference/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksServerlessRealTimeInference",
+              "operation": "Read DatabricksServerlessRealTimeInference data",
+              "description": "Read data from the DatabricksServerlessRealTimeInference table"
             }
           },
           {
@@ -4728,6 +5029,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksWebTerminal/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DatabricksWebTerminal",
+              "operation": "Read DatabricksWebTerminal data",
+              "description": "Read data from the DatabricksWebTerminal table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/DatabricksWorkspace/read",
             "isDataAction": false,
             "display": {
@@ -4738,6 +5049,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DefenderIoTRawEvent/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DefenderIoTRawEvent",
+              "operation": "Read DefenderIoTRawEvent data",
+              "description": "Read data from the DefenderIoTRawEvent table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/dependencies/read",
             "isDataAction": false,
             "display": {
@@ -4745,6 +5066,16 @@
               "resource": "dependencies",
               "operation": "Read dependencies data",
               "description": "Read data from the dependencies table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DevCenterDiagnosticLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DevCenterDiagnosticLogs",
+              "operation": "Read DevCenterDiagnosticLogs data",
+              "description": "Read data from the DevCenterDiagnosticLogs table"
             }
           },
           {
@@ -4958,6 +5289,36 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DeviceTvmSecureConfigurationAssessment/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DeviceTvmSecureConfigurationAssessment",
+              "operation": "Read DeviceTvmSecureConfigurationAssessment data",
+              "description": "Read data from the DeviceTvmSecureConfigurationAssessment table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DeviceTvmSoftwareInventory/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DeviceTvmSoftwareInventory",
+              "operation": "Read DeviceTvmSoftwareInventory data",
+              "description": "Read data from the DeviceTvmSoftwareInventory table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DeviceTvmSoftwareVulnerabilities/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DeviceTvmSoftwareVulnerabilities",
+              "operation": "Read DeviceTvmSoftwareVulnerabilities data",
+              "description": "Read data from the DeviceTvmSoftwareVulnerabilities table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/DHAppReliability/read",
             "isDataAction": false,
             "display": {
@@ -5098,6 +5459,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/DynamicSummary/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "DynamicSummary",
+              "operation": "Read DynamicSummary data",
+              "description": "Read data from the DynamicSummary table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/EmailAttachmentInfo/read",
             "isDataAction": false,
             "display": {
@@ -5195,6 +5566,16 @@
               "resource": "FunctionAppLogs",
               "operation": "Read FunctionAppLogs data",
               "description": "Read data from the FunctionAppLogs table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/GCPAuditLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "GCPAuditLogs",
+              "operation": "Read GCPAuditLogs data",
+              "description": "Read data from the GCPAuditLogs table"
             }
           },
           {
@@ -5335,6 +5716,16 @@
               "resource": "HDInsightKafkaMetrics",
               "operation": "Read HDInsightKafkaMetrics data",
               "description": "Read data from the HDInsightKafkaMetrics table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/HDInsightKafkaServerLog/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "HDInsightKafkaServerLog",
+              "operation": "Read HDInsightKafkaServerLog data",
+              "description": "Read data from the HDInsightKafkaServerLog table"
             }
           },
           {
@@ -6128,6 +6519,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/MicrosoftPurviewInformationProtection/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "MicrosoftPurviewInformationProtection",
+              "operation": "Read MicrosoftPurviewInformationProtection data",
+              "description": "Read data from the MicrosoftPurviewInformationProtection table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/NetworkAccessTraffic/read",
             "isDataAction": false,
             "display": {
@@ -6155,6 +6556,16 @@
               "resource": "NetworkSessions",
               "operation": "Read NetworkSessions data",
               "description": "Read data from the NetworkSessions table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/NSPAccessLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "NSPAccessLogs",
+              "operation": "Read NSPAccessLogs data",
+              "description": "Read data from the NSPAccessLogs table"
             }
           },
           {
@@ -6278,6 +6689,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/PFTitleAuditLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "PFTitleAuditLogs",
+              "operation": "Read PFTitleAuditLogs data",
+              "description": "Read data from the PFTitleAuditLogs table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/PowerBIActivity/read",
             "isDataAction": false,
             "display": {
@@ -6348,6 +6769,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/PowerBIReportUsageWorkspace/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "PowerBIReportUsageWorkspace",
+              "operation": "Read PowerBIReportUsageWorkspace data",
+              "description": "Read data from the PowerBIReportUsageWorkspace table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/ProjectActivity/read",
             "isDataAction": false,
             "display": {
@@ -6385,6 +6816,16 @@
               "resource": "PurviewScanStatusLogs",
               "operation": "Read PurviewScanStatusLogs data",
               "description": "Read data from the PurviewScanStatusLogs table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/PurviewSecurityLogs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "PurviewSecurityLogs",
+              "operation": "Read PurviewSecurityLogs data",
+              "description": "Read data from the PurviewSecurityLogs table"
             }
           },
           {
@@ -6728,6 +7169,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/StorageAntimalwareScanResults/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "StorageAntimalwareScanResults",
+              "operation": "Read StorageAntimalwareScanResults data",
+              "description": "Read data from the StorageAntimalwareScanResults table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/StorageBlobLogs/read",
             "isDataAction": false,
             "display": {
@@ -6945,6 +7396,16 @@
               "resource": "SynapseIntegrationTriggerRuns",
               "operation": "Read SynapseIntegrationTriggerRuns data",
               "description": "Read data from the SynapseIntegrationTriggerRuns table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/SynapseLinkEvent/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "SynapseLinkEvent",
+              "operation": "Read SynapseLinkEvent data",
+              "description": "Read data from the SynapseLinkEvent table"
             }
           },
           {
@@ -7228,6 +7689,26 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/UCDOAggregatedStatus/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "UCDOAggregatedStatus",
+              "operation": "Read UCDOAggregatedStatus data",
+              "description": "Read data from the UCDOAggregatedStatus table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/UCDOStatus/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "UCDOStatus",
+              "operation": "Read UCDOStatus data",
+              "description": "Read data from the UCDOStatus table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/UCServiceUpdateStatus/read",
             "isDataAction": false,
             "display": {
@@ -7278,6 +7759,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/UrlClickEvents/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "UrlClickEvents",
+              "operation": "Read UrlClickEvents data",
+              "description": "Read data from the UrlClickEvents table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/Usage/read",
             "isDataAction": false,
             "display": {
@@ -7315,6 +7806,16 @@
               "resource": "VIAudit",
               "operation": "Read VIAudit data",
               "description": "Read data from the VIAudit table"
+            }
+          },
+          {
+            "name": "Microsoft.OperationalInsights/workspaces/query/VIIndexing/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "VIIndexing",
+              "operation": "Read VIIndexing data",
+              "description": "Read data from the VIIndexing table"
             }
           },
           {
@@ -7568,6 +8069,16 @@
             }
           },
           {
+            "name": "Microsoft.OperationalInsights/workspaces/query/WVDConnectionGraphicsDataPreview/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Azure Log Analytics",
+              "resource": "WVDConnectionGraphicsDataPreview",
+              "operation": "Read WVDConnectionGraphicsDataPreview data",
+              "description": "Read data from the WVDConnectionGraphicsDataPreview table"
+            }
+          },
+          {
             "name": "Microsoft.OperationalInsights/workspaces/query/WVDConnectionNetworkData/read",
             "isDataAction": false,
             "display": {
@@ -7662,6 +8173,51 @@
               "resource": "Operations",
               "operation": "Get Operations List",
               "description": "Lists all of the available OperationalInsights Rest API operations."
+            }
+          },
+          {
+            "name": "microsoft.operationalinsights/workspaces/searchJobs/write",
+            "display": {
+              "provider": "MicrosoftOperationalInsights",
+              "resource": "Search Job",
+              "operation": "Run a search job",
+              "description": "Run a search job."
+            }
+          },
+          {
+            "name": "microsoft.operationalinsights/workspaces/restoreLogs/write",
+            "display": {
+              "provider": "MicrosoftOperationalInsights",
+              "resource": "Restore Logs",
+              "operation": "Restore data from a table",
+              "description": "Restore data from a table."
+            }
+          },
+          {
+            "name": "microsoft.operationalinsights/workspaces/tables/write",
+            "display": {
+              "provider": "MicrosoftOperationalInsights",
+              "resource": "Tables",
+              "operation": "Create or update a log analytics table",
+              "description": "Create or update a log analytics table."
+            }
+          },
+          {
+            "name": "microsoft.operationalinsights/workspaces/tables/read",
+            "display": {
+              "provider": "MicrosoftOperationalInsights",
+              "resource": "Tables",
+              "operation": "Get a log analytics table",
+              "description": "Get a log analytics table."
+            }
+          },
+          {
+            "name": "microsoft.operationalinsights/workspaces/tables/delete",
+            "display": {
+              "provider": "MicrosoftOperationalInsights",
+              "resource": "Tables",
+              "operation": "Delete a log analytics table",
+              "description": "Delete a log analytics table."
             }
           },
           {
