@@ -43,7 +43,7 @@ class Receipt(object):
         self.merchant_name: FormField  = form.fields.get("MerchantName", FormField())
         self.merchant_address: FormField  = form.fields.get("MerchantAddress", FormField())
         self.merchant_phone_number: FormField  = form.fields.get("MerchantPhoneNumber", FormField())
-        self.receipt_items: FormField  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
+        self.receipt_items: list[ReceiptItem]  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
         self.subtotal: FormField  = form.fields.get("Subtotal", FormField())
         self.tax: FormField  = form.fields.get("Tax", FormField())
         self.tip: FormField  = form.fields.get("Tip", FormField())

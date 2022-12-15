@@ -44,7 +44,7 @@ class Receipt(object):
         self.merchant_name: FormField  = form.fields.get("MerchantName", FormField())
         self.merchant_address: FormField  = form.fields.get("MerchantAddress", FormField())
         self.merchant_phone_number: FormField  = form.fields.get("MerchantPhoneNumber", FormField())
-        self.receipt_items: FormField  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
+        self.receipt_items: list[ReceiptItem]  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
         self.subtotal: FormField  = form.fields.get("Subtotal", FormField())
         self.tax: FormField  = form.fields.get("Tax", FormField())
         self.tip: FormField  = form.fields.get("Tip", FormField())
@@ -91,20 +91,20 @@ class StronglyTypedRecognizedFormSampleAsync(object):
             receipts = await poller.result()
 
         for receipt in receipts:
-            receipt = Receipt(receipt)
-            print("Receipt Type: {} has confidence: {}".format(receipt.receipt_type.value, receipt.receipt_type.confidence))
-            print("Merchant Name: {} has confidence: {}".format(receipt.merchant_name.value, receipt.merchant_name.confidence))
-            print("Transaction Date: {} has confidence: {}".format(receipt.transaction_date.value, receipt.transaction_date.confidence))
+            my_receipt = Receipt(receipt)
+            print("Receipt Type: {} has confidence: {}".format(my_receipt.receipt_type.value, my_receipt.receipt_type.confidence))
+            print("Merchant Name: {} has confidence: {}".format(my_receipt.merchant_name.value, my_receipt.merchant_name.confidence))
+            print("Transaction Date: {} has confidence: {}".format(my_receipt.transaction_date.value, my_receipt.transaction_date.confidence))
             print("Receipt items:")
-            for item in receipt.receipt_items:
+            for item in my_receipt.receipt_items:
                 print("...Item Name: {} has confidence: {}".format(item.name.value, item.name.confidence))
                 print("...Item Quantity: {} has confidence: {}".format(item.quantity.value, item.quantity.confidence))
                 print("...Individual Item Price: {} has confidence: {}".format(item.price.value, item.price.confidence))
                 print("...Total Item Price: {} has confidence: {}".format(item.total_price.value, item.total_price.confidence))
-            print("Subtotal: {} has confidence: {}".format(receipt.subtotal.value, receipt.subtotal.confidence))
-            print("Tax: {} has confidence: {}".format(receipt.tax.value, receipt.tax.confidence))
-            print("Tip: {} has confidence: {}".format(receipt.tip.value, receipt.tip.confidence))
-            print("Total: {} has confidence: {}".format(receipt.total.value, receipt.total.confidence))
+            print("Subtotal: {} has confidence: {}".format(my_receipt.subtotal.value, my_receipt.subtotal.confidence))
+            print("Tax: {} has confidence: {}".format(my_receipt.tax.value, my_receipt.tax.confidence))
+            print("Tip: {} has confidence: {}".format(my_receipt.tip.value, my_receipt.tip.confidence))
+            print("Total: {} has confidence: {}".format(my_receipt.total.value, my_receipt.total.confidence))
 
 
 async def main():
