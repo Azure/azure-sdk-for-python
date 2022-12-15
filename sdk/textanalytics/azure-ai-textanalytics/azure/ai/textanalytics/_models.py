@@ -929,13 +929,13 @@ class HealthcareEntity(DictMixin):
         self,
         *,
         text: str,
-        normalized_text: Optional[str] = None,
         category: str,
-        subcategory: Optional[str] = None,
-        assertion: Optional["HealthcareEntityAssertion"] = None,
         length: int,
         offset: int,
         confidence_score: float,
+        subcategory: Optional[str] = None,
+        assertion: Optional["HealthcareEntityAssertion"] = None,
+        normalized_text: Optional[str] = None,
         data_sources: Optional[List["HealthcareEntityDataSource"]],
         **kwargs: Any
     ) -> None:
