@@ -8,12 +8,13 @@
 
 
 import sys
-from typing import Any, Mapping, overload, Union, Optional, TypeVar
+from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple
 import json
+import math
 
 from .. import _model_base
-from .._model_base import rest_discriminator, rest_field, AzureJSONEncoder
-from ._enums import DownstreamMessageType, UpstreamMessageType, WebPubSubDataType
+from ._model_base import rest_discriminator, rest_field, AzureJSONEncoder
+from ._enums import WebPubSubDataType
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -48,9 +49,7 @@ class JoinGroupMessage(_model_base.Model):
     ack_id: Optional[int] = rest_field(name="ackId")
 
     @overload
-    def __init__(
-        self, *, kind: str = "joinGroup", group: str, ack_id: Optional[int] = None
-    ) -> None:
+    def __init__(self, *, kind: str = "joinGroup", group: str, ack_id: Optional[int] = None) -> None:
         ...
 
     @overload
@@ -67,9 +66,7 @@ class LeaveGroupMessage(_model_base.Model):
     ack_id: Optional[int] = rest_field(name="ackId")
 
     @overload
-    def __init__(
-        self, *, kind: str = "leaveGroup", group: str, ack_id: Optional[int] = None
-    ) -> None:
+    def __init__(self, *, kind: str = "leaveGroup", group: str, ack_id: Optional[int] = None) -> None:
         ...
 
     @overload
@@ -278,9 +275,7 @@ class ConnectedMessage(_model_base.Model, discriminator="connected"):
     reconnection_token: str = rest_field(name="reconnectionToken")
 
     @overload
-    def __init__(
-        self, *, connection_id: int, user_id: str, reconnection_token: str
-    ) -> None:
+    def __init__(self, *, connection_id: int, user_id: str, reconnection_token: str) -> None:
         ...
 
     @overload
@@ -318,9 +313,7 @@ class GroupDataMessage(WebPubSubMessageBase):
 
 
 class ServerDataMessage(WebPubSubMessageBase):
-    def __init__(
-        self, data_type: WebPubSubDataType, data: Any, sequence_id: Optional[int] = None
-    ) -> None:
+    def __init__(self, data_type: WebPubSubDataType, data: Any, sequence_id: Optional[int] = None) -> None:
         super().__init__()
         self.kind: Literal["serverData"] = "serverData"
         self.data_type = data_type
@@ -474,11 +467,12 @@ class WebPubSubClientOptions:
         self.auto_restore_groups = auto_restore_groups
         self.message_retry_options = message_retry_options
 
+
 class SendMessageErrorOptions:
     def __init__(self, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
-        
+
 
 class SendMessageError(Exception):
     def __init__(self, message: str, options: SendMessageErrorOptions, *args: object) -> None:
@@ -486,6 +480,7 @@ class SendMessageError(Exception):
         self.name = "SendMessageError"
         self.ack_id = options.ack_id
         self.error_detail = options.error_detail
+
 
 class OnGroupDataMessageArgs:
     def __init__(self, message: GroupDataMessage) -> None:
@@ -496,12 +491,95 @@ class OnServerDataMessageArgs:
     def __init__(self, message: ServerDataMessage) -> None:
         self.message = message
 
+
 class CloseEvent:
     def __init__(self, close_status_code: Optional[int] = None, close_reason: Optional[str] = None) -> None:
         self.close_status_code = close_status_code
         self.close_reason = close_reason
 
+
 class OnDisconnectedArgs:
-    def __init__(self, connection_id: Optional[str]=None, message: Optional[DisconnectedMessage]=None) -> None:
+    def __init__(self, connection_id: Optional[str] = None, message: Optional[DisconnectedMessage] = None) -> None:
         self.connection_id = connection_id
         self.message = message
+
+
+class OnRejoinGroupFailedArgs:
+    def __init__(self, group: str, error: Exception) -> None:
+        self.group = group
+        self.error = error
+
+
+class SendToGroupOptions:
+    def __init__(self, no_echo: bool, fire_and_forget: bool, ack_id: Optional[int] = None) -> None:
+        self.no_echo = no_echo
+        self.fire_and_forget = fire_and_forget
+        self.ack_id = ack_id
+
+
+class SendEventOptions:
+    def __init__(self, fire_and_forget: bool, ack_id: Optional[int] = None) -> None:
+        self.fire_and_forget = fire_and_forget
+        self.ack_id = ack_id
+
+
+class JoinGroupOptions:
+    def __init__(self, ack_id: Optional[int] = None) -> None:
+        self.ack_id = ack_id
+
+
+class LeaveGroupOptions:
+    def __init__(self, ack_id: Optional[int] = None) -> None:
+        self.ack_id = ack_id
+
+
+class RetryPolicy:
+    def __init__(self, retry_options: WebPubSubRetryOptions) -> None:
+        self.retry_options = retry_options
+        self.max_retries_to_get_max_delay = math.ceil(
+            math.log2(self.retry_options.max_retry_delay_in_ms) - math.log2(self.retry_options.retry_delay_in_ms) + 1
+        )
+
+    def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
+        if retry_attempt > self.retry_options.max_retries:
+            return None
+        else:
+            if self.retry_options.mode != "Fixed":
+                return self.retry_options.retry_delay_in_ms
+            else:
+                return self.calculate_exponential_delay(retry_attempt)
+
+    def calculate_exponential_delay(self, attempt: int) -> int:
+        if attempt >= self.max_retries_to_get_max_delay:
+            return self.retry_options.max_retry_delay_in_ms
+        else:
+            return (1 << (attempt - 1)) * self.retry_options.retry_delay_in_ms
+
+
+class WebPubSubGroup:
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.is_joined = False
+
+
+class SequenceId:
+    def __init__(self) -> None:
+        self.sequence_id = 0
+        self.is_update = False
+
+    def try_update(self, sequence_id: int) -> bool:
+        self.is_update = True
+        if sequence_id > self.sequence_id:
+            self.sequence_id = sequence_id
+            return True
+        return False
+
+    def try_get_sequence_id(self) -> Tuple[bool, Union[int, None]]:
+        if self.is_update:
+            self.is_update = False
+            return (True, self.sequence_id)
+        return (False, None)
+
+    def reset(self):
+        self.sequence_id = 0
+        self.is_update = False
