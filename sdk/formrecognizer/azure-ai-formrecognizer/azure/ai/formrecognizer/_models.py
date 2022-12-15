@@ -326,7 +326,7 @@ class FormElement:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # type: ignore
         self.page_number: int = kwargs.get("page_number", None)
         self.text: str = kwargs.get("text", None)
         self.kind: str = kwargs.get("kind", None)
@@ -398,7 +398,7 @@ class RecognizedForm:
         self.fields: dict[str, FormField] = kwargs.get("fields", None)
         self.form_type: str = kwargs.get("form_type", None)
         self.page_range: FormPageRange = kwargs.get("page_range", None)
-        self.pages: list[FormPage] = kwargs.get("pages", None)
+        self.pages: list[FormPage] = kwargs.get("pages", None)  # type: ignore
         self.model_id: str = kwargs.get("model_id", None)
         self.form_type_confidence: str = kwargs.get("form_type_confidence", None)
 
@@ -595,9 +595,9 @@ class FieldData:
     def __init__(self, **kwargs: Any) -> None:
         self.page_number: int = kwargs.get("page_number", None)
         self.text: str = kwargs.get("text", None)
-        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # type: ignore
         self.field_elements: list[Union[FormElement, FormWord,
-        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)
+        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, field, read_result):
@@ -723,9 +723,9 @@ class FormPage:
         self.width: float = kwargs.get("width", None)
         self.height: float = kwargs.get("height", None)
         self.unit: str = kwargs.get("unit", None)
-        self.tables: list[FormTable] = kwargs.get("tables", None)
-        self.lines: list[FormLine] = kwargs.get("lines", None)
-        self.selection_marks: list[FormSelectionMark] = kwargs.get("selection_marks", None)
+        self.tables: list[FormTable] = kwargs.get("tables", None)  # type: ignore
+        self.lines: list[FormLine] = kwargs.get("lines", None)  # type: ignore
+        self.selection_marks: list[FormSelectionMark] = kwargs.get("selection_marks", None)  # type: ignore
 
     def __repr__(self) -> str:
         return (
@@ -804,7 +804,7 @@ class FormLine(FormElement):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="line", **kwargs)
-        self.words: list[FormWord] = kwargs.get("words", None)
+        self.words: list[FormWord] = kwargs.get("words", None)  # type: ignore
         self.appearance: TextAppearance = kwargs.get("appearance", None)
 
     @classmethod
@@ -1042,10 +1042,10 @@ class FormTable:
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number: int = kwargs.get("page_number", None)
-        self.cells: list[FormTableCell] = kwargs.get("cells", None)
+        self.cells: list[FormTableCell] = kwargs.get("cells", None)  # type: ignore
         self.row_count: int = kwargs.get("row_count", None)
         self.column_count: int = kwargs.get("column_count", None)
-        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # type: ignore
 
     def __repr__(self) -> str:
         return (
@@ -1128,13 +1128,13 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         self.column_index: int = kwargs.get("column_index", None)
         self.row_span: int = kwargs.get("row_span", 1)
         self.column_span: int = kwargs.get("column_span", 1)
-        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # type: ignore
         self.confidence: float = kwargs.get("confidence", None)
         self.is_header: bool = kwargs.get("is_header", False)
         self.is_footer: bool = kwargs.get("is_footer", False)
         self.page_number: int = kwargs.get("page_number", None)
         self.field_elements: list[Union[FormElement, FormWord,
-        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)
+        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, cell, page, read_result):
@@ -1256,9 +1256,9 @@ class CustomFormModel:
         self.status: str = kwargs.get("status", None)
         self.training_started_on: datetime.datetime = kwargs.get("training_started_on", None)
         self.training_completed_on: datetime.datetime = kwargs.get("training_completed_on", None)
-        self.submodels: list[CustomFormSubmodel] = kwargs.get("submodels", None)
-        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)
-        self.training_documents: list[TrainingDocumentInfo] = kwargs.get("training_documents", None)
+        self.submodels: list[CustomFormSubmodel] = kwargs.get("submodels", None)  # type: ignore
+        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)  # type: ignore
+        self.training_documents: list[TrainingDocumentInfo] = kwargs.get("training_documents", None)  # type: ignore
         self.model_name: str = kwargs.get("model_name", None)
         self.properties: CustomFormModelProperties = kwargs.get("properties", None)
 
@@ -1572,7 +1572,7 @@ class TrainingDocumentInfo:
         self.name: str = kwargs.get("name", None)
         self.status: str = kwargs.get("status", None)
         self.page_count: int = kwargs.get("page_count", None)
-        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)
+        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)  # type: ignore
         self.model_id: str = kwargs.get("model_id", None)
 
     @classmethod
@@ -2196,7 +2196,7 @@ class DocumentLanguage:
 
     def __init__(self, **kwargs: Any) -> None:
         self.locale: str = kwargs.get("locale", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
         self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
@@ -2259,7 +2259,7 @@ class AnalyzedDocument:
     def __init__(self, **kwargs: Any) -> None:
         self.doc_type: str = kwargs.get("doc_type", None)
         self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
         self.fields: Optional[dict[str, DocumentField]] = kwargs.get("fields", None)
         self.confidence: float = kwargs.get("confidence", None)
 
@@ -2481,7 +2481,7 @@ class DocumentKeyValueElement:
     def __init__(self, **kwargs: Any) -> None:
         self.content: str = kwargs.get("content", None)
         self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, element):
@@ -2619,7 +2619,7 @@ class DocumentLine:
         self._parent = kwargs.get("_parent", None)
         self.content: str = kwargs.get("content", None)
         self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, line, document_page):
@@ -2703,7 +2703,7 @@ class DocumentParagraph:
         self.role: Optional[str] = kwargs.get("role", None)
         self.content: str = kwargs.get("content", None)
         self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, paragraph):
@@ -2791,7 +2791,7 @@ class DocumentPage:
         self.width: Optional[float] = kwargs.get("width", None)
         self.height: Optional[float] = kwargs.get("height", None)
         self.unit: Optional[str] = kwargs.get("unit", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
         self.words: Optional[list[DocumentWord]] = kwargs.get("words", None)
         self.selection_marks: Optional[list[DocumentSelectionMark]] = kwargs.get("selection_marks", None)
         self.lines: Optional[list[DocumentLine]] = kwargs.get("lines", None)
@@ -2968,7 +2968,7 @@ class DocumentStyle:
 
     def __init__(self, **kwargs: Any) -> None:
         self.is_handwritten: Optional[bool] = kwargs.get("is_handwritten", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
         self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
@@ -3036,9 +3036,9 @@ class DocumentTable:
     def __init__(self, **kwargs: Any) -> None:
         self.row_count: int = kwargs.get("row_count", None)
         self.column_count: int = kwargs.get("column_count", None)
-        self.cells: list[DocumentTableCell] = kwargs.get("cells", None)
+        self.cells: list[DocumentTableCell] = kwargs.get("cells", None)  # type: ignore
         self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, table):
@@ -3132,7 +3132,7 @@ class DocumentTableCell:
         self.column_span: Optional[int] = kwargs.get("column_span", 1)
         self.content: str = kwargs.get("content", None)
         self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # type: ignore
 
     @classmethod
     def _from_generated(cls, cell):
@@ -3523,7 +3523,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         self.model_id: str = kwargs.get("model_id", None)
         self.content: str = kwargs.get("content", None)
         self.languages: Optional[list[DocumentLanguage]] = kwargs.get("languages", None)
-        self.pages: list[DocumentPage] = kwargs.get("pages", None)
+        self.pages: list[DocumentPage] = kwargs.get("pages", None)  # type: ignore
         self.paragraphs: Optional[list[DocumentParagraph]] = kwargs.get("paragraphs", None)
         self.tables: Optional[list[DocumentTable]] = kwargs.get("tables", None)
         self.key_value_pairs: Optional[list[DocumentKeyValuePair]] = kwargs.get("key_value_pairs", None)
