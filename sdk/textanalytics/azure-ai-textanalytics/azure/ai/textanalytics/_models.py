@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=unused-argument
 import re
 from enum import Enum
 from typing import Optional, List, Dict, Any, Union
@@ -360,6 +361,7 @@ class DetectedLanguage(DictMixin):
         iso6391_name: str,
         confidence_score: float,
         script: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.name = name
         self.iso6391_name = iso6391_name
@@ -419,7 +421,8 @@ class RecognizeEntitiesResult(DictMixin):
         entities: List["CategorizedEntity"],
         warnings: List["TextAnalyticsWarning"],
         statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.entities = entities
@@ -478,6 +481,7 @@ class RecognizePiiEntitiesResult(DictMixin):
         warnings: List["TextAnalyticsWarning"],
         statistics: Optional["TextDocumentStatistics"] = None,
         detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.entities = entities
@@ -545,7 +549,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         warnings: List["TextAnalyticsWarning"],
         statistics: Optional["TextDocumentStatistics"] = None,
         fhir_bundle: Optional[Dict[str, Any]] = None,
-        detected_language: Optional[str] = None
+        detected_language: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.entities = entities
@@ -627,6 +632,7 @@ class HealthcareRelation(DictMixin):
         relation_type: str,
         roles: List["HealthcareRelationRole"],
         confidence_score: Optional[float] = None,
+        **kwargs: Any
     ) -> None:
         self.relation_type = relation_type
         self.roles = roles
@@ -670,7 +676,7 @@ class HealthcareRelationRole(DictMixin):
     :vartype entity: ~azure.ai.textanalytics.HealthcareEntity
     """
 
-    def __init__(self, *, name: str, entity: "HealthcareEntity") -> None:
+    def __init__(self, *, name: str, entity: "HealthcareEntity", **kwargs: Any) -> None:
         self.name = name
         self.entity = entity
 
@@ -721,7 +727,8 @@ class DetectLanguageResult(DictMixin):
         id: str,  # pylint: disable=redefined-builtin
         primary_language: DetectedLanguage,
         warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["TextDocumentStatistics"] = None
+        statistics: Optional["TextDocumentStatistics"] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.primary_language = primary_language
@@ -800,6 +807,7 @@ class CategorizedEntity(DictMixin):
                 ]
             ]
         ],
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.category = category
@@ -864,6 +872,7 @@ class PiiEntity(DictMixin):
         offset: int,
         confidence_score: float,
         subcategory: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.category = category
@@ -928,6 +937,7 @@ class HealthcareEntity(DictMixin):
         offset: int,
         confidence_score: float,
         data_sources: Optional[List["HealthcareEntityDataSource"]],
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.normalized_text = normalized_text
@@ -1006,6 +1016,7 @@ class HealthcareEntityAssertion(DictMixin):
         conditionality: Optional[str] = None,
         certainty: Optional[str] = None,
         association: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.conditionality = conditionality
         self.certainty = certainty
@@ -1032,7 +1043,7 @@ class HealthcareEntityDataSource(DictMixin):
     :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
-    def __init__(self, *, entity_id: str, name: str) -> None:
+    def __init__(self, *, entity_id: str, name: str, **kwargs: Any) -> None:
         self.entity_id = entity_id
         self.name = name
 
@@ -1060,7 +1071,7 @@ class TextAnalyticsError(DictMixin):
     """
 
     def __init__(
-        self, *, code: str, message: str, target: Optional[str] = None
+        self, *, code: str, message: str, target: Optional[str] = None, **kwargs: Any
     ) -> None:
         self.code = code
         self.message = message
@@ -1091,7 +1102,7 @@ class TextAnalyticsWarning(DictMixin):
     :vartype message: str
     """
 
-    def __init__(self, *, code: str, message: str) -> None:
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         self.code = code
         self.message = message
 
@@ -1143,7 +1154,8 @@ class ExtractKeyPhrasesResult(DictMixin):
         key_phrases: List[str],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.key_phrases = key_phrases
@@ -1197,7 +1209,8 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         entities: List["LinkedEntity"],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.entities = entities
@@ -1262,7 +1275,8 @@ class AnalyzeSentimentResult(DictMixin):
         sentences: List["SentenceSentiment"],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.sentiment = sentiment
@@ -1294,7 +1308,7 @@ class TextDocumentStatistics(DictMixin):
     :vartype transaction_count: int
     """
 
-    def __init__(self, *, character_count: int, transaction_count: int) -> None:
+    def __init__(self, *, character_count: int, transaction_count: int, **kwargs: Any) -> None:
         self.character_count = character_count
         self.transaction_count = transaction_count
 
@@ -1327,7 +1341,9 @@ class DocumentError(DictMixin):
     :ivar str kind: Error kind - "DocumentError".
     """
 
-    def __init__(self, *, id: str, error: TextAnalyticsError) -> None:  # pylint: disable=redefined-builtin
+    def __init__(
+            self, *, id: str, error: TextAnalyticsError, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         self.id = id
         self.error = error
         self.is_error: Literal[True] = True
@@ -1396,7 +1412,12 @@ class DetectLanguageInput(LanguageInput):
     """
 
     def __init__(
-        self, *, id: str, text: str, country_hint: Optional[str] = None  # pylint: disable=redefined-builtin
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        country_hint: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
@@ -1445,6 +1466,7 @@ class LinkedEntity(DictMixin):
         data_source: str,
         data_source_entity_id: Optional[str] = None,
         bing_entity_search_api_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.name = name
         self.matches = matches
@@ -1501,7 +1523,7 @@ class LinkedEntityMatch(DictMixin):
     """
 
     def __init__(
-        self, *, confidence_score: float, text: str, length: int, offset: int
+        self, *, confidence_score: float, text: str, length: int, offset: int, **kwargs: Any
     ) -> None:
         self.confidence_score = confidence_score
         self.text = text
@@ -1555,7 +1577,12 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     """
 
     def __init__(
-            self, *, id: str, text: str, language: Optional[str] = None  # pylint: disable=redefined-builtin
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        language: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         super().__init__(id=id, text=text, language=language)
         self.id = id
@@ -1590,6 +1617,7 @@ class TextDocumentBatchStatistics(DictMixin):
         valid_document_count: int,
         erroneous_document_count: int,
         transaction_count: int,
+        **kwargs: Any
     ) -> None:
         self.document_count = document_count
         self.valid_document_count = valid_document_count
@@ -1656,6 +1684,7 @@ class SentenceSentiment(DictMixin):
         length: int,
         offset: int,
         mined_opinions: Optional[List["MinedOpinion"]] = None,
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.sentiment = sentiment
@@ -1717,7 +1746,7 @@ class MinedOpinion(DictMixin):
     """
 
     def __init__(
-        self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"]
+        self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"], **kwargs: Any
     ) -> None:
         self.target = target
         self.assessments = assessments
@@ -1791,6 +1820,7 @@ class TargetSentiment(DictMixin):
         confidence_scores: "SentimentConfidenceScores",
         length: int,
         offset: int,
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.sentiment = sentiment
@@ -1851,6 +1881,7 @@ class AssessmentSentiment(DictMixin):
         length: int,
         offset: int,
         is_negated: bool,
+        **kwargs: Any
     ) -> None:
         self.text = text
         self.sentiment = sentiment
@@ -1892,7 +1923,7 @@ class SentimentConfidenceScores(DictMixin):
     :vartype negative: float
     """
 
-    def __init__(self, *, positive: float, neutral: float, negative: float) -> None:
+    def __init__(self, *, positive: float, neutral: float, negative: float, **kwargs: Any) -> None:
         self.positive = positive
         self.neutral = neutral
         self.negative = negative
@@ -1980,6 +2011,7 @@ class RecognizeEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2064,6 +2096,7 @@ class AnalyzeSentimentAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
@@ -2156,6 +2189,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.domain_filter = domain_filter
@@ -2229,6 +2263,7 @@ class ExtractKeyPhrasesAction(DictMixin):
         *,
         model_version: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.disable_service_logs = disable_service_logs
@@ -2298,6 +2333,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2376,6 +2412,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
         *,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -2434,7 +2471,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
         entities: List[CategorizedEntity],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.entities = entities
@@ -2511,6 +2549,7 @@ class MultiLabelClassifyAction(DictMixin):
         deployment_name: str,
         *,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -2563,7 +2602,8 @@ class ClassifyDocumentResult(DictMixin):
         classifications: List["ClassificationCategory"],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.classifications = classifications
@@ -2640,6 +2680,7 @@ class SingleLabelClassifyAction(DictMixin):
         deployment_name: str,
         *,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
@@ -2669,7 +2710,7 @@ class ClassificationCategory(DictMixin):
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
-    def __init__(self, *, category: str, confidence_score: float) -> None:
+    def __init__(self, *, category: str, confidence_score: float, **kwargs: Any) -> None:
         self.category = category
         self.confidence_score = confidence_score
 
@@ -2750,6 +2791,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         disable_service_logs: Optional[bool] = None,
         fhir_version: Optional[str] = None,
         document_type: Optional[Union[str, HealthcareDocumentType]] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2825,6 +2867,7 @@ class ExtractSummaryAction(DictMixin):
         disable_service_logs: Optional[bool] = None,
         max_sentence_count: Optional[int] = None,
         order_by: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
@@ -2882,7 +2925,8 @@ class ExtractSummaryResult(DictMixin):
         sentences: List["SummarySentence"],
         warnings: List[TextAnalyticsWarning],
         statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.sentences = sentences
@@ -2943,7 +2987,7 @@ class SummarySentence(DictMixin):
     """
 
     def __init__(
-        self, *, text: str, rank_score: float, offset: int, length: int
+        self, *, text: str, rank_score: float, offset: int, length: int, **kwargs: Any
     ) -> None:
         self.text = text
         self.rank_score = rank_score
@@ -2997,7 +3041,8 @@ class AbstractSummaryResult(DictMixin):
         summaries: List["AbstractiveSummary"],
         warnings: List[TextAnalyticsWarning],
         detected_language: Optional[DetectedLanguage] = None,
-        statistics: Optional[TextDocumentStatistics] = None
+        statistics: Optional[TextDocumentStatistics] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.detected_language = detected_language
@@ -3050,7 +3095,7 @@ class AbstractiveSummary(DictMixin):
     """
 
     def __init__(
-        self, *, text: str, contexts: Optional[List["SummaryContext"]] = None
+        self, *, text: str, contexts: Optional[List["SummaryContext"]] = None, **kwargs: Any
     ) -> None:
         self.text = text
         self.contexts = contexts
@@ -3083,7 +3128,7 @@ class SummaryContext(DictMixin):
         The *SummaryContext* model.
     """
 
-    def __init__(self, *, offset: int, length: int) -> None:
+    def __init__(self, *, offset: int, length: int, **kwargs: Any) -> None:
         self.offset = offset
         self.length = length
 
@@ -3152,6 +3197,7 @@ class AbstractSummaryAction(DictMixin):
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.sentence_count = sentence_count
         self.model_version = model_version
@@ -3203,7 +3249,8 @@ class DynamicClassificationResult(DictMixin):
         id: str,  # pylint: disable=redefined-builtin
         classifications: List[ClassificationCategory],
         warnings: List[TextAnalyticsWarning],
-        statistics: Optional[TextDocumentStatistics] = None
+        statistics: Optional[TextDocumentStatistics] = None,
+        **kwargs: Any
     ) -> None:
         self.id = id
         self.classifications = classifications
