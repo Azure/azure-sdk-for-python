@@ -133,7 +133,7 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
-def find_type_in_override(params_override: list = None) -> Optional[str]:
+def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -141,7 +141,7 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
     return None
 
 
-def is_compute_in_override(params_override: list = None) -> bool:
+def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 

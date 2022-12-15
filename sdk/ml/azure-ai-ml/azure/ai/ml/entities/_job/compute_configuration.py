@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict
+from typing import Optional, Any, Dict
 
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
 from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
@@ -18,12 +18,12 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        target: str = None,
-        instance_count: int = None,
-        is_local: bool = None,
-        instance_type: str = None,
-        location: str = None,
-        properties: Dict[str, Any] = None,
+        target: Optional[str] = None,
+        instance_count: Optional[int] = None,
+        is_local: Optional[bool] = None,
+        instance_type: Optional[str] = None,
+        location: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         deserialize_properties: bool = False,
     ):
         self.instance_count = instance_count

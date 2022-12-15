@@ -6,7 +6,7 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Union
+from typing import Optional, Any, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -33,11 +33,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def __init__(
         self,
         *,
-        resources: ResourceConfiguration = None,
-        identity: Union[
+        resources: Optional[ResourceConfiguration] = None,
+        identity: Optional[Union[
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+            UserIdentityConfiguration]] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.

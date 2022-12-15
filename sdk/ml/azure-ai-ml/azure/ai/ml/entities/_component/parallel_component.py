@@ -5,7 +5,7 @@
 import os
 import re
 import json
-from typing import Any, Dict, Union, List
+from typing import Optional, Any, Dict, Union, List
 
 from marshmallow import Schema
 
@@ -82,25 +82,25 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        display_name: str = None,
-        retry_settings: RetrySettings = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        task: ParallelTask = None,
-        mini_batch_size: str = None,
-        partition_keys: List = None,
-        input_data: str = None,
-        resources: JobResourceConfiguration = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        code: str = None,  # promoted property from task.code
-        instance_count: int = None,  # promoted property from resources.instance_count
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        display_name: Optional[str] = None,
+        retry_settings: Optional[RetrySettings] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        task: Optional[ParallelTask] = None,
+        mini_batch_size: Optional[str] = None,
+        partition_keys: Optional[List] = None,
+        input_data: Optional[str] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        code: Optional[str] = None,  # promoted property from task.code
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
         **kwargs,
     ):

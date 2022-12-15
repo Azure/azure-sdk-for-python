@@ -5,6 +5,7 @@
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageLimitSettings as RestImageLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 
 class ImageLimitSettings(RestTranslatableMixin):
@@ -21,9 +22,9 @@ class ImageLimitSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
     ):
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials

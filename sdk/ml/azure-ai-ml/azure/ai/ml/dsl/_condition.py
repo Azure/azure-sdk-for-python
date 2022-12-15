@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Union
+from typing import Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
@@ -15,8 +15,8 @@ from azure.ai.ml.exceptions import UserErrorException
 def condition(
     condition: Union[str, bool, InputOutputBase, BaseNode, PipelineExpression],
     *,
-    true_block: BaseNode = None,
-    false_block: BaseNode = None,
+    true_block: Optional[BaseNode] = None,
+    false_block: Optional[BaseNode] = None,
 ) -> ConditionNode:
     """
     Create a condition node to provide runtime condition graph experience.

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union, List
+from typing import Optional, Dict, Union, List
 
 from marshmallow import Schema
 
@@ -42,7 +42,7 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Dict[
+        inputs: Optional[Dict[
             str,
             Union[
                 Input,
@@ -53,9 +53,9 @@ class Pipeline(BaseNode):
                 Enum,
                 "Input",
             ],
-        ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        settings: PipelineJobSettings = None,
+        ]] = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        settings: Optional[PipelineJobSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type

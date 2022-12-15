@@ -99,7 +99,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Component,
-        inputs: Dict[
+        inputs: Optional[Dict[
             str,
             Union[
                 PipelineInput,
@@ -112,16 +112,16 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 Enum,
                 "Input",
             ],
-        ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        name: str = None,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        comment: str = None,
-        compute: str = None,
-        experiment_name: str = None,
+        ]] = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        comment: Optional[str] = None,
+        compute: Optional[str] = None,
+        experiment_name: Optional[str] = None,
         **kwargs,
     ):
         self._init = True

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Union
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpSweepSettings as RestNlpSweepSettings
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
@@ -17,7 +17,7 @@ class NlpSweepSettings(RestTranslatableMixin):
             self,
             *,
             sampling_algorithm: Union[str, SamplingAlgorithmType],
-            early_termination: EarlyTerminationPolicy = None,
+            early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

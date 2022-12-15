@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import time
-from typing import Dict, Iterable, Tuple
+from typing import Optional, Dict, Iterable, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
@@ -61,7 +61,7 @@ class WorkspaceOperations:
         operation_scope: OperationScope,
         service_client: ServiceClient102022Preview,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         # ops_logger.update_info(kwargs)
@@ -96,7 +96,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get(self, name: str = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
         :param name: Name of the workspace.
@@ -112,7 +112,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get_keys(self, name: str = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 
         :param name: Name of the workspace.
@@ -126,7 +126,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: str = None) -> LROPoller:
+    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be

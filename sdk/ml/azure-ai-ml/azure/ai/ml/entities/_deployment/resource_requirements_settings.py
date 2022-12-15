@@ -9,6 +9,7 @@ import logging
 from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceRequirements
 from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 module_logger = logging.getLogger(__name__)
 
@@ -16,8 +17,8 @@ module_logger = logging.getLogger(__name__)
 class ResourceRequirementsSettings(RestTranslatableMixin):
     def __init__(
         self,
-        requests: ResourceSettings = None,
-        limits: ResourceSettings = None,
+        requests: Optional[ResourceSettings] = None,
+        limits: Optional[ResourceSettings] = None,
     ):
         self.requests = requests
         self.limits = limits

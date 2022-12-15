@@ -7,6 +7,7 @@ from abc import abstractmethod
 from azure.ai.ml import Input
 
 from .automl_job import AutoMLJob
+from typing import Optional
 
 
 class AutoMLVertical(AutoMLJob):
@@ -14,7 +15,7 @@ class AutoMLVertical(AutoMLJob):
 
     @abstractmethod
     def __init__(
-        self, task_type: str, training_data: Input, validation_data: Input, test_data: Input = None, **kwargs
+        self, task_type: str, training_data: Input, validation_data: Input, test_data: Optional[Input] = None, **kwargs
     ) -> None:
         self._task_type = task_type
         self.training_data = training_data

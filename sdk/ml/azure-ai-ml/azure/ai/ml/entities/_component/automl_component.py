@@ -7,6 +7,7 @@ from azure.ai.ml._schema.component.automl_component import AutoMLComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
+from typing import Optional
 
 
 class AutoMLComponent(Component):
@@ -21,7 +22,7 @@ class AutoMLComponent(Component):
     def __init__(
         self,
         *,
-        task: str = None,
+        task: Optional[str] = None,
         **kwargs,
     ):
         """Initialize an AutoML component entity.

@@ -48,7 +48,7 @@ class ComputeInstanceSshSettings:
     def __init__(
         self,
         *,
-        ssh_key_value: str = None,
+        ssh_key_value: Optional[str] = None,
         **kwargs,
     ):
         """[summary]
@@ -153,7 +153,7 @@ class ComputeInstance(Compute):
         network_settings: Optional[NetworkSettings] = None,
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
-        identity: IdentityConfiguration = None,
+        identity: Optional[IdentityConfiguration] = None,
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,

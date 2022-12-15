@@ -160,10 +160,10 @@ def upload_artifact(
     datastore_operation: DatastoreOperations,
     operation_scope: OperationScope,
     datastore_name: Optional[str],
-    asset_hash: str = None,
+    asset_hash: Optional[str] = None,
     show_progress: bool = True,
-    asset_name: str = None,
-    asset_version: str = None,
+    asset_name: Optional[str] = None,
+    asset_version: Optional[str] = None,
     ignore_file: IgnoreFile = IgnoreFile(None),
     sas_uri=None,
 ) -> ArtifactStorageInfo:
@@ -204,7 +204,7 @@ def download_artifact(
     destination: str,
     datastore_operation: DatastoreOperations,
     datastore_name: Optional[str],
-    datastore_info: Dict = None,
+    datastore_info: Optional[Dict] = None,
 ) -> str:
     """Download datastore path to local file or directory.
 
@@ -263,7 +263,7 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
     )
 
 
-def aml_datastore_path_exists(uri: str, datastore_operation: DatastoreOperations, datastore_info: dict = None):
+def aml_datastore_path_exists(uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None):
     """Checks whether `uri` of the form "azureml://" points to either a
     directory or a file.
 
@@ -281,13 +281,13 @@ def _upload_to_datastore(
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
     artifact_type: str,
-    datastore_name: str = None,
+    datastore_name: Optional[str] = None,
     show_progress: bool = True,
-    asset_name: str = None,
-    asset_version: str = None,
-    asset_hash: str = None,
-    ignore_file: IgnoreFile = None,
-    sas_uri: str = None,  # contains regstry sas url
+    asset_name: Optional[str] = None,
+    asset_version: Optional[str] = None,
+    asset_hash: Optional[str] = None,
+    ignore_file: Optional[IgnoreFile] = None,
+    sas_uri: Optional[str] = None,  # contains regstry sas url
 ) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
@@ -364,8 +364,8 @@ def _check_and_upload_path(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     artifact_type: str,
-    datastore_name: str = None,
-    sas_uri: str = None,
+    datastore_name: Optional[str] = None,
+    sas_uri: Optional[str] = None,
     show_progress: bool = True,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the

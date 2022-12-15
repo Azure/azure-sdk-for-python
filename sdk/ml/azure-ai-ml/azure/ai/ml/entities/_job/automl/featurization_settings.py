@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 
 class FeaturizationSettings(RestTranslatableMixin):
@@ -13,7 +14,7 @@ class FeaturizationSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        dataset_language: str = None,
+        dataset_language: Optional[str] = None,
     ):
         self.dataset_language = dataset_language
 

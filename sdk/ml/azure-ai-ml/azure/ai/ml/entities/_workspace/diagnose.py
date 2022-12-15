@@ -156,9 +156,9 @@ class DiagnoseResult:
     def __init__(
         self,
         *,
-        code: str = None,
-        level: str = None,
-        message: str = None,
+        code: Optional[str] = None,
+        level: Optional[str] = None,
+        message: Optional[str] = None,
     ):
         self.code = code
         self.level = level

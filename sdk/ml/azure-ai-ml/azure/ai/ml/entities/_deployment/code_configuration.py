@@ -8,6 +8,7 @@ from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as Rest
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from typing import Optional
 
 module_logger = logging.getLogger(__name__)
 
@@ -23,8 +24,8 @@ class CodeConfiguration(DictMixin):
 
     def __init__(
         self,
-        code: str = None,
-        scoring_script: str = None,
+        code: Optional[str] = None,
+        scoring_script: Optional[str] = None,
     ):
         self.code = code
         self._scoring_script = scoring_script

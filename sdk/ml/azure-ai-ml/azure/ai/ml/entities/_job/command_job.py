@@ -7,7 +7,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
@@ -93,12 +93,12 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     def __init__(
         self,
         *,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Union[Output]] = None,
-        limits: CommandJobLimits = None,
-        identity: Union[
-            ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
-        services: Dict[str, JobService] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Union[Output]]] = None,
+        limits: Optional[CommandJobLimits] = None,
+        identity: Optional[Union[
+            ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.COMMAND
@@ -210,7 +210,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
         return command_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
@@ -237,7 +237,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=self.distribution if self.distribution else None,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.

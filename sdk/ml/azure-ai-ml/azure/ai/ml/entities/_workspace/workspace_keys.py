@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from typing import Optional, List
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ListWorkspaceKeysResult
 
@@ -10,9 +10,9 @@ class ContainerRegistryCredential:
     def __init__(
         self,
         *,
-        location: str = None,
-        username: str = None,
-        passwords: List[str] = None
+        location: Optional[str] = None,
+        username: Optional[str] = None,
+        passwords: Optional[List[str]] = None
     ):
         """Key for ACR associated with given workspace
 
@@ -32,8 +32,8 @@ class NotebookAccessKeys:
     def __init__(
         self,
         *,
-        primary_access_key: str = None,
-        secondary_access_key: str = None
+        primary_access_key: Optional[str] = None,
+        secondary_access_key: Optional[str] = None
     ):
         """Key for notebook resource associated with given workspace
 
@@ -50,11 +50,11 @@ class WorkspaceKeys:
     def __init__(
         self,
         *,
-        user_storage_key: str = None,
-        user_storage_resource_id: str = None,
-        app_insights_instrumentation_key: str = None,
-        container_registry_credentials: ContainerRegistryCredential = None,
-        notebook_access_keys: NotebookAccessKeys = None
+        user_storage_key: Optional[str] = None,
+        user_storage_resource_id: Optional[str] = None,
+        app_insights_instrumentation_key: Optional[str] = None,
+        container_registry_credentials: Optional[ContainerRegistryCredential] = None,
+        notebook_access_keys: Optional[NotebookAccessKeys] = None
     ):
         """Workspace Keys
 

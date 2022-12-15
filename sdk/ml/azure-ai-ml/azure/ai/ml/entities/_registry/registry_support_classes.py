@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint:disable=protected-access,no-else-return
 
-from typing import List, Union
+from typing import Optional, List, Union
 
 from functools import reduce
 from copy import deepcopy
@@ -29,7 +29,7 @@ class SystemCreatedAcrAccount:
         self,
         *,
         acr_account_sku: str,
-        arm_resource_id: str = None,
+        arm_resource_id: Optional[str] = None,
     ):
         """
         Azure ML ACR account.
@@ -94,8 +94,8 @@ class SystemCreatedStorageAccount:
         *,
         storage_account_hns: bool,
         storage_account_type: StorageAccountType,
-        arm_resource_id: str = None,
-        replicated_ids: List[str] = None,
+        arm_resource_id: Optional[str] = None,
+        replicated_ids: Optional[List[str]] = None,
         replication_count = 1,
     ):
         """
@@ -129,9 +129,9 @@ class RegistryRegionDetails:
     def __init__(
         self,
         *,
-        acr_config: List[Union[str, SystemCreatedAcrAccount]] = None,
-        location: str = None,
-        storage_config: Union[List[str], SystemCreatedStorageAccount] = None,
+        acr_config: Optional[List[Union[str, SystemCreatedAcrAccount]]] = None,
+        location: Optional[str] = None,
+        storage_config: Optional[Union[List[str], SystemCreatedStorageAccount]] = None,
     ):
         """
         Details for each region a registry is in.

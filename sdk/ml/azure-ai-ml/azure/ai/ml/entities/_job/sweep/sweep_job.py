@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, Union
+from typing import Optional, Any, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SweepJob as RestSweepJob
@@ -119,27 +119,27 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     def __init__(
         self,
         *,
-        name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        identity: Union[
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        identity: Optional[Union[
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
-        compute: str = None,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        search_space: Dict[
+            UserIdentityConfiguration]] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
+        compute: Optional[str] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
+        search_space: Optional[Dict[
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ] = None,
-        objective: Objective = None,
-        trial: Union[CommandJob, CommandComponent] = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        ]] = None,
+        objective: Optional[Objective] = None,
+        trial: Optional[Union[CommandJob, CommandComponent]] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.SWEEP
@@ -210,7 +210,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         sweep_job_resource.name = self.name
         return sweep_job_resource
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         msg = "no sweep component entity"
         raise JobException(
             message=msg,

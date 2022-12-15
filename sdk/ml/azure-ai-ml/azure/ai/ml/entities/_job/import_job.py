@@ -5,7 +5,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict
+from typing import Optional, Dict
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
@@ -32,8 +32,8 @@ class ImportSource(ABC):
     def __init__(
         self,
         *,
-        type: str = None, # pylint: disable=redefined-builtin
-        connection: str = None,
+        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
     ):
         self.type = type
         self.connection = connection
@@ -62,9 +62,9 @@ class DatabaseImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: str = None, # pylint: disable=redefined-builtin
-        connection: str = None,
-        query: str = None,
+        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
+        query: Optional[str] = None,
     ):
         ImportSource.__init__(
             self,
@@ -87,9 +87,9 @@ class FileImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: str = None, # pylint: disable=redefined-builtin
-        connection: str = None,
-        path: str = None,
+        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
+        path: Optional[str] = None,
     ):
         ImportSource.__init__(
             self,
@@ -131,12 +131,12 @@ class ImportJob(Job, JobIOMixin):
     def __init__(
         self,
         *,
-        name: str = None,
-        description: str = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        source: ImportSource = None,
-        output: Output = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        source: Optional[ImportSource] = None,
+        output: Optional[Output] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.IMPORT
@@ -208,7 +208,7 @@ class ImportJob(Job, JobIOMixin):
         )
         return import_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
@@ -229,7 +229,7 @@ class ImportJob(Job, JobIOMixin):
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.

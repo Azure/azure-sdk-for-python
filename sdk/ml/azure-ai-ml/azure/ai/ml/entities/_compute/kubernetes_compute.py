@@ -43,7 +43,7 @@ class KubernetesCompute(Compute):
         *,
         namespace: Optional[str] = "default",
         properties: Optional[Dict[str, Any]] = None,
-        identity: IdentityConfiguration = None,
+        identity: Optional[IdentityConfiguration] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.KUBERNETES

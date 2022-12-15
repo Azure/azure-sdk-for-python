@@ -8,7 +8,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict
+from typing import Optional, TYPE_CHECKING, Dict
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -81,7 +81,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
 
@@ -205,8 +205,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         *,
-        deployment_name: str = None,
-        inputs: Dict[str, Input] = None,
+        deployment_name: Optional[str] = None,
+        inputs: Optional[Dict[str, Input]] = None,
         **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.

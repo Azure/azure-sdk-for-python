@@ -129,8 +129,8 @@ class Command(BaseNode):
         self,
         *,
         component: Union[str, CommandComponent],
-        compute: str = None,
-        inputs: Dict[
+        compute: Optional[str] = None,
+        inputs: Optional[Dict[
             str,
             Union[
                 Input,
@@ -140,15 +140,15 @@ class Command(BaseNode):
                 float,
                 Enum,
             ],
-        ] = None,
-        outputs: Dict[str, Union[str, Output]] = None,
-        limits: CommandJobLimits = None,
-        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
-        distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union[Environment, str] = None,
-        environment_variables: Dict = None,
-        resources: JobResourceConfiguration = None,
-        services: Dict[str, JobService] = None,
+        ]] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        limits: Optional[CommandJobLimits] = None,
+        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        environment: Optional[Union[Environment, str]] = None,
+        environment_variables: Optional[Dict] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -299,11 +299,11 @@ class Command(BaseNode):
     def set_resources(
         self,
         *,
-        instance_type: Union[str, List[str]] = None,
-        instance_count: int = None,
-        properties: Dict = None,
-        docker_args: str = None,
-        shm_size: str = None,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Command."""
@@ -338,17 +338,17 @@ class Command(BaseNode):
         primary_metric: str,
         goal: str,
         sampling_algorithm: str = "random",
-        compute: str = None,
-        max_concurrent_trials: int = None,
-        max_total_trials: int = None,
-        timeout: int = None,
-        trial_timeout: int = None,
-        early_termination_policy: Union[EarlyTerminationPolicy, str] = None,
-        search_space: Dict[
+        compute: Optional[str] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_total_trials: Optional[int] = None,
+        timeout: Optional[int] = None,
+        trial_timeout: Optional[int] = None,
+        early_termination_policy: Optional[Union[EarlyTerminationPolicy, str]] = None,
+        search_space: Optional[Dict[
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ] = None,
-        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
+        ]] = None,
+        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial

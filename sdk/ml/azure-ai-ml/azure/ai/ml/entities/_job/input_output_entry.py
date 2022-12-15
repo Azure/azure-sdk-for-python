@@ -16,7 +16,7 @@ module_logger = logging.getLogger(__name__)
 class InputOutputEntry(DictMixin):
     def __init__(
         self,
-        data: Union[str, "Data"] = None,
+        data: Optional[Union[str, "Data"]] = None,
         mode: Optional[str] = InputOutputModes.MOUNT,
         **kwargs, # pylint: disable=unused-argument
     ):

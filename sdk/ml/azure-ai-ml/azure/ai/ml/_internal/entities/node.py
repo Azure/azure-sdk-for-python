@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Optional, Dict, List, Union
 
 from marshmallow import Schema
 
@@ -42,7 +42,7 @@ class InternalBaseNode(BaseNode):
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Union[Component, str],
-        inputs: Dict[
+        inputs: Optional[Dict[
             str,
             Union[
                 PipelineInput,
@@ -55,10 +55,10 @@ class InternalBaseNode(BaseNode):
                 Enum,
                 "Input",
             ],
-        ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        properties: Dict = None,
-        compute: str = None,
+        ]] = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        properties: Optional[Dict] = None,
+        compute: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)
@@ -77,10 +77,10 @@ class InternalBaseNode(BaseNode):
     def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
-    def _to_node(self, context: Dict = None, **kwargs) -> BaseNode:
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> BaseNode:
         return self
 
-    def _to_component(self, context: Dict = None, **kwargs) -> Component:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> Component:
         return self.component
 
     def _to_job(self) -> Job:

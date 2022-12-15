@@ -118,22 +118,22 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def __init__(
         self,
         *,
-        driver_cores: int = None,
-        driver_memory: str = None,
-        executor_cores: int = None,
-        executor_memory: str = None,
-        executor_instances: int = None,
-        dynamic_allocation_enabled: bool = None,
-        dynamic_allocation_min_executors: int = None,
-        dynamic_allocation_max_executors: int = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
+        driver_cores: Optional[int] = None,
+        driver_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_instances: Optional[int] = None,
+        dynamic_allocation_enabled: Optional[bool] = None,
+        dynamic_allocation_min_executors: Optional[int] = None,
+        dynamic_allocation_max_executors: Optional[int] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
-        identity: Union[
+        identity: Optional[Union[
             Dict[str, str],
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+            UserIdentityConfiguration]] = None,
         resources: Union[Dict, SparkResourceConfiguration, None] = None,
         **kwargs,
     ):
@@ -295,7 +295,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
         return spark_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
@@ -334,7 +334,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             args=self.args,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.

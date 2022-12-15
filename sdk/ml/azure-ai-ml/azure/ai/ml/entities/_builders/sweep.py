@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Optional, Dict, List, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -99,22 +99,22 @@ class Sweep(ParameterizedSweep, BaseNode):
     def __init__(
         self,
         *,
-        trial: Union[CommandComponent, str] = None,
-        compute: str = None,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        objective: Objective = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
-        search_space: Dict[
+        trial: Optional[Union[CommandComponent, str]] = None,
+        compute: Optional[str] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
+        objective: Optional[Objective] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        search_space: Optional[Dict[
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Union[str, Output]] = None,
-        identity: Union[
+        ]] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        identity: Optional[Union[
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+            UserIdentityConfiguration]] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input

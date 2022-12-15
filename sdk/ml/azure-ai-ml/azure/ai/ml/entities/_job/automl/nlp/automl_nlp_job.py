@@ -190,8 +190,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             max_trials: Optional[int] = 1,
             max_concurrent_trials: Optional[int] = 1,
             max_nodes: Optional[int] = 1,
-            timeout_minutes: int = None,
-            trial_timeout_minutes: int = None
+            timeout_minutes: Optional[int] = None,
+            trial_timeout_minutes: Optional[int] = None
     ) -> None:
         self._limits = NlpLimitSettings(
             max_trials=max_trials,

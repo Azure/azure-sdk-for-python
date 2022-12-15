@@ -8,7 +8,7 @@ import json
 import logging
 import shutil
 from pathlib import Path
-from typing import Iterable
+from typing import Optional, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -133,7 +133,7 @@ class _LocalDeploymentHelper(object):
             deployments.append(_convert_container_to_deployment(container=container))
         return deployments
 
-    def delete(self, name: str, deployment_name: str = None):
+    def delete(self, name: str, deployment_name: Optional[str] = None):
         """Delete a local deployment.
 
         :param name: Name of endpoint associated with the deployment to delete.
@@ -153,8 +153,8 @@ class _LocalDeploymentHelper(object):
         endpoint_name: str,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
-        endpoint_metadata: dict = None,
-        deployment_metadata: dict = None,
+        endpoint_metadata: Optional[dict] = None,
+        deployment_metadata: Optional[dict] = None,
     ):
         """Create deployment locally using Docker.
 

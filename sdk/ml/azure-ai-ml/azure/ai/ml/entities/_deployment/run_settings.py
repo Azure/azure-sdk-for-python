@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict
+from typing import Optional, Any, Dict
 
 from azure.ai.ml._schema._deployment.batch.run_settings_schema import RunSettingsSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -26,12 +26,12 @@ class RunSettings:
 
     def __init__(
         self,
-        name: str = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        settings: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        settings: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
         self.name = name

@@ -35,8 +35,8 @@ class TextNerJob(AutoMLNLPJob):
     def __init__(
         self,
         *,
-        training_data: Input = None,
-        validation_data: Input = None,
+        training_data: Optional[Input] = None,
+        validation_data: Optional[Input] = None,
         primary_metric: Optional[str] = None,
         log_verbosity: Optional[str] = None,
         **kwargs
@@ -167,7 +167,7 @@ class TextNerJob(AutoMLNLPJob):
 
         return text_ner_job
 
-    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
         raise NotImplementedError()
 
     @classmethod

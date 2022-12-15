@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import json
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -63,7 +63,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_endpoint_helper: _LocalEndpointHelper,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
@@ -160,7 +160,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
-    def begin_delete(self, name: str = None, *, local: bool = False) -> LROPoller[None]:
+    def begin_delete(self, name: Optional[str] = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
         :param name: Name of the endpoint.
@@ -298,9 +298,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         *,
-        request_file: str = None,
-        deployment_name: str = None,
-        input_data: Union[str, Data] = None,  # pylint: disable=unused-argument
+        request_file: Optional[str] = None,
+        deployment_name: Optional[str] = None,
+        input_data: Optional[Union[str, Data]] = None,  # pylint: disable=unused-argument
         params_override=None,
         local: bool = False,
         **kwargs,  # pylint: disable=unused-argument
@@ -362,7 +362,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
-    def _get_online_credentials(self, name: str, auth_mode: str = None) -> Union[EndpointAuthKeys, EndpointAuthToken]:
+    def _get_online_credentials(self, name: str, auth_mode: Optional[str] = None) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         if not auth_mode:
             endpoint = self._online_operation.get(
                 resource_group_name=self._resource_group_name,

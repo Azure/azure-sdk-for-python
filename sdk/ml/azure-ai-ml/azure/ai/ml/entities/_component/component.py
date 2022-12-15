@@ -5,7 +5,7 @@ import tempfile
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import Optional, IO, AnyStr, Dict, Union
 
 from marshmallow import INCLUDE
 
@@ -91,20 +91,20 @@ class Component(
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        id: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        display_name: str = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        id: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        display_name: Optional[str] = None,
         is_deterministic: bool = True,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        yaml_str: str = None,
-        _schema: str = None,
-        creation_context: SystemData = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        _schema: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
         **kwargs,
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -296,9 +296,9 @@ class Component(
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Component":
         data = data or {}

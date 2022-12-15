@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import Optional, IO, AnyStr, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Workspace as RestWorkspace
@@ -25,21 +25,21 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        description: str = None,
-        tags: Dict[str, str] = None,
-        display_name: str = None,
-        location: str = None,
-        resource_group: str = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        display_name: Optional[str] = None,
+        location: Optional[str] = None,
+        resource_group: Optional[str] = None,
         hbi_workspace: bool = False,
-        storage_account: str = None,
-        container_registry: str = None,
-        key_vault: str = None,
-        application_insights: str = None,
-        customer_managed_key: CustomerManagedKey = None,
-        image_build_compute: str = None,
-        public_network_access: str = None,
-        identity: IdentityConfiguration = None,
-        primary_user_assigned_identity: str = None,
+        storage_account: Optional[str] = None,
+        container_registry: Optional[str] = None,
+        key_vault: Optional[str] = None,
+        application_insights: Optional[str] = None,
+        customer_managed_key: Optional[CustomerManagedKey] = None,
+        image_build_compute: Optional[str] = None,
+        public_network_access: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
 
@@ -147,9 +147,9 @@ class Workspace(Resource):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Workspace":
         data = data or {}

@@ -8,7 +8,7 @@ import logging
 import typing
 from functools import partial
 from pathlib import Path
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
@@ -102,18 +102,18 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
     def __init__(
         self,
         *,
-        component: Union[str, PipelineComponent] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
-        name: str = None,
-        description: str = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        jobs: Dict[str, BaseNode] = None,
-        settings: PipelineJobSettings = None,
-        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
-        compute: str = None,
-        tags: Dict[str, str] = None,
+        component: Optional[Union[str, PipelineComponent]] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        jobs: Optional[Dict[str, BaseNode]] = None,
+        settings: Optional[PipelineJobSettings] = None,
+        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        compute: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         # initialize io
@@ -408,7 +408,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     msg = error_msg.format("Import job in pipeline")
                     raise UserErrorException(message=msg, no_personal_data_message=msg)
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a command job to a pipeline node when load schema.
 
         (Write a pipeline job as node in yaml is not supported presently.)
@@ -605,7 +605,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         telemetry_values.pop("is_anonymous")
         return telemetry_values
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a pipeline job to pipeline component.
 
         :param context: Context of pipeline job YAML file.

@@ -7,7 +7,7 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 import yaml
 from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
@@ -28,7 +28,7 @@ class _AdditionalIncludes:
         self,
         code_path: Union[None, str],
         yaml_path: str,
-        ignore_file: InternalComponentIgnoreFile = None,
+        ignore_file: Optional[InternalComponentIgnoreFile] = None,
     ):
         self.__yaml_path = yaml_path
         self.__code_path = code_path

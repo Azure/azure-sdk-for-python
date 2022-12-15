@@ -10,7 +10,7 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Any, Callable, Dict, TypeVar, List
+from typing import Optional, Any, Callable, Dict, TypeVar, List
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings, Model
@@ -53,12 +53,12 @@ module_logger = logging.getLogger(__name__)
 def pipeline(
     func=None,
     *,
-    name: str = None,
-    version: str = None,
-    display_name: str = None,
-    description: str = None,
-    experiment_name: str = None,
-    tags: Dict[str, str] = None,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ):
     """Build a pipeline which contains all component nodes defined in this

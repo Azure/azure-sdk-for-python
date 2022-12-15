@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Classification as RestClassification
@@ -29,8 +29,8 @@ class ClassificationJob(AutoMLTabular):
     def __init__(
         self,
         *,
-        primary_metric: str = None,
-        positive_label: str = None,
+        primary_metric: Optional[str] = None,
+        positive_label: Optional[str] = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Classification task.

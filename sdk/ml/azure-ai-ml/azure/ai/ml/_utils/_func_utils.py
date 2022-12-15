@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from types import FunctionType, MethodType
-from typing import List, Union, Callable, Any
+from typing import Optional, List, Union, Callable, Any
 
 from bytecode import Instr, Bytecode
 
@@ -15,7 +15,7 @@ class PersistentLocalsFunction(object):
     function.
     """
 
-    def __init__(self, _func, *, _self: Any = None, skip_locals: List[str] = None):
+    def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
         """
         :param _func: The function to be wrapped.
         :param _self: If original func is a method, _self should be provided, which is the instance of the method.

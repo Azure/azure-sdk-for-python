@@ -71,19 +71,19 @@ class OnlineEndpoint(Endpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        scoring_uri: str = None,
-        openapi_uri: str = None,
-        provisioning_state: str = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scoring_uri: Optional[str] = None,
+        openapi_uri: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -246,9 +246,9 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Endpoint":
         data = data or {}
@@ -292,17 +292,17 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        compute: str = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        compute: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
         super(KubernetesOnlineEndpoint, self).__init__(
@@ -323,7 +323,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -386,16 +386,16 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
         public_network_access = None,
         **kwargs,
     ):
@@ -417,7 +417,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}

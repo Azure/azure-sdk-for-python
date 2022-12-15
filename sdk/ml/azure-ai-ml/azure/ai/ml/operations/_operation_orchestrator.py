@@ -379,7 +379,7 @@ class OperationOrchestrator(object):
         )
 
     # pylint: disable=unused-argument
-    def resolve_azureml_id(self, arm_id: str = None, **kwargs) -> str:
+    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
         """This function converts ARM id to name or name:version AzureML id. It
         parses the ARM id and matches the subscription Id, resource group name
         and workspace_name.

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import List, Dict, Union
+from typing import Optional, List, Dict, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
@@ -192,9 +192,9 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     def __init__(
         self,
         authority_url: str = _get_active_directory_url_from_metadata(),
-        resource_url: str = None,
-        tenant_id: str = None,
-        client_id: str = None,
+        resource_url: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
     ):
         super().__init__()
         self.authority_url = authority_url
@@ -272,8 +272,8 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 class CertificateConfiguration(BaseTenantCredentials):
     def __init__(
         self,
-        certificate: str = None,
-        thumbprint: str = None,
+        certificate: Optional[str] = None,
+        thumbprint: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -346,7 +346,7 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
+        data: Optional[Dict] = None,
     ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
         type_str = data.get(CommonYamlFields.TYPE)
         if type_str == IdentityType.MANAGED_IDENTITY:
@@ -377,7 +377,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """
 
     def __init__(
-        self, *, client_id: str = None, resource_id: str = None, object_id: str = None, principal_id: str = None
+        self, *, client_id: Optional[str] = None, resource_id: Optional[str] = None, object_id: Optional[str] = None, principal_id: Optional[str] = None
     ):
         super().__init__()
         self.type = IdentityType.MANAGED_IDENTITY
@@ -530,7 +530,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
-    def __init__(self, *, type: str, user_assigned_identities: List[ManagedIdentityConfiguration] = None, **kwargs):
+    def __init__(self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs):
         """Managed identity specification.
 
         :param type: Managed identity type, defaults to None

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from typing import Any, Callable, Dict, List, Mapping, Union
+from typing import Optional, Any, Callable, Dict, List, Mapping, Union
 
 from marshmallow import INCLUDE
 
@@ -132,9 +132,9 @@ class _PipelineNodeFactory:
         self,
         _type: str,
         *,
-        create_instance_func: Callable[..., Union[BaseNode, AutoMLJob]] = None,
-        load_from_rest_object_func: Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]] = None,
-        nested_schema: Union[NestedField, List[NestedField]] = None,
+        create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
+        load_from_rest_object_func: Optional[Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]] = None,
+        nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
     ):
         """Register a type of node.
 
@@ -167,7 +167,7 @@ class _PipelineNodeFactory:
                 for nested_field in nested_schema:
                     jobs_value_field.insert_type_sensitive_field(type_name=_type, field=nested_field)
 
-    def load_from_dict(self, *, data: dict, _type: str = None) -> Union[BaseNode, AutoMLJob]:
+    def load_from_dict(self, *, data: dict, _type: Optional[str] = None) -> Union[BaseNode, AutoMLJob]:
         """Load a node from a dict.
 
         param data: A dict containing the node's data. type data: dict
@@ -194,7 +194,7 @@ class _PipelineNodeFactory:
         return new_instance
 
     def load_from_rest_object(
-            self, *, obj: dict, _type: str = None, **kwargs
+            self, *, obj: dict, _type: Optional[str] = None, **kwargs
     ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
@@ -235,7 +235,7 @@ class _PipelineNodeFactory:
 
 def _generate_component_function(
     component_entity: Component,
-    override_definitions: Mapping[str, OverrideDefinition] = None,  # pylint: disable=unused-argument
+    override_definitions: Optional[Mapping[str, OverrideDefinition]] = None,  # pylint: disable=unused-argument
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
     def create_component_func(**kwargs):

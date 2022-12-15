@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Tuple, Dict
+from typing import Optional, Any, Callable, Tuple, Dict
 
 from marshmallow import Schema
 
@@ -90,7 +90,7 @@ class _ComponentFactory:
         self._create_schema_funcs[_type] = create_schema_func
 
     @classmethod
-    def load_from_dict(cls, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
+    def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
         """Load a component from a yaml dict.
 
         param data: the yaml dict. type data: Dict param context: the
@@ -107,7 +107,7 @@ class _ComponentFactory:
         )
 
     @classmethod
-    def load_from_rest(cls, *, obj: ComponentVersionData, _type: str = None) -> Component:
+    def load_from_rest(cls, *, obj: ComponentVersionData, _type: Optional[str] = None) -> Component:
         """Load a component from a rest object.
 
         param obj: the rest object. type obj: ComponentVersionData param

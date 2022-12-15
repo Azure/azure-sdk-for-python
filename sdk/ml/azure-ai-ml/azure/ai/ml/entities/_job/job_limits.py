@@ -10,6 +10,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import SweepJobLimits as
 from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from typing import Optional
 
 module_logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: int = None):
+    def __init__(self, *, timeout: Optional[int] = None):
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
@@ -72,10 +73,10 @@ class SweepJobLimits(JobLimits):
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_total_trials: int = None,
-        timeout: int = None,
-        trial_timeout: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_total_trials: Optional[int] = None,
+        timeout: Optional[int] = None,
+        trial_timeout: Optional[int] = None,
     ):
         super().__init__()
         self.type = JobType.SWEEP
@@ -139,7 +140,7 @@ class DoWhileJobLimits(JobLimits):
     def __init__(
         self,
         *,
-        max_iteration_count: int = None,
+        max_iteration_count: Optional[int] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         super().__init__()

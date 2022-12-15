@@ -22,6 +22,7 @@ from azure.ai.ml.exceptions import (
     MultipleLocalDeploymentsFoundError,
 )
 from azure.ai.ml._utils.utils import DockerProxy
+from typing import Optional
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -44,8 +45,8 @@ class DockerClient(object):
 
     def __init__(
         self,
-        client: "docker.DockerClient" = None,
-        vscode_client: VSCodeClient = None,
+        client: Optional["docker.DockerClient"] = None,
+        vscode_client: Optional[VSCodeClient] = None,
     ):
         self._lazy_client = client
         self._vscode_client = vscode_client if vscode_client else VSCodeClient()
@@ -108,7 +109,7 @@ class DockerClient(object):
         environment: dict,
         azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
-        prebuilt_image_name: str = None,
+        prebuilt_image_name: Optional[str] = None,
     ) -> None:
         """Builds and runs an image from provided image context.
 
@@ -231,7 +232,7 @@ class DockerClient(object):
     def delete(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         verify_exists: bool = True,
     ) -> None:
         """Deletes local endpoint / deployment.
@@ -265,7 +266,7 @@ class DockerClient(object):
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
         return get_endpoint_json_from_container(container=container)
 
-    def get_deployment(self, endpoint_name: str, deployment_name: str = None) -> dict:
+    def get_deployment(self, endpoint_name: str, deployment_name: Optional[str] = None) -> dict:
         """Returns metadata for local deployment.
 
         :param endpoint_name: name of local endpoint
@@ -279,7 +280,7 @@ class DockerClient(object):
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
         return get_deployment_json_from_container(container=container)
 
-    def get_scoring_uri(self, endpoint_name: str, deployment_name: str = None) -> str:
+    def get_scoring_uri(self, endpoint_name: str, deployment_name: Optional[str] = None) -> str:
         """Returns scoring uri for local endpoint or deployment.
 
         :param endpoint_name: name of local endpoint
@@ -322,8 +323,8 @@ class DockerClient(object):
 
     def list_containers(
         self,
-        endpoint_name: str = None,
-        deployment_name: str = None,
+        endpoint_name: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         include_stopped: bool = True,
     ) -> list:
         """Returns a list of local endpoints.
@@ -347,7 +348,7 @@ class DockerClient(object):
     def get_endpoint_container(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         verify_single_deployment: bool = False,
         include_stopped: bool = True,
     ) -> "docker.models.containers.Container":
@@ -508,7 +509,7 @@ def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
     return f"{endpoint_name}:{deployment_name}"
 
 
-def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
+def _get_container_name(endpoint_name: str, deployment_name: Optional[str] = None) -> str:
     """Returns a container name.
 
     :param endpoint_name: name of local endpoint

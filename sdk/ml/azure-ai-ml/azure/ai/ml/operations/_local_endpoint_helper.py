@@ -6,7 +6,7 @@
 
 import json
 import logging
-from typing import Iterable
+from typing import Optional, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -72,7 +72,7 @@ class _LocalEndpointHelper(object):
             else:
                 raise ex
 
-    def invoke(self, endpoint_name: str, data: dict, deployment_name: str = None) -> str:
+    def invoke(self, endpoint_name: str, data: dict, deployment_name: Optional[str] = None) -> str:
         """Invoke a local endpoint.
 
         :param endpoint_name: Name of endpoint to invoke.
@@ -161,7 +161,7 @@ class _LocalEndpointHelper(object):
 
 def _convert_container_to_endpoint(
     container: "docker.models.containers.Container",
-    endpoint_json: dict = None,
+    endpoint_json: Optional[dict] = None,
 ) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint
     entity.

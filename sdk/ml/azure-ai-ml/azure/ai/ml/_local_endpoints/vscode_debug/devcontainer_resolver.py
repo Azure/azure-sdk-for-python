@@ -32,13 +32,13 @@ class DevContainerResolver:
 
     def __init__(
         self,
-        image: str = None,
+        image: Optional[str] = None,
         dockerfile_path: str = "../Dockerfile",
-        build_context: str = None,
-        build_target: str = None,
-        environment: dict = None,
-        mounts: dict = None,
-        labels: dict = None,
+        build_context: Optional[str] = None,
+        build_target: Optional[str] = None,
+        environment: Optional[dict] = None,
+        mounts: Optional[dict] = None,
+        labels: Optional[dict] = None,
         port: int = 5001,
     ):
         """Resolves the devcontainer.json based on provided properties.

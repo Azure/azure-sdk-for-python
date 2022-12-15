@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable
+from typing import Optional, Any, Dict, Iterable
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
@@ -45,7 +45,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.List", ActivityType.PUBLICAPI)
-    def list(self, *, compute_type: str = None) -> Iterable[Compute]:
+    def list(self, *, compute_type: Optional[str] = None) -> Iterable[Compute]:
         """List computes of the workspace.
 
         :param compute_type: the type of the compute to be listed, defaults to amlcompute
@@ -237,7 +237,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.ListUsage", ActivityType.PUBLICAPI)
-    def list_usage(self, *, location: str = None) -> Iterable[Usage]:
+    def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML
         resources for given subscription and location.
 
@@ -256,7 +256,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.ListSizes", ActivityType.PUBLICAPI)
-    def list_sizes(self, *, location: str = None, compute_type: str = None) -> Iterable[VmSize]:
+    def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
         """Returns supported VM Sizes in a location.
 
         :param location: The location upon which virtual-machine-sizes is queried.

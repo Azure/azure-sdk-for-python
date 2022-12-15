@@ -73,14 +73,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     def __init__(
         self,
-        name: str = None,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        experiment_name: str = None,
-        compute: str = None,
-        services: Dict[str, JobService] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        experiment_name: Optional[str] = None,
+        compute: Optional[str] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", JobType.COMMAND)
@@ -237,9 +237,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Job":
         """Load a job object from a yaml file.

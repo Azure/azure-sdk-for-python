@@ -41,7 +41,7 @@ class BuildContext:
         self,
         *,
         dockerfile_path: Optional[str] = None,
-        path: Union[str, os.PathLike] = None,
+        path: Optional[Union[str, os.PathLike]] = None,
     ):
         self.dockerfile_path = dockerfile_path
         self.path = path
@@ -91,14 +91,14 @@ class Environment(Asset):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        image: str = None,
-        build: BuildContext = None,
-        conda_file: Union[str, os.PathLike] = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        image: Optional[str] = None,
+        build: Optional[BuildContext] = None,
+        conda_file: Optional[Union[str, os.PathLike]] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         datastore: Optional[str] = None,
         **kwargs,
     ):
@@ -175,9 +175,9 @@ class Environment(Asset):
     @classmethod
     def _load(
         cls,
-        data: dict = None,
-        yaml_path: Union[os.PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[dict] = None,
+        yaml_path: Optional[Union[os.PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Environment":
         params_override = params_override or []
@@ -323,7 +323,7 @@ class Environment(Asset):
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def _generate_anonymous_name_version(self, source: str, conda_file: str = None, inference_config: Dict = None):
+    def _generate_anonymous_name_version(self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None):
         hash_str = ""
         if source == "image":
             hash_str = hash_str.join(get_md5_string(self.image))

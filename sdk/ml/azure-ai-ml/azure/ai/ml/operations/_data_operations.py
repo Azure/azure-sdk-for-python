@@ -286,7 +286,7 @@ class DataOperations(_ScopeDependentOperations):
             return None
 
     # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -309,7 +309,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived data asset.
 
         :param name: Name of data asset.

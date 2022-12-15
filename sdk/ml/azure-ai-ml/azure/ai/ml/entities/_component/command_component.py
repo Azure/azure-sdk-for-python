@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Dict, Union
+from typing import Optional, Dict, Union
 
 from marshmallow import Schema
 
@@ -68,21 +68,21 @@ class CommandComponent(Component, ParameterizedCommand):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        command: str = None,
-        code: str = None,
-        environment: Union[str, Environment] = None,
-        distribution: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution] = None,
-        resources: JobResourceConfiguration = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        instance_count: int = None,  # promoted property from resources.instance_count
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        command: Optional[str] = None,
+        code: Optional[str] = None,
+        environment: Optional[Union[str, Environment]] = None,
+        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
-        properties: Dict = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         # validate init params are valid type

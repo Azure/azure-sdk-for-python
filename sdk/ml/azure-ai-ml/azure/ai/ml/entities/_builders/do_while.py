@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Dict, List, Union
+from typing import Optional, Dict, List, Union
 
 from marshmallow import ValidationError
 
@@ -45,7 +45,7 @@ class DoWhile(LoopNode):
         body: Pipeline,
         condition: str,
         mapping: Dict[Union[str, Output], Union[str, Input, List]],
-        limits: Union[dict, DoWhileJobLimits] = None,
+        limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs,
     ):
         # validate init params are valid type

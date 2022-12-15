@@ -7,7 +7,7 @@
 import json
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import Optional, IO, Any, AnyStr, Dict, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ConnectionAuthType,
@@ -66,7 +66,7 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
         ],
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
@@ -148,9 +148,9 @@ class WorkspaceConnection(Resource):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "WorkspaceConnection":
         data = data or {}

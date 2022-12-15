@@ -172,7 +172,7 @@ def _validate_path(path: Union[str, os.PathLike], _type: str) -> None:
 
 
 def _parse_name_version(
-    name: str = None, version_as_int: bool = True
+    name: Optional[str] = None, version_as_int: bool = True
 ) -> Tuple[Optional[str], Optional[Union[str, int]]]:
     if not name:
         return None, None
@@ -422,12 +422,12 @@ def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
 def upload_file(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
     source: str,
-    dest: str = None,
+    dest: Optional[str] = None,
     msg: Optional[str] = None,
     size: int = 0,
     show_progress: Optional[bool] = None,
     in_directory: bool = False,
-    callback: Any = None,
+    callback: Optional[Any] = None,
 ) -> None:
     """Upload a single file to remote storage.
 
@@ -682,8 +682,8 @@ def _get_latest(
     asset_name: str,
     version_operation: Any,
     resource_group_name: str,
-    workspace_name: str = None,
-    registry_name: str = None,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
 ) -> Union[ModelVersionData, DatasetVersionData]:
@@ -753,8 +753,8 @@ def _archive_or_restore(
     ],
     is_archived: bool,
     name: str,
-    version: str = None,
-    label: str = None,
+    version: Optional[str] = None,
+    label: Optional[str] = None,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
@@ -849,7 +849,7 @@ def _resolve_label_to_asset(
 
 
 class FileUploadProgressBar(tqdm):
-    def __init__(self, msg: str = None):
+    def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
         is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
         super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
@@ -862,7 +862,7 @@ class FileUploadProgressBar(tqdm):
 
 
 class DirectoryUploadProgressBar(tqdm):
-    def __init__(self, dir_size: int, msg: str = None):
+    def __init__(self, dir_size: int, msg: Optional[str] = None):
         super().__init__(unit="B", unit_scale=True, desc=msg, colour="green")
         self.total = dir_size
         self.completed = 0

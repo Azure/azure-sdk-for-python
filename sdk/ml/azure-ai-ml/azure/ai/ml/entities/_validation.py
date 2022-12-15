@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import List
+from typing import Optional, List
 
 import pydash
 import strictyaml
@@ -58,8 +58,8 @@ class Diagnostic(object):
     def create_instance(
         cls,
         yaml_path: str,
-        message: str = None,
-        error_code: str = None,
+        message: Optional[str] = None,
+        error_code: Optional[str] = None,
     ):
         """Create a diagnostic instance.
 
@@ -175,15 +175,15 @@ class MutableValidationResult(ValidationResult):
     The result is mutable and should not be exposed to the user.
     """
 
-    def __init__(self, target_obj: typing.Dict[str, typing.Any] = None):
+    def __init__(self, target_obj: Optional[typing.Dict[str, typing.Any]] = None):
         super().__init__()
         self._target_obj = target_obj
 
     def merge_with(
         self,
         target: "MutableValidationResult",
-        field_name: str = None,
-        condition_skip: typing.Callable = None,
+        field_name: Optional[str] = None,
+        condition_skip: Optional[typing.Callable] = None,
     ):
         """Merge errors & warnings in another validation results into current one.
 
@@ -220,7 +220,7 @@ class MutableValidationResult(ValidationResult):
         error_target: ErrorTarget,
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
         raise_error: bool = True,
-        schema: Schema = None,
+        schema: Optional[Schema] = None,
         additional_message: str = "",
         raise_mashmallow_error: bool = False,
     ) -> "MutableValidationResult":
@@ -276,8 +276,8 @@ class MutableValidationResult(ValidationResult):
     def append_error(
         self,
         yaml_path: str = "*",
-        message: str = None,
-        error_code: str = None,
+        message: Optional[str] = None,
+        error_code: Optional[str] = None,
     ):
         """Append an error to the validation result.
 
@@ -323,8 +323,8 @@ class MutableValidationResult(ValidationResult):
     def append_warning(
         self,
         yaml_path: str = "*",
-        message: str = None,
-        error_code: str = None,
+        message: Optional[str] = None,
+        error_code: Optional[str] = None,
     ):
         """Append a warning to the validation result.
 
@@ -471,7 +471,7 @@ class _ValidationResultBuilder:
 
     @classmethod
     def from_single_message(
-        cls, singular_error_message: str = None, yaml_path: str = "*", data: dict = None
+        cls, singular_error_message: Optional[str] = None, yaml_path: str = "*", data: Optional[dict] = None
     ):
         """Create a validation result with only 1 diagnostic.
 
@@ -489,7 +489,7 @@ class _ValidationResultBuilder:
         cls,
         error: ValidationError,
         *,
-        source_path: str = None,
+        source_path: Optional[str] = None,
         error_on_unknown_field=False
     ):
         """Create a validation result from a ValidationError, which will be

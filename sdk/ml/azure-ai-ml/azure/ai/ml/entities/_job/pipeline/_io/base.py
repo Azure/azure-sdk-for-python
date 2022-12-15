@@ -6,7 +6,7 @@
 
 import copy
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import Optional, List, Union
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -208,8 +208,8 @@ class NodeInput(InputOutputBase):
         name: str,
         meta: Input,
         *,
-        data: Union[int, bool, float, str, Output, "PipelineInput", Input] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an input of a component.
@@ -340,8 +340,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         name: str,
         meta: Output,
         *,
-        data: Union[Output, str] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[Output, str]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -443,7 +443,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: List[str] = None, **kwargs):
+    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
         """
         Initialize a PipelineInput.
 

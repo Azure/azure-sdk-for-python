@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, List, Union
+from typing import Optional, IO, AnyStr, Dict, List, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -33,13 +33,13 @@ class Registry(Resource):
         *,
         name: str,
         location: str,
-        identity: IdentityConfiguration = None,
-        tags: Dict[str, str] = None,
-        public_network_access: str = None,
-        discovery_url: str = None,
-        intellectual_property_publisher: str = None,
-        managed_resource_group: str = None,
-        mlflow_registry_uri: str = None,
+        identity: Optional[IdentityConfiguration] = None,
+        tags: Optional[Dict[str, str]] = None,
+        public_network_access: Optional[str] = None,
+        discovery_url: Optional[str] = None,
+        intellectual_property_publisher: Optional[str] = None,
+        managed_resource_group: Optional[str] = None,
+        mlflow_registry_uri: Optional[str] = None,
         replication_locations: List[RegistryRegionDetails],
         **kwargs,
     ):
@@ -120,9 +120,9 @@ class Registry(Resource):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Registry":
         data = data or {}

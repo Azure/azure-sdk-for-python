@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 import time
 from concurrent.futures import Future
-from typing import Any, Callable, Union
+from typing import Optional, Any, Callable, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -48,8 +48,8 @@ def get_duration(start_time: float) -> None:
 
 def polling_wait(
     poller: Union[LROPoller, Future],
-    message: str = None,
-    start_time: float = None,
+    message: Optional[str] = None,
+    start_time: Optional[float] = None,
     is_local=False,
     timeout=LROConfigurations.POLLING_TIMEOUT,
 ) -> Any:

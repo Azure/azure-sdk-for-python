@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Dict, Iterable
+from typing import Optional, Dict, Iterable
 
 from azure.ai.ml._restclient.v2022_10_01_preview import \
     AzureMachineLearningWorkspaces as ServiceClient102022
@@ -39,7 +39,7 @@ class RegistryOperations:
         operation_scope: OperationScope,
         service_client: ServiceClient102022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         # ops_logger.update_info(kwargs)
@@ -72,7 +72,7 @@ class RegistryOperations:
 
     # @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     @experimental
-    def get(self, name: str = None) -> Registry:
+    def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.

@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Tuple, Union
+from typing import Optional, Dict, Tuple, Union
 
 from colorama import Fore, init, Style
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -199,7 +199,7 @@ def format_create_validation_error(
     ValidationException],
     yaml_operation: bool,
     cli: bool = False,
-    raw_error: str = None,
+    raw_error: Optional[str] = None,
 ) -> str:
     """
     Formats a detailed error message for validation errors.
