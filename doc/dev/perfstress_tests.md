@@ -14,6 +14,8 @@
     - [Running the system tests](#running-the-system-tests)
 4. [Readme](#readme)
 
+[comment]: # ( cspell:ignore perfstresstest batchperftest )
+
 # The perfstress framework
 
 The perfstress framework has been added to azure-devtools module. The code can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-devtools/src/azure_devtools/perfstress_tests).
@@ -154,14 +156,14 @@ class EventPerfTest:
         # to register a failure in the event handler. This will result in the test being shutdown.
 
     def start_events_sync(self) -> None:
-        # Must be implemented - starts the asynchronous process for receiving events.
+        # Must be implemented - starts the synchronous process for receiving events.
         # This can be blocking for the duration of the test as it will be run during setup() in a thread.
 
     def stop_events_sync(self) -> None:
         # Stop the synchronous process for receiving events. Must be implemented. Will be called during cleanup.
 
     async def start_events_async(self) -> None:
-        # Must be implemented - starts the synchronous process for receiving events.
+        # Must be implemented - starts the asynchronous process for receiving events.
         # This can be blocking for the duration of the test as it will be scheduled in the eventloop during setup().
 
     async def stop_events_async(self) -> None:
@@ -289,7 +291,7 @@ class _StorageStreamTestBase(PerfStressTest):
         super().__init__(arguments)
 
         # Any common attributes
-        self.container_name = 'streamperftests'
+        self.container_name = 'stream-perf-tests'
 
         # Auth configuration
         connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
