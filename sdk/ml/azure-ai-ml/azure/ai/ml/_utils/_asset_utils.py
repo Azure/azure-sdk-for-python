@@ -293,6 +293,7 @@ def _get_file_list_content_hash(file_list) -> str:
     # cspell:disable-next-line
     # 'a.txt' with contents 'ab.txtb'
     _hash.update(str(len(file_list)).encode())
+    # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
     for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash.update(("#" + str(file_name) + "#").encode())
         _hash.update(str(os.path.getsize(file_path)).encode())
