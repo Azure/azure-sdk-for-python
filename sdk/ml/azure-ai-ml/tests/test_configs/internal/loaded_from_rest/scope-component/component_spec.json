@@ -15,11 +15,13 @@
         "AnyDirectory"
       ],
       "description": "text file on ADLS storage",
-      "is_resource": false
+      "is_resource": false,
+      "optional": false
     },
     "ExtractionClause": {
       "type": "string",
-      "description": "the extraction clause, something like \"column1:string, column2:int\""
+      "description": "the extraction clause, something like \"column1:string, column2:int\"",
+      "optional": false
     }
   },
   "outputs": {
