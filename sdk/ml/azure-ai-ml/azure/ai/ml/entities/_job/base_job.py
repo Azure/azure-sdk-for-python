@@ -35,7 +35,8 @@ class _BaseJob(Job):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name.
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
     :type experiment_name: str
     :param services: Information on services associated with the job, readonly.
     :type services: dict[str, JobService]
@@ -51,6 +52,7 @@ class _BaseJob(Job):
         super().__init__(**kwargs)
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod

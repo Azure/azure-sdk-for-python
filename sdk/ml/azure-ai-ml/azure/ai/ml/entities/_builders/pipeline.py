@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 from marshmallow import Schema
 
@@ -11,7 +11,6 @@ from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -71,7 +70,8 @@ class Pipeline(BaseNode):
             outputs=outputs,
             **kwargs,
         )
-        self._settings = settings if settings else PipelineJobSettings()
+        self._settings = None
+        self.settings = settings
 
     @property
     def component(self) -> Union[str, Component]:
@@ -87,15 +87,31 @@ class Pipeline(BaseNode):
         :return: Settings of the pipeline.
         :rtype: ~azure.ai.ml.entities.PipelineJobSettings
         """
+        if self._settings is None:
+            self._settings = PipelineJobSettings()
         return self._settings
 
     @settings.setter
     def settings(self, value):
+        if value is not None and not isinstance(value, PipelineJobSettings):
+            raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
+        # Return None here to skip validation,
+        # as input could be custom class object(parameter group).
+        return None
 
     @property
     def _skip_required_compute_missing_validation(self):
         return True
+
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> List[str]:
+        # pipeline component must be a file reference when loading from yaml,
+        # so the created object can't pass schema validation.
+        return ["component"]
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -117,7 +133,7 @@ class Pipeline(BaseNode):
             properties=self.properties,
             inputs=self._job_inputs,
             outputs=self._job_outputs,
-            jobs=self.component.jobs,
+            component=self.component,
             settings=self.settings,
         )
 
@@ -126,22 +142,16 @@ class Pipeline(BaseNode):
         # Note: settings is not supported on node,
         # jobs.create_or_update(node) will call node._to_job() at first,
         # thus won't reach here.
+        # pylint: disable=protected-access
         from azure.ai.ml.entities import PipelineComponent
 
         validation_result = super(Pipeline, self)._customized_validate()
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:
             validation_result.append_warning(message=f"{ignored_keys} ignored on node {self.name!r}.")
+        if isinstance(self.component, PipelineComponent):
+            validation_result.merge_with(self.component._customized_validate())
         return validation_result
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Pipeline":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return Pipeline(**obj)
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)

@@ -68,3 +68,10 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         """Convert a dict to an Input object."""
         obj = cls(**dict(dct.items()))
         return obj
+
+    def _to_rest_object(self):
+        return self._to_dict()
+
+    @classmethod
+    def _from_rest_object(cls, obj):
+        return cls._from_dict(obj)

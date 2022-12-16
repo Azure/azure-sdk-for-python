@@ -399,9 +399,14 @@
         "ManualApproval",
         "none"
       ]
+    },
+    "provisionGPUCluster": {
+      "type": "bool",
+      "defaultValue": "[bool('false')]"
     }
   },
   "variables": {
+    "storageAccountApiVersion": "2019-06-01",
     "tenantId": "[subscription().tenantId]",
     "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
     "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
@@ -597,6 +602,7 @@
           "keySource": "Microsoft.Storage"
         },
         "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false,
         "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
       }
     },
@@ -737,6 +743,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
       ],
+      "condition": "[parameters('provisionGPUCluster')]",
       "properties": {
         "computeType": "AmlCompute",
         "properties": {
@@ -744,7 +751,7 @@
             "minNodeCount": "[parameters('computeMinNodeCount')]",
             "maxNodeCount": "[parameters('computeMaxNodeCount')]"
           },
-          "vmSize": "STANDARD_ND6S",
+          "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6')]",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
       }
@@ -903,11 +910,11 @@
     },
     "ML_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), parameters('storageAccountApiVersion')).keys[0].value]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), variables('storageAccountApiVersion')).keys[0].value]"
     },
     "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), parameters('storageAccountApiVersion')).keys[1].value]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('testStorageAccountName')), variables('storageAccountApiVersion')).keys[1].value]"
     }
   }
 }

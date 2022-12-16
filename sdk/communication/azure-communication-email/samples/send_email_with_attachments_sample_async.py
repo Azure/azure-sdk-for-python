@@ -25,13 +25,6 @@ import sys
 import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
-from azure.communication.email import (
-    EmailContent,
-    EmailRecipients,
-    EmailAddress,
-    EmailAttachment,
-    EmailMessage
-)
 
 sys.path.append("..")
 
@@ -46,40 +39,44 @@ class EmailWithAttachmentSampleAsync(object):
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        content = EmailContent(
-            subject="This is the subject",
-            plain_text="This is the body",
-            html= "<html><h1>This is the body</h1></html>",
-        )
+        attachment_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "attachment.txt")
 
-        recipients = EmailRecipients(
-            to=[EmailAddress(email=self.recipient_address, display_name="Customer Name")]
-        )
-
-        attachment_path = os.path.join(os.path.dirname(__file__), "attachment.txt")
         with open(attachment_path, "rb") as file:
             file_bytes = file.read()
 
         file_bytes_b64 = base64.b64encode(file_bytes)
 
-        attachment = EmailAttachment(
-            name="attachment.txt",
-            attachment_type="txt",
-            content_bytes_base64=file_bytes_b64.decode()
-        )
-
-        message = EmailMessage(
-            sender=self.sender_address,
-            content=content,
-            recipients=recipients,
-            attachments=[attachment]
-        )
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "html><h1>This is the body</h1></html>"
+            },
+            "recipients": {
+                "to": [
+                    {
+                        "email": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ]
+            },
+            "sender": self.sender_address,
+            "attachments": [
+                {
+                    "name": "attachment.txt",
+                    "attachmentType": "txt",
+                    "contentBytesBase64": file_bytes_b64.decode()
+                }
+            ]
+        }
 
         async with email_client:
             try:
                 # sending the email message
                 response = await email_client.send(message)
-                print("Message ID: " + response.message_id)
+                print("Message ID: " + response['messageId'])
             except HttpResponseError as ex:
                 print(ex)
                 pass

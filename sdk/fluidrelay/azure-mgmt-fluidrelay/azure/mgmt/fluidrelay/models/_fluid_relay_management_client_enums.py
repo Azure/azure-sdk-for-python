@@ -11,48 +11,47 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CmkIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Values can be SystemAssigned or UserAssigned
-    """
+    """Values can be SystemAssigned or UserAssigned."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class KeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The key to regenerate.
-    """
+    """The key to regenerate."""
 
     KEY1 = "key1"
     KEY2 = "key2"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provision states for FluidRelay RP
-    """
+    """Provision states for FluidRelay RP."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
 
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type.
-    """
+    """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
+
 class StorageSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sku of the storage associated with the resource
-    """
+    """Sku of the storage associated with the resource."""
 
     STANDARD = "standard"
     BASIC = "basic"

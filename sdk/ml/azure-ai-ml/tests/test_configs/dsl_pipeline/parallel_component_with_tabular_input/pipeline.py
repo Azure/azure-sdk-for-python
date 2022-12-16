@@ -17,6 +17,7 @@ def generate_dsl_pipeline() -> PipelineJob:
     def parallel_in_pipeline(pipeline_job_data_path, pipeline_score_model):
         batch_inference_node1 = batch_inference1(job_data_path=pipeline_job_data_path, score_model=pipeline_score_model)
         batch_inference_node1.compute = "cpu-cluster"
+        batch_inference_node1.logging_level = "DEBUG"
 
         return {
             "pipeline_job_out_path": batch_inference_node1.outputs.job_out_path,

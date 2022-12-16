@@ -64,7 +64,7 @@ class SampleTablesQuery(object):
                 e["Name"] = random.choice(names)
                 e["Brand"] = random.choice(brands)
                 e["Color"] = random.choice(colors)
-                e["Value"] = random.randint(0, 100)
+                e["Value"] = random.randint(0, 100) # type: ignore[assignment]
                 await table_client.create_entity(entity=e)
 
     async def sample_query_entities(self):
@@ -177,5 +177,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

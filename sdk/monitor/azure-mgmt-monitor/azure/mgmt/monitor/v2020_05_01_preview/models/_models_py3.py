@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,15 +10,14 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Action(msrest.serialization.Model):
+class Action(_serialization.Model):
     """Actions to invoke when the alert fires.
 
     :ivar action_group_id: Action Group resource Id to invoke when the alert fires.
@@ -27,16 +27,12 @@ class Action(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'web_hook_properties': {'key': 'webHookProperties', 'type': '{str}'},
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "web_hook_properties": {"key": "webHookProperties", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        action_group_id: Optional[str] = None,
-        web_hook_properties: Optional[Dict[str, str]] = None,
-        **kwargs
+        self, *, action_group_id: Optional[str] = None, web_hook_properties: Optional[Dict[str, str]] = None, **kwargs
     ):
         """
         :keyword action_group_id: Action Group resource Id to invoke when the alert fires.
@@ -44,20 +40,20 @@ class Action(msrest.serialization.Model):
         :keyword web_hook_properties: The properties of a webhook object.
         :paramtype web_hook_properties: dict[str, str]
         """
-        super(Action, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_group_id = action_group_id
         self.web_hook_properties = web_hook_properties
 
 
-class Condition(msrest.serialization.Model):
+class Condition(_serialization.Model):
     """A condition of the scheduled query rule.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar query: Log query alert.
     :vartype query: str
-    :ivar time_aggregation: Required. Aggregation type. Known values are: "Count", "Average",
-     "Minimum", "Maximum", "Total".
+    :ivar time_aggregation: Aggregation type. Required. Known values are: "Count", "Average",
+     "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
     :ivar metric_measure_column: The column containing the metric measure number.
@@ -67,11 +63,11 @@ class Condition(msrest.serialization.Model):
     :vartype resource_id_column: str
     :ivar dimensions: List of Dimensions conditions.
     :vartype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
-    :ivar operator: Required. The criteria operator. Known values are: "Equals", "GreaterThan",
-     "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+    :ivar operator: The criteria operator. Required. Known values are: "Equals", "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
     :vartype operator: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
-    :ivar threshold: Required. the criteria threshold value that activates the alert.
+    :ivar threshold: the criteria threshold value that activates the alert. Required.
     :vartype threshold: float
     :ivar failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert.
@@ -80,20 +76,20 @@ class Condition(msrest.serialization.Model):
     """
 
     _validation = {
-        'time_aggregation': {'required': True},
-        'operator': {'required': True},
-        'threshold': {'required': True},
+        "time_aggregation": {"required": True},
+        "operator": {"required": True},
+        "threshold": {"required": True},
     }
 
     _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
-        'metric_measure_column': {'key': 'metricMeasureColumn', 'type': 'str'},
-        'resource_id_column': {'key': 'resourceIdColumn', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'float'},
-        'failing_periods': {'key': 'failingPeriods', 'type': 'ConditionFailingPeriods'},
+        "query": {"key": "query", "type": "str"},
+        "time_aggregation": {"key": "timeAggregation", "type": "str"},
+        "metric_measure_column": {"key": "metricMeasureColumn", "type": "str"},
+        "resource_id_column": {"key": "resourceIdColumn", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+        "operator": {"key": "operator", "type": "str"},
+        "threshold": {"key": "threshold", "type": "float"},
+        "failing_periods": {"key": "failingPeriods", "type": "ConditionFailingPeriods"},
     }
 
     def __init__(
@@ -112,8 +108,8 @@ class Condition(msrest.serialization.Model):
         """
         :keyword query: Log query alert.
         :paramtype query: str
-        :keyword time_aggregation: Required. Aggregation type. Known values are: "Count", "Average",
-         "Minimum", "Maximum", "Total".
+        :keyword time_aggregation: Aggregation type. Required. Known values are: "Count", "Average",
+         "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.TimeAggregation
         :keyword metric_measure_column: The column containing the metric measure number.
@@ -123,18 +119,18 @@ class Condition(msrest.serialization.Model):
         :paramtype resource_id_column: str
         :keyword dimensions: List of Dimensions conditions.
         :paramtype dimensions: list[~$(python-base-namespace).v2020_05_01_preview.models.Dimension]
-        :keyword operator: Required. The criteria operator. Known values are: "Equals", "GreaterThan",
-         "GreaterThanOrEqual", "LessThan", "LessThanOrEqual".
+        :keyword operator: The criteria operator. Required. Known values are: "Equals", "GreaterThan",
+         "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
         :paramtype operator: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.ConditionOperator
-        :keyword threshold: Required. the criteria threshold value that activates the alert.
+        :keyword threshold: the criteria threshold value that activates the alert. Required.
         :paramtype threshold: float
         :keyword failing_periods: The minimum number of violations required within the selected
          lookback time window required to raise an alert.
         :paramtype failing_periods:
          ~$(python-base-namespace).v2020_05_01_preview.models.ConditionFailingPeriods
         """
-        super(Condition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.query = query
         self.time_aggregation = time_aggregation
         self.metric_measure_column = metric_measure_column
@@ -145,96 +141,83 @@ class Condition(msrest.serialization.Model):
         self.failing_periods = failing_periods
 
 
-class ConditionFailingPeriods(msrest.serialization.Model):
+class ConditionFailingPeriods(_serialization.Model):
     """The minimum number of violations required within the selected lookback time window required to raise an alert.
 
     :ivar number_of_evaluation_periods: The number of aggregated lookback points. The lookback time
      window is calculated based on the aggregation granularity (windowSize) and the selected number
      of aggregated points. Default value is 1.
-    :vartype number_of_evaluation_periods: long
+    :vartype number_of_evaluation_periods: int
     :ivar min_failing_periods_to_alert: The number of violations to trigger an alert. Should be
      smaller or equal to numberOfEvaluationPeriods. Default value is 1.
-    :vartype min_failing_periods_to_alert: long
+    :vartype min_failing_periods_to_alert: int
     """
 
     _attribute_map = {
-        'number_of_evaluation_periods': {'key': 'numberOfEvaluationPeriods', 'type': 'long'},
-        'min_failing_periods_to_alert': {'key': 'minFailingPeriodsToAlert', 'type': 'long'},
+        "number_of_evaluation_periods": {"key": "numberOfEvaluationPeriods", "type": "int"},
+        "min_failing_periods_to_alert": {"key": "minFailingPeriodsToAlert", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        number_of_evaluation_periods: Optional[int] = 1,
-        min_failing_periods_to_alert: Optional[int] = 1,
-        **kwargs
-    ):
+    def __init__(self, *, number_of_evaluation_periods: int = 1, min_failing_periods_to_alert: int = 1, **kwargs):
         """
         :keyword number_of_evaluation_periods: The number of aggregated lookback points. The lookback
          time window is calculated based on the aggregation granularity (windowSize) and the selected
          number of aggregated points. Default value is 1.
-        :paramtype number_of_evaluation_periods: long
+        :paramtype number_of_evaluation_periods: int
         :keyword min_failing_periods_to_alert: The number of violations to trigger an alert. Should be
          smaller or equal to numberOfEvaluationPeriods. Default value is 1.
-        :paramtype min_failing_periods_to_alert: long
+        :paramtype min_failing_periods_to_alert: int
         """
-        super(ConditionFailingPeriods, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.number_of_evaluation_periods = number_of_evaluation_periods
         self.min_failing_periods_to_alert = min_failing_periods_to_alert
 
 
-class Dimension(msrest.serialization.Model):
+class Dimension(_serialization.Model):
     """Dimension splitting and filtering definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of the dimension.
+    :ivar name: Name of the dimension. Required.
     :vartype name: str
-    :ivar operator: Required. Operator for dimension values. Known values are: "Include",
+    :ivar operator: Operator for dimension values. Required. Known values are: "Include" and
      "Exclude".
     :vartype operator: str or
      ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
-    :ivar values: Required. List of dimension values.
+    :ivar values: List of dimension values. Required.
     :vartype values: list[str]
     """
 
     _validation = {
-        'name': {'required': True},
-        'operator': {'required': True},
-        'values': {'required': True},
+        "name": {"required": True},
+        "operator": {"required": True},
+        "values": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        operator: Union[str, "_models.DimensionOperator"],
-        values: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, operator: Union[str, "_models.DimensionOperator"], values: List[str], **kwargs):
         """
-        :keyword name: Required. Name of the dimension.
+        :keyword name: Name of the dimension. Required.
         :paramtype name: str
-        :keyword operator: Required. Operator for dimension values. Known values are: "Include",
+        :keyword operator: Operator for dimension values. Required. Known values are: "Include" and
          "Exclude".
         :paramtype operator: str or
          ~$(python-base-namespace).v2020_05_01_preview.models.DimensionOperator
-        :keyword values: Required. List of dimension values.
+        :keyword values: List of dimension values. Required.
         :paramtype values: list[str]
         """
-        super(Dimension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.operator = operator
         self.values = values
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -242,31 +225,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorContract(msrest.serialization.Model):
+class ErrorContract(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar error: The error details.
@@ -274,24 +253,19 @@ class ErrorContract(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorResponse"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
         """
         :keyword error: The error details.
         :paramtype error: ~$(python-base-namespace).v2020_05_01_preview.models.ErrorResponse
         """
-        super(ErrorContract, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -310,28 +284,24 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -339,7 +309,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.additional_info = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -355,30 +325,26 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class ScheduledQueryRuleCriteria(msrest.serialization.Model):
+class ScheduledQueryRuleCriteria(_serialization.Model):
     """The rule criteria that defines the conditions of the scheduled query rule.
 
     :ivar all_of: A list of conditions to evaluate against the specified scopes.
@@ -386,20 +352,15 @@ class ScheduledQueryRuleCriteria(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'all_of': {'key': 'allOf', 'type': '[Condition]'},
+        "all_of": {"key": "allOf", "type": "[Condition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        all_of: Optional[List["_models.Condition"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs):
         """
         :keyword all_of: A list of conditions to evaluate against the specified scopes.
         :paramtype all_of: list[~$(python-base-namespace).v2020_05_01_preview.models.Condition]
         """
-        super(ScheduledQueryRuleCriteria, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.all_of = all_of
 
 
@@ -418,46 +379,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class ScheduledQueryRuleResource(TrackedResource):
+class ScheduledQueryRuleResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The scheduled query rule resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -472,9 +427,9 @@ class ScheduledQueryRuleResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar kind: Metadata used by portal/tooling/etc to render different UX experiences for
      resources of the same type; e.g. ApiApps are a kind of Microsoft.Web/sites type.  If supported,
@@ -495,7 +450,7 @@ class ScheduledQueryRuleResource(TrackedResource):
     :ivar display_name: The display name of the alert rule.
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-     severest. Known values are: 0, 1, 2, 3, 4.
+     severest. Known values are: 0, 1, 2, 3, and 4.
     :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
@@ -527,38 +482,38 @@ class ScheduledQueryRuleResource(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'readonly': True},
-        'etag': {'readonly': True},
-        'created_with_api_version': {'readonly': True},
-        'is_legacy_log_analytics_rule': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"readonly": True},
+        "etag": {"readonly": True},
+        "created_with_api_version": {"readonly": True},
+        "is_legacy_log_analytics_rule": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'created_with_api_version': {'key': 'properties.createdWithApiVersion', 'type': 'str'},
-        'is_legacy_log_analytics_rule': {'key': 'properties.isLegacyLogAnalyticsRule', 'type': 'bool'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'float'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
-        'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
-        'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
-        'override_query_time_range': {'key': 'properties.overrideQueryTimeRange', 'type': 'duration'},
-        'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
-        'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
-        'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
-        'actions': {'key': 'properties.actions', 'type': '[Action]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
+        "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "float"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "evaluation_frequency": {"key": "properties.evaluationFrequency", "type": "duration"},
+        "window_size": {"key": "properties.windowSize", "type": "duration"},
+        "override_query_time_range": {"key": "properties.overrideQueryTimeRange", "type": "duration"},
+        "target_resource_types": {"key": "properties.targetResourceTypes", "type": "[str]"},
+        "criteria": {"key": "properties.criteria", "type": "ScheduledQueryRuleCriteria"},
+        "mute_actions_duration": {"key": "properties.muteActionsDuration", "type": "duration"},
+        "actions": {"key": "properties.actions", "type": "[Action]"},
     }
 
     def __init__(
@@ -581,16 +536,16 @@ class ScheduledQueryRuleResource(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword description: The description of the scheduled query rule.
         :paramtype description: str
         :keyword display_name: The display name of the alert rule.
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-         severest. Known values are: 0, 1, 2, 3, 4.
+         severest. Known values are: 0, 1, 2, 3, and 4.
         :paramtype severity: float or
          ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
@@ -621,7 +576,7 @@ class ScheduledQueryRuleResource(TrackedResource):
         :keyword actions:
         :paramtype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
         """
-        super(ScheduledQueryRuleResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.kind = None
         self.etag = None
         self.created_with_api_version = None
@@ -640,7 +595,7 @@ class ScheduledQueryRuleResource(TrackedResource):
         self.actions = actions
 
 
-class ScheduledQueryRuleResourceCollection(msrest.serialization.Model):
+class ScheduledQueryRuleResourceCollection(_serialization.Model):
     """Represents a collection of scheduled query rule resources.
 
     :ivar value: The values for the scheduled query rule resources.
@@ -649,30 +604,25 @@ class ScheduledQueryRuleResourceCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ScheduledQueryRuleResource]'},
+        "value": {"key": "value", "type": "[ScheduledQueryRuleResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ScheduledQueryRuleResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ScheduledQueryRuleResource"]] = None, **kwargs):
         """
         :keyword value: The values for the scheduled query rule resources.
         :paramtype value:
          list[~$(python-base-namespace).v2020_05_01_preview.models.ScheduledQueryRuleResource]
         """
-        super(ScheduledQueryRuleResourceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
+class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The scheduled query rule resource for patch operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar created_with_api_version: The api-version used when creating this alert rule.
     :vartype created_with_api_version: str
@@ -683,7 +633,7 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     :ivar display_name: The display name of the alert rule.
     :vartype display_name: str
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-     severest. Known values are: 0, 1, 2, 3, 4.
+     severest. Known values are: 0, 1, 2, 3, and 4.
     :vartype severity: float or ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
@@ -715,26 +665,26 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
     """
 
     _validation = {
-        'created_with_api_version': {'readonly': True},
-        'is_legacy_log_analytics_rule': {'readonly': True},
+        "created_with_api_version": {"readonly": True},
+        "is_legacy_log_analytics_rule": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'created_with_api_version': {'key': 'properties.createdWithApiVersion', 'type': 'str'},
-        'is_legacy_log_analytics_rule': {'key': 'properties.isLegacyLogAnalyticsRule', 'type': 'bool'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'severity': {'key': 'properties.severity', 'type': 'float'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
-        'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
-        'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
-        'override_query_time_range': {'key': 'properties.overrideQueryTimeRange', 'type': 'duration'},
-        'target_resource_types': {'key': 'properties.targetResourceTypes', 'type': '[str]'},
-        'criteria': {'key': 'properties.criteria', 'type': 'ScheduledQueryRuleCriteria'},
-        'mute_actions_duration': {'key': 'properties.muteActionsDuration', 'type': 'duration'},
-        'actions': {'key': 'properties.actions', 'type': '[Action]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
+        "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
+        "description": {"key": "properties.description", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "severity": {"key": "properties.severity", "type": "float"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "evaluation_frequency": {"key": "properties.evaluationFrequency", "type": "duration"},
+        "window_size": {"key": "properties.windowSize", "type": "duration"},
+        "override_query_time_range": {"key": "properties.overrideQueryTimeRange", "type": "duration"},
+        "target_resource_types": {"key": "properties.targetResourceTypes", "type": "[str]"},
+        "criteria": {"key": "properties.criteria", "type": "ScheduledQueryRuleCriteria"},
+        "mute_actions_duration": {"key": "properties.muteActionsDuration", "type": "duration"},
+        "actions": {"key": "properties.actions", "type": "[Action]"},
     }
 
     def __init__(
@@ -756,14 +706,14 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of the scheduled query rule.
         :paramtype description: str
         :keyword display_name: The display name of the alert rule.
         :paramtype display_name: str
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
-         severest. Known values are: 0, 1, 2, 3, 4.
+         severest. Known values are: 0, 1, 2, 3, and 4.
         :paramtype severity: float or
          ~$(python-base-namespace).v2020_05_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
@@ -794,7 +744,7 @@ class ScheduledQueryRuleResourcePatch(msrest.serialization.Model):
         :keyword actions:
         :paramtype actions: list[~$(python-base-namespace).v2020_05_01_preview.models.Action]
         """
-        super(ScheduledQueryRuleResourcePatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.created_with_api_version = None
         self.is_legacy_log_analytics_rule = None

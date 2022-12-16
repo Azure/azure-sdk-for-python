@@ -49,7 +49,7 @@ class ParameterizedCommand:
         code: str = None,
         environment_variables: Dict = None,
         distribution: Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union["Environment", str] = None,
+        environment: Union[Environment, str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

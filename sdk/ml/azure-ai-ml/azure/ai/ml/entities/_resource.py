@@ -13,6 +13,9 @@ from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
 
+from azure.ai.ml._utils.utils import dump_yaml
+from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
+
 from ._system_data import SystemData
 
 
@@ -39,8 +42,12 @@ class Resource(ABC):
         :type description: str, optional
         :param tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
         :type tags: Dict, optional
-        :param properties: The asset property dictionary., defaults to None
+        :param properties: The asset property dictionary. Defaults to None
         :type properties: Dict, optional
+        :param: print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
+            False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+            notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
+        :type print_as_yaml: bool, optional
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -48,6 +55,10 @@ class Resource(ABC):
         self.description = description
         self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
+        # Conditional assignment to prevent entity bloat when unused.
+        print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
+        if print_as_yaml:
+            self.print_as_yaml = True
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
@@ -97,9 +108,7 @@ class Resource(ABC):
         return self._base_path
 
     @abstractmethod
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
         :param dest: The destination to receive this object's data.
@@ -109,16 +118,10 @@ class Resource(ABC):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
-        pass
 
     @classmethod
+    # pylint: disable=unused-argument
     def _resolve_cls_and_type(cls, data, params_override):
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
@@ -151,9 +154,12 @@ class Resource(ABC):
         :return: Resource
         :rtype: Resource
         """
-        pass
 
-    def _get_arm_resource(self, **kwargs):
+    # pylint: disable:unused-argument
+    def _get_arm_resource(
+        self,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         """Get arm resource.
 
         :param kwargs: A dictionary of additional configuration parameters.
@@ -164,7 +170,9 @@ class Resource(ABC):
         """
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
+        # pylint: disable=no-member
         template = get_template(resource_type=self._arm_type)
+        # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"
         return template
 
@@ -178,6 +186,7 @@ class Resource(ABC):
         :rtype: dict
         """
         resource = self._get_arm_resource(**kwargs)
+        # pylint: disable=no-member
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
 
@@ -186,4 +195,8 @@ class Resource(ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
+        if hasattr(self, "print_as_yaml") and self.print_as_yaml:
+            # pylint: disable=no-member
+            yaml_serialized = self._to_dict()
+            return dump_yaml(yaml_serialized, default_flow_style=False)
         return self.__repr__()

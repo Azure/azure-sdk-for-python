@@ -1,0 +1,23 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
+    method: DELETE
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/connections/fake%20connection%20id/groups?api-version=2022-11-01
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: '2022-11-01'
+      connection: keep-alive
+      date: Mon, 21 Nov 2022 03:13:44 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 204
+      message: No Content
+    url: https://some-wps.webpubsub.azure.com/api/hubs/hub/connections/fake%20connection%20id/groups?api-version=2022-11-01
+version: 1

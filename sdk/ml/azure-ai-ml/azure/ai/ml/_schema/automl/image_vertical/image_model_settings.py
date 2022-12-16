@@ -6,9 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -16,7 +14,6 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
 )
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import (
     ImageClassificationModelNames,
@@ -28,12 +25,10 @@ from azure.ai.ml.constants._job.automl import (
 class ImageModelSettingsSchema(metaclass=PatchedSchemaMeta):
     ams_gradient = fields.Bool()
     advanced_settings = fields.Str()
-    augmentations = fields.Str()
     beta1 = fields.Float()
     beta2 = fields.Float()
     checkpoint_frequency = fields.Int()
     checkpoint_run_id = fields.Str()
-    checkpoint_model = InputsField()
     distributed = fields.Bool()
     early_stopping = fields.Bool()
     early_stopping_delay = fields.Int()
@@ -75,7 +70,8 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
     weighted_loss = fields.Int()
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsClassification:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
         return ImageModelSettingsClassification(**data)
 
 
@@ -104,7 +100,8 @@ class ImageModelSettingsObjectDetectionSchema(ImageDetectionSegmentationCommonSc
     )
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
         return ImageModelSettingsObjectDetection(**data)
 
 
@@ -114,5 +111,6 @@ class ImageModelSettingsInstanceSegmentationSchema(ImageDetectionSegmentationCom
     )
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
         return ImageModelSettingsObjectDetection(**data)

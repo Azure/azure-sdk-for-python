@@ -37,7 +37,7 @@ active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
 #--Begin DataLake Service Samples-----------------------------------------------------------------
 
-async def data_lake_service_sample():
+async def main():
 
     # Instantiate a DataLakeServiceClient using a connection string
     # [START create_datalake_service_client]
@@ -113,4 +113,4 @@ async def data_lake_service_sample():
     await token_credential.close()
 
 if __name__ == '__main__':
-    asyncio.run(data_lake_service_sample())
+    asyncio.run(main())

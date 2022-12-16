@@ -680,7 +680,7 @@ def encrypt_blob(blob, key_encryption_key, version):
 
     elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
-        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        content_encryption_key = os.urandom(32)
         initialization_vector = None
 
         data = BytesIO(blob)
@@ -909,7 +909,7 @@ def encrypt_queue_message(message, key_encryption_key, version):
 
     elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
-        content_encryption_key = AESGCM.generate_key(bit_length=256)
+        content_encryption_key = os.urandom(32)
         initialization_vector = None
 
         # The nonce MUST be different for each key

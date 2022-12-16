@@ -18,7 +18,6 @@ from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
 from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._utils._arm_id_utils import (
     AMLVersionedArmId,
@@ -44,6 +43,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from azure.ai.ml.exceptions import ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ class StringTransformedEnum(Field):
         # pop marshmallow unknown args to avoid warnings
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
+        self.pass_original = kwargs.pop("pass_original", False)
         super().__init__(**kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
@@ -70,13 +71,13 @@ class StringTransformedEnum(Field):
         if not value:
             return
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
-        raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
+            return value if self.pass_original else self.casing_transform(value)
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
-        raise ValidationError(f"Value {value} passed is not in set {self.allowed_values}")
+            return value if self.pass_original else self.casing_transform(value)
+        raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
 class DumpableEnumField(StringTransformedEnum):
@@ -92,6 +93,11 @@ class LocalPathField(fields.Str):
     Can only be used as fields of PathAwareSchema.
     """
 
+    default_error_messages = {
+        "invalid_path": "The filename, directory name, or volume label syntax is incorrect.",
+        "path_not_exist": "Can't find {allow_type} in resolved absolute path: {path}.",
+    }
+
     def __init__(self, allow_dir=True, allow_file=True):
         self._allow_dir = allow_dir
         self._allow_file = allow_file
@@ -105,28 +111,50 @@ class LocalPathField(fields.Str):
             schema["readonly"] = True
         return schema
 
+    def _resolve_path(self, value) -> Path:
+        """Resolve path to absolute path based on base_path in context.
+        Will resolve the path if it's already an absolute path.
+        """
+        result = Path(value)
+        base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+        if not result.is_absolute():
+            result = base_path / result
+        try:
+            return result.resolve()
+        except OSError:
+            raise self.make_error("invalid_path")
+
+    @property
+    def allowed_path_type(self) -> str:
+        if self._allow_dir and self._allow_file:
+            return "directory or file"
+        if self._allow_dir:
+            return "directory"
+        return "file"
+
+    def _validate(self, value):
+        # inherited validations like required, allow_none, etc.
+        super(LocalPathField, self)._validate(value)
+
+        if value is None:
+            return
+        path = self._resolve_path(value)
+        if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
+            return
+        raise self.make_error("path_not_exist", path=path.as_posix(), allow_type=self.allowed_path_type)
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
+        # do not block serializing None even if required or not allow_none.
         if value is None:
             return None
         self._validate(value)
-        return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
-
-    def _validate(self, value):
-        try:
-            path = Path(value)
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-            if not path.is_absolute():
-                path = base_path / path
-                path.resolve()
-            if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
-                return super(LocalPathField, self)._validate(value)
-        except OSError:
-            pass
-        if self._allow_dir and self._allow_file:
-            raise ValidationError(f"{value} is not a valid path")
-        if self._allow_dir:
-            raise ValidationError(f"{value} is not a valid directory")
-        raise ValidationError(f"{value} is not a valid file")
+        # always dump path as absolute path in string as base_path will be dropped after serialization
+        return super(LocalPathField, self)._serialize(
+            self._resolve_path(value).as_posix(),
+            attr,
+            obj,
+            **kwargs
+        )
 
 
 class SerializeValidatedUrl(fields.Url):
@@ -148,6 +176,9 @@ class SerializeValidatedUrl(fields.Url):
 
 
 class DataBindingStr(fields.Str):
+    """A string represents a binding to some data in pipeline job, e.g.: parent.jobs.inputs.input1,
+    parent.jobs.node1.outputs.output1."""
+
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "pattern": r"\$\{\{\s*(\S*)\s*\}\}"}
         if self.name is not None:
@@ -173,6 +204,28 @@ class DataBindingStr(fields.Str):
         if is_data_binding_expression(value, is_singular=False):
             return super(DataBindingStr, self)._validate(value)
         raise ValidationError(f"Value passed is not a data binding string: {value}")
+
+
+class NodeBindingStr(DataBindingStr):
+    """A string represents a binding to some node in pipeline job, e.g.: parent.jobs.node1."""
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        # None value handling logic is inside _serialize but outside _validate/_deserialize
+        if value is None:
+            return None
+
+        from azure.ai.ml.entities._builders import BaseNode
+
+        if isinstance(value, BaseNode):
+            value = f"${{{{parent.jobs.{value.name}}}}}"
+
+        self._validate(value)
+        return super(NodeBindingStr, self)._serialize(value, attr, obj, **kwargs)
+
+    def _validate(self, value):
+        if is_data_binding_expression(value, is_singular=True):
+            return super(NodeBindingStr, self)._validate(value)
+        raise ValidationError(f"Value passed is not a node binding string: {value}")
 
 
 class DateTimeStr(fields.Str):
@@ -206,7 +259,7 @@ class ArmStr(Field):
     def _jsonschema_type_mapping(self):
         schema = {
             "type": "string",
-            "pattern": "^azureml:.*",
+            "pattern": self.pattern,
             "arm_type": self.azureml_type,
         }
         if self.name is not None:
@@ -514,7 +567,7 @@ class TypeSensitiveUnionField(UnionField):
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
             raise ValidationError(
-                message={self.type_field_name: f"Value {value_type} passed is not in set {self.allowed_types}"},
+                message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
         # if value has type field and its value match at least 1 allowed value, raise first matched
@@ -627,6 +680,28 @@ def DistributionField(**kwargs):
     )
 
 
+def PrimitiveValueField(**kwargs):
+    return UnionField(
+        [
+            # Note: order matters here - to make sure value parsed correctly.
+            # By default when strict is false, marshmallow downcasts float to int.
+            # Setting it to true will throw a validation error when loading a float to int.
+            # https://github.com/marshmallow-code/marshmallow/pull/755
+            # Use DumpableIntegerField to make sure there will be validation error when
+            # loading/dumping a float to int.
+            # note that this field can serialize bool instance but cannot deserialize bool instance.
+            DumpableIntegerField(strict=True),
+            # Use DumpableFloatField with strict of True to avoid '1'(str) serialized to 1.0(float)
+            DumpableFloatField(strict=True),
+            # put string schema after Int and Float to make sure they won't dump to string
+            fields.Str(),
+            # fields.Bool comes last since it'll parse anything non-falsy to True
+            fields.Bool(),
+        ],
+        **kwargs,
+    )
+
+
 class VersionField(Field):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -650,8 +725,23 @@ class VersionField(Field):
 class DumpableIntegerField(fields.Integer):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
-            raise ValidationError("Given value is not an integer")
+            # this implementation can serialize bool to bool
+            raise self.make_error("invalid", input=value)
         return super()._serialize(value, attr, obj, **kwargs)
+
+
+class DumpableFloatField(fields.Float):
+    def __init__(self, *, strict: bool = False, allow_nan: bool = False, as_string: bool = False, **kwargs):
+        self.strict = strict
+        super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
+
+    def _validated(self, value):
+        if self.strict and not isinstance(value, float):
+            raise self.make_error("invalid", input=value)
+        return super()._validated(value)
+
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
+        return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):

@@ -356,7 +356,7 @@ class OpenShiftManagedClusterBaseIdentityProvider(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIdentityProvider):
@@ -408,7 +408,7 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
         :paramtype customer_admin_group_id: str
         """
         super().__init__(**kwargs)
-        self.kind = "AADIdentityProvider"  # type: str
+        self.kind: str = "AADIdentityProvider"
         self.client_id = client_id
         self.secret = secret
         self.tenant_id = tenant_id

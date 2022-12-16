@@ -35,4 +35,5 @@ __all__ = [
     "EnvironmentOperations",
     "ComponentOperations",
     "WorkspaceConnectionsOperations",
+    "RegistryOperations",
 ]

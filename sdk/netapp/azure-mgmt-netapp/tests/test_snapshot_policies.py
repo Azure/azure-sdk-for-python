@@ -1,5 +1,4 @@
 import time
-from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
@@ -54,8 +53,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
         if self.is_live:
-            self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
-
+            from azure.mgmt.network import NetworkManagementClient
+            self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
@@ -71,7 +70,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(snapshot_policies_list)) == 0
-
+        if self.is_live:
+            time.sleep(50)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
 
     @recorded_by_proxy
@@ -94,6 +94,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
 
         snapshot_policies_list = self.client.snapshot_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(snapshot_policies_list)) == 0
+        if self.is_live:
+            time.sleep(50)
 
         delete_account(self.client, TEST_RG, ACCOUNT1)
 
@@ -106,6 +108,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         assert snapshot_policy.name == ACCOUNT1 + "/" + TEST_SNAPSHOT_POLICY_1
 
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            time.sleep(50)
         delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
@@ -127,6 +131,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         assert snapshot_policy.daily_schedule.minute == 50
 
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            time.sleep(50)
         delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
@@ -153,6 +159,8 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, live=self.is_live)
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
         delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, live=self.is_live)
+        if self.is_live:
+            time.sleep(50)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
         if self.is_live:
             self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)

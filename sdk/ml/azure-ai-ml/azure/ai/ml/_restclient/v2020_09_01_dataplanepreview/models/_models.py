@@ -449,6 +449,187 @@ class ComputeConfiguration(msrest.serialization.Model):
         self.target = kwargs.get('target', None)
 
 
+class JobInput(msrest.serialization.Model):
+    """Job input definition.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomModelJobInput, LiteralJobInput, MLFlowModelJobInput, MLTableJobInput, TritonModelJobInput, UriFileJobInput, UriFolderJobInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: Description for the input.
+    :vartype description: str
+    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
+    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    """
+
+    _validation = {
+        'job_input_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'job_input_type': {'CustomModel': 'CustomModelJobInput', 'Literal': 'LiteralJobInput', 'MLFlowModel': 'MLFlowModelJobInput', 'MLTable': 'MLTableJobInput', 'TritonModel': 'TritonModelJobInput', 'UriFile': 'UriFileJobInput', 'UriFolder': 'UriFolderJobInput'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: Description for the input.
+        :paramtype description: str
+        """
+        super(JobInput, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.job_input_type = None  # type: Optional[str]
+
+
+class CustomModelJobInput(JobInput, AssetJobInput):
+    """CustomModelJobInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Required. Input Asset URI.
+    :vartype uri: str
+    :ivar description: Description for the input.
+    :vartype description: str
+    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
+    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    """
+
+    _validation = {
+        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        'job_input_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Required. Input Asset URI.
+        :paramtype uri: str
+        :keyword description: Description for the input.
+        :paramtype description: str
+        """
+        super(CustomModelJobInput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs['uri']
+        self.job_input_type = 'CustomModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
+class JobOutputV2(msrest.serialization.Model):
+    """Job output definition container information on where to find the job output.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomModelJobOutput, MLFlowModelJobOutput, MLTableJobOutput, TritonModelJobOutput, UriFileJobOutput, UriFolderJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'job_output_type': {'CustomModel': 'CustomModelJobOutput', 'MLFlowModel': 'MLFlowModelJobOutput', 'MLTable': 'MLTableJobOutput', 'TritonModel': 'TritonModelJobOutput', 'UriFile': 'UriFileJobOutput', 'UriFolder': 'UriFolderJobOutput'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(JobOutputV2, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.job_output_type = None  # type: Optional[str]
+
+
+class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
+    """CustomModelJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar uri: Output Asset URI. This will have a default value of
+     "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+    :vartype uri: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword uri: Output Asset URI. This will have a default value of
+         "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+        :paramtype uri: str
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(CustomModelJobOutput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs.get('uri', None)
+        self.job_output_type = 'CustomModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
 class DataVersion(msrest.serialization.Model):
     """Data asset version details.
 
@@ -776,47 +957,6 @@ class JobEndpoint(msrest.serialization.Model):
         self.properties = kwargs.get('properties', None)
 
 
-class JobInput(msrest.serialization.Model):
-    """Job input definition.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MLTableJobInput, UriFileJobInput, UriFolderJobInput.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar description: Description for the input.
-    :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable".
-    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
-    """
-
-    _validation = {
-        'job_input_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'job_input_type': {'MLTable': 'MLTableJobInput', 'UriFile': 'UriFileJobInput', 'UriFolder': 'UriFolderJobInput'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword description: Description for the input.
-        :paramtype description: str
-        """
-        super(JobInput, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.job_input_type = None  # type: Optional[str]
-
-
 class JobOutputArtifacts(msrest.serialization.Model):
     """Job output definition container information on where to find job logs and artifacts.
 
@@ -849,47 +989,6 @@ class JobOutputArtifacts(msrest.serialization.Model):
         self.path = None
 
 
-class JobOutputV2(msrest.serialization.Model):
-    """Job output definition container information on where to find the job output.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UriFileJobOutput.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
-    """
-
-    _validation = {
-        'job_output_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'job_output_type': {'UriFile': 'UriFileJobOutput'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword description: Description for the output.
-        :paramtype description: str
-        """
-        super(JobOutputV2, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.job_output_type = None  # type: Optional[str]
-
-
 class LabelClass(msrest.serialization.Model):
     """Label class definition.
 
@@ -919,6 +1018,145 @@ class LabelClass(msrest.serialization.Model):
         self.subclasses = kwargs.get('subclasses', None)
 
 
+class LiteralJobInput(JobInput):
+    """LiteralJobInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar description: Description for the input.
+    :vartype description: str
+    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
+    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar value: Required. Literal input value.
+    :vartype value: str
+    """
+
+    _validation = {
+        'job_input_type': {'required': True},
+        'value': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: Description for the input.
+        :paramtype description: str
+        :keyword value: Required. Literal input value.
+        :paramtype value: str
+        """
+        super(LiteralJobInput, self).__init__(**kwargs)
+        self.job_input_type = 'Literal'  # type: str
+        self.value = kwargs['value']
+
+
+class MLFlowModelJobInput(JobInput, AssetJobInput):
+    """MLFlowModelJobInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Required. Input Asset URI.
+    :vartype uri: str
+    :ivar description: Description for the input.
+    :vartype description: str
+    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
+    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    """
+
+    _validation = {
+        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        'job_input_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Required. Input Asset URI.
+        :paramtype uri: str
+        :keyword description: Description for the input.
+        :paramtype description: str
+        """
+        super(MLFlowModelJobInput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs['uri']
+        self.job_input_type = 'MLFlowModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
+class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
+    """MLFlowModelJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar uri: Output Asset URI. This will have a default value of
+     "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+    :vartype uri: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword uri: Output Asset URI. This will have a default value of
+         "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+        :paramtype uri: str
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(MLFlowModelJobOutput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs.get('uri', None)
+        self.job_output_type = 'MLFlowModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
 class MLTableJobInput(JobInput, AssetJobInput):
     """MLTableJobInput.
 
@@ -932,7 +1170,8 @@ class MLTableJobInput(JobInput, AssetJobInput):
     :ivar description: Description for the input.
     :vartype description: str
     :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable".
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
     """
 
@@ -966,7 +1205,54 @@ class MLTableJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'MLTable'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'MLTable'  # type: str
+
+
+class MLTableJobOutput(JobOutputV2, AssetJobOutput):
+    """MLTableJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar uri: Output Asset URI. This will have a default value of
+     "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+    :vartype uri: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword uri: Output Asset URI. This will have a default value of
+         "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+        :paramtype uri: str
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(MLTableJobOutput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs.get('uri', None)
+        self.job_output_type = 'MLTable'  # type: str
+        self.description = kwargs.get('description', None)
 
 
 class SystemData(msrest.serialization.Model):
@@ -1027,6 +1313,104 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
+class TritonModelJobInput(JobInput, AssetJobInput):
+    """TritonModelJobInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Required. Input Asset URI.
+    :vartype uri: str
+    :ivar description: Description for the input.
+    :vartype description: str
+    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
+    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    """
+
+    _validation = {
+        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        'job_input_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
+         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Required. Input Asset URI.
+        :paramtype uri: str
+        :keyword description: Description for the input.
+        :paramtype description: str
+        """
+        super(TritonModelJobInput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs['uri']
+        self.job_input_type = 'TritonModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
+class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
+    """TritonModelJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar uri: Output Asset URI. This will have a default value of
+     "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+    :vartype uri: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword uri: Output Asset URI. This will have a default value of
+         "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+        :paramtype uri: str
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(TritonModelJobOutput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs.get('uri', None)
+        self.job_output_type = 'TritonModel'  # type: str
+        self.description = kwargs.get('description', None)
+
+
 class UriFileJobInput(JobInput, AssetJobInput):
     """UriFileJobInput.
 
@@ -1040,7 +1424,8 @@ class UriFileJobInput(JobInput, AssetJobInput):
     :ivar description: Description for the input.
     :vartype description: str
     :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable".
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
     """
 
@@ -1074,7 +1459,6 @@ class UriFileJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'UriFile'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'UriFile'  # type: str
 
 
 class UriFileJobOutput(JobOutputV2, AssetJobOutput):
@@ -1090,7 +1474,7 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
     :ivar description: Description for the output.
     :vartype description: str
     :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile".
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
     :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
@@ -1123,7 +1507,6 @@ class UriFileJobOutput(JobOutputV2, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'UriFile'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'UriFile'  # type: str
 
 
 class UriFolderJobInput(JobInput, AssetJobInput):
@@ -1139,7 +1522,8 @@ class UriFolderJobInput(JobInput, AssetJobInput):
     :ivar description: Description for the input.
     :vartype description: str
     :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable".
+     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
+     "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
     """
 
@@ -1173,4 +1557,51 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'UriFolder'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'UriFolder'  # type: str
+
+
+class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
+    """UriFolderJobOutput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+    :ivar uri: Output Asset URI. This will have a default value of
+     "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+    :vartype uri: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
+     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    """
+
+    _validation = {
+        'job_output_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
+        :keyword uri: Output Asset URI. This will have a default value of
+         "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
+        :paramtype uri: str
+        :keyword description: Description for the output.
+        :paramtype description: str
+        """
+        super(UriFolderJobOutput, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.uri = kwargs.get('uri', None)
+        self.job_output_type = 'UriFolder'  # type: str
+        self.description = kwargs.get('description', None)

@@ -18,6 +18,7 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultO
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -51,6 +52,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 )
                 result = await poller.result()
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -91,6 +93,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -132,6 +135,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -173,6 +177,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -196,6 +201,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
         assert len(result.pages) == 1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -234,6 +240,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert receipt.doc_type == "receipt.retailMeal"
         assert len(result.pages) == 2
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -276,6 +283,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_receipt_continuation_token(self, **kwargs):
@@ -292,6 +300,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -315,6 +324,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 await client.begin_analyze_document("prebuilt-receipt", receipt, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -327,6 +337,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -396,6 +407,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -420,6 +432,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             assert passport["Sex"].value == "F"
             assert passport["CountryRegion"].value == "CAN"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -451,6 +464,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -491,6 +505,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -536,6 +551,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert w2_document.fields.get("Employee").value.get("Address").value.country_region == None
         assert w2_document.fields.get("Employee").value.get("Address").value.po_box == None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async

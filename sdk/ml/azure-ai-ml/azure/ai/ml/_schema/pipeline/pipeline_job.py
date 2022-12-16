@@ -6,7 +6,7 @@
 
 import logging
 
-from marshmallow import INCLUDE, ValidationError, post_dump, post_load, pre_dump, pre_load
+from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load
 
 from azure.ai.ml._schema._utils.data_binding_expression import _add_data_binding_to_field
 from azure.ai.ml._schema.core.fields import (
@@ -57,6 +57,7 @@ class PipelineJobSchema(BaseJobSchema):
 
     @pre_dump()
     def backup_jobs_and_remove_component(self, job, **kwargs):
+        # pylint: disable=protected-access
         job_copy = _resolve_inputs_outputs(job)
         if not isinstance(job_copy.component, str):
             # If component is pipeline component object,

@@ -9,20 +9,29 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ResourceManagementClientConfiguration
-from .operations import DeploymentOperationsOperations, DeploymentsOperations, Operations, ProviderResourceTypesOperations, ProvidersOperations, ResourceGroupsOperations, ResourcesOperations, TagsOperations
+from .operations import (
+    DeploymentOperationsOperations,
+    DeploymentsOperations,
+    Operations,
+    ProviderResourceTypesOperations,
+    ProvidersOperations,
+    ResourceGroupsOperations,
+    ResourcesOperations,
+    TagsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ResourceManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class ResourceManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Provides operations for working with resources and resource groups.
 
     :ivar operations: Operations operations
@@ -45,9 +54,9 @@ class ResourceManagementClient:    # pylint: disable=too-many-instance-attribute
     :ivar deployment_operations: DeploymentOperationsOperations operations
     :vartype deployment_operations:
      azure.mgmt.resource.resources.v2021_04_01.operations.DeploymentOperationsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -65,28 +74,29 @@ class ResourceManagementClient:    # pylint: disable=too-many-instance-attribute
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ResourceManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ResourceManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.provider_resource_types = ProviderResourceTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.provider_resource_types = ProviderResourceTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployment_operations = DeploymentOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment_operations = DeploymentOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -95,7 +105,7 @@ class ResourceManagementClient:    # pylint: disable=too-many-instance-attribute
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -108,15 +118,12 @@ class ResourceManagementClient:    # pylint: disable=too-many-instance-attribute
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ResourceManagementClient
+    def __enter__(self) -> "ResourceManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

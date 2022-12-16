@@ -8,7 +8,6 @@ from .azureml_image_context import AzureMlImageContext
 from .docker_client import DockerClient
 from .dockerfile_resolver import DockerfileResolver
 from .endpoint_stub import EndpointStub
-from .errors import InvalidVSCodeRequestError, LocalEndpointNotFoundError
 from .local_endpoint_mode import LocalEndpointMode
 
 __all__ = [
@@ -16,7 +15,5 @@ __all__ = [
     "DockerClient",
     "DockerfileResolver",
     "EndpointStub",
-    "InvalidVSCodeRequestError",
     "LocalEndpointMode",
-    "LocalEndpointNotFoundError",
 ]

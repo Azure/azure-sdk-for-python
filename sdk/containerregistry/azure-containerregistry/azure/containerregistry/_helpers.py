@@ -30,6 +30,9 @@ SUPPORTED_API_VERSIONS = [
 ]
 OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 
+# Supported audiences
+AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
+
 
 def _is_tag(tag_or_digest):
     # type: (str) -> bool

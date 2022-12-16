@@ -6,11 +6,81 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 module_logger = logging.getLogger(__name__)
+
+
+class BaseProperty(dict):
+    """Base class for entity classes to be used as value of JobResourceConfiguration.properties."""
+
+    def __init__(self, **kwargs: Any):
+        super().__init__()
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key.startswith("_"):
+            super().__setattr__(key, value)
+        else:
+            self[key] = value
+
+    def __getattr__(self, key: str) -> Any:
+        if key.startswith("_"):
+            super().__getattribute__(key)
+        else:
+            return self[key]
+
+    def __repr__(self) -> str:
+        return json.dumps(self.as_dict())
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, dict):
+            return self.as_dict() == other
+        if isinstance(other, BaseProperty):
+            return self.as_dict() == other.as_dict()
+        return False
+
+    def as_dict(self) -> Dict[str, Any]:
+        """Return a dict representation of the object."""
+        return self._to_dict(self)
+
+    @classmethod
+    def _to_dict(cls, obj: Any) -> Any:
+        if isinstance(obj, dict):
+            result = {}
+            for key, value in obj.items():
+                if value is None:
+                    continue
+                if isinstance(value, dict):
+                    result[key] = cls._to_dict(value)
+                else:
+                    result[key] = value
+            return result
+        return obj
+
+
+class Properties(BaseProperty):
+    # pre-defined properties are case-insensitive
+    # Map Singularity -> AISupercomputer in SDK until MFE does mapping
+    _KEY_MAPPING = {
+        JobComputePropertyFields.AISUPERCOMPUTER.lower(): JobComputePropertyFields.AISUPERCOMPUTER,
+        JobComputePropertyFields.SINGULARITY.lower(): JobComputePropertyFields.AISUPERCOMPUTER,
+        JobComputePropertyFields.ITP.lower(): JobComputePropertyFields.ITP,
+        JobComputePropertyFields.TARGET_SELECTOR.lower(): JobComputePropertyFields.TARGET_SELECTOR,
+    }
+
+    def as_dict(self) -> Dict[str, Any]:
+        result = {}
+        for key, value in super().as_dict().items():
+            if key.lower() in self._KEY_MAPPING:
+                key = self._KEY_MAPPING[key.lower()]
+            result[key] = value
+        # recursively convert Ordered Dict to dictionary
+        return convert_ordered_dict_to_dict(result)
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
@@ -41,54 +111,46 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         docker_args: str = None,
         shm_size: str = None,
         **kwargs
-    ):
+    ):  # pylint: disable=unused-argument
         self.instance_count = instance_count
         self.instance_type = instance_type
         self.shm_size = shm_size
         self.docker_args = docker_args
-        self.properties = {}
-        if properties is not None:
-            for key, value in properties.items():
-                if key == JobComputePropertyFields.AISUPERCOMPUTER:
-                    self.properties[JobComputePropertyFields.SINGULARITY.lower()] = value
-                else:
-                    self.properties[key] = value
+        self._properties = None
+        self.properties = properties
+
+    @property
+    def properties(self) -> Properties:
+        return self._properties
+
+    @properties.setter
+    def properties(self, properties: Dict[str, Any]):
+        if properties is None:
+            self._properties = Properties()
+        elif isinstance(properties, dict):
+            self._properties = Properties(**properties)
+        else:
+            raise TypeError("properties must be a dict.")
 
     def _to_rest_object(self) -> RestJobResourceConfiguration:
-        serialized_properties = {}
-        if self.properties:
-            for key, value in self.properties.items():
-                try:
-                    if (
-                        key.lower() == JobComputePropertyFields.SINGULARITY.lower()
-                        or key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower()
-                    ):
-                        # Map Singularity -> AISupercomputer in SDK until MFE does mapping
-                        key = JobComputePropertyFields.AISUPERCOMPUTER
-                    # recursively convert Ordered Dict to dictionary
-                    serialized_properties[key] = json.loads(json.dumps(value))
-                except Exception:
-                    pass
         return RestJobResourceConfiguration(
             instance_count=self.instance_count,
             instance_type=self.instance_type,
-            properties=serialized_properties,
+            properties=self.properties.as_dict(),
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, rest_obj: Optional[RestJobResourceConfiguration]
-    ) -> Optional["JobResourceConfiguration"]:
-        if rest_obj is None:
+    def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
+        if obj is None:
             return None
         return JobResourceConfiguration(
-            instance_count=rest_obj.instance_count,
-            instance_type=rest_obj.instance_type,
-            properties=rest_obj.properties,
-            docker_args=rest_obj.docker_args,
-            shm_size=rest_obj.shm_size,
+            instance_count=obj.instance_count,
+            instance_type=obj.instance_type,
+            properties=obj.properties,
+            docker_args=obj.docker_args,
+            shm_size=obj.shm_size,
             deserialize_properties=True,
         )
 

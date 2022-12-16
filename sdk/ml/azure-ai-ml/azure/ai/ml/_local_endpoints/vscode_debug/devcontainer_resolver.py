@@ -20,7 +20,7 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
     RunArgs,
     Settings,
 )
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class DevContainerResolver:
@@ -126,6 +126,7 @@ class DevContainerResolver:
         with open(file_path, "w") as f:
             f.write(f"{json.dumps(self._properties, indent=4)}\n")
 
+
 def _reformat_mounts(mounts: dict) -> list:
     """Reformat mounts from Docker format to DevContainer format.
 
@@ -148,6 +149,7 @@ def _reformat_mounts(mounts: dict) -> list:
                 devcontainer_mounts.append(f"source={source},target={container_dest},type={mount_type}")
     return devcontainer_mounts
 
+
 def _reformat_labels(labels: dict) -> list:
     """Reformat labels from Docker format to DevContainer format.
 
@@ -163,6 +165,7 @@ def _reformat_labels(labels: dict) -> list:
     for key, value in labels.items():
         devcontainer_labels.append(f"--label={key}={value}")
     return devcontainer_labels
+
 
 def _get_devcontainer_file_path(directory_path: str) -> str:
     """Returns the path of the devcontainer in relation to provided

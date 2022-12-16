@@ -26,8 +26,10 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
+
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
-    "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -41,7 +43,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-videosearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
@@ -50,17 +51,17 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
+    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
-    "sdk/eventgrid/azure-eventgrid/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
-    "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -81,6 +82,8 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/ml/azure-ai-ml/swagger/**",
+    "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
@@ -93,6 +96,9 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
@@ -100,6 +106,7 @@
     "aad",
     "aadclient",
     "AADSTS",
+    "adamw",
     "addfinalizer",
     "addinivalue",
     "adfs",
@@ -129,6 +136,7 @@
     "cname",
     "conda",
     "connectedvmware",
+    "consts",
     "contoso",
     "contosodataset",
     "centralus",
@@ -145,9 +153,12 @@
     "deque",
     "deserialization",
     "disablecov",
+    "distilbert",
+    "distilroberta",
     "docfx",
     "dont",
     "dotenv",
+    "dowhile",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -181,6 +192,7 @@
     "illumos",
     "imds",
     "inotify",
+    "ints",
     "iohttp",
     "IOHTTP",
     "inprogress",
@@ -193,6 +205,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -216,6 +229,7 @@
     "LPCWSTR",
     "Lucene",
     "mbps",
+    "mday",
     "mibps",
     "mgmt",
     "mhsm",
@@ -229,7 +243,10 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
+    "nbytes",
+    "nbsp",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -242,6 +259,7 @@
     "onboarded",
     "onmicrosoft",
     "owasp",
+    "ownerid",
     "PBYTE",
     "PCREDENTIAL",
     "perfmon",
@@ -255,10 +273,15 @@
     "popen",
     "prebuilts",
     "premf",
+    "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -291,6 +314,8 @@
     "skus",
     "southcentralus",
     "ssis",
+    "struct",
+    "STRUCT",
     "substringof",
     "systemperf",
     "tenvparallel",
@@ -302,8 +327,10 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "unpad",
     "unpadder",
     "unredacted",
+    "unseekable",
     "unsubscriptable",
     "upns",
     "upserted",
@@ -321,8 +348,10 @@
     "utid",
     "Uvsc",
     "vcrpy",
+    "vendored",
     "verifysdist",
     "verifywhl",
+    "versionid",
     "vmimage",
     "vmss",
     "vmwarecloudsimple",
@@ -334,6 +363,7 @@
     "westus",
     "wfile",
     "westus",
+    "xlnet",
     "BUILDID",
     "documentdb",
     "chdir",
@@ -382,7 +412,14 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
@@ -433,12 +470,18 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": ["ctxt", "somethingstuid"]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
@@ -451,12 +494,16 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker"],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
       "words": ["groovin", "Olufsen"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
@@ -487,9 +534,33 @@
       ]
     },
     {
+      "filename": "sdk/eventgrid/**/*",
+      "words": [
+        "cncf",
+        "CNCF",
+        "Cncf"
+      ]
+    },
+    {
       "filename": "sdk/eventhub/test-resources.json",
       "words": [
         "mmspecial"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
+      "words": [
+        "blobstoragecs",
+        "blobstoragepm",
+        "rscc",
+        "rscd",
+        "rsce",
+        "rscl",
+        "rsct",
+        "saoid",
+        "scid",
+        "skoid",
+        "suoid"
       ]
     },
     {
@@ -505,7 +576,14 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {
@@ -675,6 +753,12 @@
       ]
     },
     {
+      "filename": "sdk/ml/*tests.yml",
+      "words": [
+        "euap"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -715,6 +799,7 @@
         "myworkspace",
         "mydatastore",
         "mlnlp",
+        "prec",
         "pacf",
         "armid",
         "dsvm",
@@ -788,7 +873,21 @@
         "reprlib",
         "gzrs",
         "ragzrs",
-        "wsid"
+        "wsid",
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS",
+        "wargs",
+        "pycache"
+      ]
+    },
+    {
+      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
+      "words":[
+        "sharedwus"
       ]
     },
     {
@@ -827,7 +926,12 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
@@ -974,13 +1078,21 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy",
+	"mghextreme"
       ]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
       "words": [
         "responsed"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator/operations/*.py",
+      "words": [
+        "tfile"
       ]
     },
     {
@@ -1085,6 +1197,38 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/personalizer/test-resources.json",
+      "words": [
+        "euap"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
       ]
     }
   ],

@@ -198,7 +198,7 @@ class AioHttpTransport(AsyncHttpTransport):
         try:
             auto_decompress = self.session.auto_decompress  # type: ignore
         except AttributeError:
-            # auto_decompress is introduced in aiohttp 3.7. We need this to handle Python 3.6.
+            # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
         proxies = config.pop('proxies', None)

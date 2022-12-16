@@ -12,7 +12,7 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (JsonWebKey, KeyCurveName,
+from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyCurveName,
                                  KeyOperation, KeyVaultKey)
 from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import (
@@ -34,6 +34,7 @@ from _keys_test_case import KeysTestCase
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator(is_async=True)
+only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 no_get = get_decorator(is_async=True, permissions=NO_GET)
 
@@ -208,6 +209,29 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         verified = await crypto_client.verify(result.algorithm, digest, result.signature)
         assert result.key_id == imported_key.id
         assert result.algorithm == SignatureAlgorithm.rs256
+        assert verified.is_valid
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_hsm)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_sign_and_verify_okp(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        md = hashlib.sha256()
+        md.update(self.plaintext)
+        digest = md.digest()
+
+        # Local crypto isn't supported for OKP, so operations will be remote even without explicit NO_GET permissions
+        key = await key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519)
+        crypto_client = self.create_crypto_client(key.id, is_async=True, api_version=key_client.api_version)
+
+        result = await crypto_client.sign(SignatureAlgorithm.eddsa, digest)
+        assert result.key_id == key.id
+
+        verified = await crypto_client.verify(result.algorithm, digest, result.signature)
+        assert result.key_id == key.id
+        assert result.algorithm == SignatureAlgorithm.eddsa
         assert verified.is_valid
 
     @pytest.mark.asyncio
@@ -770,36 +794,37 @@ async def test_local_only_mode_raise():
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         await client.decrypt(EncryptionAlgorithm.a256_gcm, b"...", iv=b"...", authentication_tag=b"...")
-    assert EncryptionAlgorithm.a256_gcm in str(ex.value)
-    assert KeyOperation.decrypt in str(ex.value)
+        # Look for f-string or .format-ed occurrence of enum value, to account for differences in 3.11+
+    assert f"{EncryptionAlgorithm.a256_gcm}" in str(ex.value)
+    assert f"{KeyOperation.decrypt}" in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         await client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.encrypt in str(ex.value)
+    assert f"{KeyOperation.encrypt}" in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         await client.verify(SignatureAlgorithm.es256, b"...", b"...")
-    assert SignatureAlgorithm.es256 in str(ex.value)
-    assert KeyOperation.verify in str(ex.value)
+    assert f"{SignatureAlgorithm.es256}" in str(ex.value)
+    assert f"{KeyOperation.verify}" in str(ex.value)
 
     # Algorithm not supported locally, and operation not included in JWK permissions
     with pytest.raises(NotImplementedError) as ex:
         await client.sign(SignatureAlgorithm.rs256, b"...")
-    assert SignatureAlgorithm.rs256 in str(ex.value)
-    assert KeyOperation.sign in str(ex.value)
+    assert f"{SignatureAlgorithm.rs256}" in str(ex.value)
+    assert f"{KeyOperation.sign}" in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         await client.unwrap_key(KeyWrapAlgorithm.aes_256, b"...")
-    assert KeyWrapAlgorithm.aes_256 in str(ex.value)
-    assert KeyOperation.unwrap_key in str(ex.value)
+    assert f"{KeyWrapAlgorithm.aes_256}" in str(ex.value)
+    assert f"{KeyOperation.unwrap_key}" in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.wrap_key in str(ex.value)
+    assert f"{KeyOperation.wrap_key}" in str(ex.value)
 
 
 @pytest.mark.asyncio

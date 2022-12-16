@@ -18,8 +18,6 @@ from ._operations import ConversationAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -27,22 +25,15 @@ class ConversationAnalysisClient(
     ConversationAnalysisClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service conversations API is a suite of natural language processing (NLP) skills
-    that can be used to analyze structured conversations (textual or spoken). The synchronous API
-    in this suite accepts a request and mediates among multiple language projects, such as LUIS
-    Generally Available, Question Answering, Conversational Language Understanding, and then calls
-    the best candidate service to handle the request. At last, it returns a response with the
-    candidate service's response as a payload.
-
-     In some cases, this API needs to forward requests and responses between the caller and an
-    upstream service. The asynchronous APIs in this suite enable tasks like Conversation
-    Summarization and Conversational PII detection.
+    that can be used to analyze structured conversations (textual or spoken). Further documentation
+    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

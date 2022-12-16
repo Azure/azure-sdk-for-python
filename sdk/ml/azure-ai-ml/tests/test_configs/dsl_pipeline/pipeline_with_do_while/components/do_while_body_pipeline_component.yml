@@ -1,0 +1,36 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+type: pipeline
+
+display_name: pipeline_with_do_while_body
+description: Do while body pipeline component
+
+inputs:
+  job_in_path:
+    type: uri_folder
+  job_in_number:
+    type: integer
+  job_in_number_1:
+    type: integer
+
+outputs:
+  output_in_number:
+    type: integer
+    is_control: true
+  output_in_path:
+    type: uri_folder
+  is_number_larger_than_zero:
+    type: boolean
+    is_control: true
+
+jobs:
+  write_input_num:
+    type: command
+    component: ./basic_component.yml
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_number_1: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+    outputs:
+      output_in_number: ${{parent.outputs.output_in_number}}
+      output_in_path: ${{parent.outputs.output_in_path}}
+      is_number_larger_than_zero: ${{parent.outputs.is_number_larger_than_zero}}
