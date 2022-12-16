@@ -134,14 +134,14 @@ class _PerfTestBase(_PerfTestABC):
 
     async def global_setup(self) -> None:
         """
-        Setup called once across all parallel test instances.
+        Setup called once per process across all threaded test instances.
         Used to setup state that can be used by all test instances.
         """
         return
 
     async def global_cleanup(self) -> None:
         """
-        Cleanup called once across all parallel test instances.
+        Cleanup called once per process across all threaded test instances.
         Used to cleanup state that can be used by all test instances.
         """
         return
