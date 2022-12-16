@@ -205,7 +205,7 @@ class _AdditionalIncludes:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             local_paths, _ = get_local_paths(source_path=str(folder_to_zip), ignore_file=self._ignore_file)
             for path, _ in local_paths:
-                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
+                zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
         """Clean up potential tmp folder generated during resolve as it can be
