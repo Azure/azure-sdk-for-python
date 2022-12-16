@@ -218,7 +218,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         return element
 
-    async def _create_forward_to_header_tokens(self, entity, **kwargs: Any):
+    async def _create_forward_to_header_tokens(self, entity, kwargs):
         """forward_to requires providing a bearer token in headers for the referenced entity."""
         kwargs["headers"] = kwargs.get("headers", {})
 
@@ -434,7 +434,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(to_create, **kwargs)
+        await self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -479,7 +479,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(to_update, **kwargs)
+        await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
                 queue.name,  # type: ignore
@@ -952,7 +952,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(to_create, **kwargs)
+        await self._create_forward_to_header_tokens(to_create, kwargs)
         with _handle_response_error():
             entry_ele = cast(
                 ElementTree,
@@ -1007,7 +1007,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        await self._create_forward_to_header_tokens(to_update, **kwargs)
+        await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
                 topic_name,
