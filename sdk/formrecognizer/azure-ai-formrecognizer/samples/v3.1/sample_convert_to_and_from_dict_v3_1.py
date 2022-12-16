@@ -56,8 +56,8 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as f:
-        json.dump(recognized_form_dict, f, cls=AzureJSONEncoder)
+    with open('data.json', 'w') as f:  # type: ignore
+        json.dump(recognized_form_dict, f, cls=AzureJSONEncoder)  # type: ignore
 
     # convert the dictionary back to the original model
     model = [RecognizedForm.from_dict(doc) for doc in recognized_form_dict]
