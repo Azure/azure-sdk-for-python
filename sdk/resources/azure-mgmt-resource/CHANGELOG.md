@@ -1,5 +1,13 @@
 # Release History
 
+## 22.0.0 (2022-12-15)
+
+### Breaking Changes
+
+  - Renamed operation TagsOperations.create_or_update_at_scope to TagsOperations.begin_create_or_update_at_scope
+  - Renamed operation TagsOperations.delete_at_scope to TagsOperations.begin_delete_at_scope
+  - Renamed operation TagsOperations.update_at_scope to TagsOperations.begin_update_at_scope
+
 ## 21.2.1 (2022-10-20)
 
 ### Bugs Fixed
