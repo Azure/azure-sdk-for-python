@@ -13,7 +13,7 @@ from pathlib import Path
 import shutil
 from typing import Dict, Optional, List, Any, TypeVar, Callable
 
-from jinja2 import FileSystemLoader, Environment
+from jinja2 import PackageLoader, Environment
 
 PACKAGING_TOOLS_DIR = (Path(__file__) / "..").resolve()
 
@@ -348,7 +348,7 @@ class Serializer:
     def __init__(self, code_model: "CodeModel") -> None:
         self.code_model = code_model
         self.env = Environment(
-            loader=FileSystemLoader(searchpath="templates/multiapi_combiner"),
+            loader=PackageLoader("packaging_tools", "templates/multiapi_combiner"),
             keep_trailing_newline=True,
             line_statement_prefix="##",
             line_comment_prefix="###",
@@ -552,7 +552,7 @@ class Serializer:
                 os.remove(f"{api_version_folder}/{file}")
 
             # add empty init file so we can still see the models folder
-            with open(f"{api_version_folder}/__init__.py", w) as f:
+            with open(f"{api_version_folder}/__init__.py", "w") as f:
                 f.write("")
 
     def remove_top_level_files(self, async_mode: bool):
@@ -581,6 +581,10 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def combine():
     code_model = CodeModel(Path(get_args().pkg_path))
     Serializer(code_model).serialize()
+
+
+if __name__ == "__main__":
+    combine()
