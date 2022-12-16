@@ -1,1 +1,2 @@
 -e ../azure-devtools
+-e ../tests/example_package
