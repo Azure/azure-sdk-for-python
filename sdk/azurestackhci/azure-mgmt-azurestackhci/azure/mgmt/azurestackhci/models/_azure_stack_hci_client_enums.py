@@ -36,19 +36,11 @@ class ArcSettingAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IN_PROGRESS = "InProgress"
 
 
-class AvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the way the update content can be downloaded."""
+class CloudInitDataSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Datasource for the gallery image when provisioning with cloud-init (Azure or NoCloud)."""
 
-    LOCAL = "Local"
-    ONLINE = "Online"
-    NOTIFY = "Notify"
-
-
-class ClusterNodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the cluster node hardware."""
-
-    FIRST_PARTY = "FirstParty"
-    THIRD_PARTY = "ThirdParty"
+    NO_CLOUD = "NoCloud"
+    AZURE = "Azure"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -66,6 +58,19 @@ class DiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OFF = "Off"
     BASIC = "Basic"
     ENHANCED = "Enhanced"
+
+
+class DiskFileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the actual VHD file [vhd, vhdx]."""
+
+    VHDX = "vhdx"
+    VHD = "vhd"
+
+
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of extendedLocation."""
+
+    CUSTOM_LOCATION = "CustomLocation"
 
 
 class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,6 +93,13 @@ class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IN_PROGRESS = "InProgress"
 
 
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The hypervisor generation of the Virtual Machine [V1, V2]."""
+
+    V1 = "V1"
+    V2 = "V2"
+
+
 class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IMDS attestation status of the cluster."""
 
@@ -95,15 +107,34 @@ class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
-class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
-    allowed).
+class IpAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IPAllocationMethod - The IP address allocation method. Possible values include: 'Static',
+    'Dynamic'.
     """
 
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    DYNAMIC = "Dynamic"
+    STATIC = "Static"
+
+
+class IPPoolTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ip pool type."""
+
+    VM = "vm"
+    VIPPOOL = "vippool"
+
+
+class NetworkTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the network."""
+
+    NAT = "NAT"
+    TRANSPARENT = "Transparent"
+    L2_BRIDGE = "L2Bridge"
+    L2_TUNNEL = "L2Tunnel"
+    ICS = "ICS"
+    PRIVATE = "Private"
+    OVERLAY = "Overlay"
+    INTERNAL = "Internal"
+    MIRRORED = "Mirrored"
 
 
 class NodeArcState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -140,6 +171,13 @@ class NodeExtensionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MOVING = "Moving"
 
 
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """operating system type that the gallery image uses. Expected to be linux or windows."""
+
+    WINDOWS = "Windows"
+    LINUX = "Linux"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -148,6 +186,42 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
+
+
+class OsTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OsType - string specifying whether the OS is Linux or Windows."""
+
+    LINUX = "Linux"
+    WINDOWS = "Windows"
+
+
+class PowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The power state of the virtual machine."""
+
+    DEALLOCATED = "Deallocated"
+    DEALLOCATING = "Deallocating"
+    RUNNING = "Running"
+    STARTING = "Starting"
+    STOPPED = "Stopped"
+    STOPPING = "Stopping"
+    UNKNOWN = "Unknown"
+
+
+class PrivateIPAllocationMethodEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PrivateIPAllocationMethod - The private IP address allocation method. Possible values include:
+    'Static', 'Dynamic'.
+    """
+
+    DYNAMIC = "Dynamic"
+    STATIC = "Static"
+
+
+class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of operations for guest agent."""
+
+    INSTALL = "install"
+    UNINSTALL = "uninstall"
+    REPAIR = "repair"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -160,41 +234,23 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROVISIONING = "Provisioning"
 
 
-class SoftwareAssuranceIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Customer Intent for Software Assurance Benefit."""
+class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the gallery image."""
 
-    ENABLE = "Enable"
-    DISABLE = "Disable"
-
-
-class SoftwareAssuranceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the Software Assurance for the cluster."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
+    ACCEPTED = "Accepted"
+    DELETING = "Deleting"
+    CANCELED = "Canceled"
 
 
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the update as it relates to this stamp."""
+class ProvisioningStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the operation performed on the gallery image [Succeeded, Failed, InProgress]."""
 
-    HAS_PREREQUISITE = "HasPrerequisite"
-    OBSOLETE = "Obsolete"
-    READY = "Ready"
-    NOT_APPLICABLE_BECAUSE_ANOTHER_UPDATE_IS_IN_PROGRESS = "NotApplicableBecauseAnotherUpdateIsInProgress"
-    PREPARING = "Preparing"
-    INSTALLING = "Installing"
-    INSTALLED = "Installed"
-    PREPARATION_FAILED = "PreparationFailed"
-    INSTALLATION_FAILED = "InstallationFailed"
-    INVALID = "Invalid"
-    RECALLED = "Recalled"
-    DOWNLOADING = "Downloading"
-    DOWNLOAD_FAILED = "DownloadFailed"
-    HEALTH_CHECKING = "HealthChecking"
-    HEALTH_CHECK_FAILED = "HealthCheckFailed"
-    READY_TO_INSTALL = "ReadyToInstall"
-    SCAN_IN_PROGRESS = "ScanInProgress"
-    SCAN_FAILED = "ScanFailed"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    IN_PROGRESS = "InProgress"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,26 +263,48 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "Error"
 
 
-class UpdateRunPropertiesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the update run."""
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
 
-    UNKNOWN = "Unknown"
-    SUCCEEDED = "Succeeded"
-    IN_PROGRESS = "InProgress"
-    FAILED = "Failed"
+    INFO = "Info"
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
-class UpdateSummariesPropertiesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Overall update state of the stamp."""
+class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the hybrid machine agent."""
 
-    UNKNOWN = "Unknown"
-    APPLIED_SUCCESSFULLY = "AppliedSuccessfully"
-    UPDATE_AVAILABLE = "UpdateAvailable"
-    UPDATE_IN_PROGRESS = "UpdateInProgress"
-    UPDATE_FAILED = "UpdateFailed"
-    NEEDS_ATTENTION = "NeedsAttention"
-    PREPARATION_IN_PROGRESS = "PreparationInProgress"
-    PREPARATION_FAILED = "PreparationFailed"
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+    ERROR = "Error"
+
+
+class VmSizeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VmSizeEnum."""
+
+    DEFAULT = "Default"
+    STANDARD_A2_V2 = "Standard_A2_v2"
+    STANDARD_A4_V2 = "Standard_A4_v2"
+    STANDARD_D2_S_V3 = "Standard_D2s_v3"
+    STANDARD_D4_S_V3 = "Standard_D4s_v3"
+    STANDARD_D8_S_V3 = "Standard_D8s_v3"
+    STANDARD_D16_S_V3 = "Standard_D16s_v3"
+    STANDARD_D32_S_V3 = "Standard_D32s_v3"
+    STANDARD_DS2_V2 = "Standard_DS2_v2"
+    STANDARD_DS3_V2 = "Standard_DS3_v2"
+    STANDARD_DS4_V2 = "Standard_DS4_v2"
+    STANDARD_DS5_V2 = "Standard_DS5_v2"
+    STANDARD_DS13_V2 = "Standard_DS13_v2"
+    STANDARD_K8_S_V1 = "Standard_K8S_v1"
+    STANDARD_K8_S2_V1 = "Standard_K8S2_v1"
+    STANDARD_K8_S3_V1 = "Standard_K8S3_v1"
+    STANDARD_K8_S4_V1 = "Standard_K8S4_v1"
+    STANDARD_NK6 = "Standard_NK6"
+    STANDARD_NK12 = "Standard_NK12"
+    STANDARD_NV6 = "Standard_NV6"
+    STANDARD_NV12 = "Standard_NV12"
+    STANDARD_K8_S5_V1 = "Standard_K8S5_v1"
+    CUSTOM = "Custom"
 
 
 class WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
