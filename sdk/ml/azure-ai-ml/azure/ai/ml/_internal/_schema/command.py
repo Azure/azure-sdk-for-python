@@ -4,13 +4,7 @@
 from marshmallow import fields
 
 from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import (
-    NestedField,
-    UnionField,
-    RegistryStr,
-    AnonymousEnvironmentSchema,
-    ArmVersionedStr
-)
+from azure.ai.ml._schema import NestedField, UnionField, RegistryStr, AnonymousEnvironmentSchema, ArmVersionedStr
 from azure.ai.ml._schema.core.fields import DumpableEnumField
 from azure.ai.ml._schema.job import ParameterizedParallelSchema, ParameterizedCommandSchema
 from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
@@ -35,6 +29,7 @@ class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):
 class DistributedSchema(CommandSchema):
     class Meta:
         exclude = ["code"]  # need to enable distribution comparing to CommandSchema
+
     type = DumpableEnumField(allowed_values=[NodeType.DISTRIBUTED])
 
 

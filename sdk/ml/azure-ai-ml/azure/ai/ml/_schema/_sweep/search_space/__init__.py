@@ -17,5 +17,5 @@ __all__ = [
     "UniformSchema",
     "QUniformSchema",
     "IntegerQUniformSchema",
-    "IntegerQNormalSchema"
+    "IntegerQNormalSchema",
 ]

@@ -199,7 +199,6 @@ class RegexMatchResult(object):
     """
 
 
-
 class GitWildMatchPatternError(ValueError):
     """
     The :class:`GitWildMatchPatternError` indicates an invalid git wild match
@@ -566,11 +565,11 @@ def normalize_file(file, separators=None):
     for sep in separators:
         norm_file = norm_file.replace(sep, posixpath.sep)
 
-    if norm_file.startswith('/'):
+    if norm_file.startswith("/"):
         # Make path relative.
         norm_file = norm_file[1:]
 
-    elif norm_file.startswith('./'):
+    elif norm_file.startswith("./"):
         # Remove current directory prefix.
         norm_file = norm_file[2:]
 

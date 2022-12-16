@@ -186,14 +186,15 @@ def log_activity(
 
     try:
         yield activityLogger
-    except BaseException as e: # pylint: disable=broad-except
+    except BaseException as e:  # pylint: disable=broad-except
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
                 isinstance(exception, MLException)
-                and exception.error_category in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN] # pylint: disable=no-member
+                and exception.error_category
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]  # pylint: disable=no-member
             ) or (
                 "errorCategory" in activityLogger.activity_info
                 and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
@@ -215,17 +216,21 @@ def log_activity(
                 message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__
                 if isinstance(exception, MLException):
-                    activityLogger.activity_info["errorMessage"] = exception.no_personal_data_message # pylint: disable=no-member
-                    activityLogger.activity_info["errorTarget"] = exception.target # pylint: disable=no-member
-                    activityLogger.activity_info["errorCategory"] = exception.error_category # pylint: disable=no-member
-                    if exception.inner_exception: # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorMessage"
+                    ] = exception.no_personal_data_message  # pylint: disable=no-member
+                    activityLogger.activity_info["errorTarget"] = exception.target  # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorCategory"
+                    ] = exception.error_category  # pylint: disable=no-member
+                    if exception.inner_exception:  # pylint: disable=no-member
                         # pylint: disable=no-member
                         activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
-        except Exception: # pylint: disable=broad-except
-            return # pylint: disable=lost-exception
+        except Exception:  # pylint: disable=broad-except
+            return  # pylint: disable=lost-exception
 
 
 def monitor_with_activity(
@@ -308,7 +313,7 @@ def monitor_with_telemetry_mixin(
                         dimensions.update(obj._get_telemetry_values())
                     elif extra_keys and key in extra_keys:
                         dimensions[key] = str(obj)
-                except Exception: # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     pass
             # add left keys with None
             if extra_keys:
@@ -322,7 +327,7 @@ def monitor_with_telemetry_mixin(
 
             try:
                 return value._get_telemetry_values() if isinstance(value, TelemetryMixin) else {}
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 return {}
 
         @functools.wraps(f)

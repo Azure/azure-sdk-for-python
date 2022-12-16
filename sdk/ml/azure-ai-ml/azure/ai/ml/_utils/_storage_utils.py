@@ -189,7 +189,7 @@ def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = N
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
             path_prefix = split_paths[0][3]
         except Exception:
-            raise Exception("Registry asset URI could not be parsed." )
+            raise Exception("Registry asset URI could not be parsed.")
         ds_name = None
     else:
         try:

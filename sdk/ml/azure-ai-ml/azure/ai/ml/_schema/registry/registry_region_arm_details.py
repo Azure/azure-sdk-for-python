@@ -26,13 +26,13 @@ class RegistryRegionDetailsSchema(metaclass=PatchedSchemaMeta):
     # top-level value called 'container_registry'.
     # We don't even want to show the per-region acr accounts when displaying a
     # registry to the user, so this isn't even left as a dump-only field.
-    '''acr_config = fields.List(
+    """acr_config = fields.List(
         UnionField(
             [DumpableStringField(validate=acr_format_validator), NestedField(SystemCreatedAcrAccountSchema)],
             dump_only=True,
             is_strict=True,
         )
-    )'''
+    )"""
     location = fields.Str()
     storage_config = UnionField(
         [

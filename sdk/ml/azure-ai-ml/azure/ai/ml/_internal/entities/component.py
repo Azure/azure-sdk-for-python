@@ -175,10 +175,7 @@ class InternalComponent(Component):
             skip_path_validation = False
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(
-                    self._base_path,
-                    skip_path_validation=skip_path_validation
-                ),
+                self.environment._validate(self._base_path, skip_path_validation=skip_path_validation),
                 field_name="environment",
             )
         return validation_result

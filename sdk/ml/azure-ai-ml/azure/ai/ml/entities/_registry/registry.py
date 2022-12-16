@@ -26,6 +26,7 @@ from .registry_support_classes import RegistryRegionDetails
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
 
+
 @experimental
 class Registry(Resource):
     def __init__(
@@ -85,7 +86,7 @@ class Registry(Resource):
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         """Dump the registry spec into a file in yaml format.
 
@@ -101,6 +102,7 @@ class Registry(Resource):
     def _to_dict(self) -> Dict:
         # JIT import to avoid experimental warnings on unrelated calls
         from azure.ai.ml._schema.registry.registry import RegistrySchema
+
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
@@ -133,6 +135,7 @@ class Registry(Resource):
         }
         # JIT import to avoid experimental warnings on unrelated calls
         from azure.ai.ml._schema.registry.registry import RegistrySchema
+
         loaded_schema = load_from_dict(RegistrySchema, data, context, **kwargs)
         cls._convert_yaml_dict_to_entity_input(loaded_schema)
         return Registry(**loaded_schema)
@@ -147,7 +150,8 @@ class Registry(Resource):
         replication_locations = []
         if real_registry.region_details:
             replication_locations = [
-                RegistryRegionDetails._from_rest_object(details) for details in real_registry.region_details # pylint: disable=protected-access
+                RegistryRegionDetails._from_rest_object(details)
+                for details in real_registry.region_details  # pylint: disable=protected-access
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
@@ -175,7 +179,7 @@ class Registry(Resource):
     @classmethod
     def _convert_yaml_dict_to_entity_input(
         cls,
-        input: Dict, # pylint: disable=redefined-builtin
+        input: Dict,  # pylint: disable=redefined-builtin
     ):
         # pop container_registry value.
         global_acr_exists = False
@@ -187,7 +191,6 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
-
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.

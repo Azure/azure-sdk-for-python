@@ -23,5 +23,5 @@ __all__ = [
     "PipelineConstants",
     "SearchSpace",
     "NlpModels",
-    "NlpLearningRateScheduler"
+    "NlpLearningRateScheduler",
 ]

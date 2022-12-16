@@ -89,19 +89,21 @@ class Parallel(BaseNode):
         *,
         component: Union[ParallelComponent, str],
         compute: Optional[str] = None,
-        inputs: Optional[Dict[
-            str,
-            Union[
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
-        ]] = None,
+                Union[
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
+        ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         retry_settings: Optional[Dict[str, Union[RetrySettings, str]]] = None,
         logging_level: Optional[str] = None,
@@ -330,7 +332,8 @@ class Parallel(BaseNode):
                     logging_level=self.logging_level,
                     mini_batch_size=self.mini_batch_size,
                     partition_keys=json.dumps(self.partition_keys)
-                        if self.partition_keys is not None else self.partition_keys,
+                    if self.partition_keys is not None
+                    else self.partition_keys,
                     resources=get_rest_dict_for_node_attrs(self.resources),
                 )
             )

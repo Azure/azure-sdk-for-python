@@ -149,12 +149,7 @@ class LocalPathField(fields.Str):
             return None
         self._validate(value)
         # always dump path as absolute path in string as base_path will be dropped after serialization
-        return super(LocalPathField, self)._serialize(
-            self._resolve_path(value).as_posix(),
-            attr,
-            obj,
-            **kwargs
-        )
+        return super(LocalPathField, self)._serialize(self._resolve_path(value).as_posix(), attr, obj, **kwargs)
 
 
 class SerializeValidatedUrl(fields.Url):

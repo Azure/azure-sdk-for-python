@@ -77,7 +77,7 @@ class BaseNodeSchema(PathAwareSchema):
     def remove_meaningless_key_for_node(
         self,
         data,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         data.pop("$schema", None)
         return data

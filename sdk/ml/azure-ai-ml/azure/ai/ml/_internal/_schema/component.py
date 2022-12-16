@@ -46,6 +46,7 @@ class NodeType:
 class InternalComponentSchema(ComponentSchema):
     class Meta:
         unknown = INCLUDE
+
     # override name as 1p components allow . in name, which is not allowed in v2 components
     name = fields.Str()
 
@@ -134,5 +135,5 @@ class InternalComponentSchema(ComponentSchema):
     def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
-            data["type"] = LABELLED_RESOURCE_NAME.format(data['type'], type_label)
+            data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
         return data

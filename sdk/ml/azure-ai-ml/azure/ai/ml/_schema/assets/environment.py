@@ -27,11 +27,13 @@ module_logger = logging.getLogger(__name__)
 
 class BuildContextSchema(metaclass=PatchedSchemaMeta):
     dockerfile_path = fields.Str()
-    path = UnionField([
-        LocalPathField(),
-        # build context also support http url
-        fields.URL(),
-    ])
+    path = UnionField(
+        [
+            LocalPathField(),
+            # build context also support http url
+            fields.URL(),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):

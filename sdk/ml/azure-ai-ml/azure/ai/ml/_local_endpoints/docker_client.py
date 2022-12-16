@@ -41,6 +41,7 @@ DEFAULT_LABELS = {
 class DockerClient(object):
     """Client for interacting with User's Docker environment for local
     endpoints."""
+
     # pylint: disable=client-method-missing-type-annotations
 
     def __init__(
@@ -93,6 +94,7 @@ class DockerClient(object):
             tty=True,
             publish_all_ports=True,
         )
+
     # pylint: disable=client-method-has-more-than-5-positional-arguments
 
     def create_deployment(
@@ -215,7 +217,9 @@ class DockerClient(object):
                 # to add debugpy statements
                 container.remove()
             app_path = environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT]
-            self._vscode_client.invoke_dev_container(devcontainer_path=devcontainer_path, app_path=app_path) # pylint: disable=redundant-keyword-arg
+            self._vscode_client.invoke_dev_container(
+                devcontainer_path=devcontainer_path, app_path=app_path
+            )  # pylint: disable=redundant-keyword-arg
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
         else:
             container.start()
@@ -380,8 +384,8 @@ class DockerClient(object):
         build_directory: str,
         image_name: str,
         dockerfile_path: str,
-        conda_source_path: str, # pylint: disable=unused-argument
-        conda_yaml_contents: str, # pylint: disable=unused-argument
+        conda_source_path: str,  # pylint: disable=unused-argument
+        conda_yaml_contents: str,  # pylint: disable=unused-argument
     ) -> None:
 
         try:
@@ -413,7 +417,7 @@ class DockerClient(object):
                 raise
             raise LocalEndpointImageBuildError(e)
 
-    def _reformat_volumes(self, volumes_dict: dict) -> list: # pylint: disable=no-self-use
+    def _reformat_volumes(self, volumes_dict: dict) -> list:  # pylint: disable=no-self-use
         """Returns a list of volumes to pass to docker.
 
         :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique.

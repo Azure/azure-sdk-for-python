@@ -15,7 +15,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
-    UserIdentityConfiguration
+    UserIdentityConfiguration,
 )
 
 from ..core.schema import PatchedSchemaMeta

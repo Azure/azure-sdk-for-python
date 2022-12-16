@@ -42,20 +42,22 @@ class InternalBaseNode(BaseNode):
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Union[Component, str],
-        inputs: Optional[Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
-        ]] = None,
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
+        ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         properties: Optional[Dict] = None,
         compute: Optional[str] = None,

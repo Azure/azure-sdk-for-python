@@ -42,18 +42,20 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Optional[Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
-        ]] = None,
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
+        ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         settings: Optional[PipelineJobSettings] = None,
         **kwargs,

@@ -167,6 +167,7 @@ def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwa
     kwargs.update(client_kwargs)
     return kwargs
 
+
 def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
@@ -176,7 +177,6 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
     return registry_discovery_endpoint
-
 
 
 def _resource_to_scopes(resource):

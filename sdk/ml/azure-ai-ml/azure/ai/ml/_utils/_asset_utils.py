@@ -63,7 +63,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5()) # nosec
+hash_type = type(hashlib.md5())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -233,7 +233,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version") # nosec
+    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -661,22 +661,27 @@ def _get_next_version_from_container(
     **kwargs,
 ) -> str:
     try:
-        container = container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            **kwargs,
-        ) if registry_name else container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            **kwargs,
+        container = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
         )
         version = container.properties.next_version
 
     except ResourceNotFoundError:
         version = "1"
     return version
+
 
 def _get_latest(
     asset_name: str,
@@ -772,25 +777,29 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = version_operation.get(
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-        ) if registry_name else version_operation.get(
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+        version_resource = (
+            version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.begin_create_or_update( # pylint: disable=expression-not-assigned
+        version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
             name=name,
             version=version,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             body=version_resource,
-            ) if registry_name else version_operation.create_or_update(
+        ) if registry_name else version_operation.create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
@@ -798,27 +807,31 @@ def _archive_or_restore(
             body=version_resource,
         )
     else:
-        container_resource = container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-        ) if registry_name else container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+        container_resource = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update( # pylint: disable=expression-not-assigned
+        container_operation.create_or_update(  # pylint: disable=expression-not-assigned
             name=name,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             body=container_resource,
-            ) if registry_name else container_operation.create_or_update(
+        ) if registry_name else container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=container_resource,
-            )
+        )
 
 
 def _resolve_label_to_asset(

@@ -158,7 +158,7 @@ class Resource(ABC):
     # pylint: disable:unused-argument
     def _get_arm_resource(
         self,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Get arm resource.
 

@@ -4,19 +4,15 @@
 from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    DiagnoseRequestProperties as RestDiagnoseRequestProperties
+    DiagnoseRequestProperties as RestDiagnoseRequestProperties,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    DiagnoseResponseResult as RestDiagnoseResponseResult
+    DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models import DiagnoseResult as RestDiagnoseResult
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    DiagnoseResponseResultValue as RestDiagnoseResponseResultValue
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    DiagnoseResult as RestDiagnoseResult
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters
+    DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
 )
 
 

@@ -207,8 +207,7 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
             and self.training_batch_size == other.training_batch_size
             and self.validation_batch_size == other.validation_batch_size
             and self.warmup_cosine_lr_cycles == other.warmup_cosine_lr_cycles
-            and self.warmup_cosine_lr_warmup_epochs
-            == other.warmup_cosine_lr_warmup_epochs
+            and self.warmup_cosine_lr_warmup_epochs == other.warmup_cosine_lr_warmup_epochs
             and self.weight_decay == other.weight_decay
         )
 
@@ -431,9 +430,7 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestImageModelSettingsClassification
-    ) -> "ImageModelSettingsClassification":
+    def _from_rest_object(cls, obj: RestImageModelSettingsClassification) -> "ImageModelSettingsClassification":
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
@@ -772,9 +769,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestImageModelSettingsObjectDetection
-    ) -> "ImageModelSettingsObjectDetection":
+    def _from_rest_object(cls, obj: RestImageModelSettingsObjectDetection) -> "ImageModelSettingsObjectDetection":
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
@@ -837,8 +832,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             and self.nms_iou_threshold == other.nms_iou_threshold
             and self.tile_grid_size == other.tile_grid_size
             and self.tile_overlap_ratio == other.tile_overlap_ratio
-            and self.tile_predictions_nms_threshold
-            == other.tile_predictions_nms_threshold
+            and self.tile_predictions_nms_threshold == other.tile_predictions_nms_threshold
             and self.validation_iou_threshold == other.validation_iou_threshold
             and self.validation_metric_type == other.validation_metric_type
         )

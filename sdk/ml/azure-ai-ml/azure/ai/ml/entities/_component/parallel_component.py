@@ -239,8 +239,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         rest_object = super()._to_rest_object()
         # schema required list while backend accept json string
         if self.partition_keys:
-            rest_object.properties.component_spec["partition_keys"] = \
-                json.dumps(self.partition_keys)
+            rest_object.properties.component_spec["partition_keys"] = json.dumps(self.partition_keys)
         return rest_object
 
     @classmethod

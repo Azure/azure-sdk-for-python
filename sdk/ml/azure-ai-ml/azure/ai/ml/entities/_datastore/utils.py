@@ -26,7 +26,7 @@ def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredential
     elif isinstance(rest_credentials, models.ServicePrincipalDatastoreCredentials):
         config_class = ServicePrincipalConfiguration
     elif isinstance(rest_credentials, models.CertificateDatastoreCredentials):
-        config_class =  CertificateConfiguration
+        config_class = CertificateConfiguration
 
     return config_class._from_datastore_rest_object(rest_credentials)
 

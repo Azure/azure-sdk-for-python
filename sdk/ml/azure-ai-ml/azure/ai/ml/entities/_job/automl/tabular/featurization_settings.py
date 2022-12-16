@@ -109,7 +109,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
 
     @property
     def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
-        """ A list of transformers to ignore when featurizing."""
+        """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter

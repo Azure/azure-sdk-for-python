@@ -53,9 +53,7 @@ class BatchDeploymentSchema(DeploymentSchema):
         metadata={"description": "Indicates maximum number of parallelism per instance."}
     )
     resources = NestedField(JobResourceConfigurationSchema)
-    type = StringTransformedEnum(
-        allowed_values = [BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL]
-    )
+    type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL])
 
     job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
 

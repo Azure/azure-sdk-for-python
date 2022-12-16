@@ -24,5 +24,5 @@ __all__ = [
     "ImageObjectDetectionSearchSpace",
     "ImageSweepSettings",
     "ImageModelSettingsClassification",
-    "ImageModelSettingsObjectDetection"
+    "ImageModelSettingsObjectDetection",
 ]

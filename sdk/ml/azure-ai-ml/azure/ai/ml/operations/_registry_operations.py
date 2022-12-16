@@ -6,15 +6,13 @@
 
 from typing import Optional, Dict, Iterable
 
-from azure.ai.ml._restclient.v2022_10_01_preview import \
-    AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._scope_dependent_operations import (OperationsContainer,
-                                                     OperationScope)
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
-from azure.ai.ml.exceptions import (ErrorCategory, ErrorTarget,
-                                    ValidationException)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
@@ -67,8 +65,10 @@ class RegistryOperations:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
             )
-        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], \
-            resource_group_name=self._resource_group_name)
+        return self._operation.list(
+            cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs],
+            resource_group_name=self._resource_group_name,
+        )
 
     # @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     @experimental
@@ -140,12 +140,10 @@ class RegistryOperations:
             registry_name=registry.name,
             body=registry_data,
             polling=self._get_polling(registry.name),
-            cls=lambda response, deserialized, headers: Registry._from_rest_object(
-                deserialized),
+            cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
         )
 
         return poller
-
 
     # @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     @experimental

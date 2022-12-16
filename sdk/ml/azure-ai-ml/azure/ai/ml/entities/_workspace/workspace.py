@@ -185,7 +185,9 @@ class Workspace(Resource):
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = IdentityConfiguration._from_workspace_rest_object(rest_obj.identity) # pylint: disable=protected-access
+            identity = IdentityConfiguration._from_workspace_rest_object(
+                rest_obj.identity
+            )  # pylint: disable=protected-access
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,

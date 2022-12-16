@@ -111,7 +111,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         experiment_name: Optional[str] = None,
         jobs: Optional[Dict[str, BaseNode]] = None,
         settings: Optional[PipelineJobSettings] = None,
-        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         compute: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
@@ -347,8 +349,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
                     _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
-                    if _data_binding is not None \
-                            and is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                    if _data_binding is not None and is_data_binding_expression(
+                        _data_binding, ["parent", "jobs", _validate_job_name]
+                    ):
                         return False
             return True
 

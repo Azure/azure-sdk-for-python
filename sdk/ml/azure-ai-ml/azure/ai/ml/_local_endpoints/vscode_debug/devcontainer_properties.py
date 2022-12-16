@@ -118,6 +118,7 @@ class RunArgs(object):
 class OverrideCommand(object):
     def __init__(self):
         pass
+
     # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"overrideCommand": True}
@@ -126,6 +127,7 @@ class OverrideCommand(object):
 class Extensions(object):
     def __init__(self):
         pass
+
     # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
@@ -134,6 +136,7 @@ class Extensions(object):
 class Settings(object):
     def __init__(self):
         pass
+
     # pylint: disable=no-self-use
     def to_dict(self) -> dict:
         return {

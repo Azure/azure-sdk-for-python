@@ -36,6 +36,7 @@ class CreateJobFileRefField(FileRefField):
         This function is overwrite because we need job can be dumped inside schedule.
         """
         from azure.ai.ml.entities._builders import BaseNode
+
         if isinstance(value, BaseNode):
             # Dump as Job to avoid missing field.
             value = value._to_job()
@@ -129,6 +130,7 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         #   /specs/job-endpoint.md#properties-in-difference-job-types
         # code and command can not be set during runtime
         exclude = ["code", "command"]
+
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),

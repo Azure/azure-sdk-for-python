@@ -82,7 +82,7 @@ class ParallelForSchema(BaseLoopSchema):
             fields.Dict(keys=fields.Str(), values=fields.Dict()),
             fields.List(fields.Dict()),
         ],
-        required=True
+        required=True,
     )
     max_concurrency = fields.Int()
     outputs = fields.Dict(

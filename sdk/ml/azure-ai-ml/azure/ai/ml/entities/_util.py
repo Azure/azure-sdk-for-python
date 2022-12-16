@@ -193,12 +193,15 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
+
 def is_empty_target(obj):
     """Determines if it's empty target"""
-    return (obj is None
-            # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
-            or (isinstance(obj, dict) and len(obj) == 0)
-        )
+    return (
+        obj is None
+        # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+        or (isinstance(obj, dict) and len(obj) == 0)
+    )
+
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
@@ -266,6 +269,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # rest object structure
         # pylint: disable=protected-access
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+
         if isinstance(target_obj, _BaseIdentityConfiguration):
             return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)

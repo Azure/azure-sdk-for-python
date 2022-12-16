@@ -11,8 +11,12 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, \
-    DistributionConfiguration
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+    DistributionConfiguration,
+)
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException

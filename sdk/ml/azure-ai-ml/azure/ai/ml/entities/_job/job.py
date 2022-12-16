@@ -25,7 +25,7 @@ from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.exceptions import(
+from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     JobException,

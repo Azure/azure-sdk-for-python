@@ -377,7 +377,12 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """
 
     def __init__(
-        self, *, client_id: Optional[str] = None, resource_id: Optional[str] = None, object_id: Optional[str] = None, principal_id: Optional[str] = None
+        self,
+        *,
+        client_id: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        object_id: Optional[str] = None,
+        principal_id: Optional[str] = None,
     ):
         super().__init__()
         self.type = IdentityType.MANAGED_IDENTITY
@@ -530,7 +535,9 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
-    def __init__(self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs):
+    def __init__(
+        self, *, type: str, user_assigned_identities: Optional[List[ManagedIdentityConfiguration]] = None, **kwargs
+    ):
         """Managed identity specification.
 
         :param type: Managed identity type, defaults to None

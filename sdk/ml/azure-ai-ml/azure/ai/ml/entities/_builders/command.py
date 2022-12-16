@@ -130,20 +130,24 @@ class Command(BaseNode):
         *,
         component: Union[str, CommandComponent],
         compute: Optional[str] = None,
-        inputs: Optional[Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-            ],
-        ]] = None,
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                ],
+            ]
+        ] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         limits: Optional[CommandJobLimits] = None,
-        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
@@ -344,11 +348,17 @@ class Command(BaseNode):
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
         early_termination_policy: Optional[Union[EarlyTerminationPolicy, str]] = None,
-        search_space: Optional[Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ]] = None,
-        identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial

@@ -29,8 +29,10 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration
+    ManagedIdentityConfiguration,
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
 )
 
 from .job import Job
@@ -96,8 +98,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[Output]]] = None,
         limits: Optional[CommandJobLimits] = None,
-        identity: Optional[Union[
-            ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
@@ -192,8 +195,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
             # pylint: disable=protected-access
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+            if rest_command_job.identity
+            else None,
             environment_variables=rest_command_job.environment_variables,
             resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),

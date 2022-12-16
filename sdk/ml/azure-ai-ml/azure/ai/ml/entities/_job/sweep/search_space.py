@@ -171,6 +171,7 @@ class Randint(SweepDistribution):
     :ivar type: Specifies the type of sweep distribution. Set automatically to "randint" for this class.
     :vartype type: str
     """
+
     def __init__(self, upper: Optional[int] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
@@ -249,6 +250,9 @@ class QLogUniform(QUniform):
     :ivar type: Specifies the type of sweep distribution. Set automatically to "qloguniform" for this class.
     :vartype type: str
     """
-    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs):
+
+    def __init__(
+        self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ):
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)

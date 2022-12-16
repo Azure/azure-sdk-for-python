@@ -15,6 +15,7 @@ from ..._schema.core.fields import DumpableEnumField
 class InternalBaseNodeSchema(BaseNodeSchema):
     class Meta:
         unknown = INCLUDE
+
     component = UnionField(
         [
             # for registry type assets

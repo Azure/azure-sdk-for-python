@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Union
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LogVerbosity,
     NlpLearningRateScheduler,
-    SamplingAlgorithmType
+    SamplingAlgorithmType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -72,7 +72,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.AUTOML,
-                    error_category=ErrorCategory.USER_ERROR
+                    error_category=ErrorCategory.USER_ERROR,
                 )
             self.set_training_parameters(**value)
 
@@ -185,13 +185,13 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self.validation_data = validation_data
 
     def set_limits(
-            self,
-            *,
-            max_trials: Optional[int] = 1,
-            max_concurrent_trials: Optional[int] = 1,
-            max_nodes: Optional[int] = 1,
-            timeout_minutes: Optional[int] = None,
-            trial_timeout_minutes: Optional[int] = None
+        self,
+        *,
+        max_trials: Optional[int] = 1,
+        max_concurrent_trials: Optional[int] = 1,
+        max_nodes: Optional[int] = 1,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ) -> None:
         self._limits = NlpLimitSettings(
             max_trials=max_trials,
@@ -202,10 +202,10 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def set_sweep(
-            self,
-            *,
-            sampling_algorithm: Union[str, SamplingAlgorithmType],
-            early_termination: Optional[EarlyTerminationPolicy] = None
+        self,
+        *,
+        sampling_algorithm: Union[str, SamplingAlgorithmType],
+        early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
         """
         Sweep settings for all AutoML NLP tasks.
@@ -223,17 +223,17 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
     def set_training_parameters(
-            self,
-            *,
-            gradient_accumulation_steps: Optional[int] = None,
-            learning_rate: Optional[float] = None,
-            learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]] = None,
-            model_name: Optional[str] = None,
-            number_of_epochs: Optional[int] = None,
-            training_batch_size: Optional[int] = None,
-            validation_batch_size: Optional[int] = None,
-            warmup_ratio: Optional[float] = None,
-            weight_decay: Optional[float] = None
+        self,
+        *,
+        gradient_accumulation_steps: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]] = None,
+        model_name: Optional[str] = None,
+        number_of_epochs: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_ratio: Optional[float] = None,
+        weight_decay: Optional[float] = None,
     ) -> None:
         """
         Fix certain training parameters throughout the training procedure for all candidates.
@@ -259,7 +259,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._training_parameters = self._training_parameters or NlpFixedParameters()
 
         self._training_parameters.gradient_accumulation_steps = (
-            gradient_accumulation_steps if gradient_accumulation_steps is not None
+            gradient_accumulation_steps
+            if gradient_accumulation_steps is not None
             else self._training_parameters.gradient_accumulation_steps
         )
 
@@ -286,7 +287,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.validation_batch_size = (
-            validation_batch_size if validation_batch_size is not None
+            validation_batch_size
+            if validation_batch_size is not None
             else self._training_parameters.validation_batch_size
         )
 
@@ -312,8 +314,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """
         self._search_space = self._search_space or []
         if isinstance(value, list):
-            self._search_space.extend([cast_to_specific_search_space(item, NlpSearchSpace, self.task_type)
-                                       for item in value])
+            self._search_space.extend(
+                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+            )
         else:
             self._search_space.append(cast_to_specific_search_space(value, NlpSearchSpace, self.task_type))
 

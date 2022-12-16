@@ -146,10 +146,8 @@ class Environment(Asset):
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
                 self._generate_anonymous_name_version(
-                    source="image",
-                    conda_file=self._translated_conda_file,
-                    inference_config=self.inference_config
-                    )
+                    source="image", conda_file=self._translated_conda_file, inference_config=self.inference_config
+                )
 
     @property
     def conda_file(self) -> Dict:
@@ -305,25 +303,27 @@ class Environment(Asset):
         if not isinstance(other, Environment):
             return NotImplemented
         return (
-                self.name == other.name
-                and self.id == other.id
-                and self.version == other.version
-                and self.description == other.description
-                and self.tags == other.tags
-                and self.properties == other.properties
-                and self.base_path == other.base_path
-                and self.image == other.image
-                and self.build == other.build
-                and self.conda_file == other.conda_file
-                and self.inference_config == other.inference_config
-                and self._is_anonymous == other._is_anonymous
-                and self.os_type == other.os_type
-            )
+            self.name == other.name
+            and self.id == other.id
+            and self.version == other.version
+            and self.description == other.description
+            and self.tags == other.tags
+            and self.properties == other.properties
+            and self.base_path == other.base_path
+            and self.image == other.image
+            and self.build == other.build
+            and self.conda_file == other.conda_file
+            and self.inference_config == other.inference_config
+            and self._is_anonymous == other._is_anonymous
+            and self.os_type == other.os_type
+        )
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def _generate_anonymous_name_version(self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None):
+    def _generate_anonymous_name_version(
+        self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None
+    ):
         hash_str = ""
         if source == "image":
             hash_str = hash_str.join(get_md5_string(self.image))

@@ -32,7 +32,7 @@ class ImportSource(ABC):
     def __init__(
         self,
         *,
-        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
         connection: Optional[str] = None,
     ):
         self.type = type
@@ -45,7 +45,7 @@ class ImportSource(ABC):
     @classmethod
     def _from_job_inputs(cls, job_inputs: Dict[str, str]) -> "ImportSource":
         """Translate job inputs to import source."""
-        type = job_inputs.get("type") # pylint: disable=redefined-builtin
+        type = job_inputs.get("type")  # pylint: disable=redefined-builtin
         connection = job_inputs.get("connection")
         query = job_inputs.get("query")
         path = job_inputs.get("path")
@@ -62,7 +62,7 @@ class DatabaseImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
         connection: Optional[str] = None,
         query: Optional[str] = None,
     ):
@@ -87,7 +87,7 @@ class FileImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
         connection: Optional[str] = None,
         path: Optional[str] = None,
     ):
@@ -166,7 +166,9 @@ class ImportJob(Job, JobIOMixin):
             description=self.description,
             compute_id=self.compute,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(self.source._to_job_inputs(), job_type=self.type), # pylint: disable=protected-access
+            inputs=to_rest_dataset_literal_inputs(
+                self.source._to_job_inputs(), job_type=self.type
+            ),  # pylint: disable=protected-access
             outputs=to_rest_data_outputs({"output": self.output}),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
             # No longer applicable once new import job type is ready on MFE in PuP
@@ -203,7 +205,7 @@ class ImportJob(Job, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             status=rest_command_job.status,
             creation_context=obj.system_data,
-            source=ImportSource._from_job_inputs(inputs), # pylint: disable=protected-access
+            source=ImportSource._from_job_inputs(inputs),  # pylint: disable=protected-access
             output=outputs["output"] if "output" in outputs else None,
         )
         return import_job
@@ -225,7 +227,9 @@ class ImportJob(Job, JobIOMixin):
             is_anonymous=True,
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
-            source=self._to_inputs(inputs=self.source._to_job_inputs(), pipeline_job_dict=pipeline_job_dict), # pylint: disable=protected-access
+            source=self._to_inputs(
+                inputs=self.source._to_job_inputs(), pipeline_job_dict=pipeline_job_dict
+            ),  # pylint: disable=protected-access
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
@@ -243,7 +247,7 @@ class ImportJob(Job, JobIOMixin):
         return Import(
             component=component,
             compute=self.compute,
-            inputs=self.source._to_job_inputs(), # pylint: disable=protected-access
+            inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
             outputs={"output": self.output},
             description=self.description,
             display_name=self.display_name,

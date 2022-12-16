@@ -34,10 +34,9 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         self,
         *,
         resources: Optional[ResourceConfiguration] = None,
-        identity: Optional[Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.

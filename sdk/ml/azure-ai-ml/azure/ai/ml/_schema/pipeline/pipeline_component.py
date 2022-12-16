@@ -114,7 +114,8 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
             elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
                 # Convert to do-while node.
                 job_instance = ParallelFor._create_instance_from_schema_dict(
-                    pipeline_jobs=jobs, loaded_data=job_instance)
+                    pipeline_jobs=jobs, loaded_data=job_instance
+                )
                 jobs[key] = job_instance
 
     for key, job_instance in jobs.items():

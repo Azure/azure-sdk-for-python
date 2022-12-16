@@ -116,8 +116,8 @@ class OnlineDeployment(Deployment):
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         model_mount_path: Optional[str] = None,
-        code_path:  Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script:  Optional[Union[str, PathLike]] = None, # promoted property code_configuration.scoring_script
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property code_configuration.scoring_script
         **kwargs: Any,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -363,7 +363,9 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.scoring_script
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
     ):
 
@@ -547,8 +549,10 @@ class ManagedOnlineDeployment(OnlineDeployment):
         instance_type: Optional[str] = None,
         instance_count: Optional[int] = None,
         code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.scoring_script
-        egress_public_network_access = None,
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
+        egress_public_network_access=None,
         **kwargs,
     ):
 

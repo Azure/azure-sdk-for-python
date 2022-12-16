@@ -171,6 +171,7 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
         )
 
+
 def validate_scoring_script(deployment):
     score_script_path = Path(deployment.base_path).joinpath(
         deployment.code_configuration.code, deployment.scoring_script
@@ -180,10 +181,10 @@ def validate_scoring_script(deployment):
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
-            except Exception as err: # pylint: disable=broad-except
+            except Exception as err:  # pylint: disable=broad-except
                 err.filename = err.filename.split("/")[-1]
                 msg = (
-                    f"Failed to submit deployment {deployment.name} due to syntax errors " # pylint: disable=no-member
+                    f"Failed to submit deployment {deployment.name} due to syntax errors "  # pylint: disable=no-member
                     f"in scoring script {err.filename}.\nError on line {err.lineno}: "
                     f"{err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
                 )
@@ -207,6 +208,6 @@ def validate_scoring_script(deployment):
         if isinstance(err, ValidationException):
             raise err
         raise MLException(
-            message= f"Failed to open scoring script {err.filename}.",
-            no_personal_data_message= "Failed to open scoring script.",
+            message=f"Failed to open scoring script {err.filename}.",
+            no_personal_data_message="Failed to open scoring script.",
         )

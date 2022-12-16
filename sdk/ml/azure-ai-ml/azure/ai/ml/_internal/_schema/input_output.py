@@ -19,6 +19,7 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "Float",
 ]
 
+
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list
     type = UnionField(

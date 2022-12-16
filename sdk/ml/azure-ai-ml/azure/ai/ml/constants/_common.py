@@ -531,11 +531,13 @@ class AssetTypes:
     TRITON_MODEL = "triton_model"
     CUSTOM_MODEL = "custom_model"
 
+
 class InputTypes:
-    INTEGER = 'integer'
-    NUMBER = 'number'
-    STRING = 'string'
-    BOOLEAN = 'boolean'
+    INTEGER = "integer"
+    NUMBER = "number"
+    STRING = "string"
+    BOOLEAN = "boolean"
+
 
 class WorkspaceResourceConstants(object):
     ENCRYPTION_STATUS_ENABLED = "Enabled"
@@ -576,8 +578,8 @@ class RollingRate:
 
 
 class Scope:
-    SUBSCRIPTION="subscription"
-    RESOURCE_GROUP="resource_group"
+    SUBSCRIPTION = "subscription"
+    RESOURCE_GROUP = "resource_group"
 
 
 class IdentityType:

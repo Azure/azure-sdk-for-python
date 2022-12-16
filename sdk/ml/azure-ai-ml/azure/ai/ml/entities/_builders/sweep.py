@@ -16,7 +16,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     UserIdentityConfiguration,
-    ManagedIdentityConfiguration
+    ManagedIdentityConfiguration,
 )
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
@@ -105,16 +105,19 @@ class Sweep(ParameterizedSweep, BaseNode):
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
-        search_space: Optional[Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        identity: Optional[Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input

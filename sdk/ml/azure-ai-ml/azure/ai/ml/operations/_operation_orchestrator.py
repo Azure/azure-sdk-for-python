@@ -40,7 +40,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     LABELLED_RESOURCE_ID_FORMAT,
     DEFAULT_LABEL_NAME,
-    REGISTRY_VERSION_PATTERN
+    REGISTRY_VERSION_PATTERN,
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -140,9 +140,8 @@ class OperationOrchestrator(object):
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
                 # Short form of curated env will be expanded on the backend side.
                 # CLI strips off azureml: in the schema, appending it back as required by backend
-                if (
-                    azureml_type == "environments"
-                    and (asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}"))
+                if azureml_type == "environments" and (
+                    asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}")
                 ):
                     return f"azureml:{asset}"
 

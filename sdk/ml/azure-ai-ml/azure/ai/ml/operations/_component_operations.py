@@ -20,6 +20,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import (
 #     ActivityType,
 #     monitor_with_activity,
@@ -35,8 +36,12 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
-    DEFAULT_COMPONENT_VERSION
+from azure.ai.ml.constants._common import (
+    AzureMLResourceType,
+    LROConfigurations,
+    DEFAULT_LABEL_NAME,
+    DEFAULT_COMPONENT_VERSION,
+)
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
@@ -284,13 +289,14 @@ class ComponentOperations(_ScopeDependentOperations):
         if version is not None:
             component.version = version
         if not component.version and component._auto_increment_version:
-            component.version = _get_next_version_from_container(name=component.name,
-                        container_operation=self._container_operation,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                        workspace_name=self._workspace_name,
-                        registry_name=self._registry_name,
-                        **self._init_args,
-                    )
+            component.version = _get_next_version_from_container(
+                name=component.name,
+                container_operation=self._container_operation,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                registry_name=self._registry_name,
+                **self._init_args,
+            )
 
         if not (hasattr(component, "_is_anonymous") and component._is_anonymous):
             component._set_is_anonymous(kwargs.pop("is_anonymous", False))
@@ -346,7 +352,9 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Archive a component.
 
         :param name: Name of the component.
@@ -367,7 +375,9 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Restore an archived component.
 
         :param name: Name of the component.
@@ -558,8 +568,9 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
-        variable_inputs = [key for key, val in func_parameters.items()
-                           if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]]
+        variable_inputs = [
+            key for key, val in func_parameters.items() if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]
+        ]
         if variable_inputs:
             msg = "Cannot register the component {} with variable inputs {!r}."
             raise ValidationException(

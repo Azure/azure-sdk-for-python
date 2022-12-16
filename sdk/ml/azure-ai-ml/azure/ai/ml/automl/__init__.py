@@ -31,7 +31,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     ForecastingSettings,
     RegressionJob,
     TabularFeaturizationSettings,
-    TabularLimitSettings
+    TabularLimitSettings,
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
@@ -127,5 +127,5 @@ __all__ = [
     "TextClassificationJob",
     "TextClassificationMultilabelJob",
     "TextNerJob",
-    "ValidationMetricType"
+    "ValidationMetricType",
 ]

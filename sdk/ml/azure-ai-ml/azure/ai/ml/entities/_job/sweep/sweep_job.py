@@ -124,19 +124,22 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
-        identity: Optional[Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
-        search_space: Optional[Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
         objective: Optional[Objective] = None,
         trial: Optional[Union[CommandJob, CommandComponent]] = None,
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
@@ -262,8 +265,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         )
 
     def _override_missing_properties_from_trial(self):

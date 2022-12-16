@@ -7,6 +7,7 @@ from typing import Optional, Any, Dict
 from azure.ai.ml._schema._deployment.batch.run_settings_schema import RunSettingsSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
+
 class RunSettings:
     """Run Settings entity
 

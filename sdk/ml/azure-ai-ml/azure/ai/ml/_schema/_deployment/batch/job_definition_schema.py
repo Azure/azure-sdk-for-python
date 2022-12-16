@@ -36,15 +36,11 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
             PipelineComponentFileRefField(),
         ]
     )
-    type = StringTransformedEnum(
-        required=True,
-        allowed_values=[JobType.PIPELINE]
-    )
+    type = StringTransformedEnum(required=True, allowed_values=[JobType.PIPELINE])
     settings = fields.Dict()
     name = fields.Str()
     description = fields.Str()
     tags = fields.Dict()
-
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

@@ -20,10 +20,11 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType

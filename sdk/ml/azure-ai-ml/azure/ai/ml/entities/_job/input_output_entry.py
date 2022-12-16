@@ -18,7 +18,7 @@ class InputOutputEntry(DictMixin):
         self,
         data: Optional[Union[str, "Data"]] = None,
         mode: Optional[str] = InputOutputModes.MOUNT,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         # Data will be either a dataset id, inline dataset definition
         self.data = data

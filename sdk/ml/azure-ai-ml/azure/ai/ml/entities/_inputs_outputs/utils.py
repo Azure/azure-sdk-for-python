@@ -12,7 +12,7 @@ from enum import EnumMeta
 from inspect import Parameter, signature, getmro
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions  import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 
 def is_group(obj):
@@ -127,8 +127,9 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
                 pass
             complete_annotation._update_default(default)
         if isinstance(complete_annotation, Output) and default is not None:
-            msg = f"Default value of Output {complete_annotation.name!r} cannot be set: " \
-                  f"Output has no default value."
+            msg = (
+                f"Default value of Output {complete_annotation.name!r} cannot be set: " f"Output has no default value."
+            )
             raise UserErrorException(msg)
         return complete_annotation
 
@@ -222,13 +223,13 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {
-            key: val for key, val in cls_or_func.__dict__.items()
-            if not key.startswith("_") and key not in skip_params
+            key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_") and key not in skip_params
         }
     else:
         # Infer parameter type from value if is function
         defaults_dict = {
-            key: val.default for key, val in signature(cls_or_func).parameters.items()
+            key: val.default
+            for key, val in signature(cls_or_func).parameters.items()
             if key not in skip_params and val.kind != val.VAR_KEYWORD
         }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
@@ -285,8 +286,11 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                     if io._is_enum():
                         io = EnumInput(**io._to_io_entity_args_dict())
                     else:
-                        io = Output(**io._to_io_entity_args_dict()) if key == return_annotation_key \
+                        io = (
+                            Output(**io._to_io_entity_args_dict())
+                            if key == return_annotation_key
                             else Input(**io._to_io_entity_args_dict())
+                        )
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
         result[key] = io

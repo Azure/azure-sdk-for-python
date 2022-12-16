@@ -134,8 +134,7 @@ class VirtualMachineCompute(Compute):
             private_key_data=ssh_key_value,
         )
         properties = VirtualMachineSchemaProperties(
-            ssh_port=self.ssh_settings.ssh_port,
-            administrator_account=credentials
+            ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
         )
         vm_compute = VMResource(
             properties=properties,

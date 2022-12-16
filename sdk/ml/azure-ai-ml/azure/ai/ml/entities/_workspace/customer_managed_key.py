@@ -5,6 +5,7 @@
 
 from typing import Optional
 
+
 class CustomerManagedKey:
     def __init__(
         self,

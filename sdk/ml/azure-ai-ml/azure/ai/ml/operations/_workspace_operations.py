@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     WorkspaceUpdateParameters,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
@@ -248,8 +249,11 @@ class WorkspaceOperations:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
-            if existing_workspace and existing_workspace.identity and \
-                existing_workspace.identity.user_assigned_identities:
+            if (
+                existing_workspace
+                and existing_workspace.identity
+                and existing_workspace.identity.user_assigned_identities
+            ):
                 if rest_user_assigned_identities is None:
                     rest_user_assigned_identities = {}
                 for uai in existing_workspace.identity.user_assigned_identities:
@@ -312,8 +316,8 @@ class WorkspaceOperations:
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
         if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
-            customer_managed_key_uri=workspace.customer_managed_key.key_uri
-            update_param.encryption=EncryptionUpdateProperties(
+            customer_managed_key_uri = workspace.customer_managed_key.key_uri
+            update_param.encryption = EncryptionUpdateProperties(
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
                     key_identifier=customer_managed_key_uri,
                 )
@@ -518,7 +522,8 @@ class WorkspaceOperations:
         else:
             # pylint: disable=protected-access
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+            )._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:

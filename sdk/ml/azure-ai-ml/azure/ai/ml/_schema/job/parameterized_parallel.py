@@ -28,8 +28,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
         metadata={"description": "The batch size of current job."},
     )
     partition_keys = fields.List(
-        fields.Str(),
-        metadata={"description": "The keys used to partition input data into mini-batches"}
+        fields.Str(), metadata={"description": "The keys used to partition input data into mini-batches"}
     )
     input_data = fields.Str()
     resources = NestedField(JobResourceConfigurationSchema)

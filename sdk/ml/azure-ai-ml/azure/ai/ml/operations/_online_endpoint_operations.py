@@ -21,6 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -362,7 +363,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
-    def _get_online_credentials(self, name: str, auth_mode: Optional[str] = None) -> Union[EndpointAuthKeys, EndpointAuthToken]:
+    def _get_online_credentials(
+        self, name: str, auth_mode: Optional[str] = None
+    ) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         if not auth_mode:
             endpoint = self._online_operation.get(
                 resource_group_name=self._resource_group_name,

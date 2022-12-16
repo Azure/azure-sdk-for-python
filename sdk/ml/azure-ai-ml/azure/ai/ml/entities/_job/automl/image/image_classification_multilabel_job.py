@@ -80,8 +80,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             validation_data_size=self.validation_data_size,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            model_settings=self._training_parameters._to_rest_object(
-            ) if self._training_parameters else None,
+            model_settings=self._training_parameters._to_rest_object() if self._training_parameters else None,
             search_space=(
                 [entry._to_rest_object() for entry in self._search_space if entry is not None]
                 if self._search_space is not None
@@ -132,8 +131,9 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         }
 
         image_classification_multilabel_job = cls(
@@ -152,8 +152,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
                 else None
             ),
             training_parameters=(
-                ImageModelSettingsClassification._from_rest_object(
-                    task_details.model_settings)
+                ImageModelSettingsClassification._from_rest_object(task_details.model_settings)
                 if task_details.model_settings
                 else None
             ),

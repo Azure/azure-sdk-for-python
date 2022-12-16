@@ -60,9 +60,7 @@ class _ComponentFactory:
             create_schema_func=SparkComponent._create_schema_for_validation,
         )
 
-    def get_create_funcs(
-        self, yaml_spec: dict
-    ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
+    def get_create_funcs(self, yaml_spec: dict) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
         """Get registered functions to create instance & its corresponding
         schema for the given type."""
 

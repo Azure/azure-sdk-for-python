@@ -13,7 +13,7 @@ from marshmallow import INCLUDE
 from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
     AmlTokenConfiguration,
-    UserIdentityConfiguration
+    UserIdentityConfiguration,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
@@ -129,11 +129,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
-        identity: Optional[Union[
-            Dict[str, str],
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration]] = None,
+        identity: Optional[
+            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         resources: Union[Dict, SparkResourceConfiguration, None] = None,
         **kwargs,
     ):
@@ -168,19 +166,16 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[
-                    ManagedIdentityConfiguration,
-                    AmlTokenConfiguration,
-                    UserIdentityConfiguration]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         return self._identity
 
     @identity.setter
-    def identity(self, value: Union[
-                                Dict[str, str],
-                                ManagedIdentityConfiguration,
-                                AmlTokenConfiguration,
-                                UserIdentityConfiguration,
-                                None]):
+    def identity(
+        self,
+        value: Union[
+            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
+        ],
+    ):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -275,8 +270,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            if rest_spark_job.identity
+            else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(

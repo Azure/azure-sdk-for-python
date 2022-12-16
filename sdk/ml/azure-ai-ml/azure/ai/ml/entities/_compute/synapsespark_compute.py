@@ -21,7 +21,13 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 class AutoScaleSettings:
     """Auto scale settings for synapse spark compute"""
 
-    def __init__(self, *, min_node_count: Optional[int] = None, max_node_count: Optional[int] = None, enabled: Optional[bool] = None):
+    def __init__(
+        self,
+        *,
+        min_node_count: Optional[int] = None,
+        max_node_count: Optional[int] = None,
+        enabled: Optional[bool] = None,
+    ):
         """Auto scale settings for synapse spark compute
 
         :param min_node_count: Min node count
@@ -179,6 +185,8 @@ class SynapseSparkCompute(Compute):
             name=self.name,
             identity=(
                 # pylint: disable=protected-access
-                self.identity._to_compute_rest_object() if self.identity else None
+                self.identity._to_compute_rest_object()
+                if self.identity
+                else None
             ),
         )

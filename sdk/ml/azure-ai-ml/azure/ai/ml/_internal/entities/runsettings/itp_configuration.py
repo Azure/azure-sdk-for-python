@@ -9,7 +9,13 @@ from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
 class ITPResourceConfiguration(BaseProperty):
     """ITP resource configuration."""
 
-    def __init__(self, gpu_count: Optional[int] = None, cpu_count: Optional[int] = None, memory_request_in_gb: Optional[int] = None, **kwargs):
+    def __init__(
+        self,
+        gpu_count: Optional[int] = None,
+        cpu_count: Optional[int] = None,
+        memory_request_in_gb: Optional[int] = None,
+        **kwargs
+    ):
         """
         :param gpu_count: Gpu count Defines how many gpu cores a single node gpu job will use.
         Default value is 1.

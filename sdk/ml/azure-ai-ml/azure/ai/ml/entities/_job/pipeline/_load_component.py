@@ -120,7 +120,7 @@ class _PipelineNodeFactory:
         return self._get_func(_type, self._create_instance_funcs)
 
     def get_load_from_rest_object_func(
-            self, _type: str
+        self, _type: str
     ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
         """Get the function to load a node from a rest object.
 
@@ -194,7 +194,7 @@ class _PipelineNodeFactory:
         return new_instance
 
     def load_from_rest_object(
-            self, *, obj: dict, _type: Optional[str] = None, **kwargs
+        self, *, obj: dict, _type: Optional[str] = None, **kwargs
     ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 

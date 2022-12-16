@@ -313,15 +313,20 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
+
         create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func({
-                BASE_PATH_CONTEXT_KEY: base_path,
-                PARAMS_OVERRIDE_KEY: params_override,
-            }).load(data, unknown=INCLUDE, **kwargs)),
+            **(
+                create_schema_func(
+                    {
+                        BASE_PATH_CONTEXT_KEY: base_path,
+                        PARAMS_OVERRIDE_KEY: params_override,
+                    }
+                ).load(data, unknown=INCLUDE, **kwargs)
+            ),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
@@ -361,6 +366,7 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
+
         create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
@@ -388,14 +394,16 @@ class Component(
         init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
             rest_component_version.component_spec, unknown=INCLUDE
         )
-        init_kwargs.update(dict(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            name=origin_name,
-        ))
+        init_kwargs.update(
+            dict(
+                id=obj.id,
+                is_anonymous=rest_component_version.is_anonymous,
+                creation_context=obj.system_data,
+                inputs=inputs,
+                outputs=outputs,
+                name=origin_name,
+            )
+        )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}

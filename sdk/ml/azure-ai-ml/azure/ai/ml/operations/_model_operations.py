@@ -26,6 +26,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -351,7 +352,9 @@ class ModelOperations(_ScopeDependentOperations):
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
     # @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -372,7 +375,9 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Restore an archived model asset.
 
         :param name: Name of model asset.
@@ -457,7 +462,9 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     # pylint: disable=no-self-use
-    def _prepare_to_copy(self, model: Model, name: Optional[str] = None, version: Optional[str] = None) -> WorkspaceModelReference:
+    def _prepare_to_copy(
+        self, model: Model, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceModelReference:
 
         """Returns WorkspaceModelReference
         to copy a registered model to registry given the asset id

@@ -62,10 +62,14 @@ class ParameterizedSweep:
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
-        search_space: Optional[Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

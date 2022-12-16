@@ -14,6 +14,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
@@ -23,7 +24,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
     modified_operation_client,
-    is_private_preview_enabled
+    is_private_preview_enabled,
 )
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
@@ -256,12 +257,12 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         component = None
         if isinstance(deployment.job_definition.component, PipelineComponent):
             component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name =  deployment.job_definition.component.name,
+                name=deployment.job_definition.component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                component = deployment.job_definition.component,
+                component=deployment.job_definition.component,
                 version=deployment.job_definition.component.version,
-                **self._init_kwargs
+                **self._init_kwargs,
             )
             deployment.job_definition.component = None
             deployment.job_definition.component_id = component.id
@@ -273,8 +274,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 deployment.job_definition.tags = component.tags
         elif isinstance(deployment.job_definition.component, str):
             component_id = orchestrators.get_asset_arm_id(
-                deployment.job_definition.component,
-                azureml_type=AzureMLResourceType.COMPONENT
+                deployment.job_definition.component, azureml_type=AzureMLResourceType.COMPONENT
             )
             if not deployment.job_definition.name:
                 name, _ = parse_prefixed_name_version(deployment.job_definition.component)

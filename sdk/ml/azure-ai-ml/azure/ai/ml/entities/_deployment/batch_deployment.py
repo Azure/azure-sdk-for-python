@@ -33,7 +33,7 @@ from .deployment import Deployment
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attributes
+class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
@@ -108,7 +108,9 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         max_concurrency_per_instance: Optional[int] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.scoring_script
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
@@ -289,6 +291,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             for k in del_key:
                 del deployment.properties[k]
         return deployment
+
     @classmethod
     def _load(
         cls,
@@ -333,16 +336,20 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _flat_key_snake_to_pascal(self, key_str: str) -> str: # pylint: disable=no-self-use
+    def _flat_key_snake_to_pascal(self, key_str: str) -> str:  # pylint: disable=no-self-use
         key_arr = key_str.split(".")
         pascal_array = []
         for key in key_arr:
             # pylint: disable=line-too-long
-            if key not in [PipelineConstants.CONTINUE_ON_STEP_FAILURE, PipelineConstants.DEFAULT_COMPUTE, PipelineConstants.DEFAULT_DATASTORE]:
+            if key not in [
+                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
+                PipelineConstants.DEFAULT_COMPUTE,
+                PipelineConstants.DEFAULT_DATASTORE,
+            ]:
                 pascal_array.append(snake_to_pascal(key))
             else:
                 pascal_array.append(key)
-        return '.'.join(pascal_array)
+        return ".".join(pascal_array)
 
     @classmethod
     def _flat_key_pascal_to_snake(cls, key_str: str) -> str:
@@ -350,9 +357,13 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         snake_array = []
         for key in key_arr:
             # pylint: disable=line-too-long
-            if key not in [PipelineConstants.CONTINUE_ON_STEP_FAILURE, PipelineConstants.DEFAULT_COMPUTE, PipelineConstants.DEFAULT_DATASTORE]:
+            if key not in [
+                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
+                PipelineConstants.DEFAULT_COMPUTE,
+                PipelineConstants.DEFAULT_DATASTORE,
+            ]:
                 snake_array.append(camel_to_snake(key))
             else:
                 snake_array.append(key)
 
-        return '.'.join(snake_array)
+        return ".".join(snake_array)

@@ -14,8 +14,12 @@ from azure.ai.ml.exceptions import ValidationException, ErrorTarget
 from .attr_dict import InputsAttrDict, OutputsAttrDict, _GroupAttrDict
 from .base import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 from .._pipeline_job_helpers import process_sdk_component_job_io, from_dict_to_rest_io
-from ..._input_output_helpers import to_rest_dataset_literal_inputs, to_rest_data_outputs, \
-    from_rest_inputs_to_dataset_literal, from_rest_data_outputs
+from ..._input_output_helpers import (
+    to_rest_dataset_literal_inputs,
+    to_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
+    from_rest_data_outputs,
+)
 
 
 class NodeIOMixin:

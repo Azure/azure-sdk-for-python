@@ -30,8 +30,8 @@ class OnlineScaleSettings(RestTranslatableMixin):
 
     def __init__(
         self,
-        type: str, # pylint: disable=redefined-builtin
-        **kwargs, # pylint: disable=unused-argument
+        type: str,  # pylint: disable=redefined-builtin
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.type = camel_to_snake(type)
 

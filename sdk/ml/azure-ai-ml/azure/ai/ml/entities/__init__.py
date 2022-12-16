@@ -42,8 +42,13 @@ from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationS
 from ._deployment.batch_job import BatchJob
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
-from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint,\
-    EndpointAuthKeys, EndpointAuthToken
+from ._endpoint.online_endpoint import (
+    KubernetesOnlineEndpoint,
+    ManagedOnlineEndpoint,
+    OnlineEndpoint,
+    EndpointAuthKeys,
+    EndpointAuthToken,
+)
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
@@ -98,9 +103,16 @@ from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
 from ._credentials import (
-    PatTokenConfiguration, SasTokenConfiguration, ManagedIdentityConfiguration,
-    AccountKeyConfiguration, UsernamePasswordConfiguration, ServicePrincipalConfiguration,
-    CertificateConfiguration, UserIdentityConfiguration, AmlTokenConfiguration, IdentityConfiguration
+    PatTokenConfiguration,
+    SasTokenConfiguration,
+    ManagedIdentityConfiguration,
+    AccountKeyConfiguration,
+    UsernamePasswordConfiguration,
+    ServicePrincipalConfiguration,
+    CertificateConfiguration,
+    UserIdentityConfiguration,
+    AmlTokenConfiguration,
+    IdentityConfiguration,
 )
 
 # TODO: enable in PuP
@@ -237,5 +249,5 @@ __all__ = [
     "NotebookAccessKeys",
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
-    "EndpointAuthToken"
+    "EndpointAuthToken",
 ]

@@ -122,11 +122,7 @@ class TextNerJob(AutoMLNLPJob):
             if task_details.featurization_settings
             else None
         )
-        sweep = (
-            NlpSweepSettings._from_rest_object(task_details.sweep_settings)
-            if task_details.sweep_settings
-            else None
-        )
+        sweep = NlpSweepSettings._from_rest_object(task_details.sweep_settings) if task_details.sweep_settings else None
         training_parameters = (
             NlpFixedParameters._from_rest_object(task_details.fixed_parameters)
             if task_details.fixed_parameters
@@ -159,8 +155,9 @@ class TextNerJob(AutoMLNLPJob):
             training_parameters=training_parameters,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         )
 
         text_ner_job._restore_data_inputs()

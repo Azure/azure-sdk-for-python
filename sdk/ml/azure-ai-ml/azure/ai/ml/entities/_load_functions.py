@@ -129,7 +129,11 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 
 def _load_common_raising_marshmallow_error(
-    cls: Type[Resource], yaml_dict, relative_origin: Union[PathLike, str], params_override: Optional[list] = None, **kwargs
+    cls: Type[Resource],
+    yaml_dict,
+    relative_origin: Union[PathLike, str],
+    params_override: Optional[list] = None,
+    **kwargs,
 ) -> Resource:
     # pylint: disable=protected-access
     return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
