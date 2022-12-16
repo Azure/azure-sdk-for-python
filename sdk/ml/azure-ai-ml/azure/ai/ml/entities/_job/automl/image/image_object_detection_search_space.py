@@ -7,12 +7,9 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsObjectDetection
-from azure.ai.ml.entities._job.automl.search_space_utils import (
-    _convert_from_rest_object,
-    _convert_to_rest_object,
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ImageModelDistributionSettingsObjectDetection,
 )
-from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities import (
     Choice,
     LogNormal,
@@ -24,6 +21,11 @@ from azure.ai.ml.entities import (
     QUniform,
     Randint,
     Uniform,
+)
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.search_space_utils import (
+    _convert_from_rest_object,
+    _convert_to_rest_object,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 

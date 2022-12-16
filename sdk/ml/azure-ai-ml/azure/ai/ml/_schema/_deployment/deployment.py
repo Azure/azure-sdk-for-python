@@ -6,9 +6,18 @@ import logging
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
+from azure.ai.ml._schema.assets.environment import (
+    AnonymousEnvironmentSchema,
+    EnvironmentSchema,
+)
 from azure.ai.ml._schema.assets.model import AnonymousModelSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, PathAwareSchema, RegistryStr, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    NestedField,
+    PathAwareSchema,
+    RegistryStr,
+    UnionField,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 from .code_configuration_schema import CodeConfigurationSchema

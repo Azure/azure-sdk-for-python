@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
@@ -12,18 +12,23 @@ from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.distribution import (
+    DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
     TensorFlowDistribution,
-    DistributionConfiguration,
 )
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from ..._restclient.v2022_05_01.models import ComponentVersionData
 
+from ..._restclient.v2022_05_01.models import ComponentVersionData
 from ..._schema import PathAwareSchema
-from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
+from ..._utils.utils import (
+    get_all_data_binding_expressions,
+    parse_args_description_from_docstring,
+)
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
 from .component import Component

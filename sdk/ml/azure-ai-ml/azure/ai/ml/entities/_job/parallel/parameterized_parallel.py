@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Optional, Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 from ..job_resource_configuration import JobResourceConfiguration
 from .parallel_task import ParallelTask

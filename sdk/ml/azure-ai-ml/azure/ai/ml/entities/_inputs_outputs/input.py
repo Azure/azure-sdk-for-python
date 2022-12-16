@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Optional, Dict, Union, overload
+from typing import Dict, Optional, Union, overload
 
 from typing_extensions import Literal
 

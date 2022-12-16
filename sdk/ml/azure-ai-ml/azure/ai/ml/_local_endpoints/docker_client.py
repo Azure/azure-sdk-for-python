@@ -7,11 +7,12 @@
 import json
 import logging
 import time
-
+from typing import Optional
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.exceptions import (
     DockerEngineNotAvailableError,
@@ -21,8 +22,6 @@ from azure.ai.ml.exceptions import (
     LocalEndpointNotFoundError,
     MultipleLocalDeploymentsFoundError,
 )
-from azure.ai.ml._utils.utils import DockerProxy
-from typing import Optional
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)

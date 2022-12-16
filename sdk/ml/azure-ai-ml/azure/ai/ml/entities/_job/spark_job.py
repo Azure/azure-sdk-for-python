@@ -10,19 +10,24 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration,
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._job.job import SparkConfKey
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -32,12 +37,15 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 
 from ..._schema import NestedField, UnionField
 from .job import Job
 from .job_io_mixin import JobIOMixin
-from .spark_helpers import _validate_compute_or_resources, _validate_input_output_mode, _validate_spark_configurations
+from .spark_helpers import (
+    _validate_compute_or_resources,
+    _validate_input_output_mode,
+    _validate_spark_configurations,
+)
 from .spark_job_entry import SparkJobEntry
 from .spark_job_entry_mixin import SparkJobEntryMixin
 from .spark_resource_configuration import SparkResourceConfiguration

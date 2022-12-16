@@ -5,10 +5,10 @@
 # pylint: disable=arguments-renamed
 
 import logging
+from typing import Optional
 
 from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from typing import Optional
 
 module_logger = logging.getLogger(__name__)
 

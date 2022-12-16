@@ -6,10 +6,13 @@ import logging
 import random
 import uuid
 
-from azure.ai.ml._azure_environments import _get_base_url_from_metadata
-from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
-from azure.ai.ml.constants._common import ArmConstants
 from azure.core.credentials import TokenCredential
+
+from azure.ai.ml._azure_environments import _get_base_url_from_metadata
+from azure.ai.ml._vendor.azure_resources._resource_management_client import (
+    ResourceManagementClient,
+)
+from azure.ai.ml.constants._common import ArmConstants
 
 module_logger = logging.getLogger(__name__)
 

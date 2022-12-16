@@ -7,7 +7,12 @@ from inspect import Parameter, Signature
 from typing import Callable, Sequence
 
 from azure.ai.ml.entities import Component
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UnexpectedKeywordError,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 

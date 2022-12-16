@@ -4,7 +4,7 @@
 
 # pylint: disable=R0902,protected-access,no-member
 
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationModels
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -18,9 +18,17 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionModels
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TrainingSettings as RestTrainingSettings
-from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    TrainingSettings as RestTrainingSettings,
+)
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    from_iso_duration_format_mins,
+    to_iso_duration_format_mins,
+)
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

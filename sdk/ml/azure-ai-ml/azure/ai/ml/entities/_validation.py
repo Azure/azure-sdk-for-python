@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 import pydash
 import strictyaml

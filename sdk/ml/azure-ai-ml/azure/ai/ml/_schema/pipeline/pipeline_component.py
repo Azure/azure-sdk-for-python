@@ -11,7 +11,10 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.component.input_output import OutputPortSchema, PrimitiveOutputSchema
+from azure.ai.ml._schema.component.input_output import (
+    OutputPortSchema,
+    PrimitiveOutputSchema,
+)
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     FileRefField,
@@ -33,7 +36,10 @@ from azure.ai.ml._schema.pipeline.component_job import (
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
-from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
+from azure.ai.ml._schema.pipeline.control_flow_job import (
+    DoWhileSchema,
+    ParallelForSchema,
+)
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
@@ -90,9 +96,11 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
     from azure.ai.ml.entities._builders.do_while import DoWhile
-    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
-    from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+    from azure.ai.ml.entities._job.pipeline._component_translatable import (
+        ComponentTranslatableMixin,
+    )
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)

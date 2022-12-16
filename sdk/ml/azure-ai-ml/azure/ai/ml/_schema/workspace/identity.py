@@ -11,7 +11,10 @@ from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
-from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml.entities._credentials import (
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
 
 
 class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):

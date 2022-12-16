@@ -10,7 +10,9 @@ from typing import Any
 from marshmallow import ValidationError, fields, post_load, validates
 
 from azure.ai.ml._schema import NestedField, PatchedSchemaMeta
-from azure.ai.ml._schema._deployment.online.oversize_data_config_schema import OversizeDataConfigSchema
+from azure.ai.ml._schema._deployment.online.oversize_data_config_schema import (
+    OversizeDataConfigSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.import_component import ImportComponent

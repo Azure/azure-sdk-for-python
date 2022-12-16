@@ -12,7 +12,12 @@ from marshmallow import fields, post_load
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
-from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ExperimentalField,
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
 
@@ -20,7 +25,10 @@ from .data_collector_schema import DataCollectorSchema
 from .liveness_probe import LivenessProbeSchema
 from .request_settings_schema import RequestSettingsSchema
 from .resource_requirements_schema import ResourceRequirementsSchema
-from .scale_settings_schema import DefaultScaleSettingsSchema, TargetUtilizationScaleSettingsSchema
+from .scale_settings_schema import (
+    DefaultScaleSettingsSchema,
+    TargetUtilizationScaleSettingsSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 

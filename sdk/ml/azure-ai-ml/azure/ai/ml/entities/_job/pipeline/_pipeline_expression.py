@@ -10,7 +10,11 @@ from collections import namedtuple
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
+from azure.ai.ml._utils.utils import (
+    dump_yaml_to_file,
+    get_all_data_binding_expressions,
+    load_yaml,
+)
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -201,7 +205,9 @@ class PipelineExpressionMixin:
         As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
         was rejected, logical operations are also not supported.
         """
-        from azure.ai.ml.dsl._pipeline_component_builder import _is_inside_dsl_pipeline_func
+        from azure.ai.ml.dsl._pipeline_component_builder import (
+            _is_inside_dsl_pipeline_func,
+        )
 
         # note: unexpected bool test always be checking if the object is None;
         # so for non-pipeline scenarios, directly return True to avoid unexpected breaking,
@@ -383,7 +389,9 @@ class PipelineExpression(PipelineExpressionMixin):
 
         # get all pipeline input types from builder stack
         # TODO: check if there is pipeline input we cannot know its type (missing in `PipelineComponentBuilder.inputs`)?
-        from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
+        from azure.ai.ml.dsl._pipeline_component_builder import (
+            _definition_builder_stack,
+        )
 
         pipeline_inputs = _definition_builder_stack.top().inputs
         postfix, inputs = list(), dict()

@@ -19,13 +19,24 @@ from azure.ai.ml._schema.component import (
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
 )
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    NestedField,
+    RegistryStr,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
-from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
+from azure.ai.ml._schema.spark_resource_configuration import (
+    SparkResourceConfigurationSchema,
+)
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
@@ -36,7 +47,11 @@ from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
-from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
+from ..job import (
+    ParameterizedCommandSchema,
+    ParameterizedParallelSchema,
+    ParameterizedSparkSchema,
+)
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
 from ..job.services import JobServiceSchema

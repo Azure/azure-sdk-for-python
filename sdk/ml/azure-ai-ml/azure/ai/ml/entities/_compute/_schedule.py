@@ -5,9 +5,15 @@
 from typing import List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeSchedules as RestComputeSchedules,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeStartStopSchedule as RestComputeStartStopSchedule,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ScheduleStatus as ScheduleState,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 

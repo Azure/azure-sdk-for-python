@@ -5,7 +5,7 @@
 # pylint: disable=too-many-instance-attributes
 
 from abc import ABC
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoNCrossValidations,
@@ -17,11 +17,13 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
 )
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException

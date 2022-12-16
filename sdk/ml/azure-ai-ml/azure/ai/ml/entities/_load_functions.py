@@ -5,7 +5,7 @@
 import logging
 import warnings
 from os import PathLike
-from typing import Optional, IO, AnyStr, Type, Union
+from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
@@ -28,10 +28,20 @@ from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import JobSchedule
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._validation import (
+    SchemaValidatableMixin,
+    _ValidationResultBuilder,
+)
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 

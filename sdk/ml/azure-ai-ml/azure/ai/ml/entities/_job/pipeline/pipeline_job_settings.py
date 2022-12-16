@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 from typing import Optional
+
+from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
 
 class PipelineJobSettings(_AttrDict):

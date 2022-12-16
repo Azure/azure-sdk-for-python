@@ -5,7 +5,7 @@
 import logging
 import os
 from contextlib import ContextDecorator
-from typing import Optional, Any
+from typing import Any, Optional
 
 START_MSG = "[START]"
 STOP_MSG = "[STOP]"

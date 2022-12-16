@@ -5,9 +5,9 @@
 import json
 import logging
 import traceback
-from typing import Optional, Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
-from colorama import Fore, init, Style
+from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml.constants._common import (
@@ -204,18 +204,18 @@ def format_create_validation_error(
     """
     Formats a detailed error message for validation errors.
     """
-    from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
-    from azure.ai.ml._schema.assets.data import DataSchema
     from azure.ai.ml._schema._datastore import (
         AzureBlobSchema,
         AzureDataLakeGen1Schema,
         AzureDataLakeGen2Schema,
         AzureFileSchema,
     )
-    from azure.ai.ml._schema.job import CommandJobSchema
     from azure.ai.ml._schema._sweep import SweepJobSchema
+    from azure.ai.ml._schema.assets.data import DataSchema
     from azure.ai.ml._schema.assets.environment import EnvironmentSchema
     from azure.ai.ml._schema.assets.model import ModelSchema
+    from azure.ai.ml._schema.job import CommandJobSchema
+    from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
 
     if raw_error:
         error = raw_error

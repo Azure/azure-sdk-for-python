@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
@@ -18,8 +20,14 @@ from azure.ai.ml._artifacts._constants import (
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -37,7 +45,10 @@ from azure.ai.ml._utils._data_utils import (
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
+from azure.ai.ml.constants._common import (
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
+    AssetTypes,
+)
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
@@ -48,8 +59,6 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -282,8 +291,12 @@ class DataOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
-    ) -> None:  # pylint:disable=unused-argument
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -307,8 +320,12 @@ class DataOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
-    ) -> None:  # pylint:disable=unused-argument
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived data asset.
 
         :param name: Name of data asset.

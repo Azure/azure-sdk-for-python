@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Any, Dict
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._schema._deployment.batch.run_settings_schema import RunSettingsSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

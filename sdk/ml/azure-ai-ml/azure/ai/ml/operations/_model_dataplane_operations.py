@@ -5,9 +5,18 @@
 import logging
 from typing import List
 
-from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
-from azure.ai.ml._restclient.model_dataplane.models import BatchGetResolvedUrisDto, BatchModelPathResponseDto
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.model_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientModelDataplane,
+)
+from azure.ai.ml._restclient.model_dataplane.models import (
+    BatchGetResolvedUrisDto,
+    BatchModelPathResponseDto,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 module_logger = logging.getLogger(__name__)
 

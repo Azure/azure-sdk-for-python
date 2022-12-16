@@ -6,19 +6,24 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Optional, Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    JobBase,
+    MLTableJobInput,
+    ResourceConfiguration,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
 from azure.ai.ml.constants._job.automl import AutoMLConstants
-from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.pipeline._io import AutoMLNodeIOMixin
@@ -137,7 +142,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             ImageInstanceSegmentationJob,
             ImageObjectDetectionJob,
         )
-        from .nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+        from .nlp import (
+            TextClassificationJob,
+            TextClassificationMultilabelJob,
+            TextNerJob,
+        )
         from .tabular import ClassificationJob, ForecastingJob, RegressionJob
 
         # create a mapping of task type to job class

@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoForecastHorizon,
@@ -17,7 +17,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ForecastingSettings as RestForecastingSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,

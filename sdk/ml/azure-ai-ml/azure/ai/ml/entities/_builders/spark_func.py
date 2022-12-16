@@ -6,15 +6,23 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AmlToken,
+    ManagedIdentity,
+    UserIdentity,
+)
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._component.spark_component import SparkComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.entities._job.spark_resource_configuration import (
+    SparkResourceConfiguration,
+)
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 from .spark import Spark

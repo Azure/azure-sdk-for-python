@@ -5,7 +5,10 @@
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     NlpVerticalFeaturizationSettings as RestNlpVerticalFeaturizationSettings,
 )
-from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings, FeaturizationSettingsType
+from azure.ai.ml.entities._job.automl.featurization_settings import (
+    FeaturizationSettings,
+    FeaturizationSettingsType,
+)
 
 
 class NlpFeaturizationSettings(FeaturizationSettings):

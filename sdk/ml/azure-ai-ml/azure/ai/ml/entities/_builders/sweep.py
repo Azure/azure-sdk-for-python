@@ -4,28 +4,29 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
 
+from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
-    UserIdentityConfiguration,
     ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
+    EarlyTerminationPolicy,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
-    EarlyTerminationPolicy,
 )
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
@@ -50,10 +51,11 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.sweep import SweepJob
-from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 
 from ..._schema import PathAwareSchema
-from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
 from ..._utils.utils import camel_to_snake
 from .base_node import BaseNode
 
@@ -177,12 +179,18 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @classmethod
     def _value_type_to_class(cls, value):
-        value_type = value['type']
+        value_type = value["type"]
         search_space_dict = {
-            SearchSpace.CHOICE: Choice, SearchSpace.RANDINT: Randint, SearchSpace.LOGNORMAL: LogNormal,
-            SearchSpace.NORMAL: Normal, SearchSpace.LOGUNIFORM: LogUniform, SearchSpace.UNIFORM: Uniform,
-            SearchSpace.QLOGNORMAL: QLogNormal, SearchSpace.QNORMAL: QNormal, SearchSpace.QLOGUNIFORM: QLogUniform,
-            SearchSpace.QUNIFORM: QUniform
+            SearchSpace.CHOICE: Choice,
+            SearchSpace.RANDINT: Randint,
+            SearchSpace.LOGNORMAL: LogNormal,
+            SearchSpace.NORMAL: Normal,
+            SearchSpace.LOGUNIFORM: LogUniform,
+            SearchSpace.UNIFORM: Uniform,
+            SearchSpace.QLOGNORMAL: QLogNormal,
+            SearchSpace.QNORMAL: QNormal,
+            SearchSpace.QLOGUNIFORM: QLogUniform,
+            SearchSpace.QUNIFORM: QUniform,
         }
         return search_space_dict[value_type](**value)
 
@@ -239,7 +247,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
 
         # TODO: use cls._get_schema() to load from rest object
-        from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
+        from azure.ai.ml._schema._sweep.parameterized_sweep import (
+            ParameterizedSweepSchema,
+        )
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])

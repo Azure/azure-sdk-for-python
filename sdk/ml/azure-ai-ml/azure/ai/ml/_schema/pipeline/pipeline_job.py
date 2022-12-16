@@ -8,7 +8,9 @@ import logging
 
 from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load
 
-from azure.ai.ml._schema._utils.data_binding_expression import _add_data_binding_to_field
+from azure.ai.ml._schema._utils.data_binding_expression import (
+    _add_data_binding_to_field,
+)
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     ComputeField,
@@ -18,7 +20,10 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
+from azure.ai.ml._schema.job.input_output_fields_provider import (
+    InputsField,
+    OutputsField,
+)
 from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
 from azure.ai.ml._schema.pipeline.pipeline_component import (
     PipelineComponentFileRefField,

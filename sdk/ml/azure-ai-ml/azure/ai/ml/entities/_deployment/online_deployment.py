@@ -10,14 +10,22 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentData as RestOnlineDeploymentData
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineDeploymentDetails as RestOnlineDeploymentDetails
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    ManagedOnlineDeployment as RestManagedOnlineDeployment,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    OnlineDeploymentData as RestOnlineDeploymentData,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    OnlineDeploymentDetails as RestOnlineDeploymentDetails,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import Sku as RestSku
 from azure.ai.ml._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
@@ -25,20 +33,32 @@ from azure.ai.ml._schema._deployment.online.online_deployment import (
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
 from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    TYPE,
+    ArmConstants,
+)
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
-from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
-from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
+from azure.ai.ml.entities._deployment.deployment_settings import (
+    OnlineRequestSettings,
+    ProbeSettings,
+)
+from azure.ai.ml.entities._deployment.resource_requirements_settings import (
+    ResourceRequirementsSettings,
+)
 from azure.ai.ml.entities._deployment.scale_settings import (
     DefaultScaleSettings,
     OnlineScaleSettings,
     TargetUtilizationScaleSettings,
 )
-from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
+from azure.ai.ml.entities._endpoint._endpoint_helpers import (
+    validate_endpoint_or_deployment_name,
+)
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import (
     DeploymentException,

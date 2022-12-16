@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from collections import deque
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.exceptions import UserErrorException

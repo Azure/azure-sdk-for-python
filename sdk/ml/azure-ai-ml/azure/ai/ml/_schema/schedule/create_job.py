@@ -7,19 +7,22 @@ import copy
 import yaml
 from marshmallow import INCLUDE, ValidationError, post_load, pre_load
 
-from azure.ai.ml._schema import CommandJobSchema, AnonymousEnvironmentSchema
+from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
+    ArmVersionedStr,
+    ComputeField,
     FileRefField,
     NestedField,
+    RegistryStr,
     StringTransformedEnum,
     UnionField,
-    ComputeField,
-    RegistryStr,
-    ArmVersionedStr,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
+from azure.ai.ml._schema.job.input_output_fields_provider import (
+    InputsField,
+    OutputsField,
+)
 from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file, merge_dict

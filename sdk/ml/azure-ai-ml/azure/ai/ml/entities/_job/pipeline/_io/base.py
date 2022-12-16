@@ -6,7 +6,7 @@
 
 import copy
 from abc import ABC, abstractmethod
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -14,7 +14,9 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import (
+    PipelineExpressionMixin,
+)
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
 from azure.ai.ml.exceptions import (
     ErrorCategory,

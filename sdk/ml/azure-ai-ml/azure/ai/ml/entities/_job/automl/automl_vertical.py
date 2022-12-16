@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 
 from abc import abstractmethod
+from typing import Optional
 
 from azure.ai.ml import Input
 
 from .automl_job import AutoMLJob
-from typing import Optional
 
 
 class AutoMLVertical(AutoMLJob):

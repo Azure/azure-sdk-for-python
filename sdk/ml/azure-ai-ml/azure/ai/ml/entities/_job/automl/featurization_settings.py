@@ -4,8 +4,9 @@
 
 # pylint: disable=protected-access
 
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from typing import Optional
+
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class FeaturizationSettings(RestTranslatableMixin):

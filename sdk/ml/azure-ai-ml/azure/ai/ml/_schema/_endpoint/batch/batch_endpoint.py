@@ -9,7 +9,9 @@ from typing import Any
 
 from marshmallow import post_load
 
-from azure.ai.ml._schema._endpoint.batch.batch_endpoint_defaults import BatchEndpointsDefaultsSchema
+from azure.ai.ml._schema._endpoint.batch.batch_endpoint_defaults import (
+    BatchEndpointsDefaultsSchema,
+)
 from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

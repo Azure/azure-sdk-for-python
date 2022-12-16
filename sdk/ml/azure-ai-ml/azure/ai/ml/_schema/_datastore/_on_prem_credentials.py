@@ -22,13 +22,17 @@ class KerberosPasswordSchema(BaseKerberosCredentials):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> "KerberosPasswordCredentials":
-        from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosPasswordCredentials
+        from azure.ai.ml.entities._datastore._on_prem_credentials import (
+            KerberosPasswordCredentials,
+        )
 
         return KerberosPasswordCredentials(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosPasswordCredentials
+        from azure.ai.ml.entities._datastore._on_prem_credentials import (
+            KerberosPasswordCredentials,
+        )
 
         if not isinstance(data, KerberosPasswordCredentials):
             raise ValidationError("Cannot dump non-KerberosPasswordCredentials object into KerberosPasswordCredentials")
@@ -40,13 +44,17 @@ class KerberosKeytabSchema(BaseKerberosCredentials):
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> "KerberosKeytabCredentials":
-        from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials
+        from azure.ai.ml.entities._datastore._on_prem_credentials import (
+            KerberosKeytabCredentials,
+        )
 
         return KerberosKeytabCredentials(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials
+        from azure.ai.ml.entities._datastore._on_prem_credentials import (
+            KerberosKeytabCredentials,
+        )
 
         if not isinstance(data, KerberosKeytabCredentials):
             raise ValidationError("Cannot dump non-KerberosKeytabCredentials object into KerberosKeytabCredentials")

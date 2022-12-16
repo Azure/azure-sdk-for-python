@@ -9,12 +9,15 @@ from typing import Dict, Union
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
+from azure.ai.ml._utils.utils import (
+    is_data_binding_expression,
+    is_internal_components_enabled,
+)
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, ValidationErrorType
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
 
 from .._util import convert_ordered_dict_to_dict
 from .base_node import BaseNode
@@ -56,7 +59,9 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
     def _register_in_current_pipeline_component_builder(self):
         """Register this node in current pipeline component builder by adding
         self to a global stack."""
-        from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
+        from azure.ai.ml.dsl._pipeline_component_builder import (
+            _add_component_to_current_definition_builder,
+        )
 
         _add_component_to_current_definition_builder(self)
 
@@ -141,7 +146,9 @@ class LoopNode(ControlFlowNode, ABC):
 
     @classmethod
     def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "LoopNode":
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        from azure.ai.ml.entities._job.pipeline._load_component import (
+            pipeline_node_factory,
+        )
 
         node_type = obj.get(CommonYamlFields.TYPE, None)
         load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(_type=node_type)

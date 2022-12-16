@@ -5,9 +5,13 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Optional, Dict, Iterable
+from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.core.credentials import TokenCredential
+
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -15,8 +19,9 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._utils.utils import _snake_to_camel
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
-from azure.core.credentials import TokenCredential
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 
 module_logger = logging.getLogger(__name__)
 

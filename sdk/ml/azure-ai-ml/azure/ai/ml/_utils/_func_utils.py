@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 from types import FunctionType, MethodType
-from typing import Optional, List, Union, Callable, Any
+from typing import Any, Callable, List, Optional, Union
 
-from bytecode import Instr, Bytecode
+from bytecode import Bytecode, Instr
 
 
 class PersistentLocalsFunction(object):

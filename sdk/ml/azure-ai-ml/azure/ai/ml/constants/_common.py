@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"

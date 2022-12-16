@@ -5,11 +5,13 @@
 # pylint: disable=protected-access
 
 import logging
+from typing import Optional
 
 from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceRequirements
-from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
+from azure.ai.ml.entities._deployment.container_resource_settings import (
+    ResourceSettings,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from typing import Optional
 
 module_logger = logging.getLogger(__name__)
 

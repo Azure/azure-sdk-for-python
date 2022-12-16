@@ -20,11 +20,14 @@ import uuid
 from datetime import datetime
 from uuid import uuid4
 
+from azure.core.exceptions import HttpResponseError
 from marshmallow import ValidationError
 
-from azure.core.exceptions import HttpResponseError
-
-from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
+from azure.ai.ml._utils.utils import (
+    _is_user_error_from_exception_type,
+    _is_user_error_from_status_code,
+    _str_to_bool,
+)
 from azure.ai.ml.exceptions import ErrorCategory, MLException
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
@@ -193,8 +196,8 @@ def log_activity(
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
                 isinstance(exception, MLException)
-                and exception.error_category
-                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]  # pylint: disable=no-member
+                and exception.error_category  # pylint: disable=no-member
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
                 "errorCategory" in activityLogger.activity_info
                 and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]

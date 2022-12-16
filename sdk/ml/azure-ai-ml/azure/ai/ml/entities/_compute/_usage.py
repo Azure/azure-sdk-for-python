@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import Optional, IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.event_hub_schema import EventHubSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

@@ -6,7 +6,13 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    CodeField,
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants import ParallelTaskType
 from azure.ai.ml.constants._common import AzureMLResourceType

@@ -7,7 +7,7 @@
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import Optional, IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData

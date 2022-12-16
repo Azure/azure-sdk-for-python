@@ -777,7 +777,9 @@ class PipelineChildJobError(MLException):
     PROMPT_PARENT_MESSAGE = "please use this command on pipeline parent job"
 
     def __init__(self, job_id: str, command: str = "parse", prompt_studio_ui: bool = False):
-        from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
+        from azure.ai.ml.entities._job._studio_url_from_job_id import (
+            studio_url_from_job_id,
+        )
 
         if prompt_studio_ui:
             url = studio_url_from_job_id(job_id)

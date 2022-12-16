@@ -6,13 +6,16 @@
 
 from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
 from azure.ai.ml._restclient.v2022_05_01 import models
-from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,
     NoneCredentialConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
+)
+from azure.ai.ml.entities._datastore._on_prem_credentials import (
+    KerberosKeytabCredentials,
+    KerberosPasswordCredentials,
 )
 
 

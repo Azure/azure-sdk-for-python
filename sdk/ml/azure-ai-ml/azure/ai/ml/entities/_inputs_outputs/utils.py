@@ -9,7 +9,7 @@ import copy
 from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
-from inspect import Parameter, signature, getmro
+from inspect import Parameter, getmro, signature
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
@@ -246,6 +246,7 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     to IO entities.
     """
     from azure.ai.ml import Input, Output
+
     from .enum_input import EnumInput
 
     mldesigner_pkg = "mldesigner"

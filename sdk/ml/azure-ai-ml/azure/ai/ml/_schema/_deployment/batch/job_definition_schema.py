@@ -6,16 +6,19 @@
 
 import logging
 from typing import Any
+
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import (
+    ArmVersionedStr,
     PatchedSchemaMeta,
+    RegistryStr,
     StringTransformedEnum,
     UnionField,
-    RegistryStr,
-    ArmVersionedStr,
 )
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
+from azure.ai.ml._schema.pipeline.pipeline_component import (
+    PipelineComponentFileRefField,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._job.job import JobType
 

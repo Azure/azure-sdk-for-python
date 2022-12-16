@@ -9,13 +9,16 @@ from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.constants._component import ControlFlowType, ComponentParameterTypes
+from azure.ai.ml.constants._component import ComponentParameterTypes, ControlFlowType
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
-from azure.ai.ml.entities._util import validate_attribute_type, convert_ordered_dict_to_dict
+from azure.ai.ml.entities._util import (
+    convert_ordered_dict_to_dict,
+    validate_attribute_type,
+)
 from azure.ai.ml.exceptions import UserErrorException
 
 

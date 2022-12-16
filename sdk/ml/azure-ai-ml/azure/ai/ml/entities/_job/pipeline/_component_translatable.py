@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use input as argument name
 import re
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from pydash import get
 
@@ -13,7 +13,11 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
-from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    Randint,
+    SweepDistribution,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 

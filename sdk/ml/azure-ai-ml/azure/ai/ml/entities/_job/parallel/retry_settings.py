@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
 from azure.ai.ml._utils.utils import load_yaml

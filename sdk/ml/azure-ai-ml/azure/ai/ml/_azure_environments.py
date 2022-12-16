@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME

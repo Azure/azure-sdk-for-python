@@ -7,46 +7,58 @@ import copy
 import logging
 from enum import Enum
 from os import PathLike, path
-from typing import Dict, List, Optional, Union
 from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, REGISTRY_URI_FORMAT
 from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    SparkJobEntry as RestSparkJobEntry,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SPARK_ENVIRONMENT_WARNING_MESSAGE
+from azure.ai.ml._utils.utils import is_url
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    BASE_PATH_CONTEXT_KEY,
+    REGISTRY_URI_FORMAT,
+    SPARK_ENVIRONMENT_WARNING_MESSAGE,
+)
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._job.job import SparkConfKey
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.spark_component import SparkComponent
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._credentials import (
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-    ManagedIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
 from azure.ai.ml.entities._job.spark_job import SparkJob
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntryType
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._job.spark_resource_configuration import (
+    SparkResourceConfiguration,
+)
 from azure.ai.ml.entities._validation import MutableValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from .._job.pipeline._io import NodeOutput
@@ -56,7 +68,12 @@ from .._job.spark_helpers import (
     _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    get_rest_dict_for_node_attrs,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)

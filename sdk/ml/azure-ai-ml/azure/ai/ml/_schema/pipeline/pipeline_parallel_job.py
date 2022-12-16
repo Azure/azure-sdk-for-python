@@ -10,7 +10,13 @@ from typing import Any
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, ComputeField, NestedField, RegistryStr, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    ComputeField,
+    NestedField,
+    RegistryStr,
+    UnionField,
+)
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
 from azure.ai.ml.constants._common import AzureMLResourceType

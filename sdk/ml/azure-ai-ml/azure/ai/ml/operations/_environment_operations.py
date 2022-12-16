@@ -4,15 +4,24 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional, Any, Iterable, Union
+from typing import Any, Iterable, Optional, Union
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
+
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+)
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EnvironmentVersionData,
+    ListViewType,
+)
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -28,10 +37,18 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_sas_uri_for_registry_asset,
+)
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger

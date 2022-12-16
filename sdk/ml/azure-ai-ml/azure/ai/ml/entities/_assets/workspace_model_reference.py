@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ResourceManagementAssetReferenceData,

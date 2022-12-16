@@ -5,9 +5,18 @@ import logging
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import ArmStr, ComputeField, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmStr,
+    ComputeField,
+    NestedField,
+    UnionField,
+)
 from azure.ai.ml._schema.core.resource import ResourceSchema
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 from .creation_context import CreationContextSchema

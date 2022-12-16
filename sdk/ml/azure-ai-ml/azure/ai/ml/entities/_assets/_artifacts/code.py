@@ -4,13 +4,25 @@
 import os
 from os import PathLike
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    CodeVersionData,
+    CodeVersionDetails,
+)
 from azure.ai.ml._schema import CodeAssetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import get_content_hash, get_content_hash_version, get_ignore_file, IgnoreFile
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml._utils._asset_utils import (
+    IgnoreFile,
+    get_content_hash,
+    get_content_hash_version,
+    get_ignore_file,
+)
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    ArmConstants,
+)
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict

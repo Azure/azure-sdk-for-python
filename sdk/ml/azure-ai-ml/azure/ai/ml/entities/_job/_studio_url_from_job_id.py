@@ -5,7 +5,10 @@
 import re
 from typing import Optional
 
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _get_default_cloud_name
+from azure.ai.ml._azure_environments import (
+    _get_aml_resource_id_from_metadata,
+    _get_default_cloud_name,
+)
 
 JOB_ID_RE_PATTERN = re.compile(
     (

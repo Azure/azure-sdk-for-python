@@ -4,13 +4,12 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Optional, Any
+from typing import Any, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     StackEnsembleSettings as RestStackEnsembleSettings,
-    StackMetaLearnerType,
 )
-
+from azure.ai.ml._restclient.v2022_10_01_preview.models import StackMetaLearnerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

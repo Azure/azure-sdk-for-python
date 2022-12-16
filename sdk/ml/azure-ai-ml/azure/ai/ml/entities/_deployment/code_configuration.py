@@ -3,12 +3,19 @@
 # ---------------------------------------------------------
 
 import logging
+from typing import Optional
 
-from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2021_10_01.models import (
+    CodeConfiguration as RestCodeConfiguration,
+)
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._mixins import DictMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from typing import Optional
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 

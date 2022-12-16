@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, List
+from typing import List, Optional
 
 from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
 

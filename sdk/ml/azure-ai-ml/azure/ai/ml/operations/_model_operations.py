@@ -5,8 +5,9 @@
 # pylint: disable=protected-access
 
 from os import PathLike, path
-from typing import Optional, Dict, Iterable, Union
+from typing import Dict, Iterable, Optional, Union
 
+from azure.core.exceptions import ResourceNotFoundError
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
@@ -23,9 +24,18 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    ListViewType,
+    ModelVersionData,
+)
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -40,8 +50,14 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
-from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml._utils._storage_utils import (
+    get_ds_name_and_path_prefix,
+    get_storage_client,
+)
+from azure.ai.ml._utils.utils import (
+    resolve_short_datastore_url,
+    validate_ml_flow_folder,
+)
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
@@ -53,7 +69,6 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger

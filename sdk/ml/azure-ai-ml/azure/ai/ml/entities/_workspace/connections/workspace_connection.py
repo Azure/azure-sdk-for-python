@@ -7,7 +7,7 @@
 import json
 from os import PathLike
 from pathlib import Path
-from typing import Optional, IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ConnectionAuthType,
@@ -21,16 +21,18 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import (
+    WorkspaceConnectionSchema,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
-    UsernamePasswordConfiguration,
-    ManagedIdentityConfiguration,
     ServicePrincipalConfiguration,
+    UsernamePasswordConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData

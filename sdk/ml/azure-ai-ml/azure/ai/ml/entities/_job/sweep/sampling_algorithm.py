@@ -6,9 +6,15 @@ from abc import ABC
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    GridSamplingAlgorithm as RestGridSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    RandomSamplingAlgorithm as RestRandomSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    SamplingAlgorithm as RestSamplingAlgorithm,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 

@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -13,8 +13,17 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
 from azure.ai.ml.entities._assets import Environment
 
 from ..._schema import NestedField, UnionField
-from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
-from .distribution import DistributionConfiguration, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from ..._schema.job.distribution import (
+    MPIDistributionSchema,
+    PyTorchDistributionSchema,
+    TensorFlowDistributionSchema,
+)
+from .distribution import (
+    DistributionConfiguration,
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+)
 from .job_resource_configuration import JobResourceConfiguration
 
 module_logger = logging.getLogger(__name__)

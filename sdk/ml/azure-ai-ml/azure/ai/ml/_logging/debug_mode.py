@@ -10,7 +10,7 @@ import sys
 import time
 import traceback
 from collections import namedtuple
-from typing import Optional, List
+from typing import List, Optional
 
 import six.moves.http_client as httpclient
 

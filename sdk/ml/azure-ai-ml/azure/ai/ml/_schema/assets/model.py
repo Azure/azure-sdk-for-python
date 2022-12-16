@@ -11,7 +11,11 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    AssetTypes,
+    AzureMLResourceType,
+)
 
 from ..core.fields import ArmVersionedStr, StringTransformedEnum, VersionField
 

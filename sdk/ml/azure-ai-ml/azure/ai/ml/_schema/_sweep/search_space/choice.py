@@ -8,7 +8,10 @@ from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema._sweep.search_space.normal import NormalSchema, QNormalSchema
 from azure.ai.ml._schema._sweep.search_space.randint import RandintSchema
-from azure.ai.ml._schema._sweep.search_space.uniform import QUniformSchema, UniformSchema
+from azure.ai.ml._schema._sweep.search_space.uniform import (
+    QUniformSchema,
+    UniformSchema,
+)
 from azure.ai.ml._schema.core.fields import (
     DumpableIntegerField,
     DumpableStringField,

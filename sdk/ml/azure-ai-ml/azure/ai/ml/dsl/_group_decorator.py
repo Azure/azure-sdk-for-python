@@ -10,7 +10,10 @@ import functools
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs import (
+    GroupInput,
+    _get_param_with_standard_annotation,
+)
 
 
 def group(_cls):

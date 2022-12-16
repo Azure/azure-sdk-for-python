@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import Optional, IO, AnyStr, Dict, List, Union
+from typing import IO, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachineSize
 from azure.ai.ml._schema.compute.vm_size import VmSizeSchema

@@ -4,23 +4,38 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationMultilabelPrimaryMetrics
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ClassificationMultilabelPrimaryMetrics,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.image.automl_image_classification_base import AutoMLImageClassificationBase
-from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
-from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
-from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
+from azure.ai.ml.entities._job.automl.image.automl_image_classification_base import (
+    AutoMLImageClassificationBase,
+)
+from azure.ai.ml.entities._job.automl.image.image_limit_settings import (
+    ImageLimitSettings,
+)
+from azure.ai.ml.entities._job.automl.image.image_model_settings import (
+    ImageModelSettingsClassification,
+)
+from azure.ai.ml.entities._job.automl.image.image_sweep_settings import (
+    ImageSweepSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -174,8 +189,12 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         additional_message: str,
         **kwargs,
     ) -> "ImageClassificationMultilabelJob":
-        from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
-        from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
+        from azure.ai.ml._schema.automl.image_vertical.image_classification import (
+            ImageClassificationMultilabelSchema,
+        )
+        from azure.ai.ml._schema.pipeline.automl_node import (
+            ImageClassificationMultilabelNodeSchema,
+        )
 
         inside_pipeline = kwargs.pop("inside_pipeline", False)
         if inside_pipeline:
@@ -213,8 +232,12 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         return job
 
     def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
-        from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
+        from azure.ai.ml._schema.automl.image_vertical.image_classification import (
+            ImageClassificationMultilabelSchema,
+        )
+        from azure.ai.ml._schema.pipeline.automl_node import (
+            ImageClassificationMultilabelNodeSchema,
+        )
 
         if inside_pipeline:
             schema_dict = ImageClassificationMultilabelNodeSchema(

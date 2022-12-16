@@ -12,7 +12,9 @@ from typing import Callable, Dict, Iterable, Optional, Union
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -26,35 +28,43 @@ from azure.ai.ml._scope_dependent_operations import (
 #     monitor_with_activity,
 #     monitor_with_telemetry_mixin,
 # )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+)
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
-    _resolve_label_to_asset,
     _get_next_version_from_container,
+    _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import (
+    DEFAULT_COMPONENT_VERSION,
+    DEFAULT_LABEL_NAME,
     AzureMLResourceType,
     LROConfigurations,
-    DEFAULT_LABEL_NAME,
-    DEFAULT_COMPONENT_VERSION,
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    ComponentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+)
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
-from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -486,7 +496,9 @@ class ComponentOperations(_ScopeDependentOperations):
         from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+        from azure.ai.ml.entities._job.pipeline._attr_dict import (
+            try_get_non_arbitrary_attr_for_potential_attr_dict,
+        )
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         def preprocess_job(node):

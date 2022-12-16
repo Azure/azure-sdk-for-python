@@ -6,12 +6,12 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
+    ImageInstanceSegmentationJob,
     ImageLimitSettings,
     ImageModelSettingsClassification,
     ImageModelSettingsObjectDetection,
     ImageObjectDetectionJob,
     ImageObjectDetectionSearchSpace,
-    ImageInstanceSegmentationJob,
     ImageSweepSettings,
 )
 from azure.ai.ml.entities._job.automl.nlp import (
@@ -24,6 +24,10 @@ from azure.ai.ml.entities._job.automl.nlp import (
     TextClassificationMultilabelJob,
     TextNerJob,
 )
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ColumnTransformer,
@@ -33,8 +37,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularFeaturizationSettings,
     TabularLimitSettings,
 )
-from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+
 from .._restclient.v2022_10_01_preview.models import (
     BlockedTransformers,
     ClassificationModels,
@@ -51,8 +54,8 @@ from .._restclient.v2022_10_01_preview.models import (
     RegressionModels,
     RegressionPrimaryMetrics,
     SamplingAlgorithmType,
-    StochasticOptimizer,
     ShortSeriesHandlingConfiguration,
+    StochasticOptimizer,
     TargetAggregationFunction,
     TargetLagsMode,
     TargetRollingWindowSizeMode,

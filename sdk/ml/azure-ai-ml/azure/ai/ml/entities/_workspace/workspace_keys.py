@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, List
+from typing import List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ListWorkspaceKeysResult
 

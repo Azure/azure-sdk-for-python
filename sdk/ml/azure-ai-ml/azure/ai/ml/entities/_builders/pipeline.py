@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Optional, Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 

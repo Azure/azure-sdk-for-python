@@ -4,9 +4,11 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional, Dict
+from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AmlCompute as AmlComputeRest,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
@@ -16,12 +18,16 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    snake_to_pascal,
+    to_iso_duration_format,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 
-from azure.ai.ml.entities._credentials import IdentityConfiguration
 from .compute import Compute, NetworkSettings
 
 

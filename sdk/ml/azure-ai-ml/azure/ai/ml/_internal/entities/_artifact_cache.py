@@ -3,19 +3,18 @@
 # ---------------------------------------------------------
 import copy
 import hashlib
+import logging
 import os
 import re
 import shutil
-import logging
 import subprocess
 import tempfile
 import zipfile
-from threading import Lock
 from io import BytesIO
 from pathlib import Path
+from threading import Lock
 
 import requests
-
 
 _logger = logging.getLogger(__name__)
 

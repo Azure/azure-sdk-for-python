@@ -11,6 +11,9 @@ import time
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Optional, Tuple, Union
 
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
+
 from azure.ai.ml._artifacts._constants import (
     ARTIFACT_ORIGIN,
     FILE_SIZE_WARNING,
@@ -27,8 +30,6 @@ from azure.ai.ml._utils._asset_utils import (
     traverse_directory,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
 module_logger = logging.getLogger(__name__)
 

@@ -5,14 +5,22 @@
 import logging
 from abc import ABC
 from datetime import datetime
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    RecurrenceSchedule as RestRecurrencePattern,
+)
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    RecurrenceTrigger as RestRecurrenceTrigger,
+)
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    Cron,
+    Recurrence,
+    RecurrenceSchedule,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin

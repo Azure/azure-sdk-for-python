@@ -10,12 +10,23 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthMode,
-    OnlineEndpointData,
+    EndpointAuthKeys as RestEndpointAuthKeys,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
-from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EndpointAuthToken as RestEndpointAuthToken,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    OnlineEndpointDetails as RestOnlineEndpoint,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+)
+from azure.ai.ml._schema._endpoint import (
+    KubernetesOnlineEndpointSchema,
+    ManagedOnlineEndpointSchema,
+)
 from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
@@ -25,16 +36,20 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys as RestEndpointAuthKeys,
-    EndpointAuthToken as RestEndpointAuthToken,
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
 )
 
-from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
+from ._endpoint_helpers import (
+    validate_endpoint_or_deployment_name,
+    validate_identity_type_defined,
+)
 from .endpoint import Endpoint
 
 module_logger = logging.getLogger(__name__)

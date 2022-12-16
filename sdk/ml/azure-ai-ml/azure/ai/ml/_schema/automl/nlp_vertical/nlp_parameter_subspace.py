@@ -100,7 +100,9 @@ class NlpParameterSubspaceSchema(metaclass=PatchedSchemaMeta):
     @pre_load
     def before_make(self, data, **kwargs):
         if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_str_to_dict,
+            )
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)

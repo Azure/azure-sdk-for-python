@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, INCLUDE, EXCLUDE
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import AzureMLResourceType, LABELLED_RESOURCE_NAME
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
 
+from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
@@ -17,7 +18,6 @@ from .input_output import (
     InternalParameterSchema,
     InternalPrimitiveOutputSchema,
 )
-from ..._utils._arm_id_utils import parse_name_label
 
 
 class NodeType:

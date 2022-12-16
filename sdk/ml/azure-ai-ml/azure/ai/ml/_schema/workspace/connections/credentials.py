@@ -13,11 +13,11 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
-    UsernamePasswordConfiguration,
-    ManagedIdentityConfiguration,
     ServicePrincipalConfiguration,
+    UsernamePasswordConfiguration,
 )
 
 

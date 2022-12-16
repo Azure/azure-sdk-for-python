@@ -3,9 +3,14 @@
 # ---------------------------------------------------------
 
 from enum import EnumMeta
-from typing import Optional, Iterable, Sequence, Union
+from typing import Iterable, Optional, Sequence, Union
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .input import Input
 

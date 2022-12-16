@@ -8,9 +8,19 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField, ArmStr
+from azure.ai.ml._schema.core.fields import (
+    ArmStr,
+    ArmVersionedStr,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
-from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
+from azure.ai.ml.constants._common import (
+    LOCAL_PATH,
+    AssetTypes,
+    AzureMLResourceType,
+    InputOutputModes,
+)
 
 module_logger = logging.getLogger(__name__)
 

@@ -8,6 +8,9 @@ import logging
 import time
 from typing import Any, Dict, Optional
 
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller
+
 from azure.ai.ml._arm_deployments.arm_helper import deployment_message_mapping
 from azure.ai.ml._azure_environments import (
     _get_azure_portal_id_from_metadata,
@@ -18,7 +21,9 @@ from azure.ai.ml._azure_environments import (
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
-from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
+from azure.ai.ml._vendor.azure_resources._resource_management_client import (
+    ResourceManagementClient,
+)
 from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
 from azure.ai.ml.constants._common import (
     ENDPOINT_DEPLOYMENT_START_MSG,
@@ -27,8 +32,6 @@ from azure.ai.ml.constants._common import (
     OperationStatus,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")

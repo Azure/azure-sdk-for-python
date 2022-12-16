@@ -9,13 +9,22 @@ import re
 from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+    _check_and_upload_path,
+)
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+)
 from azure.ai.ml._utils._arm_id_utils import (
+    AMLLabelledArmId,
     AMLNamedArmId,
     AMLVersionedArmId,
-    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -28,19 +37,19 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     CURATED_ENV_PREFIX,
+    DEFAULT_LABEL_NAME,
     FILE_PREFIX,
     FOLDER_PREFIX,
     HTTPS_PREFIX,
     JOB_URI_REGEX_FORMAT,
+    LABELLED_RESOURCE_ID_FORMAT,
+    LABELLED_RESOURCE_NAME,
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
+    REGISTRY_VERSION_PATTERN,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
-    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
-    LABELLED_RESOURCE_ID_FORMAT,
-    DEFAULT_LABEL_NAME,
-    REGISTRY_VERSION_PATTERN,
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -55,7 +64,6 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 module_logger = logging.getLogger(__name__)
 

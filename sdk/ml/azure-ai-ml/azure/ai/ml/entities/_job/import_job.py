@@ -5,9 +5,11 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    CommandJob as RestCommandJob,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
@@ -98,7 +100,7 @@ class FileImportSource(ImportSource):
         )
         self.path = path
 
-    def _to_job_inputs(self) -> Dict[str, str]:
+    def _to_job_inputs(self) -> Dict[str, Optional[str]]:
         """Translate source to command Inputs."""
         inputs = {
             "type": self.type,
@@ -167,8 +169,8 @@ class ImportJob(Job, JobIOMixin):
             compute_id=self.compute,
             experiment_name=self.experiment_name,
             inputs=to_rest_dataset_literal_inputs(
-                self.source._to_job_inputs(), job_type=self.type
-            ),  # pylint: disable=protected-access
+                self.source._to_job_inputs(), job_type=self.type  # pylint: disable=protected-access
+            ),
             outputs=to_rest_data_outputs({"output": self.output}),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
             # No longer applicable once new import job type is ready on MFE in PuP
@@ -228,8 +230,9 @@ class ImportJob(Job, JobIOMixin):
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
             source=self._to_inputs(
-                inputs=self.source._to_job_inputs(), pipeline_job_dict=pipeline_job_dict
-            ),  # pylint: disable=protected-access
+                inputs=self.source._to_job_inputs(),
+                pipeline_job_dict=pipeline_job_dict,  # pylint: disable=protected-access
+            ),
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 

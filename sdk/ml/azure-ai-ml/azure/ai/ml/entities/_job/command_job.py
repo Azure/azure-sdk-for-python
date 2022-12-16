@@ -7,14 +7,27 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    CommandJob as RestCommandJob,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET, TYPE
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LOCAL_COMPUTE_PROPERTY,
+    LOCAL_COMPUTE_TARGET,
+    TYPE,
+)
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
@@ -27,12 +40,11 @@ from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration,
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
 )
 
 from .job import Job

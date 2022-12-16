@@ -14,7 +14,12 @@ from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import FileRefField, NestedField, StringTransformedEnum, DumpableEnumField
+from azure.ai.ml._schema.core.fields import (
+    DumpableEnumField,
+    FileRefField,
+    NestedField,
+    StringTransformedEnum,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LoggingLevel
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 

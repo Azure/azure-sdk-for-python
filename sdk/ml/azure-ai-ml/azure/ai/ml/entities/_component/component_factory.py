@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional, Any, Callable, Tuple, Dict
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 

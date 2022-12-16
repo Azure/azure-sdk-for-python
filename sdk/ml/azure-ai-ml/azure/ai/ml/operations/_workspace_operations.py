@@ -5,11 +5,17 @@
 # pylint: disable=protected-access
 
 import time
-from typing import Optional, Dict, Iterable, Tuple
+from typing import Dict, Iterable, Optional, Tuple
+
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller, PollingMethod
+from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient102022Preview,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -26,7 +32,15 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
+from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml.constants._common import (
+    ArmConstants,
+    LROConfigurations,
+    Scope,
+    WorkspaceResourceConstants,
+)
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -35,15 +49,8 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._version import VERSION
-from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger

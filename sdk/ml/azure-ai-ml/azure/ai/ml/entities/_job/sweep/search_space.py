@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from abc import ABC
-from typing import Optional, List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace

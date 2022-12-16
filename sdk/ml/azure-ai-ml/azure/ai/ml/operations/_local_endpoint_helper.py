@@ -6,7 +6,7 @@
 
 import json
 import logging
-from typing import Optional, Iterable
+from typing import Iterable, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -18,12 +18,16 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_scoring_uri_from_container,
     get_status_from_container,
 )
-from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
+from azure.ai.ml.exceptions import (
+    InvalidLocalEndpointError,
+    LocalEndpointNotFoundError,
+    ValidationException,
+)
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)

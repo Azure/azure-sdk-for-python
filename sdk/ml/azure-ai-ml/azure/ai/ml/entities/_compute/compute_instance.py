@@ -4,13 +4,14 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
+import logging
 import re
 import warnings
-import logging
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeInstanceSshSettings as CiSShSettings,
 )
@@ -19,21 +20,20 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     PersonalComputeInstanceSettings,
     ResourceId,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml._utils._experimental import experimental
 
+from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
-from ._image_metadata import ImageMetadata
 
 module_logger = logging.getLogger(__name__)
 

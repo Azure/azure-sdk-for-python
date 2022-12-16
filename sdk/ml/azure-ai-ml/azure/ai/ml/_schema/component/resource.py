@@ -6,7 +6,9 @@
 
 from marshmallow import INCLUDE, post_dump, post_load
 
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml._schema.job_resource_configuration import (
+    JobResourceConfigurationSchema,
+)
 
 
 class ComponentResourceSchema(JobResourceConfigurationSchema):

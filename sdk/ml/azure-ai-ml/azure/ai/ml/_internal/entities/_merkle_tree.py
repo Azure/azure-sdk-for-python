@@ -4,13 +4,13 @@
 
 # pylint: disable=pointless-string-statement
 
-import os
-import json
 import hashlib
+import json
+import os
+from collections import deque
 from datetime import datetime
 from os import listdir
 from os.path import isfile, join
-from collections import deque
 
 HASH_FILE_CHUNK_SIZE = 65536
 HASH_ALGORITHM = "sha512"

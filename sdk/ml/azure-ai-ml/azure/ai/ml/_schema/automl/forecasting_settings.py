@@ -6,7 +6,9 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import FeatureLags as FeatureLagsMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    FeatureLags as FeatureLagsMode,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ForecastHorizonMode,
     SeasonalityMode,
@@ -60,6 +62,8 @@ class ForecastingSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
+        from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
+            ForecastingSettings,
+        )
 
         return ForecastingSettings(**data)

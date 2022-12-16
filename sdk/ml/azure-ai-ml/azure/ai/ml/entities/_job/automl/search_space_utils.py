@@ -6,6 +6,7 @@
 
 import re
 from typing import Union
+
 from marshmallow import fields
 
 from azure.ai.ml._schema._sweep.search_space import (
@@ -15,6 +16,12 @@ from azure.ai.ml._schema._sweep.search_space import (
     QUniformSchema,
     RandintSchema,
     UniformSchema,
+)
+from azure.ai.ml._schema.core.fields import (
+    DumpableIntegerField,
+    DumpableStringField,
+    NestedField,
+    UnionField,
 )
 from azure.ai.ml._utils.utils import float_to_str
 from azure.ai.ml.constants._job.sweep import SearchSpace
@@ -30,12 +37,6 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     Randint,
     SweepDistribution,
     Uniform,
-)
-from azure.ai.ml._schema.core.fields import (
-    DumpableIntegerField,
-    DumpableStringField,
-    NestedField,
-    UnionField,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 

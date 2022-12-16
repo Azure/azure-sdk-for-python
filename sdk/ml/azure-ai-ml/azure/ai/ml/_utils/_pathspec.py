@@ -7,9 +7,9 @@
 This file code has been vendored from pathspec repo.
 Please do not edit it, unless really necessary
 """
+import dataclasses
 import os
 import posixpath
-import dataclasses
 import re
 import warnings
 from typing import Any, AnyStr, Iterable, Iterator

@@ -14,13 +14,13 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
+    IntegerQNormalSchema,
+    IntegerQUniformSchema,
     NormalSchema,
     QNormalSchema,
     QUniformSchema,
     RandintSchema,
     UniformSchema,
-    IntegerQUniformSchema,
-    IntegerQNormalSchema,
 )
 from azure.ai.ml._schema.core.fields import (
     DumpableIntegerField,
@@ -168,7 +168,9 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
     @pre_load
     def before_make(self, data, **kwargs):
         if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_str_to_dict,
+            )
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)
@@ -213,7 +215,9 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
     @pre_load
     def before_make(self, data, **kwargs):
         if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
+                _convert_sweep_dist_str_to_dict,
+            )
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)

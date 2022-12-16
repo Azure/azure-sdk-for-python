@@ -6,7 +6,10 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .automl_job import AutoMLJobSchema
 from .automl_vertical import AutoMLVerticalSchema
-from .featurization_settings import FeaturizationSettingsSchema, TableFeaturizationSettingsSchema
+from .featurization_settings import (
+    FeaturizationSettingsSchema,
+    TableFeaturizationSettingsSchema,
+)
 from .forecasting_settings import ForecastingSettingsSchema
 from .table_vertical.classification import AutoMLClassificationSchema
 from .table_vertical.forecasting import AutoMLForecastingSchema
