@@ -11,6 +11,7 @@ from marshmallow import EXCLUDE, Schema
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
@@ -24,6 +25,7 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
+    EarlyTerminationPolicy,
 )
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
@@ -41,8 +43,14 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.sweep import SweepJob
+from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
@@ -148,6 +156,32 @@ class Sweep(ParameterizedSweep, BaseNode):
     def trial(self):
         """Id or instance of the command component/job to be run for the step."""
         return self._component
+
+    @property
+    def search_space(self):
+        """Dictionary of the hyperparameter search space.
+        The key is the name of the hyperparameter and the value is the parameter expression.
+        """
+        return self._search_space
+
+    @search_space.setter
+    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
+        search_space = {}
+        for name, value in values.items():
+            # If value is a SearchSpace object, directly pass it to job.search_space[name]
+            search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
+        self._search_space = search_space
+
+    @classmethod
+    def _value_type_to_class(cls, value):
+        value_type = value['type']
+        search_space_dict = {
+            SearchSpace.CHOICE: Choice, SearchSpace.RANDINT: Randint, SearchSpace.LOGNORMAL: LogNormal,
+            SearchSpace.NORMAL: Normal, SearchSpace.LOGUNIFORM: LogUniform, SearchSpace.UNIFORM: Uniform,
+            SearchSpace.QLOGNORMAL: QLogNormal, SearchSpace.QNORMAL: QNormal, SearchSpace.QLOGUNIFORM: QLogUniform,
+            SearchSpace.QUNIFORM: QUniform
+        }
+        return search_space_dict[value_type](**value)
 
     @classmethod
     def _get_supported_inputs_types(cls):
@@ -320,3 +354,14 @@ class Sweep(ParameterizedSweep, BaseNode):
                 self.early_termination.slack_amount = None
             if self.early_termination.slack_factor == 0.0:
                 self.early_termination.slack_factor = None
+
+    @property
+    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+        return self._early_termination
+
+    @early_termination.setter
+    def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]):
+        if isinstance(value, dict):
+            early_termination_schema = EarlyTerminationField()
+            value = early_termination_schema._deserialize(value=value, attr=None, data=None)
+        self._early_termination = value
