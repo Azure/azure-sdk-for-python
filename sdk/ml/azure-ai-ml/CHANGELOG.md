@@ -5,6 +5,9 @@
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
 
+### Bugs Fixed
+- Fixed print on Command objects when job id is empty
+
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
