@@ -36,6 +36,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -65,7 +66,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
+from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -83,7 +84,7 @@ from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     JobException,
-    MlException,
+    MLException,
     ValidationErrorType,
     ValidationException,
     JobParsingError,
@@ -98,6 +99,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
+from ..entities._builders.control_flow_node import ControlFlowNode
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -419,7 +421,8 @@ class JobOperations(_ScopeDependentOperations):
 
             for node_name, node in job.jobs.items():
                 try:
-                    if not isinstance(node, DoWhile):
+                    # TODO(1979547): refactor, not all nodes have compute
+                    if not isinstance(node, ControlFlowNode):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
@@ -641,12 +644,13 @@ class JobOperations(_ScopeDependentOperations):
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
+        :raises ~azure.ai.ml.exceptions.MLException: Raised if logs and outputs cannot be successfully downloaded.
             Details will be provided in the error message.
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
-        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE:
+        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE and \
+                PipelineConstants.REUSED_JOB_ID in job_details.properties:
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
             module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
@@ -765,7 +769,7 @@ class JobOperations(_ScopeDependentOperations):
             try:
                 job = self.get(job_name)
                 artifact_store_uri = job.outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME]
-                if artifact_store_uri and artifact_store_uri.path:
+                if artifact_store_uri is not None and artifact_store_uri.path:
                     outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = artifact_store_uri.path
             except (AttributeError, KeyError):
                 outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = SHORT_URI_FORMAT.format(
@@ -870,9 +874,9 @@ class JobOperations(_ScopeDependentOperations):
         """
         if isinstance(job, AutoMLJob):
             self._resolve_job_input(job.training_data, job._base_path)
-            if job.validation_data:
+            if job.validation_data is not None:
                 self._resolve_job_input(job.validation_data, job._base_path)
-            if hasattr(job, "test_data") and job.test_data:
+            if hasattr(job, "test_data") and job.test_data is not None:
                 self._resolve_job_input(job.test_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
@@ -1003,7 +1007,7 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ValidationException(

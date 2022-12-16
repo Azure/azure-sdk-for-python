@@ -26,6 +26,14 @@ from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
 
+_registered = False
+
+
+def _set_registered(value: bool):
+    global _registered  # pylint: disable=global-statement
+    _registered = value
+
+
 def _enable_internal_components():
     create_schema_func = InternalComponent._create_schema_for_validation
     for _type in NodeType.all_values():
@@ -34,9 +42,6 @@ def _enable_internal_components():
             create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
             create_schema_func=create_schema_func,
         )
-
-
-_registered = False
 
 
 def _register_node(_type, node_cls, schema_cls):
@@ -48,9 +53,9 @@ def _register_node(_type, node_cls, schema_cls):
     )
 
 
-def enable_internal_components_in_pipeline():
+def enable_internal_components_in_pipeline(*, force=False):
     global _registered  # pylint: disable=global-statement
-    if _registered:
+    if _registered and not force:
         return  # already registered
 
     _enable_internal_components()
@@ -68,4 +73,4 @@ def enable_internal_components_in_pipeline():
     _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
     _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
-    _registered = True
+    _set_registered(True)

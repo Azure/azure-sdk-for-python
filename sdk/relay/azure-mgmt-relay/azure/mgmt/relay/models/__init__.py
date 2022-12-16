@@ -6,84 +6,102 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccessKeys
-    from ._models_py3 import AuthorizationRule
-    from ._models_py3 import AuthorizationRuleListResult
-    from ._models_py3 import CheckNameAvailability
-    from ._models_py3 import CheckNameAvailabilityResult
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import HybridConnection
-    from ._models_py3 import HybridConnectionListResult
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import RegenerateAccessKeyParameters
-    from ._models_py3 import RelayNamespace
-    from ._models_py3 import RelayNamespaceListResult
-    from ._models_py3 import RelayUpdateParameters
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceNamespacePatch
-    from ._models_py3 import Sku
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import WcfRelay
-    from ._models_py3 import WcfRelaysListResult
-except (SyntaxError, ImportError):
-    from ._models import AccessKeys  # type: ignore
-    from ._models import AuthorizationRule  # type: ignore
-    from ._models import AuthorizationRuleListResult  # type: ignore
-    from ._models import CheckNameAvailability  # type: ignore
-    from ._models import CheckNameAvailabilityResult  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import HybridConnection  # type: ignore
-    from ._models import HybridConnectionListResult  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import RegenerateAccessKeyParameters  # type: ignore
-    from ._models import RelayNamespace  # type: ignore
-    from ._models import RelayNamespaceListResult  # type: ignore
-    from ._models import RelayUpdateParameters  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceNamespacePatch  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import WcfRelay  # type: ignore
-    from ._models import WcfRelaysListResult  # type: ignore
+from ._models_py3 import AccessKeys
+from ._models_py3 import AuthorizationRule
+from ._models_py3 import AuthorizationRuleListResult
+from ._models_py3 import CheckNameAvailability
+from ._models_py3 import CheckNameAvailabilityResult
+from ._models_py3 import ConnectionState
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import HybridConnection
+from ._models_py3 import HybridConnectionListResult
+from ._models_py3 import NWRuleSetIpRules
+from ._models_py3 import NetworkRuleSet
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourcesListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import RegenerateAccessKeyParameters
+from ._models_py3 import RelayNamespace
+from ._models_py3 import RelayNamespaceListResult
+from ._models_py3 import RelayUpdateParameters
+from ._models_py3 import Resource
+from ._models_py3 import ResourceNamespacePatch
+from ._models_py3 import Sku
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import WcfRelay
+from ._models_py3 import WcfRelaysListResult
 
-from ._relay_api_enums import (
-    AccessRights,
-    KeyType,
-    ProvisioningStateEnum,
-    Relaytype,
-    UnavailableReason,
-)
+from ._relay_api_enums import AccessRights
+from ._relay_api_enums import CreatedByType
+from ._relay_api_enums import DefaultAction
+from ._relay_api_enums import EndPointProvisioningState
+from ._relay_api_enums import KeyType
+from ._relay_api_enums import NetworkRuleIPAction
+from ._relay_api_enums import PrivateLinkConnectionStatus
+from ._relay_api_enums import PublicNetworkAccess
+from ._relay_api_enums import Relaytype
+from ._relay_api_enums import SkuName
+from ._relay_api_enums import SkuTier
+from ._relay_api_enums import UnavailableReason
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccessKeys',
-    'AuthorizationRule',
-    'AuthorizationRuleListResult',
-    'CheckNameAvailability',
-    'CheckNameAvailabilityResult',
-    'ErrorResponse',
-    'HybridConnection',
-    'HybridConnectionListResult',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'RegenerateAccessKeyParameters',
-    'RelayNamespace',
-    'RelayNamespaceListResult',
-    'RelayUpdateParameters',
-    'Resource',
-    'ResourceNamespacePatch',
-    'Sku',
-    'TrackedResource',
-    'WcfRelay',
-    'WcfRelaysListResult',
-    'AccessRights',
-    'KeyType',
-    'ProvisioningStateEnum',
-    'Relaytype',
-    'UnavailableReason',
+    "AccessKeys",
+    "AuthorizationRule",
+    "AuthorizationRuleListResult",
+    "CheckNameAvailability",
+    "CheckNameAvailabilityResult",
+    "ConnectionState",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "HybridConnection",
+    "HybridConnectionListResult",
+    "NWRuleSetIpRules",
+    "NetworkRuleSet",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourcesListResult",
+    "ProxyResource",
+    "RegenerateAccessKeyParameters",
+    "RelayNamespace",
+    "RelayNamespaceListResult",
+    "RelayUpdateParameters",
+    "Resource",
+    "ResourceNamespacePatch",
+    "Sku",
+    "SystemData",
+    "TrackedResource",
+    "WcfRelay",
+    "WcfRelaysListResult",
+    "AccessRights",
+    "CreatedByType",
+    "DefaultAction",
+    "EndPointProvisioningState",
+    "KeyType",
+    "NetworkRuleIPAction",
+    "PrivateLinkConnectionStatus",
+    "PublicNetworkAccess",
+    "Relaytype",
+    "SkuName",
+    "SkuTier",
+    "UnavailableReason",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

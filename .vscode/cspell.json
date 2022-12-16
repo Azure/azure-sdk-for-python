@@ -26,9 +26,10 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
-    "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -50,6 +51,7 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
+    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
@@ -59,6 +61,7 @@
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -94,6 +97,9 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
@@ -131,6 +137,7 @@
     "cname",
     "conda",
     "connectedvmware",
+    "consts",
     "contoso",
     "contosodataset",
     "centralus",
@@ -199,6 +206,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -273,6 +281,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -408,6 +418,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
@@ -455,12 +471,18 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": ["ctxt", "somethingstuid"]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
@@ -557,6 +579,12 @@
         "mymodel",
         "heif",
         "racwd"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {
@@ -675,7 +703,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
@@ -802,7 +830,14 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
+      ]
+    },
+    {
+      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
+      "words":[
+        "sharedwus"
       ]
     },
     {
@@ -841,7 +876,12 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
@@ -988,7 +1028,9 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy",
+	"mghextreme"
       ]
     },
     {
@@ -1105,6 +1147,38 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/personalizer/test-resources.json",
+      "words": [
+        "euap"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
       ]
     }
   ],

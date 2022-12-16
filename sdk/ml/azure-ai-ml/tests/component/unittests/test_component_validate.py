@@ -18,6 +18,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponentValidate:
     def test_component_name_validate(self):
         invalid_component_names = [
@@ -68,6 +69,16 @@ class TestComponentValidate:
             component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
                 component()
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_component_early_available_output_not_set_is_control(self):
+        yaml_file = str(components_dir / "invalid/helloworld_component_early_available_output_not_set_is_control.yml")
+        component = load_component(yaml_file)
+        validation_result = component._validate()
+        assert not validation_result.passed
+        assert "outputs.component_out_string" in validation_result.error_messages
+        expected_error_message = "Early available output 'component_out_string' requires is_control as True, got None."
+        assert validation_result.error_messages["outputs.component_out_string"] == expected_error_message
 
     @pytest.mark.parametrize(
         "expected_location,asset_object",

@@ -11,8 +11,8 @@ _BYTE_BUFFER = [_DEFAULT_LENGTH, os.urandom(_DEFAULT_LENGTH)]
 
 def get_random_bytes(buffer_length):
     if buffer_length > _BYTE_BUFFER[0]:
-        _BYTE_BUFFER[0] = buffer_length
         _BYTE_BUFFER[1] = os.urandom(buffer_length)
+        _BYTE_BUFFER[0] = buffer_length
     return _BYTE_BUFFER[1][:buffer_length]
 
 

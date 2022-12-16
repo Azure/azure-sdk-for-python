@@ -7,7 +7,7 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Cron, Recurrence, RecurrenceSchedule
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
@@ -121,10 +121,17 @@ class CronTrigger(TriggerBase):
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
     :type expression: str
-    :param start_time: Specifies start time of schedule in ISO 8601 format.
+    :param start_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                       ``time_zone`` property to specify a time zone if needed. You can also specify this
+                       parameter as a string in this format: YYYY-MM-DDThh:mm:ss. If None is provided, the
+                       first workload is run instantly and the future workloads are run based on the schedule.
+                       If the start time is in the past, the first workload is run at the next calculated run time.
     :type start_time: Union[str, datetime]
-    :param end_time: Specifies end time of schedule in ISO 8601 format.
-        Note that end_time is not supported for compute schedules.
+    :param end_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                     ``time_zone`` property to specify a time zone if needed. You can also specify this
+                     parameter as a string in this format: YYYY-MM-DDThh:mm:ss. End time in the past is invalid
+                     and will raise exception when creating schedule.
+                     Note that end_time is not supported for compute schedules.
     :type end_time: Union[str, datetime]
     :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
         This does apply to the start_time and end_time.
@@ -156,7 +163,7 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_01_01_preview.models.Cron
+    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_10_01_preview.models.Cron
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
@@ -227,7 +234,7 @@ class RecurrenceTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_recurrence_object(self) -> Recurrence:  # v2022_01_01_preview.models.Recurrence
+    def _to_rest_compute_recurrence_object(self) -> Recurrence:  # v2022_10_01_preview.models.Recurrence
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:

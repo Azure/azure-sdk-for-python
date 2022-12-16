@@ -23,73 +23,133 @@ from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Extension
 from ._models_py3 import ExtensionList
+from ._models_py3 import Offer
+from ._models_py3 import OfferList
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PackageVersionInfo
 from ._models_py3 import PasswordCredential
 from ._models_py3 import PerNodeExtensionState
 from ._models_py3 import PerNodeState
 from ._models_py3 import ProxyResource
+from ._models_py3 import Publisher
+from ._models_py3 import PublisherList
 from ._models_py3 import RawCertificateData
 from ._models_py3 import Resource
+from ._models_py3 import Sku
+from ._models_py3 import SkuList
+from ._models_py3 import SkuMappings
+from ._models_py3 import SoftwareAssuranceChangeRequest
+from ._models_py3 import SoftwareAssuranceChangeRequestProperties
+from ._models_py3 import SoftwareAssuranceProperties
+from ._models_py3 import Step
+from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import Update
+from ._models_py3 import UpdateList
+from ._models_py3 import UpdatePrerequisite
+from ._models_py3 import UpdateRun
+from ._models_py3 import UpdateRunList
+from ._models_py3 import UpdateSummaries
+from ._models_py3 import UpdateSummariesList
 from ._models_py3 import UploadCertificateRequest
+from ._models_py3 import UserAssignedIdentity
 
-
-from ._azure_stack_hci_client_enums import (
-    ActionType,
-    ArcSettingAggregateState,
-    CreatedByType,
-    DiagnosticLevel,
-    ExtensionAggregateState,
-    ImdsAttestation,
-    NodeArcState,
-    NodeExtensionState,
-    Origin,
-    ProvisioningState,
-    Status,
-    WindowsServerSubscription,
-)
+from ._azure_stack_hci_client_enums import ActionType
+from ._azure_stack_hci_client_enums import ArcSettingAggregateState
+from ._azure_stack_hci_client_enums import AvailabilityType
+from ._azure_stack_hci_client_enums import ClusterNodeType
+from ._azure_stack_hci_client_enums import CreatedByType
+from ._azure_stack_hci_client_enums import DiagnosticLevel
+from ._azure_stack_hci_client_enums import ExtensionAggregateState
+from ._azure_stack_hci_client_enums import ImdsAttestation
+from ._azure_stack_hci_client_enums import ManagedServiceIdentityType
+from ._azure_stack_hci_client_enums import NodeArcState
+from ._azure_stack_hci_client_enums import NodeExtensionState
+from ._azure_stack_hci_client_enums import Origin
+from ._azure_stack_hci_client_enums import ProvisioningState
+from ._azure_stack_hci_client_enums import SoftwareAssuranceIntent
+from ._azure_stack_hci_client_enums import SoftwareAssuranceStatus
+from ._azure_stack_hci_client_enums import State
+from ._azure_stack_hci_client_enums import Status
+from ._azure_stack_hci_client_enums import UpdateRunPropertiesState
+from ._azure_stack_hci_client_enums import UpdateSummariesPropertiesState
+from ._azure_stack_hci_client_enums import WindowsServerSubscription
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ArcConnectivityProperties',
-    'ArcIdentityResponse',
-    'ArcSetting',
-    'ArcSettingList',
-    'ArcSettingsPatch',
-    'Cluster',
-    'ClusterDesiredProperties',
-    'ClusterIdentityResponse',
-    'ClusterList',
-    'ClusterNode',
-    'ClusterPatch',
-    'ClusterReportedProperties',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'Extension',
-    'ExtensionList',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PasswordCredential',
-    'PerNodeExtensionState',
-    'PerNodeState',
-    'ProxyResource',
-    'RawCertificateData',
-    'Resource',
-    'TrackedResource',
-    'UploadCertificateRequest',
-    'ActionType',
-    'ArcSettingAggregateState',
-    'CreatedByType',
-    'DiagnosticLevel',
-    'ExtensionAggregateState',
-    'ImdsAttestation',
-    'NodeArcState',
-    'NodeExtensionState',
-    'Origin',
-    'ProvisioningState',
-    'Status',
-    'WindowsServerSubscription',
+    "ArcConnectivityProperties",
+    "ArcIdentityResponse",
+    "ArcSetting",
+    "ArcSettingList",
+    "ArcSettingsPatch",
+    "Cluster",
+    "ClusterDesiredProperties",
+    "ClusterIdentityResponse",
+    "ClusterList",
+    "ClusterNode",
+    "ClusterPatch",
+    "ClusterReportedProperties",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "Extension",
+    "ExtensionList",
+    "Offer",
+    "OfferList",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PackageVersionInfo",
+    "PasswordCredential",
+    "PerNodeExtensionState",
+    "PerNodeState",
+    "ProxyResource",
+    "Publisher",
+    "PublisherList",
+    "RawCertificateData",
+    "Resource",
+    "Sku",
+    "SkuList",
+    "SkuMappings",
+    "SoftwareAssuranceChangeRequest",
+    "SoftwareAssuranceChangeRequestProperties",
+    "SoftwareAssuranceProperties",
+    "Step",
+    "SystemData",
+    "TrackedResource",
+    "Update",
+    "UpdateList",
+    "UpdatePrerequisite",
+    "UpdateRun",
+    "UpdateRunList",
+    "UpdateSummaries",
+    "UpdateSummariesList",
+    "UploadCertificateRequest",
+    "UserAssignedIdentity",
+    "ActionType",
+    "ArcSettingAggregateState",
+    "AvailabilityType",
+    "ClusterNodeType",
+    "CreatedByType",
+    "DiagnosticLevel",
+    "ExtensionAggregateState",
+    "ImdsAttestation",
+    "ManagedServiceIdentityType",
+    "NodeArcState",
+    "NodeExtensionState",
+    "Origin",
+    "ProvisioningState",
+    "SoftwareAssuranceIntent",
+    "SoftwareAssuranceStatus",
+    "State",
+    "Status",
+    "UpdateRunPropertiesState",
+    "UpdateSummariesPropertiesState",
+    "WindowsServerSubscription",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
