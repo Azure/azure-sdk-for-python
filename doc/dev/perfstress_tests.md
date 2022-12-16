@@ -121,12 +121,12 @@ Along with the above base API, the following methods will need to be implemented
 ```python
 class BatchPerfTest:
     def run_batch_sync(self) -> int:
-        # Run cumultive operation(s) synchronously - i.e. an operation that results in more than a single logical result.
+        # Run cumulative operation(s) synchronously - i.e. an operation that results in more than a single logical result.
         # When inheriting from BatchPerfTest, this method will need to be implemented.
         # Must return the number of completed results represented by a single successful test run.
 
     async def run_batch_async(self) -> int:
-        # Run cumultive operation(s) asynchronously - i.e. an operation that results in more than a single logical result.
+        # Run cumulative operation(s) asynchronously - i.e. an operation that results in more than a single logical result.
         # When inheriting from BatchPerfTest, this method will need to be implemented.
         # Must return the number of completed results represented by a single successful test run.
         # If writing a test for an SDK without async support (e.g. a T1 legacy SDK), implement this method and raise an exception.
@@ -158,14 +158,14 @@ class EventPerfTest:
         # This can be blocking for the duration of the test as it will be run during setup() in a thread.
 
     def stop_events_sync(self) -> None:
-        # Stop the sychronous process for receiving events. Must be implemented. Will be called during cleanup.
+        # Stop the synchronous process for receiving events. Must be implemented. Will be called during cleanup.
 
     async def start_events_async(self) -> None:
         # Must be implemented - starts the synchronous process for receiving events.
         # This can be blocking for the duration of the test as it will be scheduled in the eventloop during setup().
 
     async def stop_events_async(self) -> None:
-        # Stop the asychronous process for receiving events. Must be implemented. Will be called during cleanup.
+        # Stop the asynchronous process for receiving events. Must be implemented. Will be called during cleanup.
 
 ```
 

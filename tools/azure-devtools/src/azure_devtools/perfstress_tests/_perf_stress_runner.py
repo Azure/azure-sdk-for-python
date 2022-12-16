@@ -213,12 +213,12 @@ class _PerfStressRunner:
             # All tests wait to start Post Setup.
             self._next_stage("Post Setup")
 
-            # If a warm up is configured, wait will all tests have finished all setup
+            # If a warm up is configured, wait till all tests have finished all setup
             # stages before beginning "Warmup".
             if self.per_test_args.warmup:
                 self._next_stage("Warmup", track_status=True)
 
-            # Wait will all tests have completed setup and warmup before beginning "Tests".
+            # Wait till all tests have completed setup and warmup before beginning "Tests".
             self._next_stage("Tests", track_status=True, report_results=True)
 
             # Wait till all tests have completed before beginning cleanup and shutdown.
