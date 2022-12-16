@@ -395,7 +395,7 @@ class RecognizedForm:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.fields: dict[str, FormField] = kwargs.get("fields", None)
+        self.fields: dict[str, FormField] = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
         self.form_type: str = kwargs.get("form_type", None)
         self.page_range: FormPageRange = kwargs.get("page_range", None)
         self.pages: list[FormPage] = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
@@ -483,7 +483,7 @@ class FormField:
         self.value_data: FieldData = kwargs.get("value_data", None)
         self.name: str = kwargs.get("name", None)
         self.value: Union[str, int, float, datetime.date, datetime.time,
-        dict[str, FormField], list[FormField]] = kwargs.get("value", None)
+        dict[str, FormField], list[FormField]] = kwargs.get("value", None)  # pylint: disable=unsubscriptable-object
         self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
@@ -596,7 +596,7 @@ class FieldData:
         self.page_number: int = kwargs.get("page_number", None)
         self.text: str = kwargs.get("text", None)
         self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # pylint: disable=unsubscriptable-object
-        self.field_elements: list[Union[FormElement, FormWord,
+        self.field_elements: list[Union[FormElement, FormWord,  # pylint: disable=unsubscriptable-object
         FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -1133,7 +1133,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         self.is_header: bool = kwargs.get("is_header", False)
         self.is_footer: bool = kwargs.get("is_footer", False)
         self.page_number: int = kwargs.get("page_number", None)
-        self.field_elements: list[Union[FormElement, FormWord,
+        self.field_elements: list[Union[FormElement, FormWord,  # pylint: disable=unsubscriptable-object
         FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -1389,7 +1389,7 @@ class CustomFormSubmodel:
     def __init__(self, **kwargs: Any) -> None:
         self.model_id: str = kwargs.get("model_id", None)
         self.accuracy: float = kwargs.get("accuracy", None)
-        self.fields: dict[str, CustomFormModelField] = kwargs.get("fields", None)
+        self.fields: dict[str, CustomFormModelField] = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
         self.form_type: str = kwargs.get("form_type", None)
 
     @classmethod
@@ -2258,9 +2258,9 @@ class AnalyzedDocument:
 
     def __init__(self, **kwargs: Any) -> None:
         self.doc_type: str = kwargs.get("doc_type", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.fields: Optional[dict[str, DocumentField]] = kwargs.get("fields", None)
+        self.fields: Optional[dict[str, DocumentField]] = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
         self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
@@ -2354,11 +2354,11 @@ class DocumentField:
     def __init__(self, **kwargs: Any) -> None:
         self.value_type: str = kwargs.get("value_type", None)
         self.value: Optional[Union[str, int, float, datetime.date, datetime.time,
-        CurrencyValue, AddressValue, dict[str, DocumentField], list[DocumentField]]
+        CurrencyValue, AddressValue, dict[str, DocumentField], list[DocumentField]]  # pylint: disable=unsubscriptable-object
         ] = kwargs.get("value", None)
         self.content: Optional[str] = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
-        self.spans: Optional[list[DocumentSpan]] = kwargs.get("spans", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans: Optional[list[DocumentSpan]] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
         self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
@@ -2480,7 +2480,7 @@ class DocumentKeyValueElement:
 
     def __init__(self, **kwargs: Any) -> None:
         self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -2702,7 +2702,7 @@ class DocumentParagraph:
     def __init__(self, **kwargs: Any) -> None:
         self.role: Optional[str] = kwargs.get("role", None)
         self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -2792,9 +2792,9 @@ class DocumentPage:
         self.height: Optional[float] = kwargs.get("height", None)
         self.unit: Optional[str] = kwargs.get("unit", None)
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.words: Optional[list[DocumentWord]] = kwargs.get("words", None)
-        self.selection_marks: Optional[list[DocumentSelectionMark]] = kwargs.get("selection_marks", None)
-        self.lines: Optional[list[DocumentLine]] = kwargs.get("lines", None)
+        self.words: Optional[list[DocumentWord]] = kwargs.get("words", None)  # pylint: disable=unsubscriptable-object
+        self.selection_marks: Optional[list[DocumentSelectionMark]] = kwargs.get("selection_marks", None)  # pylint: disable=unsubscriptable-object
+        self.lines: Optional[list[DocumentLine]] = kwargs.get("lines", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, page):
@@ -3037,7 +3037,7 @@ class DocumentTable:
         self.row_count: int = kwargs.get("row_count", None)
         self.column_count: int = kwargs.get("column_count", None)
         self.cells: list[DocumentTableCell] = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -3131,7 +3131,7 @@ class DocumentTableCell:
         self.row_span: Optional[int] = kwargs.get("row_span", 1)
         self.column_span: Optional[int] = kwargs.get("column_span", 1)
         self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
@@ -3246,7 +3246,7 @@ class OperationSummary:
         self.kind: str = kwargs.get("kind", None)
         self.resource_location: str = kwargs.get("resource_location", None)
         self.api_version: Optional[str] = kwargs.get("api_version", None)
-        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)
+        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
 
     def __repr__(self) -> str:
         return (
@@ -3522,13 +3522,13 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         self.api_version: str = kwargs.get("api_version", None)
         self.model_id: str = kwargs.get("model_id", None)
         self.content: str = kwargs.get("content", None)
-        self.languages: Optional[list[DocumentLanguage]] = kwargs.get("languages", None)
+        self.languages: Optional[list[DocumentLanguage]] = kwargs.get("languages", None)  # pylint: disable=unsubscriptable-object
         self.pages: list[DocumentPage] = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
-        self.paragraphs: Optional[list[DocumentParagraph]] = kwargs.get("paragraphs", None)
-        self.tables: Optional[list[DocumentTable]] = kwargs.get("tables", None)
-        self.key_value_pairs: Optional[list[DocumentKeyValuePair]] = kwargs.get("key_value_pairs", None)
-        self.styles: Optional[list[DocumentStyle]] = kwargs.get("styles", None)
-        self.documents: Optional[list[AnalyzedDocument]] = kwargs.get("documents", None)
+        self.paragraphs: Optional[list[DocumentParagraph]] = kwargs.get("paragraphs", None)  # pylint: disable=unsubscriptable-object
+        self.tables: Optional[list[DocumentTable]] = kwargs.get("tables", None)  # pylint: disable=unsubscriptable-object
+        self.key_value_pairs: Optional[list[DocumentKeyValuePair]] = kwargs.get("key_value_pairs", None)  # pylint: disable=unsubscriptable-object
+        self.styles: Optional[list[DocumentStyle]] = kwargs.get("styles", None)  # pylint: disable=unsubscriptable-object
+        self.documents: Optional[list[AnalyzedDocument]] = kwargs.get("documents", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, response):
@@ -3665,7 +3665,7 @@ class DocumentModelSummary:
         self.description: Optional[str] = kwargs.get("description", None)
         self.created_on: datetime.datetime = kwargs.get("created_on", None)
         self.api_version: Optional[str] = kwargs.get("api_version", None)
-        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)
+        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
 
     def __repr__(self) -> str:
         return (
@@ -3734,7 +3734,7 @@ class DocumentModelDetails(DocumentModelSummary):
         **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
-        self.doc_types: Optional[dict[str, DocumentTypeDetails]] = kwargs.get("doc_types", None)
+        self.doc_types: Optional[dict[str, DocumentTypeDetails]] = kwargs.get("doc_types", None)  # pylint: disable=unsubscriptable-object
 
     def __repr__(self) -> str:
         return (
@@ -3810,8 +3810,8 @@ class DocumentTypeDetails:
     ) -> None:
         self.description: Optional[str] = kwargs.get("description", None)
         self.build_mode: Optional[str] = kwargs.get("build_mode", None)
-        self.field_schema: dict[str, Any] = kwargs.get("field_schema", None)
-        self.field_confidence: Optional[dict[str, float]] = kwargs.get("field_confidence", None)
+        self.field_schema: dict[str, Any] = kwargs.get("field_schema", None)  # pylint: disable=unsubscriptable-object
+        self.field_confidence: Optional[dict[str, float]] = kwargs.get("field_confidence", None)  # pylint: disable=unsubscriptable-object
 
     def __repr__(self) -> str:
         return (
@@ -3982,7 +3982,7 @@ class DocumentAnalysisError:
         self.code: str = kwargs.get("code", None)
         self.message: str = kwargs.get("message", None)
         self.target: Optional[str] = kwargs.get("target", None)
-        self.details: Optional[list[DocumentAnalysisError]] = kwargs.get("details", None)
+        self.details: Optional[list[DocumentAnalysisError]] = kwargs.get("details", None)  # pylint: disable=unsubscriptable-object
         self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
 
     def __repr__(self) -> str:
