@@ -412,7 +412,7 @@ def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
                 path_size = os.path.getsize(full_path)
             else:
                 path_size = os.path.getsize(
-                    os.readlink(convert_windows_path_to_unix(full_path))
+                    os.path.realpath(convert_windows_path_to_unix(full_path))
                 )  # ensure we're counting the size of the linked file
             size_list[full_path] = path_size
             total_size += path_size
