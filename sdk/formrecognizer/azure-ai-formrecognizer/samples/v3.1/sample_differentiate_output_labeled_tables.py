@@ -67,8 +67,8 @@ class TestDifferentiateOutputLabeledTables(object):
         result: list[RecognizedForm] = poller.result()
 
         print("\n--------Recognizing labeled table with fixed rows--------\n")
-        for form in result:
-            for name, field in form.fields.items():
+        for recognized_form in result:
+            for name, field in recognized_form.fields.items():
                 # substitute "table" for the label given to the table tag during training
                 # (if different than sample training docs)
                 if name == "table":
@@ -109,8 +109,8 @@ class TestDifferentiateOutputLabeledTables(object):
         result: list[RecognizedForm] = poller.result()
 
         print("\n\n--------Recognizing labeled table with dynamic rows--------\n")
-        for form in result:
-            for name, field in form.fields.items():
+        for recognized_form in result:
+            for name, field in recognized_form.fields.items():
                 # substitute "table" for the label given to the table tag during training
                 # (if different than sample training docs)
                 if name == "table":
