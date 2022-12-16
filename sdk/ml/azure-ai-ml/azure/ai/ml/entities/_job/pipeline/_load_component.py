@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from functools import partial
 from typing import Any, Callable, Dict, List, Mapping, Union
 
 from marshmallow import INCLUDE
@@ -24,7 +23,7 @@ from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._util import extract_label
+from azure.ai.ml.entities._util import get_type_from_spec
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -98,28 +97,19 @@ class _PipelineNodeFactory:
         )
 
     @classmethod
-    def _get_func(cls, _type: str, funcs):
-        _type, _ = extract_label(_type)
-        exception = partial(
-            ValidationException,
-            target=ErrorTarget.COMPONENT,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+    def _get_func(cls, _type: str, funcs: Dict[str, Callable]) -> Callable:
         if _type == NodeType._CONTAINER:
             msg = (
                 "Component returned by 'list' is abbreviated and can not be used directly, "
                 "please use result from 'get'."
             )
-            raise exception(
+            raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
             )
-        if _type not in funcs:
-            msg = f"Unsupported component type: {_type}."
-            raise exception(
-                message=msg,
-                no_personal_data_message=msg,
-            )
+        _type = get_type_from_spec({CommonYamlFields.TYPE: _type}, valid_keys=funcs)
         return funcs[_type]
 
     def get_create_instance_func(self, _type: str) -> Callable[..., BaseNode]:

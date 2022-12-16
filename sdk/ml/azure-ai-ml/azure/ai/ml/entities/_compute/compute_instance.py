@@ -29,9 +29,11 @@ from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml._utils._experimental import experimental
 
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
+from ._image_metadata import ImageMetadata
 
 module_logger = logging.getLogger(__name__)
 
@@ -160,6 +162,7 @@ class ComputeInstance(Compute):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state = kwargs.pop("state", None)
         self._last_operation = kwargs.pop("last_operation", None)
+        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
         super().__init__(
             name=name,
@@ -206,6 +209,17 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
+
+    @experimental
+    @property
+    def os_image_metadata(self) -> ImageMetadata:
+        """
+        Metadata about the operating system image for this compute instance.
+
+        return: Operating system image metadata.
+        rtype: ImageMetadata
+        """
+        return self._os_image_metadata
 
     def _to_rest_object(self) -> ComputeResource:
         if self.network_settings and self.network_settings.subnet:
@@ -259,6 +273,12 @@ class ComputeInstance(Compute):
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=idle_time_before_shutdown,
+        )
+        compute_instance_prop.schedules = (
+            self.schedules._to_rest_object() if self.schedules else None
+        )
+        compute_instance_prop.setup_scripts = (
+            self.setup_scripts._to_rest_object() if self.setup_scripts else None
         )
         compute_instance_prop.schedules = (
             self.schedules._to_rest_object() if self.schedules else None
@@ -331,6 +351,20 @@ class ComputeInstance(Compute):
                 and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
+        os_image_metadata = None
+        if prop.properties and prop.properties.os_image_metadata:
+            metadata = prop.properties.os_image_metadata
+            os_image_metadata = ImageMetadata(
+                is_latest_os_image_version=metadata.is_latest_os_image_version
+                if metadata.is_latest_os_image_version is not None
+                else None,
+                current_image_version=metadata.current_image_version
+                if metadata.current_image_version
+                else None,
+                latest_image_version=metadata.latest_image_version
+                if metadata.latest_image_version
+                else None,
+            )
 
         idle_time_before_shutdown = None
         idle_time_before_shutdown_minutes = None
@@ -389,6 +423,7 @@ class ComputeInstance(Compute):
             else None,
             idle_time_before_shutdown=idle_time_before_shutdown,
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
+            os_image_metadata=os_image_metadata,
         )
         return response
 

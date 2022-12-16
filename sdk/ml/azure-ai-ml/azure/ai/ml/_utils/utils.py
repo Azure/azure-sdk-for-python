@@ -770,6 +770,11 @@ def is_internal_components_enabled():
 
 
 def try_enable_internal_components(*, force=False):
+    """Try to enable internal components for the current process.
+    This is the only function outside _internal that references _internal
+
+    :param force: Force enable internal components even if enabled before.
+    """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
@@ -885,7 +890,6 @@ def get_all_enum_values_iter(enum_type):
     for key in dir(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)
-
 
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception

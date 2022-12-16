@@ -1,5 +1,24 @@
 # Release History
 
+## 1.1.0b3 (2022-12-12)
+
+### Features Added
+
+  - Added operation group DeletedAutomationAccountsOperations
+  - Added operation group Python3PackageOperations
+  - Model HybridRunbookWorkerGroupCreateOrUpdateParameters has a new parameter name
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter service_specification
+  - Model OperationDisplay has a new parameter description
+
+### Breaking Changes
+
+  - Model HybridRunbookWorkerGroup no longer has parameter hybrid_runbook_workers
+  - Operation DscConfigurationOperations.create_or_update no longer has parameter content_type
+  - Operation DscConfigurationOperations.update no longer has parameter content_type
+  - Operation HybridRunbookWorkerGroupOperations.update has a new required parameter hybrid_runbook_worker_group_updation_parameters
+  - Operation HybridRunbookWorkerGroupOperations.update no longer has parameter parameters
+
 ## 1.1.0b2 (2022-07-18)
 
 **Features**

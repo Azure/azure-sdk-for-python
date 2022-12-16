@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,105 +8,108 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._workloads_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ApplicationServerConfiguration(msrest.serialization.Model):
+class ApplicationServerConfiguration(_serialization.Model):
     """Gets or sets the application server configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar subnet_id: Required. The subnet id.
+    :ivar subnet_id: The subnet id. Required.
     :vartype subnet_id: str
-    :ivar virtual_machine_configuration: Required. Gets or sets the virtual machine configuration.
+    :ivar virtual_machine_configuration: Gets or sets the virtual machine configuration. Required.
     :vartype virtual_machine_configuration:
      ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-    :ivar instance_count: Required. The number of app server instances.
-    :vartype instance_count: long
+    :ivar instance_count: The number of app server instances. Required.
+    :vartype instance_count: int
     """
 
     _validation = {
-        'subnet_id': {'required': True},
-        'virtual_machine_configuration': {'required': True},
-        'instance_count': {'required': True},
+        "subnet_id": {"required": True},
+        "virtual_machine_configuration": {"required": True},
+        "instance_count": {"required": True},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'instance_count': {'key': 'instanceCount', 'type': 'long'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         subnet_id: str,
-        virtual_machine_configuration: "VirtualMachineConfiguration",
+        virtual_machine_configuration: "_models.VirtualMachineConfiguration",
         instance_count: int,
         **kwargs
     ):
         """
-        :keyword subnet_id: Required. The subnet id.
+        :keyword subnet_id: The subnet id. Required.
         :paramtype subnet_id: str
-        :keyword virtual_machine_configuration: Required. Gets or sets the virtual machine
-         configuration.
+        :keyword virtual_machine_configuration: Gets or sets the virtual machine configuration.
+         Required.
         :paramtype virtual_machine_configuration:
          ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-        :keyword instance_count: Required. The number of app server instances.
-        :paramtype instance_count: long
+        :keyword instance_count: The number of app server instances. Required.
+        :paramtype instance_count: int
         """
-        super(ApplicationServerConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.virtual_machine_configuration = virtual_machine_configuration
         self.instance_count = instance_count
 
 
-class BackupProfile(msrest.serialization.Model):
+class BackupProfile(_serialization.Model):
     """Backup profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar backup_enabled: Required. Whether to enable Azure backup for the workload. Possible
-     values include: "Enabled", "Disabled".
+    :ivar backup_enabled: Whether to enable Azure backup for the workload. Required. Known values
+     are: "Enabled" and "Disabled".
     :vartype backup_enabled: str or ~azure.mgmt.workloads.models.EnableBackup
     :ivar vault_resource_id: Backup vault resource Id.
     :vartype vault_resource_id: str
     """
 
     _validation = {
-        'backup_enabled': {'required': True},
-        'vault_resource_id': {'readonly': True},
+        "backup_enabled": {"required": True},
+        "vault_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'backup_enabled': {'key': 'backupEnabled', 'type': 'str'},
-        'vault_resource_id': {'key': 'vaultResourceId', 'type': 'str'},
+        "backup_enabled": {"key": "backupEnabled", "type": "str"},
+        "vault_resource_id": {"key": "vaultResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        backup_enabled: Union[str, "EnableBackup"],
-        **kwargs
-    ):
+    def __init__(self, *, backup_enabled: Union[str, "_models.EnableBackup"], **kwargs):
         """
-        :keyword backup_enabled: Required. Whether to enable Azure backup for the workload. Possible
-         values include: "Enabled", "Disabled".
+        :keyword backup_enabled: Whether to enable Azure backup for the workload. Required. Known
+         values are: "Enabled" and "Disabled".
         :paramtype backup_enabled: str or ~azure.mgmt.workloads.models.EnableBackup
         """
-        super(BackupProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backup_enabled = backup_enabled
         self.vault_resource_id = None
 
 
-class CacheProfile(msrest.serialization.Model):
+class CacheProfile(_serialization.Model):
     """Cache profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -114,36 +118,36 @@ class CacheProfile(msrest.serialization.Model):
 
     :ivar name: Cache name.
     :vartype name: str
-    :ivar sku_name: Required. Cache SKU name.
+    :ivar sku_name: Cache SKU name. Required.
     :vartype sku_name: str
-    :ivar family: Required. Cache family. Possible values include: "C", "P".
+    :ivar family: Cache family. Required. Known values are: "C" and "P".
     :vartype family: str or ~azure.mgmt.workloads.models.RedisCacheFamily
-    :ivar capacity: Required. Cache capacity.
-    :vartype capacity: long
+    :ivar capacity: Cache capacity. Required.
+    :vartype capacity: int
     :ivar cache_resource_id: Cache resource Id.
     :vartype cache_resource_id: str
     """
 
     _validation = {
-        'sku_name': {'required': True},
-        'family': {'required': True},
-        'capacity': {'required': True},
-        'cache_resource_id': {'readonly': True},
+        "sku_name": {"required": True},
+        "family": {"required": True},
+        "capacity": {"required": True},
+        "cache_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'sku_name': {'key': 'skuName', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
-        'cache_resource_id': {'key': 'cacheResourceId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
+        "cache_resource_id": {"key": "cacheResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         sku_name: str,
-        family: Union[str, "RedisCacheFamily"],
+        family: Union[str, "_models.RedisCacheFamily"],
         capacity: int,
         name: Optional[str] = None,
         **kwargs
@@ -151,14 +155,14 @@ class CacheProfile(msrest.serialization.Model):
         """
         :keyword name: Cache name.
         :paramtype name: str
-        :keyword sku_name: Required. Cache SKU name.
+        :keyword sku_name: Cache SKU name. Required.
         :paramtype sku_name: str
-        :keyword family: Required. Cache family. Possible values include: "C", "P".
+        :keyword family: Cache family. Required. Known values are: "C" and "P".
         :paramtype family: str or ~azure.mgmt.workloads.models.RedisCacheFamily
-        :keyword capacity: Required. Cache capacity.
-        :paramtype capacity: long
+        :keyword capacity: Cache capacity. Required.
+        :paramtype capacity: int
         """
-        super(CacheProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.sku_name = sku_name
         self.family = family
@@ -166,249 +170,245 @@ class CacheProfile(msrest.serialization.Model):
         self.cache_resource_id = None
 
 
-class CentralServerConfiguration(msrest.serialization.Model):
+class CentralServerConfiguration(_serialization.Model):
     """Gets or sets the central server configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar subnet_id: Required. The subnet id.
+    :ivar subnet_id: The subnet id. Required.
     :vartype subnet_id: str
-    :ivar virtual_machine_configuration: Required. Gets or sets the virtual machine configuration.
+    :ivar virtual_machine_configuration: Gets or sets the virtual machine configuration. Required.
     :vartype virtual_machine_configuration:
      ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-    :ivar instance_count: Required. The number of central server VMs.
-    :vartype instance_count: long
+    :ivar instance_count: The number of central server VMs. Required.
+    :vartype instance_count: int
     """
 
     _validation = {
-        'subnet_id': {'required': True},
-        'virtual_machine_configuration': {'required': True},
-        'instance_count': {'required': True},
+        "subnet_id": {"required": True},
+        "virtual_machine_configuration": {"required": True},
+        "instance_count": {"required": True},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'instance_count': {'key': 'instanceCount', 'type': 'long'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         subnet_id: str,
-        virtual_machine_configuration: "VirtualMachineConfiguration",
+        virtual_machine_configuration: "_models.VirtualMachineConfiguration",
         instance_count: int,
         **kwargs
     ):
         """
-        :keyword subnet_id: Required. The subnet id.
+        :keyword subnet_id: The subnet id. Required.
         :paramtype subnet_id: str
-        :keyword virtual_machine_configuration: Required. Gets or sets the virtual machine
-         configuration.
+        :keyword virtual_machine_configuration: Gets or sets the virtual machine configuration.
+         Required.
         :paramtype virtual_machine_configuration:
          ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-        :keyword instance_count: Required. The number of central server VMs.
-        :paramtype instance_count: long
+        :keyword instance_count: The number of central server VMs. Required.
+        :paramtype instance_count: int
         """
-        super(CentralServerConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.virtual_machine_configuration = virtual_machine_configuration
         self.instance_count = instance_count
 
 
-class CentralServerVmDetails(msrest.serialization.Model):
-    """The Central Server VM Details.
+class CentralServerVmDetails(_serialization.Model):
+    """The SAP Central Services Instance VM details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: Defines the type of central server VM. Possible values include: "Primary",
-     "Secondary", "Unknown", "ASCS", "ERSInactive", "ERS", "Standby".
+    :ivar type: Defines the type of central server VM. Known values are: "Primary", "Secondary",
+     "Unknown", "ASCS", "ERSInactive", "ERS", and "Standby".
     :vartype type: str or ~azure.mgmt.workloads.models.CentralServerVirtualMachineType
     :ivar virtual_machine_id:
     :vartype virtual_machine_id: str
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'virtual_machine_id': {'readonly': True},
+        "type": {"readonly": True},
+        "virtual_machine_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CentralServerVmDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.virtual_machine_id = None
 
 
-class DatabaseConfiguration(msrest.serialization.Model):
+class DatabaseConfiguration(_serialization.Model):
     """Gets or sets the database configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar database_type: The database type. Possible values include: "HANA", "DB2".
+    :ivar database_type: The database type. Known values are: "HANA" and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-    :ivar subnet_id: Required. The subnet id.
+    :ivar subnet_id: The subnet id. Required.
     :vartype subnet_id: str
-    :ivar virtual_machine_configuration: Required. Gets or sets the virtual machine configuration.
+    :ivar virtual_machine_configuration: Gets or sets the virtual machine configuration. Required.
     :vartype virtual_machine_configuration:
      ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-    :ivar instance_count: Required. The number of database VMs.
-    :vartype instance_count: long
+    :ivar instance_count: The number of database VMs. Required.
+    :vartype instance_count: int
     """
 
     _validation = {
-        'subnet_id': {'required': True},
-        'virtual_machine_configuration': {'required': True},
-        'instance_count': {'required': True},
+        "subnet_id": {"required": True},
+        "virtual_machine_configuration": {"required": True},
+        "instance_count": {"required": True},
     }
 
     _attribute_map = {
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'instance_count': {'key': 'instanceCount', 'type': 'long'},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         subnet_id: str,
-        virtual_machine_configuration: "VirtualMachineConfiguration",
+        virtual_machine_configuration: "_models.VirtualMachineConfiguration",
         instance_count: int,
-        database_type: Optional[Union[str, "SAPDatabaseType"]] = None,
+        database_type: Optional[Union[str, "_models.SAPDatabaseType"]] = None,
         **kwargs
     ):
         """
-        :keyword database_type: The database type. Possible values include: "HANA", "DB2".
+        :keyword database_type: The database type. Known values are: "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-        :keyword subnet_id: Required. The subnet id.
+        :keyword subnet_id: The subnet id. Required.
         :paramtype subnet_id: str
-        :keyword virtual_machine_configuration: Required. Gets or sets the virtual machine
-         configuration.
+        :keyword virtual_machine_configuration: Gets or sets the virtual machine configuration.
+         Required.
         :paramtype virtual_machine_configuration:
          ~azure.mgmt.workloads.models.VirtualMachineConfiguration
-        :keyword instance_count: Required. The number of database VMs.
-        :paramtype instance_count: long
+        :keyword instance_count: The number of database VMs. Required.
+        :paramtype instance_count: int
         """
-        super(DatabaseConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.database_type = database_type
         self.subnet_id = subnet_id
         self.virtual_machine_configuration = virtual_machine_configuration
         self.instance_count = instance_count
 
 
-class DatabaseProfile(msrest.serialization.Model):
+class DatabaseProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Workload database profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Database type. Possible values include: "MySql".
+    :ivar type: Database type. Required. "MySql"
     :vartype type: str or ~azure.mgmt.workloads.models.DatabaseType
     :ivar server_name: Database server name.
     :vartype server_name: str
     :ivar version: Database version.
     :vartype version: str
-    :ivar sku: Required. The name of the server SKU, e.g. Standard_D32s_v4.
+    :ivar sku: The name of the server SKU, e.g. Standard_D32s_v4. Required.
     :vartype sku: str
-    :ivar tier: Required. Tier of the server SKU. Possible values include: "Burstable",
-     "GeneralPurpose", "MemoryOptimized".
+    :ivar tier: Tier of the server SKU. Required. Known values are: "Burstable", "GeneralPurpose",
+     and "MemoryOptimized".
     :vartype tier: str or ~azure.mgmt.workloads.models.DatabaseTier
-    :ivar ha_enabled: Whether to enable HA for the server. Possible values include: "Enabled",
+    :ivar ha_enabled: Whether to enable HA for the server. Known values are: "Enabled" and
      "Disabled".
     :vartype ha_enabled: str or ~azure.mgmt.workloads.models.HAEnabled
     :ivar storage_sku: SKU name for database storage.
     :vartype storage_sku: str
     :ivar storage_in_gb: Database storage size in GB.
-    :vartype storage_in_gb: long
+    :vartype storage_in_gb: int
     :ivar storage_iops: Storage IOPS for the server.
-    :vartype storage_iops: long
+    :vartype storage_iops: int
     :ivar backup_retention_days: Backup retention days for the server.
     :vartype backup_retention_days: int
-    :ivar ssl_enforcement_enabled: Whether to enable SSL enforcement on the database. Possible
-     values include: "Enabled", "Disabled".
+    :ivar ssl_enforcement_enabled: Whether to enable SSL enforcement on the database. Known values
+     are: "Enabled" and "Disabled".
     :vartype ssl_enforcement_enabled: str or ~azure.mgmt.workloads.models.EnableSslEnforcement
     :ivar server_resource_id: Azure Database Server resource Id.
     :vartype server_resource_id: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'sku': {'required': True},
-        'tier': {'required': True},
-        'storage_in_gb': {'minimum': 1},
-        'server_resource_id': {'readonly': True},
+        "type": {"required": True},
+        "sku": {"required": True},
+        "tier": {"required": True},
+        "storage_in_gb": {"minimum": 1},
+        "server_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'ha_enabled': {'key': 'haEnabled', 'type': 'str'},
-        'storage_sku': {'key': 'storageSku', 'type': 'str'},
-        'storage_in_gb': {'key': 'storageInGB', 'type': 'long'},
-        'storage_iops': {'key': 'storageIops', 'type': 'long'},
-        'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
-        'ssl_enforcement_enabled': {'key': 'sslEnforcementEnabled', 'type': 'str'},
-        'server_resource_id': {'key': 'serverResourceId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "server_name": {"key": "serverName", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "ha_enabled": {"key": "haEnabled", "type": "str"},
+        "storage_sku": {"key": "storageSku", "type": "str"},
+        "storage_in_gb": {"key": "storageInGB", "type": "int"},
+        "storage_iops": {"key": "storageIops", "type": "int"},
+        "backup_retention_days": {"key": "backupRetentionDays", "type": "int"},
+        "ssl_enforcement_enabled": {"key": "sslEnforcementEnabled", "type": "str"},
+        "server_resource_id": {"key": "serverResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "DatabaseType"],
+        type: Union[str, "_models.DatabaseType"],
         sku: str,
-        tier: Union[str, "DatabaseTier"],
+        tier: Union[str, "_models.DatabaseTier"],
         server_name: Optional[str] = None,
         version: Optional[str] = None,
-        ha_enabled: Optional[Union[str, "HAEnabled"]] = None,
+        ha_enabled: Optional[Union[str, "_models.HAEnabled"]] = None,
         storage_sku: Optional[str] = None,
         storage_in_gb: Optional[int] = None,
         storage_iops: Optional[int] = None,
         backup_retention_days: Optional[int] = None,
-        ssl_enforcement_enabled: Optional[Union[str, "EnableSslEnforcement"]] = None,
+        ssl_enforcement_enabled: Optional[Union[str, "_models.EnableSslEnforcement"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Database type. Possible values include: "MySql".
+        :keyword type: Database type. Required. "MySql"
         :paramtype type: str or ~azure.mgmt.workloads.models.DatabaseType
         :keyword server_name: Database server name.
         :paramtype server_name: str
         :keyword version: Database version.
         :paramtype version: str
-        :keyword sku: Required. The name of the server SKU, e.g. Standard_D32s_v4.
+        :keyword sku: The name of the server SKU, e.g. Standard_D32s_v4. Required.
         :paramtype sku: str
-        :keyword tier: Required. Tier of the server SKU. Possible values include: "Burstable",
-         "GeneralPurpose", "MemoryOptimized".
+        :keyword tier: Tier of the server SKU. Required. Known values are: "Burstable",
+         "GeneralPurpose", and "MemoryOptimized".
         :paramtype tier: str or ~azure.mgmt.workloads.models.DatabaseTier
-        :keyword ha_enabled: Whether to enable HA for the server. Possible values include: "Enabled",
+        :keyword ha_enabled: Whether to enable HA for the server. Known values are: "Enabled" and
          "Disabled".
         :paramtype ha_enabled: str or ~azure.mgmt.workloads.models.HAEnabled
         :keyword storage_sku: SKU name for database storage.
         :paramtype storage_sku: str
         :keyword storage_in_gb: Database storage size in GB.
-        :paramtype storage_in_gb: long
+        :paramtype storage_in_gb: int
         :keyword storage_iops: Storage IOPS for the server.
-        :paramtype storage_iops: long
+        :paramtype storage_iops: int
         :keyword backup_retention_days: Backup retention days for the server.
         :paramtype backup_retention_days: int
-        :keyword ssl_enforcement_enabled: Whether to enable SSL enforcement on the database. Possible
-         values include: "Enabled", "Disabled".
+        :keyword ssl_enforcement_enabled: Whether to enable SSL enforcement on the database. Known
+         values are: "Enabled" and "Disabled".
         :paramtype ssl_enforcement_enabled: str or ~azure.mgmt.workloads.models.EnableSslEnforcement
         """
-        super(DatabaseProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.server_name = server_name
         self.version = version
@@ -423,72 +423,72 @@ class DatabaseProfile(msrest.serialization.Model):
         self.server_resource_id = None
 
 
-class DatabaseVmDetails(msrest.serialization.Model):
-    """The Database VM Details.
+class DatabaseVmDetails(_serialization.Model):
+    """Database VM details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar virtual_machine_id:
     :vartype virtual_machine_id: str
-    :ivar status: Defines the SAP Instance status. Possible values include: "Starting", "Running",
-     "Stopping", "Offline", "PartiallyRunning", "Unavailable".
+    :ivar status: Defines the SAP Instance status. Known values are: "Starting", "Running",
+     "Stopping", "Offline", "PartiallyRunning", and "Unavailable".
     :vartype status: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceStatus
     """
 
     _validation = {
-        'virtual_machine_id': {'readonly': True},
-        'status': {'readonly': True},
+        "virtual_machine_id": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DatabaseVmDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.virtual_machine_id = None
         self.status = None
 
 
-class ProviderSpecificProperties(msrest.serialization.Model):
+class ProviderSpecificProperties(_serialization.Model):
     """Gets or sets the provider specific properties.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DB2ProviderInstanceProperties, MsSqlServerProviderInstanceProperties, PrometheusHaClusterProviderInstanceProperties, PrometheusOSProviderInstanceProperties, HanaDbProviderInstanceProperties, SapNetWeaverProviderInstanceProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DB2ProviderInstanceProperties, MsSqlServerProviderInstanceProperties,
+    PrometheusHaClusterProviderInstanceProperties, PrometheusOSProviderInstanceProperties,
+    HanaDbProviderInstanceProperties, SapNetWeaverProviderInstanceProperties
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
     }
 
     _subtype_map = {
-        'provider_type': {'Db2': 'DB2ProviderInstanceProperties', 'MsSqlServer': 'MsSqlServerProviderInstanceProperties', 'PrometheusHaCluster': 'PrometheusHaClusterProviderInstanceProperties', 'PrometheusOS': 'PrometheusOSProviderInstanceProperties', 'SapHana': 'HanaDbProviderInstanceProperties', 'SapNetWeaver': 'SapNetWeaverProviderInstanceProperties'}
+        "provider_type": {
+            "Db2": "DB2ProviderInstanceProperties",
+            "MsSqlServer": "MsSqlServerProviderInstanceProperties",
+            "PrometheusHaCluster": "PrometheusHaClusterProviderInstanceProperties",
+            "PrometheusOS": "PrometheusOSProviderInstanceProperties",
+            "SapHana": "HanaDbProviderInstanceProperties",
+            "SapNetWeaver": "SapNetWeaverProviderInstanceProperties",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProviderSpecificProperties, self).__init__(**kwargs)
-        self.provider_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.provider_type: Optional[str] = None
 
 
 class DB2ProviderInstanceProperties(ProviderSpecificProperties):
@@ -496,8 +496,7 @@ class DB2ProviderInstanceProperties(ProviderSpecificProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar hostname: Gets or sets the target virtual machine name.
     :vartype hostname: str
@@ -513,21 +512,28 @@ class DB2ProviderInstanceProperties(ProviderSpecificProperties):
     :vartype db_password_uri: str
     :ivar sap_sid: Gets or sets the SAP System Identifier.
     :vartype sap_sid: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB2 Database.
+    :vartype ssl_certificate_uri: str
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'db_name': {'key': 'dbName', 'type': 'str'},
-        'db_port': {'key': 'dbPort', 'type': 'str'},
-        'db_username': {'key': 'dbUsername', 'type': 'str'},
-        'db_password': {'key': 'dbPassword', 'type': 'str'},
-        'db_password_uri': {'key': 'dbPasswordUri', 'type': 'str'},
-        'sap_sid': {'key': 'sapSid', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "db_name": {"key": "dbName", "type": "str"},
+        "db_port": {"key": "dbPort", "type": "str"},
+        "db_username": {"key": "dbUsername", "type": "str"},
+        "db_password": {"key": "dbPassword", "type": "str"},
+        "db_password_uri": {"key": "dbPasswordUri", "type": "str"},
+        "sap_sid": {"key": "sapSid", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
     }
 
     def __init__(
@@ -540,6 +546,8 @@ class DB2ProviderInstanceProperties(ProviderSpecificProperties):
         db_password: Optional[str] = None,
         db_password_uri: Optional[str] = None,
         sap_sid: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
+        ssl_certificate_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -557,9 +565,15 @@ class DB2ProviderInstanceProperties(ProviderSpecificProperties):
         :paramtype db_password_uri: str
         :keyword sap_sid: Gets or sets the SAP System Identifier.
         :paramtype sap_sid: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB2
+         Database.
+        :paramtype ssl_certificate_uri: str
         """
-        super(DB2ProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'Db2'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "Db2"
         self.hostname = hostname
         self.db_name = db_name
         self.db_port = db_port
@@ -567,9 +581,11 @@ class DB2ProviderInstanceProperties(ProviderSpecificProperties):
         self.db_password = db_password
         self.db_password_uri = db_password_uri
         self.sap_sid = sap_sid
+        self.ssl_preference = ssl_preference
+        self.ssl_certificate_uri = ssl_certificate_uri
 
 
-class DeployerVmPackages(msrest.serialization.Model):
+class DeployerVmPackages(_serialization.Model):
     """Defines the url and storage account ID where deployer VM packages are uploaded.
 
     :ivar url: The URL to the deployer VM packages file.
@@ -579,61 +595,55 @@ class DeployerVmPackages(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        url: Optional[str] = None,
-        storage_account_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, url: Optional[str] = None, storage_account_id: Optional[str] = None, **kwargs):
         """
         :keyword url: The URL to the deployer VM packages file.
         :paramtype url: str
         :keyword storage_account_id: The deployer VM packages storage account id.
         :paramtype storage_account_id: str
         """
-        super(DeployerVmPackages, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.storage_account_id = storage_account_id
 
 
-class SAPConfiguration(msrest.serialization.Model):
+class SAPConfiguration(_serialization.Model):
     """The SAP Configuration.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeploymentConfiguration, DeploymentWithOSConfiguration, DiscoveryConfiguration.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DeploymentConfiguration, DeploymentWithOSConfiguration, DiscoveryConfiguration
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar configuration_type: Required. The configuration Type.Constant filled by server. Possible
-     values include: "Deployment", "Discovery", "DeploymentWithOSConfig".
+    :ivar configuration_type: The configuration Type. Required. Known values are: "Deployment",
+     "Discovery", and "DeploymentWithOSConfig".
     :vartype configuration_type: str or ~azure.mgmt.workloads.models.SAPConfigurationType
     """
 
     _validation = {
-        'configuration_type': {'required': True},
+        "configuration_type": {"required": True},
     }
 
     _attribute_map = {
-        'configuration_type': {'key': 'configurationType', 'type': 'str'},
+        "configuration_type": {"key": "configurationType", "type": "str"},
     }
 
     _subtype_map = {
-        'configuration_type': {'Deployment': 'DeploymentConfiguration', 'DeploymentWithOSConfig': 'DeploymentWithOSConfiguration', 'Discovery': 'DiscoveryConfiguration'}
+        "configuration_type": {
+            "Deployment": "DeploymentConfiguration",
+            "DeploymentWithOSConfig": "DeploymentWithOSConfiguration",
+            "Discovery": "DiscoveryConfiguration",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SAPConfiguration, self).__init__(**kwargs)
-        self.configuration_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.configuration_type: Optional[str] = None
 
 
 class DeploymentConfiguration(SAPConfiguration):
@@ -641,8 +651,8 @@ class DeploymentConfiguration(SAPConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar configuration_type: Required. The configuration Type.Constant filled by server. Possible
-     values include: "Deployment", "Discovery", "DeploymentWithOSConfig".
+    :ivar configuration_type: The configuration Type. Required. Known values are: "Deployment",
+     "Discovery", and "DeploymentWithOSConfig".
     :vartype configuration_type: str or ~azure.mgmt.workloads.models.SAPConfigurationType
     :ivar app_location: The geo-location where the SAP system is to be created.
     :vartype app_location: str
@@ -653,22 +663,22 @@ class DeploymentConfiguration(SAPConfiguration):
     """
 
     _validation = {
-        'configuration_type': {'required': True},
+        "configuration_type": {"required": True},
     }
 
     _attribute_map = {
-        'configuration_type': {'key': 'configurationType', 'type': 'str'},
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'infrastructure_configuration': {'key': 'infrastructureConfiguration', 'type': 'InfrastructureConfiguration'},
-        'software_configuration': {'key': 'softwareConfiguration', 'type': 'SoftwareConfiguration'},
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "infrastructure_configuration": {"key": "infrastructureConfiguration", "type": "InfrastructureConfiguration"},
+        "software_configuration": {"key": "softwareConfiguration", "type": "SoftwareConfiguration"},
     }
 
     def __init__(
         self,
         *,
         app_location: Optional[str] = None,
-        infrastructure_configuration: Optional["InfrastructureConfiguration"] = None,
-        software_configuration: Optional["SoftwareConfiguration"] = None,
+        infrastructure_configuration: Optional["_models.InfrastructureConfiguration"] = None,
+        software_configuration: Optional["_models.SoftwareConfiguration"] = None,
         **kwargs
     ):
         """
@@ -680,8 +690,8 @@ class DeploymentConfiguration(SAPConfiguration):
         :keyword software_configuration: The software configuration.
         :paramtype software_configuration: ~azure.mgmt.workloads.models.SoftwareConfiguration
         """
-        super(DeploymentConfiguration, self).__init__(**kwargs)
-        self.configuration_type = 'Deployment'  # type: str
+        super().__init__(**kwargs)
+        self.configuration_type: str = "Deployment"
         self.app_location = app_location
         self.infrastructure_configuration = infrastructure_configuration
         self.software_configuration = software_configuration
@@ -692,8 +702,8 @@ class DeploymentWithOSConfiguration(SAPConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar configuration_type: Required. The configuration Type.Constant filled by server. Possible
-     values include: "Deployment", "Discovery", "DeploymentWithOSConfig".
+    :ivar configuration_type: The configuration Type. Required. Known values are: "Deployment",
+     "Discovery", and "DeploymentWithOSConfig".
     :vartype configuration_type: str or ~azure.mgmt.workloads.models.SAPConfigurationType
     :ivar app_location: The geo-location where the SAP system is to be created.
     :vartype app_location: str
@@ -706,24 +716,24 @@ class DeploymentWithOSConfiguration(SAPConfiguration):
     """
 
     _validation = {
-        'configuration_type': {'required': True},
+        "configuration_type": {"required": True},
     }
 
     _attribute_map = {
-        'configuration_type': {'key': 'configurationType', 'type': 'str'},
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'infrastructure_configuration': {'key': 'infrastructureConfiguration', 'type': 'InfrastructureConfiguration'},
-        'software_configuration': {'key': 'softwareConfiguration', 'type': 'SoftwareConfiguration'},
-        'os_sap_configuration': {'key': 'osSapConfiguration', 'type': 'OsSapConfiguration'},
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "infrastructure_configuration": {"key": "infrastructureConfiguration", "type": "InfrastructureConfiguration"},
+        "software_configuration": {"key": "softwareConfiguration", "type": "SoftwareConfiguration"},
+        "os_sap_configuration": {"key": "osSapConfiguration", "type": "OsSapConfiguration"},
     }
 
     def __init__(
         self,
         *,
         app_location: Optional[str] = None,
-        infrastructure_configuration: Optional["InfrastructureConfiguration"] = None,
-        software_configuration: Optional["SoftwareConfiguration"] = None,
-        os_sap_configuration: Optional["OsSapConfiguration"] = None,
+        infrastructure_configuration: Optional["_models.InfrastructureConfiguration"] = None,
+        software_configuration: Optional["_models.SoftwareConfiguration"] = None,
+        os_sap_configuration: Optional["_models.OsSapConfiguration"] = None,
         **kwargs
     ):
         """
@@ -737,8 +747,8 @@ class DeploymentWithOSConfiguration(SAPConfiguration):
         :keyword os_sap_configuration: The OS and SAP configuration.
         :paramtype os_sap_configuration: ~azure.mgmt.workloads.models.OsSapConfiguration
         """
-        super(DeploymentWithOSConfiguration, self).__init__(**kwargs)
-        self.configuration_type = 'DeploymentWithOSConfig'  # type: str
+        super().__init__(**kwargs)
+        self.configuration_type: str = "DeploymentWithOSConfig"
         self.app_location = app_location
         self.infrastructure_configuration = infrastructure_configuration
         self.software_configuration = software_configuration
@@ -752,8 +762,8 @@ class DiscoveryConfiguration(SAPConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar configuration_type: Required. The configuration Type.Constant filled by server. Possible
-     values include: "Deployment", "Discovery", "DeploymentWithOSConfig".
+    :ivar configuration_type: The configuration Type. Required. Known values are: "Deployment",
+     "Discovery", and "DeploymentWithOSConfig".
     :vartype configuration_type: str or ~azure.mgmt.workloads.models.SAPConfigurationType
     :ivar central_server_vm_id: The virtual machine ID of the Central Server.
     :vartype central_server_vm_id: str
@@ -762,122 +772,109 @@ class DiscoveryConfiguration(SAPConfiguration):
     """
 
     _validation = {
-        'configuration_type': {'required': True},
-        'app_location': {'readonly': True},
+        "configuration_type": {"required": True},
+        "app_location": {"readonly": True},
     }
 
     _attribute_map = {
-        'configuration_type': {'key': 'configurationType', 'type': 'str'},
-        'central_server_vm_id': {'key': 'centralServerVmId', 'type': 'str'},
-        'app_location': {'key': 'appLocation', 'type': 'str'},
+        "configuration_type": {"key": "configurationType", "type": "str"},
+        "central_server_vm_id": {"key": "centralServerVmId", "type": "str"},
+        "app_location": {"key": "appLocation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        central_server_vm_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, central_server_vm_id: Optional[str] = None, **kwargs):
         """
         :keyword central_server_vm_id: The virtual machine ID of the Central Server.
         :paramtype central_server_vm_id: str
         """
-        super(DiscoveryConfiguration, self).__init__(**kwargs)
-        self.configuration_type = 'Discovery'  # type: str
+        super().__init__(**kwargs)
+        self.configuration_type: str = "Discovery"
         self.central_server_vm_id = central_server_vm_id
         self.app_location = None
 
 
-class DiskInfo(msrest.serialization.Model):
+class DiskInfo(_serialization.Model):
     """Disk resource creation details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar storage_type: Required. Storage type. Possible values include: "Premium_LRS",
-     "Standard_LRS", "StandardSSD_LRS".
+    :ivar storage_type: Storage type. Required. Known values are: "Premium_LRS", "Standard_LRS",
+     and "StandardSSD_LRS".
     :vartype storage_type: str or ~azure.mgmt.workloads.models.DiskStorageType
     :ivar size_in_gb: Disk size in GB.
-    :vartype size_in_gb: long
+    :vartype size_in_gb: int
     """
 
     _validation = {
-        'storage_type': {'required': True},
+        "storage_type": {"required": True},
     }
 
     _attribute_map = {
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'long'},
+        "storage_type": {"key": "storageType", "type": "str"},
+        "size_in_gb": {"key": "sizeInGB", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        storage_type: Union[str, "DiskStorageType"],
-        size_in_gb: Optional[int] = None,
-        **kwargs
+        self, *, storage_type: Union[str, "_models.DiskStorageType"], size_in_gb: Optional[int] = None, **kwargs
     ):
         """
-        :keyword storage_type: Required. Storage type. Possible values include: "Premium_LRS",
-         "Standard_LRS", "StandardSSD_LRS".
+        :keyword storage_type: Storage type. Required. Known values are: "Premium_LRS", "Standard_LRS",
+         and "StandardSSD_LRS".
         :paramtype storage_type: str or ~azure.mgmt.workloads.models.DiskStorageType
         :keyword size_in_gb: Disk size in GB.
-        :paramtype size_in_gb: long
+        :paramtype size_in_gb: int
         """
-        super(DiskInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.storage_type = storage_type
         self.size_in_gb = size_in_gb
 
 
-class EnqueueReplicationServerProperties(msrest.serialization.Model):
-    """Defines the SAP ERS Server properties.
+class EnqueueReplicationServerProperties(_serialization.Model):
+    """Defines the SAP Enqueue Replication Server (ERS) properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar ers_version: Defines the type of Enqueue Replication Server. Possible values include:
-     "EnqueueReplicator1", "EnqueueReplicator2".
+    :ivar ers_version: Defines the type of Enqueue Replication Server. Known values are:
+     "EnqueueReplicator1" and "EnqueueReplicator2".
     :vartype ers_version: str or ~azure.mgmt.workloads.models.EnqueueReplicationServerType
-    :ivar instance_no: The ERS server instance id.
+    :ivar instance_no: ERS Instance Number.
     :vartype instance_no: str
-    :ivar hostname: The ERS server SAP host name.
+    :ivar hostname: ERS SAP Hostname.
     :vartype hostname: str
-    :ivar kernel_version: The ERS server SAP kernel version.
+    :ivar kernel_version: ERS SAP Kernel Version.
     :vartype kernel_version: str
-    :ivar kernel_patch: The ERS server SAP kernel patch.
+    :ivar kernel_patch: ERS SAP Kernel Patch level.
     :vartype kernel_patch: str
-    :ivar ip_address: The ERS server SAP IP Address.
+    :ivar ip_address: ERS SAP IP Address.
     :vartype ip_address: str
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
     """
 
     _validation = {
-        'ers_version': {'readonly': True},
-        'instance_no': {'readonly': True},
-        'hostname': {'readonly': True},
-        'kernel_version': {'readonly': True},
-        'kernel_patch': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'health': {'readonly': True},
+        "ers_version": {"readonly": True},
+        "instance_no": {"readonly": True},
+        "hostname": {"readonly": True},
+        "kernel_version": {"readonly": True},
+        "kernel_patch": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "health": {"readonly": True},
     }
 
     _attribute_map = {
-        'ers_version': {'key': 'ersVersion', 'type': 'str'},
-        'instance_no': {'key': 'instanceNo', 'type': 'str'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'kernel_version': {'key': 'kernelVersion', 'type': 'str'},
-        'kernel_patch': {'key': 'kernelPatch', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'health': {'key': 'health', 'type': 'str'},
+        "ers_version": {"key": "ersVersion", "type": "str"},
+        "instance_no": {"key": "instanceNo", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "kernel_version": {"key": "kernelVersion", "type": "str"},
+        "kernel_patch": {"key": "kernelPatch", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "health": {"key": "health", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnqueueReplicationServerProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.ers_version = None
         self.instance_no = None
         self.hostname = None
@@ -887,50 +884,46 @@ class EnqueueReplicationServerProperties(msrest.serialization.Model):
         self.health = None
 
 
-class EnqueueServerProperties(msrest.serialization.Model):
-    """Defines the SAP enqueue server properties.
+class EnqueueServerProperties(_serialization.Model):
+    """Defines the SAP Enqueue Server properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar hostname: The enqueue server SAP host name.
+    :ivar hostname: Enqueue Server SAP Hostname.
     :vartype hostname: str
-    :ivar ip_address: The enqueue server SAP IP Address.
+    :ivar ip_address: Enqueue Server SAP IP Address.
     :vartype ip_address: str
-    :ivar port: The enqueue server Port.
-    :vartype port: long
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar port: Enqueue Server Port.
+    :vartype port: int
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
     """
 
     _validation = {
-        'hostname': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'port': {'readonly': True},
-        'health': {'readonly': True},
+        "hostname": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "port": {"readonly": True},
+        "health": {"readonly": True},
     }
 
     _attribute_map = {
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'long'},
-        'health': {'key': 'health', 'type': 'str'},
+        "hostname": {"key": "hostname", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "health": {"key": "health", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnqueueServerProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.hostname = None
         self.ip_address = None
         self.port = None
         self.health = None
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Standard error object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -949,28 +942,24 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[Error]'},
-        'inner_error': {'key': 'innerError', 'type': 'ErrorInnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[Error]"},
+        "inner_error": {"key": "innerError", "type": "ErrorInnerError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Error, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -978,7 +967,7 @@ class Error(msrest.serialization.Model):
         self.inner_error = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -986,31 +975,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDefinition(msrest.serialization.Model):
+class ErrorDefinition(_serialization.Model):
     """Error definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1024,30 +1009,26 @@ class ErrorDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDefinition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.details = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1065,28 +1046,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1094,7 +1071,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorInnerError(msrest.serialization.Model):
+class ErrorInnerError(_serialization.Model):
     """Object containing more specific information than  the current object about the error.
 
     :ivar inner_error: Standard error object.
@@ -1102,24 +1079,19 @@ class ErrorInnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'inner_error': {'key': 'innerError', 'type': 'Error'},
+        "inner_error": {"key": "innerError", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        *,
-        inner_error: Optional["Error"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, inner_error: Optional["_models.Error"] = None, **kwargs):
         """
         :keyword inner_error: Standard error object.
         :paramtype inner_error: ~azure.mgmt.workloads.models.Error
         """
-        super(ErrorInnerError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.inner_error = inner_error
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -1127,38 +1099,103 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.workloads.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class FileshareProfile(msrest.serialization.Model):
+class SoftwareConfiguration(_serialization.Model):
+    """The SAP Software configuration Input.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ExternalInstallationSoftwareConfiguration, SAPInstallWithoutOSConfigSoftwareConfiguration,
+    ServiceInitiatedSoftwareConfiguration
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar software_installation_type: The SAP software installation Type. Required. Known values
+     are: "ServiceInitiated", "SAPInstallWithoutOSConfig", and "External".
+    :vartype software_installation_type: str or
+     ~azure.mgmt.workloads.models.SAPSoftwareInstallationType
+    """
+
+    _validation = {
+        "software_installation_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "software_installation_type": {"key": "softwareInstallationType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "software_installation_type": {
+            "External": "ExternalInstallationSoftwareConfiguration",
+            "SAPInstallWithoutOSConfig": "SAPInstallWithoutOSConfigSoftwareConfiguration",
+            "ServiceInitiated": "ServiceInitiatedSoftwareConfiguration",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.software_installation_type: Optional[str] = None
+
+
+class ExternalInstallationSoftwareConfiguration(SoftwareConfiguration):
+    """The SAP Software configuration Input when the software is installed externally outside the service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar software_installation_type: The SAP software installation Type. Required. Known values
+     are: "ServiceInitiated", "SAPInstallWithoutOSConfig", and "External".
+    :vartype software_installation_type: str or
+     ~azure.mgmt.workloads.models.SAPSoftwareInstallationType
+    :ivar central_server_vm_id: The resource ID of the virtual machine containing the central
+     server instance.
+    :vartype central_server_vm_id: str
+    """
+
+    _validation = {
+        "software_installation_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "software_installation_type": {"key": "softwareInstallationType", "type": "str"},
+        "central_server_vm_id": {"key": "centralServerVmId", "type": "str"},
+    }
+
+    def __init__(self, *, central_server_vm_id: Optional[str] = None, **kwargs):
+        """
+        :keyword central_server_vm_id: The resource ID of the virtual machine containing the central
+         server instance.
+        :paramtype central_server_vm_id: str
+        """
+        super().__init__(**kwargs)
+        self.software_installation_type: str = "External"
+        self.central_server_vm_id = central_server_vm_id
+
+
+class FileshareProfile(_serialization.Model):
     """File share profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar share_type: Required. Share type. Possible values include: "NfsOnController",
-     "AzureFiles".
+    :ivar share_type: Share type. Required. Known values are: "NfsOnController" and "AzureFiles".
     :vartype share_type: str or ~azure.mgmt.workloads.models.FileShareType
-    :ivar storage_type: Required. File share backing storage type. Possible values include:
-     "Standard_LRS", "Standard_GRS", "Standard_ZRS", "Premium_LRS".
+    :ivar storage_type: File share backing storage type. Required. Known values are:
+     "Standard_LRS", "Standard_GRS", "Standard_ZRS", and "Premium_LRS".
     :vartype storage_type: str or ~azure.mgmt.workloads.models.FileShareStorageType
     :ivar share_size_in_gb: File share size in GB.
-    :vartype share_size_in_gb: long
+    :vartype share_size_in_gb: int
     :ivar storage_resource_id: File share storage resource id.
     :vartype storage_resource_id: str
     :ivar share_name: File share name.
@@ -1166,40 +1203,40 @@ class FileshareProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'share_type': {'required': True},
-        'storage_type': {'required': True},
-        'share_size_in_gb': {'minimum': 1},
-        'storage_resource_id': {'readonly': True},
-        'share_name': {'readonly': True},
+        "share_type": {"required": True},
+        "storage_type": {"required": True},
+        "share_size_in_gb": {"minimum": 1},
+        "storage_resource_id": {"readonly": True},
+        "share_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'share_type': {'key': 'shareType', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-        'share_size_in_gb': {'key': 'shareSizeInGB', 'type': 'long'},
-        'storage_resource_id': {'key': 'storageResourceId', 'type': 'str'},
-        'share_name': {'key': 'shareName', 'type': 'str'},
+        "share_type": {"key": "shareType", "type": "str"},
+        "storage_type": {"key": "storageType", "type": "str"},
+        "share_size_in_gb": {"key": "shareSizeInGB", "type": "int"},
+        "storage_resource_id": {"key": "storageResourceId", "type": "str"},
+        "share_name": {"key": "shareName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        share_type: Union[str, "FileShareType"],
-        storage_type: Union[str, "FileShareStorageType"],
+        share_type: Union[str, "_models.FileShareType"],
+        storage_type: Union[str, "_models.FileShareStorageType"],
         share_size_in_gb: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword share_type: Required. Share type. Possible values include: "NfsOnController",
+        :keyword share_type: Share type. Required. Known values are: "NfsOnController" and
          "AzureFiles".
         :paramtype share_type: str or ~azure.mgmt.workloads.models.FileShareType
-        :keyword storage_type: Required. File share backing storage type. Possible values include:
-         "Standard_LRS", "Standard_GRS", "Standard_ZRS", "Premium_LRS".
+        :keyword storage_type: File share backing storage type. Required. Known values are:
+         "Standard_LRS", "Standard_GRS", "Standard_ZRS", and "Premium_LRS".
         :paramtype storage_type: str or ~azure.mgmt.workloads.models.FileShareStorageType
         :keyword share_size_in_gb: File share size in GB.
-        :paramtype share_size_in_gb: long
+        :paramtype share_size_in_gb: int
         """
-        super(FileshareProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.share_type = share_type
         self.storage_type = storage_type
         self.share_size_in_gb = share_size_in_gb
@@ -1207,46 +1244,41 @@ class FileshareProfile(msrest.serialization.Model):
         self.share_name = None
 
 
-class GatewayServerProperties(msrest.serialization.Model):
+class GatewayServerProperties(_serialization.Model):
     """Defines the SAP Gateway Server properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar port: The gateway Port.
-    :vartype port: long
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar port: Gateway Port.
+    :vartype port: int
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
     """
 
     _validation = {
-        'port': {'readonly': True},
-        'health': {'readonly': True},
+        "port": {"readonly": True},
+        "health": {"readonly": True},
     }
 
     _attribute_map = {
-        'port': {'key': 'port', 'type': 'long'},
-        'health': {'key': 'health', 'type': 'str'},
+        "port": {"key": "port", "type": "int"},
+        "health": {"key": "health", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GatewayServerProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.port = None
         self.health = None
 
 
-class HanaDbProviderInstanceProperties(ProviderSpecificProperties):
+class HanaDbProviderInstanceProperties(ProviderSpecificProperties):  # pylint: disable=too-many-instance-attributes
     """Gets or sets the provider properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar hostname: Gets or sets the target virtual machine size.
     :vartype hostname: str
@@ -1264,25 +1296,32 @@ class HanaDbProviderInstanceProperties(ProviderSpecificProperties):
     :vartype db_password_uri: str
     :ivar db_ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB.
     :vartype db_ssl_certificate_uri: str
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB.
+    :vartype ssl_certificate_uri: str
     :ivar ssl_host_name_in_certificate: Gets or sets the hostname(s) in the SSL certificate.
     :vartype ssl_host_name_in_certificate: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'db_name': {'key': 'dbName', 'type': 'str'},
-        'sql_port': {'key': 'sqlPort', 'type': 'str'},
-        'instance_number': {'key': 'instanceNumber', 'type': 'str'},
-        'db_username': {'key': 'dbUsername', 'type': 'str'},
-        'db_password': {'key': 'dbPassword', 'type': 'str'},
-        'db_password_uri': {'key': 'dbPasswordUri', 'type': 'str'},
-        'db_ssl_certificate_uri': {'key': 'dbSslCertificateUri', 'type': 'str'},
-        'ssl_host_name_in_certificate': {'key': 'sslHostNameInCertificate', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "db_name": {"key": "dbName", "type": "str"},
+        "sql_port": {"key": "sqlPort", "type": "str"},
+        "instance_number": {"key": "instanceNumber", "type": "str"},
+        "db_username": {"key": "dbUsername", "type": "str"},
+        "db_password": {"key": "dbPassword", "type": "str"},
+        "db_password_uri": {"key": "dbPasswordUri", "type": "str"},
+        "db_ssl_certificate_uri": {"key": "dbSslCertificateUri", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
+        "ssl_host_name_in_certificate": {"key": "sslHostNameInCertificate", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
     }
 
     def __init__(
@@ -1296,7 +1335,9 @@ class HanaDbProviderInstanceProperties(ProviderSpecificProperties):
         db_password: Optional[str] = None,
         db_password_uri: Optional[str] = None,
         db_ssl_certificate_uri: Optional[str] = None,
+        ssl_certificate_uri: Optional[str] = None,
         ssl_host_name_in_certificate: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
         **kwargs
     ):
         """
@@ -1316,11 +1357,16 @@ class HanaDbProviderInstanceProperties(ProviderSpecificProperties):
         :paramtype db_password_uri: str
         :keyword db_ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB.
         :paramtype db_ssl_certificate_uri: str
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the DB.
+        :paramtype ssl_certificate_uri: str
         :keyword ssl_host_name_in_certificate: Gets or sets the hostname(s) in the SSL certificate.
         :paramtype ssl_host_name_in_certificate: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
         """
-        super(HanaDbProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'SapHana'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "SapHana"
         self.hostname = hostname
         self.db_name = db_name
         self.sql_port = sql_port
@@ -1329,84 +1375,75 @@ class HanaDbProviderInstanceProperties(ProviderSpecificProperties):
         self.db_password = db_password
         self.db_password_uri = db_password_uri
         self.db_ssl_certificate_uri = db_ssl_certificate_uri
+        self.ssl_certificate_uri = ssl_certificate_uri
         self.ssl_host_name_in_certificate = ssl_host_name_in_certificate
+        self.ssl_preference = ssl_preference
 
 
-class HighAvailabilityConfiguration(msrest.serialization.Model):
+class HighAvailabilityConfiguration(_serialization.Model):
     """Gets or sets the high availability configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar high_availability_type: Required. The high availability type. Possible values include:
-     "AvailabilitySet", "AvailabilityZone".
+    :ivar high_availability_type: The high availability type. Required. Known values are:
+     "AvailabilitySet" and "AvailabilityZone".
     :vartype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
     """
 
     _validation = {
-        'high_availability_type': {'required': True},
+        "high_availability_type": {"required": True},
     }
 
     _attribute_map = {
-        'high_availability_type': {'key': 'highAvailabilityType', 'type': 'str'},
+        "high_availability_type": {"key": "highAvailabilityType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        high_availability_type: Union[str, "SAPHighAvailabilityType"],
-        **kwargs
-    ):
+    def __init__(self, *, high_availability_type: Union[str, "_models.SAPHighAvailabilityType"], **kwargs):
         """
-        :keyword high_availability_type: Required. The high availability type. Possible values include:
-         "AvailabilitySet", "AvailabilityZone".
+        :keyword high_availability_type: The high availability type. Required. Known values are:
+         "AvailabilitySet" and "AvailabilityZone".
         :paramtype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
         """
-        super(HighAvailabilityConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.high_availability_type = high_availability_type
 
 
-class HighAvailabilitySoftwareConfiguration(msrest.serialization.Model):
+class HighAvailabilitySoftwareConfiguration(_serialization.Model):
     """Gets or sets the HA software configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar fencing_client_id: Required. The fencing client id.
+    :ivar fencing_client_id: The fencing client id. Required.
     :vartype fencing_client_id: str
-    :ivar fencing_client_password: Required. The fencing client id secret/password. The secret
-     should never expire. This will be used pacemaker to start/stop the cluster VMs.
+    :ivar fencing_client_password: The fencing client id secret/password. The secret should never
+     expire. This will be used pacemaker to start/stop the cluster VMs. Required.
     :vartype fencing_client_password: str
     """
 
     _validation = {
-        'fencing_client_id': {'required': True},
-        'fencing_client_password': {'required': True},
+        "fencing_client_id": {"required": True},
+        "fencing_client_password": {"required": True},
     }
 
     _attribute_map = {
-        'fencing_client_id': {'key': 'fencingClientId', 'type': 'str'},
-        'fencing_client_password': {'key': 'fencingClientPassword', 'type': 'str'},
+        "fencing_client_id": {"key": "fencingClientId", "type": "str"},
+        "fencing_client_password": {"key": "fencingClientPassword", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        fencing_client_id: str,
-        fencing_client_password: str,
-        **kwargs
-    ):
+    def __init__(self, *, fencing_client_id: str, fencing_client_password: str, **kwargs):
         """
-        :keyword fencing_client_id: Required. The fencing client id.
+        :keyword fencing_client_id: The fencing client id. Required.
         :paramtype fencing_client_id: str
-        :keyword fencing_client_password: Required. The fencing client id secret/password. The secret
-         should never expire. This will be used pacemaker to start/stop the cluster VMs.
+        :keyword fencing_client_password: The fencing client id secret/password. The secret should
+         never expire. This will be used pacemaker to start/stop the cluster VMs. Required.
         :paramtype fencing_client_password: str
         """
-        super(HighAvailabilitySoftwareConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.fencing_client_id = fencing_client_id
         self.fencing_client_password = fencing_client_password
 
 
-class ImageReference(msrest.serialization.Model):
+class ImageReference(_serialization.Model):
     """Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1434,16 +1471,16 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'exact_version': {'readonly': True},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'exact_version': {'key': 'exactVersion', 'type': 'str'},
-        'shared_gallery_image_id': {'key': 'sharedGalleryImageId', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
+        "shared_gallery_image_id": {"key": "sharedGalleryImageId", "type": "str"},
     }
 
     def __init__(
@@ -1474,7 +1511,7 @@ class ImageReference(msrest.serialization.Model):
          deployment. This can be fetched from shared gallery image GET call.
         :paramtype shared_gallery_image_id: str
         """
-        super(ImageReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
@@ -1483,85 +1520,73 @@ class ImageReference(msrest.serialization.Model):
         self.shared_gallery_image_id = shared_gallery_image_id
 
 
-class InfrastructureConfiguration(msrest.serialization.Model):
+class InfrastructureConfiguration(_serialization.Model):
     """Deploy SAP Infrastructure Details.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SingleServerConfiguration, ThreeTierConfiguration.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SingleServerConfiguration, ThreeTierConfiguration
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar app_resource_group: Required. The application resource group where SAP system resources
-     will be deployed.
+    :ivar app_resource_group: The application resource group where SAP system resources will be
+     deployed. Required.
     :vartype app_resource_group: str
     """
 
     _validation = {
-        'deployment_type': {'required': True},
-        'app_resource_group': {'required': True},
+        "deployment_type": {"required": True},
+        "app_resource_group": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'app_resource_group': {'key': 'appResourceGroup', 'type': 'str'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "app_resource_group": {"key": "appResourceGroup", "type": "str"},
     }
 
     _subtype_map = {
-        'deployment_type': {'SingleServer': 'SingleServerConfiguration', 'ThreeTier': 'ThreeTierConfiguration'}
+        "deployment_type": {"SingleServer": "SingleServerConfiguration", "ThreeTier": "ThreeTierConfiguration"}
     }
 
-    def __init__(
-        self,
-        *,
-        app_resource_group: str,
-        **kwargs
-    ):
+    def __init__(self, *, app_resource_group: str, **kwargs):
         """
-        :keyword app_resource_group: Required. The application resource group where SAP system
-         resources will be deployed.
+        :keyword app_resource_group: The application resource group where SAP system resources will be
+         deployed. Required.
         :paramtype app_resource_group: str
         """
-        super(InfrastructureConfiguration, self).__init__(**kwargs)
-        self.deployment_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.deployment_type: Optional[str] = None
         self.app_resource_group = app_resource_group
 
 
-class OSConfiguration(msrest.serialization.Model):
+class OSConfiguration(_serialization.Model):
     """Defines the OS configuration.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: LinuxConfiguration, WindowsConfiguration.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LinuxConfiguration, WindowsConfiguration
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os_type: Required. The OS Type.Constant filled by server. Possible values include:
-     "Linux", "Windows".
+    :ivar os_type: The OS Type. Required. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.workloads.models.OSType
     """
 
     _validation = {
-        'os_type': {'required': True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
+        "os_type": {"key": "osType", "type": "str"},
     }
 
-    _subtype_map = {
-        'os_type': {'Linux': 'LinuxConfiguration', 'Windows': 'WindowsConfiguration'}
-    }
+    _subtype_map = {"os_type": {"Linux": "LinuxConfiguration", "Windows": "WindowsConfiguration"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OSConfiguration, self).__init__(**kwargs)
-        self.os_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.os_type: Optional[str] = None
 
 
 class LinuxConfiguration(OSConfiguration):
@@ -1569,8 +1594,7 @@ class LinuxConfiguration(OSConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os_type: Required. The OS Type.Constant filled by server. Possible values include:
-     "Linux", "Windows".
+    :ivar os_type: The OS Type. Required. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.workloads.models.OSType
     :ivar disable_password_authentication: Specifies whether password authentication should be
      disabled.
@@ -1583,22 +1607,22 @@ class LinuxConfiguration(OSConfiguration):
     """
 
     _validation = {
-        'os_type': {'required': True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},
-        'ssh': {'key': 'ssh', 'type': 'SshConfiguration'},
-        'ssh_key_pair': {'key': 'sshKeyPair', 'type': 'SshKeyPair'},
+        "os_type": {"key": "osType", "type": "str"},
+        "disable_password_authentication": {"key": "disablePasswordAuthentication", "type": "bool"},
+        "ssh": {"key": "ssh", "type": "SshConfiguration"},
+        "ssh_key_pair": {"key": "sshKeyPair", "type": "SshKeyPair"},
     }
 
     def __init__(
         self,
         *,
         disable_password_authentication: Optional[bool] = None,
-        ssh: Optional["SshConfiguration"] = None,
-        ssh_key_pair: Optional["SshKeyPair"] = None,
+        ssh: Optional["_models.SshConfiguration"] = None,
+        ssh_key_pair: Optional["_models.SshKeyPair"] = None,
         **kwargs
     ):
         """
@@ -1611,14 +1635,14 @@ class LinuxConfiguration(OSConfiguration):
         :keyword ssh_key_pair: The SSH Key-pair used to authenticate with the VM's.
         :paramtype ssh_key_pair: ~azure.mgmt.workloads.models.SshKeyPair
         """
-        super(LinuxConfiguration, self).__init__(**kwargs)
-        self.os_type = 'Linux'  # type: str
+        super().__init__(**kwargs)
+        self.os_type: str = "Linux"
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh
         self.ssh_key_pair = ssh_key_pair
 
 
-class ManagedRGConfiguration(msrest.serialization.Model):
+class ManagedRGConfiguration(_serialization.Model):
     """Managed resource group configuration.
 
     :ivar name: Managed resource group name.
@@ -1626,72 +1650,63 @@ class ManagedRGConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Managed resource group name.
         :paramtype name: str
         """
-        super(ManagedRGConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class MessageServerProperties(msrest.serialization.Model):
-    """Defines the SAP message server properties.
+class MessageServerProperties(_serialization.Model):
+    """Defines the SAP Message Server properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar ms_port: The message server port.
-    :vartype ms_port: long
-    :ivar internal_ms_port: The message server internal MS port.
-    :vartype internal_ms_port: long
-    :ivar http_port: The message server http port.
-    :vartype http_port: long
-    :ivar https_port: The message server https port.
-    :vartype https_port: long
-    :ivar hostname: The message server SAP host name.
+    :ivar ms_port: Message Server port.
+    :vartype ms_port: int
+    :ivar internal_ms_port: Message Server internal MS port.
+    :vartype internal_ms_port: int
+    :ivar http_port: Message Server HTTP Port.
+    :vartype http_port: int
+    :ivar https_port: Message Server HTTPS Port.
+    :vartype https_port: int
+    :ivar hostname: Message Server SAP Hostname.
     :vartype hostname: str
-    :ivar ip_address: The message server IP Address.
+    :ivar ip_address: Message server IP Address.
     :vartype ip_address: str
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
     """
 
     _validation = {
-        'ms_port': {'readonly': True},
-        'internal_ms_port': {'readonly': True},
-        'http_port': {'readonly': True},
-        'https_port': {'readonly': True},
-        'hostname': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'health': {'readonly': True},
+        "ms_port": {"readonly": True},
+        "internal_ms_port": {"readonly": True},
+        "http_port": {"readonly": True},
+        "https_port": {"readonly": True},
+        "hostname": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "health": {"readonly": True},
     }
 
     _attribute_map = {
-        'ms_port': {'key': 'msPort', 'type': 'long'},
-        'internal_ms_port': {'key': 'internalMsPort', 'type': 'long'},
-        'http_port': {'key': 'httpPort', 'type': 'long'},
-        'https_port': {'key': 'httpsPort', 'type': 'long'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'health': {'key': 'health', 'type': 'str'},
+        "ms_port": {"key": "msPort", "type": "int"},
+        "internal_ms_port": {"key": "internalMsPort", "type": "int"},
+        "http_port": {"key": "httpPort", "type": "int"},
+        "https_port": {"key": "httpsPort", "type": "int"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "health": {"key": "health", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MessageServerProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.ms_port = None
         self.internal_ms_port = None
         self.http_port = None
@@ -1701,7 +1716,7 @@ class MessageServerProperties(msrest.serialization.Model):
         self.health = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1720,26 +1735,22 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1764,48 +1775,42 @@ class TrackedResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Monitor(TrackedResource):
+class Monitor(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """SAP monitor info on Azure (ARM properties and SAP monitor properties).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1823,14 +1828,14 @@ class Monitor(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Managed service identity (user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
-    :ivar provisioning_state: State of provisioning of the SAP monitor. Possible values include:
-     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: State of provisioning of the SAP monitor. Known values are:
+     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.WorkloadMonitorProvisioningState
     :ivar errors: Defines the SAP monitor errors.
@@ -1839,8 +1844,11 @@ class Monitor(TrackedResource):
      The subnet region should be same as the SAP monitoring region.
     :vartype app_location: str
     :ivar routing_preference: Sets the routing preference of the SAP monitor. By default only
-     RFC1918 traffic is routed to the customer VNET. Possible values include: "Default", "RouteAll".
+     RFC1918 traffic is routed to the customer VNET. Known values are: "Default" and "RouteAll".
     :vartype routing_preference: str or ~azure.mgmt.workloads.models.RoutingPreference
+    :ivar zone_redundancy_preference: Sets the preference for zone redundancy on resources created
+     for the SAP monitor. By default resources will be created which do not support zone redundancy.
+    :vartype zone_redundancy_preference: str
     :ivar managed_resource_group_configuration: Managed resource group configuration.
     :vartype managed_resource_group_configuration:
      ~azure.mgmt.workloads.models.ManagedRGConfiguration
@@ -1851,35 +1859,43 @@ class Monitor(TrackedResource):
     :vartype monitor_subnet: str
     :ivar msi_arm_id: The ARM ID of the MSI used for SAP monitoring.
     :vartype msi_arm_id: str
+    :ivar storage_account_arm_id: The ARM ID of the Storage account used for SAP monitoring.
+    :vartype storage_account_arm_id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
-        'msi_arm_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
+        "msi_arm_id": {"readonly": True},
+        "storage_account_arm_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedServiceIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'MonitorPropertiesErrors'},
-        'app_location': {'key': 'properties.appLocation', 'type': 'str'},
-        'routing_preference': {'key': 'properties.routingPreference', 'type': 'str'},
-        'managed_resource_group_configuration': {'key': 'properties.managedResourceGroupConfiguration', 'type': 'ManagedRGConfiguration'},
-        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
-        'monitor_subnet': {'key': 'properties.monitorSubnet', 'type': 'str'},
-        'msi_arm_id': {'key': 'properties.msiArmId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "UserAssignedServiceIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "MonitorPropertiesErrors"},
+        "app_location": {"key": "properties.appLocation", "type": "str"},
+        "routing_preference": {"key": "properties.routingPreference", "type": "str"},
+        "zone_redundancy_preference": {"key": "properties.zoneRedundancyPreference", "type": "str"},
+        "managed_resource_group_configuration": {
+            "key": "properties.managedResourceGroupConfiguration",
+            "type": "ManagedRGConfiguration",
+        },
+        "log_analytics_workspace_arm_id": {"key": "properties.logAnalyticsWorkspaceArmId", "type": "str"},
+        "monitor_subnet": {"key": "properties.monitorSubnet", "type": "str"},
+        "msi_arm_id": {"key": "properties.msiArmId", "type": "str"},
+        "storage_account_arm_id": {"key": "properties.storageAccountArmId", "type": "str"},
     }
 
     def __init__(
@@ -1887,18 +1903,19 @@ class Monitor(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserAssignedServiceIdentity"] = None,
+        identity: Optional["_models.UserAssignedServiceIdentity"] = None,
         app_location: Optional[str] = None,
-        routing_preference: Optional[Union[str, "RoutingPreference"]] = None,
-        managed_resource_group_configuration: Optional["ManagedRGConfiguration"] = None,
+        routing_preference: Optional[Union[str, "_models.RoutingPreference"]] = None,
+        zone_redundancy_preference: Optional[str] = None,
+        managed_resource_group_configuration: Optional["_models.ManagedRGConfiguration"] = None,
         log_analytics_workspace_arm_id: Optional[str] = None,
         monitor_subnet: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Managed service identity (user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
@@ -1906,8 +1923,12 @@ class Monitor(TrackedResource):
          The subnet region should be same as the SAP monitoring region.
         :paramtype app_location: str
         :keyword routing_preference: Sets the routing preference of the SAP monitor. By default only
-         RFC1918 traffic is routed to the customer VNET. Possible values include: "Default", "RouteAll".
+         RFC1918 traffic is routed to the customer VNET. Known values are: "Default" and "RouteAll".
         :paramtype routing_preference: str or ~azure.mgmt.workloads.models.RoutingPreference
+        :keyword zone_redundancy_preference: Sets the preference for zone redundancy on resources
+         created for the SAP monitor. By default resources will be created which do not support zone
+         redundancy.
+        :paramtype zone_redundancy_preference: str
         :keyword managed_resource_group_configuration: Managed resource group configuration.
         :paramtype managed_resource_group_configuration:
          ~azure.mgmt.workloads.models.ManagedRGConfiguration
@@ -1917,19 +1938,21 @@ class Monitor(TrackedResource):
         :keyword monitor_subnet: The subnet which the SAP monitor will be deployed in.
         :paramtype monitor_subnet: str
         """
-        super(Monitor, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.errors = None
         self.app_location = app_location
         self.routing_preference = routing_preference
+        self.zone_redundancy_preference = zone_redundancy_preference
         self.managed_resource_group_configuration = managed_resource_group_configuration
         self.log_analytics_workspace_arm_id = log_analytics_workspace_arm_id
         self.monitor_subnet = monitor_subnet
         self.msi_arm_id = None
+        self.storage_account_arm_id = None
 
 
-class MonitorListResult(msrest.serialization.Model):
+class MonitorListResult(_serialization.Model):
     """The response from the List SAP monitors operation.
 
     :ivar value: The list of SAP monitors.
@@ -1939,24 +1962,18 @@ class MonitorListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Monitor]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Monitor]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Monitor"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Monitor"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: The list of SAP monitors.
         :paramtype value: list[~azure.mgmt.workloads.models.Monitor]
         :keyword next_link: The URL to get the next set of SAP monitors.
         :paramtype next_link: str
         """
-        super(MonitorListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -1980,28 +1997,24 @@ class MonitorPropertiesErrors(Error):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[Error]'},
-        'inner_error': {'key': 'innerError', 'type': 'ErrorInnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[Error]"},
+        "inner_error": {"key": "innerError", "type": "ErrorInnerError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MonitorPropertiesErrors, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class MsSqlServerProviderInstanceProperties(ProviderSpecificProperties):
@@ -2009,8 +2022,7 @@ class MsSqlServerProviderInstanceProperties(ProviderSpecificProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar hostname: Gets or sets the SQL server host name.
     :vartype hostname: str
@@ -2024,20 +2036,27 @@ class MsSqlServerProviderInstanceProperties(ProviderSpecificProperties):
     :vartype db_password_uri: str
     :ivar sap_sid: Gets or sets the SAP System Identifier.
     :vartype sap_sid: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SQL Database.
+    :vartype ssl_certificate_uri: str
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'db_port': {'key': 'dbPort', 'type': 'str'},
-        'db_username': {'key': 'dbUsername', 'type': 'str'},
-        'db_password': {'key': 'dbPassword', 'type': 'str'},
-        'db_password_uri': {'key': 'dbPasswordUri', 'type': 'str'},
-        'sap_sid': {'key': 'sapSid', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "db_port": {"key": "dbPort", "type": "str"},
+        "db_username": {"key": "dbUsername", "type": "str"},
+        "db_password": {"key": "dbPassword", "type": "str"},
+        "db_password_uri": {"key": "dbPasswordUri", "type": "str"},
+        "sap_sid": {"key": "sapSid", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
     }
 
     def __init__(
@@ -2049,6 +2068,8 @@ class MsSqlServerProviderInstanceProperties(ProviderSpecificProperties):
         db_password: Optional[str] = None,
         db_password_uri: Optional[str] = None,
         sap_sid: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
+        ssl_certificate_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -2064,53 +2085,56 @@ class MsSqlServerProviderInstanceProperties(ProviderSpecificProperties):
         :paramtype db_password_uri: str
         :keyword sap_sid: Gets or sets the SAP System Identifier.
         :paramtype sap_sid: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SQL
+         Database.
+        :paramtype ssl_certificate_uri: str
         """
-        super(MsSqlServerProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'MsSqlServer'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "MsSqlServer"
         self.hostname = hostname
         self.db_port = db_port
         self.db_username = db_username
         self.db_password = db_password
         self.db_password_uri = db_password_uri
         self.sap_sid = sap_sid
+        self.ssl_preference = ssl_preference
+        self.ssl_certificate_uri = ssl_certificate_uri
 
 
-class NetworkConfiguration(msrest.serialization.Model):
-    """Defines the network configuration for SAP infrastructure.
+class NetworkConfiguration(_serialization.Model):
+    """Defines the network configuration type for SAP system infrastructure that is being deployed.
 
     :ivar is_secondary_ip_enabled: Specifies whether a secondary IP address should be added to the
-     network interface on all VMs.
+     network interface on all VMs of the SAP system being deployed.
     :vartype is_secondary_ip_enabled: bool
     """
 
     _attribute_map = {
-        'is_secondary_ip_enabled': {'key': 'isSecondaryIpEnabled', 'type': 'bool'},
+        "is_secondary_ip_enabled": {"key": "isSecondaryIpEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_secondary_ip_enabled: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, is_secondary_ip_enabled: bool = False, **kwargs):
         """
         :keyword is_secondary_ip_enabled: Specifies whether a secondary IP address should be added to
-         the network interface on all VMs.
+         the network interface on all VMs of the SAP system being deployed.
         :paramtype is_secondary_ip_enabled: bool
         """
-        super(NetworkConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_secondary_ip_enabled = is_secondary_ip_enabled
 
 
-class NetworkProfile(msrest.serialization.Model):
+class NetworkProfile(_serialization.Model):
     """Network profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar load_balancer_type: Required. Load balancer type. Possible values include:
-     "ApplicationGateway", "LoadBalancer".
+    :ivar load_balancer_type: Load balancer type. Required. Known values are: "ApplicationGateway"
+     and "LoadBalancer".
     :vartype load_balancer_type: str or ~azure.mgmt.workloads.models.LoadBalancerType
     :ivar load_balancer_sku: Load balancer SKU.
     :vartype load_balancer_sku: str
@@ -2118,8 +2142,8 @@ class NetworkProfile(msrest.serialization.Model):
     :vartype load_balancer_tier: str
     :ivar capacity: Capacity, applicable only for Application Gateway.
     :vartype capacity: int
-    :ivar azure_front_door_enabled: Whether to enable Azure front door. Possible values include:
-     "Enabled", "Disabled".
+    :ivar azure_front_door_enabled: Whether to enable Azure front door. Known values are: "Enabled"
+     and "Disabled".
     :vartype azure_front_door_enabled: str or ~azure.mgmt.workloads.models.AzureFrontDoorEnabled
     :ivar v_net_resource_id: Virtual network resource Id.
     :vartype v_net_resource_id: str
@@ -2134,40 +2158,40 @@ class NetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'load_balancer_type': {'required': True},
-        'v_net_resource_id': {'readonly': True},
-        'load_balancer_resource_id': {'readonly': True},
-        'azure_front_door_resource_id': {'readonly': True},
-        'front_end_public_ip_resource_id': {'readonly': True},
-        'outbound_public_ip_resource_ids': {'readonly': True},
+        "load_balancer_type": {"required": True},
+        "v_net_resource_id": {"readonly": True},
+        "load_balancer_resource_id": {"readonly": True},
+        "azure_front_door_resource_id": {"readonly": True},
+        "front_end_public_ip_resource_id": {"readonly": True},
+        "outbound_public_ip_resource_ids": {"readonly": True},
     }
 
     _attribute_map = {
-        'load_balancer_type': {'key': 'loadBalancerType', 'type': 'str'},
-        'load_balancer_sku': {'key': 'loadBalancerSku', 'type': 'str'},
-        'load_balancer_tier': {'key': 'loadBalancerTier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'azure_front_door_enabled': {'key': 'azureFrontDoorEnabled', 'type': 'str'},
-        'v_net_resource_id': {'key': 'vNetResourceId', 'type': 'str'},
-        'load_balancer_resource_id': {'key': 'loadBalancerResourceId', 'type': 'str'},
-        'azure_front_door_resource_id': {'key': 'azureFrontDoorResourceId', 'type': 'str'},
-        'front_end_public_ip_resource_id': {'key': 'frontEndPublicIpResourceId', 'type': 'str'},
-        'outbound_public_ip_resource_ids': {'key': 'outboundPublicIpResourceIds', 'type': '[str]'},
+        "load_balancer_type": {"key": "loadBalancerType", "type": "str"},
+        "load_balancer_sku": {"key": "loadBalancerSku", "type": "str"},
+        "load_balancer_tier": {"key": "loadBalancerTier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
+        "azure_front_door_enabled": {"key": "azureFrontDoorEnabled", "type": "str"},
+        "v_net_resource_id": {"key": "vNetResourceId", "type": "str"},
+        "load_balancer_resource_id": {"key": "loadBalancerResourceId", "type": "str"},
+        "azure_front_door_resource_id": {"key": "azureFrontDoorResourceId", "type": "str"},
+        "front_end_public_ip_resource_id": {"key": "frontEndPublicIpResourceId", "type": "str"},
+        "outbound_public_ip_resource_ids": {"key": "outboundPublicIpResourceIds", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        load_balancer_type: Union[str, "LoadBalancerType"],
+        load_balancer_type: Union[str, "_models.LoadBalancerType"],
         load_balancer_sku: Optional[str] = None,
         load_balancer_tier: Optional[str] = None,
         capacity: Optional[int] = None,
-        azure_front_door_enabled: Optional[Union[str, "AzureFrontDoorEnabled"]] = None,
+        azure_front_door_enabled: Optional[Union[str, "_models.AzureFrontDoorEnabled"]] = None,
         **kwargs
     ):
         """
-        :keyword load_balancer_type: Required. Load balancer type. Possible values include:
-         "ApplicationGateway", "LoadBalancer".
+        :keyword load_balancer_type: Load balancer type. Required. Known values are:
+         "ApplicationGateway" and "LoadBalancer".
         :paramtype load_balancer_type: str or ~azure.mgmt.workloads.models.LoadBalancerType
         :keyword load_balancer_sku: Load balancer SKU.
         :paramtype load_balancer_sku: str
@@ -2175,11 +2199,11 @@ class NetworkProfile(msrest.serialization.Model):
         :paramtype load_balancer_tier: str
         :keyword capacity: Capacity, applicable only for Application Gateway.
         :paramtype capacity: int
-        :keyword azure_front_door_enabled: Whether to enable Azure front door. Possible values include:
-         "Enabled", "Disabled".
+        :keyword azure_front_door_enabled: Whether to enable Azure front door. Known values are:
+         "Enabled" and "Disabled".
         :paramtype azure_front_door_enabled: str or ~azure.mgmt.workloads.models.AzureFrontDoorEnabled
         """
-        super(NetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.load_balancer_type = load_balancer_type
         self.load_balancer_sku = load_balancer_sku
         self.load_balancer_tier = load_balancer_tier
@@ -2192,7 +2216,7 @@ class NetworkProfile(msrest.serialization.Model):
         self.outbound_public_ip_resource_ids = None
 
 
-class NodeProfile(msrest.serialization.Model):
+class NodeProfile(_serialization.Model):
     """VM or VMSS node profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2201,11 +2225,11 @@ class NodeProfile(msrest.serialization.Model):
 
     :ivar name: VM or VMSS name.
     :vartype name: str
-    :ivar node_sku: Required. VM SKU for node(s).
+    :ivar node_sku: VM SKU for node(s). Required.
     :vartype node_sku: str
-    :ivar os_image: Required. OS image used for creating the nodes.
+    :ivar os_image: OS image used for creating the nodes. Required.
     :vartype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-    :ivar os_disk: Required. OS disk details.
+    :ivar os_disk: OS disk details. Required.
     :vartype os_disk: ~azure.mgmt.workloads.models.DiskInfo
     :ivar data_disks: Data disks details. This property is not in use right now.
     :vartype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
@@ -2214,44 +2238,44 @@ class NodeProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'node_sku': {'required': True},
-        'os_image': {'required': True},
-        'os_disk': {'required': True},
-        'node_resource_ids': {'readonly': True},
+        "node_sku": {"required": True},
+        "os_image": {"required": True},
+        "os_disk": {"required": True},
+        "node_resource_ids": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'node_sku': {'key': 'nodeSku', 'type': 'str'},
-        'os_image': {'key': 'osImage', 'type': 'OsImageProfile'},
-        'os_disk': {'key': 'osDisk', 'type': 'DiskInfo'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DiskInfo]'},
-        'node_resource_ids': {'key': 'nodeResourceIds', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "node_sku": {"key": "nodeSku", "type": "str"},
+        "os_image": {"key": "osImage", "type": "OsImageProfile"},
+        "os_disk": {"key": "osDisk", "type": "DiskInfo"},
+        "data_disks": {"key": "dataDisks", "type": "[DiskInfo]"},
+        "node_resource_ids": {"key": "nodeResourceIds", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         node_sku: str,
-        os_image: "OsImageProfile",
-        os_disk: "DiskInfo",
+        os_image: "_models.OsImageProfile",
+        os_disk: "_models.DiskInfo",
         name: Optional[str] = None,
-        data_disks: Optional[List["DiskInfo"]] = None,
+        data_disks: Optional[List["_models.DiskInfo"]] = None,
         **kwargs
     ):
         """
         :keyword name: VM or VMSS name.
         :paramtype name: str
-        :keyword node_sku: Required. VM SKU for node(s).
+        :keyword node_sku: VM SKU for node(s). Required.
         :paramtype node_sku: str
-        :keyword os_image: Required. OS image used for creating the nodes.
+        :keyword os_image: OS image used for creating the nodes. Required.
         :paramtype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-        :keyword os_disk: Required. OS disk details.
+        :keyword os_disk: OS disk details. Required.
         :paramtype os_disk: ~azure.mgmt.workloads.models.DiskInfo
         :keyword data_disks: Data disks details. This property is not in use right now.
         :paramtype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
         """
-        super(NodeProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.node_sku = node_sku
         self.os_image = os_image
@@ -2260,7 +2284,7 @@ class NodeProfile(msrest.serialization.Model):
         self.node_resource_ids = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2274,40 +2298,35 @@ class Operation(msrest.serialization.Model):
     :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.workloads.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.workloads.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.workloads.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.workloads.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -2315,7 +2334,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2335,33 +2354,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2373,22 +2388,18 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2413,36 +2424,36 @@ class OperationsContent(Resource):
     :vartype name_properties_name: str
     :ivar is_data_action: Indicates whether the operation applies to data-plane.
     :vartype is_data_action: bool
-    :ivar origin: Defines the workload operation origin. Possible values include: "NotSpecified",
-     "User", "System".
+    :ivar origin: Defines the workload operation origin. Known values are: "NotSpecified", "User",
+     and "System".
     :vartype origin: str or ~azure.mgmt.workloads.models.OperationProperties
     :ivar display: Display information of the operation.
     :vartype display: ~azure.mgmt.workloads.models.OperationsDefinitionDisplay
-    :ivar action_type: Defines the action type of workload operation. Possible values include:
-     "NotSpecified", "Internal".
+    :ivar action_type: Defines the action type of workload operation. Known values are:
+     "NotSpecified" and "Internal".
     :vartype action_type: str or ~azure.mgmt.workloads.models.WorkloadMonitorActionType
     :ivar properties: Defines the workload operation properties.
     :vartype properties: any
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'is_data_action': {'key': 'properties.isDataAction', 'type': 'bool'},
-        'origin': {'key': 'properties.origin', 'type': 'str'},
-        'display': {'key': 'properties.display', 'type': 'OperationsDefinitionDisplay'},
-        'action_type': {'key': 'properties.actionType', 'type': 'str'},
-        'properties': {'key': 'properties.properties', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "is_data_action": {"key": "properties.isDataAction", "type": "bool"},
+        "origin": {"key": "properties.origin", "type": "str"},
+        "display": {"key": "properties.display", "type": "OperationsDefinitionDisplay"},
+        "action_type": {"key": "properties.actionType", "type": "str"},
+        "properties": {"key": "properties.properties", "type": "object"},
     }
 
     def __init__(
@@ -2450,9 +2461,9 @@ class OperationsContent(Resource):
         *,
         name_properties_name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        origin: Optional[Union[str, "OperationProperties"]] = None,
-        display: Optional["OperationsDefinitionDisplay"] = None,
-        action_type: Optional[Union[str, "WorkloadMonitorActionType"]] = None,
+        origin: Optional[Union[str, "_models.OperationProperties"]] = None,
+        display: Optional["_models.OperationsDefinitionDisplay"] = None,
+        action_type: Optional[Union[str, "_models.WorkloadMonitorActionType"]] = None,
         properties: Optional[Any] = None,
         **kwargs
     ):
@@ -2461,18 +2472,18 @@ class OperationsContent(Resource):
         :paramtype name_properties_name: str
         :keyword is_data_action: Indicates whether the operation applies to data-plane.
         :paramtype is_data_action: bool
-        :keyword origin: Defines the workload operation origin. Possible values include:
-         "NotSpecified", "User", "System".
+        :keyword origin: Defines the workload operation origin. Known values are: "NotSpecified",
+         "User", and "System".
         :paramtype origin: str or ~azure.mgmt.workloads.models.OperationProperties
         :keyword display: Display information of the operation.
         :paramtype display: ~azure.mgmt.workloads.models.OperationsDefinitionDisplay
-        :keyword action_type: Defines the action type of workload operation. Possible values include:
-         "NotSpecified", "Internal".
+        :keyword action_type: Defines the action type of workload operation. Known values are:
+         "NotSpecified" and "Internal".
         :paramtype action_type: str or ~azure.mgmt.workloads.models.WorkloadMonitorActionType
         :keyword properties: Defines the workload operation properties.
         :paramtype properties: any
         """
-        super(OperationsContent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_properties_name = name_properties_name
         self.is_data_action = is_data_action
         self.origin = origin
@@ -2481,69 +2492,69 @@ class OperationsContent(Resource):
         self.properties = properties
 
 
-class OperationsDefinition(msrest.serialization.Model):
+class OperationsDefinition(_serialization.Model):
     """Properties of an Operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of the operation.
+    :ivar name: Name of the operation. Required.
     :vartype name: str
     :ivar is_data_action: Indicates whether the operation applies to data-plane.
     :vartype is_data_action: bool
-    :ivar origin: Defines the workload operation origin. Possible values include: "NotSpecified",
-     "User", "System".
+    :ivar origin: Defines the workload operation origin. Known values are: "NotSpecified", "User",
+     and "System".
     :vartype origin: str or ~azure.mgmt.workloads.models.OperationProperties
-    :ivar display: Required. Display information of the operation.
+    :ivar display: Display information of the operation. Required.
     :vartype display: ~azure.mgmt.workloads.models.OperationsDefinitionDisplay
-    :ivar action_type: Defines the action type of workload operation. Possible values include:
-     "NotSpecified", "Internal".
+    :ivar action_type: Defines the action type of workload operation. Known values are:
+     "NotSpecified" and "Internal".
     :vartype action_type: str or ~azure.mgmt.workloads.models.WorkloadMonitorActionType
     :ivar properties: Defines the workload operation properties.
     :vartype properties: any
     """
 
     _validation = {
-        'name': {'required': True},
-        'display': {'required': True},
+        "name": {"required": True},
+        "display": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationsDefinitionDisplay'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "origin": {"key": "origin", "type": "str"},
+        "display": {"key": "display", "type": "OperationsDefinitionDisplay"},
+        "action_type": {"key": "actionType", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        display: "OperationsDefinitionDisplay",
+        display: "_models.OperationsDefinitionDisplay",
         is_data_action: Optional[bool] = None,
-        origin: Optional[Union[str, "OperationProperties"]] = None,
-        action_type: Optional[Union[str, "WorkloadMonitorActionType"]] = None,
+        origin: Optional[Union[str, "_models.OperationProperties"]] = None,
+        action_type: Optional[Union[str, "_models.WorkloadMonitorActionType"]] = None,
         properties: Optional[Any] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Name of the operation.
+        :keyword name: Name of the operation. Required.
         :paramtype name: str
         :keyword is_data_action: Indicates whether the operation applies to data-plane.
         :paramtype is_data_action: bool
-        :keyword origin: Defines the workload operation origin. Possible values include:
-         "NotSpecified", "User", "System".
+        :keyword origin: Defines the workload operation origin. Known values are: "NotSpecified",
+         "User", and "System".
         :paramtype origin: str or ~azure.mgmt.workloads.models.OperationProperties
-        :keyword display: Required. Display information of the operation.
+        :keyword display: Display information of the operation. Required.
         :paramtype display: ~azure.mgmt.workloads.models.OperationsDefinitionDisplay
-        :keyword action_type: Defines the action type of workload operation. Possible values include:
-         "NotSpecified", "Internal".
+        :keyword action_type: Defines the action type of workload operation. Known values are:
+         "NotSpecified" and "Internal".
         :paramtype action_type: str or ~azure.mgmt.workloads.models.WorkloadMonitorActionType
         :keyword properties: Defines the workload operation properties.
         :paramtype properties: any
         """
-        super(OperationsDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.origin = origin
@@ -2552,7 +2563,7 @@ class OperationsDefinition(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationsDefinitionArrayResponseWithContinuation(msrest.serialization.Model):
+class OperationsDefinitionArrayResponseWithContinuation(_serialization.Model):
     """Defines the workload operation definition response.
 
     :ivar value: Defines the workload operation definition response properties.
@@ -2562,16 +2573,12 @@ class OperationsDefinitionArrayResponseWithContinuation(msrest.serialization.Mod
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationsDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationsDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationsDefinition"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationsDefinition"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Defines the workload operation definition response properties.
@@ -2579,60 +2586,52 @@ class OperationsDefinitionArrayResponseWithContinuation(msrest.serialization.Mod
         :keyword next_link: The URL to get to the next set of results, if there are any.
         :paramtype next_link: str
         """
-        super(OperationsDefinitionArrayResponseWithContinuation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationsDisplayDefinition(msrest.serialization.Model):
+class OperationsDisplayDefinition(_serialization.Model):
     """Defines the workload operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider: Required. Defines the workload provider.
+    :ivar provider: Defines the workload provider. Required.
     :vartype provider: str
-    :ivar resource: Required. Defines the workload resource.
+    :ivar resource: Defines the workload resource. Required.
     :vartype resource: str
-    :ivar operation: Required. Defines the workload operation.
+    :ivar operation: Defines the workload operation. Required.
     :vartype operation: str
-    :ivar description: Required. Describes the workload operation.
+    :ivar description: Describes the workload operation. Required.
     :vartype description: str
     """
 
     _validation = {
-        'provider': {'required': True},
-        'resource': {'required': True},
-        'operation': {'required': True},
-        'description': {'required': True},
+        "provider": {"required": True},
+        "resource": {"required": True},
+        "operation": {"required": True},
+        "description": {"required": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: str,
-        resource: str,
-        operation: str,
-        description: str,
-        **kwargs
-    ):
+    def __init__(self, *, provider: str, resource: str, operation: str, description: str, **kwargs):
         """
-        :keyword provider: Required. Defines the workload provider.
+        :keyword provider: Defines the workload provider. Required.
         :paramtype provider: str
-        :keyword resource: Required. Defines the workload resource.
+        :keyword resource: Defines the workload resource. Required.
         :paramtype resource: str
-        :keyword operation: Required. Defines the workload operation.
+        :keyword operation: Defines the workload operation. Required.
         :paramtype operation: str
-        :keyword description: Required. Describes the workload operation.
+        :keyword description: Describes the workload operation. Required.
         :paramtype description: str
         """
-        super(OperationsDisplayDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
@@ -2644,53 +2643,45 @@ class OperationsDefinitionDisplay(OperationsDisplayDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider: Required. Defines the workload provider.
+    :ivar provider: Defines the workload provider. Required.
     :vartype provider: str
-    :ivar resource: Required. Defines the workload resource.
+    :ivar resource: Defines the workload resource. Required.
     :vartype resource: str
-    :ivar operation: Required. Defines the workload operation.
+    :ivar operation: Defines the workload operation. Required.
     :vartype operation: str
-    :ivar description: Required. Describes the workload operation.
+    :ivar description: Describes the workload operation. Required.
     :vartype description: str
     """
 
     _validation = {
-        'provider': {'required': True},
-        'resource': {'required': True},
-        'operation': {'required': True},
-        'description': {'required': True},
+        "provider": {"required": True},
+        "resource": {"required": True},
+        "operation": {"required": True},
+        "description": {"required": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: str,
-        resource: str,
-        operation: str,
-        description: str,
-        **kwargs
-    ):
+    def __init__(self, *, provider: str, resource: str, operation: str, description: str, **kwargs):
         """
-        :keyword provider: Required. Defines the workload provider.
+        :keyword provider: Defines the workload provider. Required.
         :paramtype provider: str
-        :keyword resource: Required. Defines the workload resource.
+        :keyword resource: Defines the workload resource. Required.
         :paramtype resource: str
-        :keyword operation: Required. Defines the workload operation.
+        :keyword operation: Defines the workload operation. Required.
         :paramtype operation: str
-        :keyword description: Required. Describes the workload operation.
+        :keyword description: Describes the workload operation. Required.
         :paramtype description: str
         """
-        super(OperationsDefinitionDisplay, self).__init__(provider=provider, resource=resource, operation=operation, description=description, **kwargs)
+        super().__init__(provider=provider, resource=resource, operation=operation, description=description, **kwargs)
 
 
-class OperationStatusResult(msrest.serialization.Model):
+class OperationStatusResult(_serialization.Model):
     """The current status of an async operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -2699,7 +2690,7 @@ class OperationStatusResult(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Name of the async operation.
     :vartype name: str
-    :ivar status: Required. Operation status.
+    :ivar status: Operation status. Required.
     :vartype status: str
     :ivar percent_complete: Percent of the operation that is complete.
     :vartype percent_complete: float
@@ -2714,32 +2705,32 @@ class OperationStatusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'percent_complete': {'maximum': 100, 'minimum': 0},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'operations': {'key': 'operations', 'type': '[OperationStatusResult]'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
         status: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["OperationStatusResult"]] = None,
-        error: Optional["ErrorDetail"] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
@@ -2747,7 +2738,7 @@ class OperationStatusResult(msrest.serialization.Model):
         :paramtype id: str
         :keyword name: Name of the async operation.
         :paramtype name: str
-        :keyword status: Required. Operation status.
+        :keyword status: Operation status. Required.
         :paramtype status: str
         :keyword percent_complete: Percent of the operation that is complete.
         :paramtype percent_complete: float
@@ -2760,7 +2751,7 @@ class OperationStatusResult(msrest.serialization.Model):
         :keyword error: If present, details of the operation error.
         :paramtype error: ~azure.mgmt.workloads.models.ErrorDetail
         """
-        super(OperationStatusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -2771,53 +2762,53 @@ class OperationStatusResult(msrest.serialization.Model):
         self.error = error
 
 
-class OsImageProfile(msrest.serialization.Model):
+class OsImageProfile(_serialization.Model):
     """OS image profile.
 
-    :ivar publisher: OS image publisher. Possible values include: "Canonical".
+    :ivar publisher: OS image publisher. "Canonical"
     :vartype publisher: str or ~azure.mgmt.workloads.models.OSImagePublisher
-    :ivar offer: OS image offer. Possible values include: "UbuntuServer".
+    :ivar offer: OS image offer. "UbuntuServer"
     :vartype offer: str or ~azure.mgmt.workloads.models.OSImageOffer
-    :ivar sku: OS image sku. Possible values include: "18.04-LTS", "16.04-LTS".
+    :ivar sku: OS image sku. Known values are: "18.04-LTS" and "16.04-LTS".
     :vartype sku: str or ~azure.mgmt.workloads.models.OSImageSku
-    :ivar version: OS image version. Possible values include: "latest".
+    :ivar version: OS image version. "latest"
     :vartype version: str or ~azure.mgmt.workloads.models.OSImageVersion
     """
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        publisher: Optional[Union[str, "OSImagePublisher"]] = None,
-        offer: Optional[Union[str, "OSImageOffer"]] = None,
-        sku: Optional[Union[str, "OSImageSku"]] = None,
-        version: Optional[Union[str, "OSImageVersion"]] = None,
+        publisher: Optional[Union[str, "_models.OSImagePublisher"]] = None,
+        offer: Optional[Union[str, "_models.OSImageOffer"]] = None,
+        sku: Optional[Union[str, "_models.OSImageSku"]] = None,
+        version: Optional[Union[str, "_models.OSImageVersion"]] = None,
         **kwargs
     ):
         """
-        :keyword publisher: OS image publisher. Possible values include: "Canonical".
+        :keyword publisher: OS image publisher. "Canonical"
         :paramtype publisher: str or ~azure.mgmt.workloads.models.OSImagePublisher
-        :keyword offer: OS image offer. Possible values include: "UbuntuServer".
+        :keyword offer: OS image offer. "UbuntuServer"
         :paramtype offer: str or ~azure.mgmt.workloads.models.OSImageOffer
-        :keyword sku: OS image sku. Possible values include: "18.04-LTS", "16.04-LTS".
+        :keyword sku: OS image sku. Known values are: "18.04-LTS" and "16.04-LTS".
         :paramtype sku: str or ~azure.mgmt.workloads.models.OSImageSku
-        :keyword version: OS image version. Possible values include: "latest".
+        :keyword version: OS image version. "latest"
         :paramtype version: str or ~azure.mgmt.workloads.models.OSImageVersion
         """
-        super(OsImageProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
         self.version = version
 
 
-class OSProfile(msrest.serialization.Model):
+class OSProfile(_serialization.Model):
     """Specifies the operating system settings for the virtual machine. Some of the settings cannot be changed once VM is provisioned.
 
     :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
@@ -2850,9 +2841,9 @@ class OSProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
-        'os_configuration': {'key': 'osConfiguration', 'type': 'OSConfiguration'},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
+        "os_configuration": {"key": "osConfiguration", "type": "OSConfiguration"},
     }
 
     def __init__(
@@ -2860,7 +2851,7 @@ class OSProfile(msrest.serialization.Model):
         *,
         admin_username: Optional[str] = None,
         admin_password: Optional[str] = None,
-        os_configuration: Optional["OSConfiguration"] = None,
+        os_configuration: Optional["_models.OSConfiguration"] = None,
         **kwargs
     ):
         """
@@ -2893,13 +2884,13 @@ class OSProfile(msrest.serialization.Model):
         :keyword os_configuration: Specifies Windows operating system settings on the virtual machine.
         :paramtype os_configuration: ~azure.mgmt.workloads.models.OSConfiguration
         """
-        super(OSProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.admin_username = admin_username
         self.admin_password = admin_password
         self.os_configuration = os_configuration
 
 
-class OsSapConfiguration(msrest.serialization.Model):
+class OsSapConfiguration(_serialization.Model):
     """Defines the OS and SAP Configurations for Deployment.
 
     :ivar deployer_vm_packages: The url and storage account ID where deployer VM packages are
@@ -2910,14 +2901,14 @@ class OsSapConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'deployer_vm_packages': {'key': 'deployerVmPackages', 'type': 'DeployerVmPackages'},
-        'sap_fqdn': {'key': 'sapFqdn', 'type': 'str'},
+        "deployer_vm_packages": {"key": "deployerVmPackages", "type": "DeployerVmPackages"},
+        "sap_fqdn": {"key": "sapFqdn", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        deployer_vm_packages: Optional["DeployerVmPackages"] = None,
+        deployer_vm_packages: Optional["_models.DeployerVmPackages"] = None,
         sap_fqdn: Optional[str] = None,
         **kwargs
     ):
@@ -2928,79 +2919,78 @@ class OsSapConfiguration(msrest.serialization.Model):
         :keyword sap_fqdn: The FQDN to set for the SAP system.
         :paramtype sap_fqdn: str
         """
-        super(OsSapConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.deployer_vm_packages = deployer_vm_packages
         self.sap_fqdn = sap_fqdn
 
 
-class PatchResourceRequestBody(msrest.serialization.Model):
+class PatchResourceRequestBody(_serialization.Model):
     """Resource patch request body.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity:
     :vartype identity: ~azure.mgmt.workloads.models.PatchResourceRequestBodyIdentity
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'PatchResourceRequestBodyIdentity'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "PatchResourceRequestBodyIdentity"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["PatchResourceRequestBodyIdentity"] = None,
+        identity: Optional["_models.PatchResourceRequestBodyIdentity"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity:
         :paramtype identity: ~azure.mgmt.workloads.models.PatchResourceRequestBodyIdentity
         """
-        super(PatchResourceRequestBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
 
 
-class UserAssignedServiceIdentity(msrest.serialization.Model):
+class UserAssignedServiceIdentity(_serialization.Model):
     """Managed service identity (user assigned identities).
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of manage identity. Possible values include: "None", "UserAssigned".
+    :ivar type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
     :vartype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: User assigned identities dictionary.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.workloads.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Type of manage identity. Possible values include: "None",
-         "UserAssigned".
+        :keyword type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: User assigned identities dictionary.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.workloads.models.UserAssignedIdentity]
         """
-        super(UserAssignedServiceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -3010,71 +3000,65 @@ class PatchResourceRequestBodyIdentity(UserAssignedServiceIdentity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of manage identity. Possible values include: "None", "UserAssigned".
+    :ivar type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
     :vartype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: User assigned identities dictionary.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.workloads.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Type of manage identity. Possible values include: "None",
-         "UserAssigned".
+        :keyword type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: User assigned identities dictionary.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.workloads.models.UserAssignedIdentity]
         """
-        super(PatchResourceRequestBodyIdentity, self).__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
+        super().__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
 
 
-class PhpProfile(msrest.serialization.Model):
+class PhpProfile(_serialization.Model):
     """PHP profile.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar version: Required. PHP version. Possible values include: "7.2", "7.3", "7.4".
+    :ivar version: PHP version. Required. Known values are: "7.2", "7.3", and "7.4".
     :vartype version: str or ~azure.mgmt.workloads.models.PHPVersion
     """
 
     _validation = {
-        'version': {'required': True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        version: Union[str, "PHPVersion"],
-        **kwargs
-    ):
+    def __init__(self, *, version: Union[str, "_models.PHPVersion"], **kwargs):
         """
-        :keyword version: Required. PHP version. Possible values include: "7.2", "7.3", "7.4".
+        :keyword version: PHP version. Required. Known values are: "7.2", "7.3", and "7.4".
         :paramtype version: str or ~azure.mgmt.workloads.models.PHPVersion
         """
-        super(PhpProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.version = version
 
 
-class PhpWorkloadResource(TrackedResource):
+class PhpWorkloadResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Php workload resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3092,12 +3076,12 @@ class PhpWorkloadResource(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar kind: Required. Indicates which kind of php workload this resource represent e.g
-     WordPress. Possible values include: "WordPress".
+    :ivar kind: Indicates which kind of php workload this resource represent e.g WordPress.
+     Required. "WordPress"
     :vartype kind: str or ~azure.mgmt.workloads.models.WorkloadKind
     :ivar sku: Php workloads SKU.
     :vartype sku: ~azure.mgmt.workloads.models.Sku
@@ -3131,78 +3115,81 @@ class PhpWorkloadResource(TrackedResource):
     :vartype cache_profile: ~azure.mgmt.workloads.models.CacheProfile
     :ivar backup_profile: Backup profile.
     :vartype backup_profile: ~azure.mgmt.workloads.models.BackupProfile
-    :ivar provisioning_state: Php workload resource provisioning state. Possible values include:
-     "NotSpecified", "Accepted", "Created", "Succeeded", "Failed", "Canceled", "Provisioning",
+    :ivar provisioning_state: Php workload resource provisioning state. Known values are:
+     "NotSpecified", "Accepted", "Created", "Succeeded", "Failed", "Canceled", "Provisioning", and
      "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.workloads.models.PhpWorkloadProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'PhpWorkloadResourceIdentity'},
-        'app_location': {'key': 'properties.appLocation', 'type': 'str'},
-        'managed_resource_group_configuration': {'key': 'properties.managedResourceGroupConfiguration', 'type': 'ManagedRGConfiguration'},
-        'admin_user_profile': {'key': 'properties.adminUserProfile', 'type': 'UserProfile'},
-        'web_nodes_profile': {'key': 'properties.webNodesProfile', 'type': 'VmssNodesProfile'},
-        'controller_profile': {'key': 'properties.controllerProfile', 'type': 'NodeProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'database_profile': {'key': 'properties.databaseProfile', 'type': 'DatabaseProfile'},
-        'site_profile': {'key': 'properties.siteProfile', 'type': 'SiteProfile'},
-        'fileshare_profile': {'key': 'properties.fileshareProfile', 'type': 'FileshareProfile'},
-        'php_profile': {'key': 'properties.phpProfile', 'type': 'PhpProfile'},
-        'search_profile': {'key': 'properties.searchProfile', 'type': 'SearchProfile'},
-        'cache_profile': {'key': 'properties.cacheProfile', 'type': 'CacheProfile'},
-        'backup_profile': {'key': 'properties.backupProfile', 'type': 'BackupProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "PhpWorkloadResourceIdentity"},
+        "app_location": {"key": "properties.appLocation", "type": "str"},
+        "managed_resource_group_configuration": {
+            "key": "properties.managedResourceGroupConfiguration",
+            "type": "ManagedRGConfiguration",
+        },
+        "admin_user_profile": {"key": "properties.adminUserProfile", "type": "UserProfile"},
+        "web_nodes_profile": {"key": "properties.webNodesProfile", "type": "VmssNodesProfile"},
+        "controller_profile": {"key": "properties.controllerProfile", "type": "NodeProfile"},
+        "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
+        "database_profile": {"key": "properties.databaseProfile", "type": "DatabaseProfile"},
+        "site_profile": {"key": "properties.siteProfile", "type": "SiteProfile"},
+        "fileshare_profile": {"key": "properties.fileshareProfile", "type": "FileshareProfile"},
+        "php_profile": {"key": "properties.phpProfile", "type": "PhpProfile"},
+        "search_profile": {"key": "properties.searchProfile", "type": "SearchProfile"},
+        "cache_profile": {"key": "properties.cacheProfile", "type": "CacheProfile"},
+        "backup_profile": {"key": "properties.backupProfile", "type": "BackupProfile"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        kind: Union[str, "WorkloadKind"],
+        kind: Union[str, "_models.WorkloadKind"],
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        identity: Optional["PhpWorkloadResourceIdentity"] = None,
+        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.PhpWorkloadResourceIdentity"] = None,
         app_location: Optional[str] = None,
-        managed_resource_group_configuration: Optional["ManagedRGConfiguration"] = None,
-        admin_user_profile: Optional["UserProfile"] = None,
-        web_nodes_profile: Optional["VmssNodesProfile"] = None,
-        controller_profile: Optional["NodeProfile"] = None,
-        network_profile: Optional["NetworkProfile"] = None,
-        database_profile: Optional["DatabaseProfile"] = None,
-        site_profile: Optional["SiteProfile"] = None,
-        fileshare_profile: Optional["FileshareProfile"] = None,
-        php_profile: Optional["PhpProfile"] = None,
-        search_profile: Optional["SearchProfile"] = None,
-        cache_profile: Optional["CacheProfile"] = None,
-        backup_profile: Optional["BackupProfile"] = None,
+        managed_resource_group_configuration: Optional["_models.ManagedRGConfiguration"] = None,
+        admin_user_profile: Optional["_models.UserProfile"] = None,
+        web_nodes_profile: Optional["_models.VmssNodesProfile"] = None,
+        controller_profile: Optional["_models.NodeProfile"] = None,
+        network_profile: Optional["_models.NetworkProfile"] = None,
+        database_profile: Optional["_models.DatabaseProfile"] = None,
+        site_profile: Optional["_models.SiteProfile"] = None,
+        fileshare_profile: Optional["_models.FileshareProfile"] = None,
+        php_profile: Optional["_models.PhpProfile"] = None,
+        search_profile: Optional["_models.SearchProfile"] = None,
+        cache_profile: Optional["_models.CacheProfile"] = None,
+        backup_profile: Optional["_models.BackupProfile"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword kind: Required. Indicates which kind of php workload this resource represent e.g
-         WordPress. Possible values include: "WordPress".
+        :keyword kind: Indicates which kind of php workload this resource represent e.g WordPress.
+         Required. "WordPress"
         :paramtype kind: str or ~azure.mgmt.workloads.models.WorkloadKind
         :keyword sku: Php workloads SKU.
         :paramtype sku: ~azure.mgmt.workloads.models.Sku
@@ -3237,7 +3224,7 @@ class PhpWorkloadResource(TrackedResource):
         :keyword backup_profile: Backup profile.
         :paramtype backup_profile: ~azure.mgmt.workloads.models.BackupProfile
         """
-        super(PhpWorkloadResource, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.kind = kind
         self.sku = sku
         self.identity = identity
@@ -3262,40 +3249,39 @@ class PhpWorkloadResourceIdentity(UserAssignedServiceIdentity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Type of manage identity. Possible values include: "None", "UserAssigned".
+    :ivar type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
     :vartype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: User assigned identities dictionary.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.workloads.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
         """
-        :keyword type: Required. Type of manage identity. Possible values include: "None",
-         "UserAssigned".
+        :keyword type: Type of manage identity. Required. Known values are: "None" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.workloads.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: User assigned identities dictionary.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.workloads.models.UserAssignedIdentity]
         """
-        super(PhpWorkloadResourceIdentity, self).__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
+        super().__init__(type=type, user_assigned_identities=user_assigned_identities, **kwargs)
 
 
-class PhpWorkloadResourceList(msrest.serialization.Model):
+class PhpWorkloadResourceList(_serialization.Model):
     """Php workload resource list.
 
     :ivar value: List of resources in current page.
@@ -3305,16 +3291,12 @@ class PhpWorkloadResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PhpWorkloadResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PhpWorkloadResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["PhpWorkloadResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.PhpWorkloadResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: List of resources in current page.
@@ -3322,7 +3304,7 @@ class PhpWorkloadResourceList(msrest.serialization.Model):
         :keyword next_link: Link to next page of resources.
         :paramtype next_link: str
         """
-        super(PhpWorkloadResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3332,8 +3314,7 @@ class PrometheusHaClusterProviderInstanceProperties(ProviderSpecificProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar prometheus_url: URL of the Node Exporter endpoint.
     :vartype prometheus_url: str
@@ -3343,18 +3324,26 @@ class PrometheusHaClusterProviderInstanceProperties(ProviderSpecificProperties):
     :vartype sid: str
     :ivar cluster_name: Gets or sets the clusterName.
     :vartype cluster_name: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the HA cluster
+     exporter.
+    :vartype ssl_certificate_uri: str
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'prometheus_url': {'key': 'prometheusUrl', 'type': 'str'},
-        'hostname': {'key': 'hostname', 'type': 'str'},
-        'sid': {'key': 'sid', 'type': 'str'},
-        'cluster_name': {'key': 'clusterName', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "prometheus_url": {"key": "prometheusUrl", "type": "str"},
+        "hostname": {"key": "hostname", "type": "str"},
+        "sid": {"key": "sid", "type": "str"},
+        "cluster_name": {"key": "clusterName", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
     }
 
     def __init__(
@@ -3364,6 +3353,8 @@ class PrometheusHaClusterProviderInstanceProperties(ProviderSpecificProperties):
         hostname: Optional[str] = None,
         sid: Optional[str] = None,
         cluster_name: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
+        ssl_certificate_uri: Optional[str] = None,
         **kwargs
     ):
         """
@@ -3375,13 +3366,21 @@ class PrometheusHaClusterProviderInstanceProperties(ProviderSpecificProperties):
         :paramtype sid: str
         :keyword cluster_name: Gets or sets the clusterName.
         :paramtype cluster_name: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the HA cluster
+         exporter.
+        :paramtype ssl_certificate_uri: str
         """
-        super(PrometheusHaClusterProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'PrometheusHaCluster'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "PrometheusHaCluster"
         self.prometheus_url = prometheus_url
         self.hostname = hostname
         self.sid = sid
         self.cluster_name = cluster_name
+        self.ssl_preference = ssl_preference
+        self.ssl_certificate_uri = ssl_certificate_uri
 
 
 class PrometheusOSProviderInstanceProperties(ProviderSpecificProperties):
@@ -3389,35 +3388,52 @@ class PrometheusOSProviderInstanceProperties(ProviderSpecificProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar prometheus_url: URL of the Node Exporter endpoint.
     :vartype prometheus_url: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the prometheus node
+     exporter.
+    :vartype ssl_certificate_uri: str
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'prometheus_url': {'key': 'prometheusUrl', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "prometheus_url": {"key": "prometheusUrl", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         prometheus_url: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
+        ssl_certificate_uri: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword prometheus_url: URL of the Node Exporter endpoint.
         :paramtype prometheus_url: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the prometheus
+         node exporter.
+        :paramtype ssl_certificate_uri: str
         """
-        super(PrometheusOSProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'PrometheusOS'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "PrometheusOS"
         self.prometheus_url = prometheus_url
+        self.ssl_preference = ssl_preference
+        self.ssl_certificate_uri = ssl_certificate_uri
 
 
 class ProxyResource(Resource):
@@ -3439,26 +3455,22 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class ProviderInstance(ProxyResource):
@@ -3479,8 +3491,8 @@ class ProviderInstance(ProxyResource):
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
     :ivar identity: Managed service identity (user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
-    :ivar provisioning_state: State of provisioning of the provider instance. Possible values
-     include: "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar provisioning_state: State of provisioning of the provider instance. Known values are:
+     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.WorkloadMonitorProvisioningState
     :ivar errors: Defines the provider instance errors.
@@ -3490,30 +3502,30 @@ class ProviderInstance(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedServiceIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'ProviderInstancePropertiesErrors'},
-        'provider_settings': {'key': 'properties.providerSettings', 'type': 'ProviderSpecificProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "UserAssignedServiceIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "ProviderInstancePropertiesErrors"},
+        "provider_settings": {"key": "properties.providerSettings", "type": "ProviderSpecificProperties"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["UserAssignedServiceIdentity"] = None,
-        provider_settings: Optional["ProviderSpecificProperties"] = None,
+        identity: Optional["_models.UserAssignedServiceIdentity"] = None,
+        provider_settings: Optional["_models.ProviderSpecificProperties"] = None,
         **kwargs
     ):
         """
@@ -3522,14 +3534,14 @@ class ProviderInstance(ProxyResource):
         :keyword provider_settings: Defines the provider instance errors.
         :paramtype provider_settings: ~azure.mgmt.workloads.models.ProviderSpecificProperties
         """
-        super(ProviderInstance, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.errors = None
         self.provider_settings = provider_settings
 
 
-class ProviderInstanceListResult(msrest.serialization.Model):
+class ProviderInstanceListResult(_serialization.Model):
     """The response from the List provider instances operation.
 
     :ivar value: The list of provider instances.
@@ -3539,16 +3551,12 @@ class ProviderInstanceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProviderInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProviderInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ProviderInstance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ProviderInstance"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of provider instances.
@@ -3556,7 +3564,7 @@ class ProviderInstanceListResult(msrest.serialization.Model):
         :keyword next_link: The URL to get the next set of provider instances.
         :paramtype next_link: str
         """
-        super(ProviderInstanceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -3580,31 +3588,27 @@ class ProviderInstancePropertiesErrors(Error):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[Error]'},
-        'inner_error': {'key': 'innerError', 'type': 'ErrorInnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[Error]"},
+        "inner_error": {"key": "innerError", "type": "ErrorInnerError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProviderInstancePropertiesErrors, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class RestrictionInfo(msrest.serialization.Model):
+class RestrictionInfo(_serialization.Model):
     """The SKU restriction information.
 
     :ivar locations: The restriction locations.
@@ -3614,30 +3618,24 @@ class RestrictionInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'zones': {'key': 'zones', 'type': '[str]'},
+        "locations": {"key": "locations", "type": "[str]"},
+        "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        locations: Optional[List[str]] = None,
-        zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, locations: Optional[List[str]] = None, zones: Optional[List[str]] = None, **kwargs):
         """
         :keyword locations: The restriction locations.
         :paramtype locations: list[str]
         :keyword zones: The restriction zones.
         :paramtype zones: list[str]
         """
-        super(RestrictionInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.locations = locations
         self.zones = zones
 
 
-class SAPApplicationServerInstance(TrackedResource):
-    """Define the SAP Application Server Instance.
+class SAPApplicationServerInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Define the SAP Application Server Instance resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3654,38 +3652,38 @@ class SAPApplicationServerInstance(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar instance_no: The application server instance id.
+    :ivar instance_no: Application server Instance Number.
     :vartype instance_no: str
-    :ivar subnet: The application server subnet.
+    :ivar subnet: Application server Subnet.
     :vartype subnet: str
-    :ivar hostname: The application server SAP host name.
+    :ivar hostname: Application server instance SAP hostname.
     :vartype hostname: str
-    :ivar kernel_version: The application server SAP kernel version.
+    :ivar kernel_version: Application server instance SAP Kernel Version.
     :vartype kernel_version: str
-    :ivar kernel_patch: The application server SAP kernel patch.
+    :ivar kernel_patch: Application server instance SAP Kernel Patch level.
     :vartype kernel_patch: str
-    :ivar ip_address: The application server SAP IP Address.
+    :ivar ip_address: Application server instance SAP IP Address.
     :vartype ip_address: str
-    :ivar gateway_port: The application server gateway Port.
-    :vartype gateway_port: long
-    :ivar icm_http_port: The application server ICM HTTP Port.
-    :vartype icm_http_port: long
-    :ivar icm_https_port: The application server ICM HTTPS Port.
-    :vartype icm_https_port: long
+    :ivar gateway_port: Application server instance gateway Port.
+    :vartype gateway_port: int
+    :ivar icm_http_port: Application server instance ICM HTTP Port.
+    :vartype icm_http_port: int
+    :ivar icm_https_port: Application server instance ICM HTTPS Port.
+    :vartype icm_https_port: int
     :ivar virtual_machine_id: The virtual machine.
     :vartype virtual_machine_id: str
-    :ivar status: Defines the SAP Instance status. Possible values include: "Starting", "Running",
-     "Stopping", "Offline", "PartiallyRunning", "Unavailable".
+    :ivar status: Defines the SAP Instance status. Known values are: "Starting", "Running",
+     "Stopping", "Offline", "PartiallyRunning", and "Unavailable".
     :vartype status: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceStatus
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
-    :ivar provisioning_state: Defines the provisioning states. Possible values include:
-     "Succeeded", "Updating", "Creating", "Failed", "Deleting".
+    :ivar provisioning_state: Defines the provisioning states. Known values are: "Succeeded",
+     "Updating", "Creating", "Failed", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.SapVirtualInstanceProvisioningState
     :ivar errors: Defines the Application Instance errors.
@@ -3693,64 +3691,58 @@ class SAPApplicationServerInstance(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'instance_no': {'readonly': True},
-        'subnet': {'readonly': True},
-        'hostname': {'readonly': True},
-        'kernel_version': {'readonly': True},
-        'kernel_patch': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'gateway_port': {'readonly': True},
-        'icm_http_port': {'readonly': True},
-        'icm_https_port': {'readonly': True},
-        'virtual_machine_id': {'readonly': True},
-        'status': {'readonly': True},
-        'health': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "instance_no": {"readonly": True},
+        "subnet": {"readonly": True},
+        "hostname": {"readonly": True},
+        "kernel_version": {"readonly": True},
+        "kernel_patch": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "gateway_port": {"readonly": True},
+        "icm_http_port": {"readonly": True},
+        "icm_https_port": {"readonly": True},
+        "virtual_machine_id": {"readonly": True},
+        "status": {"readonly": True},
+        "health": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'instance_no': {'key': 'properties.instanceNo', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'hostname': {'key': 'properties.hostname', 'type': 'str'},
-        'kernel_version': {'key': 'properties.kernelVersion', 'type': 'str'},
-        'kernel_patch': {'key': 'properties.kernelPatch', 'type': 'str'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'gateway_port': {'key': 'properties.gatewayPort', 'type': 'long'},
-        'icm_http_port': {'key': 'properties.icmHttpPort', 'type': 'long'},
-        'icm_https_port': {'key': 'properties.icmHttpsPort', 'type': 'long'},
-        'virtual_machine_id': {'key': 'properties.virtualMachineId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'health': {'key': 'properties.health', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'SAPVirtualInstanceError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "instance_no": {"key": "properties.instanceNo", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "str"},
+        "hostname": {"key": "properties.hostname", "type": "str"},
+        "kernel_version": {"key": "properties.kernelVersion", "type": "str"},
+        "kernel_patch": {"key": "properties.kernelPatch", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "gateway_port": {"key": "properties.gatewayPort", "type": "int"},
+        "icm_http_port": {"key": "properties.icmHttpPort", "type": "int"},
+        "icm_https_port": {"key": "properties.icmHttpsPort", "type": "int"},
+        "virtual_machine_id": {"key": "properties.virtualMachineId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "health": {"key": "properties.health", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "SAPVirtualInstanceError"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(SAPApplicationServerInstance, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.instance_no = None
         self.subnet = None
         self.hostname = None
@@ -3767,90 +3759,90 @@ class SAPApplicationServerInstance(TrackedResource):
         self.errors = None
 
 
-class SAPApplicationServerInstanceList(msrest.serialization.Model):
-    """Defines the collection of SAP Application Server Instances.
+class SAPApplicationServerInstanceList(_serialization.Model):
+    """Defines the collection of SAP Application Server Instance resources.
 
-    :ivar value: Gets the list of SAP Application Server instances.
+    :ivar value: Gets the list of SAP Application Server instance resources.
     :vartype value: list[~azure.mgmt.workloads.models.SAPApplicationServerInstance]
     :ivar next_link: Gets the value of next link.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SAPApplicationServerInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SAPApplicationServerInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SAPApplicationServerInstance"]] = None,
+        value: Optional[List["_models.SAPApplicationServerInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: Gets the list of SAP Application Server instances.
+        :keyword value: Gets the list of SAP Application Server instance resources.
         :paramtype value: list[~azure.mgmt.workloads.models.SAPApplicationServerInstance]
         :keyword next_link: Gets the value of next link.
         :paramtype next_link: str
         """
-        super(SAPApplicationServerInstanceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SAPAvailabilityZoneDetailsRequest(msrest.serialization.Model):
+class SAPAvailabilityZoneDetailsRequest(_serialization.Model):
     """The SAP request to get list of availability zones.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar app_location: Required. The geo-location where the SAP resources will be created.
+    :ivar app_location: The geo-location where the SAP resources will be created. Required.
     :vartype app_location: str
-    :ivar sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-     "S4HANA", "Other".
+    :ivar sap_product: Defines the SAP Product type. Required. Known values are: "ECC", "S4HANA",
+     and "Other".
     :vartype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-    :ivar database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values include:
-     "HANA", "DB2".
+    :ivar database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are: "HANA"
+     and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
     """
 
     _validation = {
-        'app_location': {'required': True},
-        'sap_product': {'required': True},
-        'database_type': {'required': True},
+        "app_location": {"required": True},
+        "sap_product": {"required": True},
+        "database_type": {"required": True},
     }
 
     _attribute_map = {
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'sap_product': {'key': 'sapProduct', 'type': 'str'},
-        'database_type': {'key': 'databaseType', 'type': 'str'},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "sap_product": {"key": "sapProduct", "type": "str"},
+        "database_type": {"key": "databaseType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         app_location: str,
-        sap_product: Union[str, "SAPProductType"],
-        database_type: Union[str, "SAPDatabaseType"],
+        sap_product: Union[str, "_models.SAPProductType"],
+        database_type: Union[str, "_models.SAPDatabaseType"],
         **kwargs
     ):
         """
-        :keyword app_location: Required. The geo-location where the SAP resources will be created.
+        :keyword app_location: The geo-location where the SAP resources will be created. Required.
         :paramtype app_location: str
-        :keyword sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-         "S4HANA", "Other".
+        :keyword sap_product: Defines the SAP Product type. Required. Known values are: "ECC",
+         "S4HANA", and "Other".
         :paramtype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-        :keyword database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values
-         include: "HANA", "DB2".
+        :keyword database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are:
+         "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
         """
-        super(SAPAvailabilityZoneDetailsRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.app_location = app_location
         self.sap_product = sap_product
         self.database_type = database_type
 
 
-class SAPAvailabilityZoneDetailsResult(msrest.serialization.Model):
+class SAPAvailabilityZoneDetailsResult(_serialization.Model):
     """The list of supported availability zone pairs which are part of SAP HA deployment.
 
     :ivar availability_zone_pairs: Gets the list of availability zone pairs.
@@ -3858,89 +3850,78 @@ class SAPAvailabilityZoneDetailsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'availability_zone_pairs': {'key': 'availabilityZonePairs', 'type': '[SAPAvailabilityZonePair]'},
+        "availability_zone_pairs": {"key": "availabilityZonePairs", "type": "[SAPAvailabilityZonePair]"},
     }
 
-    def __init__(
-        self,
-        *,
-        availability_zone_pairs: Optional[List["SAPAvailabilityZonePair"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, availability_zone_pairs: Optional[List["_models.SAPAvailabilityZonePair"]] = None, **kwargs):
         """
         :keyword availability_zone_pairs: Gets the list of availability zone pairs.
         :paramtype availability_zone_pairs: list[~azure.mgmt.workloads.models.SAPAvailabilityZonePair]
         """
-        super(SAPAvailabilityZoneDetailsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.availability_zone_pairs = availability_zone_pairs
 
 
-class SAPAvailabilityZonePair(msrest.serialization.Model):
+class SAPAvailabilityZonePair(_serialization.Model):
     """The SAP Availability Zone Pair.
 
     :ivar zone_a: The zone A.
-    :vartype zone_a: long
+    :vartype zone_a: int
     :ivar zone_b: The zone B.
-    :vartype zone_b: long
+    :vartype zone_b: int
     """
 
     _attribute_map = {
-        'zone_a': {'key': 'zoneA', 'type': 'long'},
-        'zone_b': {'key': 'zoneB', 'type': 'long'},
+        "zone_a": {"key": "zoneA", "type": "int"},
+        "zone_b": {"key": "zoneB", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        zone_a: Optional[int] = None,
-        zone_b: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, zone_a: Optional[int] = None, zone_b: Optional[int] = None, **kwargs):
         """
         :keyword zone_a: The zone A.
-        :paramtype zone_a: long
+        :paramtype zone_a: int
         :keyword zone_b: The zone B.
-        :paramtype zone_b: long
+        :paramtype zone_b: int
         """
-        super(SAPAvailabilityZonePair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.zone_a = zone_a
         self.zone_b = zone_b
 
 
-class SAPCentralInstanceList(msrest.serialization.Model):
-    """Defines the collection of SAP Central Instances.
+class SAPCentralInstanceList(_serialization.Model):
+    """Defines the collection of SAP Central Services Instance resources.
 
-    :ivar value: Gets the list of SAP central instances.
+    :ivar value: Gets the list of SAP central services instance resources.
     :vartype value: list[~azure.mgmt.workloads.models.SAPCentralServerInstance]
     :ivar next_link: Gets the value of next link.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SAPCentralServerInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SAPCentralServerInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SAPCentralServerInstance"]] = None,
+        value: Optional[List["_models.SAPCentralServerInstance"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: Gets the list of SAP central instances.
+        :keyword value: Gets the list of SAP central services instance resources.
         :paramtype value: list[~azure.mgmt.workloads.models.SAPCentralServerInstance]
         :keyword next_link: Gets the value of next link.
         :paramtype next_link: str
         """
-        super(SAPCentralInstanceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SAPCentralServerInstance(TrackedResource):
-    """Define the SAP Central Server Instance.
+class SAPCentralServerInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Define the SAP Central Services Instance resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3957,80 +3938,84 @@ class SAPCentralServerInstance(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar instance_no: The central server instance id.
+    :ivar instance_no: The central services instance number.
     :vartype instance_no: str
-    :ivar subnet: The central server subnet.
+    :ivar subnet: The central services instance subnet.
     :vartype subnet: str
-    :ivar message_server_properties: Defines the SAP message server properties.
+    :ivar message_server_properties: Defines the SAP Message Server properties.
     :vartype message_server_properties: ~azure.mgmt.workloads.models.MessageServerProperties
-    :ivar enqueue_server_properties: Defines the SAP enqueue server properties.
+    :ivar enqueue_server_properties: Defines the SAP Enqueue Server properties.
     :vartype enqueue_server_properties: ~azure.mgmt.workloads.models.EnqueueServerProperties
     :ivar gateway_server_properties: Defines the SAP Gateway Server properties.
     :vartype gateway_server_properties: ~azure.mgmt.workloads.models.GatewayServerProperties
-    :ivar enqueue_replication_server_properties: Defines the SAP ERS Server properties.
+    :ivar enqueue_replication_server_properties: Defines the SAP Enqueue Replication Server (ERS)
+     properties.
     :vartype enqueue_replication_server_properties:
      ~azure.mgmt.workloads.models.EnqueueReplicationServerProperties
-    :ivar kernel_version: The central server kernel version.
+    :ivar kernel_version: The central services instance Kernel Version.
     :vartype kernel_version: str
-    :ivar kernel_patch: The central server kernel patch.
+    :ivar kernel_patch: The central services instance Kernel Patch level.
     :vartype kernel_patch: str
-    :ivar vm_details: The list of virtual machines.
+    :ivar vm_details: The list of virtual machines corresponding to the Central Services instance.
     :vartype vm_details: list[~azure.mgmt.workloads.models.CentralServerVmDetails]
-    :ivar status: Defines the SAP Instance status. Possible values include: "Starting", "Running",
-     "Stopping", "Offline", "PartiallyRunning", "Unavailable".
+    :ivar status: Defines the SAP Instance status. Known values are: "Starting", "Running",
+     "Stopping", "Offline", "PartiallyRunning", and "Unavailable".
     :vartype status: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceStatus
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
-    :ivar provisioning_state: Defines the provisioning states. Possible values include:
-     "Succeeded", "Updating", "Creating", "Failed", "Deleting".
+    :ivar provisioning_state: Defines the provisioning states. Known values are: "Succeeded",
+     "Updating", "Creating", "Failed", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.SapVirtualInstanceProvisioningState
-    :ivar errors: Defines the Central Instance errors.
+    :ivar errors: Defines the errors related to SAP Central Services Instance resource.
     :vartype errors: ~azure.mgmt.workloads.models.SAPVirtualInstanceError
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'instance_no': {'readonly': True},
-        'subnet': {'readonly': True},
-        'kernel_version': {'readonly': True},
-        'kernel_patch': {'readonly': True},
-        'vm_details': {'readonly': True},
-        'status': {'readonly': True},
-        'health': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "instance_no": {"readonly": True},
+        "subnet": {"readonly": True},
+        "kernel_version": {"readonly": True},
+        "kernel_patch": {"readonly": True},
+        "vm_details": {"readonly": True},
+        "status": {"readonly": True},
+        "health": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'instance_no': {'key': 'properties.instanceNo', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'message_server_properties': {'key': 'properties.messageServerProperties', 'type': 'MessageServerProperties'},
-        'enqueue_server_properties': {'key': 'properties.enqueueServerProperties', 'type': 'EnqueueServerProperties'},
-        'gateway_server_properties': {'key': 'properties.gatewayServerProperties', 'type': 'GatewayServerProperties'},
-        'enqueue_replication_server_properties': {'key': 'properties.enqueueReplicationServerProperties', 'type': 'EnqueueReplicationServerProperties'},
-        'kernel_version': {'key': 'properties.kernelVersion', 'type': 'str'},
-        'kernel_patch': {'key': 'properties.kernelPatch', 'type': 'str'},
-        'vm_details': {'key': 'properties.vmDetails', 'type': '[CentralServerVmDetails]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'health': {'key': 'properties.health', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'SAPVirtualInstanceError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "instance_no": {"key": "properties.instanceNo", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "str"},
+        "message_server_properties": {"key": "properties.messageServerProperties", "type": "MessageServerProperties"},
+        "enqueue_server_properties": {"key": "properties.enqueueServerProperties", "type": "EnqueueServerProperties"},
+        "gateway_server_properties": {"key": "properties.gatewayServerProperties", "type": "GatewayServerProperties"},
+        "enqueue_replication_server_properties": {
+            "key": "properties.enqueueReplicationServerProperties",
+            "type": "EnqueueReplicationServerProperties",
+        },
+        "kernel_version": {"key": "properties.kernelVersion", "type": "str"},
+        "kernel_patch": {"key": "properties.kernelPatch", "type": "str"},
+        "vm_details": {"key": "properties.vmDetails", "type": "[CentralServerVmDetails]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "health": {"key": "properties.health", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "SAPVirtualInstanceError"},
     }
 
     def __init__(
@@ -4038,28 +4023,29 @@ class SAPCentralServerInstance(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        message_server_properties: Optional["MessageServerProperties"] = None,
-        enqueue_server_properties: Optional["EnqueueServerProperties"] = None,
-        gateway_server_properties: Optional["GatewayServerProperties"] = None,
-        enqueue_replication_server_properties: Optional["EnqueueReplicationServerProperties"] = None,
+        message_server_properties: Optional["_models.MessageServerProperties"] = None,
+        enqueue_server_properties: Optional["_models.EnqueueServerProperties"] = None,
+        gateway_server_properties: Optional["_models.GatewayServerProperties"] = None,
+        enqueue_replication_server_properties: Optional["_models.EnqueueReplicationServerProperties"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword message_server_properties: Defines the SAP message server properties.
+        :keyword message_server_properties: Defines the SAP Message Server properties.
         :paramtype message_server_properties: ~azure.mgmt.workloads.models.MessageServerProperties
-        :keyword enqueue_server_properties: Defines the SAP enqueue server properties.
+        :keyword enqueue_server_properties: Defines the SAP Enqueue Server properties.
         :paramtype enqueue_server_properties: ~azure.mgmt.workloads.models.EnqueueServerProperties
         :keyword gateway_server_properties: Defines the SAP Gateway Server properties.
         :paramtype gateway_server_properties: ~azure.mgmt.workloads.models.GatewayServerProperties
-        :keyword enqueue_replication_server_properties: Defines the SAP ERS Server properties.
+        :keyword enqueue_replication_server_properties: Defines the SAP Enqueue Replication Server
+         (ERS) properties.
         :paramtype enqueue_replication_server_properties:
          ~azure.mgmt.workloads.models.EnqueueReplicationServerProperties
         """
-        super(SAPCentralServerInstance, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.instance_no = None
         self.subnet = None
         self.message_server_properties = message_server_properties
@@ -4075,8 +4061,8 @@ class SAPCentralServerInstance(TrackedResource):
         self.errors = None
 
 
-class SAPDatabaseInstance(TrackedResource):
-    """Define the SAP Database Instance.
+class SAPDatabaseInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Define the Database resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4093,78 +4079,73 @@ class SAPDatabaseInstance(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar subnet: The database subnet.
+    :ivar subnet: Database subnet.
     :vartype subnet: str
-    :ivar database_sid: The database SID.
+    :ivar database_sid: Database SID name.
     :vartype database_sid: str
-    :ivar database_type: The SAP database type.
+    :ivar database_type: Database type, that is if the DB is HANA, DB2, Oracle, SAP ASE, Max DB or
+     MS SQL Server.
     :vartype database_type: str
-    :ivar ip_address: The database IP Address.
+    :ivar ip_address: Database IP Address.
     :vartype ip_address: str
-    :ivar vm_details: The list of virtual machines.
+    :ivar vm_details: The list of virtual machines corresponding to the Database resource.
     :vartype vm_details: list[~azure.mgmt.workloads.models.DatabaseVmDetails]
-    :ivar status: Defines the SAP Instance status. Possible values include: "Starting", "Running",
-     "Stopping", "Offline", "PartiallyRunning", "Unavailable".
+    :ivar status: Defines the SAP Instance status. Known values are: "Starting", "Running",
+     "Stopping", "Offline", "PartiallyRunning", and "Unavailable".
     :vartype status: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceStatus
-    :ivar provisioning_state: Defines the provisioning states. Possible values include:
-     "Succeeded", "Updating", "Creating", "Failed", "Deleting".
+    :ivar provisioning_state: Defines the provisioning states. Known values are: "Succeeded",
+     "Updating", "Creating", "Failed", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.SapVirtualInstanceProvisioningState
-    :ivar errors: Defines the Database Instance errors.
+    :ivar errors: Defines the errors related to Database resource.
     :vartype errors: ~azure.mgmt.workloads.models.SAPVirtualInstanceError
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'subnet': {'readonly': True},
-        'database_sid': {'readonly': True},
-        'database_type': {'readonly': True},
-        'ip_address': {'readonly': True},
-        'vm_details': {'readonly': True},
-        'status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "subnet": {"readonly": True},
+        "database_sid": {"readonly": True},
+        "database_type": {"readonly": True},
+        "ip_address": {"readonly": True},
+        "vm_details": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'database_sid': {'key': 'properties.databaseSid', 'type': 'str'},
-        'database_type': {'key': 'properties.databaseType', 'type': 'str'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'vm_details': {'key': 'properties.vmDetails', 'type': '[DatabaseVmDetails]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'SAPVirtualInstanceError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "str"},
+        "database_sid": {"key": "properties.databaseSid", "type": "str"},
+        "database_type": {"key": "properties.databaseType", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "str"},
+        "vm_details": {"key": "properties.vmDetails", "type": "[DatabaseVmDetails]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "SAPVirtualInstanceError"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(SAPDatabaseInstance, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.subnet = None
         self.database_sid = None
         self.database_type = None
@@ -4175,7 +4156,7 @@ class SAPDatabaseInstance(TrackedResource):
         self.errors = None
 
 
-class SAPDatabaseInstanceList(msrest.serialization.Model):
+class SAPDatabaseInstanceList(_serialization.Model):
     """Defines the collection of SAP Database Instances.
 
     :ivar value: Gets the list of SAP Database instances.
@@ -4185,16 +4166,12 @@ class SAPDatabaseInstanceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SAPDatabaseInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SAPDatabaseInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SAPDatabaseInstance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SAPDatabaseInstance"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets the list of SAP Database instances.
@@ -4202,12 +4179,12 @@ class SAPDatabaseInstanceList(msrest.serialization.Model):
         :keyword next_link: Gets the value of next link.
         :paramtype next_link: str
         """
-        super(SAPDatabaseInstanceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SAPDiskConfiguration(msrest.serialization.Model):
+class SAPDiskConfiguration(_serialization.Model):
     """The SAP Disk Configuration.
 
     :ivar volume: The volume name.
@@ -4215,25 +4192,25 @@ class SAPDiskConfiguration(msrest.serialization.Model):
     :ivar disk_type: The disk type.
     :vartype disk_type: str
     :ivar disk_count: The disk count.
-    :vartype disk_count: long
+    :vartype disk_count: int
     :ivar disk_size_gb: The disk size in GB.
-    :vartype disk_size_gb: long
+    :vartype disk_size_gb: int
     :ivar disk_iops_read_write: The disk Iops.
-    :vartype disk_iops_read_write: long
+    :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: The disk provisioned throughput in MBps.
-    :vartype disk_m_bps_read_write: long
+    :vartype disk_m_bps_read_write: int
     :ivar disk_storage_type: The disk storage type.
     :vartype disk_storage_type: str
     """
 
     _attribute_map = {
-        'volume': {'key': 'volume', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
-        'disk_count': {'key': 'diskCount', 'type': 'long'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'long'},
-        'disk_iops_read_write': {'key': 'diskIopsReadWrite', 'type': 'long'},
-        'disk_m_bps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
-        'disk_storage_type': {'key': 'diskStorageType', 'type': 'str'},
+        "volume": {"key": "volume", "type": "str"},
+        "disk_type": {"key": "diskType", "type": "str"},
+        "disk_count": {"key": "diskCount", "type": "int"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "disk_iops_read_write": {"key": "diskIopsReadWrite", "type": "int"},
+        "disk_m_bps_read_write": {"key": "diskMBpsReadWrite", "type": "int"},
+        "disk_storage_type": {"key": "diskStorageType", "type": "str"},
     }
 
     def __init__(
@@ -4254,17 +4231,17 @@ class SAPDiskConfiguration(msrest.serialization.Model):
         :keyword disk_type: The disk type.
         :paramtype disk_type: str
         :keyword disk_count: The disk count.
-        :paramtype disk_count: long
+        :paramtype disk_count: int
         :keyword disk_size_gb: The disk size in GB.
-        :paramtype disk_size_gb: long
+        :paramtype disk_size_gb: int
         :keyword disk_iops_read_write: The disk Iops.
-        :paramtype disk_iops_read_write: long
+        :paramtype disk_iops_read_write: int
         :keyword disk_m_bps_read_write: The disk provisioned throughput in MBps.
-        :paramtype disk_m_bps_read_write: long
+        :paramtype disk_m_bps_read_write: int
         :keyword disk_storage_type: The disk storage type.
         :paramtype disk_storage_type: str
         """
-        super(SAPDiskConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.volume = volume
         self.disk_type = disk_type
         self.disk_count = disk_count
@@ -4274,77 +4251,77 @@ class SAPDiskConfiguration(msrest.serialization.Model):
         self.disk_storage_type = disk_storage_type
 
 
-class SAPDiskConfigurationsRequest(msrest.serialization.Model):
+class SAPDiskConfigurationsRequest(_serialization.Model):
     """The SAP request to get list of disk configurations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar app_location: Required. The geo-location where the SAP resources will be created.
+    :ivar app_location: The geo-location where the SAP resources will be created. Required.
     :vartype app_location: str
-    :ivar environment: Required. Defines the environment type - Production/Non Production. Possible
-     values include: "NonProd", "Prod".
+    :ivar environment: Defines the environment type - Production/Non Production. Required. Known
+     values are: "NonProd" and "Prod".
     :vartype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-    :ivar sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-     "S4HANA", "Other".
+    :ivar sap_product: Defines the SAP Product type. Required. Known values are: "ECC", "S4HANA",
+     and "Other".
     :vartype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-    :ivar database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values include:
-     "HANA", "DB2".
+    :ivar database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are: "HANA"
+     and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-    :ivar deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-     values include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known values
+     are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar db_vm_sku: Required. The VM SKU for database instance.
+    :ivar db_vm_sku: The VM SKU for database instance. Required.
     :vartype db_vm_sku: str
     """
 
     _validation = {
-        'app_location': {'required': True},
-        'environment': {'required': True},
-        'sap_product': {'required': True},
-        'database_type': {'required': True},
-        'deployment_type': {'required': True},
-        'db_vm_sku': {'required': True},
+        "app_location": {"required": True},
+        "environment": {"required": True},
+        "sap_product": {"required": True},
+        "database_type": {"required": True},
+        "deployment_type": {"required": True},
+        "db_vm_sku": {"required": True},
     }
 
     _attribute_map = {
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'sap_product': {'key': 'sapProduct', 'type': 'str'},
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'db_vm_sku': {'key': 'dbVmSku', 'type': 'str'},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
+        "sap_product": {"key": "sapProduct", "type": "str"},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "db_vm_sku": {"key": "dbVmSku", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         app_location: str,
-        environment: Union[str, "SAPEnvironmentType"],
-        sap_product: Union[str, "SAPProductType"],
-        database_type: Union[str, "SAPDatabaseType"],
-        deployment_type: Union[str, "SAPDeploymentType"],
+        environment: Union[str, "_models.SAPEnvironmentType"],
+        sap_product: Union[str, "_models.SAPProductType"],
+        database_type: Union[str, "_models.SAPDatabaseType"],
+        deployment_type: Union[str, "_models.SAPDeploymentType"],
         db_vm_sku: str,
         **kwargs
     ):
         """
-        :keyword app_location: Required. The geo-location where the SAP resources will be created.
+        :keyword app_location: The geo-location where the SAP resources will be created. Required.
         :paramtype app_location: str
-        :keyword environment: Required. Defines the environment type - Production/Non Production.
-         Possible values include: "NonProd", "Prod".
+        :keyword environment: Defines the environment type - Production/Non Production. Required. Known
+         values are: "NonProd" and "Prod".
         :paramtype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-        :keyword sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-         "S4HANA", "Other".
+        :keyword sap_product: Defines the SAP Product type. Required. Known values are: "ECC",
+         "S4HANA", and "Other".
         :paramtype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-        :keyword database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values
-         include: "HANA", "DB2".
+        :keyword database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are:
+         "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-        :keyword deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-         values include: "SingleServer", "ThreeTier".
+        :keyword deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known
+         values are: "SingleServer" and "ThreeTier".
         :paramtype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-        :keyword db_vm_sku: Required. The VM SKU for database instance.
+        :keyword db_vm_sku: The VM SKU for database instance. Required.
         :paramtype db_vm_sku: str
         """
-        super(SAPDiskConfigurationsRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.app_location = app_location
         self.environment = environment
         self.sap_product = sap_product
@@ -4353,7 +4330,7 @@ class SAPDiskConfigurationsRequest(msrest.serialization.Model):
         self.db_vm_sku = db_vm_sku
 
 
-class SAPDiskConfigurationsResult(msrest.serialization.Model):
+class SAPDiskConfigurationsResult(_serialization.Model):
     """The list of disk configuration for vmSku which are part of SAP deployment.
 
     :ivar disk_configurations: Gets the list of Disk Configurations.
@@ -4361,57 +4338,16 @@ class SAPDiskConfigurationsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_configurations': {'key': 'diskConfigurations', 'type': '[SAPDiskConfiguration]'},
+        "disk_configurations": {"key": "diskConfigurations", "type": "[SAPDiskConfiguration]"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_configurations: Optional[List["SAPDiskConfiguration"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_configurations: Optional[List["_models.SAPDiskConfiguration"]] = None, **kwargs):
         """
         :keyword disk_configurations: Gets the list of Disk Configurations.
         :paramtype disk_configurations: list[~azure.mgmt.workloads.models.SAPDiskConfiguration]
         """
-        super(SAPDiskConfigurationsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_configurations = disk_configurations
-
-
-class SoftwareConfiguration(msrest.serialization.Model):
-    """The SAP Software configuration Input.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SAPInstallWithoutOSConfigSoftwareConfiguration, ServiceInitiatedSoftwareConfiguration.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar software_installation_type: Required. The SAP software installation Type.Constant filled
-     by server. Possible values include: "ServiceInitiated", "SAPInstallWithoutOSConfig".
-    :vartype software_installation_type: str or
-     ~azure.mgmt.workloads.models.SAPSoftwareInstallationType
-    """
-
-    _validation = {
-        'software_installation_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'software_installation_type': {'key': 'softwareInstallationType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'software_installation_type': {'SAPInstallWithoutOSConfig': 'SAPInstallWithoutOSConfigSoftwareConfiguration', 'ServiceInitiated': 'ServiceInitiatedSoftwareConfiguration'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SoftwareConfiguration, self).__init__(**kwargs)
-        self.software_installation_type = None  # type: Optional[str]
 
 
 class SAPInstallWithoutOSConfigSoftwareConfiguration(SoftwareConfiguration):
@@ -4419,15 +4355,15 @@ class SAPInstallWithoutOSConfigSoftwareConfiguration(SoftwareConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar software_installation_type: Required. The SAP software installation Type.Constant filled
-     by server. Possible values include: "ServiceInitiated", "SAPInstallWithoutOSConfig".
+    :ivar software_installation_type: The SAP software installation Type. Required. Known values
+     are: "ServiceInitiated", "SAPInstallWithoutOSConfig", and "External".
     :vartype software_installation_type: str or
      ~azure.mgmt.workloads.models.SAPSoftwareInstallationType
-    :ivar bom_url: Required. The URL to the SAP Build of Materials(BOM) file.
+    :ivar bom_url: The URL to the SAP Build of Materials(BOM) file. Required.
     :vartype bom_url: str
-    :ivar sap_bits_storage_account_id: Required. The SAP bits storage account id.
+    :ivar sap_bits_storage_account_id: The SAP bits storage account id. Required.
     :vartype sap_bits_storage_account_id: str
-    :ivar software_version: Required. The software version to install.
+    :ivar software_version: The software version to install. Required.
     :vartype software_version: str
     :ivar high_availability_software_configuration: Gets or sets the HA software configuration.
     :vartype high_availability_software_configuration:
@@ -4435,18 +4371,21 @@ class SAPInstallWithoutOSConfigSoftwareConfiguration(SoftwareConfiguration):
     """
 
     _validation = {
-        'software_installation_type': {'required': True},
-        'bom_url': {'required': True},
-        'sap_bits_storage_account_id': {'required': True},
-        'software_version': {'required': True},
+        "software_installation_type": {"required": True},
+        "bom_url": {"required": True},
+        "sap_bits_storage_account_id": {"required": True},
+        "software_version": {"required": True},
     }
 
     _attribute_map = {
-        'software_installation_type': {'key': 'softwareInstallationType', 'type': 'str'},
-        'bom_url': {'key': 'bomUrl', 'type': 'str'},
-        'sap_bits_storage_account_id': {'key': 'sapBitsStorageAccountId', 'type': 'str'},
-        'software_version': {'key': 'softwareVersion', 'type': 'str'},
-        'high_availability_software_configuration': {'key': 'highAvailabilitySoftwareConfiguration', 'type': 'HighAvailabilitySoftwareConfiguration'},
+        "software_installation_type": {"key": "softwareInstallationType", "type": "str"},
+        "bom_url": {"key": "bomUrl", "type": "str"},
+        "sap_bits_storage_account_id": {"key": "sapBitsStorageAccountId", "type": "str"},
+        "software_version": {"key": "softwareVersion", "type": "str"},
+        "high_availability_software_configuration": {
+            "key": "highAvailabilitySoftwareConfiguration",
+            "type": "HighAvailabilitySoftwareConfiguration",
+        },
     }
 
     def __init__(
@@ -4455,35 +4394,36 @@ class SAPInstallWithoutOSConfigSoftwareConfiguration(SoftwareConfiguration):
         bom_url: str,
         sap_bits_storage_account_id: str,
         software_version: str,
-        high_availability_software_configuration: Optional["HighAvailabilitySoftwareConfiguration"] = None,
+        high_availability_software_configuration: Optional["_models.HighAvailabilitySoftwareConfiguration"] = None,
         **kwargs
     ):
         """
-        :keyword bom_url: Required. The URL to the SAP Build of Materials(BOM) file.
+        :keyword bom_url: The URL to the SAP Build of Materials(BOM) file. Required.
         :paramtype bom_url: str
-        :keyword sap_bits_storage_account_id: Required. The SAP bits storage account id.
+        :keyword sap_bits_storage_account_id: The SAP bits storage account id. Required.
         :paramtype sap_bits_storage_account_id: str
-        :keyword software_version: Required. The software version to install.
+        :keyword software_version: The software version to install. Required.
         :paramtype software_version: str
         :keyword high_availability_software_configuration: Gets or sets the HA software configuration.
         :paramtype high_availability_software_configuration:
          ~azure.mgmt.workloads.models.HighAvailabilitySoftwareConfiguration
         """
-        super(SAPInstallWithoutOSConfigSoftwareConfiguration, self).__init__(**kwargs)
-        self.software_installation_type = 'SAPInstallWithoutOSConfig'  # type: str
+        super().__init__(**kwargs)
+        self.software_installation_type: str = "SAPInstallWithoutOSConfig"
         self.bom_url = bom_url
         self.sap_bits_storage_account_id = sap_bits_storage_account_id
         self.software_version = software_version
         self.high_availability_software_configuration = high_availability_software_configuration
 
 
-class SapNetWeaverProviderInstanceProperties(ProviderSpecificProperties):
+class SapNetWeaverProviderInstanceProperties(
+    ProviderSpecificProperties
+):  # pylint: disable=too-many-instance-attributes
     """Gets or sets the provider properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provider_type: Required. The provider type. For example, the value can be
-     SapHana.Constant filled by server.
+    :ivar provider_type: The provider type. For example, the value can be SapHana. Required.
     :vartype provider_type: str
     :ivar sap_sid: Gets or sets the SAP System Identifier.
     :vartype sap_sid: str
@@ -4505,24 +4445,31 @@ class SapNetWeaverProviderInstanceProperties(ProviderSpecificProperties):
     :vartype sap_port_number: str
     :ivar sap_ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SAP system.
     :vartype sap_ssl_certificate_uri: str
+    :ivar ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SAP system.
+    :vartype ssl_certificate_uri: str
+    :ivar ssl_preference: Gets or sets certificate preference if secure communication is enabled.
+     Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+    :vartype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
     """
 
     _validation = {
-        'provider_type': {'required': True},
+        "provider_type": {"required": True},
     }
 
     _attribute_map = {
-        'provider_type': {'key': 'providerType', 'type': 'str'},
-        'sap_sid': {'key': 'sapSid', 'type': 'str'},
-        'sap_hostname': {'key': 'sapHostname', 'type': 'str'},
-        'sap_instance_nr': {'key': 'sapInstanceNr', 'type': 'str'},
-        'sap_host_file_entries': {'key': 'sapHostFileEntries', 'type': '[str]'},
-        'sap_username': {'key': 'sapUsername', 'type': 'str'},
-        'sap_password': {'key': 'sapPassword', 'type': 'str'},
-        'sap_password_uri': {'key': 'sapPasswordUri', 'type': 'str'},
-        'sap_client_id': {'key': 'sapClientId', 'type': 'str'},
-        'sap_port_number': {'key': 'sapPortNumber', 'type': 'str'},
-        'sap_ssl_certificate_uri': {'key': 'sapSslCertificateUri', 'type': 'str'},
+        "provider_type": {"key": "providerType", "type": "str"},
+        "sap_sid": {"key": "sapSid", "type": "str"},
+        "sap_hostname": {"key": "sapHostname", "type": "str"},
+        "sap_instance_nr": {"key": "sapInstanceNr", "type": "str"},
+        "sap_host_file_entries": {"key": "sapHostFileEntries", "type": "[str]"},
+        "sap_username": {"key": "sapUsername", "type": "str"},
+        "sap_password": {"key": "sapPassword", "type": "str"},
+        "sap_password_uri": {"key": "sapPasswordUri", "type": "str"},
+        "sap_client_id": {"key": "sapClientId", "type": "str"},
+        "sap_port_number": {"key": "sapPortNumber", "type": "str"},
+        "sap_ssl_certificate_uri": {"key": "sapSslCertificateUri", "type": "str"},
+        "ssl_certificate_uri": {"key": "sslCertificateUri", "type": "str"},
+        "ssl_preference": {"key": "sslPreference", "type": "str"},
     }
 
     def __init__(
@@ -4538,6 +4485,8 @@ class SapNetWeaverProviderInstanceProperties(ProviderSpecificProperties):
         sap_client_id: Optional[str] = None,
         sap_port_number: Optional[str] = None,
         sap_ssl_certificate_uri: Optional[str] = None,
+        ssl_certificate_uri: Optional[str] = None,
+        ssl_preference: Optional[Union[str, "_models.SslPreference"]] = None,
         **kwargs
     ):
         """
@@ -4562,9 +4511,14 @@ class SapNetWeaverProviderInstanceProperties(ProviderSpecificProperties):
         :keyword sap_ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SAP
          system.
         :paramtype sap_ssl_certificate_uri: str
+        :keyword ssl_certificate_uri: Gets or sets the blob URI to SSL certificate for the SAP system.
+        :paramtype ssl_certificate_uri: str
+        :keyword ssl_preference: Gets or sets certificate preference if secure communication is
+         enabled. Known values are: "Disabled", "RootCertificate", and "ServerCertificate".
+        :paramtype ssl_preference: str or ~azure.mgmt.workloads.models.SslPreference
         """
-        super(SapNetWeaverProviderInstanceProperties, self).__init__(**kwargs)
-        self.provider_type = 'SapNetWeaver'  # type: str
+        super().__init__(**kwargs)
+        self.provider_type: str = "SapNetWeaver"
         self.sap_sid = sap_sid
         self.sap_hostname = sap_hostname
         self.sap_instance_nr = sap_instance_nr
@@ -4575,98 +4529,100 @@ class SapNetWeaverProviderInstanceProperties(ProviderSpecificProperties):
         self.sap_client_id = sap_client_id
         self.sap_port_number = sap_port_number
         self.sap_ssl_certificate_uri = sap_ssl_certificate_uri
+        self.ssl_certificate_uri = ssl_certificate_uri
+        self.ssl_preference = ssl_preference
 
 
-class SAPSizingRecommendationRequest(msrest.serialization.Model):
+class SAPSizingRecommendationRequest(_serialization.Model):
     """The SAP Sizing Recommendation request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar app_location: Required. The geo-location where the resource is to be created.
+    :ivar app_location: The geo-location where the resource is to be created. Required.
     :vartype app_location: str
-    :ivar environment: Required. Defines the environment type - Production/Non Production. Possible
-     values include: "NonProd", "Prod".
+    :ivar environment: Defines the environment type - Production/Non Production. Required. Known
+     values are: "NonProd" and "Prod".
     :vartype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-    :ivar sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-     "S4HANA", "Other".
+    :ivar sap_product: Defines the SAP Product type. Required. Known values are: "ECC", "S4HANA",
+     and "Other".
     :vartype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-    :ivar deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-     values include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known values
+     are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar saps: Required. The SAP Application Performance Standard measurement.
-    :vartype saps: long
-    :ivar db_memory: Required. The database memory configuration.
-    :vartype db_memory: long
-    :ivar database_type: Required. The database type. Possible values include: "HANA", "DB2".
+    :ivar saps: The SAP Application Performance Standard measurement. Required.
+    :vartype saps: int
+    :ivar db_memory: The database memory configuration. Required.
+    :vartype db_memory: int
+    :ivar database_type: The database type. Required. Known values are: "HANA" and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-    :ivar db_scale_method: The DB scale method. Possible values include: "ScaleUp".
+    :ivar db_scale_method: The DB scale method. "ScaleUp"
     :vartype db_scale_method: str or ~azure.mgmt.workloads.models.SAPDatabaseScaleMethod
-    :ivar high_availability_type: The high availability type. Possible values include:
-     "AvailabilitySet", "AvailabilityZone".
+    :ivar high_availability_type: The high availability type. Known values are: "AvailabilitySet"
+     and "AvailabilityZone".
     :vartype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
     """
 
     _validation = {
-        'app_location': {'required': True},
-        'environment': {'required': True},
-        'sap_product': {'required': True},
-        'deployment_type': {'required': True},
-        'saps': {'required': True},
-        'db_memory': {'required': True},
-        'database_type': {'required': True},
+        "app_location": {"required": True},
+        "environment": {"required": True},
+        "sap_product": {"required": True},
+        "deployment_type": {"required": True},
+        "saps": {"required": True},
+        "db_memory": {"required": True},
+        "database_type": {"required": True},
     }
 
     _attribute_map = {
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'sap_product': {'key': 'sapProduct', 'type': 'str'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'saps': {'key': 'saps', 'type': 'long'},
-        'db_memory': {'key': 'dbMemory', 'type': 'long'},
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'db_scale_method': {'key': 'dbScaleMethod', 'type': 'str'},
-        'high_availability_type': {'key': 'highAvailabilityType', 'type': 'str'},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
+        "sap_product": {"key": "sapProduct", "type": "str"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "saps": {"key": "saps", "type": "int"},
+        "db_memory": {"key": "dbMemory", "type": "int"},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "db_scale_method": {"key": "dbScaleMethod", "type": "str"},
+        "high_availability_type": {"key": "highAvailabilityType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         app_location: str,
-        environment: Union[str, "SAPEnvironmentType"],
-        sap_product: Union[str, "SAPProductType"],
-        deployment_type: Union[str, "SAPDeploymentType"],
+        environment: Union[str, "_models.SAPEnvironmentType"],
+        sap_product: Union[str, "_models.SAPProductType"],
+        deployment_type: Union[str, "_models.SAPDeploymentType"],
         saps: int,
         db_memory: int,
-        database_type: Union[str, "SAPDatabaseType"],
-        db_scale_method: Optional[Union[str, "SAPDatabaseScaleMethod"]] = None,
-        high_availability_type: Optional[Union[str, "SAPHighAvailabilityType"]] = None,
+        database_type: Union[str, "_models.SAPDatabaseType"],
+        db_scale_method: Optional[Union[str, "_models.SAPDatabaseScaleMethod"]] = None,
+        high_availability_type: Optional[Union[str, "_models.SAPHighAvailabilityType"]] = None,
         **kwargs
     ):
         """
-        :keyword app_location: Required. The geo-location where the resource is to be created.
+        :keyword app_location: The geo-location where the resource is to be created. Required.
         :paramtype app_location: str
-        :keyword environment: Required. Defines the environment type - Production/Non Production.
-         Possible values include: "NonProd", "Prod".
+        :keyword environment: Defines the environment type - Production/Non Production. Required. Known
+         values are: "NonProd" and "Prod".
         :paramtype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-        :keyword sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-         "S4HANA", "Other".
+        :keyword sap_product: Defines the SAP Product type. Required. Known values are: "ECC",
+         "S4HANA", and "Other".
         :paramtype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-        :keyword deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-         values include: "SingleServer", "ThreeTier".
+        :keyword deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known
+         values are: "SingleServer" and "ThreeTier".
         :paramtype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-        :keyword saps: Required. The SAP Application Performance Standard measurement.
-        :paramtype saps: long
-        :keyword db_memory: Required. The database memory configuration.
-        :paramtype db_memory: long
-        :keyword database_type: Required. The database type. Possible values include: "HANA", "DB2".
+        :keyword saps: The SAP Application Performance Standard measurement. Required.
+        :paramtype saps: int
+        :keyword db_memory: The database memory configuration. Required.
+        :paramtype db_memory: int
+        :keyword database_type: The database type. Required. Known values are: "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-        :keyword db_scale_method: The DB scale method. Possible values include: "ScaleUp".
+        :keyword db_scale_method: The DB scale method. "ScaleUp"
         :paramtype db_scale_method: str or ~azure.mgmt.workloads.models.SAPDatabaseScaleMethod
-        :keyword high_availability_type: The high availability type. Possible values include:
-         "AvailabilitySet", "AvailabilityZone".
+        :keyword high_availability_type: The high availability type. Known values are:
+         "AvailabilitySet" and "AvailabilityZone".
         :paramtype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
         """
-        super(SAPSizingRecommendationRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.app_location = app_location
         self.environment = environment
         self.sap_product = sap_product
@@ -4678,42 +4634,41 @@ class SAPSizingRecommendationRequest(msrest.serialization.Model):
         self.high_availability_type = high_availability_type
 
 
-class SAPSizingRecommendationResult(msrest.serialization.Model):
+class SAPSizingRecommendationResult(_serialization.Model):
     """The SAP sizing recommendation result.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SingleServerRecommendationResult, ThreeTierRecommendationResult.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SingleServerRecommendationResult, ThreeTierRecommendationResult
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
     """
 
     _validation = {
-        'deployment_type': {'required': True},
+        "deployment_type": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
     }
 
     _subtype_map = {
-        'deployment_type': {'SingleServer': 'SingleServerRecommendationResult', 'ThreeTier': 'ThreeTierRecommendationResult'}
+        "deployment_type": {
+            "SingleServer": "SingleServerRecommendationResult",
+            "ThreeTier": "ThreeTierRecommendationResult",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SAPSizingRecommendationResult, self).__init__(**kwargs)
-        self.deployment_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.deployment_type: Optional[str] = None
 
 
-class SAPSupportedResourceSkusResult(msrest.serialization.Model):
+class SAPSupportedResourceSkusResult(_serialization.Model):
     """The list of supported SKUs for different resources which are part of SAP deployment.
 
     :ivar supported_skus: Gets the list of SAP supported SKUs.
@@ -4721,24 +4676,19 @@ class SAPSupportedResourceSkusResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'supported_skus': {'key': 'supportedSkus', 'type': '[SAPSupportedSku]'},
+        "supported_skus": {"key": "supportedSkus", "type": "[SAPSupportedSku]"},
     }
 
-    def __init__(
-        self,
-        *,
-        supported_skus: Optional[List["SAPSupportedSku"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, supported_skus: Optional[List["_models.SAPSupportedSku"]] = None, **kwargs):
         """
         :keyword supported_skus: Gets the list of SAP supported SKUs.
         :paramtype supported_skus: list[~azure.mgmt.workloads.models.SAPSupportedSku]
         """
-        super(SAPSupportedResourceSkusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.supported_skus = supported_skus
 
 
-class SAPSupportedSku(msrest.serialization.Model):
+class SAPSupportedSku(_serialization.Model):
     """The SAP supported SKU.
 
     :ivar vm_sku: The VM Sku.
@@ -4751,9 +4701,9 @@ class SAPSupportedSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'vm_sku': {'key': 'vmSku', 'type': 'str'},
-        'is_app_server_certified': {'key': 'isAppServerCertified', 'type': 'bool'},
-        'is_database_certified': {'key': 'isDatabaseCertified', 'type': 'bool'},
+        "vm_sku": {"key": "vmSku", "type": "str"},
+        "is_app_server_certified": {"key": "isAppServerCertified", "type": "bool"},
+        "is_database_certified": {"key": "isDatabaseCertified", "type": "bool"},
     }
 
     def __init__(
@@ -4774,84 +4724,84 @@ class SAPSupportedSku(msrest.serialization.Model):
          system.
         :paramtype is_database_certified: bool
         """
-        super(SAPSupportedSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_sku = vm_sku
         self.is_app_server_certified = is_app_server_certified
         self.is_database_certified = is_database_certified
 
 
-class SAPSupportedSkusRequest(msrest.serialization.Model):
+class SAPSupportedSkusRequest(_serialization.Model):
     """The SAP request to get list of supported SKUs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar app_location: Required. The geo-location where the resource is to be created.
+    :ivar app_location: The geo-location where the resource is to be created. Required.
     :vartype app_location: str
-    :ivar environment: Required. Defines the environment type - Production/Non Production. Possible
-     values include: "NonProd", "Prod".
+    :ivar environment: Defines the environment type - Production/Non Production. Required. Known
+     values are: "NonProd" and "Prod".
     :vartype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-    :ivar sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-     "S4HANA", "Other".
+    :ivar sap_product: Defines the SAP Product type. Required. Known values are: "ECC", "S4HANA",
+     and "Other".
     :vartype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-    :ivar deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-     values include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known values
+     are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values include:
-     "HANA", "DB2".
+    :ivar database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are: "HANA"
+     and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-    :ivar high_availability_type: The high availability type. Possible values include:
-     "AvailabilitySet", "AvailabilityZone".
+    :ivar high_availability_type: The high availability type. Known values are: "AvailabilitySet"
+     and "AvailabilityZone".
     :vartype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
     """
 
     _validation = {
-        'app_location': {'required': True},
-        'environment': {'required': True},
-        'sap_product': {'required': True},
-        'deployment_type': {'required': True},
-        'database_type': {'required': True},
+        "app_location": {"required": True},
+        "environment": {"required": True},
+        "sap_product": {"required": True},
+        "deployment_type": {"required": True},
+        "database_type": {"required": True},
     }
 
     _attribute_map = {
-        'app_location': {'key': 'appLocation', 'type': 'str'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'sap_product': {'key': 'sapProduct', 'type': 'str'},
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'high_availability_type': {'key': 'highAvailabilityType', 'type': 'str'},
+        "app_location": {"key": "appLocation", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
+        "sap_product": {"key": "sapProduct", "type": "str"},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "high_availability_type": {"key": "highAvailabilityType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         app_location: str,
-        environment: Union[str, "SAPEnvironmentType"],
-        sap_product: Union[str, "SAPProductType"],
-        deployment_type: Union[str, "SAPDeploymentType"],
-        database_type: Union[str, "SAPDatabaseType"],
-        high_availability_type: Optional[Union[str, "SAPHighAvailabilityType"]] = None,
+        environment: Union[str, "_models.SAPEnvironmentType"],
+        sap_product: Union[str, "_models.SAPProductType"],
+        deployment_type: Union[str, "_models.SAPDeploymentType"],
+        database_type: Union[str, "_models.SAPDatabaseType"],
+        high_availability_type: Optional[Union[str, "_models.SAPHighAvailabilityType"]] = None,
         **kwargs
     ):
         """
-        :keyword app_location: Required. The geo-location where the resource is to be created.
+        :keyword app_location: The geo-location where the resource is to be created. Required.
         :paramtype app_location: str
-        :keyword environment: Required. Defines the environment type - Production/Non Production.
-         Possible values include: "NonProd", "Prod".
+        :keyword environment: Defines the environment type - Production/Non Production. Required. Known
+         values are: "NonProd" and "Prod".
         :paramtype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-        :keyword sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-         "S4HANA", "Other".
+        :keyword sap_product: Defines the SAP Product type. Required. Known values are: "ECC",
+         "S4HANA", and "Other".
         :paramtype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-        :keyword deployment_type: Required. The deployment type. Eg: SingleServer/ThreeTier. Possible
-         values include: "SingleServer", "ThreeTier".
+        :keyword deployment_type: The deployment type. Eg: SingleServer/ThreeTier. Required. Known
+         values are: "SingleServer" and "ThreeTier".
         :paramtype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-        :keyword database_type: Required. The database type. Eg: HANA, DB2, etc. Possible values
-         include: "HANA", "DB2".
+        :keyword database_type: The database type. Eg: HANA, DB2, etc. Required. Known values are:
+         "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-        :keyword high_availability_type: The high availability type. Possible values include:
-         "AvailabilitySet", "AvailabilityZone".
+        :keyword high_availability_type: The high availability type. Known values are:
+         "AvailabilitySet" and "AvailabilityZone".
         :paramtype high_availability_type: str or ~azure.mgmt.workloads.models.SAPHighAvailabilityType
         """
-        super(SAPSupportedSkusRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.app_location = app_location
         self.environment = environment
         self.sap_product = sap_product
@@ -4860,8 +4810,8 @@ class SAPSupportedSkusRequest(msrest.serialization.Model):
         self.high_availability_type = high_availability_type
 
 
-class SAPVirtualInstance(TrackedResource):
-    """Define the Virtual Instance for SAP.
+class SAPVirtualInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """Define the Virtual Instance for SAP solutions resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4878,112 +4828,116 @@ class SAPVirtualInstance(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: Managed service identity (user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
-    :ivar environment: Required. Defines the environment type - Production/Non Production. Possible
-     values include: "NonProd", "Prod".
+    :ivar environment: Defines the environment type - Production/Non Production. Required. Known
+     values are: "NonProd" and "Prod".
     :vartype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-    :ivar sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-     "S4HANA", "Other".
+    :ivar sap_product: Defines the SAP Product type. Required. Known values are: "ECC", "S4HANA",
+     and "Other".
     :vartype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-    :ivar configuration: Required. Defines if an existing SAP system is being registered or a new
-     SAP system is being created.
+    :ivar configuration: Defines if the SAP system is being created using Azure Center for SAP
+     solutions (ACSS) or if an existing SAP system is being registered with ACSS. Required.
     :vartype configuration: ~azure.mgmt.workloads.models.SAPConfiguration
     :ivar managed_resource_group_configuration: Managed resource group configuration.
     :vartype managed_resource_group_configuration:
      ~azure.mgmt.workloads.models.ManagedRGConfiguration
-    :ivar status: Defines the SAP Instance status. Possible values include: "Starting", "Running",
-     "Stopping", "Offline", "PartiallyRunning", "Unavailable".
+    :ivar status: Defines the SAP Instance status. Known values are: "Starting", "Running",
+     "Stopping", "Offline", "PartiallyRunning", and "Unavailable".
     :vartype status: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceStatus
-    :ivar health: Defines the SAP Instance health. Possible values include: "Unknown", "Healthy",
-     "Unhealthy", "Degraded".
+    :ivar health: Defines the health of SAP Instances. Known values are: "Unknown", "Healthy",
+     "Unhealthy", and "Degraded".
     :vartype health: str or ~azure.mgmt.workloads.models.SAPHealthState
-    :ivar state: Defines the Virtual Instance for SAP state. Possible values include:
+    :ivar state: Defines the Virtual Instance for SAP state. Known values are:
      "InfrastructureDeploymentPending", "InfrastructureDeploymentInProgress",
      "InfrastructureDeploymentFailed", "SoftwareInstallationPending",
-     "SoftwareInstallationInProgress", "SoftwareInstallationFailed", "DiscoveryPending",
-     "DiscoveryInProgress", "DiscoveryFailed", "RegistrationComplete".
+     "SoftwareInstallationInProgress", "SoftwareInstallationFailed", "SoftwareDetectionInProgress",
+     "SoftwareDetectionFailed", "DiscoveryPending", "DiscoveryInProgress", "DiscoveryFailed", and
+     "RegistrationComplete".
     :vartype state: str or ~azure.mgmt.workloads.models.SAPVirtualInstanceState
-    :ivar provisioning_state: Defines the provisioning states. Possible values include:
-     "Succeeded", "Updating", "Creating", "Failed", "Deleting".
+    :ivar provisioning_state: Defines the provisioning states. Known values are: "Succeeded",
+     "Updating", "Creating", "Failed", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.workloads.models.SapVirtualInstanceProvisioningState
-    :ivar errors: Defines the Virtual Instance for SAP errors.
+    :ivar errors: Indicates any errors on the Virtual Instance for SAP solutions resource.
     :vartype errors: ~azure.mgmt.workloads.models.SAPVirtualInstanceError
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'environment': {'required': True},
-        'sap_product': {'required': True},
-        'configuration': {'required': True},
-        'status': {'readonly': True},
-        'health': {'readonly': True},
-        'state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "environment": {"required": True},
+        "sap_product": {"required": True},
+        "configuration": {"required": True},
+        "status": {"readonly": True},
+        "health": {"readonly": True},
+        "state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedServiceIdentity'},
-        'environment': {'key': 'properties.environment', 'type': 'str'},
-        'sap_product': {'key': 'properties.sapProduct', 'type': 'str'},
-        'configuration': {'key': 'properties.configuration', 'type': 'SAPConfiguration'},
-        'managed_resource_group_configuration': {'key': 'properties.managedResourceGroupConfiguration', 'type': 'ManagedRGConfiguration'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'health': {'key': 'properties.health', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'errors': {'key': 'properties.errors', 'type': 'SAPVirtualInstanceError'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "UserAssignedServiceIdentity"},
+        "environment": {"key": "properties.environment", "type": "str"},
+        "sap_product": {"key": "properties.sapProduct", "type": "str"},
+        "configuration": {"key": "properties.configuration", "type": "SAPConfiguration"},
+        "managed_resource_group_configuration": {
+            "key": "properties.managedResourceGroupConfiguration",
+            "type": "ManagedRGConfiguration",
+        },
+        "status": {"key": "properties.status", "type": "str"},
+        "health": {"key": "properties.health", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "errors": {"key": "properties.errors", "type": "SAPVirtualInstanceError"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        environment: Union[str, "SAPEnvironmentType"],
-        sap_product: Union[str, "SAPProductType"],
-        configuration: "SAPConfiguration",
+        environment: Union[str, "_models.SAPEnvironmentType"],
+        sap_product: Union[str, "_models.SAPProductType"],
+        configuration: "_models.SAPConfiguration",
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserAssignedServiceIdentity"] = None,
-        managed_resource_group_configuration: Optional["ManagedRGConfiguration"] = None,
+        identity: Optional["_models.UserAssignedServiceIdentity"] = None,
+        managed_resource_group_configuration: Optional["_models.ManagedRGConfiguration"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: Managed service identity (user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
-        :keyword environment: Required. Defines the environment type - Production/Non Production.
-         Possible values include: "NonProd", "Prod".
+        :keyword environment: Defines the environment type - Production/Non Production. Required. Known
+         values are: "NonProd" and "Prod".
         :paramtype environment: str or ~azure.mgmt.workloads.models.SAPEnvironmentType
-        :keyword sap_product: Required. Defines the SAP Product type. Possible values include: "ECC",
-         "S4HANA", "Other".
+        :keyword sap_product: Defines the SAP Product type. Required. Known values are: "ECC",
+         "S4HANA", and "Other".
         :paramtype sap_product: str or ~azure.mgmt.workloads.models.SAPProductType
-        :keyword configuration: Required. Defines if an existing SAP system is being registered or a
-         new SAP system is being created.
+        :keyword configuration: Defines if the SAP system is being created using Azure Center for SAP
+         solutions (ACSS) or if an existing SAP system is being registered with ACSS. Required.
         :paramtype configuration: ~azure.mgmt.workloads.models.SAPConfiguration
         :keyword managed_resource_group_configuration: Managed resource group configuration.
         :paramtype managed_resource_group_configuration:
          ~azure.mgmt.workloads.models.ManagedRGConfiguration
         """
-        super(SAPVirtualInstance, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.environment = environment
         self.sap_product = sap_product
@@ -4996,7 +4950,7 @@ class SAPVirtualInstance(TrackedResource):
         self.errors = None
 
 
-class SAPVirtualInstanceError(msrest.serialization.Model):
+class SAPVirtualInstanceError(_serialization.Model):
     """An error response from the Virtual Instance for SAP Workload service.
 
     :ivar properties: The Virtual Instance for SAP error body.
@@ -5004,51 +4958,42 @@ class SAPVirtualInstanceError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'ErrorDefinition'},
+        "properties": {"key": "properties", "type": "ErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ErrorDefinition"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.ErrorDefinition"] = None, **kwargs):
         """
         :keyword properties: The Virtual Instance for SAP error body.
         :paramtype properties: ~azure.mgmt.workloads.models.ErrorDefinition
         """
-        super(SAPVirtualInstanceError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class SAPVirtualInstanceList(msrest.serialization.Model):
-    """Defines the collection of Virtual Instance for SAP.
+class SAPVirtualInstanceList(_serialization.Model):
+    """Defines the collection of Virtual Instance for SAP solutions resources.
 
-    :ivar value: Gets the list of Virtual Instances for SAP.
+    :ivar value: Gets the list of Virtual Instances for SAP solutions resources.
     :vartype value: list[~azure.mgmt.workloads.models.SAPVirtualInstance]
     :ivar next_link: Gets the value of next link.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SAPVirtualInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SAPVirtualInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SAPVirtualInstance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SAPVirtualInstance"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
-        :keyword value: Gets the list of Virtual Instances for SAP.
+        :keyword value: Gets the list of Virtual Instances for SAP solutions resources.
         :paramtype value: list[~azure.mgmt.workloads.models.SAPVirtualInstance]
         :keyword next_link: Gets the value of next link.
         :paramtype next_link: str
         """
-        super(SAPVirtualInstanceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -5062,64 +5007,66 @@ class SearchProfile(NodeProfile):
 
     :ivar name: VM or VMSS name.
     :vartype name: str
-    :ivar node_sku: Required. VM SKU for node(s).
+    :ivar node_sku: VM SKU for node(s). Required.
     :vartype node_sku: str
-    :ivar os_image: Required. OS image used for creating the nodes.
+    :ivar os_image: OS image used for creating the nodes. Required.
     :vartype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-    :ivar os_disk: Required. OS disk details.
+    :ivar os_disk: OS disk details. Required.
     :vartype os_disk: ~azure.mgmt.workloads.models.DiskInfo
     :ivar data_disks: Data disks details. This property is not in use right now.
     :vartype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
     :ivar node_resource_ids: VM/VMSS resource ARM Ids.
     :vartype node_resource_ids: list[str]
-    :ivar search_type: Required. Search type. Possible values include: "Elastic".
+    :ivar search_type: Search type. Required. "Elastic"
     :vartype search_type: str or ~azure.mgmt.workloads.models.SearchType
     """
 
     _validation = {
-        'node_sku': {'required': True},
-        'os_image': {'required': True},
-        'os_disk': {'required': True},
-        'node_resource_ids': {'readonly': True},
-        'search_type': {'required': True},
+        "node_sku": {"required": True},
+        "os_image": {"required": True},
+        "os_disk": {"required": True},
+        "node_resource_ids": {"readonly": True},
+        "search_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'node_sku': {'key': 'nodeSku', 'type': 'str'},
-        'os_image': {'key': 'osImage', 'type': 'OsImageProfile'},
-        'os_disk': {'key': 'osDisk', 'type': 'DiskInfo'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DiskInfo]'},
-        'node_resource_ids': {'key': 'nodeResourceIds', 'type': '[str]'},
-        'search_type': {'key': 'searchType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "node_sku": {"key": "nodeSku", "type": "str"},
+        "os_image": {"key": "osImage", "type": "OsImageProfile"},
+        "os_disk": {"key": "osDisk", "type": "DiskInfo"},
+        "data_disks": {"key": "dataDisks", "type": "[DiskInfo]"},
+        "node_resource_ids": {"key": "nodeResourceIds", "type": "[str]"},
+        "search_type": {"key": "searchType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         node_sku: str,
-        os_image: "OsImageProfile",
-        os_disk: "DiskInfo",
-        search_type: Union[str, "SearchType"],
+        os_image: "_models.OsImageProfile",
+        os_disk: "_models.DiskInfo",
+        search_type: Union[str, "_models.SearchType"],
         name: Optional[str] = None,
-        data_disks: Optional[List["DiskInfo"]] = None,
+        data_disks: Optional[List["_models.DiskInfo"]] = None,
         **kwargs
     ):
         """
         :keyword name: VM or VMSS name.
         :paramtype name: str
-        :keyword node_sku: Required. VM SKU for node(s).
+        :keyword node_sku: VM SKU for node(s). Required.
         :paramtype node_sku: str
-        :keyword os_image: Required. OS image used for creating the nodes.
+        :keyword os_image: OS image used for creating the nodes. Required.
         :paramtype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-        :keyword os_disk: Required. OS disk details.
+        :keyword os_disk: OS disk details. Required.
         :paramtype os_disk: ~azure.mgmt.workloads.models.DiskInfo
         :keyword data_disks: Data disks details. This property is not in use right now.
         :paramtype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
-        :keyword search_type: Required. Search type. Possible values include: "Elastic".
+        :keyword search_type: Search type. Required. "Elastic"
         :paramtype search_type: str or ~azure.mgmt.workloads.models.SearchType
         """
-        super(SearchProfile, self).__init__(name=name, node_sku=node_sku, os_image=os_image, os_disk=os_disk, data_disks=data_disks, **kwargs)
+        super().__init__(
+            name=name, node_sku=node_sku, os_image=os_image, os_disk=os_disk, data_disks=data_disks, **kwargs
+        )
         self.search_type = search_type
 
 
@@ -5128,19 +5075,19 @@ class ServiceInitiatedSoftwareConfiguration(SoftwareConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar software_installation_type: Required. The SAP software installation Type.Constant filled
-     by server. Possible values include: "ServiceInitiated", "SAPInstallWithoutOSConfig".
+    :ivar software_installation_type: The SAP software installation Type. Required. Known values
+     are: "ServiceInitiated", "SAPInstallWithoutOSConfig", and "External".
     :vartype software_installation_type: str or
      ~azure.mgmt.workloads.models.SAPSoftwareInstallationType
-    :ivar bom_url: Required. The URL to the SAP Build of Materials(BOM) file.
+    :ivar bom_url: The URL to the SAP Build of Materials(BOM) file. Required.
     :vartype bom_url: str
-    :ivar software_version: Required. The software version to install.
+    :ivar software_version: The software version to install. Required.
     :vartype software_version: str
-    :ivar sap_bits_storage_account_id: Required. The SAP bits storage account id.
+    :ivar sap_bits_storage_account_id: The SAP bits storage account id. Required.
     :vartype sap_bits_storage_account_id: str
-    :ivar sap_fqdn: Required. The FQDN to set for the SAP system during install.
+    :ivar sap_fqdn: The FQDN to set for the SAP system during install. Required.
     :vartype sap_fqdn: str
-    :ivar ssh_private_key: Required. The SSH private key.
+    :ivar ssh_private_key: The SSH private key. Required.
     :vartype ssh_private_key: str
     :ivar high_availability_software_configuration: Gets or sets the HA software configuration.
     :vartype high_availability_software_configuration:
@@ -5148,22 +5095,25 @@ class ServiceInitiatedSoftwareConfiguration(SoftwareConfiguration):
     """
 
     _validation = {
-        'software_installation_type': {'required': True},
-        'bom_url': {'required': True},
-        'software_version': {'required': True},
-        'sap_bits_storage_account_id': {'required': True},
-        'sap_fqdn': {'required': True},
-        'ssh_private_key': {'required': True},
+        "software_installation_type": {"required": True},
+        "bom_url": {"required": True},
+        "software_version": {"required": True},
+        "sap_bits_storage_account_id": {"required": True},
+        "sap_fqdn": {"required": True},
+        "ssh_private_key": {"required": True},
     }
 
     _attribute_map = {
-        'software_installation_type': {'key': 'softwareInstallationType', 'type': 'str'},
-        'bom_url': {'key': 'bomUrl', 'type': 'str'},
-        'software_version': {'key': 'softwareVersion', 'type': 'str'},
-        'sap_bits_storage_account_id': {'key': 'sapBitsStorageAccountId', 'type': 'str'},
-        'sap_fqdn': {'key': 'sapFqdn', 'type': 'str'},
-        'ssh_private_key': {'key': 'sshPrivateKey', 'type': 'str'},
-        'high_availability_software_configuration': {'key': 'highAvailabilitySoftwareConfiguration', 'type': 'HighAvailabilitySoftwareConfiguration'},
+        "software_installation_type": {"key": "softwareInstallationType", "type": "str"},
+        "bom_url": {"key": "bomUrl", "type": "str"},
+        "software_version": {"key": "softwareVersion", "type": "str"},
+        "sap_bits_storage_account_id": {"key": "sapBitsStorageAccountId", "type": "str"},
+        "sap_fqdn": {"key": "sapFqdn", "type": "str"},
+        "ssh_private_key": {"key": "sshPrivateKey", "type": "str"},
+        "high_availability_software_configuration": {
+            "key": "highAvailabilitySoftwareConfiguration",
+            "type": "HighAvailabilitySoftwareConfiguration",
+        },
     }
 
     def __init__(
@@ -5174,26 +5124,26 @@ class ServiceInitiatedSoftwareConfiguration(SoftwareConfiguration):
         sap_bits_storage_account_id: str,
         sap_fqdn: str,
         ssh_private_key: str,
-        high_availability_software_configuration: Optional["HighAvailabilitySoftwareConfiguration"] = None,
+        high_availability_software_configuration: Optional["_models.HighAvailabilitySoftwareConfiguration"] = None,
         **kwargs
     ):
         """
-        :keyword bom_url: Required. The URL to the SAP Build of Materials(BOM) file.
+        :keyword bom_url: The URL to the SAP Build of Materials(BOM) file. Required.
         :paramtype bom_url: str
-        :keyword software_version: Required. The software version to install.
+        :keyword software_version: The software version to install. Required.
         :paramtype software_version: str
-        :keyword sap_bits_storage_account_id: Required. The SAP bits storage account id.
+        :keyword sap_bits_storage_account_id: The SAP bits storage account id. Required.
         :paramtype sap_bits_storage_account_id: str
-        :keyword sap_fqdn: Required. The FQDN to set for the SAP system during install.
+        :keyword sap_fqdn: The FQDN to set for the SAP system during install. Required.
         :paramtype sap_fqdn: str
-        :keyword ssh_private_key: Required. The SSH private key.
+        :keyword ssh_private_key: The SSH private key. Required.
         :paramtype ssh_private_key: str
         :keyword high_availability_software_configuration: Gets or sets the HA software configuration.
         :paramtype high_availability_software_configuration:
          ~azure.mgmt.workloads.models.HighAvailabilitySoftwareConfiguration
         """
-        super(ServiceInitiatedSoftwareConfiguration, self).__init__(**kwargs)
-        self.software_installation_type = 'ServiceInitiated'  # type: str
+        super().__init__(**kwargs)
+        self.software_installation_type: str = "ServiceInitiated"
         self.bom_url = bom_url
         self.software_version = software_version
         self.sap_bits_storage_account_id = sap_bits_storage_account_id
@@ -5207,37 +5157,37 @@ class SingleServerConfiguration(InfrastructureConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar app_resource_group: Required. The application resource group where SAP system resources
-     will be deployed.
+    :ivar app_resource_group: The application resource group where SAP system resources will be
+     deployed. Required.
     :vartype app_resource_group: str
     :ivar network_configuration: Network configuration for the server.
     :vartype network_configuration: ~azure.mgmt.workloads.models.NetworkConfiguration
-    :ivar database_type: The database type. Possible values include: "HANA", "DB2".
+    :ivar database_type: The database type. Known values are: "HANA" and "DB2".
     :vartype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-    :ivar subnet_id: Required. The subnet id.
+    :ivar subnet_id: The subnet id. Required.
     :vartype subnet_id: str
-    :ivar virtual_machine_configuration: Required. Gets or sets the virtual machine configuration.
+    :ivar virtual_machine_configuration: Gets or sets the virtual machine configuration. Required.
     :vartype virtual_machine_configuration:
      ~azure.mgmt.workloads.models.VirtualMachineConfiguration
     """
 
     _validation = {
-        'deployment_type': {'required': True},
-        'app_resource_group': {'required': True},
-        'subnet_id': {'required': True},
-        'virtual_machine_configuration': {'required': True},
+        "deployment_type": {"required": True},
+        "app_resource_group": {"required": True},
+        "subnet_id": {"required": True},
+        "virtual_machine_configuration": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'app_resource_group': {'key': 'appResourceGroup', 'type': 'str'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
-        'database_type': {'key': 'databaseType', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "app_resource_group": {"key": "appResourceGroup", "type": "str"},
+        "network_configuration": {"key": "networkConfiguration", "type": "NetworkConfiguration"},
+        "database_type": {"key": "databaseType", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
     }
 
     def __init__(
@@ -5245,28 +5195,28 @@ class SingleServerConfiguration(InfrastructureConfiguration):
         *,
         app_resource_group: str,
         subnet_id: str,
-        virtual_machine_configuration: "VirtualMachineConfiguration",
-        network_configuration: Optional["NetworkConfiguration"] = None,
-        database_type: Optional[Union[str, "SAPDatabaseType"]] = None,
+        virtual_machine_configuration: "_models.VirtualMachineConfiguration",
+        network_configuration: Optional["_models.NetworkConfiguration"] = None,
+        database_type: Optional[Union[str, "_models.SAPDatabaseType"]] = None,
         **kwargs
     ):
         """
-        :keyword app_resource_group: Required. The application resource group where SAP system
-         resources will be deployed.
+        :keyword app_resource_group: The application resource group where SAP system resources will be
+         deployed. Required.
         :paramtype app_resource_group: str
         :keyword network_configuration: Network configuration for the server.
         :paramtype network_configuration: ~azure.mgmt.workloads.models.NetworkConfiguration
-        :keyword database_type: The database type. Possible values include: "HANA", "DB2".
+        :keyword database_type: The database type. Known values are: "HANA" and "DB2".
         :paramtype database_type: str or ~azure.mgmt.workloads.models.SAPDatabaseType
-        :keyword subnet_id: Required. The subnet id.
+        :keyword subnet_id: The subnet id. Required.
         :paramtype subnet_id: str
-        :keyword virtual_machine_configuration: Required. Gets or sets the virtual machine
-         configuration.
+        :keyword virtual_machine_configuration: Gets or sets the virtual machine configuration.
+         Required.
         :paramtype virtual_machine_configuration:
          ~azure.mgmt.workloads.models.VirtualMachineConfiguration
         """
-        super(SingleServerConfiguration, self).__init__(app_resource_group=app_resource_group, **kwargs)
-        self.deployment_type = 'SingleServer'  # type: str
+        super().__init__(app_resource_group=app_resource_group, **kwargs)
+        self.deployment_type: str = "SingleServer"
         self.network_configuration = network_configuration
         self.database_type = database_type
         self.subnet_id = subnet_id
@@ -5278,38 +5228,33 @@ class SingleServerRecommendationResult(SAPSizingRecommendationResult):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
     :ivar vm_sku: The recommended VM SKU for single server.
     :vartype vm_sku: str
     """
 
     _validation = {
-        'deployment_type': {'required': True},
+        "deployment_type": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'vm_sku': {'key': 'vmSku', 'type': 'str'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "vm_sku": {"key": "vmSku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_sku: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, vm_sku: Optional[str] = None, **kwargs):
         """
         :keyword vm_sku: The recommended VM SKU for single server.
         :paramtype vm_sku: str
         """
-        super(SingleServerRecommendationResult, self).__init__(**kwargs)
-        self.deployment_type = 'SingleServer'  # type: str
+        super().__init__(**kwargs)
+        self.deployment_type: str = "SingleServer"
         self.vm_sku = vm_sku
 
 
-class SiteProfile(msrest.serialization.Model):
+class SiteProfile(_serialization.Model):
     """Workload website profile.
 
     :ivar domain_name: Domain name for the application site URL.
@@ -5317,33 +5262,28 @@ class SiteProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'domain_name': {'key': 'domainName', 'type': 'str'},
+        "domain_name": {"key": "domainName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        domain_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, domain_name: Optional[str] = None, **kwargs):
         """
         :keyword domain_name: Domain name for the application site URL.
         :paramtype domain_name: str
         """
-        super(SiteProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domain_name = domain_name
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
     :ivar tier: This field is required to be implemented by the Resource Provider if the service
-     has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
-     "Standard", "Premium".
+     has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.workloads.models.SkuTier
     :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
@@ -5357,33 +5297,33 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "SkuTier"]] = None,
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
         :keyword tier: This field is required to be implemented by the Resource Provider if the service
-         has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
-         "Standard", "Premium".
+         has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+         "Standard", and "Premium".
         :paramtype tier: str or ~azure.mgmt.workloads.models.SkuTier
         :keyword size: The SKU size. When the name field is the combination of tier and some other
          value, this would be the standalone code.
@@ -5395,7 +5335,7 @@ class Sku(msrest.serialization.Model):
          included. If scale out/in is not possible for the resource this may be omitted.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size
@@ -5403,7 +5343,7 @@ class Sku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class SkuCapability(msrest.serialization.Model):
+class SkuCapability(_serialization.Model):
     """The SKU capability definition.
 
     :ivar name: The capability name.
@@ -5413,29 +5353,23 @@ class SkuCapability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The capability name.
         :paramtype name: str
         :keyword value: The capability value.
         :paramtype value: str
         """
-        super(SkuCapability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class SkuCapacity(msrest.serialization.Model):
+class SkuCapacity(_serialization.Model):
     """The SKU capacity.
 
     :ivar minimum: Minimum capacity value.
@@ -5444,16 +5378,16 @@ class SkuCapacity(msrest.serialization.Model):
     :vartype maximum: int
     :ivar default: Default capacity value.
     :vartype default: int
-    :ivar scale_type: Scale type of the SKU capacity. Possible values include: "None", "Manual",
+    :ivar scale_type: Scale type of the SKU capacity. Known values are: "None", "Manual", and
      "Automatic".
     :vartype scale_type: str or ~azure.mgmt.workloads.models.SkuScaleType
     """
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'int'},
-        'maximum': {'key': 'maximum', 'type': 'int'},
-        'default': {'key': 'default', 'type': 'int'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "default": {"key": "default", "type": "int"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
     def __init__(
@@ -5462,7 +5396,7 @@ class SkuCapacity(msrest.serialization.Model):
         minimum: Optional[int] = None,
         maximum: Optional[int] = None,
         default: Optional[int] = None,
-        scale_type: Optional[Union[str, "SkuScaleType"]] = None,
+        scale_type: Optional[Union[str, "_models.SkuScaleType"]] = None,
         **kwargs
     ):
         """
@@ -5472,18 +5406,18 @@ class SkuCapacity(msrest.serialization.Model):
         :paramtype maximum: int
         :keyword default: Default capacity value.
         :paramtype default: int
-        :keyword scale_type: Scale type of the SKU capacity. Possible values include: "None", "Manual",
+        :keyword scale_type: Scale type of the SKU capacity. Known values are: "None", "Manual", and
          "Automatic".
         :paramtype scale_type: str or ~azure.mgmt.workloads.models.SkuScaleType
         """
-        super(SkuCapacity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
         self.default = default
         self.scale_type = scale_type
 
 
-class SkuCost(msrest.serialization.Model):
+class SkuCost(_serialization.Model):
     """The SKU cost definition.
 
     :ivar meter_id: Billing meter id.
@@ -5495,9 +5429,9 @@ class SkuCost(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'int'},
-        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "int"},
+        "extended_unit": {"key": "extendedUnit", "type": "str"},
     }
 
     def __init__(
@@ -5516,18 +5450,18 @@ class SkuCost(msrest.serialization.Model):
         :keyword extended_unit: The extended unit.
         :paramtype extended_unit: str
         """
-        super(SkuCost, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.meter_id = meter_id
         self.quantity = quantity
         self.extended_unit = extended_unit
 
 
-class SkuDefinition(msrest.serialization.Model):
+class SkuDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The SKU definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU.
+    :ivar name: The name of the SKU. Required.
     :vartype name: str
     :ivar resource_type: Resource type the SKU applicable for.
     :vartype resource_type: str
@@ -5549,7 +5483,7 @@ class SkuDefinition(msrest.serialization.Model):
     :vartype location_info: list[~azure.mgmt.workloads.models.SkuLocationAndZones]
     :ivar capacity: If the SKU supports scale out/in then the capacity integer should be included.
      If scale out/in is not possible for the resource this may be omitted.
-    :vartype capacity: any
+    :vartype capacity: JSON
     :ivar costs: The SKU costs.
     :vartype costs: list[~azure.mgmt.workloads.models.SkuCost]
     :ivar capabilities: The SKU capabilities.
@@ -5559,22 +5493,22 @@ class SkuDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'location_info': {'key': 'locationInfo', 'type': '[SkuLocationAndZones]'},
-        'capacity': {'key': 'capacity', 'type': 'object'},
-        'costs': {'key': 'costs', 'type': '[SkuCost]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
-        'restrictions': {'key': 'restrictions', 'type': '[SkuRestriction]'},
+        "name": {"key": "name", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "location_info": {"key": "locationInfo", "type": "[SkuLocationAndZones]"},
+        "capacity": {"key": "capacity", "type": "object"},
+        "costs": {"key": "costs", "type": "[SkuCost]"},
+        "capabilities": {"key": "capabilities", "type": "[SkuCapability]"},
+        "restrictions": {"key": "restrictions", "type": "[SkuRestriction]"},
     }
 
     def __init__(
@@ -5587,15 +5521,15 @@ class SkuDefinition(msrest.serialization.Model):
         family: Optional[str] = None,
         kind: Optional[str] = None,
         locations: Optional[List[str]] = None,
-        location_info: Optional[List["SkuLocationAndZones"]] = None,
-        capacity: Optional[Any] = None,
-        costs: Optional[List["SkuCost"]] = None,
-        capabilities: Optional[List["SkuCapability"]] = None,
-        restrictions: Optional[List["SkuRestriction"]] = None,
+        location_info: Optional[List["_models.SkuLocationAndZones"]] = None,
+        capacity: Optional[JSON] = None,
+        costs: Optional[List["_models.SkuCost"]] = None,
+        capabilities: Optional[List["_models.SkuCapability"]] = None,
+        restrictions: Optional[List["_models.SkuRestriction"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU.
+        :keyword name: The name of the SKU. Required.
         :paramtype name: str
         :keyword resource_type: Resource type the SKU applicable for.
         :paramtype resource_type: str
@@ -5617,7 +5551,7 @@ class SkuDefinition(msrest.serialization.Model):
         :paramtype location_info: list[~azure.mgmt.workloads.models.SkuLocationAndZones]
         :keyword capacity: If the SKU supports scale out/in then the capacity integer should be
          included. If scale out/in is not possible for the resource this may be omitted.
-        :paramtype capacity: any
+        :paramtype capacity: JSON
         :keyword costs: The SKU costs.
         :paramtype costs: list[~azure.mgmt.workloads.models.SkuCost]
         :keyword capabilities: The SKU capabilities.
@@ -5625,7 +5559,7 @@ class SkuDefinition(msrest.serialization.Model):
         :keyword restrictions: The SKU restrictions.
         :paramtype restrictions: list[~azure.mgmt.workloads.models.SkuRestriction]
         """
-        super(SkuDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.resource_type = resource_type
         self.tier = tier
@@ -5640,7 +5574,7 @@ class SkuDefinition(msrest.serialization.Model):
         self.restrictions = restrictions
 
 
-class SkuLocationAndZones(msrest.serialization.Model):
+class SkuLocationAndZones(_serialization.Model):
     """The SKU location and zone.
 
     :ivar location: The location of the SKU.
@@ -5651,16 +5585,16 @@ class SkuLocationAndZones(msrest.serialization.Model):
     :vartype zone_details: list[~azure.mgmt.workloads.models.SkuZoneDetail]
     :ivar extended_locations: The extended locations of SKU.
     :vartype extended_locations: list[str]
-    :ivar type: Type of the extended location. Possible values include: "Region", "EdgeZone".
+    :ivar type: Type of the extended location. Known values are: "Region" and "EdgeZone".
     :vartype type: str or ~azure.mgmt.workloads.models.LocationType
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'zone_details': {'key': 'zoneDetails', 'type': '[SkuZoneDetail]'},
-        'extended_locations': {'key': 'extendedLocations', 'type': '[str]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "zone_details": {"key": "zoneDetails", "type": "[SkuZoneDetail]"},
+        "extended_locations": {"key": "extendedLocations", "type": "[str]"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -5668,9 +5602,9 @@ class SkuLocationAndZones(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         zones: Optional[List[str]] = None,
-        zone_details: Optional[List["SkuZoneDetail"]] = None,
+        zone_details: Optional[List["_models.SkuZoneDetail"]] = None,
         extended_locations: Optional[List[str]] = None,
-        type: Optional[Union[str, "LocationType"]] = None,
+        type: Optional[Union[str, "_models.LocationType"]] = None,
         **kwargs
     ):
         """
@@ -5682,10 +5616,10 @@ class SkuLocationAndZones(msrest.serialization.Model):
         :paramtype zone_details: list[~azure.mgmt.workloads.models.SkuZoneDetail]
         :keyword extended_locations: The extended locations of SKU.
         :paramtype extended_locations: list[str]
-        :keyword type: Type of the extended location. Possible values include: "Region", "EdgeZone".
+        :keyword type: Type of the extended location. Known values are: "Region" and "EdgeZone".
         :paramtype type: str or ~azure.mgmt.workloads.models.LocationType
         """
-        super(SkuLocationAndZones, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.zones = zones
         self.zone_details = zone_details
@@ -5693,57 +5627,56 @@ class SkuLocationAndZones(msrest.serialization.Model):
         self.type = type
 
 
-class SkuRestriction(msrest.serialization.Model):
+class SkuRestriction(_serialization.Model):
     """The SKU restriction definition.
 
-    :ivar type: The SKU restriction type. Possible values include: "NotSpecified", "Location",
-     "Zone".
+    :ivar type: The SKU restriction type. Known values are: "NotSpecified", "Location", and "Zone".
     :vartype type: str or ~azure.mgmt.workloads.models.SkuRestrictionType
     :ivar values: Restriction values.
     :vartype values: list[str]
     :ivar restriction_info: The restriction information.
-    :vartype restriction_info: any
-    :ivar reason_code: The SKU restriction reason code. Possible values include: "NotSpecified",
-     "QuotaId", "NotAvailableForSubscription".
+    :vartype restriction_info: JSON
+    :ivar reason_code: The SKU restriction reason code. Known values are: "NotSpecified",
+     "QuotaId", and "NotAvailableForSubscription".
     :vartype reason_code: str or ~azure.mgmt.workloads.models.SkuRestrictionReasonCode
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'restriction_info': {'key': 'restrictionInfo', 'type': 'object'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "restriction_info": {"key": "restrictionInfo", "type": "object"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "SkuRestrictionType"]] = None,
+        type: Optional[Union[str, "_models.SkuRestrictionType"]] = None,
         values: Optional[List[str]] = None,
-        restriction_info: Optional[Any] = None,
-        reason_code: Optional[Union[str, "SkuRestrictionReasonCode"]] = None,
+        restriction_info: Optional[JSON] = None,
+        reason_code: Optional[Union[str, "_models.SkuRestrictionReasonCode"]] = None,
         **kwargs
     ):
         """
-        :keyword type: The SKU restriction type. Possible values include: "NotSpecified", "Location",
+        :keyword type: The SKU restriction type. Known values are: "NotSpecified", "Location", and
          "Zone".
         :paramtype type: str or ~azure.mgmt.workloads.models.SkuRestrictionType
         :keyword values: Restriction values.
         :paramtype values: list[str]
         :keyword restriction_info: The restriction information.
-        :paramtype restriction_info: any
-        :keyword reason_code: The SKU restriction reason code. Possible values include: "NotSpecified",
-         "QuotaId", "NotAvailableForSubscription".
+        :paramtype restriction_info: JSON
+        :keyword reason_code: The SKU restriction reason code. Known values are: "NotSpecified",
+         "QuotaId", and "NotAvailableForSubscription".
         :paramtype reason_code: str or ~azure.mgmt.workloads.models.SkuRestrictionReasonCode
         """
-        super(SkuRestriction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.values = values
         self.restriction_info = restriction_info
         self.reason_code = reason_code
 
 
-class SkusListResult(msrest.serialization.Model):
+class SkusListResult(_serialization.Model):
     """A list of SKUs supported by an Azure Resource Provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5755,27 +5688,23 @@ class SkusListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SkuDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SkuDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SkusListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SkuZoneDetail(msrest.serialization.Model):
+class SkuZoneDetail(_serialization.Model):
     """The SKU zone details.
 
     :ivar zones: The physical zones.
@@ -5785,15 +5714,15 @@ class SkuZoneDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SkuCapability]'},
+        "zones": {"key": "zones", "type": "[str]"},
+        "capabilities": {"key": "capabilities", "type": "[SkuCapability]"},
     }
 
     def __init__(
         self,
         *,
         zones: Optional[List[str]] = None,
-        capabilities: Optional[List["SkuCapability"]] = None,
+        capabilities: Optional[List["_models.SkuCapability"]] = None,
         **kwargs
     ):
         """
@@ -5802,12 +5731,12 @@ class SkuZoneDetail(msrest.serialization.Model):
         :keyword capabilities: The capabilities.
         :paramtype capabilities: list[~azure.mgmt.workloads.models.SkuCapability]
         """
-        super(SkuZoneDetail, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.zones = zones
         self.capabilities = capabilities
 
 
-class SshConfiguration(msrest.serialization.Model):
+class SshConfiguration(_serialization.Model):
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
@@ -5815,24 +5744,19 @@ class SshConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
+        "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_keys: Optional[List["SshPublicKey"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs):
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with linux based VMs.
         :paramtype public_keys: list[~azure.mgmt.workloads.models.SshPublicKey]
         """
-        super(SshConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_keys = public_keys
 
 
-class SshKeyPair(msrest.serialization.Model):
+class SshKeyPair(_serialization.Model):
     """The SSH Key-pair used to authenticate with the VM. The key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure <https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_.
 
     :ivar public_key: SSH public key.
@@ -5842,29 +5766,23 @@ class SshKeyPair(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_key': {'key': 'publicKey', 'type': 'str'},
-        'private_key': {'key': 'privateKey', 'type': 'str'},
+        "public_key": {"key": "publicKey", "type": "str"},
+        "private_key": {"key": "privateKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_key: Optional[str] = None,
-        private_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_key: Optional[str] = None, private_key: Optional[str] = None, **kwargs):
         """
         :keyword public_key: SSH public key.
         :paramtype public_key: str
         :keyword private_key: SSH private key.
         :paramtype private_key: str
         """
-        super(SshKeyPair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_key = public_key
         self.private_key = private_key
 
 
-class SshPublicKey(msrest.serialization.Model):
+class SshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
 
     :ivar key_data: SSH public key certificate used to authenticate with the VM through ssh. The
@@ -5875,15 +5793,10 @@ class SshPublicKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_data': {'key': 'keyData', 'type': 'str'},
+        "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_data: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key_data: Optional[str] = None, **kwargs):
         """
         :keyword key_data: SSH public key certificate used to authenticate with the VM through ssh. The
          key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
@@ -5891,11 +5804,11 @@ class SshPublicKey(msrest.serialization.Model):
          <https://docs.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_.
         :paramtype key_data: str
         """
-        super(SshPublicKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_data = key_data
 
 
-class StopRequest(msrest.serialization.Model):
+class StopRequest(_serialization.Model):
     """Stop SAP Request.
 
     :ivar hard_stop: A boolean to specify if the SAP system should be hard-stopped.
@@ -5903,79 +5816,74 @@ class StopRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hard_stop': {'key': 'hardStop', 'type': 'bool'},
+        "hard_stop": {"key": "hardStop", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        hard_stop: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, hard_stop: bool = False, **kwargs):
         """
         :keyword hard_stop: A boolean to specify if the SAP system should be hard-stopped.
         :paramtype hard_stop: bool
         """
-        super(StopRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hard_stop = hard_stop
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.workloads.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.workloads.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.workloads.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.workloads.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -5984,28 +5892,23 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Tags(msrest.serialization.Model):
+class Tags(_serialization.Model):
     """Tags field of the resource.
 
-    :ivar tags: A set of tags. Tags field of the resource.
+    :ivar tags: Tags field of the resource.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Tags field of the resource.
+        :keyword tags: Tags field of the resource.
         :paramtype tags: dict[str, str]
         """
-        super(Tags, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
@@ -6014,70 +5917,70 @@ class ThreeTierConfiguration(InfrastructureConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
-    :ivar app_resource_group: Required. The application resource group where SAP system resources
-     will be deployed.
+    :ivar app_resource_group: The application resource group where SAP system resources will be
+     deployed. Required.
     :vartype app_resource_group: str
     :ivar network_configuration: Network configuration common to all servers.
     :vartype network_configuration: ~azure.mgmt.workloads.models.NetworkConfiguration
-    :ivar central_server: Required. The central server configuration.
+    :ivar central_server: The central server configuration. Required.
     :vartype central_server: ~azure.mgmt.workloads.models.CentralServerConfiguration
-    :ivar application_server: Required. The application server configuration.
+    :ivar application_server: The application server configuration. Required.
     :vartype application_server: ~azure.mgmt.workloads.models.ApplicationServerConfiguration
-    :ivar database_server: Required. The database configuration.
+    :ivar database_server: The database configuration. Required.
     :vartype database_server: ~azure.mgmt.workloads.models.DatabaseConfiguration
     :ivar high_availability_config: The high availability configuration.
     :vartype high_availability_config: ~azure.mgmt.workloads.models.HighAvailabilityConfiguration
     """
 
     _validation = {
-        'deployment_type': {'required': True},
-        'app_resource_group': {'required': True},
-        'central_server': {'required': True},
-        'application_server': {'required': True},
-        'database_server': {'required': True},
+        "deployment_type": {"required": True},
+        "app_resource_group": {"required": True},
+        "central_server": {"required": True},
+        "application_server": {"required": True},
+        "database_server": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'app_resource_group': {'key': 'appResourceGroup', 'type': 'str'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
-        'central_server': {'key': 'centralServer', 'type': 'CentralServerConfiguration'},
-        'application_server': {'key': 'applicationServer', 'type': 'ApplicationServerConfiguration'},
-        'database_server': {'key': 'databaseServer', 'type': 'DatabaseConfiguration'},
-        'high_availability_config': {'key': 'highAvailabilityConfig', 'type': 'HighAvailabilityConfiguration'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "app_resource_group": {"key": "appResourceGroup", "type": "str"},
+        "network_configuration": {"key": "networkConfiguration", "type": "NetworkConfiguration"},
+        "central_server": {"key": "centralServer", "type": "CentralServerConfiguration"},
+        "application_server": {"key": "applicationServer", "type": "ApplicationServerConfiguration"},
+        "database_server": {"key": "databaseServer", "type": "DatabaseConfiguration"},
+        "high_availability_config": {"key": "highAvailabilityConfig", "type": "HighAvailabilityConfiguration"},
     }
 
     def __init__(
         self,
         *,
         app_resource_group: str,
-        central_server: "CentralServerConfiguration",
-        application_server: "ApplicationServerConfiguration",
-        database_server: "DatabaseConfiguration",
-        network_configuration: Optional["NetworkConfiguration"] = None,
-        high_availability_config: Optional["HighAvailabilityConfiguration"] = None,
+        central_server: "_models.CentralServerConfiguration",
+        application_server: "_models.ApplicationServerConfiguration",
+        database_server: "_models.DatabaseConfiguration",
+        network_configuration: Optional["_models.NetworkConfiguration"] = None,
+        high_availability_config: Optional["_models.HighAvailabilityConfiguration"] = None,
         **kwargs
     ):
         """
-        :keyword app_resource_group: Required. The application resource group where SAP system
-         resources will be deployed.
+        :keyword app_resource_group: The application resource group where SAP system resources will be
+         deployed. Required.
         :paramtype app_resource_group: str
         :keyword network_configuration: Network configuration common to all servers.
         :paramtype network_configuration: ~azure.mgmt.workloads.models.NetworkConfiguration
-        :keyword central_server: Required. The central server configuration.
+        :keyword central_server: The central server configuration. Required.
         :paramtype central_server: ~azure.mgmt.workloads.models.CentralServerConfiguration
-        :keyword application_server: Required. The application server configuration.
+        :keyword application_server: The application server configuration. Required.
         :paramtype application_server: ~azure.mgmt.workloads.models.ApplicationServerConfiguration
-        :keyword database_server: Required. The database configuration.
+        :keyword database_server: The database configuration. Required.
         :paramtype database_server: ~azure.mgmt.workloads.models.DatabaseConfiguration
         :keyword high_availability_config: The high availability configuration.
         :paramtype high_availability_config: ~azure.mgmt.workloads.models.HighAvailabilityConfiguration
         """
-        super(ThreeTierConfiguration, self).__init__(app_resource_group=app_resource_group, **kwargs)
-        self.deployment_type = 'ThreeTier'  # type: str
+        super().__init__(app_resource_group=app_resource_group, **kwargs)
+        self.deployment_type: str = "ThreeTier"
         self.network_configuration = network_configuration
         self.central_server = central_server
         self.application_server = application_server
@@ -6090,35 +5993,35 @@ class ThreeTierRecommendationResult(SAPSizingRecommendationResult):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar deployment_type: Required. The deployment Type.Constant filled by server. Possible values
-     include: "SingleServer", "ThreeTier".
+    :ivar deployment_type: The type of SAP deployment, single server or Three tier. Required. Known
+     values are: "SingleServer" and "ThreeTier".
     :vartype deployment_type: str or ~azure.mgmt.workloads.models.SAPDeploymentType
     :ivar db_vm_sku: The database VM SKU.
     :vartype db_vm_sku: str
     :ivar database_instance_count: The database server instance count.
-    :vartype database_instance_count: long
+    :vartype database_instance_count: int
     :ivar central_server_vm_sku: The central server VM SKU.
     :vartype central_server_vm_sku: str
     :ivar central_server_instance_count: The central server instance count.
-    :vartype central_server_instance_count: long
+    :vartype central_server_instance_count: int
     :ivar application_server_vm_sku: The application server VM SKU.
     :vartype application_server_vm_sku: str
     :ivar application_server_instance_count: The application server instance count.
-    :vartype application_server_instance_count: long
+    :vartype application_server_instance_count: int
     """
 
     _validation = {
-        'deployment_type': {'required': True},
+        "deployment_type": {"required": True},
     }
 
     _attribute_map = {
-        'deployment_type': {'key': 'deploymentType', 'type': 'str'},
-        'db_vm_sku': {'key': 'dbVmSku', 'type': 'str'},
-        'database_instance_count': {'key': 'databaseInstanceCount', 'type': 'long'},
-        'central_server_vm_sku': {'key': 'centralServerVmSku', 'type': 'str'},
-        'central_server_instance_count': {'key': 'centralServerInstanceCount', 'type': 'long'},
-        'application_server_vm_sku': {'key': 'applicationServerVmSku', 'type': 'str'},
-        'application_server_instance_count': {'key': 'applicationServerInstanceCount', 'type': 'long'},
+        "deployment_type": {"key": "deploymentType", "type": "str"},
+        "db_vm_sku": {"key": "dbVmSku", "type": "str"},
+        "database_instance_count": {"key": "databaseInstanceCount", "type": "int"},
+        "central_server_vm_sku": {"key": "centralServerVmSku", "type": "str"},
+        "central_server_instance_count": {"key": "centralServerInstanceCount", "type": "int"},
+        "application_server_vm_sku": {"key": "applicationServerVmSku", "type": "str"},
+        "application_server_instance_count": {"key": "applicationServerInstanceCount", "type": "int"},
     }
 
     def __init__(
@@ -6136,18 +6039,18 @@ class ThreeTierRecommendationResult(SAPSizingRecommendationResult):
         :keyword db_vm_sku: The database VM SKU.
         :paramtype db_vm_sku: str
         :keyword database_instance_count: The database server instance count.
-        :paramtype database_instance_count: long
+        :paramtype database_instance_count: int
         :keyword central_server_vm_sku: The central server VM SKU.
         :paramtype central_server_vm_sku: str
         :keyword central_server_instance_count: The central server instance count.
-        :paramtype central_server_instance_count: long
+        :paramtype central_server_instance_count: int
         :keyword application_server_vm_sku: The application server VM SKU.
         :paramtype application_server_vm_sku: str
         :keyword application_server_instance_count: The application server instance count.
-        :paramtype application_server_instance_count: long
+        :paramtype application_server_instance_count: int
         """
-        super(ThreeTierRecommendationResult, self).__init__(**kwargs)
-        self.deployment_type = 'ThreeTier'  # type: str
+        super().__init__(**kwargs)
+        self.deployment_type: str = "ThreeTier"
         self.db_vm_sku = db_vm_sku
         self.database_instance_count = database_instance_count
         self.central_server_vm_sku = central_server_vm_sku
@@ -6156,146 +6059,131 @@ class ThreeTierRecommendationResult(SAPSizingRecommendationResult):
         self.application_server_instance_count = application_server_instance_count
 
 
-class UpdateMonitorRequest(msrest.serialization.Model):
+class UpdateMonitorRequest(_serialization.Model):
     """Defines the request body for updating SAP monitor resource.
 
-    :ivar tags: A set of tags. Gets or sets the Resource tags.
+    :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Managed service identity (user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedServiceIdentity'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "UserAssignedServiceIdentity"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserAssignedServiceIdentity"] = None,
+        identity: Optional["_models.UserAssignedServiceIdentity"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Gets or sets the Resource tags.
+        :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: Managed service identity (user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         """
-        super(UpdateMonitorRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
 
 
-class UpdateSAPApplicationInstanceRequest(msrest.serialization.Model):
+class UpdateSAPApplicationInstanceRequest(_serialization.Model):
     """Defines the request body for updating SAP Application Instance.
 
-    :ivar tags: A set of tags. Gets or sets the Resource tags.
+    :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Gets or sets the Resource tags.
+        :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateSAPApplicationInstanceRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class UpdateSAPCentralInstanceRequest(msrest.serialization.Model):
+class UpdateSAPCentralInstanceRequest(_serialization.Model):
     """Defines the request body for updating SAP Central Instance.
 
-    :ivar tags: A set of tags. Gets or sets the Resource tags.
+    :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Gets or sets the Resource tags.
+        :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateSAPCentralInstanceRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class UpdateSAPDatabaseInstanceRequest(msrest.serialization.Model):
+class UpdateSAPDatabaseInstanceRequest(_serialization.Model):
     """Defines the request body for updating SAP Database Instance.
 
-    :ivar tags: A set of tags. Gets or sets the Resource tags.
+    :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Gets or sets the Resource tags.
+        :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(UpdateSAPDatabaseInstanceRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class UpdateSAPVirtualInstanceRequest(msrest.serialization.Model):
+class UpdateSAPVirtualInstanceRequest(_serialization.Model):
     """Defines the request body for updating Virtual Instance for SAP.
 
-    :ivar tags: A set of tags. Gets or sets the Resource tags.
+    :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Managed service identity (user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedServiceIdentity'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "UserAssignedServiceIdentity"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserAssignedServiceIdentity"] = None,
+        identity: Optional["_models.UserAssignedServiceIdentity"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Gets or sets the Resource tags.
+        :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: Managed service identity (user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         """
-        super(UpdateSAPVirtualInstanceRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6307,107 +6195,92 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class UserProfile(msrest.serialization.Model):
+class UserProfile(_serialization.Model):
     """User profile to configure on a compute resources such as VM, VMSS.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar user_name: Required. User name.
+    :ivar user_name: User name. Required.
     :vartype user_name: str
-    :ivar ssh_public_key: Required. SSH public key data.
+    :ivar ssh_public_key: SSH public key data. Required.
     :vartype ssh_public_key: str
     """
 
     _validation = {
-        'user_name': {'required': True},
-        'ssh_public_key': {'required': True},
+        "user_name": {"required": True},
+        "ssh_public_key": {"required": True},
     }
 
     _attribute_map = {
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
+        "user_name": {"key": "userName", "type": "str"},
+        "ssh_public_key": {"key": "sshPublicKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        user_name: str,
-        ssh_public_key: str,
-        **kwargs
-    ):
+    def __init__(self, *, user_name: str, ssh_public_key: str, **kwargs):
         """
-        :keyword user_name: Required. User name.
+        :keyword user_name: User name. Required.
         :paramtype user_name: str
-        :keyword ssh_public_key: Required. SSH public key data.
+        :keyword ssh_public_key: SSH public key data. Required.
         :paramtype ssh_public_key: str
         """
-        super(UserProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_name = user_name
         self.ssh_public_key = ssh_public_key
 
 
-class VirtualMachineConfiguration(msrest.serialization.Model):
+class VirtualMachineConfiguration(_serialization.Model):
     """Defines the virtual machine configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar vm_size: Required. The virtual machine size.
+    :ivar vm_size: The virtual machine size. Required.
     :vartype vm_size: str
-    :ivar image_reference: Required. The image reference.
+    :ivar image_reference: The image reference. Required.
     :vartype image_reference: ~azure.mgmt.workloads.models.ImageReference
-    :ivar os_profile: Required. The OS profile.
+    :ivar os_profile: The OS profile. Required.
     :vartype os_profile: ~azure.mgmt.workloads.models.OSProfile
     """
 
     _validation = {
-        'vm_size': {'required': True},
-        'image_reference': {'required': True},
-        'os_profile': {'required': True},
+        "vm_size": {"required": True},
+        "image_reference": {"required": True},
+        "os_profile": {"required": True},
     }
 
     _attribute_map = {
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_profile': {'key': 'osProfile', 'type': 'OSProfile'},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_profile": {"key": "osProfile", "type": "OSProfile"},
     }
 
     def __init__(
-        self,
-        *,
-        vm_size: str,
-        image_reference: "ImageReference",
-        os_profile: "OSProfile",
-        **kwargs
+        self, *, vm_size: str, image_reference: "_models.ImageReference", os_profile: "_models.OSProfile", **kwargs
     ):
         """
-        :keyword vm_size: Required. The virtual machine size.
+        :keyword vm_size: The virtual machine size. Required.
         :paramtype vm_size: str
-        :keyword image_reference: Required. The image reference.
+        :keyword image_reference: The image reference. Required.
         :paramtype image_reference: ~azure.mgmt.workloads.models.ImageReference
-        :keyword os_profile: Required. The OS profile.
+        :keyword os_profile: The OS profile. Required.
         :paramtype os_profile: ~azure.mgmt.workloads.models.OSProfile
         """
-        super(VirtualMachineConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_size = vm_size
         self.image_reference = image_reference
         self.os_profile = os_profile
@@ -6422,11 +6295,11 @@ class VmssNodesProfile(NodeProfile):
 
     :ivar name: VM or VMSS name.
     :vartype name: str
-    :ivar node_sku: Required. VM SKU for node(s).
+    :ivar node_sku: VM SKU for node(s). Required.
     :vartype node_sku: str
-    :ivar os_image: Required. OS image used for creating the nodes.
+    :ivar os_image: OS image used for creating the nodes. Required.
     :vartype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-    :ivar os_disk: Required. OS disk details.
+    :ivar os_disk: OS disk details. Required.
     :vartype os_disk: ~azure.mgmt.workloads.models.DiskInfo
     :ivar data_disks: Data disks details. This property is not in use right now.
     :vartype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
@@ -6439,33 +6312,33 @@ class VmssNodesProfile(NodeProfile):
     """
 
     _validation = {
-        'node_sku': {'required': True},
-        'os_image': {'required': True},
-        'os_disk': {'required': True},
-        'node_resource_ids': {'readonly': True},
-        'auto_scale_min_count': {'minimum': 1},
-        'auto_scale_max_count': {'minimum': 1},
+        "node_sku": {"required": True},
+        "os_image": {"required": True},
+        "os_disk": {"required": True},
+        "node_resource_ids": {"readonly": True},
+        "auto_scale_min_count": {"minimum": 1},
+        "auto_scale_max_count": {"minimum": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'node_sku': {'key': 'nodeSku', 'type': 'str'},
-        'os_image': {'key': 'osImage', 'type': 'OsImageProfile'},
-        'os_disk': {'key': 'osDisk', 'type': 'DiskInfo'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DiskInfo]'},
-        'node_resource_ids': {'key': 'nodeResourceIds', 'type': '[str]'},
-        'auto_scale_min_count': {'key': 'autoScaleMinCount', 'type': 'int'},
-        'auto_scale_max_count': {'key': 'autoScaleMaxCount', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "node_sku": {"key": "nodeSku", "type": "str"},
+        "os_image": {"key": "osImage", "type": "OsImageProfile"},
+        "os_disk": {"key": "osDisk", "type": "DiskInfo"},
+        "data_disks": {"key": "dataDisks", "type": "[DiskInfo]"},
+        "node_resource_ids": {"key": "nodeResourceIds", "type": "[str]"},
+        "auto_scale_min_count": {"key": "autoScaleMinCount", "type": "int"},
+        "auto_scale_max_count": {"key": "autoScaleMaxCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         node_sku: str,
-        os_image: "OsImageProfile",
-        os_disk: "DiskInfo",
+        os_image: "_models.OsImageProfile",
+        os_disk: "_models.DiskInfo",
         name: Optional[str] = None,
-        data_disks: Optional[List["DiskInfo"]] = None,
+        data_disks: Optional[List["_models.DiskInfo"]] = None,
         auto_scale_min_count: Optional[int] = None,
         auto_scale_max_count: Optional[int] = None,
         **kwargs
@@ -6473,11 +6346,11 @@ class VmssNodesProfile(NodeProfile):
         """
         :keyword name: VM or VMSS name.
         :paramtype name: str
-        :keyword node_sku: Required. VM SKU for node(s).
+        :keyword node_sku: VM SKU for node(s). Required.
         :paramtype node_sku: str
-        :keyword os_image: Required. OS image used for creating the nodes.
+        :keyword os_image: OS image used for creating the nodes. Required.
         :paramtype os_image: ~azure.mgmt.workloads.models.OsImageProfile
-        :keyword os_disk: Required. OS disk details.
+        :keyword os_disk: OS disk details. Required.
         :paramtype os_disk: ~azure.mgmt.workloads.models.DiskInfo
         :keyword data_disks: Data disks details. This property is not in use right now.
         :paramtype data_disks: list[~azure.mgmt.workloads.models.DiskInfo]
@@ -6486,7 +6359,9 @@ class VmssNodesProfile(NodeProfile):
         :keyword auto_scale_max_count: Maximum number of nodes for autoscale.
         :paramtype auto_scale_max_count: int
         """
-        super(VmssNodesProfile, self).__init__(name=name, node_sku=node_sku, os_image=os_image, os_disk=os_disk, data_disks=data_disks, **kwargs)
+        super().__init__(
+            name=name, node_sku=node_sku, os_image=os_image, os_disk=os_disk, data_disks=data_disks, **kwargs
+        )
         self.auto_scale_min_count = auto_scale_min_count
         self.auto_scale_max_count = auto_scale_max_count
 
@@ -6496,27 +6371,22 @@ class WindowsConfiguration(OSConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os_type: Required. The OS Type.Constant filled by server. Possible values include:
-     "Linux", "Windows".
+    :ivar os_type: The OS Type. Required. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.workloads.models.OSType
     """
 
     _validation = {
-        'os_type': {'required': True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
+        "os_type": {"key": "osType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(WindowsConfiguration, self).__init__(**kwargs)
-        self.os_type = 'Windows'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.os_type: str = "Windows"
 
 
 class WordpressInstanceResource(ProxyResource):
@@ -6535,7 +6405,7 @@ class WordpressInstanceResource(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar version: Application version. Possible values include: "5.4.3", "5.4.2", "5.4.1", "5.4".
+    :ivar version: Application version. Known values are: "5.4.3", "5.4.2", "5.4.1", and "5.4".
     :vartype version: str or ~azure.mgmt.workloads.models.WordpressVersions
     :ivar database_name: Database name used by the application.
     :vartype database_name: str
@@ -6543,50 +6413,49 @@ class WordpressInstanceResource(ProxyResource):
     :vartype database_user: str
     :ivar site_url: Site Url to access the WordPress application.
     :vartype site_url: str
-    :ivar provisioning_state: WordPress instance provisioning state. Possible values include:
-     "NotSpecified", "Accepted", "Created", "Succeeded", "Failed", "Canceled", "Installing".
+    :ivar provisioning_state: WordPress instance provisioning state. Known values are:
+     "NotSpecified", "Accepted", "Created", "Succeeded", "Failed", "Canceled", and "Installing".
     :vartype provisioning_state: str or ~azure.mgmt.workloads.models.ApplicationProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'site_url': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "site_url": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
-        'database_user': {'key': 'properties.databaseUser', 'type': 'str'},
-        'site_url': {'key': 'properties.siteUrl', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "version": {"key": "properties.version", "type": "str"},
+        "database_name": {"key": "properties.databaseName", "type": "str"},
+        "database_user": {"key": "properties.databaseUser", "type": "str"},
+        "site_url": {"key": "properties.siteUrl", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        version: Optional[Union[str, "WordpressVersions"]] = None,
+        version: Optional[Union[str, "_models.WordpressVersions"]] = None,
         database_name: Optional[str] = None,
         database_user: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword version: Application version. Possible values include: "5.4.3", "5.4.2", "5.4.1",
-         "5.4".
+        :keyword version: Application version. Known values are: "5.4.3", "5.4.2", "5.4.1", and "5.4".
         :paramtype version: str or ~azure.mgmt.workloads.models.WordpressVersions
         :keyword database_name: Database name used by the application.
         :paramtype database_name: str
         :keyword database_user: User name used by the application to connect to database.
         :paramtype database_user: str
         """
-        super(WordpressInstanceResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.version = version
         self.database_name = database_name
         self.database_user = database_user
@@ -6594,7 +6463,7 @@ class WordpressInstanceResource(ProxyResource):
         self.provisioning_state = None
 
 
-class WordpressInstanceResourceList(msrest.serialization.Model):
+class WordpressInstanceResourceList(_serialization.Model):
     """WordPress instance resource list.
 
     :ivar value: List of resources in current page.
@@ -6604,14 +6473,14 @@ class WordpressInstanceResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WordpressInstanceResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WordpressInstanceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["WordpressInstanceResource"]] = None,
+        value: Optional[List["_models.WordpressInstanceResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -6621,6 +6490,6 @@ class WordpressInstanceResourceList(msrest.serialization.Model):
         :keyword next_link: Link to next page of resources.
         :paramtype next_link: str
         """
-        super(WordpressInstanceResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link

@@ -14,11 +14,11 @@ jobs:
       DocRepoName: azure-docs-sdk-python
       DocValidationImageId: azuresdkimages.azurecr.io/pyrefautocr:latest
     steps:
-      # Docs CI uses Python 3.6.8 but that is not available on this image
+      # Docs CI uses Python 3.9.13
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.6'
+        displayName: 'Use Python 3.9.13'
         inputs:
-          versionSpec: '3.6'
+          versionSpec: '3.9.13'
 
       # Docs CI upgrades pip, wheel, and setuptools
       - pwsh: pip install --upgrade pip wheel setuptools

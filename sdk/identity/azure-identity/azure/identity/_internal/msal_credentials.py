@@ -13,7 +13,7 @@ from .._constants import EnvironmentVariables
 from .._persistent_cache import _load_persistent_cache
 
 
-class MsalCredential(object):
+class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(
@@ -22,10 +22,11 @@ class MsalCredential(object):
             client_credential: Union[str, Dict] = None,
             *,
             additionally_allowed_tenants: List[str] = None,
+            allow_broker: bool = None,
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
-        # self._validate_authority = kwargs.pop("validate_authority", True)
+        self._instance_discovery = kwargs.pop("instance_discovery", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
@@ -34,6 +35,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
+        self._allow_broker = allow_broker
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
@@ -76,7 +78,8 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                # validate_authority=self._validate_authority
+                instance_discovery=self._instance_discovery,
+                allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]
