@@ -536,6 +536,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-machinelearningcompute typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-iotcentral msrest>=0.7.1
 #override azure-mgmt-iotcentral azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-datalake-analytics typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-redisenterprise msrest>=0.7.1
 #override azure-mgmt-redisenterprise azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-storage azure-mgmt-core>=1.3.2,<2.0.0
@@ -726,9 +727,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appcomplianceautomation azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-developer-loadtesting azure-core<2.0.0,>=1.24.0
 #override azure-developer-loadtesting isodate<1.0.0,>=0.6.1
-#override azure-mgmt-datalake-analytics msrest>=0.6.21
+#override azure-mgmt-datalake-analytics msrest>=0.7.1
 #override azure-mgmt-iothubprovisioningservices typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-security typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-datalake-store msrest>=0.7.1
 #override azure-mgmt-operationsmanagement msrest>=0.7.1
