@@ -270,19 +270,14 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     # DO NOT change this function unless you change the verification logic together
     actual_path = path
     if os.path.islink(path):
-        link_path = os.readlink(path)
-        actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
+        target_path = os.readlink(path)
+        actual_path = target_path if os.path.isabs(target_path) else os.path.abspath(target_path)
     if os.path.isdir(actual_path):
-        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
+        file_list = construct_local_and_remote_paths(actual_path, dest="", ignore_file=ignore_file)
+        return _get_file_list_content_hash(file_list)
     if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
-
-
-def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
-    upload_pairs = construct_local_and_remote_paths(path, dest="", ignore_file=ignore_file)
-    local_paths = [i for i, _ in upload_pairs]
-    return local_paths
 
 
 def _get_file_list_content_hash(file_list) -> str:
@@ -298,11 +293,10 @@ def _get_file_list_content_hash(file_list) -> str:
     # cspell:disable-next-line
     # 'a.txt' with contents 'ab.txtb'
     _hash.update(str(len(file_list)).encode())
-    # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
     for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
-        _hash.update(("#" + file_name + "#").encode())
+        _hash.update(("#" + str(file_name) + "#").encode())
         _hash.update(str(os.path.getsize(file_path)).encode())
-    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
+    for file_path, _ in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash = _get_file_hash(file_path, _hash)
     return str(_hash.hexdigest())
 
@@ -406,7 +400,7 @@ def construct_remote_paths(
                 remote = remote.replace(target["target file"], link)
             if not target["directory"]:
                 if link in local:
-                    local = local.replace(link, target["target file"])
+                    local = os.path.abspath(local.replace(link, target["target file"]))
         updated_upload_pairs.append((local, remote))
 
     return updated_upload_pairs
