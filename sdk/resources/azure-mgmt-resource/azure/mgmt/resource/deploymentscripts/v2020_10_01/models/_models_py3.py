@@ -126,7 +126,7 @@ class DeploymentScript(AzureResourceBase):
         self.identity = identity
         self.location = location
         self.tags = tags
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -310,7 +310,7 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
         :paramtype az_cli_version: str
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.kind = "AzureCLI"  # type: str
+        self.kind: str = "AzureCLI"
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
@@ -840,7 +840,7 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         :paramtype az_power_shell_version: str
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.kind = "AzurePowerShell"  # type: str
+        self.kind: str = "AzurePowerShell"
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference

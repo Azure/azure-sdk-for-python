@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -319,7 +320,7 @@ class TemplateSpecArtifact(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.path = path
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class TemplateSpecsError(_serialization.Model):
@@ -410,7 +411,7 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
         :paramtype template: JSON
         """
         super().__init__(path=path, **kwargs)
-        self.kind = "template"  # type: str
+        self.kind: str = "template"
         self.template = template
 
 
