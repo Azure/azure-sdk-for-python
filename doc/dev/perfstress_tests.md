@@ -255,7 +255,7 @@ class ListContainersTest(PerfStressTest):
         """The synchronous perf test.
 
         Try to keep this minimal and focused. Using only a single client API.
-        Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
+        Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
         for _ in self.client.list_containers():
@@ -265,7 +265,7 @@ class ListContainersTest(PerfStressTest):
         """The asynchronous perf test.
 
         Try to keep this minimal and focused. Using only a single client API.
-        Avoid putting any ancilliary logic (e.g. generating UUIDs), and put this in the setup/init instead
+        Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
         """
         async for _ in self.async_client.list_containers():
