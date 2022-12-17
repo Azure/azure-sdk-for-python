@@ -48,14 +48,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_key_async]
             :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_aad_async]
             :end-before: [END create_fr_client_with_aad_async]
             :language: python

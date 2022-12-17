@@ -58,14 +58,14 @@ class FormTrainingClient(FormRecognizerClientBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.1/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication_v3_1.py
             :start-after: [START create_ft_client_with_key]
             :end-before: [END create_ft_client_with_key]
             :language: python
             :dedent: 8
             :caption: Creating the FormTrainingClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.1/sample_authentication.py
+        .. literalinclude:: ../samples/v3.1/sample_authentication_v3_1.py
             :start-after: [START create_ft_client_with_aad]
             :end-before: [END create_ft_client_with_aad]
             :language: python
