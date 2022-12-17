@@ -23,20 +23,10 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs import (
-    GroupInput,
-    Input,
-    Output,
-    _get_param_with_standard_annotation,
-)
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._io import (
-    NodeOutput,
-    PipelineInput,
-    PipelineOutput,
-    _GroupAttrDict,
-)
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.

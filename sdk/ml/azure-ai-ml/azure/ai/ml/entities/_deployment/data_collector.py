@@ -4,9 +4,7 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._schema._deployment.online.data_collector_schema import (
-    DataCollectorSchema,
-)
+from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.destination import Destination
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging

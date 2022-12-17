@@ -1,9 +1,13 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     BanditPolicy as RestBanditPolicy,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     JobBase,
     LogVerbosity,
     MLTableJobInput,
@@ -23,7 +27,9 @@ from azure.ai.ml.automl import text_classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.nlp.text_classification_job import TextClassificationJob
+from azure.ai.ml.entities._job.automl.nlp.text_classification_job import (
+    TextClassificationJob,
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 

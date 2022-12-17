@@ -11,12 +11,8 @@ from unittest import mock
 import msrest
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    JobInputType as JobInputType02,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    JobInputType as JobInputType10,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -41,17 +37,12 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._schema.compute.virtual_machine_compute import (
-    VirtualMachineComputeSchema,
-)
+from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import (
-    is_internal_components_enabled,
-    try_enable_internal_components,
-)
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
@@ -62,12 +53,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -374,9 +360,7 @@ def resolve_pipeline_parameter(data):
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
     from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
-    from azure.ai.ml.entities._job.pipeline._pipeline_expression import (
-        PipelineExpression,
-    )
+    from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
     if isinstance(data, PipelineExpression):
         data = data.resolve()

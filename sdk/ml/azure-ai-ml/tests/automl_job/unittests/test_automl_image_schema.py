@@ -16,8 +16,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    AutoMLJob as RestAutoMLJob,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    BanditPolicy as RestBanditPolicy,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
@@ -31,7 +35,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    ImageLimitSettings as RestImageLimitSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
 )
@@ -40,12 +46,16 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageObjectDetection as RestImageObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    ImageSweepSettings as RestImageSweepSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
@@ -54,7 +64,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ObjectDetectionPrimaryMetrics,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    dump_yaml_to_file,
+    load_yaml,
+    to_iso_duration_format_mins,
+)
 from azure.ai.ml.automl import (
     ImageClassificationSearchSpace,
     ImageLimitSettings,
@@ -66,11 +81,11 @@ from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.image import (
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
     image_classification_job,
     image_instance_segmentation_job,
     image_object_detection_job,
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
 )
 
 

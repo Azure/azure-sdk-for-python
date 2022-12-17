@@ -8,17 +8,11 @@ import random
 import re
 from typing import Dict, Optional
 
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._restclient.v2022_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -30,16 +24,9 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import (
-    upload_dependencies,
-    validate_scoring_script,
-)
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    AzureMLResourceType,
-    LROConfigurations,
-)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import (
@@ -49,6 +36,10 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator

@@ -4,11 +4,7 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    RecurrenceFrequency,
-    TriggerType,
-    WeekDay,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
 from azure.ai.ml._schema.core.fields import (
     DateTimeStr,
     DumpableIntegerField,

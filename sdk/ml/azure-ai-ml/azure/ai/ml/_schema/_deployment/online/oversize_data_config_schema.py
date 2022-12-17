@@ -27,8 +27,6 @@ class OversizeDataConfigSchema(metaclass=PatchedSchemaMeta):
     # pylint: disable=unused-argument,no-self-use
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities._deployment.oversize_data_config import (
-            OversizeDataConfig,
-        )
+        from azure.ai.ml.entities._deployment.oversize_data_config import OversizeDataConfig
 
         return OversizeDataConfig(**data)

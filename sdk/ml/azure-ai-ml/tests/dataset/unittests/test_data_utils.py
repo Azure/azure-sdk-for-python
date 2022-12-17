@@ -5,7 +5,10 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
+from azure.ai.ml._utils._data_utils import (
+    read_local_mltable_metadata_contents,
+    read_remote_mltable_metadata_contents,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._code_operations import CodeOperations

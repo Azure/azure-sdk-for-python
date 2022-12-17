@@ -12,18 +12,14 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import (
-    NlpFeaturizationSettings,
-)
+from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space
-from azure.ai.ml.entities._job.sweep.early_termination_policy import (
-    EarlyTerminationPolicy,
-)
+from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 

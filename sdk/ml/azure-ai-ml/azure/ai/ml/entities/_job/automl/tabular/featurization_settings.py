@@ -8,18 +8,13 @@ import logging
 from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ColumnTransformer as RestColumnTransformer,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ColumnTransformer as RestColumnTransformer
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import AutoMLTransformerParameterKeys
-from azure.ai.ml.entities._job.automl.featurization_settings import (
-    FeaturizationSettings,
-    FeaturizationSettingsType,
-)
+from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings, FeaturizationSettingsType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)

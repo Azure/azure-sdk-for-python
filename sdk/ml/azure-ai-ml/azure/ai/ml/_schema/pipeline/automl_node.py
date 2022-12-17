@@ -6,14 +6,8 @@
 
 from marshmallow import fields, post_dump, post_load, pre_dump
 
-from azure.ai.ml._schema._utils.data_binding_expression import (
-    support_data_binding_expression_for_fields,
-)
-from azure.ai.ml._schema.automl import (
-    AutoMLClassificationSchema,
-    AutoMLForecastingSchema,
-    AutoMLRegressionSchema,
-)
+from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from azure.ai.ml._schema.automl import AutoMLClassificationSchema, AutoMLForecastingSchema, AutoMLRegressionSchema
 from azure.ai.ml._schema.automl.image_vertical.image_classification import (
     ImageClassificationMultilabelSchema,
     ImageClassificationSchema,
@@ -22,12 +16,8 @@ from azure.ai.ml._schema.automl.image_vertical.image_object_detection import (
     ImageInstanceSegmentationSchema,
     ImageObjectDetectionSchema,
 )
-from azure.ai.ml._schema.automl.nlp_vertical.text_classification import (
-    TextClassificationSchema,
-)
-from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
-    TextClassificationMultilabelSchema,
-)
+from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
+from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import TextClassificationMultilabelSchema
 from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema

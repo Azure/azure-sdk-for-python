@@ -13,10 +13,7 @@ from azure.ai.ml.entities._credentials import (
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
 )
-from azure.ai.ml.entities._datastore._on_prem_credentials import (
-    KerberosKeytabCredentials,
-    KerberosPasswordCredentials,
-)
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 
 def from_rest_datastore_credentials(rest_credentials: models.DatastoreCredentials):

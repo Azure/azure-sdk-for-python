@@ -4,9 +4,7 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._schema._deployment.online.sampling_strategy_schema import (
-    SamplingStrategySchema,
-)
+from azure.ai.ml._schema._deployment.online.sampling_strategy_schema import SamplingStrategySchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 

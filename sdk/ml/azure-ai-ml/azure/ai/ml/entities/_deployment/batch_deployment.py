@@ -10,21 +10,13 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchDeploymentDetails as RestBatchDeployment,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
 from azure.ai.ml._restclient.v2022_05_01.models import BatchOutputAction
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    CodeConfiguration as RestCodeConfiguration,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import (
-    camel_to_snake,
-    is_private_preview_enabled,
-    snake_to_pascal,
-)
+from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled, snake_to_pascal
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -32,12 +24,7 @@ from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .code_configuration import CodeConfiguration

@@ -3,18 +3,10 @@
 # ---------------------------------------------------------
 from abc import ABC
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    BanditPolicy as RestBanditPolicy,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    EarlyTerminationPolicy as RestEarlyTerminationPolicy,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    EarlyTerminationPolicyType,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    MedianStoppingPolicy as RestMedianStoppingPolicy,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )

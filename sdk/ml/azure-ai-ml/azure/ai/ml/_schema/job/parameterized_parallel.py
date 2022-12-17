@@ -8,9 +8,7 @@ from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSch
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
 from azure.ai.ml._schema.core.fields import DumpableEnumField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job_resource_configuration import (
-    JobResourceConfigurationSchema,
-)
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import LoggingLevel
 
 

@@ -325,9 +325,7 @@ class PipelineComponent(Component):
 
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
-        from azure.ai.ml.entities._job.pipeline._load_component import (
-            pipeline_node_factory,
-        )
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         sub_nodes = {}
         if rest_jobs is None:

@@ -25,9 +25,7 @@ from azure.ai.ml.entities._job.automl.nlp import (
     TextNerJob,
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
-    StackEnsembleSettings,
-)
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ColumnTransformer,

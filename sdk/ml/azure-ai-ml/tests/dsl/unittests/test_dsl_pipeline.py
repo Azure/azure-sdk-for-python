@@ -10,28 +10,46 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, \
-    AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
+from azure.ai.ml import (
+    AmlTokenConfiguration,
+    Input,
+    ManagedIdentityConfiguration,
+    MLClient,
+    MpiDistribution,
+    Output,
+    UserIdentityConfiguration,
+    command,
+    dsl,
+    load_component,
+    load_job,
+)
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ComponentContainerData,
+    ComponentContainerDetails,
+    SystemData,
+)
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_RESOURCE_PROVIDER,
-    InputOutputModes,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AssetTypes,
     AzureMLResourceType,
+    InputOutputModes,
 )
-from azure.ai.ml.entities import (
-    Component,
-    Data,
-    JobResourceConfiguration,
-    PipelineJob,
-)
+from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError, UnsupportedParameterKindError, MultipleValueError
+from azure.ai.ml.entities._job.pipeline._load_component import (
+    _generate_component_function,
+)
+from azure.ai.ml.exceptions import (
+    MultipleValueError,
+    ParamValueNotExistsError,
+    UnsupportedParameterKindError,
+    UserErrorException,
+    ValidationException,
+)
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -785,7 +803,9 @@ class TestDSLPipeline:
         assert pipeline_job2 == pipeline_job3
 
     def test_component_source(self):
-        from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
+        from azure.ai.ml.dsl._pipeline_component_builder import (
+            _add_component_to_current_definition_builder,
+        )
 
         def mock_add_to_builder(component):
             _add_component_to_current_definition_builder(component)
@@ -1137,7 +1157,9 @@ class TestDSLPipeline:
         assert dsl_pipeline_job_dict == pipeline_job_dict
 
     def test_dsl_pipeline_support_data_binding_for_fields(self) -> None:
-        from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+        from azure.ai.ml._schema._utils.data_binding_expression import (
+            support_data_binding_expression_for_fields,
+        )
         from azure.ai.ml._schema.job.distribution import MPIDistributionSchema
 
         schema = MPIDistributionSchema()
@@ -1151,7 +1173,9 @@ class TestDSLPipeline:
         assert dumped == {"type": "mpi", "process_count_per_instance": "${{parent.inputs.test}}"}
 
     def test_dsl_pipeline_without_setting_binding_node(self) -> None:
-        from dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import pipeline_without_setting_binding_node
+        from dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
+            pipeline_without_setting_binding_node,
+        )
 
         pipeline = pipeline_without_setting_binding_node()
         dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
@@ -1272,7 +1296,9 @@ class TestDSLPipeline:
         }
 
     def test_dsl_pipeline_with_only_setting_binding_node(self) -> None:
-        from dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import pipeline_with_only_setting_binding_node
+        from dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
+            pipeline_with_only_setting_binding_node,
+        )
 
         pipeline = pipeline_with_only_setting_binding_node()
         dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()

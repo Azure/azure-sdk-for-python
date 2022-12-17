@@ -6,17 +6,9 @@
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._internal._schema.command import (
-    CommandSchema,
-    DistributedSchema,
-    ParallelSchema,
-)
+from azure.ai.ml._internal._schema.command import CommandSchema, DistributedSchema, ParallelSchema
 from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal._schema.node import (
-    HDInsightSchema,
-    InternalBaseNodeSchema,
-    ScopeSchema,
-)
+from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
 from azure.ai.ml._internal.entities import (
     Command,
     DataTransfer,

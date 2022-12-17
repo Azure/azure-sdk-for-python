@@ -10,16 +10,8 @@ from typing import Any
 from marshmallow import ValidationError, fields, post_load, validates
 
 from azure.ai.ml._schema._endpoint.endpoint import EndpointSchema
-from azure.ai.ml._schema.core.fields import (
-    ArmStr,
-    ExperimentalField,
-    StringTransformedEnum,
-)
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    AzureMLResourceType,
-    PublicNetworkAccess,
-)
+from azure.ai.ml._schema.core.fields import ArmStr, ExperimentalField, StringTransformedEnum
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType, PublicNetworkAccess
 
 module_logger = logging.getLogger(__name__)
 

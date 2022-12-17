@@ -8,19 +8,11 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchEndpointDetails as RestBatchEndpoint,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.constants._common import (
-    AAD_TOKEN_YAML,
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
-from azure.ai.ml.entities._endpoint._endpoint_helpers import (
-    validate_endpoint_or_deployment_name,
-)
+from azure.ai.ml.constants._common import AAD_TOKEN_YAML, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
 
 from .endpoint import Endpoint

@@ -7,9 +7,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    CommandJob as RestCommandJob,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
@@ -230,8 +228,8 @@ class ImportJob(Job, JobIOMixin):
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
             source=self._to_inputs(
-                inputs=self.source._to_job_inputs(),
-                pipeline_job_dict=pipeline_job_dict,  # pylint: disable=protected-access
+                inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
+                pipeline_job_dict=pipeline_job_dict,
             ),
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )

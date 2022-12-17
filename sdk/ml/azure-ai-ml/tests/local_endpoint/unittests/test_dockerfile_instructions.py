@@ -5,7 +5,15 @@
 
 import pytest
 
-from azure.ai.ml._local_endpoints.dockerfile_instructions import Cmd, Copy, Env, Expose, From, Run, Workdir
+from azure.ai.ml._local_endpoints.dockerfile_instructions import (
+    Cmd,
+    Copy,
+    Env,
+    Expose,
+    From,
+    Run,
+    Workdir,
+)
 
 
 @pytest.mark.unittest

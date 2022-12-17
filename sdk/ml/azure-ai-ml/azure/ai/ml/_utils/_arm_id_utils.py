@@ -20,12 +20,7 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
 )
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 

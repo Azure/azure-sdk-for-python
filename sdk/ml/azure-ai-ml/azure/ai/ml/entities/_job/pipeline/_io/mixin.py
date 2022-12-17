@@ -6,9 +6,7 @@ import copy
 from typing import Dict, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    JobOutput as RestJobOutput,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException

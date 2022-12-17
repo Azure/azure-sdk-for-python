@@ -8,7 +8,12 @@ import pytest
 
 from azure.ai.ml import Input, Output, command, dsl, load_component, load_job
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml.entities import CommandComponent, CommandJob, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJob,
+    CommandJobLimits,
+    JobResourceConfiguration,
+)
 
 from .._util import _UTILS_TIMEOUT_SECOND
 

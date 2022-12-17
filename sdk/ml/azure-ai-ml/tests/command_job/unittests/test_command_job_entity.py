@@ -12,7 +12,9 @@ from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
 

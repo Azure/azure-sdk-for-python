@@ -24,21 +24,11 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._schema import DataSchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    SHORT_URI_FORMAT,
-    AssetTypes,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, SHORT_URI_FORMAT, AssetTypes
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .artifact import ArtifactStorageInfo
 

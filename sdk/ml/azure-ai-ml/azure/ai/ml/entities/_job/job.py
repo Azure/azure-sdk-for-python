@@ -18,11 +18,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, JobServi
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    CommonYamlFields,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin

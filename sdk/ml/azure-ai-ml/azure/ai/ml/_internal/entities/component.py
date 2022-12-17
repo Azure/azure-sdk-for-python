@@ -11,10 +11,7 @@ from uuid import UUID
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    ComponentVersionData,
-    ComponentVersionDetails,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData

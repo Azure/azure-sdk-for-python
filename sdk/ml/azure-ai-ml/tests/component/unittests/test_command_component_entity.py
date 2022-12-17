@@ -9,10 +9,24 @@ import pydash
 import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
+from azure.ai.ml import (
+    Input,
+    MpiDistribution,
+    Output,
+    TensorFlowDistribution,
+    command,
+    load_component,
+)
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.constants._common import (
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AzureMLResourceType,
+)
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJobLimits,
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -199,7 +213,9 @@ class TestCommandComponentEntity:
             os.chdir(old_cwd)
 
     def test_command_component_code_git_path(self):
-        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+        from azure.ai.ml.operations._component_operations import (
+            _try_resolve_code_for_component,
+        )
 
         yaml_path = "./tests/test_configs/components/component_git_path.yml"
         yaml_dict = load_yaml(yaml_path)
@@ -383,7 +399,9 @@ class TestCommandComponentEntity:
         sweep_job1.early_termination = {
             'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
             }
-        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+            BanditPolicy,
+        )
         assert isinstance(sweep_job1.early_termination, BanditPolicy)
         assert [sweep_job1.early_termination.evaluation_interval,
                 sweep_job1.early_termination.delay_evaluation,

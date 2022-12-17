@@ -44,18 +44,11 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import (
-    ErrorTarget,
-    UserErrorException,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
 from ..._schema import PathAwareSchema
-from ..._schema._utils.data_binding_expression import (
-    support_data_binding_expression_for_fields,
-)
+from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..._utils.utils import camel_to_snake
 from .base_node import BaseNode
 
@@ -247,9 +240,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
 
         # TODO: use cls._get_schema() to load from rest object
-        from azure.ai.ml._schema._sweep.parameterized_sweep import (
-            ParameterizedSweepSchema,
-        )
+        from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])

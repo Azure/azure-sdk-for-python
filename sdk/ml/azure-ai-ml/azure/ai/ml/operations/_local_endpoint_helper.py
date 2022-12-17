@@ -23,11 +23,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml.exceptions import (
-    InvalidLocalEndpointError,
-    LocalEndpointNotFoundError,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)

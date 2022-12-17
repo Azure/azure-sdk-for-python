@@ -6,13 +6,9 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    AutoMLJob as RestAutoMLJob,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, TaskType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    TextClassification as RestTextClassification,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TextClassification as RestTextClassification
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
@@ -21,14 +17,9 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_data_outputs,
-    to_rest_data_outputs,
-)
+from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
-from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import (
-    NlpFeaturizationSettings,
-)
+from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
@@ -182,14 +173,10 @@ class TextClassificationJob(AutoMLNLPJob):
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "TextClassificationJob":
-        from azure.ai.ml._schema.automl.nlp_vertical.text_classification import (
-            TextClassificationSchema,
-        )
+        from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
 
         if kwargs.pop("inside_pipeline", False):
-            from azure.ai.ml._schema.pipeline.automl_node import (
-                AutoMLTextClassificationNode,
-            )
+            from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 
             loaded_data = load_from_dict(
                 AutoMLTextClassificationNode,
@@ -209,12 +196,8 @@ class TextClassificationJob(AutoMLNLPJob):
         return TextClassificationJob(**loaded_data)
 
     def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.nlp_vertical.text_classification import (
-            TextClassificationSchema,
-        )
-        from azure.ai.ml._schema.pipeline.automl_node import (
-            AutoMLTextClassificationNode,
-        )
+        from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
+        from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 
         if inside_pipeline:
             return AutoMLTextClassificationNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

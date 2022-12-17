@@ -6,11 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import (
-    NestedField,
-    StringTransformedEnum,
-    UnionField,
-)
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
 from azure.ai.ml.constants import ImportSourceType, JobType

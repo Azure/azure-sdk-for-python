@@ -2,15 +2,15 @@ import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils import is_live
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import (
+    _PYTEST_TIMEOUT_METHOD,
     assert_job_cancel,
     sleep_if_live,
     wait_until_done,
-    _PYTEST_TIMEOUT_METHOD,
 )
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
@@ -23,18 +23,22 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
-from azure.core.exceptions import HttpResponseError
 
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
     _PIPELINE_JOB_TIMEOUT_SECOND,
-    DATABINDING_EXPRESSION_TEST_CASES,
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
+    DATABINDING_EXPRESSION_TEST_CASES,
 )
 
 
 def assert_job_input_output_types(job: PipelineJob):
-    from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput, PipelineOutput
+    from azure.ai.ml.entities._job.pipeline._io import (
+        NodeInput,
+        NodeOutput,
+        PipelineInput,
+        PipelineOutput,
+    )
 
     for _, input in job.inputs.items():
         assert isinstance(input, PipelineInput)

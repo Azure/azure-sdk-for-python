@@ -8,9 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ManagedServiceIdentity as RestManagedServiceIdentity,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ManagedServiceIdentityType as RestManagedServiceIdentityType,
 )

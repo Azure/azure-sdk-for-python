@@ -7,9 +7,7 @@ import binascii
 import re
 
 from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
-from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import (
-    DevContainerResolver,
-)
+from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
 from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 

@@ -14,16 +14,9 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import (
-    PipelineExpressionMixin,
-)
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    UserErrorException,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
 
 
 def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:

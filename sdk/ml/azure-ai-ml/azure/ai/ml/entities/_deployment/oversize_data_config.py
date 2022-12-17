@@ -4,9 +4,7 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._schema._deployment.online.oversize_data_config_schema import (
-    OversizeDataConfigSchema,
-)
+from azure.ai.ml._schema._deployment.online.oversize_data_config_schema import OversizeDataConfigSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 

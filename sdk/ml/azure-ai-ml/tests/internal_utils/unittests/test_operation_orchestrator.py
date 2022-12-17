@@ -2,10 +2,19 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from pytest_mock import MockFixture
-from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+from test_utilities.constants import (
+    Test_Resource_Group,
+    Test_Subscription,
+    Test_Workspace_Name,
+)
 
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+)
 from azure.ai.ml.constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     NAMED_RESOURCE_ID_FORMAT,
@@ -24,7 +33,6 @@ from azure.ai.ml.operations import (
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 
 @pytest.fixture

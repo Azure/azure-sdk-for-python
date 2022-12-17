@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
+
+from azure.ai.ml.exceptions import JobException
 
 _PIPELINE_JOB_TIMEOUT_SECOND = 20 * 60  # timeout for pipeline job's tests, unit in second.
 _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND = 40 * 60  # timeout for pipeline job's long-running tests, unit in second.

@@ -7,7 +7,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobPythonEnt
 from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.entities._job.spark_resource_configuration import (
+    SparkResourceConfiguration,
+)
 from azure.ai.ml.exceptions import ValidationException
 
 

@@ -4,19 +4,14 @@
 
 import logging
 
-from azure.core.exceptions import HttpResponseError
-
-from azure.ai.ml._restclient.registry_discovery import (
-    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces,
-)
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
     TemporaryDataReferenceRequestDto,
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
+from azure.core.exceptions import HttpResponseError
 
 module_logger = logging.getLogger(__name__)
 

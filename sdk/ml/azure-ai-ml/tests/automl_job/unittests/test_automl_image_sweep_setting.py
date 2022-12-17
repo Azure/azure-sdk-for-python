@@ -2,24 +2,33 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import pytest
 from itertools import product
 from typing import Optional
 
+import pytest
+
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     BanditPolicy as RestBanditPolicy,
-    EarlyTerminationPolicyType, 
-    ImageSweepSettings as RestImageSweepSettings, 
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EarlyTerminationPolicyType,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ImageSweepSettings as RestImageSweepSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     MedianStoppingPolicy as RestMedianStoppingPolicy,
-    SamplingAlgorithmType, 
-    TruncationSelectionPolicy as RestTruncationSelectionPolicy, 
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._job.automl.image import ImageSweepSettings
 from azure.ai.ml.sweep import (
-    BanditPolicy, 
-    MedianStoppingPolicy, 
-    TruncationSelectionPolicy
- )
+    BanditPolicy,
+    MedianStoppingPolicy,
+    TruncationSelectionPolicy,
+)
 
 
 @pytest.mark.unittest

@@ -20,22 +20,12 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
-from azure.ai.ml.entities._job.pipeline._io import (
-    NodeOutput,
-    PipelineInput,
-    PipelineNodeIOMixin,
-)
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineNodeIOMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._util import (
-    convert_ordered_dict_to_dict,
-    resolve_pipeline_parameters,
-)
-from azure.ai.ml.entities._validation import (
-    MutableValidationResult,
-    SchemaValidatableMixin,
-)
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -374,9 +364,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         if CommonYamlFields.TYPE not in obj:
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
-        from azure.ai.ml.entities._job.pipeline._load_component import (
-            pipeline_node_factory,
-        )
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
@@ -495,9 +483,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     def _register_in_current_pipeline_component_builder(self):
         """Register this node in current pipeline component builder by adding
         self to a global stack."""
-        from azure.ai.ml.dsl._pipeline_component_builder import (
-            _add_component_to_current_definition_builder,
-        )
+        from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
         # TODO: would it be better if we make _add_component_to_current_definition_builder a public function of
         #  _PipelineComponentBuilderStack and make _PipelineComponentBuilderStack a singleton?

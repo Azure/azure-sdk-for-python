@@ -17,12 +17,7 @@ from azure.ai.ml._schema._sweep.search_space import (
     RandintSchema,
     UniformSchema,
 )
-from azure.ai.ml._schema.core.fields import (
-    DumpableIntegerField,
-    DumpableStringField,
-    NestedField,
-    UnionField,
-)
+from azure.ai.ml._schema.core.fields import DumpableIntegerField, DumpableStringField, NestedField, UnionField
 from azure.ai.ml._utils.utils import float_to_str
 from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import (

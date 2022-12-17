@@ -14,11 +14,7 @@ from pydash import objects
 
 from azure.ai.ml._schema.core.schema_meta import PatchedBaseSchema, PatchedSchemaMeta
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    FILE_PREFIX,
-    PARAMS_OVERRIDE_KEY,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 

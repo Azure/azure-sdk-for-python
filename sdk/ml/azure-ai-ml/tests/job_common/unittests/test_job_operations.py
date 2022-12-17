@@ -6,25 +6,33 @@ from unittest.mock import Mock, patch
 import pytest
 import vcr
 import yaml
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.constants._common import (
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AzureMLResourceType,
+)
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
-from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
+from azure.ai.ml.operations import (
+    DatastoreOperations,
+    EnvironmentOperations,
+    JobOperations,
+    WorkspaceOperations,
+)
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._run_operations import RunOperations
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 

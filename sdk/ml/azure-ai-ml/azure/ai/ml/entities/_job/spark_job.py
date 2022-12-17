@@ -12,11 +12,7 @@ from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._schema.job.identity import (
-    AMLTokenIdentitySchema,
-    ManagedIdentitySchema,
-    UserIdentitySchema,
-)
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
@@ -41,11 +37,7 @@ from azure.ai.ml.entities._util import load_from_dict
 from ..._schema import NestedField, UnionField
 from .job import Job
 from .job_io_mixin import JobIOMixin
-from .spark_helpers import (
-    _validate_compute_or_resources,
-    _validate_input_output_mode,
-    _validate_spark_configurations,
-)
+from .spark_helpers import _validate_compute_or_resources, _validate_input_output_mode, _validate_spark_configurations
 from .spark_job_entry import SparkJobEntry
 from .spark_job_entry_mixin import SparkJobEntryMixin
 from .spark_resource_configuration import SparkResourceConfiguration

@@ -14,19 +14,8 @@ from contextlib import suppress
 from multiprocessing import cpu_count
 from pathlib import Path
 from platform import system
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
-    Union,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 
@@ -69,14 +58,10 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import (
-        ComponentOperations,
-        DataOperations,
-        EnvironmentOperations,
-        ModelOperations,
-    )
+    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
 hash_type = type(hashlib.md5())  # nosec
 

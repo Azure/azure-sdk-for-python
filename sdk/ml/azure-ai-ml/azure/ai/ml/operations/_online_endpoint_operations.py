@@ -7,20 +7,11 @@
 import json
 from typing import Dict, Optional, Union
 
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_02_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    KeyType,
-    RegenerateEndpointKeysRequest,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
+from azure.ai.ml._restclient.v2022_02_01_preview.models import KeyType, RegenerateEndpointKeysRequest
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -37,17 +28,13 @@ from azure.ai.ml.constants._common import KEY, AzureMLResourceType, LROConfigura
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointKeyType
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
-from azure.ai.ml.entities._endpoint.online_endpoint import (
-    EndpointAuthKeys,
-    EndpointAuthToken,
-)
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._operation_orchestrator import OperationOrchestrator
 

@@ -1,13 +1,13 @@
 from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
+from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._vendor.azure_resources import ResourceManagementClient
 from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
-from azure.core.polling import LROPoller
 
 
 def _raise_exception():

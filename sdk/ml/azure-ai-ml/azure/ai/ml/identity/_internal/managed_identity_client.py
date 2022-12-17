@@ -7,10 +7,11 @@ import time
 from typing import TYPE_CHECKING
 
 import six
+from msal import TokenCache
+
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from msal import TokenCache
 
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline

@@ -13,29 +13,15 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    CommandJob as RestCommandJob,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    CommandJobLimits as RestCommandJobLimits,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    JobResourceConfiguration as RestJobResourceConfiguration,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
-from azure.ai.ml._schema.job.identity import (
-    AMLTokenIdentitySchema,
-    ManagedIdentitySchema,
-    UserIdentitySchema,
-)
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    LOCAL_COMPUTE_PROPERTY,
-    LOCAL_COMPUTE_TARGET,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
@@ -47,10 +33,7 @@ from azure.ai.ml.entities._credentials import (
     _BaseJobIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_data_outputs,
-    from_rest_inputs_to_dataset_literal,
-)
+from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.distribution import (
     DistributionConfiguration,
@@ -59,13 +42,9 @@ from azure.ai.ml.entities._job.distribution import (
     TensorFlowDistribution,
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
-from azure.ai.ml.entities._job.job_resource_configuration import (
-    JobResourceConfiguration,
-)
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.sweep.early_termination_policy import (
-    EarlyTerminationPolicy,
-)
+from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import (
     Choice,
@@ -81,19 +60,10 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     Uniform,
 )
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
-from ..._schema.job.distribution import (
-    MPIDistributionSchema,
-    PyTorchDistributionSchema,
-    TensorFlowDistributionSchema,
-)
+from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,

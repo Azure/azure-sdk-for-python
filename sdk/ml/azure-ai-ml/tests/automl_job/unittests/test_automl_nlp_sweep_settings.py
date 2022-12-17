@@ -1,22 +1,30 @@
-from typing import Optional
 from itertools import product
+from typing import Optional
 
 import pytest
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     BanditPolicy as RestBanditPolicy,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     EarlyTerminationPolicyType,
-    NlpSweepSettings as RestNlpSweepSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     MedianStoppingPolicy as RestMedianStoppingPolicy,
-    SamplingAlgorithmType,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    NlpSweepSettings as RestNlpSweepSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.automl import NlpSweepSettings
 from azure.ai.ml.sweep import (
     BanditPolicy,
     MedianStoppingPolicy,
-    TruncationSelectionPolicy
- )
+    TruncationSelectionPolicy,
+)
 
 
 class TestNlpSweepSettings:

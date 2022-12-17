@@ -7,6 +7,8 @@
 from functools import wraps
 from typing import Any, Callable, Optional
 
+from typing_extensions import Concatenate, ParamSpec, Self
+
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -21,7 +23,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.rest import HttpRequest, HttpResponse
-from typing_extensions import Concatenate, ParamSpec, Self
 
 
 def _request_function(f: Callable[["HttpPipeline"], None]):

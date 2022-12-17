@@ -8,19 +8,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ManagedServiceIdentity as RestManagedServiceIdentity,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    Workspace as RestWorkspace,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    WorkspaceResourceConstants,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -193,8 +185,8 @@ class Workspace(Resource):
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = IdentityConfiguration._from_workspace_rest_object(
-                rest_obj.identity  # pylint: disable=protected-access
+            identity = IdentityConfiguration._from_workspace_rest_object(  # pylint: disable=protected-access
+                rest_obj.identity
             )
         return Workspace(
             name=rest_obj.name,

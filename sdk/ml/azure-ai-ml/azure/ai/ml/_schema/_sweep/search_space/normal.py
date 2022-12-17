@@ -7,11 +7,7 @@
 from marshmallow import ValidationError, fields, post_load
 from marshmallow.decorators import pre_dump
 
-from azure.ai.ml._schema.core.fields import (
-    DumpableIntegerField,
-    StringTransformedEnum,
-    UnionField,
-)
+from azure.ai.ml._schema.core.fields import DumpableIntegerField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace

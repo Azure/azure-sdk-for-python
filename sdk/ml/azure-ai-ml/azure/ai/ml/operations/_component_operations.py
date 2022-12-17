@@ -12,9 +12,7 @@ from typing import Callable, Dict, Iterable, Optional, Union
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_05_01 import (
-    AzureMachineLearningWorkspaces as ServiceClient052022,
-)
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -28,10 +26,7 @@ from azure.ai.ml._scope_dependent_operations import (
 #     monitor_with_activity,
 #     monitor_with_telemetry_mixin,
 # )
-from azure.ai.ml._utils._arm_id_utils import (
-    is_ARM_id_for_resource,
-    is_registry_id_for_resource,
-)
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -49,12 +44,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.exceptions import (
-    ComponentException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
@@ -363,8 +353,12 @@ class ComponentOperations(_ScopeDependentOperations):
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
-    ) -> None:  # pylint:disable=unused-argument
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a component.
 
         :param name: Name of the component.
@@ -386,8 +380,12 @@ class ComponentOperations(_ScopeDependentOperations):
 
     # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
-        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
-    ) -> None:  # pylint:disable=unused-argument
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived component.
 
         :param name: Name of the component.
@@ -496,9 +494,7 @@ class ComponentOperations(_ScopeDependentOperations):
         from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-        from azure.ai.ml.entities._job.pipeline._attr_dict import (
-            try_get_non_arbitrary_attr_for_potential_attr_dict,
-        )
+        from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
         def preprocess_job(node):

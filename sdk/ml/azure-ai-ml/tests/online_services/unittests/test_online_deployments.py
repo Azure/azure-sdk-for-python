@@ -4,6 +4,7 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 import pytest
+from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump
 
@@ -16,7 +17,6 @@ from azure.ai.ml.entities._deployment.online_deployment import (
     OnlineDeployment,
 )
 from azure.ai.ml.operations import OnlineDeploymentOperations, WorkspaceOperations
-from azure.core.polling import LROPoller
 
 
 @pytest.fixture()

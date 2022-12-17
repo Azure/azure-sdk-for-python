@@ -5,20 +5,25 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.core.exceptions import HttpResponseError
 
-from test_utilities.utils import assert_job_cancel, sleep_if_live
-from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE, \
-    get_expected_runsettings_items
+from .._utils import (
+    DATA_VERSION,
+    PARAMETERS_TO_TEST,
+    TEST_CASE_NAME_ENUMERATE,
+    get_expected_runsettings_items,
+    set_run_settings,
+)
 
 _dependent_datasets = {}
 

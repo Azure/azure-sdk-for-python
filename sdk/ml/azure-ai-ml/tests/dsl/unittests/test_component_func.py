@@ -10,8 +10,14 @@ from azure.ai.ml.entities import Data, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
-from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException, UnexpectedAttributeError
+from azure.ai.ml.entities._job.pipeline._load_component import (
+    _generate_component_function,
+)
+from azure.ai.ml.exceptions import (
+    UnexpectedAttributeError,
+    UnexpectedKeywordError,
+    ValidationException,
+)
 
 from .._util import _DSL_TIMEOUT_SECOND
 

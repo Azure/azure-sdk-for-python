@@ -12,12 +12,7 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin

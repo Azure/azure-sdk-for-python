@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Callable
 from unittest.mock import patch
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import get_arm_id
 
 from azure.ai.ml import MLClient

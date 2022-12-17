@@ -8,11 +8,7 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    InferenceContainerProperties,
-    OperatingSystemType,
-    Route,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import InferenceContainerProperties, OperatingSystemType, Route
 from azure.ai.ml._schema.core.fields import LocalPathField, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (

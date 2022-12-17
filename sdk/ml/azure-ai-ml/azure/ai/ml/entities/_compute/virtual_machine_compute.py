@@ -5,16 +5,12 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    VirtualMachine as VMResource,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     VirtualMachineSchemaProperties,
     VirtualMachineSshCredentials,
 )
-from azure.ai.ml._schema.compute.virtual_machine_compute import (
-    VirtualMachineComputeSchema,
-)
+from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute

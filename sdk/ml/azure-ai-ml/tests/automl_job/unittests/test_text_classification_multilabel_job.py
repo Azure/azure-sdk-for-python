@@ -3,9 +3,13 @@ from lib2to3.pytree import convert
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AutoMLJob as RestAutoMLJob,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     BanditPolicy as RestBanditPolicy,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     JobBase,
     LogVerbosity,
     MLTableJobInput,
@@ -17,7 +21,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SamplingAlgorithmType,
     TextClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    UserIdentity as RestUserIdentity,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
@@ -26,7 +32,9 @@ from azure.ai.ml.automl import text_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job import TextClassificationMultilabelJob
+from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job import (
+    TextClassificationMultilabelJob,
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 

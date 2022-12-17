@@ -11,9 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    PipelineJob as RestPipelineJob,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -24,10 +22,7 @@ from azure.ai.ml._utils.utils import (
     transform_dict_keys,
 )
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import (
-    AZUREML_PRIVATE_FEATURES_ENV_VAR,
-    BASE_PATH_CONTEXT_KEY,
-)
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
@@ -60,10 +55,7 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixi
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._validation import (
-    MutableValidationResult,
-    SchemaValidatableMixin,
-)
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 
 module_logger = logging.getLogger(__name__)

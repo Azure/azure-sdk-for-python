@@ -17,11 +17,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 )
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.component import ComponentSchema
-from azure.ai.ml._utils.utils import (
-    dump_yaml_to_file,
-    hash_dict,
-    is_private_preview_enabled,
-)
+from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
@@ -33,17 +29,10 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._mixins import (
-    RestTranslatableMixin,
-    TelemetryMixin,
-    YamlTranslatableMixin,
-)
+from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import (
-    MutableValidationResult,
-    SchemaValidatableMixin,
-)
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from .code import ComponentIgnoreFile
@@ -159,9 +148,7 @@ class Component(
 
     @property
     def _func(self):
-        from azure.ai.ml.entities._job.pipeline._load_component import (
-            _generate_component_function,
-        )
+        from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
         # validate input/output names before creating component function
         validation_result = self._validate_io_names(self.inputs)

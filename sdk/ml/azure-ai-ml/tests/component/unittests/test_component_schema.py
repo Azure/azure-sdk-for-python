@@ -11,10 +11,18 @@ import yaml
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    AssetTypes,
+    LegacyAssetTypes,
+)
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.component import (
+    COMPONENT_CODE_PLACEHOLDER,
+    COMPONENT_PLACEHOLDER,
+)
 from azure.ai.ml.entities._component.component_factory import component_factory
 
 from .._util import _COMPONENT_TIMEOUT_SECOND

@@ -15,10 +15,7 @@ from azure.ai.ml._schema.schedule.create_job import (
     PipelineCreateJobSchema,
     SparkCreateJobSchema,
 )
-from azure.ai.ml._schema.schedule.trigger import (
-    CronTriggerSchema,
-    RecurrenceTriggerSchema,
-)
+from azure.ai.ml._schema.schedule.trigger import CronTriggerSchema, RecurrenceTriggerSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 

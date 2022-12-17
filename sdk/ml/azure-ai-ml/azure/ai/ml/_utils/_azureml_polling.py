@@ -8,10 +8,9 @@ from concurrent.futures import Future
 from time import time
 from typing import Any, Optional, Union
 
+from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.polling import LROPoller
 from azure.mgmt.core.polling.arm_polling import ARMPolling
-
-from azure.ai.ml.constants._common import LROConfigurations
 
 module_logger = logging.getLogger(__name__)
 

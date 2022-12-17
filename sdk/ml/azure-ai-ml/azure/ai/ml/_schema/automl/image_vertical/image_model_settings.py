@@ -71,9 +71,7 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.image.image_model_settings import (
-            ImageModelSettingsClassification,
-        )
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
 
         return ImageModelSettingsClassification(**data)
 
@@ -104,9 +102,7 @@ class ImageModelSettingsObjectDetectionSchema(ImageDetectionSegmentationCommonSc
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.image.image_model_settings import (
-            ImageModelSettingsObjectDetection,
-        )
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
 
         return ImageModelSettingsObjectDetection(**data)
 
@@ -118,8 +114,6 @@ class ImageModelSettingsInstanceSegmentationSchema(ImageDetectionSegmentationCom
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._job.automl.image.image_model_settings import (
-            ImageModelSettingsObjectDetection,
-        )
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
 
         return ImageModelSettingsObjectDetection(**data)

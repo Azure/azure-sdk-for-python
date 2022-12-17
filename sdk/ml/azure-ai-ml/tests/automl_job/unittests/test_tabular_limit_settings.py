@@ -1,6 +1,8 @@
 import pytest
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TableVerticalLimitSettings as RestTabularLimitSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    TableVerticalLimitSettings as RestTabularLimitSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular import TabularLimitSettings
 
 

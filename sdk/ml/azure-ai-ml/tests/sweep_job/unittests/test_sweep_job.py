@@ -6,9 +6,17 @@ from azure.ai.ml.entities import CommandJob, CommandJobLimits, Job
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
+from azure.ai.ml.entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+)
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    TruncationSelectionPolicy,
+)
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.sweep import (

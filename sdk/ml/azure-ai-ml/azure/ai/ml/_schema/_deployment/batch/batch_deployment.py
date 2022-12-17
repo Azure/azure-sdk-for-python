@@ -9,24 +9,12 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema._deployment.batch.job_definition_schema import (
-    JobDefinitionSchema,
-)
+from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema.core.fields import (
-    ComputeField,
-    ExperimentalField,
-    NestedField,
-    StringTransformedEnum,
-)
-from azure.ai.ml._schema.job_resource_configuration import (
-    JobResourceConfigurationSchema,
-)
+from azure.ai.ml._schema.core.fields import ComputeField, ExperimentalField, NestedField, StringTransformedEnum
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._deployment import (
-    BatchDeploymentOutputAction,
-    BatchDeploymentType,
-)
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 

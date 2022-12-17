@@ -16,11 +16,7 @@ from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, Model, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_group
-from azure.ai.ml.entities._job.pipeline._io import (
-    NodeOutput,
-    PipelineInput,
-    _GroupAttrDict,
-)
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import (
     MultipleValueError,
@@ -31,10 +27,7 @@ from azure.ai.ml.exceptions import (
     UserErrorException,
 )
 
-from ._pipeline_component_builder import (
-    PipelineComponentBuilder,
-    _is_inside_dsl_pipeline_func,
-)
+from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from ._settings import _dsl_settings_stack
 from ._utils import _resolve_source_file
 

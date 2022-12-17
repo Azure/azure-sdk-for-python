@@ -7,11 +7,7 @@
 from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema
 
 from ..job.job_limits import SweepJobLimitsSchema
-from .sweep_fields_provider import (
-    EarlyTerminationField,
-    SamplingAlgorithmField,
-    SearchSpaceField,
-)
+from .sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField, SearchSpaceField
 from .sweep_objective import SweepObjectiveSchema
 
 

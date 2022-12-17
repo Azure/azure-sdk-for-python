@@ -13,22 +13,14 @@ from typing import Iterable, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._local_endpoints import (
-    AzureMlImageContext,
-    DockerfileResolver,
-    LocalEndpointMode,
-)
+from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerfileResolver, LocalEndpointMode
 from azure.ai.ml._local_endpoints.docker_client import (
     DockerClient,
     get_deployment_json_from_container,
     get_status_from_container,
 )
-from azure.ai.ml._local_endpoints.validators.code_validator import (
-    get_code_configuration_artifacts,
-)
-from azure.ai.ml._local_endpoints.validators.environment_validator import (
-    get_environment_artifacts,
-)
+from azure.ai.ml._local_endpoints.validators.code_validator import get_code_configuration_artifacts
+from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
@@ -36,11 +28,7 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
-from azure.ai.ml.exceptions import (
-    InvalidLocalEndpointError,
-    LocalEndpointNotFoundError,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)

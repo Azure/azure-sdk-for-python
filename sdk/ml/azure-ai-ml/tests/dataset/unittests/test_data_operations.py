@@ -3,6 +3,7 @@ from typing import Callable, Iterable
 from unittest.mock import Mock, patch
 
 import pytest
+from azure.core.paging import ItemPaged
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
@@ -23,7 +24,6 @@ from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
-from azure.core.paging import ItemPaged
 
 
 @pytest.fixture

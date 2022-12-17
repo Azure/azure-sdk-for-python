@@ -17,15 +17,9 @@ from azure.ai.ml.entities._credentials import (
     UserIdentityConfiguration,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import (
-    MpiDistribution,
-    PyTorchDistribution,
-    TensorFlowDistribution,
-)
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._component_translatable import (
-    ComponentTranslatableMixin,
-)
+from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 

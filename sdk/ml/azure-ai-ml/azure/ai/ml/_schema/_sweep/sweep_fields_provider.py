@@ -25,11 +25,7 @@ from azure.ai.ml._schema._sweep.sweep_termination import (
     MedianStoppingPolicySchema,
     TruncationSelectionPolicySchema,
 )
-from azure.ai.ml._schema.core.fields import (
-    NestedField,
-    StringTransformedEnum,
-    UnionField,
-)
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 
 
 def SamplingAlgorithmField():
