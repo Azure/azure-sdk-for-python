@@ -29,6 +29,7 @@ USAGE:
 import os
 import asyncio
 from azure.ai.formrecognizer import FormField, RecognizedForm
+from typing import List
 
 
 class Receipt(object):
@@ -44,7 +45,7 @@ class Receipt(object):
         self.merchant_name: FormField  = form.fields.get("MerchantName", FormField())
         self.merchant_address: FormField  = form.fields.get("MerchantAddress", FormField())
         self.merchant_phone_number: FormField  = form.fields.get("MerchantPhoneNumber", FormField())
-        self.receipt_items: list[ReceiptItem]  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
+        self.receipt_items: List[ReceiptItem]  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
         self.subtotal: FormField  = form.fields.get("Subtotal", FormField())
         self.tax: FormField  = form.fields.get("Tax", FormField())
         self.tip: FormField  = form.fields.get("Tip", FormField())
@@ -52,7 +53,7 @@ class Receipt(object):
         self.transaction_date: FormField  = form.fields.get("TransactionDate", FormField())
         self.transaction_time: FormField  = form.fields.get("TransactionTime", FormField())
 
-    def convert_to_receipt_item(self, items: FormField) -> list["ReceiptItem"]:
+    def convert_to_receipt_item(self, items: FormField) -> List["ReceiptItem"]:
         """Converts Items in a receipt to a list of strongly-typed ReceiptItem
         """
         if items is None:
