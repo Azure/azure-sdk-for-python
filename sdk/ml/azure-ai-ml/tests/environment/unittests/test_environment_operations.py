@@ -2,7 +2,6 @@ from typing import Callable, Iterable
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.paging import ItemPaged
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_environment
@@ -17,6 +16,7 @@ from azure.ai.ml.constants._common import ARM_ID_PREFIX, OrderString
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.core.paging import ItemPaged
 
 
 @pytest.fixture

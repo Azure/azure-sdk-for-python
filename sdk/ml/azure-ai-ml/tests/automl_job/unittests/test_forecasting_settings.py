@@ -12,15 +12,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     CustomTargetLags,
     CustomTargetRollingWindowSize,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ForecastingSettings as RestForecastingSettings,
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ShortSeriesHandlingConfiguration,
-)
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
-    ForecastingSettings,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ShortSeriesHandlingConfiguration
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
 
 @pytest.mark.automl_test

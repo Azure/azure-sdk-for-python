@@ -2,7 +2,6 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
-from azure.core.polling import LROPoller
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_workspace
@@ -13,13 +12,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import (
-    CustomerManagedKey,
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    Workspace,
-)
+from azure.ai.ml.entities import CustomerManagedKey, IdentityConfiguration, ManagedIdentityConfiguration, Workspace
 from azure.ai.ml.operations import WorkspaceOperations
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture

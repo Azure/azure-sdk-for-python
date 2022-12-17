@@ -4,7 +4,6 @@ from unittest.mock import Mock
 
 import pytest
 import vcr
-from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
@@ -17,6 +16,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
 )
 from azure.ai.ml.operations import ComputeOperations
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture

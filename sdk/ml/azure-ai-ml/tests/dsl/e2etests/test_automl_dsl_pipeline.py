@@ -19,9 +19,7 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.nlp import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular import TabularFeaturizationSettings
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
-    ForecastingSettings,
-)
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 tests_root_dir = Path(__file__).parent.parent.parent

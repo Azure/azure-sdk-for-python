@@ -7,12 +7,6 @@ from .input_reason_expression import generate_dsl_pipeline as input_reason_expre
 from .input_string_concatenate import generate_dsl_pipeline as input_string_concatenate
 from .run_settings_compute import generate_dsl_pipeline as run_settings_compute
 from .run_settings_literal import generate_dsl_pipeline as run_settings_literal
-from .run_settings_sweep_choice import (
-    generate_dsl_pipeline as run_settings_sweep_choice,
-)
-from .run_settings_sweep_limits import (
-    generate_dsl_pipeline as run_settings_sweep_limits,
-)
-from .run_settings_sweep_literal import (
-    generate_dsl_pipeline as run_settings_sweep_literal,
-)
+from .run_settings_sweep_choice import generate_dsl_pipeline as run_settings_sweep_choice
+from .run_settings_sweep_limits import generate_dsl_pipeline as run_settings_sweep_limits
+from .run_settings_sweep_literal import generate_dsl_pipeline as run_settings_sweep_literal

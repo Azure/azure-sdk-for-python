@@ -6,21 +6,13 @@ import pytest
 import yaml
 from _pytest.logging import LogCaptureFixture
 from marshmallow.exceptions import ValidationError
-from test_utilities.constants import (
-    Test_Resource_Group,
-    Test_Subscription,
-    Test_Workspace_Name,
-)
+from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
 from azure.ai.ml import load_batch_deployment, load_environment
 from azure.ai.ml._schema import AnonymousEnvironmentSchema, EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml._utils.utils import is_valid_uuid
-from azure.ai.ml.constants._common import (
-    ANONYMOUS_ENV_NAME,
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
+from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 

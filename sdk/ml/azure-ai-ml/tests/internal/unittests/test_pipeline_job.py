@@ -32,10 +32,7 @@ from azure.ai.ml._internal import (
     TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import (
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AssetTypes,
-)
+from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._utils import environment_variable_overwrite
@@ -608,9 +605,7 @@ class TestPipelineJob:
 
     def test_load_pipeline_job_with_internal_nodes_from_rest(self):
         # this is a simplified test case which avoid constructing a complete pipeline job rest object
-        from azure.ai.ml.entities._job.pipeline._load_component import (
-            pipeline_node_factory,
-        )
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         unregister_internal_components()
         internal_node_type = "CommandComponent"

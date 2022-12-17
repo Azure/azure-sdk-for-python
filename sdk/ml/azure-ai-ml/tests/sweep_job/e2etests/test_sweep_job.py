@@ -11,9 +11,7 @@ from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.sweep.early_termination_policy import (
-    TruncationSelectionPolicy,
-)
+from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 

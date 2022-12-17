@@ -9,12 +9,7 @@ from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, Asse
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._inputs_outputs import Output
-from azure.ai.ml.entities._job.import_job import (
-    DatabaseImportSource,
-    FileImportSource,
-    ImportJob,
-    ImportSource,
-)
+from azure.ai.ml.entities._job.import_job import DatabaseImportSource, FileImportSource, ImportJob, ImportSource
 
 
 @pytest.mark.unittest

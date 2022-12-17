@@ -8,12 +8,7 @@ import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import (
-    _PYTEST_TIMEOUT_METHOD,
-    assert_job_cancel,
-    omit_with_wildcard,
-    sleep_if_live,
-)
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import (
     AmlTokenConfiguration,

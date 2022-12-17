@@ -21,9 +21,7 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._component_translatable import (
-    ComponentTranslatableMixin,
-)
+from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND

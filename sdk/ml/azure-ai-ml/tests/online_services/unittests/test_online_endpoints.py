@@ -3,9 +3,6 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.polling import LROPoller
-from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 from requests import Response
 
@@ -19,9 +16,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineDeploymentDetails,
     OnlineEndpointData,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineEndpointDetails as RestOnlineEndpoint,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType, HttpResponseStatusCode
 from azure.ai.ml.entities import OnlineEndpoint
@@ -33,9 +28,10 @@ from azure.ai.ml.operations import (
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml.operations._online_endpoint_operations import (
-    _strip_zeroes_from_traffic,
-)
+from azure.ai.ml.operations._online_endpoint_operations import _strip_zeroes_from_traffic
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.polling import LROPoller
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture()

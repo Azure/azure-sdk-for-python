@@ -23,19 +23,9 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageObjectDetectionJob,
 )
-from azure.ai.ml.entities._job.automl.nlp import (
-    TextClassificationJob,
-    TextClassificationMultilabelJob,
-    TextNerJob,
-)
-from azure.ai.ml.entities._job.automl.tabular import (
-    ClassificationJob,
-    ForecastingJob,
-    RegressionJob,
-)
-from azure.ai.ml.entities._job.job_resource_configuration import (
-    JobResourceConfiguration,
-)
+from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import ValidationException
 

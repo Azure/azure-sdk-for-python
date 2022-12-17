@@ -3,12 +3,7 @@ import yaml
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
-from azure.ai.ml.entities import (
-    BatchEndpoint,
-    Endpoint,
-    ManagedOnlineDeployment,
-    OnlineEndpoint,
-)
+from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, OnlineEndpoint
 
 
 @pytest.mark.production_experiences_test

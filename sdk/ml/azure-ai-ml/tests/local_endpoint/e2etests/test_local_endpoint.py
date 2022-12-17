@@ -1,13 +1,13 @@
 import random
 
 import pytest
-from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.fixture

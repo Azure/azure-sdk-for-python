@@ -7,13 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import wait_until_done
 
-from azure.ai.ml import (
-    MLClient,
-    load_batch_deployment,
-    load_batch_endpoint,
-    load_environment,
-    load_model,
-)
+from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import BatchDeployment, BatchEndpoint

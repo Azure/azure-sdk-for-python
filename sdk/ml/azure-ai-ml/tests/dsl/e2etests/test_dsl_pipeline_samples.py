@@ -101,9 +101,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_basic_component(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.basic_component.pipeline import (
-            generate_dsl_pipeline as basic_component,
-        )
+        from test_configs.dsl_pipeline.basic_component.pipeline import generate_dsl_pipeline as basic_component
 
         pipeline = basic_component()
         assert_job_cancel(pipeline, client)
@@ -119,27 +117,21 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_basic_pipeline(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.basic_pipeline.pipeline import (
-            generate_dsl_pipeline as basic_pipeline,
-        )
+        from test_configs.dsl_pipeline.basic_pipeline.pipeline import generate_dsl_pipeline as basic_pipeline
 
         pipeline = basic_pipeline()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pipeline_with_data(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.pipline_with_data.pipeline import (
-            generate_dsl_pipeline as pipline_with_data,
-        )
+        from test_configs.dsl_pipeline.pipline_with_data.pipeline import generate_dsl_pipeline as pipline_with_data
 
         pipeline = pipline_with_data()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_local_data_input(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.local_data_input.pipeline import (
-            generate_dsl_pipeline as local_data_input,
-        )
+        from test_configs.dsl_pipeline.local_data_input.pipeline import generate_dsl_pipeline as local_data_input
 
         pipeline = local_data_input()
         assert_job_cancel(pipeline, client)
@@ -164,18 +156,14 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_dataset_input(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.dataset_input.pipeline import (
-            generate_dsl_pipeline as dataset_input,
-        )
+        from test_configs.dsl_pipeline.dataset_input.pipeline import generate_dsl_pipeline as dataset_input
 
         pipeline = dataset_input(client)
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_web_url_input(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.web_url_input.pipeline import (
-            generate_dsl_pipeline as web_url_input,
-        )
+        from test_configs.dsl_pipeline.web_url_input.pipeline import generate_dsl_pipeline as web_url_input
 
         pipeline = web_url_input()
         assert_job_cancel(pipeline, client)
@@ -191,45 +179,35 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_env_registered(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.env_registered.pipeline import (
-            generate_dsl_pipeline as env_registered,
-        )
+        from test_configs.dsl_pipeline.env_registered.pipeline import generate_dsl_pipeline as env_registered
 
         pipeline = env_registered()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_env_conda_file(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.env_conda_file.pipeline import (
-            generate_dsl_pipeline as env_conda_file,
-        )
+        from test_configs.dsl_pipeline.env_conda_file.pipeline import generate_dsl_pipeline as env_conda_file
 
         pipeline = env_conda_file()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_tf_hello_world(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.tf_hello_world.pipeline import (
-            generate_dsl_pipeline as tf_hello_world,
-        )
+        from test_configs.dsl_pipeline.tf_hello_world.pipeline import generate_dsl_pipeline as tf_hello_world
 
         pipeline = tf_hello_world()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_mpi_hello_world(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.mpi_hello_world.pipeline import (
-            generate_dsl_pipeline as mpi_hello_world,
-        )
+        from test_configs.dsl_pipeline.mpi_hello_world.pipeline import generate_dsl_pipeline as mpi_hello_world
 
         pipeline = mpi_hello_world()
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pytorch_hello_world(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.pytorch_hello_world.pipeline import (
-            generate_dsl_pipeline as pytorch_hello_world,
-        )
+        from test_configs.dsl_pipeline.pytorch_hello_world.pipeline import generate_dsl_pipeline as pytorch_hello_world
 
         pipeline = pytorch_hello_world()
         assert_job_cancel(pipeline, client)
@@ -245,9 +223,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_tf_mnist(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.tf_mnist.pipeline import (
-            generate_dsl_pipeline as tf_mnist,
-        )
+        from test_configs.dsl_pipeline.tf_mnist.pipeline import generate_dsl_pipeline as tf_mnist
 
         pipeline = tf_mnist()
         assert_job_cancel(pipeline, client)

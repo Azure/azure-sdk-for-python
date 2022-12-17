@@ -1,10 +1,6 @@
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import (
-    _PYTEST_TIMEOUT_METHOD,
-    assert_job_cancel,
-    omit_with_wildcard,
-)
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
 from azure.ai.ml import Input, MLClient, load_component
 from azure.ai.ml.dsl import pipeline

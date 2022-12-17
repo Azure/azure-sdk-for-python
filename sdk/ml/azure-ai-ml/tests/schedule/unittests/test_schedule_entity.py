@@ -4,13 +4,7 @@ import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml.constants import TimeZone
-from azure.ai.ml.entities import (
-    CronTrigger,
-    JobSchedule,
-    PipelineJob,
-    RecurrencePattern,
-    RecurrenceTrigger,
-)
+from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 from azure.ai.ml.exceptions import ValidationException
 

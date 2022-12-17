@@ -11,17 +11,10 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    UriFolderJobOutput as RestUriFolderJobOutput,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
-from azure.ai.ml.constants._common import (
-    ANONYMOUS_ENV_NAME,
-    BASE_PATH_CONTEXT_KEY,
-    AssetTypes,
-    InputOutputModes,
-)
+from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
 from azure.ai.ml.entities import CommandJob, Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object

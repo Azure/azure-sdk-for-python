@@ -1,9 +1,8 @@
 from pathlib import Path
 
-from azure.core.exceptions import ResourceNotFoundError
-
 from azure.ai.ml import Input, dsl, load_component
 from azure.ai.ml.entities import Data, PipelineJob
+from azure.core.exceptions import ResourceNotFoundError
 
 base_dir = str(Path(__file__).parent)
 

@@ -5,9 +5,7 @@ from test_utilities.utils import download_dataset
 
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
-    ForecastingSettings,
-)
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
 TEST_CONFIG_PATH = "tests/test_configs/automl_job"
 TEST_DATASETS_PATH = TEST_CONFIG_PATH + "/" + "test_datasets"

@@ -1,20 +1,16 @@
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.exceptions import HttpResponseError
 from pytest_mock import MockFixture
 
-from azure.ai.ml._scope_dependent_operations import (
-    OperationConfig,
-    OperationsContainer,
-    OperationScope,
-)
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.core.exceptions import HttpResponseError
 
 
 class MockResponse:

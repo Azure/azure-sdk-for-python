@@ -323,9 +323,7 @@ class TestComponent:
         # internal component code (snapshot) default includes items in base directory when code is None,
         # rather than COMPONENT_PLACEHOLDER in v2, this test targets to this case.
         from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
-        from azure.ai.ml.operations._component_operations import (
-            _try_resolve_code_for_component,
-        )
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
 
         # create a mock function for param `get_arm_id_and_fill_back`
         def mock_get_arm_id_and_fill_back(asset, *args, **kwargs):

@@ -12,34 +12,19 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    JobOutput as RestJobOutput,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    PipelineJob as RestPipelineJob,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
-from azure.ai.ml._utils.utils import (
-    camel_to_snake,
-    dump_yaml_to_file,
-    is_data_binding_expression,
-    load_yaml,
-)
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import (
-    CommandComponent,
-    Component,
-    Job,
-    PipelineJob,
-    SparkComponent,
-)
+from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -47,9 +32,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_contains_allowed_characters,
 )
-from azure.ai.ml.entities._job.automl.search_space_utils import (
-    _convert_sweep_dist_dict_to_str_dict,
-)
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
@@ -1135,10 +1118,7 @@ class TestPipelineJobSchema:
     def test_dump_distribution(self):
         # pipeline level test is in test_pipeline_job_create_with_distribution_component
         from azure.ai.ml import TensorFlowDistribution
-        from azure.ai.ml._schema.job.distribution import (
-            PyTorchDistributionSchema,
-            TensorFlowDistributionSchema,
-        )
+        from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema
 
         distribution_dict = {
             "type": "tensorflow",

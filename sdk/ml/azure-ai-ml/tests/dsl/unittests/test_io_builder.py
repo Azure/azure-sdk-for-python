@@ -6,9 +6,7 @@ from test_utilities.utils import omit_with_wildcard
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.entities._job.pipeline._io.base import (
-    _resolve_builders_2_data_bindings,
-)
+from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
 from azure.ai.ml.exceptions import UserErrorException
 
 from .._util import _DSL_TIMEOUT_SECOND

@@ -4,17 +4,12 @@ from typing import Callable
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.polling import LROPoller
-from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_batch_endpoint
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    BatchEndpointDetails as RestBatchEndpoint,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
@@ -28,6 +23,9 @@ from azure.ai.ml.operations import (
     WorkspaceOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.polling import LROPoller
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture()

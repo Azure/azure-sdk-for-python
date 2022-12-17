@@ -12,13 +12,6 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import (
-    AzureCliCredential,
-    ClientSecretCredential,
-    DefaultAzureCredential,
-)
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -32,17 +25,10 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
-from test_utilities.constants import (
-    Test_Registry_Name,
-    Test_Resource_Group,
-    Test_Subscription,
-    Test_Workspace_Name,
-)
+from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
 from azure.ai.ml import MLClient, load_component, load_job
-from azure.ai.ml._restclient.registry_discovery import (
-    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
-)
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
@@ -52,10 +38,10 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml.operations._workspace_operations import (
-    get_deployment_name,
-    get_name_for_dependent_resource,
-)
+from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -636,19 +622,11 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 @pytest.fixture()
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
-    from azure.ai.ml._schema.component import (
-        command_component as command_component_schema,
-    )
+    from azure.ai.ml._schema.component import command_component as command_component_schema
     from azure.ai.ml._schema.component import input_output
-    from azure.ai.ml._schema.pipeline import (
-        pipeline_component as pipeline_component_schema,
-    )
-    from azure.ai.ml.entities._component import (
-        command_component as command_component_entity,
-    )
-    from azure.ai.ml.entities._component import (
-        pipeline_component as pipeline_component_entity,
-    )
+    from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml.entities._component import command_component as command_component_entity
+    from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
 
     def _reload_related_classes():
         reload(input_output)

@@ -3,23 +3,14 @@ from typing import Callable
 
 import jwt
 import pytest
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
-from azure.ai.ml._azure_environments import (
-    _get_base_url_from_metadata,
-    _resource_to_scopes,
-)
+from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml.constants._common import (
-    COMMON_RUNTIME_ENV_VAR,
-    LOCAL_COMPUTE_TARGET,
-    TID_FMT,
-    AssetTypes,
-)
+from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
 from azure.ai.ml.entities import AmlTokenConfiguration
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._job.command_job import CommandJob
@@ -27,6 +18,7 @@ from azure.ai.ml.entities._job.distribution import MpiDistribution
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.polling import LROPoller
 
 # These params are logged in ..\test_configs\python\simple_train.py. test_command_job_with_params asserts these parameters are
 # logged in the training script, so any changes to parameter logging in simple_train.py must preserve this logging or change it both

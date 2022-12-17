@@ -3,7 +3,6 @@ from unittest.mock import Mock, patch
 
 import mock
 import pytest
-from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from test_utilities.constants import Test_Resource_Group, Test_Subscription
 
 from azure.ai.ml import (
@@ -27,6 +26,7 @@ from azure.ai.ml._azure_environments import AzureEnvironments
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 
 @pytest.mark.unittest

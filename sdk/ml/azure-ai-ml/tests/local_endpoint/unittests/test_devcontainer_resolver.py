@@ -5,9 +5,7 @@
 
 import pytest
 
-from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import (
-    DevContainerResolver,
-)
+from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
 
 
 @pytest.fixture
