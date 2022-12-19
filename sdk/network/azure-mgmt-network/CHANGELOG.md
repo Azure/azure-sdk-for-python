@@ -1,6 +1,6 @@
 # Release History
 
-## 23.0.0b1 (2022-12-xx)
+## 23.0.0b1 (2022-12-19)
 
 - Preview package with the same multiapi support but much reduced package size.
 
