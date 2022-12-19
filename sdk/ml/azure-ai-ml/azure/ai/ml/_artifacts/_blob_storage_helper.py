@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from colorama import Fore
 
@@ -32,7 +32,7 @@ from azure.ai.ml._utils._asset_utils import (
     upload_file,
 )
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
@@ -43,7 +43,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class BlobStorageClient:
-    def __init__(self, credential: str, account_url: str, container_name: str = None):
+    def __init__(self, credential: str, account_url: str, container_name: Optional[str] = None):
         self.service_client = BlobServiceClient(account_url=account_url, credential=credential)
         self.upload_to_root_container = None
         if container_name:
@@ -66,7 +66,7 @@ class BlobStorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
         """Upload a file or directory to a path inside the container."""
@@ -229,7 +229,7 @@ class BlobStorageClient:
             raise ex
         except Exception as e:
             msg = "Saving blob with prefix {} was unsuccessful. exception={}"
-            raise MlException(
+            raise MLException(
                 message=msg.format(starts_with, e),
                 no_personal_data_message=msg.format("[starts_with]", "[exception]"),
                 target=ErrorTarget.ARTIFACT,

@@ -41,6 +41,7 @@ class EndpointYamlFields(object):
     RETRY_SETTINGS = "retry_settings"
     BATCH_JOB_INPUT_DATA = "input_data"
     BATCH_JOB_INSTANCE_COUNT = "compute.instance_count"
+    BATCH_JOB_OUTPUT_DATA = "output_data"
     BATCH_JOB_OUTPUT_PATH = "output_dataset.path"
     BATCH_JOB_OUTPUT_DATSTORE = "output_dataset.datastore_id"
     BATCH_JOB_NAME = "job_name"
@@ -74,3 +75,16 @@ class LocalEndpointConstants:
     CONDA_ENV_NAME = "inf-conda-env"
     CONDA_ENV_BIN_PATH = "/opt/miniconda/envs/inf-conda-env/bin"
     CONDA_ENV_PYTHON_PATH = "/opt/miniconda/envs/inf-conda-env/bin/python"
+
+
+class BatchEndpointInvoke:
+    INPUTS = "inputs"
+    OUTPUTS = "outputs"
+    ENDPOINT = "endpoint"
+    DEPLOYMENT = "deployment"
+    TYPE = "type"
+    MODE = "mode"
+    PATH = "path"
+    DEFAULT = "default"
+    MIN = "min"
+    MAX = "max"

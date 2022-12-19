@@ -14,11 +14,15 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     LogVerbosity,
     MLTableJobInput,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
-    NlpFixedParameters as RestNlpFixedParameters,
-    NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
     NlpParameterSubspace as RestNlpParameterSubspace,
-    NlpSweepSettings as RestNlpSweepSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import NlpSweepSettings as RestNlpSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     NlpVerticalLimitSettings as RestNlpVerticalLimitSettings,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import TextClassification as RestTextClassification
@@ -33,7 +37,7 @@ from azure.ai.ml.automl import (
     NlpFixedParameters,
     NlpLimitSettings,
     NlpSearchSpace,
-    NlpSweepSettings
+    NlpSweepSettings,
 )
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import Job

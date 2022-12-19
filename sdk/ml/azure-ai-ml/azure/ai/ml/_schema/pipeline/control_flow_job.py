@@ -4,15 +4,18 @@
 import copy
 import json
 
-# pylint: disable=no-self-use,protected-access
-
 from marshmallow import INCLUDE, fields, pre_dump
 
 from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
 
+from ..job.input_output_entry import OutputSchema
 from ..job.job_limits import DoWhileLimitsSchema
+from .component_job import _resolve_outputs
+from .pipeline_job_io import OutputBindingStr
+
+# pylint: disable=no-self-use,protected-access
 
 
 class ControlFlowSchema(PathAwareSchema):
@@ -79,16 +82,27 @@ class ParallelForSchema(BaseLoopSchema):
             fields.Dict(keys=fields.Str(), values=fields.Dict()),
             fields.List(fields.Dict()),
         ],
-        required=True
+        required=True,
     )
     max_concurrency = fields.Int()
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
+    )
 
     @pre_dump
-    def serialize_items(self, data, **kwargs):   # pylint: disable=no-self-use, unused-argument
+    def serialize_items(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
         from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
 
         result = copy.copy(data)
         if isinstance(result.items, (dict, list)):
             # use str to serialize input/output builder
             result._items = json.dumps(result.items, default=lambda x: str(x) if isinstance(x, InputOutputBase) else x)
+        return result
+
+    @pre_dump
+    def resolve_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
+
+        result = copy.copy(job)
+        _resolve_outputs(result, job)
         return result

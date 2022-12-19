@@ -1,20 +1,30 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b12 (Unreleased)
 
 ### Features Added
-
-- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.0.0b11 (2022-12-15)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Add azure-sdk usage to instrumentations statsbeat
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
+
+### Bugs Fixed
+
+- Pinning OpenTelemetry SDK and API to between 1.12 and 1.14 to avoid bug from change in module path. Reverting [#27913]
+    ([#27958](https://github.com/Azure/azure-sdk-for-python/pull/27958))
 - Pass along sampleRate in SpanEvents from Span
     ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
-
-### Other Changes
 
 ## 1.0.0b10 (2022-11-10)
 

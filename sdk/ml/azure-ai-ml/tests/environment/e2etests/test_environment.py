@@ -2,15 +2,14 @@ import random
 import re
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.core.paging import ItemPaged
-
-from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -88,6 +87,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
+    @pytest.mark.skip(reason="This test not recording, task : 2128097")
     def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
@@ -149,8 +149,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert created_env._auto_increment_version is False
 
         next_env_asset = client.environments.create_or_update(env)
-        next_version_regex = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{7}")
-        assert next_version_regex.match(next_env_asset.version)
         assert next_env_asset._auto_increment_version is False
 
     def test_environment_list(self, client: MLClient) -> None:

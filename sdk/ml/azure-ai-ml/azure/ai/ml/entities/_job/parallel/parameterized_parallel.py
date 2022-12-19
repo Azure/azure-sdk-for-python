@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 from ..job_resource_configuration import JobResourceConfiguration
 from .parallel_task import ParallelTask
@@ -39,17 +39,17 @@ class ParameterizedParallel:
     # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        retry_settings: RetrySettings = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        input_data: str = None,
-        task: ParallelTask = None,
-        mini_batch_size: int = None,
-        partition_keys: List = None,
-        resources: Union[dict, JobResourceConfiguration] = None,
-        environment_variables: Dict = None,
+        retry_settings: Optional[RetrySettings] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        input_data: Optional[str] = None,
+        task: Optional[ParallelTask] = None,
+        mini_batch_size: Optional[int] = None,
+        partition_keys: Optional[List] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
+        environment_variables: Optional[Dict] = None,
     ):
         self.mini_batch_size = mini_batch_size
         self.partition_keys = partition_keys

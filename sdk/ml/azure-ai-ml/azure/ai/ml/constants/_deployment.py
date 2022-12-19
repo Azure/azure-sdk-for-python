@@ -13,6 +13,11 @@ class BatchDeploymentOutputAction:
     SUMMARY_ONLY = "summary_only"
 
 
+class BatchDeploymentType:
+    MODEL = "model"
+    COMPONENT = "component"
+
+
 class EndpointDeploymentLogContainerType(object):
     STORAGE_INITIALIZER_REST = "StorageInitializer"
     INFERENCE_SERVER_REST = "InferenceServer"

@@ -106,6 +106,13 @@ Mypy install and run.
 \> tox -e mypy -c <path to tox.ini>
 ```
 
+#### `sphinx` environment
+Generate shpinx doc for this package.
+
+```
+\> tox -e sphinx -c <path to tox.ini>
+```
+
 ### Custom Pytest Arguments
 
 `tox` supports custom arguments, and the defined pytest environments within the common `tox.ini` also allow these. Essentially, separate the arguments you want passed to `pytest` by a `--` in your tox invocation.

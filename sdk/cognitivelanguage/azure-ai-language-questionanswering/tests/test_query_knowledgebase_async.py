@@ -13,7 +13,8 @@ from azure.ai.language.questionanswering.models import (
     MetadataFilter,
 )
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering._operations._operations import build_get_answers_request
+from azure.ai.language.questionanswering._operations._operations import \
+    build_question_answering_get_answers_request as build_get_answers_request
 from azure.core.credentials import AzureKeyCredential
 
 from testcase import QuestionAnsweringTestCase

@@ -69,7 +69,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
         api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         self._config = FeatureClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)

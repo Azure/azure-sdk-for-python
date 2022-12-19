@@ -6,7 +6,7 @@
 
 import copy
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -16,12 +16,7 @@ from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    UserErrorException,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
 
 
 def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
@@ -208,8 +203,8 @@ class NodeInput(InputOutputBase):
         name: str,
         meta: Input,
         *,
-        data: Union[int, bool, float, str, Output, "PipelineInput", Input] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an input of a component.
@@ -340,8 +335,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         name: str,
         meta: Output,
         *,
-        data: Union[Output, str] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[Output, str]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -443,7 +438,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: List[str] = None, **kwargs):
+    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
         """
         Initialize a PipelineInput.
 
@@ -537,6 +532,11 @@ class PipelineOutput(NodeOutput):
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
             return self._data
+        if self._data is None and self._meta and self._meta.type:
+            # For un-configured pipeline output with meta, we need to return Output with accurate type,
+            # so it won't default to uri_folder.
+            return Output(type=self._meta.type)
+
         return super(PipelineOutput, self)._to_job_output()
 
     def _data_binding(self):

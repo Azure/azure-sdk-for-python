@@ -5,14 +5,14 @@
 import logging
 from abc import ABC
 from datetime import datetime
-from typing import List, Union
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -39,8 +39,8 @@ class TriggerBase(RestTranslatableMixin, ABC):
         self,
         *,
         type: str,  # pylint: disable=redefined-builtin
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: TimeZone = TimeZone.UTC,
     ):
         super().__init__()
@@ -76,8 +76,8 @@ class RecurrencePattern(RestTranslatableMixin):
         *,
         hours: Union[int, List[int]],
         minutes: Union[int, List[int]],
-        week_days: Union[str, List[str]] = None,
-        month_days: Union[int, List[int]] = None,
+        week_days: Optional[Union[str, List[str]]] = None,
+        month_days: Optional[Union[int, List[int]]] = None,
     ):
         self.hours = hours
         self.minutes = minutes
@@ -142,8 +142,8 @@ class CronTrigger(TriggerBase):
         self,
         *,
         expression: str,
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ):
         super().__init__(
@@ -208,9 +208,9 @@ class RecurrenceTrigger(TriggerBase):
         *,
         frequency: str,
         interval: int,
-        schedule: RecurrencePattern = None,
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        schedule: Optional[RecurrencePattern] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ):
         super().__init__(

@@ -261,9 +261,9 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                     PhoneNumberCapabilityType.INBOUND,
                     polling = True
                 )
-        
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
+
+        assert str(ex.value.status_code) == "404"  # type: ignore
+        assert ex.value.message is not None  # type: ignore
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_toll_free_area_codes_with_managed_identity(self):

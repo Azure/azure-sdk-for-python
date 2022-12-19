@@ -64,7 +64,7 @@ PARAMETERS_TO_TEST = [
         },
         {
             "resources.instance_count": 1,  # runsettings.parallel.node_count
-            "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
+            "max_concurrency_per_instance": 2,  # runsettings.parallel.process_count_per_node
             "error_threshold": 5,  # runsettings.parallel.error_threshold
             "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
@@ -280,3 +280,18 @@ def extract_non_primitive(obj):
     if isinstance(obj, (float, int, str)):
         return None
     return obj
+
+
+def unregister_internal_components():
+    from azure.ai.ml._internal._schema.component import NodeType
+    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml.entities._component.component_factory import component_factory
+    from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+    for _type in NodeType.all_values():
+        pipeline_node_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        pipeline_node_factory._load_from_rest_object_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
+
+    _set_registered(False)

@@ -95,5 +95,5 @@ class IOConstants:
         "string": ["default"],
         "boolean": ["default"],
     }
-    GROUP_ATTR_NAME = "__parameter_group__"
+    GROUP_ATTR_NAME = "__dsl_group__"
     GROUP_TYPE_NAME = "group"

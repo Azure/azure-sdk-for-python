@@ -4,7 +4,7 @@
 
 import os
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ResourceManagementAssetReferenceData,
@@ -32,10 +32,10 @@ class WorkspaceModelReference(Asset):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        asset_id: str = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        asset_id: Optional[str] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         super().__init__(
@@ -49,9 +49,9 @@ class WorkspaceModelReference(Asset):
     @classmethod
     def _load(
         cls,
-        data: dict = None,
-        yaml_path: Union[os.PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[dict] = None,
+        yaml_path: Optional[Union[os.PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "WorkspaceModelReference":
         data = data or {}

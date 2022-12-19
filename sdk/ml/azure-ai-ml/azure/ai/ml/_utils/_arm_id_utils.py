@@ -68,7 +68,9 @@ class AMLVersionedArmId(object):
                     )
 
 
-def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationScope = None) -> Optional[str]:
+def get_datastore_arm_id(
+    datastore_name: Optional[str] = None, operation_scope: Optional[OperationScope] = None
+) -> Optional[str]:
     return (
         DATASTORE_RESOURCE_ID.format(
             operation_scope.subscription_id,

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
@@ -48,6 +48,8 @@ class TextAnalyticsClientBase:
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -82,9 +84,9 @@ class TextAnalyticsClientBase:
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
 
-        self._api_version = kwargs.pop("api_version", DEFAULT_API_VERSION)
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
         if hasattr(self._api_version, "value"):
-            self._api_version = self._api_version.value
+            self._api_version = self._api_version.value  # type: ignore
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore

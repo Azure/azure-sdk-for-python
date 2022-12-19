@@ -1,12 +1,11 @@
 # Release History
 
-## 12.9.2 (Unreleased)
+## 12.10.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service version 2021-12-02.
+- Added ability to perform leasing actions on file append and flush. See new keyword `lease_action` for details.
+- Added support for `AsyncIterable` as data type for async file upload.
 
 ### Other Changes
 - Removed `msrest` dependency.

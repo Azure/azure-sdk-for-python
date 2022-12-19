@@ -11,7 +11,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -338,10 +338,13 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -364,6 +367,28 @@ class TestCommandComponentEntity:
                 in std_out.getvalue()
             )
 
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
+            }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [sweep_job1.early_termination.evaluation_interval,
+                sweep_job1.early_termination.delay_evaluation,
+                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
+
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
         component = load_component(yaml_path)
@@ -385,6 +410,7 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
@@ -398,6 +424,12 @@ class TestCommandComponentEntity:
                 "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
             },
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "command",
@@ -426,6 +458,12 @@ class TestCommandComponentEntity:
                 "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
             },
             command="echo Hello World",
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -435,6 +473,29 @@ class TestCommandComponentEntity:
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
         assert actual_component_dict2 == expected_rest_component
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_invalid_component_outputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
+        component = load_component(yaml_path)
+        with pytest.raises(ValidationException) as e:
+            component._validate(raise_error=True)
+        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
+        params_override = [
+            {
+                "outputs": {
+                    "component_out_string": {
+                        "description": "A string",
+                        "type": "string",
+                        "is_control": True,
+                        "early_available": True,
+                    }
+                }
+            },
+        ]
+        component = load_component(yaml_path, params_override=params_override)
+        validation_result = component._validate()
+        assert validation_result.passed
 
     def test_component_code_asset_ignoring_pycache(self) -> None:
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"

@@ -85,7 +85,7 @@ def build_packaging_by_package_name(package_name: str, output_folder: str, build
         _LOGGER.info(f"Package {package_name} has no auto-packaging update enabled")
         return
 
-    env = Environment(loader=PackageLoader("packaging_tools", "templates"), keep_trailing_newline=True)
+    env = Environment(loader=PackageLoader("packaging_tools", "templates/packaging_files"), keep_trailing_newline=True)
     conf = build_config(conf)
 
     for template_name in env.list_templates():

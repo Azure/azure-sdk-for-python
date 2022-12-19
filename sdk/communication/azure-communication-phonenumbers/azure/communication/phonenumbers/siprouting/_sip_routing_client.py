@@ -206,9 +206,10 @@ class SipRoutingClient(object):
             if x.fqdn not in [o.fqdn for o in trunks]:
                 config.trunks[x.fqdn] = None
 
-        self._rest_service.patch_sip_configuration(
-            body=config, **kwargs
-        )
+        if len(config.trunks) > 0:
+            self._rest_service.patch_sip_configuration(
+                body=config, **kwargs
+            )
 
     @distributed_trace
     def set_routes(

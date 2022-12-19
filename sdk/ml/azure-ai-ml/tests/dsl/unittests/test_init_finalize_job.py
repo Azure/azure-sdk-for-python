@@ -2,6 +2,7 @@ from functools import partial
 from pathlib import Path
 
 import pytest
+
 from azure.ai.ml import dsl, load_component, load_job
 from azure.ai.ml.entities import PipelineJob
 

@@ -12,6 +12,8 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
+from azure.ai.ml._utils.utils import dump_yaml
 
 from ._system_data import SystemData
 
@@ -39,8 +41,12 @@ class Resource(ABC):
         :type description: str, optional
         :param tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
         :type tags: Dict, optional
-        :param properties: The asset property dictionary., defaults to None
+        :param properties: The asset property dictionary. Defaults to None
         :type properties: Dict, optional
+        :param: print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
+            False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+            notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
+        :type print_as_yaml: bool, optional
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -48,6 +54,10 @@ class Resource(ABC):
         self.description = description
         self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
+        # Conditional assignment to prevent entity bloat when unused.
+        print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
+        if print_as_yaml:
+            self.print_as_yaml = True
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
@@ -127,9 +137,9 @@ class Resource(ABC):
     @abstractmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
@@ -147,7 +157,7 @@ class Resource(ABC):
     # pylint: disable:unused-argument
     def _get_arm_resource(
         self,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Get arm resource.
 
@@ -184,4 +194,8 @@ class Resource(ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
+        if hasattr(self, "print_as_yaml") and self.print_as_yaml:
+            # pylint: disable=no-member
+            yaml_serialized = self._to_dict()
+            return dump_yaml(yaml_serialized, default_flow_style=False)
         return self.__repr__()

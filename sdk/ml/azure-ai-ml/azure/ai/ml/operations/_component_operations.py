@@ -20,6 +20,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import (
 #     ActivityType,
 #     monitor_with_activity,
@@ -28,15 +29,19 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
     _get_latest,
+    _get_next_version_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
-    DEFAULT_COMPONENT_VERSION
+from azure.ai.ml.constants._common import (
+    DEFAULT_COMPONENT_VERSION,
+    DEFAULT_LABEL_NAME,
+    AzureMLResourceType,
+    LROConfigurations,
+)
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
@@ -46,10 +51,10 @@ from .._utils.utils import is_data_binding_expression
 from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
-from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -283,18 +288,18 @@ class ComponentOperations(_ScopeDependentOperations):
             component = _refine_component(component)
         if version is not None:
             component.version = version
-        if not component.version and self._registry_name:
-            # version is required only when create into registry as
-            # we have _auto_increment_version for workspace component.
-            msg = "Component version is required for create_or_update."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.COMPONENT,
-                error_category=ErrorCategory.USER_ERROR,
+        if not component.version and component._auto_increment_version:
+            component.version = _get_next_version_from_container(
+                name=component.name,
+                container_operation=self._container_operation,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                registry_name=self._registry_name,
+                **self._init_args,
             )
 
-        component._set_is_anonymous(kwargs.pop("is_anonymous", False))
+        if not (hasattr(component, "_is_anonymous") and component._is_anonymous):
+            component._set_is_anonymous(kwargs.pop("is_anonymous", False))
         if not skip_validation:
             self._validate(component, raise_on_failure=True)
 
@@ -327,25 +332,14 @@ class ComponentOperations(_ScopeDependentOperations):
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
             else:
-                if component._auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=component.name,
-                        body=rest_component_resource,
-                        version_operation=self._version_operation,
-                        container_operation=self._container_operation,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                        workspace_name=self._workspace_name,
-                        **self._init_args,
-                    )
-                else:
-                    result = self._version_operation.create_or_update(
-                        name=rest_component_resource.name,
-                        version=component.version,
-                        resource_group_name=self._resource_group_name,
-                        workspace_name=self._workspace_name,
-                        body=rest_component_resource,
-                        **self._init_args,
-                    )
+                result = self._version_operation.create_or_update(
+                    name=rest_component_resource.name,
+                    version=component.version,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body=rest_component_resource,
+                    **self._init_args,
+                )
         except Exception as e:
             raise e
 
@@ -358,7 +352,13 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a component.
 
         :param name: Name of the component.
@@ -379,7 +379,13 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived component.
 
         :param name: Name of the component.
@@ -570,8 +576,9 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
-        variable_inputs = [key for key, val in func_parameters.items()
-                           if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]]
+        variable_inputs = [
+            key for key, val in func_parameters.items() if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]
+        ]
         if variable_inputs:
             msg = "Cannot register the component {} with variable inputs {!r}."
             raise ValidationException(
