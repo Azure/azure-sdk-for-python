@@ -374,7 +374,7 @@ class CodegenTestPR:
 
     @staticmethod
     def get_need_dependency() -> List[str]:
-        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/packaging_files/setup.py')
         items = ["msrest>", "azure-mgmt-core", "typing-extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()

@@ -11,7 +11,7 @@ import re
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
@@ -179,6 +179,7 @@ class LocalPathField(fields.Str):
         return super(LocalPathField, self)._serialize(
             self._resolve_path(value).as_posix(), attr, obj, **kwargs
         )
+
 
 
 class SerializeValidatedUrl(fields.Url):
@@ -543,7 +544,7 @@ class TypeSensitiveUnionField(UnionField):
         self,
         type_sensitive_fields_dict: typing.Dict[str, List[fields.Field]],
         *,
-        plain_union_fields: List[fields.Field] = None,
+        plain_union_fields: Optional[List[fields.Field]] = None,
         allow_load_from_file: bool = True,
         type_field_name="type",
         **kwargs,

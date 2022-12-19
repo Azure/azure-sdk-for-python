@@ -1,14 +1,12 @@
 from typing import Callable
 
-from devtools_testutils import is_live
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities._compute.aml_compute import AmlCompute
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.e2etest

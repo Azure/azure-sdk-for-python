@@ -36,7 +36,7 @@
         "service_client_specific": {
             "sync": {
                 "api_version": {
-                    "signature": "api_version=None, # type: Optional[str]",
+                    "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false
@@ -48,7 +48,7 @@
                     "required": false
                 },
                 "profile": {
-                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false
@@ -90,8 +90,8 @@
         "tenants": "TenantsOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"local\": {\".\": [[\"models\", \"_models\"]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
         "operations": {
             "check_resource_name" : {
                 "sync": {

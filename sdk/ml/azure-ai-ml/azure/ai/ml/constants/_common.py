@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -531,11 +530,13 @@ class AssetTypes:
     TRITON_MODEL = "triton_model"
     CUSTOM_MODEL = "custom_model"
 
+
 class InputTypes:
-    INTEGER = 'integer'
-    NUMBER = 'number'
-    STRING = 'string'
-    BOOLEAN = 'boolean'
+    INTEGER = "integer"
+    NUMBER = "number"
+    STRING = "string"
+    BOOLEAN = "boolean"
+
 
 class WorkspaceResourceConstants(object):
     ENCRYPTION_STATUS_ENABLED = "Enabled"
@@ -576,8 +577,8 @@ class RollingRate:
 
 
 class Scope:
-    SUBSCRIPTION="subscription"
-    RESOURCE_GROUP="resource_group"
+    SUBSCRIPTION = "subscription"
+    RESOURCE_GROUP = "resource_group"
 
 
 class IdentityType:

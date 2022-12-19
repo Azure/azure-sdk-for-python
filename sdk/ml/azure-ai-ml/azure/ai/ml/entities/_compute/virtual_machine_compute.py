@@ -22,9 +22,9 @@ class VirtualMachineSshSettings:
         self,
         *,
         admin_username: str,
-        admin_password: str = None,
+        admin_password: Optional[str] = None,
         ssh_port: int = 22,
-        ssh_private_key_file: str = None,
+        ssh_private_key_file: Optional[str] = None,
     ):
         """SSH settings for a virtual machine.
 
@@ -65,7 +65,7 @@ class VirtualMachineCompute(Compute):
         name: str,
         description: Optional[str] = None,
         resource_id: str,
-        ssh_settings: VirtualMachineSshSettings = None,
+        ssh_settings: Optional[VirtualMachineSshSettings] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
@@ -134,8 +134,7 @@ class VirtualMachineCompute(Compute):
             private_key_data=ssh_key_value,
         )
         properties = VirtualMachineSchemaProperties(
-            ssh_port=self.ssh_settings.ssh_port,
-            administrator_account=credentials
+            ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
         )
         vm_compute = VMResource(
             properties=properties,

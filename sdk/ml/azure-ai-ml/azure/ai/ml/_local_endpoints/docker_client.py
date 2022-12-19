@@ -7,11 +7,12 @@
 import json
 import logging
 import time
-
+from typing import Optional
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.exceptions import (
     DockerEngineNotAvailableError,
@@ -21,7 +22,6 @@ from azure.ai.ml.exceptions import (
     LocalEndpointNotFoundError,
     MultipleLocalDeploymentsFoundError,
 )
-from azure.ai.ml._utils.utils import DockerProxy
 
 docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
@@ -40,12 +40,13 @@ DEFAULT_LABELS = {
 class DockerClient(object):
     """Client for interacting with User's Docker environment for local
     endpoints."""
+
     # pylint: disable=client-method-missing-type-annotations
 
     def __init__(
         self,
-        client: "docker.DockerClient" = None,
-        vscode_client: VSCodeClient = None,
+        client: Optional["docker.DockerClient"] = None,
+        vscode_client: Optional[VSCodeClient] = None,
     ):
         self._lazy_client = client
         self._vscode_client = vscode_client if vscode_client else VSCodeClient()
@@ -92,6 +93,7 @@ class DockerClient(object):
             tty=True,
             publish_all_ports=True,
         )
+
     # pylint: disable=client-method-has-more-than-5-positional-arguments
 
     def create_deployment(
@@ -108,7 +110,7 @@ class DockerClient(object):
         environment: dict,
         azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
-        prebuilt_image_name: str = None,
+        prebuilt_image_name: Optional[str] = None,
     ) -> None:
         """Builds and runs an image from provided image context.
 
@@ -214,7 +216,9 @@ class DockerClient(object):
                 # to add debugpy statements
                 container.remove()
             app_path = environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT]
-            self._vscode_client.invoke_dev_container(devcontainer_path=devcontainer_path, app_path=app_path) # pylint: disable=redundant-keyword-arg
+            self._vscode_client.invoke_dev_container(
+                devcontainer_path=devcontainer_path, app_path=app_path
+            )  # pylint: disable=redundant-keyword-arg
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
         else:
             container.start()
@@ -231,7 +235,7 @@ class DockerClient(object):
     def delete(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         verify_exists: bool = True,
     ) -> None:
         """Deletes local endpoint / deployment.
@@ -265,7 +269,7 @@ class DockerClient(object):
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name)
         return get_endpoint_json_from_container(container=container)
 
-    def get_deployment(self, endpoint_name: str, deployment_name: str = None) -> dict:
+    def get_deployment(self, endpoint_name: str, deployment_name: Optional[str] = None) -> dict:
         """Returns metadata for local deployment.
 
         :param endpoint_name: name of local endpoint
@@ -279,7 +283,7 @@ class DockerClient(object):
             raise LocalEndpointNotFoundError(endpoint_name=endpoint_name, deployment_name=deployment_name)
         return get_deployment_json_from_container(container=container)
 
-    def get_scoring_uri(self, endpoint_name: str, deployment_name: str = None) -> str:
+    def get_scoring_uri(self, endpoint_name: str, deployment_name: Optional[str] = None) -> str:
         """Returns scoring uri for local endpoint or deployment.
 
         :param endpoint_name: name of local endpoint
@@ -322,8 +326,8 @@ class DockerClient(object):
 
     def list_containers(
         self,
-        endpoint_name: str = None,
-        deployment_name: str = None,
+        endpoint_name: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         include_stopped: bool = True,
     ) -> list:
         """Returns a list of local endpoints.
@@ -347,7 +351,7 @@ class DockerClient(object):
     def get_endpoint_container(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         verify_single_deployment: bool = False,
         include_stopped: bool = True,
     ) -> "docker.models.containers.Container":
@@ -379,8 +383,8 @@ class DockerClient(object):
         build_directory: str,
         image_name: str,
         dockerfile_path: str,
-        conda_source_path: str, # pylint: disable=unused-argument
-        conda_yaml_contents: str, # pylint: disable=unused-argument
+        conda_source_path: str,  # pylint: disable=unused-argument
+        conda_yaml_contents: str,  # pylint: disable=unused-argument
     ) -> None:
 
         try:
@@ -412,7 +416,7 @@ class DockerClient(object):
                 raise
             raise LocalEndpointImageBuildError(e)
 
-    def _reformat_volumes(self, volumes_dict: dict) -> list: # pylint: disable=no-self-use
+    def _reformat_volumes(self, volumes_dict: dict) -> list:  # pylint: disable=no-self-use
         """Returns a list of volumes to pass to docker.
 
         :param volumes_dict: custom formatted dict of volumes to mount. We expect the keys to be unique.
@@ -508,7 +512,7 @@ def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
     return f"{endpoint_name}:{deployment_name}"
 
 
-def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
+def _get_container_name(endpoint_name: str, deployment_name: Optional[str] = None) -> str:
     """Returns a container name.
 
     :param endpoint_name: name of local endpoint

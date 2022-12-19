@@ -18,13 +18,13 @@ from azure.ai.ml.entities import (
     AzureFileDatastore,
     Datastore,
 )
-from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
-from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     NoneCredentialConfiguration,
     ServicePrincipalConfiguration,
 )
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
 kerberos_keytab_yml = "hdfs_kerberos_keytab.yml"

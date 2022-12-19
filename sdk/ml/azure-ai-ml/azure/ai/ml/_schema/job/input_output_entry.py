@@ -14,6 +14,7 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
     LocalPathField,
 )
+
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
 from azure.ai.ml.constants._common import (
     AssetTypes,
