@@ -92,35 +92,7 @@ def get_default_resource_group_deployment(
 def get_default_log_analytics_deployment(
     deployment_name: str,
     location: str,
-    subscription_id: str,
-    dependency: str = "") -> dict:
-    if dependency!="":
-        return {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": deployment_name,
-            "resourceGroup": get_default_resource_group_name(location),
-            "subscriptionId": subscription_id,
-            "dependsOn": [dependency],
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "apiVersion": "2020-08-01",
-                            "name": get_default_log_analytics_name(location),
-                            "type": "Microsoft.OperationalInsights/workspaces",
-                            "location": location,
-                            "properties": {}
-                        }
-                    ]
-                }
-            }
-        }
+    subscription_id: str) -> dict:
     return {
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2019-10-01",

@@ -493,11 +493,14 @@ class WorkspaceOperations:
                 app_insights_log_workspace_deployment_name = "DeployLogWorkspace%s"%get_deployment_name("")
                 template["resources"].append(get_default_resource_group_deployment(
                     app_insights_resource_group_deployment_name,
-                    app_insights_location, self._subscription_id))
-                template["resources"].append(get_default_log_analytics_deployment(
+                    app_insights_location,
+                    self._subscription_id))
+                log_analytics_deployment = get_default_log_analytics_deployment(
                     app_insights_log_workspace_deployment_name,
-                    app_insights_location, self._subscription_id,
-                    app_insights_resource_group_deployment_name))
+                    app_insights_location,
+                    self._subscription_id)
+                log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deployment_name]
+                template["resources"].append(log_analytics_deployment)
                 for resource in template["resources"]:
                     if resource["type"] == "Microsoft.Insights/components":
                         resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
