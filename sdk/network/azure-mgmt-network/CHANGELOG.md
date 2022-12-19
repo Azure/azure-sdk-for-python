@@ -1,5 +1,12 @@
 # Release History
 
+## 22.3.0 (2022-12-19)
+
+### Features Added
+
+  - Model NspLink has a new parameter remote_perimeter_location
+  - Model NspLinkReference has a new parameter remote_perimeter_location
+
 ## 23.0.0b1 (2022-12-19)
 
 - Preview package with the same multiapi support but much reduced package size.
