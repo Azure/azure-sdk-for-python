@@ -2,16 +2,10 @@ import os.path
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils import is_live
 import pydash
 import pytest
-from test_utilities.utils import (
-    assert_job_cancel,
-    sleep_if_live,
-    wait_until_done,
-    _PYTEST_TIMEOUT_METHOD,
-)
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -28,8 +22,8 @@ from azure.core.exceptions import HttpResponseError
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
     _PIPELINE_JOB_TIMEOUT_SECOND,
-    DATABINDING_EXPRESSION_TEST_CASES,
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
+    DATABINDING_EXPRESSION_TEST_CASES,
 )
 
 

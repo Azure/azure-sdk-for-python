@@ -1,15 +1,14 @@
 import pytest
-
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
 from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml import MLClient, load_component, Input
+from azure.ai.ml import Input, MLClient, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._parallel_for import parallel_for
 
-from .._util import include_private_preview_nodes_in_pipeline, _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 
 test_input = Input(
     type="uri_file",

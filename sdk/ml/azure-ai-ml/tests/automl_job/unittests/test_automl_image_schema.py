@@ -40,6 +40,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
@@ -66,11 +68,11 @@ from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.image import (
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
     image_classification_job,
     image_instance_segmentation_job,
     image_object_detection_job,
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
 )
 
 

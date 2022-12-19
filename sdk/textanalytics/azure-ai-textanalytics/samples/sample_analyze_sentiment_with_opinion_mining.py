@@ -106,18 +106,19 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
 
     for document in doc_result:
         for sentence in document.sentences:
-            for mined_opinion in sentence.mined_opinions:
-                target = mined_opinion.target
-                if target.sentiment == 'negative':
-                    target_to_complaints.setdefault(target.text, [])
-                    target_to_complaints[target.text].append(mined_opinion)
+            if sentence.mined_opinions:
+                for mined_opinion in sentence.mined_opinions:
+                    target = mined_opinion.target
+                    if target.sentiment == 'negative':
+                        target_to_complaints.setdefault(target.text, [])
+                        target_to_complaints[target.text].append(mined_opinion)
 
     print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
 
-    for target, complaints in target_to_complaints.items():
+    for target_name, complaints in target_to_complaints.items():
         print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
             len(complaints),
-            target,
+            target_name,
             "', '".join(
                 [assessment.text for complaint in complaints for assessment in complaint.assessments]
             )

@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional
+
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
 
@@ -21,10 +23,10 @@ class PipelineJobSettings(_AttrDict):
 
     def __init__(
         self,
-        default_datastore: str = None,
-        default_compute: str = None,
-        continue_on_step_failure: bool = None,
-        force_rerun: bool = None,
+        default_datastore: Optional[str] = None,
+        default_compute: Optional[str] = None,
+        continue_on_step_failure: Optional[bool] = None,
+        force_rerun: Optional[bool] = None,
         **kwargs
     ):
         self._init = True

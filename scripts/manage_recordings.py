@@ -141,7 +141,7 @@ if args.verb and args.path:
     subprocess.run(
         shlex.split(
             f'docker run --rm -v "{repo_root}:/srv/testproxy" '
-            f'-e "GIT_TOKEN={GIT_TOKEN}" -e "GIT_COMMIT_OWNER={GIT_OWNER}" -e "GIT_COMMIT_EMAIL={GIT_OWNER}" '
+            f'-e "GIT_TOKEN={GIT_TOKEN}" -e "GIT_COMMIT_OWNER={GIT_OWNER}" -e "GIT_COMMIT_EMAIL={GIT_EMAIL}" '
             f"{CONTAINER_NAME}:{image_tag} test-proxy {args.verb.lower()} -a {assets_path}"
         ),
         stdout=sys.stdout,

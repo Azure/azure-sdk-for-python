@@ -1,0 +1,13 @@
+{{ imports }}
+{% if async_mode %}
+{% for operation_group in code_model.operation_groups %}
+    {% for operation in operation_group.operations %}
+        {% if operation.api_versions[-1] != code_model.sorted_api_versions[-1] and operation.request_builder_name %}
+from ...operations._operations import {{ operation.request_builder_name }}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% endif %}
+{% for operation_group in code_model.operation_groups %}
+{% include "operation_group.py.jinja2" %}
+{% endfor %}

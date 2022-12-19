@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -28,11 +28,11 @@ class DataCollector:
 
     def __init__(
         self,
-        enabled: bool = None,
-        rolling_rate: str = None,
-        destination: Destination = None,
-        sampling_strategy: SamplingStrategy = None,
-        request_logging: RequestLogging = None,
+        enabled: Optional[bool] = None,
+        rolling_rate: Optional[str] = None,
+        destination: Optional[Destination] = None,
+        sampling_strategy: Optional[SamplingStrategy] = None,
+        request_logging: Optional[RequestLogging] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
         self.enabled = enabled

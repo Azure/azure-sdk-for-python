@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Optional, Union
 from pathlib import Path
+from typing import List, Optional, Union
 
 from ...entities._assets import Code
 from ...entities._component.code import ComponentIgnoreFile

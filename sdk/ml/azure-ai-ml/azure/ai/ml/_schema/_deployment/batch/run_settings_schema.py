@@ -9,7 +9,7 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema import  PatchedSchemaMeta
+from azure.ai.ml._schema import PatchedSchemaMeta
 
 module_logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class RunSettingsSchema(metaclass=PatchedSchemaMeta):
     experiment_name = fields.Str()
     description = fields.Str()
     tags = fields.Dict()
-    settings= fields.Dict()
+    settings = fields.Dict()
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

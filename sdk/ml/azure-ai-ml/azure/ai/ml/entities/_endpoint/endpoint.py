@@ -40,12 +40,12 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        auth_mode: str = None,
-        location: str = None,
-        name: str = None,
-        tags: Dict[str, str] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
+        auth_mode: Optional[str] = None,
+        location: Optional[str] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         # MFE is case-insensitive for Name. So convert the name into lower case here.
@@ -86,7 +86,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs) -> None:
+    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
         pass
 
     @abstractmethod

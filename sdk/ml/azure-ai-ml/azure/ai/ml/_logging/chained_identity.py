@@ -5,7 +5,7 @@
 import logging
 import os
 from contextlib import ContextDecorator
-from typing import Any
+from typing import Any, Optional
 
 START_MSG = "[START]"
 STOP_MSG = "[STOP]"
@@ -19,7 +19,7 @@ class ChainedIdentity(object):
 
     DELIM = "#"
 
-    def __init__(self, _ident: str = None, _parent_logger: logging.Logger = None, **kwargs):
+    def __init__(self, _ident: Optional[str] = None, _parent_logger: Optional[logging.Logger] = None, **kwargs):
         """Internal class used to improve logging information.
 
         :param _ident: Identity of the object

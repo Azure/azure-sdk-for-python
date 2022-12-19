@@ -12,6 +12,7 @@ class BatchDeploymentOutputAction:
     APPEND_ROW = "append_row"
     SUMMARY_ONLY = "summary_only"
 
+
 class BatchDeploymentType:
     MODEL = "model"
     COMPONENT = "component"

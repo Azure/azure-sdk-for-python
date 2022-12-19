@@ -1,7 +1,7 @@
+import json
 from pathlib import Path
 
 import pytest
-import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_component, load_environment
