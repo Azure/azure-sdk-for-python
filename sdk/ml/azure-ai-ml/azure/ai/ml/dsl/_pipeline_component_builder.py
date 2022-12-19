@@ -9,7 +9,7 @@ from collections import OrderedDict
 from inspect import Parameter, signature
 from typing import Callable, Union
 
-from azure.ai.ml._utils._func_utils import persistent_locals
+from azure.ai.ml._utils._func_utils import get_output_and_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
     is_private_preview_enabled,
@@ -96,23 +96,6 @@ def _add_component_to_current_definition_builder(component):
         builder.add_node(component)
 
 
-def get_func_variable_tracer(_locals_data, func_code):
-    """Get a tracer to trace variable names in dsl.pipeline function.
-
-    :param _locals_data: A dict to save locals data.
-    :type _locals_data: dict
-    :param func_code: An code object to compare if current frame is inside user function.
-    :type func_code: CodeType
-    """
-
-    def tracer(frame, event, arg):  # pylint: disable=unused-argument
-        if frame.f_code == func_code and event == "return":
-            # Copy the locals of user's dsl function when it returns.
-            _locals_data.update(frame.f_locals.copy())
-
-    return tracer
-
-
 class PipelineComponentBuilder:
     # map from python built-in type to component type
     # pylint: disable=too-many-instance-attributes
@@ -193,7 +176,13 @@ class PipelineComponentBuilder:
         kwargs.update(non_pipeline_inputs_dict or {})
 
         # Use a dict to store all variables in self.func
-        outputs, _locals = self._get_outputs_and_locals(kwargs)
+        # We use this stack to store the dsl pipeline definition hierarchy
+        _definition_builder_stack.push(self)
+
+        try:
+            outputs, _locals = get_output_and_locals(self.func, kwargs)
+        finally:
+            _definition_builder_stack.pop()
 
         if outputs is None:
             outputs = {}
@@ -214,28 +203,6 @@ class PipelineComponentBuilder:
         # exception will be raised in component.build_validate_io().
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
-
-    def _get_outputs_and_locals(
-        self,
-        _all_kwargs: typing.Dict[str, typing.Any]
-    ) -> typing.Tuple[typing.Dict, typing.Dict]:
-        """Get outputs and locals from self.func.
-        Locals will be used to update node variable names.
-
-        :param _all_kwargs: All kwargs to call self.func.
-        :type _all_kwargs: typing.Dict[str, typing.Any]
-        :return: A tuple of outputs and locals.
-        :rtype: typing.Tuple[typing.Dict, typing.Dict]
-        """
-        # We use this stack to store the dsl pipeline definition hierarchy
-        _definition_builder_stack.push(self)
-
-        try:
-            persistent_func = persistent_locals(self.func)
-            outputs = persistent_func(**_all_kwargs)
-            return outputs, persistent_func.locals
-        finally:
-            _definition_builder_stack.pop()
 
     def _validate_group_annotation(self, name:str, val:GroupInput):
         for k, v in val.values.items():

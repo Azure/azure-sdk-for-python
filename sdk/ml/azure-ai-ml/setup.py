@@ -85,8 +85,6 @@ setup(
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
         # "opencensus-ext-azure<2.0.0", disabled until SDK logging re-activated
-        # Used in pipeline_component_builder
-        'bytecode<0.15.0,>=0.13.0',
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
@@ -94,6 +92,14 @@ setup(
         "designer": [
             "mldesigner",
         ],
+        # user can run `pip install azure-ai-ml[bytecode]` to install bytecode, which is used to accelerate dsl
+        # pipeline builder.
+        "bytecode": [
+            # 0.14.0 for Python 3.8 or newer;
+            # 0.13.0 for Python 3.6/3.7;
+            # 0.12.0 for Python 3.5
+            'bytecode<0.15.0,>=0.12.0',
+        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
