@@ -7,7 +7,7 @@
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01.models import OnlineDeploymentData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
@@ -57,17 +57,17 @@ class Deployment(Resource, RestTranslatableMixin):
 
     def __init__(
         self,
-        name: str = None,
-        endpoint_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
-        model: Union[str, "Model"] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, "Environment"] = None,
-        environment_variables: Dict[str, str] = None,
-        code_path: Union[str, PathLike] = None,
-        scoring_script: Union[str, PathLike] = None,
+        name: Optional[str] = None,
+        endpoint_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        code_path: Optional[Union[str, PathLike]] = None,
+        scoring_script: Optional[Union[str, PathLike]] = None,
         **kwargs,
     ):
         # MFE is case-insensitive for Name. So convert the name into lower case here.

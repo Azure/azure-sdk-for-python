@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import CodeField, NestedField, DistributionField
+from azure.ai.ml._schema.core.fields import CodeField, DistributionField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import AzureMLResourceType

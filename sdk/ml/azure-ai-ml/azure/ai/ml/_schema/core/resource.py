@@ -6,10 +6,10 @@
 
 import logging
 
-from marshmallow import fields, post_load, pre_dump, post_dump
+from marshmallow import fields, post_dump, post_load, pre_dump
 
-from .schema import YamlFileSchema
 from ...constants._common import BASE_PATH_CONTEXT_KEY
+from .schema import YamlFileSchema
 
 module_logger = logging.getLogger(__name__)
 

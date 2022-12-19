@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
@@ -40,13 +40,13 @@ class ImportComponent(Component):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        source: Dict = None,
-        output: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        source: Optional[Dict] = None,
+        output: Optional[Dict] = None,
         is_deterministic: bool = True,
         **kwargs,
     ):

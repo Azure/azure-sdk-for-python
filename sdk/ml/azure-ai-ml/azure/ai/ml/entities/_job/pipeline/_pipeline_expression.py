@@ -89,8 +89,10 @@ class PipelineExpressionMixin:
     def _validate_binary_operation(self, other, operator: str):
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
-        if other is not None and not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES) and not isinstance(
-            other, (PipelineInput, NodeOutput, PipelineExpression)
+        if (
+            other is not None
+            and not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES)
+            and not isinstance(other, (PipelineInput, NodeOutput, PipelineExpression))
         ):
             error_message = (
                 f"Operator '{operator}' is not supported with {type(other)}; "
@@ -460,8 +462,9 @@ class PipelineExpression(PipelineExpressionMixin):
             if _type != NONE_PARAMETER_TYPE and _type not in PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES:
                 error_message = (
                     f"Pipeline input type {_type!r} is not supported in expression; "
-                    f"currently only support None, " +
-                    ", ".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES) + "."
+                    f"currently only support None, "
+                    + ", ".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES)
+                    + "."
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
@@ -552,9 +555,9 @@ class PipelineExpression(PipelineExpressionMixin):
             for _name in sorted(self._inputs):
                 _type = self._inputs[_name].type
                 _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(_name + "=\"${{inputs." + _name + "}}\"")
+                _command_inputs_items.append(_name + '="${{inputs.' + _name + '}}"')
             _command_inputs_string = " ".join(_command_inputs_items)
-            _command_output_string = "output=\"${{outputs.output}}\""
+            _command_output_string = 'output="${{outputs.output}}"'
             _command = (
                 "mldesigner execute --source expression_component.py --name expression_func"
                 " --inputs " + _command_inputs_string + " --outputs " + _command_output_string

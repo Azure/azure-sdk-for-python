@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-09-10/examples/RecoveryPoints_ListByReplicationProtectedItems.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/RecoveryPoints_ListByReplicationProtectedItems.json
 if __name__ == "__main__":
     main()

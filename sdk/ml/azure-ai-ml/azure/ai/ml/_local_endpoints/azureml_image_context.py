@@ -102,7 +102,7 @@ class AzureMlImageContext(object):
 
         :return: str
         """
-        return self._docker_conda_file_name # pylint: disable=no-member
+        return self._docker_conda_file_name  # pylint: disable=no-member
 
     @property
     def volumes(self) -> dict:

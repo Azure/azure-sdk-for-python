@@ -6,15 +6,15 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
-from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
+from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, load_job, load_component, dsl
-from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml import MLClient, dsl, load_component, load_job
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import Spark
 from azure.ai.ml.entities._job.automl.image import (
@@ -23,9 +23,9 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageObjectDetectionJob,
 )
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import ValidationException
 

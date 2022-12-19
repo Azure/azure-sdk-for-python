@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import NestedField, UnionField, PrimitiveValueField
+from azure.ai.ml._schema.core.fields import NestedField, PrimitiveValueField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import (
     DataInputSchema,
     InputLiteralValueSchema,
