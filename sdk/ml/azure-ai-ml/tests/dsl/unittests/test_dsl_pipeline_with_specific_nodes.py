@@ -6,19 +6,9 @@ from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml.automl import classification, regression
-from azure.ai.ml.constants._common import (
-    AssetTypes,
-    InputOutputModes,
-)
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.entities import (
-    CommandComponent,
-    CommandJob,
-    Data,
-    ParallelTask,
-    PipelineJob,
-    SparkJob,
-)
+from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
 from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob

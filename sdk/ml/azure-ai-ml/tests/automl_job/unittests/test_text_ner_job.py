@@ -2,8 +2,8 @@ import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    BanditPolicy as RestBanditPolicy,
     JobBase,
     LogVerbosity,
     MLTableJobInput,

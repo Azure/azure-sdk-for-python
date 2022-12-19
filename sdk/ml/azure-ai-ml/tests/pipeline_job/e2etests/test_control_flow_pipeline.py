@@ -1,15 +1,15 @@
-import pytest
 from typing import Callable
-from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+import pytest
+from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml._schema.pipeline import pipeline_job
+from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 from .test_pipeline_job import assert_job_cancel

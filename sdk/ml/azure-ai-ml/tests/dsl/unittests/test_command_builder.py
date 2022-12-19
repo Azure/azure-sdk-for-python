@@ -3,6 +3,7 @@ import re
 import pydash
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import (
     Input,
@@ -10,11 +11,11 @@ from azure.ai.ml import (
     Output,
     PyTorchDistribution,
     TensorFlowDistribution,
+    UserIdentityConfiguration,
     command,
     load_component,
     load_job,
     spark,
-    UserIdentityConfiguration,
 )
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
@@ -22,7 +23,6 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
-from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from .._util import _DSL_TIMEOUT_SECOND
 

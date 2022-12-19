@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -24,8 +24,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         self,
         *,
         task_type: str,
-        limits: ImageLimitSettings = None,
-        sweep: ImageSweepSettings = None,
+        limits: Optional[ImageLimitSettings] = None,
+        sweep: Optional[ImageSweepSettings] = None,
         **kwargs,
     ) -> None:
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
@@ -94,8 +94,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         *,
         training_data: Input,
         target_column_name: str,
-        validation_data: Input = None,
-        validation_data_size: float = None,
+        validation_data: Optional[Input] = None,
+        validation_data_size: Optional[float] = None,
     ) -> None:
         self.target_column_name = self.target_column_name if target_column_name is None else target_column_name
         self.training_data = self.training_data if training_data is None else training_data
@@ -105,9 +105,9 @@ class AutoMLImage(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
     ) -> None:
         """Limit settings for all AutoML Image Verticals.
 
@@ -127,7 +127,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         sampling_algorithm: Union[
             str, SamplingAlgorithmType.RANDOM, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN
         ],
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
 

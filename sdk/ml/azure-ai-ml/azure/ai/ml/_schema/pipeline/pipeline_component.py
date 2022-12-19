@@ -90,8 +90,8 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
     from azure.ai.ml.entities._builders.do_while import DoWhile
-    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 
     # parse inputs/outputs
@@ -114,7 +114,8 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
             elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
                 # Convert to do-while node.
                 job_instance = ParallelFor._create_instance_from_schema_dict(
-                    pipeline_jobs=jobs, loaded_data=job_instance)
+                    pipeline_jobs=jobs, loaded_data=job_instance
+                )
                 jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
