@@ -481,12 +481,12 @@ class WorkspaceOperations:
                 app_insights_location = "southcentralus"
             else:
                 app_insights_location = workspace.location
-            # get name for default resource group and if it already exists
+            # check if default resource group already exists
             rg_is_existing = default_resource_group_for_app_insights_exists(
                 self._credentials,
                 self._subscription_id,
                 app_insights_location)
-            # if default resource group does not exist yet, create resource group with log analytics inside
+            # if default resource group does not exist yet, create rg and log analytics
             if not rg_is_existing:
                 # add resource group and log analytics deployments to resources
                 app_insights_resource_group_deployment_name = "DeployResourceGroup%s"%get_deployment_name("")
@@ -503,7 +503,7 @@ class WorkspaceOperations:
                         resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
             # if default resource group exists, check default log analytics exists
             else:
-                # get ARM id for default log analytics workspace to be used and if it already exists
+                # check if default log analytics workspace already exists
                 la_is_existing = default_log_analytics_workspace_exists(
                     self._credentials, self._subscription_id,
                     app_insights_location)
