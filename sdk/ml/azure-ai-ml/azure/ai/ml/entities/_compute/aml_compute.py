@@ -95,6 +95,11 @@ class AmlCompute(Compute):
      else is open all public nodes. It can be default only during cluster creation time, after
      creation it will be either True or False. Possible values include: True, False, None. Default value: None.
      :type ssh_public_access_enabled: bool, optional
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
+     True - Indicates that the compute nodes will have public IPs provisioned.
+     False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+     Default Value: True.
+    :type enable_node_public_ip: Optional[bool], optional
     """
 
     def __init__(
@@ -111,6 +116,7 @@ class AmlCompute(Compute):
         idle_time_before_scale_down: Optional[int] = None,
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
+        enable_node_public_ip : Optional[bool] = True,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
@@ -129,6 +135,7 @@ class AmlCompute(Compute):
         self.ssh_settings = ssh_settings
         self.network_settings = network_settings
         self.tier = tier
+        self.enable_node_public_ip = enable_node_public_ip
         self.subnet = None
 
     @classmethod
@@ -168,6 +175,7 @@ class AmlCompute(Compute):
             else None,
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.additional_properties.get("createdOn", None),
+            enable_node_public_ip=prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip else True,
         )
         return response
 
@@ -215,6 +223,7 @@ class AmlCompute(Compute):
             scale_settings=scale_settings,
             subnet=subnet_resource,
             remote_login_port_public_access=remote_login_public_access,
+            enable_node_public_ip=self.enable_node_public_ip
         )
 
         aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)
