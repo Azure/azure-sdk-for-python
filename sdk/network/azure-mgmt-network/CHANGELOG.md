@@ -2,7 +2,9 @@
 
 ## 23.0.0b1 (2022-12-19)
 
-- Preview package with the same multiapi support but much reduced package size.
+### Other Changes
+
+  - Preview package with the same multiapi support but much reduced package size.
 
 ### Breaking Changes
 
