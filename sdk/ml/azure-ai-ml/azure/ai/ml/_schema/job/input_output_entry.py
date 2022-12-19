@@ -2,41 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 
-from azure.ai.ml._schema import PatchedSchemaMeta, PathAwareSchema
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
-from azure.ai.ml.constants import AzureMLResourceType, InputOutputModes, AssetTypes, LegacyAssetTypes
-from marshmallow import pre_dump, ValidationError, fields, post_load
+from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField, ArmStr
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
+from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
 
 module_logger = logging.getLogger(__name__)
 
 
 class InputSchema(metaclass=PatchedSchemaMeta):
-    mode = StringTransformedEnum(
-        allowed_values=[
-            InputOutputModes.DOWNLOAD,
-            InputOutputModes.RO_MOUNT,
-            InputOutputModes.EVAL_MOUNT,
-            InputOutputModes.EVAL_DOWNLOAD,
-            InputOutputModes.DIRECT,
-        ],
-        required=False,
-    )
-    type = StringTransformedEnum(
-        allowed_values=[
-            AssetTypes.URI_FILE,
-            AssetTypes.URI_FOLDER,
-            AssetTypes.CUSTOM_MODEL,
-            AssetTypes.MLFLOW_MODEL,
-            AssetTypes.MLTABLE,
-            AssetTypes.TRITON_MODEL,
-        ]
-    )
-    path = UnionField([ArmVersionedStr(), fields.Str()])
-
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._inputs_outputs import Input
@@ -49,8 +28,76 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, Input):
             return data
-        else:
-            raise ValidationError("InputSchema needs type Input to dump")
+        raise ValidationError("InputSchema needs type Input to dump")
+
+
+def generate_path_property(azureml_type):
+    return UnionField(
+        [
+            ArmVersionedStr(azureml_type=azureml_type, pattern=r"^azureml:\w+"),
+            fields.Str(metadata={"pattern": r"^azureml:(?!\w).*"}),
+            ArmStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
+            fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
+            ArmStr(azureml_type=LOCAL_PATH, pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+        ],
+        is_strict=True,
+    )
+
+
+class ModelInputSchema(InputSchema):
+    mode = StringTransformedEnum(
+        allowed_values=[
+            InputOutputModes.DOWNLOAD,
+            InputOutputModes.RO_MOUNT,
+            InputOutputModes.DIRECT,
+        ],
+        required=False,
+    )
+    type = StringTransformedEnum(
+        allowed_values=[
+            AssetTypes.CUSTOM_MODEL,
+            AssetTypes.MLFLOW_MODEL,
+            AssetTypes.TRITON_MODEL,
+        ]
+    )
+    path = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
+
+
+class DataInputSchema(InputSchema):
+    mode = StringTransformedEnum(
+        allowed_values=[
+            InputOutputModes.DOWNLOAD,
+            InputOutputModes.RO_MOUNT,
+            InputOutputModes.DIRECT,
+        ],
+        required=False,
+    )
+    type = StringTransformedEnum(
+        allowed_values=[
+            AssetTypes.URI_FILE,
+            AssetTypes.URI_FOLDER,
+        ]
+    )
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
+
+
+class MLTableInputSchema(InputSchema):
+    mode = StringTransformedEnum(
+        allowed_values=[
+            InputOutputModes.DOWNLOAD,
+            InputOutputModes.RO_MOUNT,
+            InputOutputModes.EVAL_MOUNT,
+            InputOutputModes.EVAL_DOWNLOAD,
+            InputOutputModes.DIRECT,
+        ],
+        required=False,
+    )
+    type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
@@ -64,8 +111,7 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
     def check_dict(self, data, **kwargs):
         if hasattr(data, "value"):
             return data
-        else:
-            raise ValidationError("InputLiteralValue must have a field value")
+        raise ValidationError("InputLiteralValue must have a field value")
 
 
 class OutputSchema(PathAwareSchema):
@@ -102,6 +148,5 @@ class OutputSchema(PathAwareSchema):
 
         if isinstance(data, Output):
             return data
-        else:
-            # Assists with union schema
-            raise ValidationError("OutputSchema needs type Output to dump")
+        # Assists with union schema
+        raise ValidationError("OutputSchema needs type Output to dump")

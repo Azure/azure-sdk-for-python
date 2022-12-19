@@ -120,32 +120,32 @@ class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Healthcare Entity Category.
     """
 
-    BODY_STRUCTURE = "BODY_STRUCTURE"
-    AGE = "AGE"
-    GENDER = "GENDER"
-    EXAMINATION_NAME = "EXAMINATION_NAME"
-    DATE = "DATE"
-    DIRECTION = "DIRECTION"
-    FREQUENCY = "FREQUENCY"
-    MEASUREMENT_VALUE = "MEASUREMENT_VALUE"
-    MEASUREMENT_UNIT = "MEASUREMENT_UNIT"
-    RELATIONAL_OPERATOR = "RELATIONAL_OPERATOR"
-    TIME = "TIME"
-    GENE_OR_PROTEIN = "GENE_OR_PROTEIN"
-    VARIANT = "VARIANT"
-    ADMINISTRATIVE_EVENT = "ADMINISTRATIVE_EVENT"
-    CARE_ENVIRONMENT = "CARE_ENVIRONMENT"
-    HEALTHCARE_PROFESSION = "HEALTHCARE_PROFESSION"
-    DIAGNOSIS = "DIAGNOSIS"
-    SYMPTOM_OR_SIGN = "SYMPTOM_OR_SIGN"
-    CONDITION_QUALIFIER = "CONDITION_QUALIFIER"
-    MEDICATION_CLASS = "MEDICATION_CLASS"
-    MEDICATION_NAME = "MEDICATION_NAME"
-    DOSAGE = "DOSAGE"
-    MEDICATION_FORM = "MEDICATION_FORM"
-    MEDICATION_ROUTE = "MEDICATION_ROUTE"
-    FAMILY_RELATION = "FAMILY_RELATION"
-    TREATMENT_NAME = "TREATMENT_NAME"
+    BODY_STRUCTURE = "BodyStructure"
+    AGE = "Age"
+    GENDER = "Gender"
+    EXAMINATION_NAME = "ExaminationName"
+    DATE = "Date"
+    DIRECTION = "Direction"
+    FREQUENCY = "Frequency"
+    MEASUREMENT_VALUE = "MeasurementValue"
+    MEASUREMENT_UNIT = "MeasurementUnit"
+    RELATIONAL_OPERATOR = "RelationalOperator"
+    TIME = "Time"
+    GENE_OR_PROTEIN = "GeneOrProtein"
+    VARIANT = "Variant"
+    ADMINISTRATIVE_EVENT = "AdministrativeEvent"
+    CARE_ENVIRONMENT = "CareEnvironment"
+    HEALTHCARE_PROFESSION = "HealthcareProfession"
+    DIAGNOSIS = "Diagnosis"
+    SYMPTOM_OR_SIGN = "SymptomOrSign"
+    CONDITION_QUALIFIER = "ConditionQualifier"
+    MEDICATION_CLASS = "MedicationClass"
+    MEDICATION_NAME = "MedicationName"
+    DOSAGE = "Dosage"
+    MEDICATION_FORM = "MedicationForm"
+    MEDICATION_ROUTE = "MedicationRoute"
+    FAMILY_RELATION = "FamilyRelation"
+    TREATMENT_NAME = "TreatmentName"
 
 class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
@@ -167,6 +167,8 @@ class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID_COUNTRY_HINT = "InvalidCountryHint"
 
 class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PiiCategory.
+    """
 
     ABA_ROUTING_NUMBER = "ABARoutingNumber"
     AR_NATIONAL_IDENTITY_NUMBER = "ARNationalIdentityNumber"
@@ -386,6 +388,8 @@ class SentenceSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEGATIVE = "negative"
 
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State.
+    """
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"

@@ -1,0 +1,21 @@
+$schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
+type: automl
+
+experiment_name: automl-image-classification-multilabel-e2e-cli-test
+compute: azureml:gpu-cluster
+
+log_verbosity: debug
+task: image_classification_multilabel
+primary_metric: iou
+
+limits:
+  max_trials: 2
+  max_concurrent_trials: 1
+
+target_column_name: label
+training_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_classification_multilabel/train
+  type: mltable
+validation_data:
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/image_classification_multilabel/valid
+  type: mltable

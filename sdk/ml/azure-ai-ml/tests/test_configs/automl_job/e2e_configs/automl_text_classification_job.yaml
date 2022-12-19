@@ -1,26 +1,21 @@
 type: automl
 
-experiment_name: "cli_e2e_text_classification"
+experiment_name: cli_e2e_text_classification
 compute: azureml:gpu-cluster
 
 log_verbosity: debug
 task: text_classification
 primary_metric: accuracy
 
-properties:
-  _automl_internal_enable_mltable_quick_profile: "true"
-  _automl_internal_label: "latest"
-  _automl_internal_save_mlflow: "true"
-
 limits:
   timeout_minutes: 30
 
 target_column_name: y
 training_data:
-  path: tests/test_configs/automl_job/test_datasets/newsgroup/train
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/newsgroup/train
   type: mltable
 validation_data:
-  path: tests/test_configs/automl_job/test_datasets/newsgroup/valid
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/newsgroup/valid
   type: mltable
 
 featurization:

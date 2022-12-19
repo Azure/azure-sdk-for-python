@@ -71,7 +71,7 @@ class CapabilityTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-09-15-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapabilityTypeListResult]
 
         error_map = {
@@ -170,7 +170,7 @@ class CapabilityTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-09-15-preview"))  # type: str
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-01-preview"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.CapabilityType]
 
         

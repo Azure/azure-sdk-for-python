@@ -1,0 +1,33 @@
+{
+  "code": "./basic_spark_job/src",
+  "compute": "azureml:douglassynapse",
+  "conf": {
+    "spark.driver.cores": 1,
+    "spark.driver.memory": "2g",
+    "spark.executor.cores": 2,
+    "spark.executor.memory": "2g",
+    "spark.executor.instances": 1,
+    "spark.dynamicAllocation.enabled": true,
+    "spark.dynamicAllocation.minExecutors": 1,
+    "spark.dynamicAllocation.maxExecutors": 5
+  },
+  "description": "simply the best",
+  "display_name": "witty_feather_2tys9tvrmc",
+  "entry": {
+    "file": "main.py"
+  },
+  "environment": "azureml:condaenv:1",
+  "experiment_name": "testSpark",
+  "inputs": {},
+  "name": "witty_feather_2tys9tvrmc",
+  "outputs": {
+    "default": {
+      "mode": "rw_mount",
+      "path": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.witty_feather_2tys9tvrmc",
+      "type": "uri_folder"
+    }
+  },
+  "properties": {},
+  "tags": {},
+  "type": "spark"
+}

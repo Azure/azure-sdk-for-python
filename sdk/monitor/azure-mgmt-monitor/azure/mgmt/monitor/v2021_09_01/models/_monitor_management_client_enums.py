@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
     """

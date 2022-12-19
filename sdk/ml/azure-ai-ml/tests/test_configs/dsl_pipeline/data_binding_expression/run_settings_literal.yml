@@ -14,18 +14,16 @@ inputs:
   job_in_folder:
     path: ../../data
     type: uri_folder
-    mode: ro_mount
   job_in_file:
     path: ../../data/sample1.csv
     type: uri_file
-    mode: ro_mount
   target_compute: "cpu-cluster"
   output_file_name: "sample1.csv"
 
 jobs:
   hello_world:
     type: command
-    component: file:./component.yml
+    component: file:./distribution_component.yml
     distribution:
       type: "mpi"
       process_count_per_instance: ${{parent.inputs.job_in_number}}

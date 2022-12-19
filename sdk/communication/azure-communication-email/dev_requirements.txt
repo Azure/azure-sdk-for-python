@@ -1,0 +1,7 @@
+-e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-devtools
+-e ../../identity/azure-identity
+../../core/azure-core
+aiohttp>=3.0
+aiounittest>=1.4
+pytest-tornasync==0.6.0.post2

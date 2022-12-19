@@ -9,10 +9,11 @@
 try:
     from ._models_py3 import AccountKeyDatastoreCredentials
     from ._models_py3 import AccountKeyDatastoreSecrets
-    from ._models_py3 import AcrDetails
+    from ._models_py3 import AcrDetail
     from ._models_py3 import AmlToken
     from ._models_py3 import AssetBase
     from ._models_py3 import AssetContainer
+    from ._models_py3 import AssetReferenceBase
     from ._models_py3 import AzureBlobDatastore
     from ._models_py3 import AzureDataLakeGen1Datastore
     from ._models_py3 import AzureDataLakeGen2Datastore
@@ -21,6 +22,8 @@ try:
     from ._models_py3 import BasicBinding
     from ._models_py3 import Binding
     from ._models_py3 import BlobReferenceForConsumptionDto
+    from ._models_py3 import BlobReferenceSASRequestDto
+    from ._models_py3 import BlobReferenceSASResponseDto
     from ._models_py3 import BuildContext
     from ._models_py3 import CertificateDatastoreCredentials
     from ._models_py3 import CertificateDatastoreSecrets
@@ -39,6 +42,13 @@ try:
     from ._models_py3 import ComponentVersionData
     from ._models_py3 import ComponentVersionDetails
     from ._models_py3 import ComponentVersionResourceArmPaginatedResult
+    from ._models_py3 import DataContainerData
+    from ._models_py3 import DataContainerDetails
+    from ._models_py3 import DataContainerResourceArmPaginatedResult
+    from ._models_py3 import DataPathAssetReference
+    from ._models_py3 import DataVersionBaseData
+    from ._models_py3 import DataVersionBaseDetails
+    from ._models_py3 import DataVersionBaseResourceArmPaginatedResult
     from ._models_py3 import Datastore
     from ._models_py3 import DatastoreCredentials
     from ._models_py3 import DatastoreSecrets
@@ -54,6 +64,7 @@ try:
     from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse
     from ._models_py3 import FlavorData
+    from ._models_py3 import IdAssetReference
     from ._models_py3 import IdentityConfiguration
     from ._models_py3 import ImageReferenceForConsumptionDto
     from ._models_py3 import InferenceContainerProperties
@@ -68,6 +79,7 @@ try:
     from ._models_py3 import JobOutputDataset
     from ._models_py3 import JobOutputUri
     from ._models_py3 import JobService
+    from ._models_py3 import MLTableData
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import MedianStoppingPolicy
     from ._models_py3 import ModelContainerData
@@ -79,11 +91,14 @@ try:
     from ._models_py3 import Mpi
     from ._models_py3 import NoneDatastoreCredentials
     from ._models_py3 import Objective
+    from ._models_py3 import OutputPathAssetReference
     from ._models_py3 import PipelineJob
     from ._models_py3 import PyTorch
     from ._models_py3 import Resource
     from ._models_py3 import ResourceBase
     from ._models_py3 import ResourceConfiguration
+    from ._models_py3 import ResourceManagementAssetReferenceData
+    from ._models_py3 import ResourceManagementAssetReferenceDetails
     from ._models_py3 import Route
     from ._models_py3 import SasDatastoreCredentials
     from ._models_py3 import SasDatastoreSecrets
@@ -97,14 +112,17 @@ try:
     from ._models_py3 import TensorFlow
     from ._models_py3 import TrialComponent
     from ._models_py3 import TruncationSelectionPolicy
+    from ._models_py3 import UriFileDataVersion
+    from ._models_py3 import UriFolderDataVersion
     from ._models_py3 import UriReference
 except (SyntaxError, ImportError):
     from ._models import AccountKeyDatastoreCredentials  # type: ignore
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
-    from ._models import AcrDetails  # type: ignore
+    from ._models import AcrDetail  # type: ignore
     from ._models import AmlToken  # type: ignore
     from ._models import AssetBase  # type: ignore
     from ._models import AssetContainer  # type: ignore
+    from ._models import AssetReferenceBase  # type: ignore
     from ._models import AzureBlobDatastore  # type: ignore
     from ._models import AzureDataLakeGen1Datastore  # type: ignore
     from ._models import AzureDataLakeGen2Datastore  # type: ignore
@@ -113,6 +131,8 @@ except (SyntaxError, ImportError):
     from ._models import BasicBinding  # type: ignore
     from ._models import Binding  # type: ignore
     from ._models import BlobReferenceForConsumptionDto  # type: ignore
+    from ._models import BlobReferenceSASRequestDto  # type: ignore
+    from ._models import BlobReferenceSASResponseDto  # type: ignore
     from ._models import BuildContext  # type: ignore
     from ._models import CertificateDatastoreCredentials  # type: ignore
     from ._models import CertificateDatastoreSecrets  # type: ignore
@@ -131,6 +151,13 @@ except (SyntaxError, ImportError):
     from ._models import ComponentVersionData  # type: ignore
     from ._models import ComponentVersionDetails  # type: ignore
     from ._models import ComponentVersionResourceArmPaginatedResult  # type: ignore
+    from ._models import DataContainerData  # type: ignore
+    from ._models import DataContainerDetails  # type: ignore
+    from ._models import DataContainerResourceArmPaginatedResult  # type: ignore
+    from ._models import DataPathAssetReference  # type: ignore
+    from ._models import DataVersionBaseData  # type: ignore
+    from ._models import DataVersionBaseDetails  # type: ignore
+    from ._models import DataVersionBaseResourceArmPaginatedResult  # type: ignore
     from ._models import Datastore  # type: ignore
     from ._models import DatastoreCredentials  # type: ignore
     from ._models import DatastoreSecrets  # type: ignore
@@ -146,6 +173,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorDetail  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import FlavorData  # type: ignore
+    from ._models import IdAssetReference  # type: ignore
     from ._models import IdentityConfiguration  # type: ignore
     from ._models import ImageReferenceForConsumptionDto  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
@@ -160,6 +188,7 @@ except (SyntaxError, ImportError):
     from ._models import JobOutputDataset  # type: ignore
     from ._models import JobOutputUri  # type: ignore
     from ._models import JobService  # type: ignore
+    from ._models import MLTableData  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import MedianStoppingPolicy  # type: ignore
     from ._models import ModelContainerData  # type: ignore
@@ -171,11 +200,14 @@ except (SyntaxError, ImportError):
     from ._models import Mpi  # type: ignore
     from ._models import NoneDatastoreCredentials  # type: ignore
     from ._models import Objective  # type: ignore
+    from ._models import OutputPathAssetReference  # type: ignore
     from ._models import PipelineJob  # type: ignore
     from ._models import PyTorch  # type: ignore
     from ._models import Resource  # type: ignore
     from ._models import ResourceBase  # type: ignore
     from ._models import ResourceConfiguration  # type: ignore
+    from ._models import ResourceManagementAssetReferenceData  # type: ignore
+    from ._models import ResourceManagementAssetReferenceDetails  # type: ignore
     from ._models import Route  # type: ignore
     from ._models import SasDatastoreCredentials  # type: ignore
     from ._models import SasDatastoreSecrets  # type: ignore
@@ -189,12 +221,15 @@ except (SyntaxError, ImportError):
     from ._models import TensorFlow  # type: ignore
     from ._models import TrialComponent  # type: ignore
     from ._models import TruncationSelectionPolicy  # type: ignore
+    from ._models import UriFileDataVersion  # type: ignore
+    from ._models import UriFolderDataVersion  # type: ignore
     from ._models import UriReference  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
     BindingType,
     CreatedByType,
     CredentialsType,
+    DataType,
     DatastoreType,
     DistributionType,
     EarlyTerminationPolicyType,
@@ -210,6 +245,7 @@ from ._azure_machine_learning_workspaces_enums import (
     ListViewType,
     OperatingSystemType,
     OutputDataDeliveryMode,
+    ReferenceType,
     SamplingAlgorithm,
     SecretsType,
     ServiceDataAccessAuthIdentity,
@@ -218,10 +254,11 @@ from ._azure_machine_learning_workspaces_enums import (
 __all__ = [
     'AccountKeyDatastoreCredentials',
     'AccountKeyDatastoreSecrets',
-    'AcrDetails',
+    'AcrDetail',
     'AmlToken',
     'AssetBase',
     'AssetContainer',
+    'AssetReferenceBase',
     'AzureBlobDatastore',
     'AzureDataLakeGen1Datastore',
     'AzureDataLakeGen2Datastore',
@@ -230,6 +267,8 @@ __all__ = [
     'BasicBinding',
     'Binding',
     'BlobReferenceForConsumptionDto',
+    'BlobReferenceSASRequestDto',
+    'BlobReferenceSASResponseDto',
     'BuildContext',
     'CertificateDatastoreCredentials',
     'CertificateDatastoreSecrets',
@@ -248,6 +287,13 @@ __all__ = [
     'ComponentVersionData',
     'ComponentVersionDetails',
     'ComponentVersionResourceArmPaginatedResult',
+    'DataContainerData',
+    'DataContainerDetails',
+    'DataContainerResourceArmPaginatedResult',
+    'DataPathAssetReference',
+    'DataVersionBaseData',
+    'DataVersionBaseDetails',
+    'DataVersionBaseResourceArmPaginatedResult',
     'Datastore',
     'DatastoreCredentials',
     'DatastoreSecrets',
@@ -263,6 +309,7 @@ __all__ = [
     'ErrorDetail',
     'ErrorResponse',
     'FlavorData',
+    'IdAssetReference',
     'IdentityConfiguration',
     'ImageReferenceForConsumptionDto',
     'InferenceContainerProperties',
@@ -277,6 +324,7 @@ __all__ = [
     'JobOutputDataset',
     'JobOutputUri',
     'JobService',
+    'MLTableData',
     'ManagedIdentity',
     'MedianStoppingPolicy',
     'ModelContainerData',
@@ -288,11 +336,14 @@ __all__ = [
     'Mpi',
     'NoneDatastoreCredentials',
     'Objective',
+    'OutputPathAssetReference',
     'PipelineJob',
     'PyTorch',
     'Resource',
     'ResourceBase',
     'ResourceConfiguration',
+    'ResourceManagementAssetReferenceData',
+    'ResourceManagementAssetReferenceDetails',
     'Route',
     'SasDatastoreCredentials',
     'SasDatastoreSecrets',
@@ -306,10 +357,13 @@ __all__ = [
     'TensorFlow',
     'TrialComponent',
     'TruncationSelectionPolicy',
+    'UriFileDataVersion',
+    'UriFolderDataVersion',
     'UriReference',
     'BindingType',
     'CreatedByType',
     'CredentialsType',
+    'DataType',
     'DatastoreType',
     'DistributionType',
     'EarlyTerminationPolicyType',
@@ -325,6 +379,7 @@ __all__ = [
     'ListViewType',
     'OperatingSystemType',
     'OutputDataDeliveryMode',
+    'ReferenceType',
     'SamplingAlgorithm',
     'SecretsType',
     'ServiceDataAccessAuthIdentity',

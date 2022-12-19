@@ -4,16 +4,15 @@
 
 import logging
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    CodeConfiguration as RestCodeConfiguration,
-)
+from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._mixins import DictMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class CodeConfiguration:
+class CodeConfiguration(DictMixin):
     """CodeConfiguration.
 
     :param code: Code entity, defaults to None
@@ -45,12 +44,16 @@ class CodeConfiguration:
                 target=ErrorTarget.CODE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
 
     @staticmethod
     def _from_rest_code_configuration(code_configuration: RestCodeConfiguration):
         if code_configuration:
-            return CodeConfiguration(code=code_configuration.code_id, scoring_script=code_configuration.scoring_script)
+            return CodeConfiguration(
+                code=code_configuration.code_id,
+                scoring_script=code_configuration.scoring_script,
+            )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CodeConfiguration):

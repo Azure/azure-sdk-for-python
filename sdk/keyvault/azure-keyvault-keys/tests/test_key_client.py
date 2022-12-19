@@ -6,25 +6,28 @@ import codecs
 import functools
 import json
 import logging
+import os
 import time
 
 import pytest
-from azure.core.exceptions import (HttpResponseError, ResourceExistsError,
-                                   ResourceNotFoundError)
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyClient,
-                                 KeyReleasePolicy, KeyRotationLifetimeAction,
-                                 KeyRotationPolicy, KeyRotationPolicyAction,
-                                 KeyType)
-from azure.keyvault.keys._generated.v7_3.models import \
-    KeyRotationPolicy as _KeyRotationPolicy
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyClient,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicy,
+    KeyRotationPolicyAction,
+    KeyType
+)
+from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import (KeysClientPreparer, get_attestation_token,
-                        get_decorator, get_release_policy, is_public_cloud)
+from _test_case import KeysClientPreparer, get_attestation_token, get_decorator, get_release_policy, is_public_cloud
 
 from _keys_test_case import KeysTestCase
 
@@ -250,7 +253,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
@@ -510,6 +513,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_release(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
@@ -550,6 +556,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_update_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
@@ -592,6 +601,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_immutable_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
@@ -626,10 +638,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name)
         rotated_key = client.rotate_key(key_name)
@@ -639,14 +651,15 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
+    @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation_policy(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 

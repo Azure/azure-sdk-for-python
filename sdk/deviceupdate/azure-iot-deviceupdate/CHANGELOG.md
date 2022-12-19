@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2022-09-09)
+
+### Features Added
+- Added filter to DeviceManagementOperations.list_device_classes method
+- Updated description for some methods to be more descriptive and less ambiguous
+
+### Breaking Changes
+- Removed filter from DeviceManagementOperations.list_best_updates_for_group method
+
 ## 1.0.0b3 (2022-07-07)
 
 ### Features Added

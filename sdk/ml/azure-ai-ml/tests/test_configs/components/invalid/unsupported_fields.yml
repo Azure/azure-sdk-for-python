@@ -2,7 +2,7 @@ $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schem
 name: atestcomponent
 name1: atestcomponent
 version: 1
-code: ../python
+code: ../../python
 command: >-
   echo ${{outputs.output_path}}
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

@@ -51,11 +51,11 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -71,17 +71,18 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        'msrest>=0.6.21',
+        "msrest>=0.7.1",
         {%- if need_msrestazure %}
-        'msrestazure>=0.4.32,<2.0.0',
+        "msrestazure>=0.4.32,<2.0.0",
         {%- endif %}
-        'azure-common~=1.1',
+        "azure-common~=1.1",
         {%- if need_azurecore %}
-        'azure-core>=1.23.0,<2.0.0',
+        "azure-core>=1.24.0,<2.0.0",
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        'azure-mgmt-core>=1.3.1,<2.0.0',
+        "azure-mgmt-core>=1.3.2,<2.0.0",
+        "typing-extensions>=4.3.0; python_version<'3.8.0'",
         {%- endif %}
     ],
-    python_requires=">=3.6"
+    python_requires=">=3.7"
 )

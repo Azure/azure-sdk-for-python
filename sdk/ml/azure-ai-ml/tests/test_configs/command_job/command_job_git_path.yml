@@ -1,0 +1,14 @@
+name: output_test
+compute: azureml:cpu-cluster
+inputs:
+  training_data: ./training_data.pkl
+  max_epochs: 21
+  learning_rate: 0.01
+outputs:
+  model_output:
+    mode: mount
+command: >-
+  python ./train.py --training_data {inputs.training_data} --max_epochs {inputs.max_epochs}
+  --learning_rate {inputs.learning_rate} --model_output {outputs.model_output}
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+code: git+https://github.com/varndorfer/test-git-snapshot-public.git@testBranch&subdirectory=subdirectory

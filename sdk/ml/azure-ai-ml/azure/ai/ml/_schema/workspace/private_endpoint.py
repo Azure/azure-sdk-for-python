@@ -2,8 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._schema import NestedField, PatchedSchemaMeta
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields, post_load
+
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+
 from .endpoint_connection import EndpointConnectionSchema
 
 

@@ -62,42 +62,42 @@ def sample_analyze_orchestration_app_conv_response():
         )
 
     # view result
-    print("query: {}".format(result["result"]["query"]))
-    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
+    print(f"query: {result['result']['query']}")
+    print(f"project kind: {result['result']['prediction']['projectKind']}\n")
 
     # top intent
     top_intent = result["result"]["prediction"]["topIntent"]
-    print("top intent: {}".format(top_intent))
+    print(f"top intent: {top_intent}")
     top_intent_object = result["result"]["prediction"]["intents"][top_intent]
-    print("confidence score: {}".format(top_intent_object["confidenceScore"]))
-    print("project kind: {}".format(top_intent_object["targetProjectKind"]))
+    print(f"confidence score: {top_intent_object['confidenceScore']}")
+    print(f"project kind: {top_intent_object['targetProjectKind']}")
 
     # conversation result
     if top_intent_object["targetProjectKind"] == "Conversation":
         print("\nview conversation result:")
 
-        print("\ntop intent: {}".format(top_intent_object["result"]["prediction"]["topIntent"]))
-        print("category: {}".format(top_intent_object["result"]["prediction"]["intents"][0]["category"]))
-        print("confidence score: {}\n".format(top_intent_object["result"]["prediction"]["intents"][0]["confidenceScore"]))
+        print(f"\ntop intent: {top_intent_object['result']['prediction']['topIntent']}")
+        print(f"category: {top_intent_object['result']['prediction']['intents'][0]['category']}")
+        print(f"confidence score: {top_intent_object['result']['prediction']['intents'][0]['confidenceScore']}\n")
 
         print("\nview entities:")
         for entity in top_intent_object["result"]["prediction"]["entities"]:
-            print("\ncategory: {}".format(entity["category"]))
-            print("text: {}".format(entity["text"]))
-            print("confidence score: {}".format(entity["confidenceScore"]))
+            print(f"\ncategory: {entity['category']}")
+            print(f"text: {entity['text']}")
+            print(f"confidence score: {entity['confidenceScore']}")
             if "resolutions" in entity:
                 print("resolutions")
                 for resolution in entity["resolutions"]:
-                    print("kind: {}".format(resolution["resolutionKind"]))
-                    print("value: {}".format(resolution["value"]))
+                    print(f"kind: {resolution['resolutionKind']}")
+                    print(f"value: {resolution['value']}")
             if "extraInformation" in entity:
                 print("extra info")
                 for data in entity["extraInformation"]:
-                    print("kind: {}".format(data["extraInformationKind"]))
+                    print(f"kind: {data['extraInformationKind']}")
                     if data["extraInformationKind"] == "ListKey":
-                        print("key: {}".format(data["key"]))
+                        print(f"key: {data['key']}")
                     if data["extraInformationKind"] == "EntitySubtype":
-                        print("value: {}".format(data["value"]))
+                        print(f"value: {data['value']}")
 
     # [END analyze_orchestration_app_conv_response]
 

@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import TYPE_CHECKING
+from typing import Any, List
 
 import six
 
@@ -20,10 +20,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any
 
 
 CLI_NOT_FOUND = "Azure CLI not found on path"
@@ -35,7 +31,16 @@ class AzureCliCredential(object):
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
+
+    :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+
+        self.tenant_id = tenant_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     def __enter__(self):
         return self
@@ -43,13 +48,11 @@ class AzureCliCredential(object):
     def __exit__(self, *args):
         pass
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -67,7 +70,11 @@ class AzureCliCredential(object):
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
-        tenant = resolve_tenant("", **kwargs)
+        tenant = resolve_tenant(
+            default_tenant=self.tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         if tenant:
             command += " --tenant " + tenant
         output = _run_command(command)
@@ -130,7 +137,7 @@ def _run_command(command):
         working_directory = get_safe_working_dir()
 
         kwargs = {
-            "stderr": subprocess.STDOUT,
+            "stderr": subprocess.PIPE,
             "cwd": working_directory,
             "universal_newlines": True,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
@@ -141,14 +148,14 @@ def _run_command(command):
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
-        if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
+        if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
-        if "az login" in ex.output or "az account set" in ex.output:
+        if "az login" in ex.stderr or "az account set" in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
         # return code is from the CLI -> propagate its output
-        if ex.output:
-            message = sanitize_output(ex.output)
+        if ex.stderr:
+            message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure CLI"
         raise ClientAuthenticationError(message=message)

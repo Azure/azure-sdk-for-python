@@ -5,14 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.purview.administration.account import PurviewAccountClient
 from azure.purview.administration.metadatapolicies import PurviewMetadataPoliciesClient
 
 
-class PurviewAccountTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(PurviewAccountTest, self).__init__(method_name, **kwargs)
+class PurviewAccountTest(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
         credential = self.get_credential(PurviewAccountClient)
@@ -30,9 +28,7 @@ PurviewAccountPowerShellPreparer = functools.partial(
 )
 
 
-class PurviewMetaPolicyTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(PurviewMetaPolicyTest, self).__init__(method_name, **kwargs)
+class PurviewMetaPolicyTest(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
         credential = self.get_credential(PurviewMetadataPoliciesClient)

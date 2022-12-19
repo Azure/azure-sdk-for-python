@@ -62,31 +62,31 @@ def sample_analyze_conversation_app():
         )
 
     # view result
-    print("query: {}".format(result["result"]["query"]))
-    print("project kind: {}\n".format(result["result"]["prediction"]["projectKind"]))
+    print(f"query: {result['result']['query']}")
+    print(f"project kind: {result['result']['prediction']['projectKind']}\n")
 
-    print("top intent: {}".format(result["result"]["prediction"]["topIntent"]))
-    print("category: {}".format(result["result"]["prediction"]["intents"][0]["category"]))
-    print("confidence score: {}\n".format(result["result"]["prediction"]["intents"][0]["confidenceScore"]))
+    print(f"top intent: {result['result']['prediction']['topIntent']}")
+    print(f"category: {result['result']['prediction']['intents'][0]['category']}")
+    print(f"confidence score: {result['result']['prediction']['intents'][0]['confidenceScore']}\n")
 
     print("entities:")
-    for entity in result["result"]["prediction"]["entities"]:
-        print("\ncategory: {}".format(entity["category"]))
-        print("text: {}".format(entity["text"]))
-        print("confidence score: {}".format(entity["confidenceScore"]))
+    for entity in result['result']['prediction']['entities']:
+        print(f"\ncategory: {entity['category']}")
+        print(f"text: {entity['text']}")
+        print(f"confidence score: {entity['confidenceScore']}")
         if "resolutions" in entity:
             print("resolutions")
-            for resolution in entity["resolutions"]:
-                print("kind: {}".format(resolution["resolutionKind"]))
-                print("value: {}".format(resolution["value"]))
+            for resolution in entity['resolutions']:
+                print(f"kind: {resolution['resolutionKind']}")
+                print(f"value: {resolution['value']}")
         if "extraInformation" in entity:
             print("extra info")
-            for data in entity["extraInformation"]:
-                print("kind: {}".format(data["extraInformationKind"]))
-                if data["extraInformationKind"] == "ListKey":
-                    print("key: {}".format(data["key"]))
-                if data["extraInformationKind"] == "EntitySubtype":
-                    print("value: {}".format(data["value"]))
+            for data in entity['extraInformation']:
+                print(f"kind: {data['extraInformationKind']}")
+                if data['extraInformationKind'] == "ListKey":
+                    print(f"key: {data['key']}")
+                if data['extraInformationKind'] == "EntitySubtype":
+                    print(f"value: {data['value']}")
 
     # [END analyze_conversation_app]
 

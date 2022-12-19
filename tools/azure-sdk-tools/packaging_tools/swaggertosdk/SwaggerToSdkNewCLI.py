@@ -141,7 +141,15 @@ def get_local_path_dir(root, relative_path):
     return build_folder
 
 
-def build_project(temp_dir, project, absolute_markdown_path, sdk_folder, global_conf, local_conf, autorest_bin=None):
+def build_project(
+    temp_dir,
+    project,
+    absolute_markdown_path,
+    sdk_folder,
+    global_conf,
+    local_conf,
+    autorest_bin=None,
+):
     absolute_generated_path = Path(temp_dir, project)
     absolute_save_path = Path(temp_dir, "save")
     move_wrapper_files_or_dirs(sdk_folder, absolute_save_path, global_conf, local_conf)
@@ -192,7 +200,15 @@ def build_libraries(config, skip_callback, restapi_git_folder, sdk_repo, temp_di
             ]
 
         sdk_folder = sdk_repo.working_tree_dir
-        build_project(temp_dir, project, absolute_markdown_path, sdk_folder, global_conf, local_conf, autorest_bin)
+        build_project(
+            temp_dir,
+            project,
+            absolute_markdown_path,
+            sdk_folder,
+            global_conf,
+            local_conf,
+            autorest_bin,
+        )
 
 
 def generate_sdk_from_git_object(
@@ -229,7 +245,10 @@ def generate_sdk_from_git_object(
     try:  # Checkout the sha if commit obj
         branched_rest_api_id = restapi_git_id + "@" + git_object.sha
         pr_number = None
-    except (AttributeError, TypeError):  # This is a PR, don't clone the fork but "base" repo and PR magic commit
+    except (
+        AttributeError,
+        TypeError,
+    ):  # This is a PR, don't clone the fork but "base" repo and PR magic commit
         if git_object.merge_commit_sha:
             branched_rest_api_id = git_object.base.repo.full_name + "@" + git_object.merge_commit_sha
         else:
@@ -264,7 +283,10 @@ def generate_sdk_from_git_object(
         _LOGGER.info("Clone dir will be: %s", clone_dir)
 
         with manage_git_folder(
-            gh_token, Path(temp_dir) / Path("rest"), branched_rest_api_id, pr_number=pr_number
+            gh_token,
+            Path(temp_dir) / Path("rest"),
+            branched_rest_api_id,
+            pr_number=pr_number,
         ) as restapi_git_folder, manage_git_folder(gh_token, clone_dir, branched_sdk_git_id) as sdk_folder:
 
             readme_files_infered = get_readme_files_from_git_object(git_object, restapi_git_folder)
@@ -309,7 +331,14 @@ def generate_sdk_from_git_object(
                     return True
                 return False
 
-            build_libraries(config, skip_callback, restapi_git_folder, sdk_repo, temp_dir, autorest_bin)
+            build_libraries(
+                config,
+                skip_callback,
+                restapi_git_folder,
+                sdk_repo,
+                temp_dir,
+                autorest_bin,
+            )
 
             try:
                 commit_for_sha = git_object.commit  # Commit

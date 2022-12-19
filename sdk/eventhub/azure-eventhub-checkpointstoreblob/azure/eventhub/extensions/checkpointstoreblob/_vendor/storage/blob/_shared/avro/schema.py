@@ -259,7 +259,7 @@ class Name(object):
             # Validate the fullname:
             if _RE_FULL_NAME.match(self._fullname) is None:
                 raise SchemaParseException(
-                    'Invalid schema name %r infered from name %r and namespace %r.'
+                    'Invalid schema name %r inferred from name %r and namespace %r.'
                     % (self._fullname, self._name, self._namespace))
 
     def __eq__(self, other):
@@ -439,9 +439,9 @@ class NamedSchema(Schema):
         """Reports this schema name relative to the specified name tracker.
 
         Args:
-          names: Avro name tracker to relativise this schema name against.
+          names: Avro name tracker to relativize this schema name against.
         Returns:
-          This schema name, relativised against the specified name tracker.
+          This schema name, relativized against the specified name tracker.
         """
         if self.namespace == names.default_namespace:
             return self.name

@@ -7,19 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BaselineSensitivity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the sensitivity of the baseline.
-    """
+class BaselineSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the sensitivity of the baseline."""
 
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
 
-class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
     communications.
     """
@@ -28,7 +27,9 @@ class ReceiverStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     DATA = "Data"
     METADATA = "Metadata"

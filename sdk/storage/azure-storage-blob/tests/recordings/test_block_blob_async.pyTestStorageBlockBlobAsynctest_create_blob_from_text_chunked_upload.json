@@ -1,0 +1,287 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "ETag": "\u00220x8DA6B7FEA938FA3\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainersource1a16535b7?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "ETag": "\u00220x8DA6B7FEAA0AD17\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "IGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIHB5dGhvbiBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBweXRob24gcHl0aG9uIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBoZWxsbyBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgd29ybGQgcA==",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "Qa/K1\u002B3UjLg=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "eXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gcHl0aG9uIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybA==",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "Z6o5uRFe52M=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "ZCBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gcHl0aG9uIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCB3b3JsZCBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyBweXRobw==",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "ijQwb3PqpcU=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "biB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gaGVsbG8gd29ybGQgd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIHdvcmxkIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHdvcmxkIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiB3b3JsZCBoZQ==",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "Oc9btdP3Xm0=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:16 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "bGxvIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBweXRob24gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgd29ybGQgd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIGhlbGxvIHdvcmxkIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZA==",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "2QrMVqGzOkg=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=block\u0026blockid=TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA%3D%3D",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "6",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "IGhlbGxv",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "aAVp\u002Bd\u002BEnjI=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7?comp=blocklist",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "548",
+        "Content-Type": "application/xml",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CBlockList\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQSUzRA==\u003C/Latest\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURFd01qUSUzRA==\u003C/Latest\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURJd05EZyUzRA==\u003C/Latest\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURNd056SSUzRA==\u003C/Latest\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURRd09UWSUzRA==\u003C/Latest\u003E\u003CLatest\u003ETURBd01EQXdNREF3TURBd01EQXdNREF3TURBd01EQXdNREF3TURVeE1qQSUzRA==\u003C/Latest\u003E\u003C/BlockList\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "ETag": "\u00220x8DA6B7FEB0C8C7A\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-content-crc64": "458m2zSGZuo=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainera16535b7/bloba16535b7",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "5126",
+        "Content-Range": "bytes 0-5125/5126",
+        "Content-Type": "application/octet-stream",
+        "Date": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "ETag": "\u00220x8DA6B7FEB0C8C7A\u0022",
+        "Last-Modified": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Fri, 22 Jul 2022 01:17:17 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "IGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIHB5dGhvbiBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBweXRob24gcHl0aG9uIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBoZWxsbyBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gcHl0aG9uIGhlbGxvIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gaGVsbG8gd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIHdvcmxkIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBweXRob24gd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHdvcmxkIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHdvcmxkIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIHdvcmxkIGhlbGxvIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgd29ybGQgd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgd29ybGQgcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHdvcmxkIHB5dGhvbiBweXRob24gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiB3b3JsZCB3b3JsZCB3b3JsZCBweXRob24gaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gaGVsbG8gd29ybGQgd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIHdvcmxkIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIGhlbGxvIGhlbGxvIGhlbGxvIGhlbGxvIHdvcmxkIHdvcmxkIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBweXRob24gcHl0aG9uIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gcHl0aG9uIHB5dGhvbiB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCBoZWxsbyBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBweXRob24gcHl0aG9uIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIHdvcmxkIHB5dGhvbiBweXRob24gaGVsbG8gcHl0aG9uIGhlbGxvIHB5dGhvbiBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiBoZWxsbyBweXRob24gcHl0aG9uIHdvcmxkIGhlbGxvIHdvcmxkIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBoZWxsbyB3b3JsZCB3b3JsZCBweXRob24gd29ybGQgd29ybGQgaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgd29ybGQgaGVsbG8gcHl0aG9uIHdvcmxkIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gd29ybGQgaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIGhlbGxvIHdvcmxkIGhlbGxvIHdvcmxkIHB5dGhvbiBweXRob24gaGVsbG8gaGVsbG8gaGVsbG8gcHl0aG9uIHB5dGhvbiBweXRob24gd29ybGQgd29ybGQgaGVsbG8gd29ybGQgd29ybGQgd29ybGQgaGVsbG8gd29ybGQgaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIHdvcmxkIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8gaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIGhlbGxvIGhlbGxvIHB5dGhvbiBoZWxsbyB3b3JsZCBweXRob24gcHl0aG9uIHB5dGhvbiBoZWxsbyBoZWxsbyBweXRob24gaGVsbG8gd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIHdvcmxkIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgcHl0aG9uIHdvcmxkIHdvcmxkIHB5dGhvbiBoZWxsbyB3b3JsZCB3b3JsZCB3b3JsZCBoZWxsbyBoZWxsbyB3b3JsZCBweXRob24gd29ybGQgd29ybGQgcHl0aG9uIHdvcmxkIGhlbGxvIGhlbGxvIGhlbGxvIHB5dGhvbiBweXRob24gd29ybGQgaGVsbG8="
+    }
+  ],
+  "Variables": {}
+}

@@ -5,34 +5,20 @@
 import abc
 import platform
 import time
-
-import msal
+from typing import Any, Iterable, List, Mapping, Optional
+from urllib.parse import urlparse
 import six
-from six.moves.urllib_parse import urlparse
+import msal
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
+from .._internal import AadClientBase
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional
-    from .._internal import AadClientBase
-
-    CacheItem = Mapping[str, str]
-
+ABC = abc.ABC
+CacheItem = Mapping[str, str]
 
 MULTIPLE_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
 were found in the cache. Use username and tenant id to disambiguate."""
@@ -95,6 +81,7 @@ class SharedTokenCacheBase(ABC):
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
         self._cache = kwargs.pop("_cache", None)
+        self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client = None  # type: Optional[AadClientBase]
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
@@ -116,16 +103,18 @@ class SharedTokenCacheBase(ABC):
     def _load_cache(self):
         if not self._cache and self.supported():
             try:
-                # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
-                # create a new cache. If the default cache exists, the user must have created it earlier. If it's
-                # unencrypted, the user must have allowed that.
-                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
+                # If no cache options were provided, the default cache will be used. This credential accepts the
+                # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
+                # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
+                # have allowed that.
+                options = self._cache_persistence_options or \
+                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
 
     @abc.abstractmethod
-    def _get_auth_client(self, **kwargs):
-        # type: (**Any) -> AadClientBase
+    def _get_auth_client(self, **kwargs) -> AadClientBase:
         pass
 
     def _get_cache_items_for_authority(self, credential_type):
@@ -139,8 +128,7 @@ class SharedTokenCacheBase(ABC):
                 items.append(item)
         return items
 
-    def _get_accounts_having_matching_refresh_tokens(self):
-        # type: () -> Iterable[CacheItem]
+    def _get_accounts_having_matching_refresh_tokens(self) -> Iterable[CacheItem]:
         """returns an iterable of cached accounts which have a matching refresh token"""
 
         refresh_tokens = self._get_cache_items_for_authority(msal.TokenCache.CredentialType.REFRESH_TOKEN)
@@ -161,8 +149,7 @@ class SharedTokenCacheBase(ABC):
         return accounts.values()
 
     @wrap_exceptions
-    def _get_account(self, username=None, tenant_id=None):
-        # type: (Optional[str], Optional[str]) -> CacheItem
+    def _get_account(self, username: str = None, tenant_id: str = None)  -> CacheItem:
         """returns exactly one account which has a refresh token and matches username and/or tenant_id"""
 
         accounts = self._get_accounts_having_matching_refresh_tokens()

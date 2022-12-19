@@ -82,13 +82,13 @@ jobs:
           Python_37_Mac (AzureCloud):
             PythonVersion: '3.7'
             Pool: Azure Pipelines
-            OSVmImage: macOS-10.15
+            OSVmImage: macos-11
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Mac (AzureCloud):
             PythonVersion: '3.8'
             Pool: Azure Pipelines
-            OSVmImage: macOS-10.15
+            OSVmImage: macos-11
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Linux (AzureUSGovernment):

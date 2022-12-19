@@ -14,13 +14,13 @@ _PRINT_STACK = os.environ.get("_AZUREML_TRACE_STACK", False)
 
 
 class ChainedIdentity(object):
-    """A mixin that provides structured, chained logging for objects and contexts"""
+    """A mixin that provides structured, chained logging for objects and
+    contexts."""
 
     DELIM = "#"
 
     def __init__(self, _ident: str = None, _parent_logger: logging.Logger = None, **kwargs):
-        """
-        Internal class used to improve logging information
+        """Internal class used to improve logging information.
 
         :param _ident: Identity of the object
         :type _ident: str
@@ -47,7 +47,7 @@ class ChainedIdentity(object):
 
 
 class LogScope(ChainedIdentity, ContextDecorator):
-    """Convenience for logging a context"""
+    """Convenience for logging a context."""
 
     def __enter__(self) -> logging.Logger:
         msg = START_MSG

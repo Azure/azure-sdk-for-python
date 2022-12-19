@@ -380,6 +380,16 @@
             ]
         },
         {
+          "type": "Microsoft.Storage/storageAccounts/encryptionScopes",
+          "apiVersion": "[variables('storageApiVersion')]",
+          "name": "[concat(variables('dataLakeAccountName'), '/hnstestscope1')]",
+          "properties": {
+          },
+          "dependsOn": [
+            "[variables('dataLakeAccountName')]"
+          ]
+        },
+        {
           "type": "Microsoft.Storage/storageAccounts",
           "apiVersion": "[variables('storageApiVersion')]",
           "name": "[variables('dataLakeSoftDeleteAccountName')]",
@@ -417,6 +427,10 @@
           "apiVersion": "[variables('storageApiVersion')]",
           "name": "[concat(variables('dataLakeSoftDeleteAccountName'), '/default')]",
           "properties": {
+            "deleteRetentionPolicy": {
+              "enabled": true,
+              "days": 1
+            },
             "containerDeleteRetentionPolicy": {
               "enabled": true,
               "days": 1

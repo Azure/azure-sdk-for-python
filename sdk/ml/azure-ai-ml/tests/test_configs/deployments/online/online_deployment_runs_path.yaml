@@ -1,0 +1,19 @@
+name: blue
+endpoint_name: runs-end
+description: description for online deployment
+model:
+  name: run-model
+  version: 3
+  path: runs:/neat_oregano_fzsg37dy2y/model/
+code_configuration:
+  code: ../model-4/onlinescoring/
+  scoring_script: cloud_score.py
+environment:
+  name: myTestEnvV2
+  version: 2
+  conda_file: ../model-4/environment/conda.yml
+  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20220601.v1
+instance_count: 1
+instance_type: Standard_DS2_V2
+scale_settings:
+  type: default

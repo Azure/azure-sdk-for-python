@@ -28,11 +28,6 @@ jobs:
     log_verbosity: debug
     primary_metric: r2_score
 
-    properties:
-      _automl_internal_enable_mltable_quick_profile: "true"
-      _automl_internal_label: "latest"
-      _automl_internal_save_mlflow: "true"
-
     limits:
       timeout_minutes: 180
       trial_timeout_minutes: 20

@@ -9,10 +9,10 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrdin50XpUl6c4eIkDrvfTs0SbokRX1DYm-VB1uLTD0xdenLZpKsO-viPmHJyeX6JzYttBbJlrwR4lCjCZxiqKi0Zht3e01YkWDhvH3jbX2xg-uNEgrdbnf17WYOafXxDqapJHQE5kfvUIkLmU4HIiebpjZuSRp-5Q0Fk5udcx7fwgAA;
-        fpc=AgSe3Okf8L1PgoIF4q4pxGU; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrR7f_Fxoy0U7kBbhijuhERu8hy_q9RUX4oO3HIdbtdqZhffdl7iLAHIBDUXUYIx9V1Z54rnMPgbiriVXpza8cxnoiTGyfCsYMclDy4QFRrRvcKwaHwPFjmpBirzaayXaII565SvbartksLaEYfzaac4t2oBOkxZAYsbOxkCQEgvW04pKf7cFkAxh-NHUKZNb20jr1CLsWfTw6TsuyDZkrMLxowPLwr3zsP2_6b6xkMyEgAA;
+        fpc=Av7hZj7YgWpAsHS3skxaK_0; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
-      - python-requests/2.27.1
+      - python-requests/2.28.1
     method: GET
     uri: https://sanitized.microsoftonline.com/common/userrealm/sanitized@test.onmicrosoft.com?api-version=1.0
   response:
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 01 Jun 2022 08:16:30 GMT
+      - Fri, 07 Oct 2022 14:38:25 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AgSe3Okf8L1PgoIF4q4pxGU; expires=Fri, 01-Jul-2022 08:16:31 GMT; path=/;
+      - fpc=Av7hZj7YgWpAsHS3skxaK_0; expires=Sun, 06-Nov-2022 14:38:26 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.12794.7 - WEULR2 ProdSlices
+      - 2.1.13777.6 - WEULR2 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -58,32 +58,32 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '2142'
+      - '2120'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0 Python/3.10.0 (macOS-12.3.1-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.3.0 Python/3.10.0 (macOS-12.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 01 Jun 2022 08:16:31 GMT
+      - Fri, 07 Oct 2022 14:38:26 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
   response:
     body:
       string: '{"error": {"code": "ValidationError", "message": "UserId: The UserId
         field is required.", "target": "UserId"}}'
     headers:
       content-type: application/json
-      date: Wed, 01 Jun 2022 08:16:31 GMT
-      ms-cv: YKtGJwz9nEKXfGjD2BlHrA.0
+      date: Fri, 07 Oct 2022 14:38:26 GMT
+      ms-cv: iStpc47RUEik/nWqlvCRSw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 107ms
+      x-processing-time: 111ms
     status:
       code: 400
       message: Bad Request
-    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
+    url: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
 version: 1

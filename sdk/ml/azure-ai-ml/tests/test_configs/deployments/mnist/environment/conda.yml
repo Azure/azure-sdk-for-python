@@ -1,0 +1,11 @@
+name: mnist-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.6.2
+  - pip<22.0
+  - pip:
+    - tensorflow==1.15.2
+    - pillow
+    - azureml-core
+    - azureml-dataset-runtime[fuse]

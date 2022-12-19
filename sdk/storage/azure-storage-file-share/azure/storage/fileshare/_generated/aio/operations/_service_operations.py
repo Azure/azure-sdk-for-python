@@ -8,17 +8,30 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._service_operations import build_get_properties_request, build_list_shares_segment_request, build_set_properties_request
-T = TypeVar('T')
+from ...operations._service_operations import (
+    build_get_properties_request,
+    build_list_shares_segment_request,
+    build_set_properties_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ServiceOperations:
     """
@@ -33,24 +46,20 @@ class ServiceOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
-
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def set_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        storage_service_properties: "_models.StorageServiceProperties",
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, storage_service_properties: _models.StorageServiceProperties, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
         """Sets properties for a storage account's File service endpoint, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :param storage_service_properties: The StorageService properties.
+        :param storage_service_properties: The StorageService properties. Required.
         :type storage_service_properties: ~azure.storage.fileshare.models.StorageServiceProperties
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
@@ -64,40 +73,42 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        restype = kwargs.pop('restype', "service")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
+        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        _content = self._serialize.body(storage_service_properties, "StorageServiceProperties", is_xml=True)
 
         request = build_set_properties_request(
             url=self._config.url,
+            timeout=timeout,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             content_type=content_type,
+            version=self._config.version,
             content=_content,
-            timeout=timeout,
-            template_url=self.set_properties.metadata['url'],
+            template_url=self.set_properties.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -106,22 +117,16 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}"}  # type: ignore
-
+    set_properties.metadata = {"url": "{url}"}  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(
-        self,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> "_models.StorageServiceProperties":
+    async def get_properties(self, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
         """Gets the properties of a storage account's File service, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -137,36 +142,37 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: StorageServiceProperties, or the result of cls(response)
+        :return: StorageServiceProperties or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.StorageServiceProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StorageServiceProperties"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        restype = kwargs.pop('restype', "service")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.StorageServiceProperties]
+
         request = build_get_properties_request(
             url=self._config.url,
+            timeout=timeout,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            timeout=timeout,
-            template_url=self.get_properties.metadata['url'],
+            template_url=self.get_properties.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -175,18 +181,17 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize('StorageServiceProperties', pipeline_response)
+        deserialized = self._deserialize("StorageServiceProperties", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_properties.metadata = {'url': "{url}"}  # type: ignore
-
+    get_properties.metadata = {"url": "{url}"}  # type: ignore
 
     @distributed_trace_async
     async def list_shares_segment(
@@ -197,7 +202,7 @@ class ServiceOperations:
         include: Optional[List[Union[str, "_models.ListSharesIncludeType"]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> "_models.ListSharesResponse":
+    ) -> _models.ListSharesResponse:
         """The List Shares Segment operation returns a list of the shares and share snapshots under the
         specified account.
 
@@ -225,38 +230,39 @@ class ServiceOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListSharesResponse, or the result of cls(response)
+        :return: ListSharesResponse or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.ListSharesResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListSharesResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "list")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListSharesResponse]
+
         request = build_list_shares_segment_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
             timeout=timeout,
-            template_url=self.list_shares_segment.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.list_shares_segment.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -265,15 +271,14 @@ class ServiceOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize('ListSharesResponse', pipeline_response)
+        deserialized = self._deserialize("ListSharesResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_shares_segment.metadata = {'url': "{url}"}  # type: ignore
-
+    list_shares_segment.metadata = {"url": "{url}"}  # type: ignore

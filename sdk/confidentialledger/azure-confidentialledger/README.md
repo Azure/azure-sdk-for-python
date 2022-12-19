@@ -208,23 +208,23 @@ post_poller = ledger_client.begin_create_ledger_entry(
 )
 post_result = post_poller.result()
 
+post_transaction_id = post_result["transactionId"]
+
 latest_entry = ledger_client.get_current_ledger_entry()
 print(
-    f'Current entry (transaction id = {latest_entry["transactionId"]}) "
-    f"in collection {latest_entry["collectionId"]}: {latest_entry["contents"]}'
+    f'Current entry (transaction id = {latest_entry["transactionId"]}) '
+    f'in collection {latest_entry["collectionId"]}: {latest_entry["contents"]}'
 )
-
-prior_transaction_id = latest_entry["transactionId"]
 
 post_poller = ledger_client.begin_create_ledger_entry(
     {"contents": "Hello!"}
 )
 post_result = post_poller.result()
 
-get_entry_poller = ledger_client.begin_get_ledger_entry(prior_transaction_id)
+get_entry_poller = ledger_client.begin_get_ledger_entry(post_transaction_id)
 older_entry = get_entry_poller.result()
 print(
-    f'Contents of {older_entry["collectionId"]} at {prior_transaction_id}: {older_entry["contents"]}'
+    f'Contents of {older_entry["entry"]["collectionId"]} at {post_transaction_id}: {older_entry["entry"]["contents"]}'
 )
 ```
 
@@ -442,17 +442,33 @@ ledger_client.get_current_ledger_entry(logging_enable=True)
 ### More sample code
 These code samples show common scenario operations with the Azure Confidential Ledger client library.
 
-Common scenarios
+#### Common scenarios
 
-- Writing to the ledger: [write_to_ledger.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/write_to_ledger.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/write_to_ledger_async.py])
-- Write many ledger entries and retrievee them all afterwards: [list_ledger_entries.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/list_ledger_entries.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/list_ledger_entries_async.py])
-- Manage users using service-implemented role-based access control: [manage_users.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/manage_users.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/manage_users_async.py])
+- Writing to the ledger:
+  - [write_to_ledger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/write_to_ledger.py) 
+  - [write_to_ledger_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/write_to_ledger_async.py) (async version)
 
-Advanced scenarios
+- Write many ledger entries and retrieve them all afterwards:
+  - [list_ledger_entries.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/list_ledger_entries.py)
+  - [list_ledger_entries_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/list_ledger_entries_async.py) (async version)
 
-- Using collections: [use_collections.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/use_collections.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/use_collections_async.py])
-- Getting receipts for ledger writes: [get_receipt.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt_async.py])
-- Verifying service details: [verify_service.py][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service.py] ([async version][https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service_async.py])
+- Manage users using service-implemented role-based access control: 
+  - [manage_users.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/manage_users.py)
+  - [manage_users_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/manage_users_async.py) (async version)
+
+#### Advanced scenarios
+
+- Using collections: 
+  - [use_collections.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/use_collections.py)
+  - [use_collections_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/use_collections_async.py) (async version)
+  
+- Getting receipts for ledger writes: 
+  - [get_receipt.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt.py)
+  - [get_receipt_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_receipt_async.py) (async version)
+  
+- Verifying service details: 
+  - [verify_service.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service.py) 
+  - [verify_service_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/verify_service_async.py) (async version)
 
 ###  Additional Documentation
 For more extensive documentation on Azure Confidential Ledger, see the

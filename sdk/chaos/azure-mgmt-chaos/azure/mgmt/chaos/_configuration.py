@@ -29,7 +29,7 @@ class ChaosManagementClientConfiguration(Configuration):  # pylint: disable=too-
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: GUID that represents an Azure subscription ID.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2021-09-15-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class ChaosManagementClientConfiguration(Configuration):  # pylint: disable=too-
         **kwargs: Any
     ) -> None:
         super(ChaosManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-09-15-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-07-01-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

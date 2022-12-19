@@ -1,0 +1,24 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: weekly_retrain_2022_recurrence_file_updates
+display_name: weekly retrain schedule
+description: a weekly retrain schedule
+
+trigger:
+  type: recurrence
+  schedule:
+    hours: 10
+    minutes: 15
+    week_days: monday
+  frequency: week
+  interval: 1
+  start_time: "2022-05-10T10:15:00"
+  time_zone: Pacific Standard Time
+
+create_job:
+  type: pipeline
+  job: ../pipeline_jobs/helloworld_pipeline_job_defaults.yml
+  identity:
+    type: aml_token
+  inputs:
+    job_in_number: 1
+    job_in_other_number: 2

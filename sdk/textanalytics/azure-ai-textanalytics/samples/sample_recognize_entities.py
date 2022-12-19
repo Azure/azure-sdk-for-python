@@ -20,16 +20,16 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
+from __future__ import annotations
 import os
 
 
-
-def sample_recognize_entities():
+def sample_recognize_entities() -> None:
     print(
         "In this sample, we are a catering business, and we're looking to sort the reviews "
         "for our organization based off of the organization that hired us for catering"
     )
-    organization_to_reviews = {}
+    organization_to_reviews: dict[str, list[str]] = {}
     # [START recognize_entities]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient

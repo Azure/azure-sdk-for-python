@@ -8,6 +8,7 @@ from dateutil import parser as date_parse
 import functools
 import json
 import logging
+import os
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -21,7 +22,6 @@ from azure.keyvault.keys import (
 )
 from azure.keyvault.keys.aio import KeyClient
 import pytest
-from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, AsyncKeysClientPreparer
@@ -249,7 +249,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = await self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.asyncio
@@ -515,6 +515,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_release(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = await get_attestation_token(attestation_uri)
@@ -557,6 +560,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_update_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
@@ -600,6 +606,9 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_immutable_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
@@ -635,10 +644,10 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_rotation(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = await self._create_rsa_key(client, key_name)
         rotated_key = await client.rotate_key(key_name)
@@ -648,15 +657,16 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
+    @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_key_rotation_policy(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 

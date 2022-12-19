@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._monitor_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ActionGroupList(msrest.serialization.Model):
+class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
@@ -25,16 +27,12 @@ class ActionGroupList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActionGroupResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActionGroupResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ActionGroupResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of action groups.
@@ -42,15 +40,15 @@ class ActionGroupList(msrest.serialization.Model):
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
-        super(ActionGroupList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ActionGroupPatchBody(msrest.serialization.Model):
+class ActionGroupPatchBody(_serialization.Model):
     """An action group object for the body of patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its actions will be activated.
@@ -58,30 +56,24 @@ class ActionGroupPatchBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this action group is enabled. If an action group is not
          enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
-        super(ActionGroupPatchBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -94,41 +86,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -136,7 +122,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ActionGroupResource(Resource):
+class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attributes
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -149,9 +135,9 @@ class ActionGroupResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
     :vartype group_short_name: str
@@ -189,31 +175,34 @@ class ActionGroupResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'group_short_name': {'max_length': 12, 'min_length': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "group_short_name": {"max_length": 12},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'email_receivers': {'key': 'properties.emailReceivers', 'type': '[EmailReceiver]'},
-        'sms_receivers': {'key': 'properties.smsReceivers', 'type': '[SmsReceiver]'},
-        'webhook_receivers': {'key': 'properties.webhookReceivers', 'type': '[WebhookReceiver]'},
-        'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
-        'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
-        'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
-        'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
-        'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
-        'azure_function_receivers': {'key': 'properties.azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
-        'arm_role_receivers': {'key': 'properties.armRoleReceivers', 'type': '[ArmRoleReceiver]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "group_short_name": {"key": "properties.groupShortName", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "email_receivers": {"key": "properties.emailReceivers", "type": "[EmailReceiver]"},
+        "sms_receivers": {"key": "properties.smsReceivers", "type": "[SmsReceiver]"},
+        "webhook_receivers": {"key": "properties.webhookReceivers", "type": "[WebhookReceiver]"},
+        "itsm_receivers": {"key": "properties.itsmReceivers", "type": "[ItsmReceiver]"},
+        "azure_app_push_receivers": {"key": "properties.azureAppPushReceivers", "type": "[AzureAppPushReceiver]"},
+        "automation_runbook_receivers": {
+            "key": "properties.automationRunbookReceivers",
+            "type": "[AutomationRunbookReceiver]",
+        },
+        "voice_receivers": {"key": "properties.voiceReceivers", "type": "[VoiceReceiver]"},
+        "logic_app_receivers": {"key": "properties.logicAppReceivers", "type": "[LogicAppReceiver]"},
+        "azure_function_receivers": {"key": "properties.azureFunctionReceivers", "type": "[AzureFunctionReceiver]"},
+        "arm_role_receivers": {"key": "properties.armRoleReceivers", "type": "[ArmRoleReceiver]"},
     }
 
     def __init__(
@@ -222,23 +211,23 @@ class ActionGroupResource(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
-        enabled: Optional[bool] = True,
-        email_receivers: Optional[List["EmailReceiver"]] = None,
-        sms_receivers: Optional[List["SmsReceiver"]] = None,
-        webhook_receivers: Optional[List["WebhookReceiver"]] = None,
-        itsm_receivers: Optional[List["ItsmReceiver"]] = None,
-        azure_app_push_receivers: Optional[List["AzureAppPushReceiver"]] = None,
-        automation_runbook_receivers: Optional[List["AutomationRunbookReceiver"]] = None,
-        voice_receivers: Optional[List["VoiceReceiver"]] = None,
-        logic_app_receivers: Optional[List["LogicAppReceiver"]] = None,
-        azure_function_receivers: Optional[List["AzureFunctionReceiver"]] = None,
-        arm_role_receivers: Optional[List["ArmRoleReceiver"]] = None,
+        enabled: bool = True,
+        email_receivers: Optional[List["_models.EmailReceiver"]] = None,
+        sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
+        webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
+        itsm_receivers: Optional[List["_models.ItsmReceiver"]] = None,
+        azure_app_push_receivers: Optional[List["_models.AzureAppPushReceiver"]] = None,
+        automation_runbook_receivers: Optional[List["_models.AutomationRunbookReceiver"]] = None,
+        voice_receivers: Optional[List["_models.VoiceReceiver"]] = None,
+        logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
+        azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
+        arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword group_short_name: The short name of the action group. This will be used in SMS
          messages.
@@ -278,7 +267,7 @@ class ActionGroupResource(Resource):
         :paramtype arm_role_receivers:
          list[~$(python-base-namespace).v2018_09_01.models.ArmRoleReceiver]
         """
-        super(ActionGroupResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
         self.enabled = enabled
         self.email_receivers = email_receivers
@@ -293,60 +282,54 @@ class ActionGroupResource(Resource):
         self.arm_role_receivers = arm_role_receivers
 
 
-class ArmRoleReceiver(msrest.serialization.Model):
+class ArmRoleReceiver(_serialization.Model):
     """An arm role receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the arm role receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the arm role receiver. Names must be unique across all receivers within
+     an action group. Required.
     :vartype name: str
-    :ivar role_id: Required. The arm role id.
+    :ivar role_id: The arm role id. Required.
     :vartype role_id: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'role_id': {'required': True},
+        "name": {"required": True},
+        "role_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'role_id': {'key': 'roleId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "role_id": {"key": "roleId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        role_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, role_id: str, **kwargs):
         """
-        :keyword name: Required. The name of the arm role receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the arm role receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword role_id: Required. The arm role id.
+        :keyword role_id: The arm role id. Required.
         :paramtype role_id: str
         """
-        super(ArmRoleReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.role_id = role_id
 
 
-class AutomationRunbookReceiver(msrest.serialization.Model):
+class AutomationRunbookReceiver(_serialization.Model):
     """The Azure Automation Runbook notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar automation_account_id: Required. The Azure automation account Id which holds this runbook
-     and authenticate to Azure resource.
+    :ivar automation_account_id: The Azure automation account Id which holds this runbook and
+     authenticate to Azure resource. Required.
     :vartype automation_account_id: str
-    :ivar runbook_name: Required. The name for this runbook.
+    :ivar runbook_name: The name for this runbook. Required.
     :vartype runbook_name: str
-    :ivar webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+    :ivar webhook_resource_id: The resource id for webhook linked to this runbook. Required.
     :vartype webhook_resource_id: str
-    :ivar is_global_runbook: Required. Indicates whether this instance is global runbook.
+    :ivar is_global_runbook: Indicates whether this instance is global runbook. Required.
     :vartype is_global_runbook: bool
     :ivar name: Indicates name of the webhook.
     :vartype name: str
@@ -355,19 +338,19 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
     """
 
     _validation = {
-        'automation_account_id': {'required': True},
-        'runbook_name': {'required': True},
-        'webhook_resource_id': {'required': True},
-        'is_global_runbook': {'required': True},
+        "automation_account_id": {"required": True},
+        "runbook_name": {"required": True},
+        "webhook_resource_id": {"required": True},
+        "is_global_runbook": {"required": True},
     }
 
     _attribute_map = {
-        'automation_account_id': {'key': 'automationAccountId', 'type': 'str'},
-        'runbook_name': {'key': 'runbookName', 'type': 'str'},
-        'webhook_resource_id': {'key': 'webhookResourceId', 'type': 'str'},
-        'is_global_runbook': {'key': 'isGlobalRunbook', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        "automation_account_id": {"key": "automationAccountId", "type": "str"},
+        "runbook_name": {"key": "runbookName", "type": "str"},
+        "webhook_resource_id": {"key": "webhookResourceId", "type": "str"},
+        "is_global_runbook": {"key": "isGlobalRunbook", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
     def __init__(
@@ -382,21 +365,21 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword automation_account_id: Required. The Azure automation account Id which holds this
-         runbook and authenticate to Azure resource.
+        :keyword automation_account_id: The Azure automation account Id which holds this runbook and
+         authenticate to Azure resource. Required.
         :paramtype automation_account_id: str
-        :keyword runbook_name: Required. The name for this runbook.
+        :keyword runbook_name: The name for this runbook. Required.
         :paramtype runbook_name: str
-        :keyword webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+        :keyword webhook_resource_id: The resource id for webhook linked to this runbook. Required.
         :paramtype webhook_resource_id: str
-        :keyword is_global_runbook: Required. Indicates whether this instance is global runbook.
+        :keyword is_global_runbook: Indicates whether this instance is global runbook. Required.
         :paramtype is_global_runbook: bool
         :keyword name: Indicates name of the webhook.
         :paramtype name: str
         :keyword service_uri: The URI where webhooks should be sent.
         :paramtype service_uri: str
         """
-        super(AutomationRunbookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.automation_account_id = automation_account_id
         self.runbook_name = runbook_name
         self.webhook_resource_id = webhook_resource_id
@@ -405,516 +388,195 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         self.service_uri = service_uri
 
 
-class AzureAppPushReceiver(msrest.serialization.Model):
+class AzureAppPushReceiver(_serialization.Model):
     """The Azure mobile App push notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Azure mobile app push receiver. Names must be unique
-     across all receivers within an action group.
+    :ivar name: The name of the Azure mobile app push receiver. Names must be unique across all
+     receivers within an action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address registered for the Azure mobile app.
+    :ivar email_address: The email address registered for the Azure mobile app. Required.
     :vartype email_address: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, **kwargs):
         """
-        :keyword name: Required. The name of the Azure mobile app push receiver. Names must be unique
-         across all receivers within an action group.
+        :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
+         receivers within an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address registered for the Azure mobile app.
+        :keyword email_address: The email address registered for the Azure mobile app. Required.
         :paramtype email_address: str
         """
-        super(AzureAppPushReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
 
 
-class AzureFunctionReceiver(msrest.serialization.Model):
+class AzureFunctionReceiver(_serialization.Model):
     """An azure function receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the azure function receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the azure function receiver. Names must be unique across all receivers
+     within an action group. Required.
     :vartype name: str
-    :ivar function_app_resource_id: Required. The azure resource id of the function app.
+    :ivar function_app_resource_id: The azure resource id of the function app. Required.
     :vartype function_app_resource_id: str
-    :ivar function_name: Required. The function name in the function app.
+    :ivar function_name: The function name in the function app. Required.
     :vartype function_name: str
-    :ivar http_trigger_url: Required. The http trigger url where http request sent to.
+    :ivar http_trigger_url: The http trigger url where http request sent to. Required.
     :vartype http_trigger_url: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'function_app_resource_id': {'required': True},
-        'function_name': {'required': True},
-        'http_trigger_url': {'required': True},
+        "name": {"required": True},
+        "function_app_resource_id": {"required": True},
+        "function_name": {"required": True},
+        "http_trigger_url": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'function_app_resource_id': {'key': 'functionAppResourceId', 'type': 'str'},
-        'function_name': {'key': 'functionName', 'type': 'str'},
-        'http_trigger_url': {'key': 'httpTriggerUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "function_app_resource_id": {"key": "functionAppResourceId", "type": "str"},
+        "function_name": {"key": "functionName", "type": "str"},
+        "http_trigger_url": {"key": "httpTriggerUrl", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        function_app_resource_id: str,
-        function_name: str,
-        http_trigger_url: str,
-        **kwargs
+        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs
     ):
         """
-        :keyword name: Required. The name of the azure function receiver. Names must be unique across
-         all receivers within an action group.
+        :keyword name: The name of the azure function receiver. Names must be unique across all
+         receivers within an action group. Required.
         :paramtype name: str
-        :keyword function_app_resource_id: Required. The azure resource id of the function app.
+        :keyword function_app_resource_id: The azure resource id of the function app. Required.
         :paramtype function_app_resource_id: str
-        :keyword function_name: Required. The function name in the function app.
+        :keyword function_name: The function name in the function app. Required.
         :paramtype function_name: str
-        :keyword http_trigger_url: Required. The http trigger url where http request sent to.
+        :keyword http_trigger_url: The http trigger url where http request sent to. Required.
         :paramtype http_trigger_url: str
         """
-        super(AzureFunctionReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.function_app_resource_id = function_app_resource_id
         self.function_name = function_name
         self.http_trigger_url = http_trigger_url
 
 
-class Baseline(msrest.serialization.Model):
-    """The baseline values for a single sensitivity value.
+class BaselineMetadata(_serialization.Model):
+    """Represents a baseline metadata value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar sensitivity: Required. The sensitivity of the baseline. Possible values include: "Low",
-     "Medium", "High".
-    :vartype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.Sensitivity
-    :ivar low_thresholds: Required. The low thresholds of the baseline.
-    :vartype low_thresholds: list[float]
-    :ivar high_thresholds: Required. The high thresholds of the baseline.
-    :vartype high_thresholds: list[float]
-    :ivar timestamps: the array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar prediction_result_type: The prediction result type of the baseline. Possible values
-     include: 0, 1, 2.
-    :vartype prediction_result_type: int or
-     ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-    :ivar error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
-     200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    """
-
-    _validation = {
-        'sensitivity': {'required': True},
-        'low_thresholds': {'required': True},
-        'high_thresholds': {'required': True},
-    }
-
-    _attribute_map = {
-        'sensitivity': {'key': 'sensitivity', 'type': 'str'},
-        'low_thresholds': {'key': 'lowThresholds', 'type': '[float]'},
-        'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'prediction_result_type': {'key': 'PredictionResultType', 'type': 'int'},
-        'error_type': {'key': 'ErrorType', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        sensitivity: Union[str, "Sensitivity"],
-        low_thresholds: List[float],
-        high_thresholds: List[float],
-        timestamps: Optional[List[datetime.datetime]] = None,
-        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword sensitivity: Required. The sensitivity of the baseline. Possible values include:
-         "Low", "Medium", "High".
-        :paramtype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.Sensitivity
-        :keyword low_thresholds: Required. The low thresholds of the baseline.
-        :paramtype low_thresholds: list[float]
-        :keyword high_thresholds: Required. The high thresholds of the baseline.
-        :paramtype high_thresholds: list[float]
-        :keyword timestamps: the array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword prediction_result_type: The prediction result type of the baseline. Possible values
-         include: 0, 1, 2.
-        :paramtype prediction_result_type: int or
-         ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-        :keyword error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4,
-         100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        """
-        super(Baseline, self).__init__(**kwargs)
-        self.sensitivity = sensitivity
-        self.low_thresholds = low_thresholds
-        self.high_thresholds = high_thresholds
-        self.timestamps = timestamps
-        self.prediction_result_type = prediction_result_type
-        self.error_type = error_type
-
-
-class BaselineMetadataValue(msrest.serialization.Model):
-    """Represents a baseline metadata value.
-
-    :ivar name: The name of the metadata.
-    :vartype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-    :ivar value: The value of the metadata.
+    :ivar name: Name of the baseline metadata. Required.
+    :vartype name: str
+    :ivar value: Value of the baseline metadata. Required.
     :vartype value: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'LocalizableString'},
-        'value': {'key': 'value', 'type': 'str'},
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional["LocalizableString"] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, value: str, **kwargs):
         """
-        :keyword name: The name of the metadata.
-        :paramtype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-        :keyword value: The value of the metadata.
+        :keyword name: Name of the baseline metadata. Required.
+        :paramtype name: str
+        :keyword value: Value of the baseline metadata. Required.
         :paramtype value: str
         """
-        super(BaselineMetadataValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class BaselineResponse(msrest.serialization.Model):
-    """The response to a baseline query.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The metric baseline ID.
-    :vartype id: str
-    :ivar type: The resource type of the baseline resource.
-    :vartype type: str
-    :ivar name: The name and the display name of the metric, i.e. it is localizable string.
-    :vartype name: ~$(python-base-namespace).v2018_09_01.models.LocalizableString
-    :ivar timestamps: The array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar baseline: The baseline values for each sensitivity.
-    :vartype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-    :ivar metdata: The baseline metadata values.
-    :vartype metdata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
-    :ivar prediction_result_type: The prediction result type of the baseline. Possible values
-     include: 0, 1, 2.
-    :vartype prediction_result_type: int or
-     ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-    :ivar error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4, 100,
-     200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    :ivar timespan: The timespan for which the data was retrieved. Its value consists of two
-     datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
-     from what was originally requested.
-    :vartype timespan: str
-    :ivar interval: The interval (window size) for which the metric data was returned in.  This may
-     be adjusted in the future and returned back from what was originally requested.  This is not
-     present if a metadata request was made.
-    :vartype interval: ~datetime.timedelta
-    :ivar aggregation: The aggregation type of the metric.
-    :vartype aggregation: str
-    :ivar internal_operation_id: internal operation id.
-    :vartype internal_operation_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'internal_operation_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'LocalizableString'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'baseline': {'key': 'baseline', 'type': '[Baseline]'},
-        'metdata': {'key': 'metdata', 'type': '[BaselineMetadataValue]'},
-        'prediction_result_type': {'key': 'predictionResultType', 'type': 'int'},
-        'error_type': {'key': 'errorType', 'type': 'int'},
-        'timespan': {'key': 'properties.timespan', 'type': 'str'},
-        'interval': {'key': 'properties.interval', 'type': 'duration'},
-        'aggregation': {'key': 'properties.aggregation', 'type': 'str'},
-        'internal_operation_id': {'key': 'properties.internalOperationId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        timestamps: Optional[List[datetime.datetime]] = None,
-        baseline: Optional[List["Baseline"]] = None,
-        metdata: Optional[List["BaselineMetadataValue"]] = None,
-        prediction_result_type: Optional[Union[int, "PredictionResultType"]] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        timespan: Optional[str] = None,
-        interval: Optional[datetime.timedelta] = None,
-        aggregation: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword timestamps: The array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword baseline: The baseline values for each sensitivity.
-        :paramtype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-        :keyword metdata: The baseline metadata values.
-        :paramtype metdata: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadataValue]
-        :keyword prediction_result_type: The prediction result type of the baseline. Possible values
-         include: 0, 1, 2.
-        :paramtype prediction_result_type: int or
-         ~$(python-base-namespace).v2018_09_01.models.PredictionResultType
-        :keyword error_type: The error type of the baseline. Possible values include: 0, 1, 2, 3, 4,
-         100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
-         datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
-         from what was originally requested.
-        :paramtype timespan: str
-        :keyword interval: The interval (window size) for which the metric data was returned in.  This
-         may be adjusted in the future and returned back from what was originally requested.  This is
-         not present if a metadata request was made.
-        :paramtype interval: ~datetime.timedelta
-        :keyword aggregation: The aggregation type of the metric.
-        :paramtype aggregation: str
-        """
-        super(BaselineResponse, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.metdata = metdata
-        self.prediction_result_type = prediction_result_type
-        self.error_type = error_type
-        self.timespan = timespan
-        self.interval = interval
-        self.aggregation = aggregation
-        self.internal_operation_id = None
-
-
-class CalculateBaselineResponse(msrest.serialization.Model):
-    """The response to a calculate baseline call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. The resource type of the baseline resource.
-    :vartype type: str
-    :ivar timestamps: The array of timestamps of the baselines.
-    :vartype timestamps: list[~datetime.datetime]
-    :ivar baseline: Required. The baseline values for each sensitivity.
-    :vartype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-    :ivar statistics: The statistics.
-    :vartype statistics:
-     ~$(python-base-namespace).v2018_09_01.models.CalculateBaselineResponseStatistics
-    :ivar internal_operation_id: internal operation id.
-    :vartype internal_operation_id: str
-    :ivar error_type: The error type for calculating the baseline. Possible values include: 0, 1,
-     2, 3, 4, 100, 200.
-    :vartype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-    """
-
-    _validation = {
-        'type': {'required': True},
-        'baseline': {'required': True},
-        'internal_operation_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'baseline': {'key': 'baseline', 'type': '[Baseline]'},
-        'statistics': {'key': 'statistics', 'type': 'CalculateBaselineResponseStatistics'},
-        'internal_operation_id': {'key': 'internalOperationId', 'type': 'str'},
-        'error_type': {'key': 'errorType', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: str,
-        baseline: List["Baseline"],
-        timestamps: Optional[List[datetime.datetime]] = None,
-        statistics: Optional["CalculateBaselineResponseStatistics"] = None,
-        error_type: Optional[Union[int, "ErrorType"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword type: Required. The resource type of the baseline resource.
-        :paramtype type: str
-        :keyword timestamps: The array of timestamps of the baselines.
-        :paramtype timestamps: list[~datetime.datetime]
-        :keyword baseline: Required. The baseline values for each sensitivity.
-        :paramtype baseline: list[~$(python-base-namespace).v2018_09_01.models.Baseline]
-        :keyword statistics: The statistics.
-        :paramtype statistics:
-         ~$(python-base-namespace).v2018_09_01.models.CalculateBaselineResponseStatistics
-        :keyword error_type: The error type for calculating the baseline. Possible values include: 0,
-         1, 2, 3, 4, 100, 200.
-        :paramtype error_type: int or ~$(python-base-namespace).v2018_09_01.models.ErrorType
-        """
-        super(CalculateBaselineResponse, self).__init__(**kwargs)
-        self.type = type
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.statistics = statistics
-        self.internal_operation_id = None
-        self.error_type = error_type
-
-
-class CalculateBaselineResponseStatistics(msrest.serialization.Model):
-    """The statistics.
-
-    :ivar is_eligible: is series eligible for dynamic threshold analysis.
-    :vartype is_eligible: bool
-    :ivar status: The list of extended status for calculating the baseline.
-    :vartype status: list[str]
-    :ivar seasonality_period: The seasonality period for calculating the baseline.
-    :vartype seasonality_period: int
-    """
-
-    _attribute_map = {
-        'is_eligible': {'key': 'isEligible', 'type': 'bool'},
-        'status': {'key': 'status', 'type': '[str]'},
-        'seasonality_period': {'key': 'seasonalityPeriod', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        is_eligible: Optional[bool] = None,
-        status: Optional[List[str]] = None,
-        seasonality_period: Optional[int] = None,
-        **kwargs
-    ):
-        """
-        :keyword is_eligible: is series eligible for dynamic threshold analysis.
-        :paramtype is_eligible: bool
-        :keyword status: The list of extended status for calculating the baseline.
-        :paramtype status: list[str]
-        :keyword seasonality_period: The seasonality period for calculating the baseline.
-        :paramtype seasonality_period: int
-        """
-        super(CalculateBaselineResponseStatistics, self).__init__(**kwargs)
-        self.is_eligible = is_eligible
-        self.status = status
-        self.seasonality_period = seasonality_period
-
-
-class EmailReceiver(msrest.serialization.Model):
+class EmailReceiver(_serialization.Model):
     """An email receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the email receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the email receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address of this receiver.
+    :ivar email_address: The email address of this receiver. Required.
     :vartype email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include: "NotSpecified",
-     "Enabled", "Disabled".
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     and "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_09_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, **kwargs):
         """
-        :keyword name: Required. The name of the email receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the email receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address of this receiver.
+        :keyword email_address: The email address of this receiver. Required.
         :paramtype email_address: str
         """
-        super(EmailReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
         self.status = None
 
 
-class EnableRequest(msrest.serialization.Model):
+class EnableRequest(_serialization.Model):
     """Describes a receiver that should be resubscribed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar receiver_name: Required. The name of the receiver to resubscribe.
+    :ivar receiver_name: The name of the receiver to resubscribe. Required.
     :vartype receiver_name: str
     """
 
     _validation = {
-        'receiver_name': {'required': True},
+        "receiver_name": {"required": True},
     }
 
     _attribute_map = {
-        'receiver_name': {'key': 'receiverName', 'type': 'str'},
+        "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        receiver_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, receiver_name: str, **kwargs):
         """
-        :keyword receiver_name: Required. The name of the receiver to resubscribe.
+        :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
         """
-        super(EnableRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.receiver_name = receiver_name
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -924,92 +586,81 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ItsmReceiver(msrest.serialization.Model):
+class ItsmReceiver(_serialization.Model):
     """An Itsm receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Itsm receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the Itsm receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar workspace_id: Required. OMS LA instance identifier.
+    :ivar workspace_id: OMS LA instance identifier. Required.
     :vartype workspace_id: str
-    :ivar connection_id: Required. Unique identification of ITSM connection among multiple defined
-     in above workspace.
+    :ivar connection_id: Unique identification of ITSM connection among multiple defined in above
+     workspace. Required.
     :vartype connection_id: str
-    :ivar ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-     CreateMultipleWorkItems option will be part of this blob as well.
+    :ivar ticket_configuration: JSON blob for the configurations of the ITSM action.
+     CreateMultipleWorkItems option will be part of this blob as well. Required.
     :vartype ticket_configuration: str
-    :ivar region: Required. Region in which workspace resides. Supported
+    :ivar region: Region in which workspace resides. Supported
      values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+     Required.
     :vartype region: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'workspace_id': {'required': True},
-        'connection_id': {'required': True},
-        'ticket_configuration': {'required': True},
-        'region': {'required': True},
+        "name": {"required": True},
+        "workspace_id": {"required": True},
+        "connection_id": {"required": True},
+        "ticket_configuration": {"required": True},
+        "region": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'connection_id': {'key': 'connectionId', 'type': 'str'},
-        'ticket_configuration': {'key': 'ticketConfiguration', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "connection_id": {"key": "connectionId", "type": "str"},
+        "ticket_configuration": {"key": "ticketConfiguration", "type": "str"},
+        "region": {"key": "region", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        workspace_id: str,
-        connection_id: str,
-        ticket_configuration: str,
-        region: str,
-        **kwargs
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
     ):
         """
-        :keyword name: Required. The name of the Itsm receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword workspace_id: Required. OMS LA instance identifier.
+        :keyword workspace_id: OMS LA instance identifier. Required.
         :paramtype workspace_id: str
-        :keyword connection_id: Required. Unique identification of ITSM connection among multiple
-         defined in above workspace.
+        :keyword connection_id: Unique identification of ITSM connection among multiple defined in
+         above workspace. Required.
         :paramtype connection_id: str
-        :keyword ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-         CreateMultipleWorkItems option will be part of this blob as well.
+        :keyword ticket_configuration: JSON blob for the configurations of the ITSM action.
+         CreateMultipleWorkItems option will be part of this blob as well. Required.
         :paramtype ticket_configuration: str
-        :keyword region: Required. Region in which workspace resides. Supported
+        :keyword region: Region in which workspace resides. Supported
          values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+         Required.
         :paramtype region: str
         """
-        super(ItsmReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.workspace_id = workspace_id
         self.connection_id = connection_id
@@ -1017,281 +668,429 @@ class ItsmReceiver(msrest.serialization.Model):
         self.region = region
 
 
-class LocalizableString(msrest.serialization.Model):
-    """The localizable string class.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required. The invariant value.
-    :vartype value: str
-    :ivar localized_value: The locale specific value.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: str,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: Required. The invariant value.
-        :paramtype value: str
-        :keyword localized_value: The locale specific value.
-        :paramtype localized_value: str
-        """
-        super(LocalizableString, self).__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
-
-
-class LogicAppReceiver(msrest.serialization.Model):
+class LogicAppReceiver(_serialization.Model):
     """A logic app receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the logic app receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the logic app receiver. Names must be unique across all receivers
+     within an action group. Required.
     :vartype name: str
-    :ivar resource_id: Required. The azure resource id of the logic app receiver.
+    :ivar resource_id: The azure resource id of the logic app receiver. Required.
     :vartype resource_id: str
-    :ivar callback_url: Required. The callback url where http request sent to.
+    :ivar callback_url: The callback url where http request sent to. Required.
     :vartype callback_url: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'resource_id': {'required': True},
-        'callback_url': {'required': True},
+        "name": {"required": True},
+        "resource_id": {"required": True},
+        "callback_url": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'callback_url': {'key': 'callbackUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "callback_url": {"key": "callbackUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        resource_id: str,
-        callback_url: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs):
         """
-        :keyword name: Required. The name of the logic app receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the logic app receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword resource_id: Required. The azure resource id of the logic app receiver.
+        :keyword resource_id: The azure resource id of the logic app receiver. Required.
         :paramtype resource_id: str
-        :keyword callback_url: Required. The callback url where http request sent to.
+        :keyword callback_url: The callback url where http request sent to. Required.
         :paramtype callback_url: str
         """
-        super(LogicAppReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.resource_id = resource_id
         self.callback_url = callback_url
 
 
-class SmsReceiver(msrest.serialization.Model):
+class MetricBaselinesResponse(_serialization.Model):
+    """A list of metric baselines.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar timespan: The timespan for which the data was retrieved. Its value consists of two
+     datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
+     from what was originally requested. Required.
+    :vartype timespan: str
+    :ivar interval: The interval (window size) for which the metric data was returned in.  This may
+     be adjusted in the future and returned back from what was originally requested.  This is not
+     present if a metadata request was made. Required.
+    :vartype interval: ~datetime.timedelta
+    :ivar namespace: The namespace of the metrics been queried.
+    :vartype namespace: str
+    :ivar value: The baseline for each time series that was queried.
+    :vartype value: list[~$(python-base-namespace).v2018_09_01.models.SingleMetricBaseline]
+    """
+
+    _validation = {
+        "timespan": {"required": True},
+        "interval": {"required": True},
+    }
+
+    _attribute_map = {
+        "timespan": {"key": "timespan", "type": "str"},
+        "interval": {"key": "interval", "type": "duration"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "value": {"key": "value", "type": "[SingleMetricBaseline]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timespan: str,
+        interval: datetime.timedelta,
+        namespace: Optional[str] = None,
+        value: Optional[List["_models.SingleMetricBaseline"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
+         datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
+         from what was originally requested. Required.
+        :paramtype timespan: str
+        :keyword interval: The interval (window size) for which the metric data was returned in.  This
+         may be adjusted in the future and returned back from what was originally requested.  This is
+         not present if a metadata request was made. Required.
+        :paramtype interval: ~datetime.timedelta
+        :keyword namespace: The namespace of the metrics been queried.
+        :paramtype namespace: str
+        :keyword value: The baseline for each time series that was queried.
+        :paramtype value: list[~$(python-base-namespace).v2018_09_01.models.SingleMetricBaseline]
+        """
+        super().__init__(**kwargs)
+        self.timespan = timespan
+        self.interval = interval
+        self.namespace = namespace
+        self.value = value
+
+
+class MetricSingleDimension(_serialization.Model):
+    """The metric dimension name and value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the dimension. Required.
+    :vartype name: str
+    :ivar value: Value of the dimension. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, value: str, **kwargs):
+        """
+        :keyword name: Name of the dimension. Required.
+        :paramtype name: str
+        :keyword value: Value of the dimension. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class SingleBaseline(_serialization.Model):
+    """The baseline values for a single sensitivity value.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
+     "Medium", and "High".
+    :vartype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.BaselineSensitivity
+    :ivar low_thresholds: The low thresholds of the baseline. Required.
+    :vartype low_thresholds: list[float]
+    :ivar high_thresholds: The high thresholds of the baseline. Required.
+    :vartype high_thresholds: list[float]
+    """
+
+    _validation = {
+        "sensitivity": {"required": True},
+        "low_thresholds": {"required": True},
+        "high_thresholds": {"required": True},
+    }
+
+    _attribute_map = {
+        "sensitivity": {"key": "sensitivity", "type": "str"},
+        "low_thresholds": {"key": "lowThresholds", "type": "[float]"},
+        "high_thresholds": {"key": "highThresholds", "type": "[float]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        sensitivity: Union[str, "_models.BaselineSensitivity"],
+        low_thresholds: List[float],
+        high_thresholds: List[float],
+        **kwargs
+    ):
+        """
+        :keyword sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
+         "Medium", and "High".
+        :paramtype sensitivity: str or ~$(python-base-namespace).v2018_09_01.models.BaselineSensitivity
+        :keyword low_thresholds: The low thresholds of the baseline. Required.
+        :paramtype low_thresholds: list[float]
+        :keyword high_thresholds: The high thresholds of the baseline. Required.
+        :paramtype high_thresholds: list[float]
+        """
+        super().__init__(**kwargs)
+        self.sensitivity = sensitivity
+        self.low_thresholds = low_thresholds
+        self.high_thresholds = high_thresholds
+
+
+class SingleMetricBaseline(_serialization.Model):
+    """The baseline results of a single metric.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The metric baseline Id. Required.
+    :vartype id: str
+    :ivar type: The resource type of the metric baseline resource. Required.
+    :vartype type: str
+    :ivar metric_name: The name of the metric for which the baselines were retrieved. Required.
+    :vartype metric_name: str
+    :ivar baselines: The baseline for each time series that was queried. Required.
+    :vartype baselines: list[~$(python-base-namespace).v2018_09_01.models.TimeSeriesBaseline]
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "type": {"required": True},
+        "metric_name": {"required": True},
+        "baselines": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "metric_name": {"key": "metricName", "type": "str"},
+        "baselines": {"key": "baselines", "type": "[TimeSeriesBaseline]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        type: str,
+        metric_name: str,
+        baselines: List["_models.TimeSeriesBaseline"],
+        **kwargs
+    ):
+        """
+        :keyword id: The metric baseline Id. Required.
+        :paramtype id: str
+        :keyword type: The resource type of the metric baseline resource. Required.
+        :paramtype type: str
+        :keyword metric_name: The name of the metric for which the baselines were retrieved. Required.
+        :paramtype metric_name: str
+        :keyword baselines: The baseline for each time series that was queried. Required.
+        :paramtype baselines: list[~$(python-base-namespace).v2018_09_01.models.TimeSeriesBaseline]
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.type = type
+        self.metric_name = metric_name
+        self.baselines = baselines
+
+
+class SmsReceiver(_serialization.Model):
     """An SMS receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SMS receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the SMS receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar country_code: Required. The country code of the SMS receiver.
+    :ivar country_code: The country code of the SMS receiver. Required.
     :vartype country_code: str
-    :ivar phone_number: Required. The phone number of the SMS receiver.
+    :ivar phone_number: The phone number of the SMS receiver. Required.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Possible values include: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2018_09_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'country_code': {'required': True},
-        'phone_number': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        country_code: str,
-        phone_number: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
         """
-        :keyword name: Required. The name of the SMS receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword country_code: Required. The country code of the SMS receiver.
+        :keyword country_code: The country code of the SMS receiver. Required.
         :paramtype country_code: str
-        :keyword phone_number: Required. The phone number of the SMS receiver.
+        :keyword phone_number: The phone number of the SMS receiver. Required.
         :paramtype phone_number: str
         """
-        super(SmsReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.country_code = country_code
         self.phone_number = phone_number
         self.status = None
 
 
-class TimeSeriesInformation(msrest.serialization.Model):
-    """The time series info needed for calculating the baseline.
+class TimeSeriesBaseline(_serialization.Model):
+    """The baseline values for a single time series.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar sensitivities: Required. The list of sensitivities for calculating the baseline.
-    :vartype sensitivities: list[str]
-    :ivar values: Required. The metric values to calculate the baseline.
-    :vartype values: list[float]
-    :ivar timestamps: The array of timestamps of the baselines.
+    :ivar aggregation: The aggregation type of the metric. Required.
+    :vartype aggregation: str
+    :ivar dimensions: The dimensions of this time series.
+    :vartype dimensions: list[~$(python-base-namespace).v2018_09_01.models.MetricSingleDimension]
+    :ivar timestamps: The list of timestamps of the baselines. Required.
     :vartype timestamps: list[~datetime.datetime]
+    :ivar data: The baseline values for each sensitivity. Required.
+    :vartype data: list[~$(python-base-namespace).v2018_09_01.models.SingleBaseline]
+    :ivar metadata_values: The baseline metadata values.
+    :vartype metadata_values: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadata]
     """
 
     _validation = {
-        'sensitivities': {'required': True},
-        'values': {'required': True},
+        "aggregation": {"required": True},
+        "timestamps": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'sensitivities': {'key': 'sensitivities', 'type': '[str]'},
-        'values': {'key': 'values', 'type': '[float]'},
-        'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
+        "aggregation": {"key": "aggregation", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[MetricSingleDimension]"},
+        "timestamps": {"key": "timestamps", "type": "[iso-8601]"},
+        "data": {"key": "data", "type": "[SingleBaseline]"},
+        "metadata_values": {"key": "metadataValues", "type": "[BaselineMetadata]"},
     }
 
     def __init__(
         self,
         *,
-        sensitivities: List[str],
-        values: List[float],
-        timestamps: Optional[List[datetime.datetime]] = None,
+        aggregation: str,
+        timestamps: List[datetime.datetime],
+        data: List["_models.SingleBaseline"],
+        dimensions: Optional[List["_models.MetricSingleDimension"]] = None,
+        metadata_values: Optional[List["_models.BaselineMetadata"]] = None,
         **kwargs
     ):
         """
-        :keyword sensitivities: Required. The list of sensitivities for calculating the baseline.
-        :paramtype sensitivities: list[str]
-        :keyword values: Required. The metric values to calculate the baseline.
-        :paramtype values: list[float]
-        :keyword timestamps: The array of timestamps of the baselines.
+        :keyword aggregation: The aggregation type of the metric. Required.
+        :paramtype aggregation: str
+        :keyword dimensions: The dimensions of this time series.
+        :paramtype dimensions: list[~$(python-base-namespace).v2018_09_01.models.MetricSingleDimension]
+        :keyword timestamps: The list of timestamps of the baselines. Required.
         :paramtype timestamps: list[~datetime.datetime]
+        :keyword data: The baseline values for each sensitivity. Required.
+        :paramtype data: list[~$(python-base-namespace).v2018_09_01.models.SingleBaseline]
+        :keyword metadata_values: The baseline metadata values.
+        :paramtype metadata_values: list[~$(python-base-namespace).v2018_09_01.models.BaselineMetadata]
         """
-        super(TimeSeriesInformation, self).__init__(**kwargs)
-        self.sensitivities = sensitivities
-        self.values = values
+        super().__init__(**kwargs)
+        self.aggregation = aggregation
+        self.dimensions = dimensions
         self.timestamps = timestamps
+        self.data = data
+        self.metadata_values = metadata_values
 
 
-class VoiceReceiver(msrest.serialization.Model):
+class VoiceReceiver(_serialization.Model):
     """A voice receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the voice receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the voice receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar country_code: Required. The country code of the voice receiver.
+    :ivar country_code: The country code of the voice receiver. Required.
     :vartype country_code: str
-    :ivar phone_number: Required. The phone number of the voice receiver.
+    :ivar phone_number: The phone number of the voice receiver. Required.
     :vartype phone_number: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'country_code': {'required': True},
-        'phone_number': {'required': True},
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        country_code: str,
-        phone_number: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
         """
-        :keyword name: Required. The name of the voice receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the voice receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword country_code: Required. The country code of the voice receiver.
+        :keyword country_code: The country code of the voice receiver. Required.
         :paramtype country_code: str
-        :keyword phone_number: Required. The phone number of the voice receiver.
+        :keyword phone_number: The phone number of the voice receiver. Required.
         :paramtype phone_number: str
         """
-        super(VoiceReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.country_code = country_code
         self.phone_number = phone_number
 
 
-class WebhookReceiver(msrest.serialization.Model):
+class WebhookReceiver(_serialization.Model):
     """A webhook receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the webhook receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
+     an action group. Required.
     :vartype name: str
-    :ivar service_uri: Required. The URI where webhooks should be sent.
+    :ivar service_uri: The URI where webhooks should be sent. Required.
     :vartype service_uri: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'service_uri': {'required': True},
+        "name": {"required": True},
+        "service_uri": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        service_uri: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, service_uri: str, **kwargs):
         """
-        :keyword name: Required. The name of the webhook receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the webhook receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword service_uri: Required. The URI where webhooks should be sent.
+        :keyword service_uri: The URI where webhooks should be sent. Required.
         :paramtype service_uri: str
         """
-        super(WebhookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri

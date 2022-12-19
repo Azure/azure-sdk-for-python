@@ -22,14 +22,14 @@ def sample_create_and_deploy_project():
     # [START create_and_deploy_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
         # create project
@@ -73,17 +73,14 @@ def sample_create_and_deploy_project():
                 }
             ]
         )
-        update_sources_poller.result()
+        sources = update_sources_poller.result()
 
         # list sources
         print("list project sources")
-        sources = client.list_sources(
-            project_name=project_name
-        )
         for source in sources:
-            print("project: {}".format(source["displayName"]))
+            print("source name: {}".format(source.get("displayName", "N/A")))
             print("\tsource: {}".format(source["source"]))
-            print("\tsource Uri: {}".format(source["sourceUri"]))
+            print("\tsource Uri: {}".format(source.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
@@ -91,7 +88,8 @@ def sample_create_and_deploy_project():
             project_name=project_name,
             deployment_name="production"
         )
-        deployment_poller.result()
+        deployment = deployment_poller.result()
+        print(f"Deployment successfully created under {deployment['deploymentName']}.")
 
         # list all deployments
         deployments = client.list_deployments(

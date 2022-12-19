@@ -6,21 +6,21 @@
 # -------------------------------------------------------------------------
 from testcase import PurviewAccountTest, PurviewAccountPowerShellPreparer
 from testcase import PurviewMetaPolicyTest, PurviewMetaPolicyPowerShellPreparer
-from _util import PurviewAccountRecordingProcessor, PurviewAccountCollectionsRecordingProcessor
+from devtools_testutils import recorded_by_proxy
 
 
-class PurviewAccountSmokeTest(PurviewAccountTest):
+class TestPurviewAccountSmoke(PurviewAccountTest):
 
     @PurviewAccountPowerShellPreparer()
+    @recorded_by_proxy
     def test_basic_smoke_test(self, purviewaccount_endpoint):
-        self.recording_processors.append(PurviewAccountRecordingProcessor())
         client = self.create_client(endpoint=purviewaccount_endpoint)
         response = client.accounts.get_access_keys()
         assert set(response.keys()) == set(['atlasKafkaPrimaryEndpoint', 'atlasKafkaSecondaryEndpoint'])
 
     @PurviewAccountPowerShellPreparer()
+    @recorded_by_proxy
     def test_collections_list(self, purviewaccount_endpoint):
-        self.recording_processors.append(PurviewAccountCollectionsRecordingProcessor())
         client = self.create_client(endpoint=purviewaccount_endpoint)
         response = client.collections.list_collections()
         result = [item for item in response]
@@ -28,9 +28,10 @@ class PurviewAccountSmokeTest(PurviewAccountTest):
             assert set(item.keys()) == set(['name', 'friendlyName', 'description', 'systemData', 'collectionProvisioningState'])
 
 
-class PurviewMetaPolicySmokeTest(PurviewMetaPolicyTest):
+class TestPurviewMetaPolicySmoke(PurviewMetaPolicyTest):
 
     @PurviewMetaPolicyPowerShellPreparer()
+    @recorded_by_proxy
     def test_meta_policy_smoke_test(self, purviewmetapolicy_endpoint):
         client = self.create_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_policy.list_all()
@@ -38,6 +39,7 @@ class PurviewMetaPolicySmokeTest(PurviewMetaPolicyTest):
         assert len(result) >= 1
 
     @PurviewMetaPolicyPowerShellPreparer()
+    @recorded_by_proxy
     def test_meta_roles_smoke_test(self, purviewmetapolicy_endpoint):
         client = self.create_client(endpoint=purviewmetapolicy_endpoint)
         response = client.metadata_roles.list()

@@ -1,0 +1,44 @@
+type: pipeline
+description: "E2E dummy train-score-eval pipeline with registered components"
+display_name: "e2e_registered_components"
+inputs:
+  pipeline_job_training_input:
+    path: ../dsl_pipeline/e2e_registered_components/data
+  pipeline_job_test_input:
+    path: ../dsl_pipeline/e2e_registered_components/data
+  pipeline_job_training_max_epocs: 20
+  pipeline_job_training_learning_rate: 1.8
+  pipeline_job_learning_rate_schedule: 'time-based'
+
+outputs:
+  pipeline_job_trained_model:
+    mode: upload
+  pipeline_job_scored_data:
+    mode: upload
+
+#settings:
+#  datastore: azureml:workspaceblobstore
+
+compute: azureml:cpu-cluster
+
+jobs:
+  train_job:
+    type: command
+    component: azureml:Train:31
+    inputs:
+      training_data: ${{parent.inputs.pipeline_job_training_input}}
+      max_epocs: ${{parent.inputs.pipeline_job_training_max_epocs}}
+      learning_rate: ${{parent.inputs.pipeline_job_training_learning_rate}}
+      learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
+    outputs:
+      model_output: ${{parent.outputs.pipeline_job_trained_model}}
+
+  score_job:
+    type: command
+    inputs:
+      model_input: ${{parent.jobs.train_job.outputs.model_output}}
+      test_data: ${{parent.inputs.pipeline_job_test_input}}
+    outputs:
+      score_output:
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    command: echo "hello" && echo "world" && echo "train" > world.txt

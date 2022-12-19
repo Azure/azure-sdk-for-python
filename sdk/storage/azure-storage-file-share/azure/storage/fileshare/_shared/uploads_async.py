@@ -19,6 +19,26 @@ from .response_handlers import return_response_headers
 from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
 
 
+async def _async_parallel_uploads(uploader, pending, running):
+    range_ids = []
+    while True:
+        # Wait for some download to finish before adding a new one
+        done, running = await asyncio.wait(running, return_when=asyncio.FIRST_COMPLETED)
+        range_ids.extend([chunk.result() for chunk in done])
+        try:
+            for _ in range(0, len(done)):
+                next_chunk = await pending.__anext__()
+                running.add(asyncio.ensure_future(uploader(next_chunk)))
+        except StopAsyncIteration:
+            break
+
+    # Wait for the remaining uploads to finish
+    if running:
+        done, _running = await asyncio.wait(running)
+        range_ids.extend([chunk.result() for chunk in done])
+    return range_ids
+
+
 async def _parallel_uploads(uploader, pending, running):
     range_ids = []
     while True:
@@ -65,14 +85,18 @@ async def upload_data_chunks(
 
     if parallel:
         upload_tasks = uploader.get_chunk_streams()
-        running_futures = [
-            asyncio.ensure_future(uploader.process_chunk(u))
-            for u in islice(upload_tasks, 0, max_concurrency)
-        ]
-        range_ids = await _parallel_uploads(uploader.process_chunk, upload_tasks, running_futures)
+        running_futures = []
+        for _ in range(max_concurrency):
+            try:
+                chunk = await upload_tasks.__anext__()
+                running_futures.append(asyncio.ensure_future(uploader.process_chunk(chunk)))
+            except StopAsyncIteration:
+                break
+
+        range_ids = await _async_parallel_uploads(uploader.process_chunk, upload_tasks, running_futures)
     else:
         range_ids = []
-        for chunk in uploader.get_chunk_streams():
+        async for chunk in uploader.get_chunk_streams():
             range_ids.append(await uploader.process_chunk(chunk))
 
     if any(range_ids):
@@ -152,7 +176,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.last_modified = None
         self.request_options = kwargs
 
-    def get_chunk_streams(self):
+    async def get_chunk_streams(self):
         index = 0
         while True:
             data = b''
@@ -162,7 +186,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             while True:
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
-                temp = self.stream.read(read_size)
+                if asyncio.iscoroutinefunction(self.stream.read):
+                    temp = await self.stream.read(read_size)
+                else:
+                    temp = self.stream.read(read_size)
                 if not isinstance(temp, six.binary_type):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""

@@ -39,12 +39,12 @@ class HeadersTest(unittest.TestCase):
 
     dedicated_gateway_max_age_thousand = 1000
     dedicated_gateway_max_age_million = 1000000
-    dedicated_gateway_max_age_zero = 0
+    dedicated_gateway_max_age_negative = -1
 
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database(test_config._test_config.TEST_DATABASE_ID)
+        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
         cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
                                                       partition_key=PartitionKey(path="/id"))
 
@@ -76,10 +76,10 @@ class HeadersTest(unittest.TestCase):
         except StopIteration:
             pass
 
-    def test_zero_max_integrated_cache_staleness(self):
+    def test_negative_max_integrated_cache_staleness(self):
         try:
             self.container.read_item(item="id-1", partition_key="pk-1",
-                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_zero)
+                                     max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
         except Exception as exception:
             assert isinstance(exception, ValueError)
 

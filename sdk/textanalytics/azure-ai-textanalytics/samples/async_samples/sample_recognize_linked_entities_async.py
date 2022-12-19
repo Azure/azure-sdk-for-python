@@ -28,7 +28,7 @@ import os
 import asyncio
 
 
-async def sample_recognize_linked_entities_async():
+async def sample_recognize_linked_entities_async() -> None:
     print(
         "In this sample, we are students conducting research for a class project. We will extract "
         "links to Wikipedia articles for all entities listed in our research documents, so we have "

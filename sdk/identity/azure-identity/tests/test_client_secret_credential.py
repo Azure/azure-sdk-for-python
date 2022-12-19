@@ -129,14 +129,14 @@ def test_regional_authority():
         mock_confidential_client.reset_mock()
 
         # region can be configured via environment variable
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region}, clear=True):
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
             credential = ClientSecretCredential("tenant", "client-id", "secret")
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
             credential.get_token("scope")
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region
+        assert kwargs["azure_region"] == region.value
 
 
 def test_token_cache():
@@ -219,7 +219,7 @@ def test_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = ClientSecretCredential(
-        first_tenant, "client-id", "secret", transport=Mock(send=send)
+        first_tenant, "client-id", "secret", transport=Mock(send=send), additionally_allowed_tenants=['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -238,7 +238,7 @@ def test_multitenant_authentication():
 def test_live_multitenant_authentication(live_service_principal):
     # first create a credential with a non-existent tenant
     credential = ClientSecretCredential(
-        "...", live_service_principal["client_id"], live_service_principal["client_secret"]
+        "...", live_service_principal["client_id"], live_service_principal["client_secret"], additionally_allowed_tenants=['*']
     )
     # then get a valid token for an actual tenant
     token = credential.get_token("https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"])

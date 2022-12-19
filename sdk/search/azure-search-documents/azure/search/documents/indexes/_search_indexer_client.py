@@ -9,7 +9,8 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated import SearchClient as _SearchServiceClient
+from ._generated import SearchServiceClient as _SearchServiceClient
+from ._generated.models import SkillNames
 from .models import SearchIndexerSkillset
 from ._utils import (
     get_access_conditions,
@@ -40,7 +41,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
-
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -51,6 +54,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -61,7 +65,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             )  # type: _SearchServiceClient
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -129,7 +133,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = indexer.name
         result = self._client.indexers.create_or_update(
-            indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
+            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result
 
@@ -384,6 +388,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -654,6 +659,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -677,7 +683,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = skillset.name
         except AttributeError:
             name = skillset
-        return self._client.skillsets.reset_skills(name, skill_names, **kwargs)
+        names = SkillNames(skill_names=skill_names)
+        return self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
 
 def _validate_skillset(skillset):
     """Validates any multi-version skills in the skillset to verify that unsupported

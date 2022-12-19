@@ -8,17 +8,33 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._queue_operations import build_create_request, build_delete_request, build_get_access_policy_request, build_get_properties_request, build_set_access_policy_request, build_set_metadata_request
-T = TypeVar('T')
+from ...operations._queue_operations import (
+    build_create_request,
+    build_delete_request,
+    build_get_access_policy_request,
+    build_get_properties_request,
+    build_set_access_policy_request,
+    build_set_metadata_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class QueueOperations:
     """
@@ -33,12 +49,11 @@ class QueueOperations:
     models = _models
 
     def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
-
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -65,33 +80,35 @@ class QueueOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
         request = build_create_request(
             url=self._config.url,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
-            template_url=self.create.metadata['url'],
+            version=self._config.version,
+            template_url=self.create.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201, 204]:
@@ -101,29 +118,23 @@ class QueueOperations:
 
         response_headers = {}
         if response.status_code == 201:
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if response.status_code == 204:
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-            
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    create.metadata = {"url": "{url}/{queueName}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """operation permanently deletes the specified queue.
 
@@ -136,32 +147,34 @@ class QueueOperations:
          value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
         request = build_delete_request(
             url=self._config.url,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.delete.metadata['url'],
+            version=self._config.version,
+            template_url=self.delete.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -170,23 +183,18 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    delete.metadata = {"url": "{url}/{queueName}"}  # type: ignore
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Retrieves user-defined metadata and queue properties on the specified queue. Metadata is
         associated with the queue as name-values pairs.
@@ -203,35 +211,36 @@ class QueueOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "metadata")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
         request = build_get_properties_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.get_properties.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_properties.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -240,18 +249,18 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
-        response_headers['x-ms-approximate-messages-count']=self._deserialize('int', response.headers.get('x-ms-approximate-messages-count'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-approximate-messages-count"] = self._deserialize(
+            "int", response.headers.get("x-ms-approximate-messages-count")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    get_properties.metadata = {"url": "{url}/{queueName}"}  # type: ignore
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -282,36 +291,37 @@ class QueueOperations:
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "metadata")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
         request = build_set_metadata_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_metadata.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.set_metadata.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -320,24 +330,19 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    set_metadata.metadata = {"url": "{url}/{queueName}"}  # type: ignore
 
     @distributed_trace_async
     async def get_access_policy(
-        self,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        **kwargs: Any
-    ) -> List["_models.SignedIdentifier"]:
+        self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    ) -> List[_models.SignedIdentifier]:
         """returns details about any stored access policies specified on the queue that may be used with
         Shared Access Signatures.
 
@@ -353,35 +358,36 @@ class QueueOperations:
          in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of SignedIdentifier, or the result of cls(response)
+        :return: list of SignedIdentifier or the result of cls(response)
         :rtype: list[~azure.storage.queue.models.SignedIdentifier]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.SignedIdentifier"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "acl")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.SignedIdentifier]]
+
         request = build_get_access_policy_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.get_access_policy.metadata['url'],
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_access_policy.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -390,26 +396,25 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize('[SignedIdentifier]', pipeline_response)
+        deserialized = self._deserialize("[SignedIdentifier]", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_access_policy.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    get_access_policy.metadata = {"url": "{url}/{queueName}"}  # type: ignore
 
     @distributed_trace_async
     async def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        queue_acl: Optional[List["_models.SignedIdentifier"]] = None,
+        queue_acl: Optional[List[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """sets stored access policies for the queue that may be used with Shared Access Signatures.
@@ -428,43 +433,47 @@ class QueueOperations:
          in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        comp = kwargs.pop('comp', "acl")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        serialization_ctxt = {"xml": {'name': 'SignedIdentifiers', 'wrapped': True}}
+        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        serialization_ctxt = {"xml": {"name": "SignedIdentifiers", "wrapped": True}}
         if queue_acl is not None:
-            _content = self._serialize.body(queue_acl, '[SignedIdentifier]', is_xml=True, serialization_ctxt=serialization_ctxt)
+            _content = self._serialize.body(
+                queue_acl, "[SignedIdentifier]", is_xml=True, serialization_ctxt=serialization_ctxt
+            )
         else:
             _content = None
 
         request = build_set_access_policy_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
-            content_type=content_type,
-            content=_content,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            template_url=self.set_access_policy.metadata['url'],
+            comp=comp,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            template_url=self.set_access_policy.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -473,13 +482,11 @@ class QueueOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {'url': "{url}/{queueName}"}  # type: ignore
-
+    set_access_policy.metadata = {"url": "{url}/{queueName}"}  # type: ignore

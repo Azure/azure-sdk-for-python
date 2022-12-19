@@ -6,16 +6,24 @@ products:
   - azure-monitor
 ---
 
+<!-- cSpell:disable -->
 # Microsoft Azure Monitor Opentelemetry Exporter Trace Python Samples
 
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
-* Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
-* Collector: [sample_collector.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/collector/sample_collector.py)
-* Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
-* Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_server.py)
 * Span Event: [sample_span_event.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_span_event.py)
 * Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py)
+
+* Collector: [sample_collector.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/collector/sample_collector.py)
+* Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
+
+* Django instrumentation: [manage.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/manage.py)
+* Flask instrumentation: [sample_flask.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_flask.py)
+* Requests instrumentation: [sample_requests.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_requests.py)
+
+* Psycopg2 instrumentation: [sample_psycopg2.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_psycopg2.py)
+
+* Emitting metrics with instrumentations: [sample_metrics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_metrics.py)
 
 * Azure AppConfig Add Config Setting: [sample_app_config.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_app_config.py)
 * Azure Communication Chat Create Client/Thread: [sample_comm_chat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_chat.py)
@@ -42,7 +50,57 @@ $ pip install azure-monitor-opentelemetry-exporter --pre
 
 ## Run the Applications
 
-### Client
+### Trace
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_trace.py
+```
+
+### Span Event
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_span_event.py
+```
+
+### Django instrumentation
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ pip install opentelemetry-instrumentation-django
+$ # from the django directory
+$ python manage.py runserver
+```
+
+* Open http://localhost:8000/
+
+### Flask instrumentation
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ pip install opentelemetry-instrumentation-flask
+$ # from this directory
+$ python sample_flask.py
+```
+
+* Open http://localhost:8080/
+
+### Requests instrumentation
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -51,8 +109,37 @@ $ pip install azure-monitor-opentelemetry-exporter --pre
 ```sh
 $ pip install opentelemetry-instrumentation-requests
 $ # from this directory
-$ python sample_request.py
+$ python sample_requests.py
 ```
+
+### Psycopg2 instrumentation
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Ensure you have a database named `test` with a table named `test_table`, make sure `test_table` has a field called `test_field`
+* Supply your `user` and `password` for your database if needed
+* Run the sample
+
+```sh
+$ pip install opentelemetry-instrumentation-psygopg2
+$ # from this directory
+$ python sample_psycopg2.py
+```
+
+### Emitting metrics with instrumentations
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ pip install opentelemetry-instrumentation-flask
+$ pip install opentelemetry-instrumentation-requests
+$ # from this directory
+$ python sample_metrics.py
+```
+
+Calls made with the underlying instrumented libraries will track metrics information in the metrics explorer view in Application Insights. Only certain instrumentations support metrics collection, refer to https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/README.md for the full list. This also assumes you are using the latest versions of the instrumentation libraries.
 
 ### Collector
 
@@ -79,7 +166,7 @@ $ pip install opentelemetry-exporter-otlp
 $ python sample_collector.py
 ```
 
-* You should be able to see your traces in the Zipkin backend as well as Azure Monitor application insights backend.
+* You should be able to see your traces in the Zipkin backend as well as Azure Monitor Application Insights backend.
 
 ### Jaeger
 
@@ -106,44 +193,7 @@ $ # from this directory
 $ python sample_jaeger.py
 ```
 
-* You should be able to see your traces in the Jaeger backend as well as Azure Monitor application insights backend.
-
-### Span Event
-
-* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
-
-* Run the sample
-
-```sh
-$ # from this directory
-$ python sample_span_event.py
-```
-
-### Server
-
-* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
-
-* Run the sample
-
-```sh
-$ pip install opentelemetry-instrumentation-requests
-$ pip install opentelemetry-instrumentation-flask
-$ # from this directory
-$ python sample_server.py
-```
-
-* Open http://localhost:8080/
-
-### Trace
-
-* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
-
-* Run the sample
-
-```sh
-$ # from this directory
-$ python sample_trace.py
-```
+* You should be able to see your traces in the Jaeger backend as well as Azure Monitor Application Insights backend.
 
 ### Azure AppConfig Add Config Setting
 
@@ -444,3 +494,5 @@ $ python sample_text_analytics.py
 
 After running the applications, data would be available in [Azure](
 https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
+
+<!-- cSpell:enable -->

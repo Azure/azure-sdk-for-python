@@ -32,30 +32,36 @@ from ._operations import VirtualNetworkGatewaysOperations
 from ._operations import VirtualNetworkGatewayConnectionsOperations
 from ._operations import LocalNetworkGatewaysOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ApplicationGatewaysOperations',
-    'NetworkManagementClientOperationsMixin',
-    'ExpressRouteCircuitAuthorizationsOperations',
-    'ExpressRouteCircuitPeeringsOperations',
-    'ExpressRouteCircuitsOperations',
-    'ExpressRouteServiceProvidersOperations',
-    'LoadBalancersOperations',
-    'NetworkInterfacesOperations',
-    'NetworkSecurityGroupsOperations',
-    'SecurityRulesOperations',
-    'NetworkWatchersOperations',
-    'PacketCapturesOperations',
-    'PublicIPAddressesOperations',
-    'RouteFiltersOperations',
-    'RouteFilterRulesOperations',
-    'RouteTablesOperations',
-    'RoutesOperations',
-    'BgpServiceCommunitiesOperations',
-    'UsagesOperations',
-    'VirtualNetworksOperations',
-    'SubnetsOperations',
-    'VirtualNetworkPeeringsOperations',
-    'VirtualNetworkGatewaysOperations',
-    'VirtualNetworkGatewayConnectionsOperations',
-    'LocalNetworkGatewaysOperations',
+    "ApplicationGatewaysOperations",
+    "NetworkManagementClientOperationsMixin",
+    "ExpressRouteCircuitAuthorizationsOperations",
+    "ExpressRouteCircuitPeeringsOperations",
+    "ExpressRouteCircuitsOperations",
+    "ExpressRouteServiceProvidersOperations",
+    "LoadBalancersOperations",
+    "NetworkInterfacesOperations",
+    "NetworkSecurityGroupsOperations",
+    "SecurityRulesOperations",
+    "NetworkWatchersOperations",
+    "PacketCapturesOperations",
+    "PublicIPAddressesOperations",
+    "RouteFiltersOperations",
+    "RouteFilterRulesOperations",
+    "RouteTablesOperations",
+    "RoutesOperations",
+    "BgpServiceCommunitiesOperations",
+    "UsagesOperations",
+    "VirtualNetworksOperations",
+    "SubnetsOperations",
+    "VirtualNetworkPeeringsOperations",
+    "VirtualNetworkGatewaysOperations",
+    "VirtualNetworkGatewayConnectionsOperations",
+    "LocalNetworkGatewaysOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

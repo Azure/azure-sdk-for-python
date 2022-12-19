@@ -13,4 +13,3 @@ jobs:
   component_c_job:
     type: command
     component: file:./componentC.yml
-

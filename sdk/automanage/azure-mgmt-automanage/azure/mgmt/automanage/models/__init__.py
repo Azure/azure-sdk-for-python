@@ -6,97 +6,70 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Account
-    from ._models_py3 import AccountIdentity
-    from ._models_py3 import AccountList
-    from ._models_py3 import AccountUpdate
-    from ._models_py3 import ConfigurationProfileAssignment
-    from ._models_py3 import ConfigurationProfileAssignmentCompliance
-    from ._models_py3 import ConfigurationProfileAssignmentList
-    from ._models_py3 import ConfigurationProfileAssignmentProperties
-    from ._models_py3 import ConfigurationProfilePreference
-    from ._models_py3 import ConfigurationProfilePreferenceAntiMalware
-    from ._models_py3 import ConfigurationProfilePreferenceList
-    from ._models_py3 import ConfigurationProfilePreferenceProperties
-    from ._models_py3 import ConfigurationProfilePreferenceUpdate
-    from ._models_py3 import ConfigurationProfilePreferenceVmBackup
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ErrorResponseError
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UpdateResource
-except (SyntaxError, ImportError):
-    from ._models import Account  # type: ignore
-    from ._models import AccountIdentity  # type: ignore
-    from ._models import AccountList  # type: ignore
-    from ._models import AccountUpdate  # type: ignore
-    from ._models import ConfigurationProfileAssignment  # type: ignore
-    from ._models import ConfigurationProfileAssignmentCompliance  # type: ignore
-    from ._models import ConfigurationProfileAssignmentList  # type: ignore
-    from ._models import ConfigurationProfileAssignmentProperties  # type: ignore
-    from ._models import ConfigurationProfilePreference  # type: ignore
-    from ._models import ConfigurationProfilePreferenceAntiMalware  # type: ignore
-    from ._models import ConfigurationProfilePreferenceList  # type: ignore
-    from ._models import ConfigurationProfilePreferenceProperties  # type: ignore
-    from ._models import ConfigurationProfilePreferenceUpdate  # type: ignore
-    from ._models import ConfigurationProfilePreferenceVmBackup  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ErrorResponseError  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UpdateResource  # type: ignore
+from ._models_py3 import BestPractice
+from ._models_py3 import BestPracticeList
+from ._models_py3 import ConfigurationProfile
+from ._models_py3 import ConfigurationProfileAssignment
+from ._models_py3 import ConfigurationProfileAssignmentList
+from ._models_py3 import ConfigurationProfileAssignmentProperties
+from ._models_py3 import ConfigurationProfileList
+from ._models_py3 import ConfigurationProfileProperties
+from ._models_py3 import ConfigurationProfileUpdate
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Report
+from ._models_py3 import ReportList
+from ._models_py3 import ReportResource
+from ._models_py3 import Resource
+from ._models_py3 import ServicePrincipal
+from ._models_py3 import ServicePrincipalListResult
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UpdateResource
+
 
 from ._automanage_client_enums import (
-    ConfigurationProfile,
-    EnableRealTimeProtection,
-    ProvisioningStatus,
-    ResourceIdentityType,
-    RunScheduledScan,
-    ScanType,
-    UpdateStatus,
+    ActionType,
+    CreatedByType,
+    Origin,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'Account',
-    'AccountIdentity',
-    'AccountList',
-    'AccountUpdate',
+    'BestPractice',
+    'BestPracticeList',
+    'ConfigurationProfile',
     'ConfigurationProfileAssignment',
-    'ConfigurationProfileAssignmentCompliance',
     'ConfigurationProfileAssignmentList',
     'ConfigurationProfileAssignmentProperties',
-    'ConfigurationProfilePreference',
-    'ConfigurationProfilePreferenceAntiMalware',
-    'ConfigurationProfilePreferenceList',
-    'ConfigurationProfilePreferenceProperties',
-    'ConfigurationProfilePreferenceUpdate',
-    'ConfigurationProfilePreferenceVmBackup',
+    'ConfigurationProfileList',
+    'ConfigurationProfileProperties',
+    'ConfigurationProfileUpdate',
     'ErrorAdditionalInfo',
+    'ErrorDetail',
     'ErrorResponse',
-    'ErrorResponseError',
     'Operation',
     'OperationDisplay',
-    'OperationList',
+    'OperationListResult',
     'ProxyResource',
+    'Report',
+    'ReportList',
+    'ReportResource',
     'Resource',
+    'ServicePrincipal',
+    'ServicePrincipalListResult',
+    'SystemData',
     'TrackedResource',
     'UpdateResource',
-    'ConfigurationProfile',
-    'EnableRealTimeProtection',
-    'ProvisioningStatus',
-    'ResourceIdentityType',
-    'RunScheduledScan',
-    'ScanType',
-    'UpdateStatus',
+    'ActionType',
+    'CreatedByType',
+    'Origin',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

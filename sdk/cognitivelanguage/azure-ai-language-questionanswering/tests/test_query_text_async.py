@@ -3,31 +3,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer
-)
 
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswering._operations._operations import build_get_answers_from_text_request
-from azure.ai.language.questionanswering.models import (
-    AnswersFromTextOptions,
-    TextDocument
-)
+from azure.ai.language.questionanswering.models import AnswersFromTextOptions, TextDocument
+from azure.core.credentials import AzureKeyCredential
 
-class QnATests(QuestionAnsweringTest):
-    def setUp(self):
-        super(QnATests, self).setUp()
+from testcase import QuestionAnsweringTestCase
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_text_llc(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+
+class TestQueryTextAsync(QuestionAnsweringTestCase):
+
+    @pytest.mark.asyncio
+    async def test_query_text_llc(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         json_content = {
             "question": "What is the meaning of life?",
             "records": [
@@ -66,9 +56,9 @@ class QnATests(QuestionAnsweringTest):
             assert answer['answerSpan'].get('offset') is not None
             assert answer['answerSpan'].get('length')
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_text(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_query_text(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersFromTextOptions(
             question="What is the meaning of life?",
             text_documents=[
@@ -102,9 +92,9 @@ class QnATests(QuestionAnsweringTest):
             assert answer.short_answer.offset is not None
             assert answer.short_answer.length
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_text_with_dictparams(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_query_text_with_dictparams(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
             "records": [
@@ -129,9 +119,9 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_text_with_str_records(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_query_text_with_str_records(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
             "records": [
@@ -150,9 +140,9 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_query_text_overload(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_query_text_overload(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         async with client:
             with pytest.raises(TypeError):
@@ -182,6 +172,7 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
+    @pytest.mark.asyncio
     async def test_query_text_overload_positional_and_kwarg(self):
         async with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):

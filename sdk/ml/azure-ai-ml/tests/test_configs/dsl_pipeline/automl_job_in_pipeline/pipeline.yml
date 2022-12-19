@@ -6,7 +6,8 @@ description: Example of using automl function inside pipeline
 
 experiment_name: sdk-cli-v2
 
-compute: azureml:cpu-cluster
+settings:
+  default_compute: azureml:cpu-cluster
 
 inputs:
   # examples of inputs that take values such as int, string, etc.
@@ -22,7 +23,7 @@ inputs:
 
 outputs:
   best_model:
-    type: uri_folder
+    type: mlflow_model
 
 jobs:
   hello_automl_regression:
@@ -41,7 +42,6 @@ jobs:
     training:
       enable_stack_ensemble: false
       enable_vote_ensemble: false
-      enable_model_explainability: true
     outputs:
        best_model: ${{parent.outputs.best_model}}
   show_output:

@@ -16,7 +16,8 @@ try:
     from subprocess import TimeoutExpired, check_call, CalledProcessError
 except ImportError:
     from subprocess32 import TimeoutExpired, check_call, CalledProcessError
-from common_tasks import run_check_call, compare_python_version
+from ci_tools.functions import compare_python_version
+from common_tasks import run_check_call
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -135,7 +136,13 @@ IGNORED_SAMPLES = {
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",
         "sample_analyze_healthcare_entities_with_cancellation_async.py",
-    ]
+        "sample_abstract_summary.py",
+        "sample_abstract_summary_async.py",
+    ],
+    "azure-ai-language-conversations": [
+        "sample_assign_deployment_resources.py",
+        "sample_assign_deployment_resources_async.py",
+    ],
 }
 
 def run_check_call_with_timeout(

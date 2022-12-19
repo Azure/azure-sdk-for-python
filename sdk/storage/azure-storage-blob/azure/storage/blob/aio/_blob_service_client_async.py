@@ -7,7 +7,7 @@
 
 import functools
 import warnings
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
@@ -40,6 +40,7 @@ from ._container_client_async import ContainerClient
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
@@ -69,10 +70,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -113,11 +116,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(BlobServiceClient, self).__init__(
             account_url,

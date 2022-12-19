@@ -2,36 +2,39 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import uuid
-import logging
-import time
-import os
-from typing import Dict, List, TYPE_CHECKING
-from pathlib import PurePosixPath, Path
-from colorama import Fore
-import sys
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
 
-from azure.storage.blob import BlobServiceClient, ContainerClient
-from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml._utils._asset_utils import (
-    generate_asset_id,
-    upload_directory,
-    upload_file,
-    AssetNotChangedError,
-    _build_metadata_dict,
-    IgnoreFile,
-    get_directory_size,
-)
+import logging
+import os
+import sys
+import time
+import uuid
+from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING, Dict, List
+
+from colorama import Fore
+
 from azure.ai.ml._artifacts._constants import (
-    UPLOAD_CONFIRMATION,
     ARTIFACT_ORIGIN,
+    BLOB_DATASTORE_IS_HDI_FOLDER_KEY,
+    FILE_SIZE_WARNING,
     LEGACY_ARTIFACT_DIRECTORY,
     MAX_CONCURRENCY,
-    FILE_SIZE_WARNING,
-    BLOB_DATASTORE_IS_HDI_FOLDER_KEY,
+    UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml.constants import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException, MlException
+from azure.ai.ml._utils._asset_utils import (
+    AssetNotChangedError,
+    IgnoreFile,
+    _build_metadata_dict,
+    generate_asset_id,
+    get_directory_size,
+    upload_directory,
+    upload_file,
+)
+from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.core.exceptions import ResourceNotFoundError
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 if TYPE_CHECKING:
     from azure.storage.blob import BlobProperties
@@ -66,9 +69,7 @@ class BlobStorageClient:
         asset_hash: str = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
-        """
-        Upload a file or directory to a path inside the container
-        """
+        """Upload a file or directory to a path inside the container."""
         if name and version is None:
             version = str(uuid.uuid4())  # placeholder for auto-increment artifacts
 
@@ -105,7 +106,13 @@ class BlobStorageClient:
             else:
                 self.indicator_file = dest
                 self.check_blob_exists()
-                upload_file(storage_client=self, source=source, dest=dest, msg=msg, show_progress=show_progress)
+                upload_file(
+                    storage_client=self,
+                    source=source,
+                    dest=dest,
+                    msg=msg,
+                    show_progress=show_progress,
+                )
             print(Fore.RESET + "\n", file=sys.stderr)
 
             # upload must be completed before we try to generate confirmation file
@@ -118,18 +125,23 @@ class BlobStorageClient:
             if self.legacy:
                 dest = dest.replace(ARTIFACT_ORIGIN, LEGACY_ARTIFACT_DIRECTORY)
 
-        artifact_info = {"remote path": dest, "name": name, "version": version, "indicator file": self.indicator_file}
+        artifact_info = {
+            "remote path": dest,
+            "name": name,
+            "version": version,
+            "indicator file": self.indicator_file,
+        }
 
         return artifact_info
 
     def check_blob_exists(self) -> None:
-        """
-        Throw error if blob already exists.
+        """Throw error if blob already exists.
 
-        Check if blob already exists in container by checking the metadata for
-        existence and confirmation data. If confirmation data is missing, blob does not exist
-        or was only partially uploaded and the partial upload will be overwritten with a complete
-        upload.
+        Check if blob already exists in container by checking the
+        metadata for existence and confirmation data. If confirmation
+        data is missing, blob does not exist or was only partially
+        uploaded and the partial upload will be overwritten with a
+        complete upload.
         """
 
         try:
@@ -161,49 +173,39 @@ class BlobStorageClient:
                 self.name = metadata.get("name")
                 self.version = metadata.get("version")
                 raise AssetNotChangedError
-            else:
-                self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
+            self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
         except ResourceNotFoundError:
             pass
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+            # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
-                msg = "You don't have permission to alter this storage account. Ensure that you have been assigned both Storage Blob Data Reader and Storage Blob Data Contributor roles."
+                msg = (
+                    "You don't have permission to alter this storage account. "
+                    "Ensure that you have been assigned both Storage Blob Data Reader "
+                    "and Storage Blob Data Contributor roles."
+                )
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         blob_client = self.container_client.get_blob_client(blob=self.indicator_file)
         metadata_dict = _build_metadata_dict(name, version)
         blob_client.set_blob_metadata(metadata_dict)
 
-    def _blob_is_hdi_folder(self, blob: "BlobProperties") -> bool:
-        """Checks if a given blob actually represents a folder
-
-        Blob datastores do not natively have any conception of a folder. Instead,
-        empty blobs with the same name as a "folder" can have additional metadata
-        specifying that it is actually a folder.
-
-        :param BlobProperties blob: Blob to check
-        :return bool: True if blob represents a folder, False otherwise
-        """
-
-        # Metadata isn't always a populated field, and may need to be explicitly
-        # requested from whatever function generates the blobproperies object
-        #
-        # e.g self.container_client.list_blobs(..., include='metadata')
-        return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))
-
     def download(
-        self, starts_with: str, destination: str = Path.home(), max_concurrency: int = MAX_CONCURRENCY
+        self,
+        starts_with: str,
+        destination: str = Path.home(),
+        max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
-        """
-        Downloads all blobs inside a specified container to the destination folder
+        """Downloads all blobs inside a specified container to the destination
+        folder.
+
         :param starts_with: Indicates the blob name starts with to search.
         :param destination: Indicates path to download in local
         :param max_concurrency: Indicates concurrent connections to download a blob.
@@ -214,7 +216,7 @@ class BlobStorageClient:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
 
-                if self._blob_is_hdi_folder(item):
+                if _blob_is_hdi_folder(item):
                     target_path.mkdir(parents=True, exist_ok=True)
                     continue
 
@@ -236,8 +238,8 @@ class BlobStorageClient:
             )
 
     def list(self, starts_with: str) -> List[str]:
-        """
-        Lists all blob names in the specified container
+        """Lists all blob names in the specified container.
+
         :param starts_with: Indicates the blob name starts with to search.
         :return: the list of blob paths in container
         """
@@ -246,7 +248,7 @@ class BlobStorageClient:
 
     def exists(self, blobpath: str, delimeter: str = "/") -> bool:
         """Returns whether there exists a blob named `blobpath`, or if there
-           exists a virtual directory given path delimeter `delimeter`
+        exists a virtual directory given path delimeter `delimeter`
 
            e.g:
                 Given blob store with blobs
@@ -270,6 +272,25 @@ class BlobStorageClient:
 
         # Virtual directory only exists if there is atleast one blob with it
         result = next(
-            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter), None
+            self.container_client.walk_blobs(name_starts_with=blobpath + ensure_delimeter, delimiter=delimeter),
+            None,
         )
         return result is not None
+
+
+def _blob_is_hdi_folder(blob: "BlobProperties") -> bool:
+    """Checks if a given blob actually represents a folder.
+
+    Blob datastores do not natively have any conception of a folder. Instead,
+    empty blobs with the same name as a "folder" can have additional metadata
+    specifying that it is actually a folder.
+
+    :param BlobProperties blob: Blob to check
+    :return bool: True if blob represents a folder, False otherwise
+    """
+
+    # Metadata isn't always a populated field, and may need to be explicitly
+    # requested from whatever function generates the blobproperties object
+    #
+    # e.g self.container_client.list_blobs(..., include='metadata')
+    return bool(blob.metadata and blob.metadata.get(BLOB_DATASTORE_IS_HDI_FOLDER_KEY, None))

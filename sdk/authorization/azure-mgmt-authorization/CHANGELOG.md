@@ -1,5 +1,61 @@
 # Release History
 
+## 3.0.0 (2022-10-11)
+
+### Features Added
+
+  - Added operation AccessReviewInstancesOperations.create
+  - Added operation group AccessReviewHistoryDefinitionInstanceOperations
+  - Added operation group AccessReviewHistoryDefinitionInstancesOperations
+  - Added operation group AccessReviewHistoryDefinitionOperations
+  - Added operation group AccessReviewHistoryDefinitionsOperations
+  - Added operation group AccessReviewInstanceContactedReviewersOperations
+  - Added operation group AlertConfigurationsOperations
+  - Added operation group AlertDefinitionsOperations
+  - Added operation group AlertIncidentsOperations
+  - Added operation group AlertOperationOperations
+  - Added operation group AlertsOperations
+  - Added operation group ScopeAccessReviewDefaultSettingsOperations
+  - Added operation group ScopeAccessReviewHistoryDefinitionInstanceOperations
+  - Added operation group ScopeAccessReviewHistoryDefinitionInstancesOperations
+  - Added operation group ScopeAccessReviewHistoryDefinitionOperations
+  - Added operation group ScopeAccessReviewHistoryDefinitionsOperations
+  - Added operation group ScopeAccessReviewInstanceContactedReviewersOperations
+  - Added operation group ScopeAccessReviewInstanceDecisionsOperations
+  - Added operation group ScopeAccessReviewInstanceOperations
+  - Added operation group ScopeAccessReviewInstancesOperations
+  - Added operation group ScopeAccessReviewScheduleDefinitionsOperations
+  - Added operation group TenantLevelAccessReviewInstanceContactedReviewersOperations
+  - Model AccessReviewDecision has a new parameter insights
+  - Model AccessReviewDecision has a new parameter membership_types
+  - Model AccessReviewDecisionProperties has a new parameter insights
+  - Model AccessReviewDecisionProperties has a new parameter membership_types
+  - Model AccessReviewDefaultSettings has a new parameter recommendation_look_back_duration
+  - Model AccessReviewInstance has a new parameter backup_reviewers
+  - Model AccessReviewInstance has a new parameter reviewers
+  - Model AccessReviewInstance has a new parameter reviewers_type
+  - Model AccessReviewScheduleDefinition has a new parameter exclude_resource_id
+  - Model AccessReviewScheduleDefinition has a new parameter exclude_role_definition_id
+  - Model AccessReviewScheduleDefinition has a new parameter expand_nested_memberships
+  - Model AccessReviewScheduleDefinition has a new parameter include_access_below_resource
+  - Model AccessReviewScheduleDefinition has a new parameter include_inherited_access
+  - Model AccessReviewScheduleDefinition has a new parameter recommendation_look_back_duration
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter exclude_resource_id
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter exclude_role_definition_id
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter expand_nested_memberships
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter include_access_below_resource
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter include_inherited_access
+  - Model AccessReviewScheduleDefinitionProperties has a new parameter recommendation_look_back_duration
+  - Model AccessReviewScheduleSettings has a new parameter recommendation_look_back_duration
+  - Model DenyAssignmentPermission has a new parameter condition
+  - Model DenyAssignmentPermission has a new parameter condition_version
+
+### Breaking Changes
+
+  - Operation RoleAssignmentsOperations.list_for_scope has a new parameter skip_token
+  - Removed operation RoleAssignmentsOperations.validate
+  - Removed operation RoleAssignmentsOperations.validate_by_id
+
 ## 2.0.0 (2021-09-26)
 
 **Features**

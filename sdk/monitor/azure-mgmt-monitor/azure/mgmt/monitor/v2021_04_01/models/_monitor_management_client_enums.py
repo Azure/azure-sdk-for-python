@@ -7,22 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class KnownDataCollectionEndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The resource provisioning state. This property is READ-ONLY.
-    """
+
+class KnownDataCollectionEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state. This property is READ-ONLY."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -30,16 +28,16 @@ class KnownDataCollectionEndpointProvisioningState(with_metaclass(CaseInsensitiv
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class KnownDataCollectionEndpointResourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of the resource.
-    """
+
+class KnownDataCollectionEndpointResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the resource."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class KnownDataCollectionRuleAssociationProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The resource provisioning state.
-    """
+
+class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -47,9 +45,9 @@ class KnownDataCollectionRuleAssociationProvisioningState(with_metaclass(CaseIns
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class KnownDataCollectionRuleProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The resource provisioning state.
-    """
+
+class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -57,14 +55,16 @@ class KnownDataCollectionRuleProvisioningState(with_metaclass(CaseInsensitiveEnu
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class KnownDataCollectionRuleResourceKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of the resource.
-    """
+
+class KnownDataCollectionRuleResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the resource."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class KnownDataFlowStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownDataFlowStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownDataFlowStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -72,7 +72,9 @@ class KnownDataFlowStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
-class KnownExtensionDataSourceStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownExtensionDataSourceStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -80,12 +82,15 @@ class KnownExtensionDataSourceStreams(with_metaclass(CaseInsensitiveEnumMeta, st
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
-class KnownPerfCounterDataSourceStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownPerfCounterDataSourceStreams."""
 
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
 
-class KnownPublicNetworkAccessOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownPublicNetworkAccessOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The configuration to set whether network access from public internet to the endpoints are
     allowed.
     """
@@ -93,7 +98,9 @@ class KnownPublicNetworkAccessOptions(with_metaclass(CaseInsensitiveEnumMeta, st
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class KnownSyslogDataSourceFacilityNames(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceFacilityNames."""
 
     AUTH = "auth"
     AUTHPRIV = "authpriv"
@@ -117,7 +124,9 @@ class KnownSyslogDataSourceFacilityNames(with_metaclass(CaseInsensitiveEnumMeta,
     LOCAL7 = "local7"
     ASTERISK = "*"
 
-class KnownSyslogDataSourceLogLevels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceLogLevels."""
 
     DEBUG = "Debug"
     INFO = "Info"
@@ -129,11 +138,15 @@ class KnownSyslogDataSourceLogLevels(with_metaclass(CaseInsensitiveEnumMeta, str
     EMERGENCY = "Emergency"
     ASTERISK = "*"
 
-class KnownSyslogDataSourceStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownSyslogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceStreams."""
 
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
 
-class KnownWindowsEventLogDataSourceStreams(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownWindowsEventLogDataSourceStreams."""
 
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
     MICROSOFT_EVENT = "Microsoft-Event"

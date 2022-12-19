@@ -1,0 +1,2 @@
+azureml-defaults
+rsa==4.7

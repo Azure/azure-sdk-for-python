@@ -87,7 +87,6 @@ class FilteredBlobPaged(AsyncPageIterator):
     :ivar current_page: The current page of listed results.
     :vartype current_page: list(~azure.storage.blob.BlobProperties)
     :ivar str container: The container that the blobs are listed from.
-
     :param callable command: Function to retrieve the next page of items.
     :param str container: The name of the container.
     :param int results_per_page: The maximum number of blobs to retrieve per

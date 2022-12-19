@@ -6,11 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._key_vault_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import __init__ as _models
 
 
 class AccessPolicyEntry(msrest.serialization.Model):
@@ -49,7 +51,7 @@ class AccessPolicyEntry(msrest.serialization.Model):
         *,
         tenant_id: str,
         object_id: str,
-        permissions: "Permissions",
+        permissions: "_models.Permissions",
         application_id: Optional[str] = None,
         **kwargs
     ):
@@ -84,8 +86,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: The reason that a vault name could not be used. The Reason element is only
-     returned if NameAvailable is false. Possible values include: "AccountNameInvalid",
-     "AlreadyExists".
+     returned if NameAvailable is false. Known values are: "AccountNameInvalid", "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.keyvault.v2018_02_14.models.Reason
     :ivar message: An error message explaining the Reason value in more detail.
     :vartype message: str
@@ -180,7 +181,7 @@ class DeletedVault(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: Optional["DeletedVaultProperties"] = None,
+        properties: Optional["_models.DeletedVaultProperties"] = None,
         **kwargs
     ):
         """
@@ -211,7 +212,7 @@ class DeletedVaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["DeletedVault"]] = None,
+        value: Optional[List["_models.DeletedVault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -349,11 +350,11 @@ class NetworkRuleSet(msrest.serialization.Model):
     """A set of rules governing the network accessibility of a vault.
 
     :ivar bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-     'None'.  If not specified the default is 'AzureServices'. Possible values include:
-     "AzureServices", "None".
+     'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+     "None".
     :vartype bypass: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleBypassOptions
     :ivar default_action: The default action when no rule from ipRules and from virtualNetworkRules
-     match. This is only used after the bypass property has been evaluated. Possible values include:
+     match. This is only used after the bypass property has been evaluated. Known values are:
      "Allow", "Deny".
     :vartype default_action: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleAction
     :ivar ip_rules: The list of IP address rules.
@@ -373,20 +374,20 @@ class NetworkRuleSet(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        bypass: Optional[Union[str, "NetworkRuleBypassOptions"]] = None,
-        default_action: Optional[Union[str, "NetworkRuleAction"]] = None,
-        ip_rules: Optional[List["IPRule"]] = None,
-        virtual_network_rules: Optional[List["VirtualNetworkRule"]] = None,
+        bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
+        default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
+        ip_rules: Optional[List["_models.IPRule"]] = None,
+        virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         **kwargs
     ):
         """
         :keyword bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or
-         'None'.  If not specified the default is 'AzureServices'. Possible values include:
-         "AzureServices", "None".
+         'None'.  If not specified the default is 'AzureServices'. Known values are: "AzureServices",
+         "None".
         :paramtype bypass: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleBypassOptions
         :keyword default_action: The default action when no rule from ipRules and from
          virtualNetworkRules match. This is only used after the bypass property has been evaluated.
-         Possible values include: "Allow", "Deny".
+         Known values are: "Allow", "Deny".
         :paramtype default_action: str or ~azure.mgmt.keyvault.v2018_02_14.models.NetworkRuleAction
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.keyvault.v2018_02_14.models.IPRule]
@@ -425,9 +426,9 @@ class Operation(msrest.serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -510,7 +511,7 @@ class OperationListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Operation"]] = None,
+        value: Optional[List["_models.Operation"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -549,10 +550,10 @@ class Permissions(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        keys: Optional[List[Union[str, "KeyPermissions"]]] = None,
-        secrets: Optional[List[Union[str, "SecretPermissions"]]] = None,
-        certificates: Optional[List[Union[str, "CertificatePermissions"]]] = None,
-        storage: Optional[List[Union[str, "StoragePermissions"]]] = None,
+        keys: Optional[List[Union[str, "_models.KeyPermissions"]]] = None,
+        secrets: Optional[List[Union[str, "_models.SecretPermissions"]]] = None,
+        certificates: Optional[List[Union[str, "_models.CertificatePermissions"]]] = None,
+        storage: Optional[List[Union[str, "_models.StoragePermissions"]]] = None,
         **kwargs
     ):
         """
@@ -667,8 +668,8 @@ class PrivateEndpointConnection(Resource):
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
     """
@@ -696,8 +697,8 @@ class PrivateEndpointConnection(Resource):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         """
@@ -723,8 +724,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     :ivar private_link_service_connection_state: Approval state of the private link connection.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateLinkServiceConnectionState
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
+    :ivar provisioning_state: Provisioning state of the private endpoint connection. Known values
+     are: "Succeeded", "Creating", "Updating", "Deleting", "Failed", "Disconnected".
     :vartype provisioning_state: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointConnectionProvisioningState
     """
@@ -742,8 +743,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
         """
@@ -833,7 +834,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         **kwargs
     ):
         """
@@ -848,7 +849,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """An object that represents the approval state of the private link connection.
 
     :ivar status: Indicates whether the connection has been approved, rejected or removed by the
-     key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+     key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
     :vartype status: str or
      ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval or rejection.
@@ -867,14 +868,14 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         action_required: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword status: Indicates whether the connection has been approved, rejected or removed by the
-         key vault owner. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
+         key vault owner. Known values are: "Pending", "Approved", "Rejected", "Disconnected".
         :paramtype status: str or
          ~azure.mgmt.keyvault.v2018_02_14.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval or rejection.
@@ -906,7 +907,7 @@ class ResourceListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Resource"]] = None,
+        value: Optional[List["_models.Resource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -935,7 +936,7 @@ class ServiceSpecification(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
         **kwargs
     ):
         """
@@ -951,10 +952,10 @@ class Sku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar family: Required. SKU family name. Possible values include: "A".
+    :ivar family: Required. SKU family name. Known values are: "A".
     :vartype family: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuFamily
     :ivar name: Required. SKU name to specify whether the key vault is a standard vault or a
-     premium vault. Possible values include: "standard", "premium".
+     premium vault. Known values are: "standard", "premium".
     :vartype name: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuName
     """
 
@@ -971,15 +972,15 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "SkuFamily"] = "A",
-        name: Union[str, "SkuName"],
+        family: Union[str, "_models.SkuFamily"] = "A",
+        name: Union[str, "_models.SkuName"],
         **kwargs
     ):
         """
-        :keyword family: Required. SKU family name. Possible values include: "A".
+        :keyword family: Required. SKU family name. Known values are: "A".
         :paramtype family: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuFamily
         :keyword name: Required. SKU name to specify whether the key vault is a standard vault or a
-         premium vault. Possible values include: "standard", "premium".
+         premium vault. Known values are: "standard", "premium".
         :paramtype name: str or ~azure.mgmt.keyvault.v2018_02_14.models.SkuName
         """
         super(Sku, self).__init__(**kwargs)
@@ -1027,7 +1028,7 @@ class Vault(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -1087,7 +1088,7 @@ class VaultAccessPolicyParameters(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        properties: "VaultAccessPolicyProperties",
+        properties: "_models.VaultAccessPolicyProperties",
         **kwargs
     ):
         """
@@ -1123,7 +1124,7 @@ class VaultAccessPolicyProperties(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        access_policies: List["AccessPolicyEntry"],
+        access_policies: List["_models.AccessPolicyEntry"],
         **kwargs
     ):
         """
@@ -1203,7 +1204,7 @@ class VaultCreateOrUpdateParameters(msrest.serialization.Model):
         self,
         *,
         location: str,
-        properties: "VaultProperties",
+        properties: "_models.VaultProperties",
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -1239,7 +1240,7 @@ class VaultListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["Vault"]] = None,
+        value: Optional[List["_models.Vault"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1272,7 +1273,7 @@ class VaultPatchParameters(msrest.serialization.Model):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["VaultPatchProperties"] = None,
+        properties: Optional["_models.VaultPatchProperties"] = None,
         **kwargs
     ):
         """
@@ -1310,7 +1311,7 @@ class VaultPatchProperties(msrest.serialization.Model):
      enabled for this key vault. It does not accept false value.
     :vartype enable_soft_delete: bool
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1340,15 +1341,15 @@ class VaultPatchProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: Optional[str] = None,
-        sku: Optional["Sku"] = None,
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: Optional["_models.Sku"] = None,
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
         enable_soft_delete: Optional[bool] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
-        network_acls: Optional["NetworkRuleSet"] = None,
+        network_acls: Optional["_models.NetworkRuleSet"] = None,
         **kwargs
     ):
         """
@@ -1373,7 +1374,7 @@ class VaultPatchProperties(msrest.serialization.Model):
          enabled for this key vault. It does not accept false value.
         :paramtype enable_soft_delete: bool
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault. Setting this property to true activates protection against purge for
@@ -1430,7 +1431,7 @@ class VaultProperties(msrest.serialization.Model):
      enabled for this key vault. It does not accept false value.
     :vartype enable_soft_delete: bool
     :ivar create_mode: The vault's create mode to indicate whether the vault need to be recovered
-     or not. Possible values include: "recover", "default".
+     or not. Known values are: "recover", "default".
     :vartype create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
     :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
      for this vault. Setting this property to true activates protection against purge for this vault
@@ -1472,16 +1473,16 @@ class VaultProperties(msrest.serialization.Model):
         self,
         *,
         tenant_id: str,
-        sku: "Sku",
-        access_policies: Optional[List["AccessPolicyEntry"]] = None,
+        sku: "_models.Sku",
+        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
         vault_uri: Optional[str] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
         enable_soft_delete: Optional[bool] = None,
-        create_mode: Optional[Union[str, "CreateMode"]] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         enable_purge_protection: Optional[bool] = None,
-        network_acls: Optional["NetworkRuleSet"] = None,
+        network_acls: Optional["_models.NetworkRuleSet"] = None,
         **kwargs
     ):
         """
@@ -1510,7 +1511,7 @@ class VaultProperties(msrest.serialization.Model):
          enabled for this key vault. It does not accept false value.
         :paramtype enable_soft_delete: bool
         :keyword create_mode: The vault's create mode to indicate whether the vault need to be
-         recovered or not. Possible values include: "recover", "default".
+         recovered or not. Known values are: "recover", "default".
         :paramtype create_mode: str or ~azure.mgmt.keyvault.v2018_02_14.models.CreateMode
         :keyword enable_purge_protection: Property specifying whether protection against purge is
          enabled for this vault. Setting this property to true activates protection against purge for

@@ -24,14 +24,14 @@ async def sample_update_knowledge_sources_async():
     # [START update_knowledge_sources]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring.aio import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
 
         # create project
@@ -62,15 +62,11 @@ async def sample_update_knowledge_sources_async():
                 }
             }]
         )
-        await sources_poller.result() # wait until done
-
-        sources = client.list_sources(
-            project_name=project_name
-        )
+        sources = await sources_poller.result() # wait until done
         async for item in sources:
-            print("source name: {}".format(item["displayName"]))
+            print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
-            print("\tsource uri: {}".format(item["sourceUri"]))
+            print("\tsource uri: {}".format(item.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas
@@ -86,11 +82,7 @@ async def sample_update_knowledge_sources_async():
                 }
             }]
         )
-        await qna_poller.result()
-
-        qnas = client.list_qnas(
-            project_name=project_name
-        )
+        qnas = await qna_poller.result()
         async for item in qnas:
             print("qna: {}".format(item["id"]))
             print("\tquestions:")

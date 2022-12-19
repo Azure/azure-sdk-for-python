@@ -15,6 +15,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
@@ -24,26 +25,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class KeysOperations:
-    """KeysOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.keyvault.v2021_10_01.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.keyvault.v2021_10_01.aio.KeyVaultManagementClient`'s
+        :attr:`keys` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create_if_not_exist(
@@ -51,9 +50,9 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         key_name: str,
-        parameters: "_models.KeyCreateParameters",
+        parameters: _models.KeyCreateParameters,
         **kwargs: Any
-    ) -> "_models.Key":
+    ) -> _models.Key:
         """Creates the first version of a new key if it does not exist. If it already exists, then the
         existing key is returned without any write operations being performed. This API does not create
         subsequent versions, and does not update existing keys.
@@ -72,14 +71,17 @@ class KeysOperations:
         :rtype: ~azure.mgmt.keyvault.v2021_10_01.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Key]
 
         _json = self._serialize.body(parameters, 'KeyCreateParameters')
 
@@ -92,11 +94,13 @@ class KeysOperations:
             content_type=content_type,
             json=_json,
             template_url=self.create_if_not_exist.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -124,7 +128,7 @@ class KeysOperations:
         vault_name: str,
         key_name: str,
         **kwargs: Any
-    ) -> "_models.Key":
+    ) -> _models.Key:
         """Gets the current version of the specified key from the specified key vault.
 
         :param resource_group_name: The name of the resource group which contains the specified key
@@ -139,13 +143,16 @@ class KeysOperations:
         :rtype: ~azure.mgmt.keyvault.v2021_10_01.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Key]
 
         
         request = build_get_request(
@@ -155,11 +162,13 @@ class KeysOperations:
             key_name=key_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -186,7 +195,7 @@ class KeysOperations:
         resource_group_name: str,
         vault_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.KeyListResult"]:
+    ) -> AsyncIterable[_models.KeyListResult]:
         """Lists the keys in the specified key vault.
 
         :param resource_group_name: The name of the resource group which contains the specified key
@@ -200,13 +209,16 @@ class KeysOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2021_10_01.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -216,9 +228,11 @@ class KeysOperations:
                     vault_name=vault_name,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -228,9 +242,11 @@ class KeysOperations:
                     vault_name=vault_name,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 
@@ -271,7 +287,7 @@ class KeysOperations:
         key_name: str,
         key_version: str,
         **kwargs: Any
-    ) -> "_models.Key":
+    ) -> _models.Key:
         """Gets the specified version of the specified key in the specified key vault.
 
         :param resource_group_name: The name of the resource group which contains the specified key
@@ -288,13 +304,16 @@ class KeysOperations:
         :rtype: ~azure.mgmt.keyvault.v2021_10_01.models.Key
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Key"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Key]
 
         
         request = build_get_version_request(
@@ -305,11 +324,13 @@ class KeysOperations:
             key_version=key_version,
             api_version=api_version,
             template_url=self.get_version.metadata['url'],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs
@@ -337,7 +358,7 @@ class KeysOperations:
         vault_name: str,
         key_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.KeyListResult"]:
+    ) -> AsyncIterable[_models.KeyListResult]:
         """Lists the versions of the specified key in the specified key vault.
 
         :param resource_group_name: The name of the resource group which contains the specified key
@@ -353,13 +374,16 @@ class KeysOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2021_10_01.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyListResult"]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.KeyListResult]
+
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
                 
@@ -370,9 +394,11 @@ class KeysOperations:
                     key_name=key_name,
                     api_version=api_version,
                     template_url=self.list_versions.metadata['url'],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
                 
@@ -383,9 +409,11 @@ class KeysOperations:
                     key_name=key_name,
                     api_version=api_version,
                     template_url=next_link,
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
             return request
 

@@ -29,41 +29,43 @@ from ._models_py3 import StorageAccountConfiguration
 from ._models_py3 import SystemData
 from ._models_py3 import UserAssignedIdentity
 
-
-from ._deployment_scripts_client_enums import (
-    CleanupOptions,
-    CreatedByType,
-    ManagedServiceIdentityType,
-    ScriptProvisioningState,
-    ScriptType,
-)
+from ._deployment_scripts_client_enums import CleanupOptions
+from ._deployment_scripts_client_enums import CreatedByType
+from ._deployment_scripts_client_enums import ManagedServiceIdentityType
+from ._deployment_scripts_client_enums import ScriptProvisioningState
+from ._deployment_scripts_client_enums import ScriptType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AzureCliScript',
-    'AzureCliScriptProperties',
-    'AzurePowerShellScript',
-    'AzurePowerShellScriptProperties',
-    'AzureResourceBase',
-    'ContainerConfiguration',
-    'DeploymentScript',
-    'DeploymentScriptListResult',
-    'DeploymentScriptPropertiesBase',
-    'DeploymentScriptUpdateParameter',
-    'DeploymentScriptsError',
-    'EnvironmentVariable',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'ManagedServiceIdentity',
-    'ScriptConfigurationBase',
-    'ScriptLog',
-    'ScriptLogsList',
-    'ScriptStatus',
-    'StorageAccountConfiguration',
-    'SystemData',
-    'UserAssignedIdentity',
-    'CleanupOptions',
-    'CreatedByType',
-    'ManagedServiceIdentityType',
-    'ScriptProvisioningState',
-    'ScriptType',
+    "AzureCliScript",
+    "AzureCliScriptProperties",
+    "AzurePowerShellScript",
+    "AzurePowerShellScriptProperties",
+    "AzureResourceBase",
+    "ContainerConfiguration",
+    "DeploymentScript",
+    "DeploymentScriptListResult",
+    "DeploymentScriptPropertiesBase",
+    "DeploymentScriptUpdateParameter",
+    "DeploymentScriptsError",
+    "EnvironmentVariable",
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "ManagedServiceIdentity",
+    "ScriptConfigurationBase",
+    "ScriptLog",
+    "ScriptLogsList",
+    "ScriptStatus",
+    "StorageAccountConfiguration",
+    "SystemData",
+    "UserAssignedIdentity",
+    "CleanupOptions",
+    "CreatedByType",
+    "ManagedServiceIdentityType",
+    "ScriptProvisioningState",
+    "ScriptType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

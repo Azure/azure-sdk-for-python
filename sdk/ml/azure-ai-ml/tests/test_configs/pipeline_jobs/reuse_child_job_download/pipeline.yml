@@ -1,0 +1,23 @@
+type: pipeline
+
+name: simplePipelineJobWithInlineComponentAndOutput
+description: The hello world pipeline job with inline component and output
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+jobs:
+  hello_world_component_inline:
+    type: command
+    compute: azureml:cpu-cluster
+
+    component:
+      command: >-
+        echo Hello World > ${{outputs.component_out_path}}/component_output
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: ./
+      outputs:
+        component_out_path:
+          type: uri_folder

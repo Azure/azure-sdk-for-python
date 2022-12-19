@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: synapse
+    TestProxy: true
     Artifacts:
     - name: azure-synapse-accesscontrol
       safeName: azuresynapseaccesscontrol

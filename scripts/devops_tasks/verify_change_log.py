@@ -13,8 +13,9 @@ import sys
 import os
 import logging
 
-from common_tasks import process_glob_string, parse_setup, run_check_call
-
+from common_tasks import run_check_call
+from ci_tools.functions import discover_targeted_packages
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -56,21 +57,20 @@ def verify_packages(targeted_packages):
     change_log_missing = {}
 
     for package in targeted_packages:
-        # Parse setup.py using common helper method to get version and package name
-        pkg_name, version, _, _ = parse_setup(package)
+        parsed_pkg = ParsedSetup.from_path(package)
 
         # Skip management packages and any explicitly excluded packages
-        if "-mgmt" in pkg_name or pkg_name in NON_STANDARD_CHANGE_LOG_PACKAGES:
-            logging.info("Skipping {} due to known exclusion in change log verification".format(pkg_name))
+        if "-mgmt" in parsed_pkg.name or parsed_pkg.name in NON_STANDARD_CHANGE_LOG_PACKAGES:
+            logging.info("Skipping {} due to known exclusion in change log verification".format(parsed_pkg.name))
             continue
 
-        if not find_change_log(package, version):
+        if not find_change_log(package, parsed_pkg.version):
             logging.error(
                 "Change log is not updated for package {0}, version {1}".format(
-                    pkg_name, version
+                    parsed_pkg.name, parsed_pkg.version
                 )
             )
-            change_log_missing[pkg_name] = version
+            change_log_missing[parsed_pkg.name] = parsed_pkg.version
 
     return change_log_missing
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # Skip nspkg and metapackage from version check.
     # Change log file may be missing for these two types
     # process glob helper methods filter nspkg and metapackages with filter type "Docs"
-    targeted_packages = process_glob_string(
+    targeted_packages = discover_targeted_packages(
         args.glob_string, target_dir, args.package_filter_string, "Docs"
     )
     change_missing = verify_packages(targeted_packages)

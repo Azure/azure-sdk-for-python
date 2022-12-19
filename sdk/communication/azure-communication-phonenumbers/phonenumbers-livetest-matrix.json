@@ -17,8 +17,8 @@
         "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON36",
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       },
-      "macOS-10.15": {
-        "OSVmImage": "macOS-10.15",
+      "macos-11": {
+        "OSVmImage": "macos-11",
         "Pool": "Azure Pipelines",
         "AZURE_TEST_AGENT": "MACOS_1015_PYTHON37",
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"

@@ -1,0 +1,113 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/retrytest30a30b0?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 21:28:32 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "297",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 21:28:32 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "x-ms-error-code": "InvalidAuthenticationInfo"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidAuthenticationInfo\u003C/Code\u003E\u003CMessage\u003EAuthentication information is not given in the correct format. Check the value of Authorization header.\n",
+        "RequestId:9c99621e-301e-0072-2692-aedd8d000000\n",
+        "Time:2022-08-12T21:28:32.9041080Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/retrytest30a30b0?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 21:28:35 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "297",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 21:28:35 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "x-ms-error-code": "InvalidAuthenticationInfo"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidAuthenticationInfo\u003C/Code\u003E\u003CMessage\u003EAuthentication information is not given in the correct format. Check the value of Authorization header.\n",
+        "RequestId:9c996700-301e-0072-4492-aedd8d000000\n",
+        "Time:2022-08-12T21:28:35.7055108Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/retrytest30a30b0?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 21:28:38 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "297",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 21:28:38 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "x-ms-error-code": "InvalidAuthenticationInfo"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidAuthenticationInfo\u003C/Code\u003E\u003CMessage\u003EAuthentication information is not given in the correct format. Check the value of Authorization header.\n",
+        "RequestId:9c996bda-301e-0072-6792-aedd8d000000\n",
+        "Time:2022-08-12T21:28:38.6288437Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/retrytest30a30b0?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 21:28:39 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "297",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 21:28:39 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "x-ms-error-code": "InvalidAuthenticationInfo"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidAuthenticationInfo\u003C/Code\u003E\u003CMessage\u003EAuthentication information is not given in the correct format. Check the value of Authorization header.\n",
+        "RequestId:9c996e48-301e-0072-7d92-aedd8d000000\n",
+        "Time:2022-08-12T21:28:39.8301583Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

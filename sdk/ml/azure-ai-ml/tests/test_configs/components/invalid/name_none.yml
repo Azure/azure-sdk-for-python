@@ -1,7 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
 name:
 version: 1
-code: ../python
+code: ../../python
 command: >-
   echo ${{outputs.output_path}}
 environment: azureml:AzureML-Minimal:2

@@ -2,13 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
 
-from azure.ai.ml._schema import PatchedSchemaMeta
-from azure.ai.ml._schema import NestedField
+from marshmallow import post_load
+
+from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+
 from .resource_settings_schema import ResourceSettingsSchema
-from marshmallow import fields, post_load
 
 module_logger = logging.getLogger(__name__)
 

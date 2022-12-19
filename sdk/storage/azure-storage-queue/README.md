@@ -12,7 +12,7 @@ Common uses of Queue storage include:
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
@@ -299,7 +299,10 @@ Other optional configuration keyword arguments that can be specified on the clie
 **Client keyword arguments:**
 
 * __connection_timeout__ (int): The number of seconds the client will wait to establish a connection to the server.
-* __read_timeout__ (int): The number of seconds the client will wait, after the connections has been established, for the server to send a response.
+Defaults to 20 seconds.
+* __read_timeout__ (int): The number of seconds the client will wait, between consecutive read operations, for a
+response from the server. This is a socket level timeout and is not affected by overall data size. Client-side read 
+timeouts will be automatically retried. Defaults to 60 seconds.
 * __transport__ (Any): User-provided transport to send the HTTP request.
 
 **Per-operation keyword arguments:**

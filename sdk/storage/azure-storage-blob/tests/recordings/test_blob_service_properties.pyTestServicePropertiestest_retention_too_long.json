@@ -1,0 +1,40 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/?restype=service\u0026comp=properties",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "273",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 20 Jul 2022 23:50:04 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CStorageServiceProperties\u003E\u003CMinuteMetrics\u003E\u003CVersion\u003E1.0\u003C/Version\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CIncludeAPIs\u003Etrue\u003C/IncludeAPIs\u003E\u003CRetentionPolicy\u003E\u003CEnabled\u003Etrue\u003C/Enabled\u003E\u003CDays\u003E366\u003C/Days\u003E\u003C/RetentionPolicy\u003E\u003C/MinuteMetrics\u003E\u003C/StorageServiceProperties\u003E"
+      ],
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "376",
+        "Content-Type": "application/xml",
+        "Date": "Wed, 20 Jul 2022 23:50:03 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "InvalidXmlDocument",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidXmlDocument\u003C/Code\u003E\u003CMessage\u003EXML specified is not syntactically valid.\n",
+        "RequestId:19514c3a-301e-009b-3d93-9c3724000000\n",
+        "Time:2022-07-20T23:50:03.6531306Z\u003C/Message\u003E\u003CLineNumber\u003E2\u003C/LineNumber\u003E\u003CLinePosition\u003E176\u003C/LinePosition\u003E\u003CReason\u003ERetention days must be greater than 0 and less than or equal to 365 days.\u003C/Reason\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

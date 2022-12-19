@@ -16,16 +16,24 @@ from ._server_endpoints_operations import ServerEndpointsOperations
 from ._registered_servers_operations import RegisteredServersOperations
 from ._workflows_operations import WorkflowsOperations
 from ._operation_status_operations import OperationStatusOperations
+from ._microsoft_storage_sync_operations import MicrosoftStorageSyncOperationsMixin
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Operations',
-    'StorageSyncServicesOperations',
-    'PrivateLinkResourcesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'SyncGroupsOperations',
-    'CloudEndpointsOperations',
-    'ServerEndpointsOperations',
-    'RegisteredServersOperations',
-    'WorkflowsOperations',
-    'OperationStatusOperations',
+    "Operations",
+    "StorageSyncServicesOperations",
+    "PrivateLinkResourcesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "SyncGroupsOperations",
+    "CloudEndpointsOperations",
+    "ServerEndpointsOperations",
+    "RegisteredServersOperations",
+    "WorkflowsOperations",
+    "OperationStatusOperations",
+    "MicrosoftStorageSyncOperationsMixin",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -117,5 +117,4 @@ async def main():
     await sample.get_queue_client_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

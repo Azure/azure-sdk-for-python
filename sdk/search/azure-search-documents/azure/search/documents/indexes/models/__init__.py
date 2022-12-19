@@ -44,10 +44,13 @@ from .._generated.models import (
     CjkBigramTokenFilter,
     ClassicSimilarity,
     ClassicTokenizer,
+    CognitiveServicesAccount,
+    CognitiveServicesAccountKey,
     CommonGramTokenFilter,
     ConditionalSkill,
     CorsOptions,
     CustomEntityLookupSkill,
+    DefaultCognitiveServicesAccount,
     CustomEntityLookupSkillLanguage,
     CustomNormalizer,
     DictionaryDecompounderTokenFilter,
@@ -185,12 +188,6 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
-class BM25SimilarityAlgorithm(BM25Similarity):
-    pass
-
-class ClassicSimilarityAlgorithm(ClassicSimilarity):
-    pass
-
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
 
@@ -213,17 +210,20 @@ __all__ = (
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
-    "BM25SimilarityAlgorithm",
+    "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
-    "ClassicSimilarityAlgorithm",
+    "ClassicSimilarity",
     "ClassicTokenizer",
+    "CognitiveServicesAccount",
+    "CognitiveServicesAccountKey",
     "CommonGramTokenFilter",
     "ComplexField",
     "ConditionalSkill",
     "CorsOptions",
     "CustomAnalyzer",
     "CustomEntityLookupSkill",
+    "DefaultCognitiveServicesAccount",
     "CustomEntityLookupSkillLanguage",
     "CustomNormalizer",
     "DictionaryDecompounderTokenFilter",

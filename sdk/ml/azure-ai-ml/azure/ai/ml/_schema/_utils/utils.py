@@ -4,10 +4,10 @@
 
 import logging
 import re
+from collections import OrderedDict
+from typing import Any, Dict
 
 from marshmallow.exceptions import ValidationError
-from typing import Any, Dict
-from collections import OrderedDict
 
 module_logger = logging.getLogger(__name__)
 
@@ -20,8 +20,7 @@ def validate_arm_str(arm_str: str) -> bool:
     match = re.match(reg_str, lowered)
     if match and match.group() == lowered:
         return True
-    else:
-        raise ValidationError(f"ARM string {arm_str} is not formatted correctly.")
+    raise ValidationError(f"ARM string {arm_str} is not formatted correctly.")
 
 
 def get_subnet_str(vnet_name: str, subnet: str, sub_id: str = None, rg: str = None) -> str:
@@ -31,7 +30,10 @@ def get_subnet_str(vnet_name: str, subnet: str, sub_id: str = None, rg: str = No
         if validate_arm_str(subnet):
             return subnet
     except ValidationError:
-        return f"/subscriptions/{sub_id}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet_name}/subnets/{subnet}"
+        return (
+            f"/subscriptions/{sub_id}/resourceGroups/{rg}/"
+            f"providers/Microsoft.Network/virtualNetworks/{vnet_name}/subnets/{subnet}"
+        )
 
 
 def replace_key_in_odict(odict: OrderedDict, old_key: Any, new_key: Any):

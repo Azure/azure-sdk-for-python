@@ -40,7 +40,7 @@ jobs:
       timeout: 60
 
     task:
-      type: function
+      type: run_function
       code: "../script_parallel"
       entry_script: tabular_run_with_model.py
       environment:

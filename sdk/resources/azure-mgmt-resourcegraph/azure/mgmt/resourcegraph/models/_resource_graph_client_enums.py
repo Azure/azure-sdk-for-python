@@ -6,44 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChangeCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The change category.
-    """
+class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The change category."""
 
     USER = "User"
     SYSTEM = "System"
 
-class ChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The change type for snapshot. PropertyChanges will be provided in case of Update change type
-    """
+
+class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The change type for snapshot. PropertyChanges will be provided in case of Update change type."""
 
     CREATE = "Create"
     UPDATE = "Update"
     DELETE = "Delete"
 
-class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Data type of a column in a table.
-    """
+
+class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data type of a column in a table."""
 
     STRING = "string"
     INTEGER = "integer"
@@ -51,36 +34,38 @@ class ColumnDataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BOOLEAN = "boolean"
     OBJECT = "object"
 
-class FacetSortOrder(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sorting order by the selected column (count by default).
-    """
+
+class FacetSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sorting order by the selected column (count by default)."""
 
     ASC = "asc"
     DESC = "desc"
 
-class PropertyChangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The property change Type
-    """
+
+class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The property change Type."""
 
     INSERT = "Insert"
     UPDATE = "Update"
     REMOVE = "Remove"
 
-class ResourcesHistoryRequestOptionsResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourcesHistoryRequestOptionsResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResourcesHistoryRequestOptionsResultFormat."""
 
     TABLE = "table"
     OBJECT_ARRAY = "objectArray"
 
-class ResultFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines in which format query result returned.
-    """
+
+class ResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines in which format query result returned."""
 
     TABLE = "table"
     OBJECT_ARRAY = "objectArray"
 
-class ResultTruncated(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether the query results are truncated.
-    """
+
+class ResultTruncated(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the query results are truncated."""
 
     TRUE = "true"
     FALSE = "false"

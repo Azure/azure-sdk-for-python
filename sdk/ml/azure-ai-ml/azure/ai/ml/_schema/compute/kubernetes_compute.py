@@ -2,13 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from marshmallow import fields
-from .compute import ComputeSchema, IdentitySchema
+
+from azure.ai.ml.constants._compute import ComputeType
+
 from ..core.fields import NestedField, StringTransformedEnum
-from azure.ai.ml.constants import ComputeType
+from .compute import ComputeSchema, IdentitySchema
 
 
 class KubernetesComputeSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.KUBERNETES], required=True)
-    namespace = fields.Str(required=True, default="default")
+    namespace = fields.Str(required=True, dump_default="default")
     properties = fields.Dict()
     identity = NestedField(IdentitySchema)

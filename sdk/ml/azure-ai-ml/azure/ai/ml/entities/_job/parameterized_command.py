@@ -2,18 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 from typing import Dict, Union
 
 from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
-from .distribution import MpiDistribution, TensorFlowDistribution, PyTorchDistribution
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
-from .resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._assets import Environment
-from ..._schema import UnionField, NestedField
-from ..._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, MPIDistributionSchema
+
+from ..._schema import NestedField, UnionField
+from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from .distribution import DistributionConfiguration, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from .job_resource_configuration import JobResourceConfiguration
 
 module_logger = logging.getLogger(__name__)
 
@@ -22,8 +24,9 @@ INPUT_BINDING_PREFIX = "AZURE_ML_INPUT_"
 OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
-class ParameterizedCommand(LoadableMixin):
-    """Command component that contains the traning command and supporting parameters for the command.
+class ParameterizedCommand:
+    """Command component that contains the training command and supporting
+    parameters for the command.
 
     :param command: Command to be executed in training.
     :type command: str
@@ -34,7 +37,7 @@ class ParameterizedCommand(LoadableMixin):
     :param environment: Environment that training job will run in.
     :type environment: Union[Environment, str]
     :param resources: Compute Resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -42,11 +45,11 @@ class ParameterizedCommand(LoadableMixin):
     def __init__(
         self,
         command: str = "",
-        resources: Union[dict, ResourceConfiguration] = None,
+        resources: Union[dict, JobResourceConfiguration] = None,
         code: str = None,
         environment_variables: Dict = None,
         distribution: Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union["Environment", str] = None,
+        environment: Union[Environment, str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -58,7 +61,9 @@ class ParameterizedCommand(LoadableMixin):
         self.resources = resources
 
     @property
-    def distribution(self) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution]:
+    def distribution(
+        self,
+    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution]:
         return self._distribution
 
     @distribution.setter
@@ -75,13 +80,13 @@ class ParameterizedCommand(LoadableMixin):
         self._distribution = value
 
     @property
-    def resources(self) -> ResourceConfiguration:
+    def resources(self) -> JobResourceConfiguration:
         return self._resources
 
     @resources.setter
     def resources(self, value):
         if isinstance(value, dict):
-            value = ResourceConfiguration(**value)
+            value = JobResourceConfiguration(**value)
         self._resources = value
 
     @classmethod
@@ -91,7 +96,7 @@ class ParameterizedCommand(LoadableMixin):
             code=sweep_job.trial.code_id,
             environment_variables=sweep_job.trial.environment_variables,
             environment=sweep_job.trial.environment_id,
-            distribution=sweep_job.trial.distribution,
-            resources=ResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
+            resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
         )
         return parameterized_command

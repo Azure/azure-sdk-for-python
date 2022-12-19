@@ -17,6 +17,9 @@ from ._generated.models import (
 )
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
+from ._api_versions import DEFAULT_VERSION
+
+_DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
 if TYPE_CHECKING:
     from typing import Any
@@ -34,7 +37,7 @@ if TYPE_CHECKING:
     )
 
 
-class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-keyword
+class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
     This client provides operations to interact with the phone numbers service
@@ -42,6 +45,10 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The credentials with which to authenticate.
+    :keyword api_version: Azure Communication Phone Number API version.
+        The default value is "2022-01-11-preview2".
+        Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
         self,
@@ -63,8 +70,10 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         self._endpoint = endpoint
         self._accepted_language = accepted_language
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
+            api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -100,14 +109,17 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
         purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
 
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
+            search_id,
             body=purchase_request,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -126,12 +138,14 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
+        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -166,7 +180,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
@@ -177,9 +191,11 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             quantity=kwargs.pop('quantity', None),
             area_code=kwargs.pop('area_code', None)
         )
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
+            polling_interval=polling_interval,
             **kwargs
         )
     @distributed_trace
@@ -204,16 +220,20 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
 
         capabilities_request = PhoneNumberCapabilitiesRequest(calling=calling, sms=sms)
 
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             body=capabilities_request,
+            calling=calling,
+            sms=sms,
+            polling_interval=polling_interval,
             **kwargs
         )
 

@@ -1,0 +1,51 @@
+type: pipeline
+
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  int_param: 10
+  data_input:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+
+outputs:
+  output1:
+  output2:
+  output3:
+
+jobs:
+  node1:
+    type: pipeline
+    inputs:
+      component_in_number: ${{parent.inputs.int_param}}
+      component_in_path: ${{parent.inputs.data_input}}
+    outputs:
+      output_path: ${{parent.outputs.output1}}
+
+    component: ../components/helloworld_pipeline_component.yml
+
+  node2:
+    type: pipeline
+    inputs:
+      component_in_number: 20
+      component_in_path:
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+        type: uri_file
+    component: ../components/helloworld_nested_pipeline_component.yml
+    outputs:
+      nested_output: ${{parent.outputs.output2}}
+
+  node3:
+    type: pipeline
+    inputs:
+      component_in_number: 30
+      component_in_path: ${{parent.jobs.node1.outputs.output_path}}
+    component: ../components/helloworld_nested_pipeline_component.yml
+    outputs:
+      nested_output: ${{parent.outputs.output3}}

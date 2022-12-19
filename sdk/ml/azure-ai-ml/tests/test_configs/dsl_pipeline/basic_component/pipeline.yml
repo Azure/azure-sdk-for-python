@@ -6,4 +6,3 @@ jobs:
     type: command
     component: file:./component.yml
     compute: azureml:cpu-cluster
-

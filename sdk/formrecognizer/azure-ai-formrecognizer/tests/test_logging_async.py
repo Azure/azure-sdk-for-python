@@ -100,7 +100,7 @@ class TestLogging(AsyncFormRecognizerTest):
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
         async with client:
-            result = await client.get_resource_info()
+            result = await client.get_resource_details()
 
         for message in mock_handler.messages:
             if message.levelname == "INFO":

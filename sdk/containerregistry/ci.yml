@@ -28,6 +28,7 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    TestProxy: true
     ServiceDirectory: containerregistry
     Artifacts:
     - name: azure-mgmt-containerregistry

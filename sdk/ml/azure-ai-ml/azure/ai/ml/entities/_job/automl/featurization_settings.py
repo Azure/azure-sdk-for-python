@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class FeaturizationSettings(RestTranslatableMixin):
-    """Base Featurization settings"""
+    """Base Featurization settings."""
 
     def __init__(
         self,
@@ -23,3 +25,7 @@ class FeaturizationSettings(RestTranslatableMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+class FeaturizationSettingsType():
+    NLP = "nlp"
+    TABULAR = "tabular"

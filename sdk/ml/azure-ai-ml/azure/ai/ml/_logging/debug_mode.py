@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
 import os
-import time
 import sys
+import time
 import traceback
-from typing import List
-import six.moves.http_client as httpclient
 from collections import namedtuple
+from typing import List
 
+import six.moves.http_client as httpclient
 
 LOG_FILE = os.path.abspath("azureml.log")
 LOG_FORMAT = "%(asctime)s|%(name)s|%(levelname)s|%(message)s"
@@ -26,7 +28,15 @@ def stack_info() -> list:
     for threadId, stack in sys._current_frames().items():
         for filename, lineno, name, line in traceback.extract_stack(stack):
             call = line.strip() if line is not None else None
-            main_stack.append({"ThreadID": threadId, "File": filename, "Line": lineno, "Name": name, "Call": call})
+            main_stack.append(
+                {
+                    "ThreadID": threadId,
+                    "File": filename,
+                    "Line": lineno,
+                    "Name": name,
+                    "Call": call,
+                }
+            )
 
     return main_stack
 
@@ -36,6 +46,7 @@ def connection_info(gc_objects: list) -> List[ConnectionInfo]:
     return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
 
 
+# pylint: disable=client-incorrect-naming-convention
 class diagnostic_log(object):
     """Directs debug logs to a specified file.
 
@@ -86,7 +97,10 @@ class diagnostic_log(object):
             # We don't want to spew to those consoles with DEBUG emissions
             n_logger.propagate = False
 
-        module_logger.info("\n\n********** STARTING CAPTURE FOR [%s] **********\n\n", self._context_name)
+        module_logger.info(
+            "\n\n********** STARTING CAPTURE FOR [%s] **********\n\n",
+            self._context_name,
+        )
         self._capturing = True
 
     def stop_capture(self) -> None:
@@ -95,7 +109,10 @@ class diagnostic_log(object):
             module_logger.warning("Debug logs are already disabled.")
             return
 
-        module_logger.info("\n\n********** STOPPING CAPTURE FOR [%s] **********\n\n", self._context_name)
+        module_logger.info(
+            "\n\n********** STOPPING CAPTURE FOR [%s] **********\n\n",
+            self._context_name,
+        )
         print("Disabling log capture. Resulting file is at {}".format(self._filename))
 
         for namespace in self._namespaces:
@@ -108,7 +125,7 @@ class diagnostic_log(object):
     def __enter__(self) -> None:
         self.start_capture()
 
-    def __exit__(self) -> None:
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         self.stop_capture()
 
 
@@ -116,7 +133,7 @@ _debugging_enabled = False
 
 
 def debug_sdk() -> None:
-    global _debugging_enabled
+    global _debugging_enabled # pylint: disable=global-statement
     if _debugging_enabled:
         module_logger.warning("Debug logs are already enabled at %s", LOG_FILE)
         return

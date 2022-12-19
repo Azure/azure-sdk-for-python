@@ -1,0 +1,10 @@
+[packaging]
+auto_update = false
+package_name = "azure-communication-email"
+package_nspkg = "azure-communication-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

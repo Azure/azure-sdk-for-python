@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,15 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._feature_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AuthorizationProfile(msrest.serialization.Model):
+class AuthorizationProfile(_serialization.Model):
     """Authorization Profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -32,28 +34,24 @@ class AuthorizationProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'requested_time': {'readonly': True},
-        'requester': {'readonly': True},
-        'requester_object_id': {'readonly': True},
-        'approved_time': {'readonly': True},
-        'approver': {'readonly': True},
+        "requested_time": {"readonly": True},
+        "requester": {"readonly": True},
+        "requester_object_id": {"readonly": True},
+        "approved_time": {"readonly": True},
+        "approver": {"readonly": True},
     }
 
     _attribute_map = {
-        'requested_time': {'key': 'requestedTime', 'type': 'iso-8601'},
-        'requester': {'key': 'requester', 'type': 'str'},
-        'requester_object_id': {'key': 'requesterObjectId', 'type': 'str'},
-        'approved_time': {'key': 'approvedTime', 'type': 'iso-8601'},
-        'approver': {'key': 'approver', 'type': 'str'},
+        "requested_time": {"key": "requestedTime", "type": "iso-8601"},
+        "requester": {"key": "requester", "type": "str"},
+        "requester_object_id": {"key": "requesterObjectId", "type": "str"},
+        "approved_time": {"key": "approvedTime", "type": "iso-8601"},
+        "approver": {"key": "approver", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AuthorizationProfile, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.requested_time = None
         self.requester = None
         self.requester_object_id = None
@@ -61,7 +59,7 @@ class AuthorizationProfile(msrest.serialization.Model):
         self.approver = None
 
 
-class ErrorDefinition(msrest.serialization.Model):
+class ErrorDefinition(_serialization.Model):
     """Error definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -75,33 +73,28 @@ class ErrorDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        details: Optional[List["ErrorDefinition"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs):
         """
         :keyword details: Internal error details.
         :paramtype details: list[~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition]
         """
-        super(ErrorDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.details = details
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response indicates that the service is not able to process the incoming request.
 
     :ivar error: The error details.
@@ -109,24 +102,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDefinition"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.resource.features.v2021_07_01.models.ErrorDefinition
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class FeatureOperationsListResult(msrest.serialization.Model):
+class FeatureOperationsListResult(_serialization.Model):
     """List of previewed features.
 
     :ivar value: The array of features.
@@ -136,16 +124,12 @@ class FeatureOperationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FeatureResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FeatureResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["FeatureResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.FeatureResult"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The array of features.
@@ -153,12 +137,12 @@ class FeatureOperationsListResult(msrest.serialization.Model):
         :keyword next_link: The URL to use for getting the next set of results.
         :paramtype next_link: str
         """
-        super(FeatureOperationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class FeatureProperties(msrest.serialization.Model):
+class FeatureProperties(_serialization.Model):
     """Information about feature.
 
     :ivar state: The registration state of the feature for the subscription.
@@ -166,24 +150,19 @@ class FeatureProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        state: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, state: Optional[str] = None, **kwargs):
         """
         :keyword state: The registration state of the feature for the subscription.
         :paramtype state: str
         """
-        super(FeatureProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.state = state
 
 
-class FeatureResult(msrest.serialization.Model):
+class FeatureResult(_serialization.Model):
     """Previewed feature information.
 
     :ivar name: The name of the feature.
@@ -197,18 +176,18 @@ class FeatureResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'FeatureProperties'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "FeatureProperties"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["FeatureProperties"] = None,
-        id: Optional[str] = None,
+        properties: Optional["_models.FeatureProperties"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
         **kwargs
     ):
@@ -222,14 +201,14 @@ class FeatureResult(msrest.serialization.Model):
         :keyword type: The resource type of the feature.
         :paramtype type: str
         """
-        super(FeatureResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
         self.id = id
         self.type = type
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Microsoft.Features operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -239,29 +218,23 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.resource.features.v2021_07_01.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Features.
@@ -273,9 +246,9 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -294,13 +267,13 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list Microsoft.Features operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Features operations.
@@ -310,29 +283,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: List of Microsoft.Features operations.
         :paramtype value: list[~azure.mgmt.resource.features.v2021_07_01.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """An Azure proxy resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -346,24 +313,20 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -386,34 +349,29 @@ class SubscriptionFeatureRegistration(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'SubscriptionFeatureRegistrationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "SubscriptionFeatureRegistrationProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["SubscriptionFeatureRegistrationProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.SubscriptionFeatureRegistrationProperties"] = None, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
          ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationProperties
         """
-        super(SubscriptionFeatureRegistration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
+class SubscriptionFeatureRegistrationList(_serialization.Model):
     """The list of subscription feature registrations.
 
     :ivar next_link: The link used to get the next page of subscription feature registrations list.
@@ -424,15 +382,15 @@ class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[SubscriptionFeatureRegistration]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SubscriptionFeatureRegistration]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["SubscriptionFeatureRegistration"]] = None,
+        value: Optional[List["_models.SubscriptionFeatureRegistration"]] = None,
         **kwargs
     ):
         """
@@ -443,12 +401,12 @@ class SubscriptionFeatureRegistrationList(msrest.serialization.Model):
         :paramtype value:
          list[~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistration]
         """
-        super(SubscriptionFeatureRegistrationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
+class SubscriptionFeatureRegistrationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """SubscriptionFeatureRegistrationProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -463,8 +421,8 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     :vartype display_name: str
     :ivar provider_namespace: The providerNamespace.
     :vartype provider_namespace: str
-    :ivar state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
-     "Registering", "Registered", "Unregistering", "Unregistered".
+    :ivar state: The state. Known values are: "NotSpecified", "NotRegistered", "Pending",
+     "Registering", "Registered", "Unregistering", and "Unregistered".
     :vartype state: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
     :ivar authorization_profile: Authorization Profile.
@@ -478,8 +436,8 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     :vartype registration_date: ~datetime.datetime
     :ivar documentation_link: The feature documentation link.
     :vartype documentation_link: str
-    :ivar approval_type: The feature approval type. Possible values include: "NotSpecified",
-     "ApprovalRequired", "AutoApproval".
+    :ivar approval_type: The feature approval type. Known values are: "NotSpecified",
+     "ApprovalRequired", and "AutoApproval".
     :vartype approval_type: str or
      ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationApprovalType
     :ivar should_feature_display_in_portal: Indicates whether feature should be displayed in
@@ -490,48 +448,48 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'tenant_id': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'feature_name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'provider_namespace': {'readonly': True},
-        'release_date': {'readonly': True},
-        'registration_date': {'readonly': True},
-        'documentation_link': {'readonly': True, 'max_length': 1000, 'min_length': 0},
-        'approval_type': {'readonly': True},
-        'description': {'max_length': 1000, 'min_length': 0},
+        "tenant_id": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "feature_name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "provider_namespace": {"readonly": True},
+        "release_date": {"readonly": True},
+        "registration_date": {"readonly": True},
+        "documentation_link": {"readonly": True, "max_length": 1000},
+        "approval_type": {"readonly": True},
+        "description": {"max_length": 1000},
     }
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'feature_name': {'key': 'featureName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'provider_namespace': {'key': 'providerNamespace', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'authorization_profile': {'key': 'authorizationProfile', 'type': 'AuthorizationProfile'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'release_date': {'key': 'releaseDate', 'type': 'iso-8601'},
-        'registration_date': {'key': 'registrationDate', 'type': 'iso-8601'},
-        'documentation_link': {'key': 'documentationLink', 'type': 'str'},
-        'approval_type': {'key': 'approvalType', 'type': 'str'},
-        'should_feature_display_in_portal': {'key': 'shouldFeatureDisplayInPortal', 'type': 'bool'},
-        'description': {'key': 'description', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "feature_name": {"key": "featureName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "provider_namespace": {"key": "providerNamespace", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "authorization_profile": {"key": "authorizationProfile", "type": "AuthorizationProfile"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "release_date": {"key": "releaseDate", "type": "iso-8601"},
+        "registration_date": {"key": "registrationDate", "type": "iso-8601"},
+        "documentation_link": {"key": "documentationLink", "type": "str"},
+        "approval_type": {"key": "approvalType", "type": "str"},
+        "should_feature_display_in_portal": {"key": "shouldFeatureDisplayInPortal", "type": "bool"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "SubscriptionFeatureRegistrationState"]] = None,
-        authorization_profile: Optional["AuthorizationProfile"] = None,
+        state: Optional[Union[str, "_models.SubscriptionFeatureRegistrationState"]] = None,
+        authorization_profile: Optional["_models.AuthorizationProfile"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        should_feature_display_in_portal: Optional[bool] = False,
+        should_feature_display_in_portal: bool = False,
         description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword state: The state. Possible values include: "NotSpecified", "NotRegistered", "Pending",
-         "Registering", "Registered", "Unregistering", "Unregistered".
+        :keyword state: The state. Known values are: "NotSpecified", "NotRegistered", "Pending",
+         "Registering", "Registered", "Unregistering", and "Unregistered".
         :paramtype state: str or
          ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistrationState
         :keyword authorization_profile: Authorization Profile.
@@ -545,7 +503,7 @@ class SubscriptionFeatureRegistrationProperties(msrest.serialization.Model):
         :keyword description: The feature description.
         :paramtype description: str
         """
-        super(SubscriptionFeatureRegistrationProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tenant_id = None
         self.subscription_id = None
         self.feature_name = None

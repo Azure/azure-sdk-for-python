@@ -1,5 +1,46 @@
 # Release History
 
+## 5.0.1 (2022-09-30)
+
+### Bugs Fixed
+  
+  - Fix paging problem about `api_version`
+
+## 5.0.0 (2022-09-19)
+
+### Features Added
+
+  - Model Resource has a new parameter system_data
+  - Model Resource has a new parameter tags
+
+### Breaking Changes
+
+  - Model Resource has a new required parameter location
+
+## 4.0.1 (2022-08-02)
+
+**Other Change**
+
+  - Fix package structure
+
+## 4.0.0 (2022-08-02)
+
+**Features**
+
+  - Added operation ActionGroupsOperations.begin_create_notifications_at_action_group_resource_level
+  - Added operation ActionGroupsOperations.begin_create_notifications_at_resource_group_level
+  - Added operation ActionGroupsOperations.get_test_notifications_at_action_group_resource_level
+  - Added operation ActionGroupsOperations.get_test_notifications_at_resource_group_level
+
+**Breaking changes**
+
+  - Model ActionGroupResource no longer has parameter identity
+  - Model ActionGroupResource no longer has parameter kind
+  - Model AzureResource no longer has parameter identity
+  - Model AzureResource no longer has parameter kind
+  - Removed operation group BaselineOperations
+  - Removed operation group MetricBaselineOperations
+
 ## 3.1.0 (2022-03-16)
 
 **Features**
