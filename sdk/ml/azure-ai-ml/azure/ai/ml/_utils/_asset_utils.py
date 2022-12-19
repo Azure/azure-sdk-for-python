@@ -392,7 +392,10 @@ def construct_remote_paths(
 
     for file_path in original_file_paths:
         local = file_path
-        remote = prefix + convert_windows_path_to_unix(os.path.relpath(file_path, source))
+        assert os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)) == os.path.relpath(file_path, source)
+        print("absolute:", os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)))
+        print("normal:", os.path.relpath(file_path, source))
+        remote = prefix + convert_windows_path_to_unix(os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)))
         upload_pairs.append((local, remote))
 
     for local, remote in upload_pairs:
