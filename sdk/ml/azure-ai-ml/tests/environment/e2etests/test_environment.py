@@ -2,15 +2,14 @@ import random
 import re
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.core.paging import ItemPaged
-
-from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture

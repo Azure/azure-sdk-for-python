@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 if TYPE_CHECKING:
-    from azure.ai.ml.entities._job.automl.image.image_classification_search_space import \
-        ImageClassificationSearchSpace
-    from azure.ai.ml.entities._job.automl.image.image_object_detection_search_space import \
-        ImageObjectDetectionSearchSpace
+    from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
+    from azure.ai.ml.entities._job.automl.image.image_object_detection_search_space import (
+        ImageObjectDetectionSearchSpace,
+    )
     from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
     from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 

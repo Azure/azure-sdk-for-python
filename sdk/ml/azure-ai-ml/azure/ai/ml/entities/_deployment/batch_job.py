@@ -16,7 +16,7 @@ class BatchJob(object):
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.name = kwargs.get("name", None)
-        self.type =  kwargs.get("type", None)
+        self.type = kwargs.get("type", None)
         self.status = kwargs.get("status", None)
 
     def _to_dict(self):

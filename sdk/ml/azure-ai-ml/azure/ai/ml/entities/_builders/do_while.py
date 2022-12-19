@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import ValidationError
 
@@ -45,7 +45,7 @@ class DoWhile(LoopNode):
         body: Pipeline,
         condition: str,
         mapping: Dict[Union[str, Output], Union[str, Input, List]],
-        limits: Union[dict, DoWhileJobLimits] = None,
+        limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -160,11 +160,11 @@ class DoWhile(LoopNode):
         self,
         *,
         max_iteration_count: int,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Set max iteration count for do while job. The range of the iteration count is (0, 1000]."""
         if isinstance(self.limits, DoWhileJobLimits):
-            self.limits._max_iteration_count = max_iteration_count # pylint: disable=protected-access
+            self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
         else:
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
 
@@ -190,16 +190,16 @@ class DoWhile(LoopNode):
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, " # pylint: disable=protected-access
+                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, "  # pylint: disable=protected-access
                     f"dowhile only accept {port_type} of the body: {self.body.name}."
                 ),
             )
-        elif port_obj is None or port_obj._name not in node_ports: # pylint: disable=protected-access
+        elif port_obj is None or port_obj._name not in node_ports:  # pylint: disable=protected-access
             # Check port is exist in dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not " # pylint: disable=protected-access
+                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not "  # pylint: disable=protected-access
                     f"exist in {self.body.name} {port_type}, existing {port_type}: {node_ports.keys()}"
                 ),
             )

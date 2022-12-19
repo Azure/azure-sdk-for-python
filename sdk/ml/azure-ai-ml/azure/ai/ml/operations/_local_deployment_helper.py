@@ -8,7 +8,8 @@ import json
 import logging
 import shutil
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -22,8 +23,8 @@ from azure.ai.ml._local_endpoints.validators.code_validator import get_code_conf
 from azure.ai.ml._local_endpoints.validators.environment_validator import get_environment_artifacts
 from azure.ai.ml._local_endpoints.validators.model_validator import get_model_artifacts
 from azure.ai.ml._scope_dependent_operations import OperationsContainer
-from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 from azure.ai.ml.entities import OnlineDeployment
@@ -133,7 +134,7 @@ class _LocalDeploymentHelper(object):
             deployments.append(_convert_container_to_deployment(container=container))
         return deployments
 
-    def delete(self, name: str, deployment_name: str = None):
+    def delete(self, name: str, deployment_name: Optional[str] = None):
         """Delete a local deployment.
 
         :param name: Name of endpoint associated with the deployment to delete.
@@ -153,8 +154,8 @@ class _LocalDeploymentHelper(object):
         endpoint_name: str,
         deployment: OnlineDeployment,
         local_endpoint_mode: LocalEndpointMode,
-        endpoint_metadata: dict = None,
-        deployment_metadata: dict = None,
+        endpoint_metadata: Optional[dict] = None,
+        deployment_metadata: Optional[dict] = None,
     ):
         """Create deployment locally using Docker.
 

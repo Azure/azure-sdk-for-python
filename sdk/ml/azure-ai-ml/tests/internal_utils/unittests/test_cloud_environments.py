@@ -9,9 +9,9 @@ from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
+    _get_registry_discovery_endpoint_from_metadata,
     _get_storage_endpoint_from_metadata,
     _set_cloud,
-    _get_registry_discovery_endpoint_from_metadata,
 )
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 

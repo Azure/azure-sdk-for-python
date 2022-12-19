@@ -4,28 +4,29 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
 
+from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    ManagedIdentityConfiguration
 )
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
+    EarlyTerminationPolicy,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
-    EarlyTerminationPolicy,
 )
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
@@ -43,14 +44,8 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import (
-    ErrorTarget,
-    UserErrorException,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
-from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
@@ -107,22 +102,25 @@ class Sweep(ParameterizedSweep, BaseNode):
     def __init__(
         self,
         *,
-        trial: Union[CommandComponent, str] = None,
-        compute: str = None,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        objective: Objective = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        trial: Optional[Union[CommandComponent, str]] = None,
+        compute: Optional[str] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
+        objective: Optional[Objective] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
         ] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Union[str, Output]] = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -174,12 +172,18 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @classmethod
     def _value_type_to_class(cls, value):
-        value_type = value['type']
+        value_type = value["type"]
         search_space_dict = {
-            SearchSpace.CHOICE: Choice, SearchSpace.RANDINT: Randint, SearchSpace.LOGNORMAL: LogNormal,
-            SearchSpace.NORMAL: Normal, SearchSpace.LOGUNIFORM: LogUniform, SearchSpace.UNIFORM: Uniform,
-            SearchSpace.QLOGNORMAL: QLogNormal, SearchSpace.QNORMAL: QNormal, SearchSpace.QLOGUNIFORM: QLogUniform,
-            SearchSpace.QUNIFORM: QUniform
+            SearchSpace.CHOICE: Choice,
+            SearchSpace.RANDINT: Randint,
+            SearchSpace.LOGNORMAL: LogNormal,
+            SearchSpace.NORMAL: Normal,
+            SearchSpace.LOGUNIFORM: LogUniform,
+            SearchSpace.UNIFORM: Uniform,
+            SearchSpace.QLOGNORMAL: QLogNormal,
+            SearchSpace.QNORMAL: QNormal,
+            SearchSpace.QLOGUNIFORM: QLogUniform,
+            SearchSpace.QUNIFORM: QUniform,
         }
         return search_space_dict[value_type](**value)
 

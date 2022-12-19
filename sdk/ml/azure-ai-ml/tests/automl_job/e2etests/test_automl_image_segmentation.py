@@ -7,6 +7,7 @@ import platform
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
@@ -17,8 +18,6 @@ from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageObjectDetectionSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.automl_test

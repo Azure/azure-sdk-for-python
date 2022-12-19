@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
+from typing import Optional
 
 from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
@@ -23,8 +24,8 @@ class CodeConfiguration(DictMixin):
 
     def __init__(
         self,
-        code: str = None,
-        scoring_script: str = None,
+        code: Optional[str] = None,
+        scoring_script: Optional[str] = None,
     ):
         self.code = code
         self._scoring_script = scoring_script

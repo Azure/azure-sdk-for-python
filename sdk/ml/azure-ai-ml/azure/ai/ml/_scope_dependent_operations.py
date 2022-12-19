@@ -71,6 +71,7 @@ class OperationScope(object):
     def registry_name(self, value: str) -> None:
         self._registry_name = value
 
+
 class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope

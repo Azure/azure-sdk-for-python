@@ -2,15 +2,14 @@ from typing import Callable
 
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.ai.ml.entities import CronTrigger, PipelineJob, AmlTokenConfiguration
+from azure.ai.ml.entities import AmlTokenConfiguration, CronTrigger, PipelineJob
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_DICT
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)

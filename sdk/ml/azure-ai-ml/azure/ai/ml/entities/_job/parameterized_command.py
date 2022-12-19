@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -45,11 +45,11 @@ class ParameterizedCommand:
     def __init__(
         self,
         command: str = "",
-        resources: Union[dict, JobResourceConfiguration] = None,
-        code: str = None,
-        environment_variables: Dict = None,
-        distribution: Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union[Environment, str] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
+        code: Optional[str] = None,
+        environment_variables: Optional[Dict] = None,
+        distribution: Optional[Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        environment: Optional[Union[Environment, str]] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

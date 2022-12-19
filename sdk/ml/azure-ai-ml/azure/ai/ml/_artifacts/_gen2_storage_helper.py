@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from colorama import Fore
 
@@ -56,7 +56,7 @@ class Gen2StorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
         """Upload a file or directory to a path inside the filesystem."""
