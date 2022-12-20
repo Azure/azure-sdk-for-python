@@ -6,18 +6,15 @@ from msrest import Serializer
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ComputeResource,
-    ImageMetadata,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, ImageMetadata
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
     ComputeInstance,
     KubernetesCompute,
+    ManagedIdentityConfiguration,
     SynapseSparkCompute,
     VirtualMachineCompute,
-    ManagedIdentityConfiguration,
 )
 
 

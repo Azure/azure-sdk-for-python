@@ -10,28 +10,40 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, \
-    AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml import (
+    AmlTokenConfiguration,
+    Input,
+    ManagedIdentityConfiguration,
+    MLClient,
+    MpiDistribution,
+    Output,
+    UserIdentityConfiguration,
+    command,
+    dsl,
+    load_component,
+    load_job,
+)
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_RESOURCE_PROVIDER,
-    InputOutputModes,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AssetTypes,
     AzureMLResourceType,
+    InputOutputModes,
 )
-from azure.ai.ml.entities import (
-    Component,
-    Data,
-    JobResourceConfiguration,
-    PipelineJob,
-)
+from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError, UnsupportedParameterKindError, MultipleValueError
+from azure.ai.ml.exceptions import (
+    MultipleValueError,
+    ParamValueNotExistsError,
+    UnsupportedParameterKindError,
+    UserErrorException,
+    ValidationException,
+)
 
 from .._util import _DSL_TIMEOUT_SECOND
 

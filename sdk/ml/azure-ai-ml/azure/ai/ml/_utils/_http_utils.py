@@ -5,7 +5,7 @@
 # pylint: disable=no-self-use
 
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from typing_extensions import Concatenate, ParamSpec, Self
 
@@ -79,16 +79,16 @@ class HttpPipeline(Pipeline):
     def __init__(
         self,
         *,
-        transport: HttpTransport = None,
-        config: Configuration = None,
-        user_agent_policy: UserAgentPolicy = None,
-        headers_policy: HeadersPolicy = None,
-        proxy_policy: ProxyPolicy = None,
-        logging_policy: NetworkTraceLoggingPolicy = None,
-        http_logging_policy: HttpLoggingPolicy = None,
-        retry_policy: RetryPolicy = None,
-        custom_hook_policy: CustomHookPolicy = None,
-        redirect_policy: RedirectPolicy = None,
+        transport: Optional[HttpTransport] = None,
+        config: Optional[Configuration] = None,
+        user_agent_policy: Optional[UserAgentPolicy] = None,
+        headers_policy: Optional[HeadersPolicy] = None,
+        proxy_policy: Optional[ProxyPolicy] = None,
+        logging_policy: Optional[NetworkTraceLoggingPolicy] = None,
+        http_logging_policy: Optional[HttpLoggingPolicy] = None,
+        retry_policy: Optional[RetryPolicy] = None,
+        custom_hook_policy: Optional[CustomHookPolicy] = None,
+        redirect_policy: Optional[RedirectPolicy] = None,
         **kwargs
     ):
         """
