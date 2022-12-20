@@ -7,7 +7,6 @@ ignore=_vendor,_generated,_restclient,samples,examples,test,tests,doc,.tox
 ignore-paths=azure\\mixedreality\\remoterendering\\_api_version.py,azure/mixedreality/remoterendering/_api_version.py
 
 load-plugins=pylint_guidelines_checker
-# pylint.extensions.docparams
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.pycqa.org/en/latest/technical_reference/features.html'
@@ -17,7 +16,8 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=locally-disabled,fixme,too-few-public-methods,import-outside-toplevel,deprecated-module,assigning-non-slot,deprecated-class,deprecated-argument,deprecated-decorator,consider-using-dict-items,consider-iterating-dictionary,signature-differs,duplicate-code,cyclic-import,consider-using-f-string, check-docstrings
+disable=locally-disabled,fixme,too-few-public-methods,import-outside-toplevel,deprecated-module,assigning-non-slot,deprecated-class,deprecated-argument,deprecated-decorator,consider-using-dict-items,consider-iterating-dictionary,signature-differs,duplicate-code,cyclic-import,consider-using-f-string,no-name-in-module,missing-module-docstring,invalid-name,check-docstrings,networking-import-outside-azure-core-transport,non-abstract-transport-import,
+name-too-long,delete-operation-wrong-return-type,async-return-async-iterable,no-raise-with-traceback,
 
 
 [FORMAT]
@@ -46,6 +46,11 @@ min-similarity-lines=10
 
 # The invalid-name checker must be **enabled** for these hints to be used.
 include-naming-hint=yes
+
+# Don't enforce snake case on attribute/variable/argument names -- could have "id" or "batch"
+attr-naming-style=any
+variable-naming-style=any
+argument-naming-style=any
 
 [TYPECHECK]
 generated-members=js.*
