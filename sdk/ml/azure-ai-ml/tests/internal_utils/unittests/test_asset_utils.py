@@ -117,7 +117,7 @@ class TestAssetUtils:
         gitignore_file: GitIgnoreFile,
         no_ignore_file: IgnoreFile,
     ) -> None:
-        source_path = os.path.abspath(storage_test_directory)
+        source_path = Path(storage_test_directory).resolve()
 
         amlignore_upload_paths = []
         gitignore_upload_paths = []
@@ -132,7 +132,7 @@ class TestAssetUtils:
         assert len(amlignore_upload_paths) == 4
 
     def test_upload_paths_match(self, storage_test_directory: str, fake_remote_prefix: str) -> None:
-        source_path = os.path.abspath(storage_test_directory)
+        source_path = Path(storage_test_directory).resolve()
         upload_paths = construct_local_and_remote_paths(source_path, dest=fake_remote_prefix)
 
         for local_path, remote_path in upload_paths:
@@ -158,7 +158,7 @@ class TestAssetUtils:
         e.g given a symlink "./other_dir/bar_link.txt" with target file "./dir/foo/bar.txt", we want to upload the
         contents of "./dir/food/bar.txt" at path "LocalUpload/<artifact hash>/other_dir/bar_link.txt" in the remote storage.
         """
-        source_path = os.path.abspath(storage_test_directory)
+        source_path = Path(storage_test_directory).resolve()
         upload_pairs = construct_local_and_remote_paths(source_path, dest=fake_remote_prefix)
 
         local_paths = [i for i, _ in upload_pairs]
