@@ -7,6 +7,7 @@
 """Contains functionality for sending telemetry to Application Insights via OpenCensus Azure Monitor Exporter."""
 
 import logging
+
 # import platform
 from os import getenv
 
@@ -53,7 +54,7 @@ class CustomDimensionsFilter(logging.Filter):
     def filter(self, record):
         """Adds the default custom_dimensions into the current log record"""
         custom_dimensions = self.custom_dimensions.copy()
-        custom_dimensions.update(getattr(record, 'custom_dimensions', {}))
+        custom_dimensions.update(getattr(record, "custom_dimensions", {}))
         record.custom_dimensions = custom_dimensions
 
         return True
@@ -68,7 +69,8 @@ def in_jupyter_notebook() -> bool:
     """
     try:  # cspell:ignore ipython
         from IPython import get_ipython
-        if 'IPKernelApp' not in get_ipython().config:
+
+        if "IPKernelApp" not in get_ipython().config:
             return False
     except ImportError:
         return False
@@ -112,30 +114,30 @@ def is_telemetry_collection_disabled():
 #         if instrumentation_key is None:
 #             instrumentation_key = INSTRUMENTATION_KEY
 
-    #     if is_telemetry_collection_disabled():
-    #         return logging.NullHandler()
+#     if is_telemetry_collection_disabled():
+#         return logging.NullHandler()
 
-    #     if not user_agent or not user_agent.lower() == USER_AGENT.lower():
-    #         return logging.NullHandler()
+#     if not user_agent or not user_agent.lower() == USER_AGENT.lower():
+#         return logging.NullHandler()
 
-    #     if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
-    #         if kwargs.get("properties")["subscription_id"] in test_subscriptions:
-    #             return logging.NullHandler()
+#     if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
+#         if kwargs.get("properties")["subscription_id"] in test_subscriptions:
+#             return logging.NullHandler()
 
-    #     child_namespace = component_name or __name__
-    #     current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
-    #     current_logger.propagate = False
-    #     current_logger.setLevel(logging.CRITICAL)
+#     child_namespace = component_name or __name__
+#     current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
+#     current_logger.propagate = False
+#     current_logger.setLevel(logging.CRITICAL)
 
-    #     custom_properties = {"PythonVersion": platform.python_version()}
-    #     custom_properties.update({"user_agent": user_agent})
-    #     if "properties" in kwargs:
-    #         custom_properties.update(kwargs.pop("properties"))
-    #     handler = AzureLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}')
-    #     current_logger.addHandler(handler)
-    #     handler.addFilter(CustomDimensionsFilter(custom_properties))
+#     custom_properties = {"PythonVersion": platform.python_version()}
+#     custom_properties.update({"user_agent": user_agent})
+#     if "properties" in kwargs:
+#         custom_properties.update(kwargs.pop("properties"))
+#     handler = AzureLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}')
+#     current_logger.addHandler(handler)
+#     handler.addFilter(CustomDimensionsFilter(custom_properties))
 
-    #     return handler
-    # except Exception: # pylint: disable=broad-except
-    #     # ignore exceptions, telemetry should not block
-    #     return logging.NullHandler()
+#     return handler
+# except Exception: # pylint: disable=broad-except
+#     # ignore exceptions, telemetry should not block
+#     return logging.NullHandler()

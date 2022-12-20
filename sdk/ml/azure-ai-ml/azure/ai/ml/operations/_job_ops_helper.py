@@ -36,7 +36,7 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: dict = None, only_streamable=True
+    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we
     left off last iteration.
@@ -173,7 +173,7 @@ def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
 def stream_logs_until_completion(
     run_operations: RunOperations,
     job_resource: JobBaseData,
-    datastore_operations: DatastoreOperations = None,
+    datastore_operations: Optional[DatastoreOperations] = None,
     raise_exception_on_failed_job=True,
     *,
     requests_pipeline: HttpPipeline

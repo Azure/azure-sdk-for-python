@@ -4,7 +4,8 @@
 import sys
 from contextlib import contextmanager
 from types import FunctionType, MethodType
-from typing import List, Union, Callable, Any
+from typing import Any, Callable, List, Optional, Union
+
 
 
 @contextmanager
@@ -53,7 +54,6 @@ def _get_output_and_locals_old(func, _all_kwargs):
         outputs = func(**_all_kwargs)
     return outputs, _locals
 
-
 class PersistentLocalsFunction(object):
     """Wrapper class for the 'persistent_locals' decorator.
 
@@ -61,7 +61,7 @@ class PersistentLocalsFunction(object):
     function.
     """
 
-    def __init__(self, _func, *, _self: Any = None, skip_locals: List[str] = None):
+    def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
         """
         :param _func: The function to be wrapped.
         :param _self: If original func is a method, _self should be provided, which is the instance of the method.
@@ -99,7 +99,7 @@ def _target_template_func(__self, mock_arg):
 
 
 try:
-    from bytecode import Instr, Bytecode
+    from bytecode import Bytecode, Instr
 
     class PersistentLocalsFunctionBuilder(object):
         def __init__(self):
@@ -150,14 +150,14 @@ try:
             pieces.append(piece)
 
             if cur_separator is not None:
-                raise ValueError('Not all template separators are used, please '
-                                 'switch to a compatible version of Python.')
+                raise ValueError("Not all template separators are used, "
+                                 "please switch to a compatible version of Python.")
             return pieces
 
         @classmethod
         def get_body_instruction(cls):
             """Get the body execution instruction in template."""
-            return Instr('LOAD_FAST', 'mock_arg')
+            return Instr("LOAD_FAST", "mock_arg")
 
         @classmethod
         def _clear_location(cls, bytecode: Bytecode) -> Bytecode:
@@ -175,10 +175,10 @@ try:
             generated_bytecode.clear()
 
             if self._injected_param in generated_bytecode.argnames:
-                raise ValueError('Injected param name {} conflicts with function args {}'.format(
+                raise ValueError("Injected param name {} conflicts with function args {}".format(
                     self._injected_param,
-                    generated_bytecode.argnames
-                ))
+                    generated_bytecode.argnames)
+                )
             generated_bytecode.argnames.insert(0, self._injected_param)
             generated_bytecode.argcount += 1  # pylint: disable=no-member
             return generated_bytecode
@@ -192,7 +192,7 @@ try:
                     Bytecode.from_code(func.__code__),
                     skip_body_instr=True
                 ),
-                self._template_separators
+                self._template_separators,
             ):
                 generated_bytecode.extend(template_piece)
                 generated_bytecode.extend(input_piece)
@@ -211,7 +211,7 @@ try:
             return PersistentLocalsFunction(
                 generated_func,
                 _self=func.__self__ if isinstance(func, MethodType) else None,
-                skip_locals=[self._injected_param]
+                skip_locals=[self._injected_param],
             )
 
         def build(self, func: Callable):
