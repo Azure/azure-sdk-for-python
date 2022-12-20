@@ -117,7 +117,6 @@ class PhoneNumbersClient(object):
 
         polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
-            search_id,
             body=purchase_request,
             polling_interval=polling_interval,
             **kwargs
@@ -231,8 +230,6 @@ class PhoneNumbersClient(object):
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             body=capabilities_request,
-            calling=calling,
-            sms=sms,
             polling_interval=polling_interval,
             **kwargs
         )
