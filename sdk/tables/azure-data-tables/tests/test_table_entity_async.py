@@ -2245,7 +2245,8 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             exclude_interactive_browser_credential=True,
             exclude_powershell_credential=True,
         )
-        client = TableServiceClient(credential=credential, endpoint=account_url, api_version="2020-12-06")
-        with pytest.raises(ClientAuthenticationError):
-            async for _ in client.list_tables():
-                pass
+        async with credential:
+            client = TableServiceClient(credential=credential, endpoint=account_url, api_version="2020-12-06")
+            with pytest.raises(ClientAuthenticationError):
+                async for _ in client.list_tables():
+                    pass
