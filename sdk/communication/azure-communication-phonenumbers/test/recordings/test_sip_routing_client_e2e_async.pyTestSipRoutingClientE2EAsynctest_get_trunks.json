@@ -97,9 +97,7 @@
           },
           "sbs2.sanitized.com": {
             "sipSignalingPort": 1123
-          },
-          "sbs1.sanitized.com": null,
-          "sbs2.sanitized.com": null
+          }
         }
       },
       "StatusCode": 200,
