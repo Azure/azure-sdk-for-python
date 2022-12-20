@@ -33,8 +33,8 @@ from azure.ai.ml._artifacts._constants import (
     UPLOAD_CONFIRMATION,
 )
 from azure.ai.ml._restclient.v2022_10_01.models import (
-    DatasetVersionData,
-    ModelVersionData,
+    DataVersionBase,
+    ModelVersion,
     ModelVersionResourceArmPaginatedResult,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
@@ -691,7 +691,7 @@ def _get_latest(
     registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersionData, DatasetVersionData]:
+) -> Union[ModelVersion, DataVersionBase]:
     """Returns the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most
