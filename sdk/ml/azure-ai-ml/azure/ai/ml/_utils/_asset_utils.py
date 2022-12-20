@@ -343,7 +343,6 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    print("target from relative path: ", target)
                     relative_path = os.path.relpath(os.path.abspath(target), os.path.abspath(source))
                     symlink_dict[file] = {
                         "target file": convert_windows_path_to_unix(relative_path),
