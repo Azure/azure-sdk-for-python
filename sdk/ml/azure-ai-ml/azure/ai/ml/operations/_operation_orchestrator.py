@@ -10,7 +10,7 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._restclient.v2021_10_01.models import UriReference
+from azure.ai.ml._restclient.v2022_10_01.models import UriReference
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,

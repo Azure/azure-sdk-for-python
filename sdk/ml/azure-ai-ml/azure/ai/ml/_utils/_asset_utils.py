@@ -32,7 +32,7 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2021_10_01.models import (
+from azure.ai.ml._restclient.v2022_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
