@@ -35,8 +35,8 @@ def mock_function_with_self(self):
 @pytest.mark.pipeline_test
 class TestPersistentLocals:
     def get_output_and_locals(self, func, injected_params):
-        from azure.ai.ml._utils._func_utils import get_output_and_locals
-        return get_output_and_locals(func, injected_params)
+        from azure.ai.ml._utils._func_utils import _get_outputs_and_locals
+        return _get_outputs_and_locals(func, injected_params)
 
     def test_simple(self):
         def mock_function(mock_arg):
@@ -92,7 +92,13 @@ class TestPersistentLocals:
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
-class TestPersistentLocalsOld(TestPersistentLocals):
+@pytest.mark.usefixtures('enable_pipeline_private_preview_features')
+class TestPersistentLocalsPrivatePreview(TestPersistentLocals):
     def get_output_and_locals(self, func, injected_params):
-        from azure.ai.ml._utils._func_utils import _get_output_and_locals_old
-        return _get_output_and_locals_old(func, injected_params)
+        from azure.ai.ml._utils._func_utils import _get_outputs_and_locals_private_preview
+        return _get_outputs_and_locals_private_preview(func, injected_params)
+
+    @pytest.fixture(scope='class')
+    def install_bytecode(self):
+        import pip
+        pip.main(['install', 'bytecode'])

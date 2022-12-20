@@ -5,7 +5,17 @@ import sys
 from contextlib import contextmanager
 from types import FunctionType, MethodType
 from typing import Any, Callable, List, Optional, Union
+import logging
 
+from azure.ai.ml._utils.utils import is_private_preview_enabled
+
+ERRORS = {
+    "not_callable": "func must be a function or a callable object",
+    "conflict_argument": "Injected param name __self conflicts with function args {}",
+    "not_all_template_separators_used": "Not all template separators are used, "
+                                        "please switch to a compatible version of Python.",
+}
+logger = logging.getLogger(__name__)
 
 
 @contextmanager
@@ -36,23 +46,23 @@ def get_func_variable_tracer(_locals_data, func_code):
     return tracer
 
 
-def _get_output_and_locals_old(func, _all_kwargs):
+def _get_outputs_and_locals(func, _all_kwargs):
     _locals = {}
 
     if not hasattr(func, '__code__'):
         if hasattr(func, '__call__'):
             func = func.__call__
         else:
-            raise TypeError('func must be a function or a callable object')
+            raise TypeError(ERRORS["not_callable"])
 
     if "__self" in func.__code__.co_varnames:
-        raise ValueError('Injected param name __self conflicts with function '
-                         'args {}'.format(list(func.__code__.co_varnames)))
+        raise ValueError(ERRORS["conflict_argument"].format(list(func.__code__.co_varnames)))
 
     func_variable_profiler = get_func_variable_tracer(_locals, func.__code__)
     with replace_sys_profiler(func_variable_profiler):
         outputs = func(**_all_kwargs)
     return outputs, _locals
+
 
 class PersistentLocalsFunction(object):
     """Wrapper class for the 'persistent_locals' decorator.
@@ -150,8 +160,7 @@ try:
             pieces.append(piece)
 
             if cur_separator is not None:
-                raise ValueError("Not all template separators are used, "
-                                 "please switch to a compatible version of Python.")
+                raise ValueError(ERRORS["not_all_template_separators_used"])
             return pieces
 
         @classmethod
@@ -175,10 +184,7 @@ try:
             generated_bytecode.clear()
 
             if self._injected_param in generated_bytecode.argnames:
-                raise ValueError("Injected param name {} conflicts with function args {}".format(
-                    self._injected_param,
-                    generated_bytecode.argnames)
-                )
+                raise ValueError(ERRORS["conflict_argument"].format(generated_bytecode.argnames))
             generated_bytecode.argnames.insert(0, self._injected_param)
             generated_bytecode.argcount += 1  # pylint: disable=no-member
             return generated_bytecode
@@ -238,13 +244,19 @@ try:
             elif hasattr(func, '__call__'):
                 func = func.__call__
             else:
-                raise TypeError('func must be a function or a callable object')
+                raise TypeError(ERRORS['not_callable'])
             return self._build_func(func)
+
+    def _get_outputs_and_locals_private_preview(func, _all_kwargs):
+        persistent_func = PersistentLocalsFunctionBuilder().build(func)
+        outputs = persistent_func(**_all_kwargs)
+        return outputs, persistent_func.locals
+
 except ImportError:
     pass
 
 
-def get_output_and_locals(func, _all_kwargs):
+def get_outputs_and_locals(func, _all_kwargs):
     """Get outputs and locals from self.func.
     Locals will be used to update node variable names.
 
@@ -255,10 +267,10 @@ def get_output_and_locals(func, _all_kwargs):
     :return: A tuple of outputs and locals.
     :rtype: typing.Tuple[typing.Dict, typing.Dict]
     """
-    try:
-        persistent_func = PersistentLocalsFunctionBuilder().build(func)
-        outputs = persistent_func(**_all_kwargs)
-        return outputs, persistent_func.locals
-    except NameError:
-        # Fallback to the old way.
-        return _get_output_and_locals_old(func, _all_kwargs)
+    if is_private_preview_enabled():
+        try:
+            return _get_outputs_and_locals_private_preview(func, _all_kwargs)
+        except NameError:
+            pass
+    # Fallback to the old way.
+    return _get_outputs_and_locals(func, _all_kwargs)

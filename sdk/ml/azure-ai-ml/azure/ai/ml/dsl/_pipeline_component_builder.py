@@ -9,7 +9,7 @@ from collections import OrderedDict
 from inspect import Parameter, signature
 from typing import Callable, Union
 
-from azure.ai.ml._utils._func_utils import get_output_and_locals
+from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
     is_private_preview_enabled,
@@ -181,7 +181,7 @@ class PipelineComponentBuilder:
         _definition_builder_stack.push(self)
 
         try:
-            outputs, _locals = get_output_and_locals(self.func, kwargs)
+            outputs, _locals = get_outputs_and_locals(self.func, kwargs)
         finally:
             _definition_builder_stack.pop()
 
