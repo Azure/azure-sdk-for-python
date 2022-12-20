@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
+from typing import List, Optional
 
 from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
 
@@ -13,10 +13,10 @@ class TargetSelector(BaseProperty):
     def __init__(
         self,
         compute_type: str,
-        instance_types: List[str] = None,
-        regions: List[str] = None,
-        my_resource_only: bool = None,
-        allow_spot_vm: bool = None,
+        instance_types: Optional[List[str]] = None,
+        regions: Optional[List[str]] = None,
+        my_resource_only: Optional[bool] = None,
+        allow_spot_vm: Optional[bool] = None,
         **kwargs,
     ):
         """

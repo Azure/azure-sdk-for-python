@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-import msrest.serialization
 from azure.core import CaseInsensitiveEnumMeta
+from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -375,7 +375,7 @@ class SentimentSkill(SearchIndexerSkill):
         return None
 
 
-class AnalyzeTextOptions(msrest.serialization.Model):
+class AnalyzeTextOptions(_serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
 
     All required parameters must be populated in order to send to Azure.
@@ -665,7 +665,7 @@ class PatternTokenizer(LexicalTokenizer):
         )
 
 
-class SearchResourceEncryptionKey(msrest.serialization.Model):
+class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
@@ -749,7 +749,7 @@ class SearchResourceEncryptionKey(msrest.serialization.Model):
         )
 
 
-class SynonymMap(msrest.serialization.Model):
+class SynonymMap(_serialization.Model):
     """Represents a synonym map definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -828,7 +828,7 @@ class SynonymMap(msrest.serialization.Model):
         )
 
 
-class SearchIndexerDataSourceConnection(msrest.serialization.Model):
+class SearchIndexerDataSourceConnection(_serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.

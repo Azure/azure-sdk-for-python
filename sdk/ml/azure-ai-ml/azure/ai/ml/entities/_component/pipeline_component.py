@@ -8,7 +8,7 @@ import json
 import logging
 import typing
 from collections import Counter
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -62,15 +62,15 @@ class PipelineComponent(Component):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        jobs: Dict[str, BaseNode] = None,
-        is_deterministic: bool = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        jobs: Optional[Dict[str, BaseNode]] = None,
+        is_deterministic: Optional[bool] = None,
         **kwargs,
     ):
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE

@@ -4,6 +4,7 @@ from enum import Enum as PyEnum
 from io import StringIO
 
 import pytest
+from test_utilities.utils import omit_with_wildcard
 
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import IOConstants
@@ -12,7 +13,6 @@ from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_group
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import UnexpectedAttributeError, UserErrorException
-from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 

@@ -19,6 +19,8 @@ USAGE:
     3) AZURE_CONVERSATIONS_PROJECT_NAME         - project name for your existing CLU conversations project
 """
 
+import uuid
+
 
 def sample_export_project():
     import os
@@ -46,15 +48,13 @@ def sample_export_project():
     return exported_project
 
 
-def sample_import_project(exported_project):
+def sample_import_project(exported_project, project_name):
     import os
-    import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    project_name = "test_project" + str(uuid.uuid4())
 
     print(f"Importing project as '{project_name}'")
     client = ConversationAuthoringClient(
@@ -135,11 +135,12 @@ def sample_delete_project(project_name):
 
 
 if __name__ == '__main__':
+    project_name = "test_project" + str(uuid.uuid4())
     try:
         print("Exporting project...")
         project = sample_export_project()
         print("Importing project...")
-        project_name = sample_import_project(project)
+        project_name = sample_import_project(project, project_name)
         print("Training model...")
         sample_train_model(project_name)
         print("Deploying model...")

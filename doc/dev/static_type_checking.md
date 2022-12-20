@@ -109,10 +109,10 @@ given the expressiveness of Python as a language. So, in practice, what should y
    type checker, follow the steps per [PEP 561](https://mypy.readthedocs.io/en/stable/installed_packages.html#creating-pep-561-compatible-packages) below:
 
     - add an empty `py.typed` file to your package directory. E.g. `.../sdk/azure-core/azure/core/py.typed`
-    - include the `py.typed` file in the
+    - include the path to the `py.typed` in the
       MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
       This is important as it ensures the `py.typed` is included in both the sdist/bdist.
-    - include `py.typed` under `package_data` in your setup.py (`package_data={"azure.core": ["py.typed"]}`).
+    - set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` in the setup.py.
       Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests

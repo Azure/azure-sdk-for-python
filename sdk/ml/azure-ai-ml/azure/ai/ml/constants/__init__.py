@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._common import AssetTypes, InputOutputModes, ModelType, TimeZone, Scope
+from ._common import AssetTypes, InputOutputModes, ModelType, Scope, TimeZone
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import (
@@ -14,10 +14,10 @@ from ._job import (
     ImageObjectDetectionModelNames,
     ImportSourceType,
     JobType,
-    NlpModels,
     NlpLearningRateScheduler,
+    NlpModels,
 )
-from ._registry import StorageAccountType, AcrAccountSku
+from ._registry import AcrAccountSku, StorageAccountType
 from ._workspace import ManagedServiceIdentityType
 
 __all__ = [

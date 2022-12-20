@@ -1,5 +1,11 @@
 # Azure App Configuration client library for Python (conda)
 
+## 2022.12.01
+
+### Packages included
+
+- azure-appconfiguration-1.3.0
+
 ## 2022.09.01
 
 ### Packages included

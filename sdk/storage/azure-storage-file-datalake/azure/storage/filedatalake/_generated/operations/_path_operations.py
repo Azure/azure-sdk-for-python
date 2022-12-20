@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -643,6 +644,9 @@ def build_flush_data_request(
     content_length: Optional[int] = None,
     content_md5: Optional[bytes] = None,
     lease_id: Optional[str] = None,
+    lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+    lease_duration: Optional[int] = None,
+    proposed_lease_id: Optional[str] = None,
     cache_control: Optional[str] = None,
     content_type_parameter: Optional[str] = None,
     content_disposition: Optional[str] = None,
@@ -691,6 +695,12 @@ def build_flush_data_request(
         _headers["x-ms-content-md5"] = _SERIALIZER.header("content_md5", content_md5, "bytearray")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if lease_action is not None:
+        _headers["x-ms-lease-action"] = _SERIALIZER.header("lease_action", lease_action, "str")
+    if lease_duration is not None:
+        _headers["x-ms-lease-duration"] = _SERIALIZER.header("lease_duration", lease_duration, "int")
+    if proposed_lease_id is not None:
+        _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
     if cache_control is not None:
         _headers["x-ms-cache-control"] = _SERIALIZER.header("cache_control", cache_control, "str")
     if content_type_parameter is not None:
@@ -735,6 +745,9 @@ def build_append_data_request(
     transactional_content_hash: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
     lease_id: Optional[str] = None,
+    lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+    lease_duration: Optional[int] = None,
+    proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
@@ -780,6 +793,12 @@ def build_append_data_request(
         )
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if lease_action is not None:
+        _headers["x-ms-lease-action"] = _SERIALIZER.header("lease_action", lease_action, "str")
+    if lease_duration is not None:
+        _headers["x-ms-lease-duration"] = _SERIALIZER.header("lease_duration", lease_duration, "int")
+    if proposed_lease_id is not None:
+        _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
@@ -1025,7 +1044,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1289,7 +1313,12 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1468,7 +1497,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1599,7 +1633,12 @@ class PathOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1789,7 +1828,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1913,7 +1957,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2027,7 +2076,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2154,7 +2208,12 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2218,6 +2277,9 @@ class PathOperations:
         retain_uncommitted_data: Optional[bool] = None,
         close: Optional[bool] = None,
         content_length: Optional[int] = None,
+        lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+        lease_duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -2262,6 +2324,19 @@ class PathOperations:
          Data".  Must be the length of the request content in bytes for "Append Data". Default value is
          None.
         :type content_length: int
+        :param lease_action: Optional. If "acquire" it will acquire the lease. If "auto-renew" it will
+         renew the lease. If "release" it will release the lease only on flush. If "acquire-release" it
+         will acquire & complete the operation & release the lease once operation is done. Known values
+         are: "acquire", "auto-renew", "release", and "acquire-release". Default value is None.
+        :type lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
+        :param lease_duration: The lease duration is required to acquire a lease, and specifies the
+         duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or -1
+         for infinite lease. Default value is None.
+        :type lease_duration: int
+        :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
+         400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -2282,7 +2357,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2333,6 +2413,9 @@ class PathOperations:
             content_length=content_length,
             content_md5=_content_md5,
             lease_id=_lease_id,
+            lease_action=lease_action,
+            lease_duration=lease_duration,
+            proposed_lease_id=proposed_lease_id,
             cache_control=_cache_control,
             content_type_parameter=_content_type_parameter,
             content_disposition=_content_disposition,
@@ -2382,6 +2465,7 @@ class PathOperations:
         response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-key-sha256")
         )
+        response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -2396,6 +2480,9 @@ class PathOperations:
         timeout: Optional[int] = None,
         content_length: Optional[int] = None,
         transactional_content_crc64: Optional[bytes] = None,
+        lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+        lease_duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         flush: Optional[bool] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
@@ -2428,6 +2515,19 @@ class PathOperations:
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
         :type transactional_content_crc64: bytes
+        :param lease_action: Optional. If "acquire" it will acquire the lease. If "auto-renew" it will
+         renew the lease. If "release" it will release the lease only on flush. If "acquire-release" it
+         will acquire & complete the operation & release the lease once operation is done. Known values
+         are: "acquire", "auto-renew", "release", and "acquire-release". Default value is None.
+        :type lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
+        :param lease_duration: The lease duration is required to acquire a lease, and specifies the
+         duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or -1
+         for infinite lease. Default value is None.
+        :type lease_duration: int
+        :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
+         400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
@@ -2448,7 +2548,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2481,6 +2586,9 @@ class PathOperations:
             transactional_content_hash=_transactional_content_hash,
             transactional_content_crc64=transactional_content_crc64,
             lease_id=_lease_id,
+            lease_action=lease_action,
+            lease_duration=lease_duration,
+            proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
@@ -2526,6 +2634,7 @@ class PathOperations:
         response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-key-sha256")
         )
+        response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -2565,7 +2674,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -2645,7 +2759,12 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

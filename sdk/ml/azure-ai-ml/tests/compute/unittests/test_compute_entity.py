@@ -6,15 +6,15 @@ from msrest import Serializer
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, ImageMetadata
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
     ComputeInstance,
     KubernetesCompute,
+    ManagedIdentityConfiguration,
     SynapseSparkCompute,
     VirtualMachineCompute,
-    ManagedIdentityConfiguration,
 )
 
 
@@ -153,6 +153,35 @@ class TestComputeEntity:
         )
         assert compute_instance.last_operation == compute_instance2.last_operation
         assert compute_instance.services == compute_instance2.services
+
+    def test_compute_instance_with_image_metadata(self):
+        os_image_metadata = ImageMetadata(
+            current_image_version="22.08.19",
+            latest_image_version="22.08.20",
+            is_latest_os_image_version=False,
+        )
+        compute_instance: ComputeInstance = load_compute(
+            "tests/test_configs/compute/compute-ci-unit.yaml"
+        )
+        compute_resource = compute_instance._to_rest_object()
+        compute_resource.properties.properties.os_image_metadata = os_image_metadata
+        compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(
+            compute_resource
+        )
+        os_image_metadata2 = compute_instance2.os_image_metadata
+        assert os_image_metadata2 is not None
+        assert (
+            os_image_metadata2.current_image_version
+            == os_image_metadata.current_image_version
+        )
+        assert (
+            os_image_metadata2.latest_image_version
+            == os_image_metadata.latest_image_version
+        )
+        assert (
+            os_image_metadata2.is_latest_os_image_version
+            == os_image_metadata.is_latest_os_image_version
+        )
 
     def test_compute_instance_schedules_from_yaml(self):
         compute_instance: ComputeInstance = load_compute(

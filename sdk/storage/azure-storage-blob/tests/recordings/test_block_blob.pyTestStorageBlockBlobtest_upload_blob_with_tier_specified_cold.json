@@ -1,0 +1,112 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer5a35312b?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "x-ms-version": "2021-12-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "ETag": "\u00220x8DA87C5FD7C5808\u0022",
+        "Last-Modified": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-12-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainersource15a35312b?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 27 Aug 2022 00:49:26 GMT",
+        "x-ms-version": "2021-12-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "ETag": "\u00220x8DA87C5FD861C55\u0022",
+        "Last-Modified": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-12-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer5a35312b/blob5a35312b",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-access-tier": "Cold",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-date": "Sat, 27 Aug 2022 00:49:26 GMT",
+        "x-ms-version": "2021-12-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-MD5": "1B2M2Y8AsgTpgAmY7PhCfg==",
+        "Date": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "ETag": "\u00220x8DA87C5FD8E6A53\u0022",
+        "Last-Modified": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-content-crc64": "AAAAAAAAAAA=",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer5a35312b/blob5a35312b",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 27 Aug 2022 00:49:26 GMT",
+        "x-ms-version": "2021-12-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "0",
+        "Content-MD5": "1B2M2Y8AsgTpgAmY7PhCfg==",
+        "Content-Type": "application/octet-stream",
+        "Date": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "ETag": "\u00220x8DA87C5FD8E6A53\u0022",
+        "Last-Modified": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "x-ms-access-tier": "Cold",
+        "x-ms-access-tier-change-time": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Sat, 27 Aug 2022 00:49:25 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-12-02"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

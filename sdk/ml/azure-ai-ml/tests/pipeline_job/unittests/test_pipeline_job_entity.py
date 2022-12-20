@@ -6,15 +6,15 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
-from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
+from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, load_job, load_component, dsl
-from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml import MLClient, dsl, load_component, load_job
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import Spark
 from azure.ai.ml.entities._job.automl.image import (
@@ -25,6 +25,7 @@ from azure.ai.ml.entities._job.automl.image import (
 )
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import ValidationException
 
@@ -1464,3 +1465,27 @@ class TestPipelineJobEntity:
         assert "boolean" in rest_obj.properties.inputs
         assert "number" in rest_obj.properties.inputs
         assert "str_param" in rest_obj.properties.inputs
+
+    def test_pipeline_input_as_runsettings_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="Set pipeline input to runsettings",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, shm_size: str):
+            component = input_types_func(component_in_string=str_param,
+                                         component_in_ranged_integer=integer,
+                                         component_in_boolean=boolean,
+                                         component_in_ranged_number=number)
+            component.resources = JobResourceConfiguration(
+                instance_count=integer,
+                shm_size=shm_size,
+            )
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", shm_size="20g")
+        rest_obj = pipeline._to_rest_object()
+        expect_resource = {'instance_count': '${{parent.inputs.integer}}', 'shm_size': '${{parent.inputs.shm_size}}'}
+        assert rest_obj.properties.jobs["component"]["resources"] == expect_resource

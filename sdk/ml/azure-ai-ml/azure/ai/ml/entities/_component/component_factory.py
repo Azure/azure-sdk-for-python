@@ -4,16 +4,12 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Tuple, Dict
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._utils.utils import is_internal_components_enabled
-from azure.ai.ml.constants._common import (
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY,
-)
+from azure.ai.ml.constants._common import SOURCE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
@@ -22,8 +18,7 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._util import extract_label
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._util import get_type_from_spec
 
 
 class _ComponentFactory:
@@ -65,35 +60,11 @@ class _ComponentFactory:
             create_schema_func=SparkComponent._create_schema_for_validation,
         )
 
-    def get_create_funcs(
-        self, _type: str, *, schema: str = None
-    ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
+    def get_create_funcs(self, yaml_spec: dict) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
         """Get registered functions to create instance & its corresponding
         schema for the given type."""
 
-        from azure.ai.ml._utils.utils import try_enable_internal_components
-
-        try_enable_internal_components()
-
-        _type, _ = extract_label(_type)
-        if _type not in self._create_instance_funcs:
-            if (
-                schema
-                and not is_internal_components_enabled()
-                and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-            ):
-                msg = (
-                    f"Internal components is a private feature in v2, please set environment variable "
-                    f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
-                )
-            else:
-                msg = f"Unsupported component type: {_type}."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+        _type = get_type_from_spec(yaml_spec, valid_keys=self._create_instance_funcs)
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]
         return create_instance_func, create_schema_func
@@ -117,7 +88,7 @@ class _ComponentFactory:
         self._create_schema_funcs[_type] = create_schema_func
 
     @classmethod
-    def load_from_dict(cls, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
+    def load_from_dict(cls, *, data: Dict, context: Dict, _type: Optional[str] = None, **kwargs) -> Component:
         """Load a component from a yaml dict.
 
         param data: the yaml dict. type data: Dict param context: the
@@ -134,7 +105,7 @@ class _ComponentFactory:
         )
 
     @classmethod
-    def load_from_rest(cls, *, obj: ComponentVersionData, _type: str = None) -> Component:
+    def load_from_rest(cls, *, obj: ComponentVersionData, _type: Optional[str] = None) -> Component:
         """Load a component from a rest object.
 
         param obj: the rest object. type obj: ComponentVersionData param

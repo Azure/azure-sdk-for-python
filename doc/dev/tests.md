@@ -23,6 +23,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
         - [Write your tests](#write-your-tests)
         - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
         - [Run and record tests](#run-and-record-tests)
+        - [Run tests with out-of-repo recordings](#run-tests-with-out-of-repo-recordings)
         - [Sanitize secrets](#sanitize-secrets)
             - [Special case: SAS tokens](#special-case-sas-tokens)
     - [Functional vs. unit tests](#functional-vs-unit-tests)
@@ -365,6 +366,54 @@ recording in this folder will be a `.json` file that captures the HTTP traffic t
 matching the file's name. If you set the `AZURE_TEST_RUN_LIVE` environment variable to "false" and re-run tests, they
 should pass again -- this time, in playback mode (i.e. without making actual HTTP requests).
 
+### Run tests with out-of-repo recordings
+
+If the package being tested stores its recordings outside the `azure-sdk-for-python` repository -- i.e. the
+[recording migration guide][recording_move] has been followed and the package contains an `assets.json` file -- there
+won't be a `recordings` folder in the `tests` directory. Instead, the package's `assets.json` file will point to a tag
+in the `azure-sdk-assets` repository that contains the recordings. This is the preferred recording configuration.
+
+Running live or playback tests is the same in this configuration as it was in the previous section. The only changes are
+to the process of updating recordings.
+
+#### Update test recordings
+
+Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
+`AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
+`azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
+the repo.
+
+The `.assets` folder contains one or more directories with random names, which each are a git directory containing
+recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
+recording updates you've made.
+
+To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
+file lists a package name on each line, followed by the recording directory name; for example:
+```
+sdk/{service}/{package}/assets.json;2Km2Z8755;python/{service}/{package}_<10-character-commit-SHA>
+```
+The recording directory in this case is `2Km2Z8755`, the string between the two semicolons.
+
+After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
+script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
+a verb and a **relative** path to your package's `assets.json` file. For example, from the root of the
+`azure-sdk-for-python` repo:
+```
+python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
+```
+
+The verbs that can be provided to this script are "push", "restore", and "reset":
+- **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+- **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
+- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
+
+After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
+contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the
+upstream repo.
+
+More details about the recording management commands and management script are documented in
+[`manage_recordings.py`][manage_recordings].
+
 ### Sanitize secrets
 
 The `.json` files created from running tests in live mode can include authorization details, account names, shared
@@ -665,6 +714,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
 [kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
 
+[manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
@@ -676,6 +726,8 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]:https://github.com/theskumar/python-dotenv
+
+[recording_move]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
 
 [test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme

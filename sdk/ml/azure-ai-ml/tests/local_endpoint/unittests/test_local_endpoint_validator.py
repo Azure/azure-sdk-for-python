@@ -16,6 +16,7 @@ from azure.ai.ml.entities._assets import Code, Model
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
 from azure.ai.ml.exceptions import CloudArtifactsNotSupportedError, RequiredLocalArtifactsNotFoundError
 
+
 @pytest.fixture
 def code_operations():
     return Mock()

@@ -9,18 +9,19 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 class NlpFixedParameters(RestTranslatableMixin):
     """Object to house fixed parameters for NLP jobs."""
+
     def __init__(
-            self,
-            *,
-            gradient_accumulation_steps: Optional[int] = None,
-            learning_rate: Optional[float] = None,
-            learning_rate_scheduler: Optional[str] = None,
-            model_name: Optional[str] = None,
-            number_of_epochs: Optional[int] = None,
-            training_batch_size: Optional[int] = None,
-            validation_batch_size: Optional[int] = None,
-            warmup_ratio: Optional[float] = None,
-            weight_decay: Optional[float] = None,
+        self,
+        *,
+        gradient_accumulation_steps: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[str] = None,
+        model_name: Optional[str] = None,
+        number_of_epochs: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_ratio: Optional[float] = None,
+        weight_decay: Optional[float] = None,
     ):
         self.gradient_accumulation_steps = gradient_accumulation_steps
         self.learning_rate = learning_rate
@@ -42,7 +43,7 @@ class NlpFixedParameters(RestTranslatableMixin):
             training_batch_size=self.training_batch_size,
             validation_batch_size=self.validation_batch_size,
             warmup_ratio=self.warmup_ratio,
-            weight_decay=self.weight_decay
+            weight_decay=self.weight_decay,
         )
 
     @classmethod
@@ -56,7 +57,7 @@ class NlpFixedParameters(RestTranslatableMixin):
             training_batch_size=obj.training_batch_size,
             validation_batch_size=obj.validation_batch_size,
             warmup_ratio=obj.warmup_ratio,
-            weight_decay=obj.weight_decay
+            weight_decay=obj.weight_decay,
         )
 
     def __eq__(self, other: object):
