@@ -23,7 +23,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1682ms"
+        "X-Processing-Time": "2453ms"
       },
       "ResponseBody": {
         "phoneNumbers": [
@@ -373,8 +373,8 @@
             "countryCode": "US",
             "phoneNumberType": "tollFree",
             "capabilities": {
-              "calling": "inbound",
-              "sms": "outbound"
+              "calling": "outbound",
+              "sms": "inbound\u002Boutbound"
             },
             "assignmentType": "application",
             "purchaseDate": "2021-06-23T23:31:24.7610118\u002B00:00",
