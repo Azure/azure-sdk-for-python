@@ -111,7 +111,10 @@ class IgnoreFile(object):
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
-            file_path = os.path.relpath(os.path.abspath(file_path), os.path.abspath(ignore_dirname))
+            if callable(hasattr(Path(object), "relative_to")):
+                file_path = file_path.relative_to(ignore_dirname)
+            else:
+                file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -343,7 +346,11 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    relative_path = os.path.relpath(os.path.abspath(target), os.path.abspath(source))
+                    if callable(hasattr(Path(object), "relative_to")):
+                        relative_path = target.relative_to(source)
+                    else:
+                        relative_path = os.path.relpath(target, source)
+
                     symlink_dict[file] = {
                         "target file": convert_windows_path_to_unix(relative_path),
                         "directory": False
@@ -393,7 +400,12 @@ def construct_remote_paths(
 
     for file_path in original_file_paths:
         local = file_path
-        relative_path = os.path.relpath(os.path.abspath(file_path), os.path.abspath(source))
+
+        if callable(hasattr(Path(object), "relative_to")):
+            relative_path = file_path.relative_to(source)
+        else:
+            relative_path = os.path.relpath(file_path, source)
+
         remote = prefix + convert_windows_path_to_unix(relative_path)
         upload_pairs.append((local, remote))
 
@@ -452,7 +464,7 @@ def construct_local_and_remote_paths(
     :return: List of tuples each containing a validated local path and a remote upload path for each file
     :rtype: List[Tuple[str, str]]
     """
-    source_path = os.path.abspath(source)
+    source_path = Path(source).resolve()
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
@@ -608,7 +620,7 @@ def upload_directory(
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: None
     """
-    source_path = os.path.abspath(source)
+    source_path = Path(source).resolve()
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
