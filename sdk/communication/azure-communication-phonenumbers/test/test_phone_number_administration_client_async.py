@@ -360,7 +360,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert len(items) > 0      
 
     @recorded_by_proxy_async
-    async def test_list_localities_with_administrative_division_and_managed_identity(self):
+    async def test_list_localities_with_ad_and_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             localities = phone_number_client.list_available_localities("US")
@@ -373,7 +373,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert len(items) > 0 
 
     @recorded_by_proxy_async
-    async def test_list_localities_with_administrative_division(self):
+    async def test_list_localities_with_ad(self):
         async with self.phone_number_client:
             localities = self.phone_number_client.list_available_localities("US")
             async for first_locality in localities:

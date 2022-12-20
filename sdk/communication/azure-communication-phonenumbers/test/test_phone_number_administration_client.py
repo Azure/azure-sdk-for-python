@@ -307,14 +307,14 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert localities.next()  
 
     @recorded_by_proxy
-    def test_list_localities_with_administrative_division_from_managed_identity(self):
+    def test_list_localities_with_ad_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
         first_locality = phone_number_client.list_available_localities("US")
         localities = phone_number_client.list_available_localities("US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
         assert localities.next() 
 
     @recorded_by_proxy
-    def test_list_localities_with_administrative_division(self):
+    def test_list_localities_with_ad(self):
         first_locality = self.phone_number_client.list_available_localities("US")
         localities = self.phone_number_client.list_available_localities("US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
         assert localities.next()          
