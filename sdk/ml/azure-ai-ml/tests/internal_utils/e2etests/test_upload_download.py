@@ -6,6 +6,8 @@ from pathlib import Path, PurePath
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml._artifacts._artifact_utilities import _update_metadata
@@ -17,10 +19,6 @@ from azure.ai.ml._utils._asset_utils import _parse_name_version, get_object_hash
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
-
-from devtools_testutils import AzureRecordedTestCase, is_live
-
-from test_utilities.utils import sleep_if_live
 
 container_name = "testblob"
 file_share_name = "testfileshare"

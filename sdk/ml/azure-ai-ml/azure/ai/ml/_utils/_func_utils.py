@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 from types import FunctionType, MethodType
-from typing import List, Union, Callable, Any
+from typing import Any, Callable, List, Optional, Union
 
-from bytecode import Instr, Bytecode
+from bytecode import Bytecode, Instr
 
 
 class PersistentLocalsFunction(object):
@@ -15,7 +15,7 @@ class PersistentLocalsFunction(object):
     function.
     """
 
-    def __init__(self, _func, *, _self: Any = None, skip_locals: List[str] = None):
+    def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
         """
         :param _func: The function to be wrapped.
         :param _self: If original func is a method, _self should be provided, which is the instance of the method.
@@ -101,13 +101,13 @@ class PersistentLocalsFunctionBuilder(object):
         pieces.append(piece)
 
         if cur_separator is not None:
-            raise ValueError('Not all template separators are used, please switch to a compatible version of Python.')
+            raise ValueError("Not all template separators are used, please switch to a compatible version of Python.")
         return pieces
 
     @classmethod
     def get_body_instruction(cls):
         """Get the body execution instruction in template."""
-        return Instr('LOAD_FAST', 'mock_arg')
+        return Instr("LOAD_FAST", "mock_arg")
 
     @classmethod
     def _clear_location(cls, bytecode: Bytecode) -> Bytecode:
@@ -125,10 +125,11 @@ class PersistentLocalsFunctionBuilder(object):
         generated_bytecode.clear()
 
         if self._injected_param in generated_bytecode.argnames:
-            raise ValueError('Injected param name {} conflicts with function args {}'.format(
-                self._injected_param,
-                generated_bytecode.argnames
-            ))
+            raise ValueError(
+                "Injected param name {} conflicts with function args {}".format(
+                    self._injected_param, generated_bytecode.argnames
+                )
+            )
         generated_bytecode.argnames.insert(0, self._injected_param)
         generated_bytecode.argcount += 1  # pylint: disable=no-member
         return generated_bytecode
@@ -138,11 +139,8 @@ class PersistentLocalsFunctionBuilder(object):
 
         for template_piece, input_piece, separator in zip(
             self._template_body,
-            self.split_bytecode(
-                Bytecode.from_code(func.__code__),
-                skip_body_instr=True
-            ),
-            self._template_separators
+            self.split_bytecode(Bytecode.from_code(func.__code__), skip_body_instr=True),
+            self._template_separators,
         ):
             generated_bytecode.extend(template_piece)
             generated_bytecode.extend(input_piece)
@@ -152,16 +150,12 @@ class PersistentLocalsFunctionBuilder(object):
 
         generated_code = generated_bytecode.to_code()
         generated_func = FunctionType(
-            generated_code,
-            func.__globals__,
-            func.__name__,
-            func.__defaults__,
-            func.__closure__
+            generated_code, func.__globals__, func.__name__, func.__defaults__, func.__closure__
         )
         return PersistentLocalsFunction(
             generated_func,
             _self=func.__self__ if isinstance(func, MethodType) else None,
-            skip_locals=[self._injected_param]
+            skip_locals=[self._injected_param],
         )
 
     def build(self, func: Callable):
@@ -170,10 +164,10 @@ class PersistentLocalsFunctionBuilder(object):
         """
         if isinstance(func, (FunctionType, MethodType)):
             pass
-        elif hasattr(func, '__call__'):
+        elif hasattr(func, "__call__"):
             func = func.__call__
         else:
-            raise TypeError('func must be a function or a callable object')
+            raise TypeError("func must be a function or a callable object")
         return self._build_func(func)
 
 

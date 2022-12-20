@@ -7,6 +7,10 @@
 
 ### Bugs Fixed
 - Fixed print on Command objects when job id is empty
+- Fixed issue with date-time format for utc_time_created field when creating models.
+- Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
+- Improved intellisense with VS Code for fields supporting local paths and datastores.
+- Fixed print on Command objects when job id is empty
 
 ## 1.2.0 (2022-12-05)
 

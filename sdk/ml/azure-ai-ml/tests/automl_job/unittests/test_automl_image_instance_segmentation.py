@@ -19,10 +19,7 @@ from azure.ai.ml.automl import image_instance_segmentation
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import (
-    ImageInstanceSegmentationJob,
-    ImageModelSettingsObjectDetection
-)
+from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageModelSettingsObjectDetection
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 

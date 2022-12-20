@@ -7,7 +7,7 @@
 
 import math
 from inspect import Parameter
-from typing import Dict, Union, overload
+from typing import Dict, Optional, Union, overload
 
 from typing_extensions import Literal
 
@@ -61,10 +61,10 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: Literal["uri_folder"] = "uri_folder",
-        path: str = None,
-        mode: str = None,
-        optional: bool = None,
-        description: str = None,
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        optional: Optional[bool] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         """Initialize an input.
@@ -95,11 +95,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: Literal["number"] = "number",
-        default: float = None,
-        min: float = None,
-        max: float = None,
-        optional: bool = None,
-        description: str = None,
+        default: Optional[float] = None,
+        min: Optional[float] = None,
+        max: Optional[float] = None,
+        optional: Optional[bool] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         """Initialize a number input.
@@ -125,11 +125,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: Literal["integer"] = "integer",
-        default: int = None,
-        min: int = None,
-        max: int = None,
-        optional: bool = None,
-        description: str = None,
+        default: Optional[int] = None,
+        min: Optional[int] = None,
+        max: Optional[int] = None,
+        optional: Optional[bool] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         """Initialize an integer input.
@@ -155,9 +155,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: Literal["string"] = "string",
-        default: str = None,
-        optional: bool = None,
-        description: str = None,
+        default: Optional[str] = None,
+        optional: Optional[bool] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         """Initialize a string input.
@@ -179,9 +179,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: Literal["boolean"] = "boolean",
-        default: bool = None,
-        optional: bool = None,
-        description: str = None,
+        default: Optional[bool] = None,
+        optional: Optional[bool] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         """Initialize a bool input.
@@ -202,15 +202,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self,
         *,
         type: str = "uri_folder",
-        path: str = None,
-        mode: str = None,
-        default: Union[str, int, float, bool] = None,
-        optional: bool = None,
-        min: Union[int, float] = None,
-        max: Union[int, float] = None,
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        default: Optional[Union[str, int, float, bool]] = None,
+        optional: Optional[bool] = None,
+        min: Optional[Union[int, float]] = None,
+        max: Optional[Union[int, float]] = None,
         enum=None,
-        description: str = None,
-        datastore: str = None,
+        description: Optional[str] = None,
+        datastore: Optional[str] = None,
         **kwargs,
     ):
         super(Input, self).__init__(type=type)

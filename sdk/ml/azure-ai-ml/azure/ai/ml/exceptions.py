@@ -4,7 +4,7 @@
 
 import logging
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from azure.core.exceptions import AzureError
 
@@ -597,7 +597,7 @@ class LocalEndpointNotFoundError(MLException):
     def __init__(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -703,7 +703,7 @@ class CloudArtifactsNotSupportedError(MLException):
         self,
         endpoint_name: str,
         invalid_artifact: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -732,7 +732,7 @@ class RequiredLocalArtifactsNotFoundError(MLException):
         endpoint_name: str,
         required_artifact: str,
         required_artifact_type: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (

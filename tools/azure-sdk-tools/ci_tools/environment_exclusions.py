@@ -129,8 +129,6 @@ PYRIGHT_OPT_OUT = [
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
@@ -206,8 +204,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
@@ -271,7 +267,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-synapse-spark",
     "azure-data-tables",
     "azure-messaging-webpubsubservice",
-    "azure-ai-textanalytics",
 ]
 
 # omit package from running type checkers on samples
@@ -285,8 +280,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
