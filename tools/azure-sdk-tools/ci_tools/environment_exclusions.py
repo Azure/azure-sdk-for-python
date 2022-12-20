@@ -304,7 +304,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-eventhub-checkpointstoreblob",
     "azure-eventhub-checkpointstoreblob-aio",
     "azure-eventhub-checkpointstoretable",
-    "azure-ai-formrecognizer",
     "azure-keyvault-administration",
     "azure-keyvault-certificates",
     "azure-keyvault-keys",

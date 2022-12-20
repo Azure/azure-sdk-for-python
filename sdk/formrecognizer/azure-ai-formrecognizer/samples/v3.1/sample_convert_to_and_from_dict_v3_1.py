@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_convert_to_and_from_dict.py
+FILE: sample_convert_to_and_from_dict_v3_1.py
 
 DESCRIPTION:
     This sample demonstrates how to convert models returned from an analyze operation
@@ -15,7 +15,7 @@ DESCRIPTION:
     JSON file, then the same dictionary is converted back to its original model.
 
 USAGE:
-    python sample_convert_to_and_from_dict.py
+    python sample_convert_to_and_from_dict_v3_1.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -56,8 +56,8 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as f:
-        json.dump(recognized_form_dict, f, cls=AzureJSONEncoder)
+    with open('data.json', 'w') as output_file:
+        json.dump(recognized_form_dict, output_file, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
     model = [RecognizedForm.from_dict(doc) for doc in recognized_form_dict]
