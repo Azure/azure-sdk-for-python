@@ -111,7 +111,7 @@ class IgnoreFile(object):
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
-            if callable(hasattr(Path(object), "relative_to")):
+            if callable(hasattr(Path(file_path), "relative_to")):
                 file_path = file_path.relative_to(ignore_dirname)
             else:
                 file_path = os.path.relpath(file_path, ignore_dirname)
@@ -346,7 +346,7 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    if callable(hasattr(Path(object), "relative_to")):
+                    if callable(hasattr(Path(target), "relative_to")):
                         relative_path = target.relative_to(source)
                     else:
                         relative_path = os.path.relpath(target, source)
@@ -401,7 +401,7 @@ def construct_remote_paths(
     for file_path in original_file_paths:
         local = file_path
 
-        if callable(hasattr(Path(object), "relative_to")):
+        if callable(hasattr(Path(file_path), "relative_to")):
             relative_path = file_path.relative_to(source)
         else:
             relative_path = os.path.relpath(file_path, source)
