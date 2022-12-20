@@ -1213,9 +1213,28 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
-        azure_ml_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
         aml_token = self._credential.get_token(*azure_ml_scopes).token
+        # validate token has aml audience
+        decoded_token = jwt.decode(
+            aml_token,
+            options={"verify_signature": False, "verify_aud": False},
+        )
+        if decoded_token.get("aud") != aml_resource_id:
+            msg = """AAD token with aml scope could not be fetched using the credentials being used.
+            Please validate if token with {0} scope can be fetched using credentials provided to MLClient.
+            Token with {0} scope can be fetched using credentials.get_token({0})
+            """
+            raise JobException(
+                message=msg.format(*azure_ml_scopes),
+                target=ErrorTarget.JOB,
+                no_personal_data_message=msg.format("[job.code]"),
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+
         headers = kwargs.pop("headers", {})
         headers["x-azureml-token"] = aml_token
         kwargs["headers"] = headers
