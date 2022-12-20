@@ -17,6 +17,7 @@ USAGE:
 
 import os
 
+
 class MLClientSamples(object):
 
     def ml_auth_azure_default_credential(self):
@@ -30,9 +31,10 @@ class MLClientSamples(object):
         resource_group = "RESOURCE_GROUP_NAME"
 
         # Instantiate a MLClient
-        from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
+        from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+
         from azure.ai.ml import MLClient
-        
+
         # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
         # you must use an authority with DefaultAzureCredential.
         # Default authority value : AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
@@ -49,6 +51,7 @@ class MLClientSamples(object):
         # [END create_ml_client_default_credential]
         
         from azure.ai.ml.entities import Workspace
+
         # Get a list of workspaces in a resource group
         for ws in ml_client.workspaces.list():
             print(ws.name, ":", ws.location, ":", ws.description)

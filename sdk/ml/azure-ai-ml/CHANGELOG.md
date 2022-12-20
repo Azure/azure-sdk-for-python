@@ -5,6 +5,11 @@
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
 
+### Bugs Fixed
+- Fixed issue with date-time format for utc_time_created field when creating models.
+- Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
+- Improved intellisense with VS Code for fields supporting local paths and datastores.
+
 ### Other Changes
 - Switched compute operations to go through 2022-12-01-preview API version.
 

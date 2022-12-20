@@ -15,9 +15,9 @@ from azure.ai.ml.entities import (
     Compute,
     ComputeInstance,
     KubernetesCompute,
+    ManagedIdentityConfiguration,
     SynapseSparkCompute,
     VirtualMachineCompute,
-    ManagedIdentityConfiguration,
 )
 
 

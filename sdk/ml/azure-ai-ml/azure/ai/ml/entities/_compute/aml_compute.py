@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
@@ -19,9 +19,9 @@ from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 
-from azure.ai.ml.entities._credentials import IdentityConfiguration
 from .compute import Compute, NetworkSettings
 
 
@@ -32,8 +32,8 @@ class AmlComputeSshSettings:
         self,
         *,
         admin_username: str,
-        admin_password: str = None,
-        ssh_key_value: str = None,
+        admin_password: Optional[str] = None,
+        ssh_key_value: Optional[str] = None,
     ):
         """[summary]
 
@@ -101,16 +101,16 @@ class AmlCompute(Compute):
         self,
         *,
         name: str,
-        description: str = None,
-        size: str = None,
-        ssh_public_access_enabled: bool = None,
-        ssh_settings: AmlComputeSshSettings = None,
-        min_instances: int = None,
-        max_instances: int = None,
-        network_settings: NetworkSettings = None,
-        idle_time_before_scale_down: int = None,
-        identity: IdentityConfiguration = None,
-        tier: str = None,
+        description: Optional[str] = None,
+        size: Optional[str] = None,
+        ssh_public_access_enabled: Optional[bool] = None,
+        ssh_settings: Optional[AmlComputeSshSettings] = None,
+        min_instances: Optional[int] = None,
+        max_instances: Optional[int] = None,
+        network_settings: Optional[NetworkSettings] = None,
+        idle_time_before_scale_down: Optional[int] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        tier: Optional[str] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE

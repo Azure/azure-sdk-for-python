@@ -1,10 +1,11 @@
 import pytest
 
-from azure.ai.ml import load_component, Input
+from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.entities import Command
-from azure.ai.ml.exceptions import ValidationException, UserErrorException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
+
 from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 
 

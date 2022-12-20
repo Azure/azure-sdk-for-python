@@ -4,8 +4,10 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Iterable, Union
+from typing import Any, Iterable, Optional, Union
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -139,7 +141,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(self, name: str, version: str = None) -> EnvironmentVersionData:
+    def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersionData:
         if version:
             return (
                 self._version_operations.get(
@@ -175,7 +177,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Environment:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
         :param name: Name of the environment.
@@ -219,7 +221,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        name: str = None,
+        name: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Environment]:
@@ -273,8 +275,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def archive(
         self,
         name: str,
-        version: str = None,
-        label: str = None,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -300,8 +302,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def restore(
         self,
         name: str,
-        version: str = None,
-        label: str = None,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
     ) -> None:
         """Restore an archived environment version.
 

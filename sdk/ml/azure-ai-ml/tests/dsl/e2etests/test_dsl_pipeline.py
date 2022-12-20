@@ -6,33 +6,36 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
+
 from azure.ai.ml import (
+    AmlTokenConfiguration,
     Input,
+    ManagedIdentityConfiguration,
     MLClient,
     MpiDistribution,
     Output,
     PyTorchDistribution,
     TensorFlowDistribution,
+    UserIdentityConfiguration,
     command,
     dsl,
-    load_component, AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration,
+    load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from devtools_testutils import AzureRecordedTestCase
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
-from devtools_testutils import is_live
 from .._util import _DSL_TIMEOUT_SECOND
 
 tests_root_dir = Path(__file__).parent.parent.parent
