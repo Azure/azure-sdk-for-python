@@ -92,14 +92,6 @@ setup(
         "designer": [
             "mldesigner",
         ],
-        # user can run `pip install azure-ai-ml[bytecode]` to install bytecode, which is used to accelerate dsl
-        # pipeline builder.
-        "bytecode": [
-            # 0.14.0 for Python 3.8 or newer;
-            # 0.13.0 for Python 3.6/3.7;
-            # 0.12.0 for Python 3.5
-            'bytecode<0.15.0,>=0.12.0',
-        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
