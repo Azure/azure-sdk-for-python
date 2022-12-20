@@ -7,10 +7,9 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import Optional, Union, List, Tuple, Iterable, Any
 
 import yaml
-
-from typing import Optional, Union, List, Tuple, Iterable, Any
 
 from azure.ai.ml._utils._asset_utils import IgnoreFile
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
