@@ -158,7 +158,12 @@ class TestAssetUtils:
         e.g given a symlink "./other_dir/bar_link.txt" with target file "./dir/foo/bar.txt", we want to upload the
         contents of "./dir/food/bar.txt" at path "LocalUpload/<artifact hash>/other_dir/bar_link.txt" in the remote storage.
         """
-        source_path = Path(storage_test_directory).resolve()
+        print("source path was: ", storage_test_directory)  # TODO: remove")
+        source_path = Path(storage_test_directory)
+        print(f"source path is {source_path} after casting to Path")  # TODO: remove
+        source_path = source_path.resolve()
+        print(f"source path is {source_path} after resolving")  # TODO: remove
+        assert 1 == 2
         upload_pairs = construct_local_and_remote_paths(source_path, dest=fake_remote_prefix)
 
         local_paths = [i for i, _ in upload_pairs]
