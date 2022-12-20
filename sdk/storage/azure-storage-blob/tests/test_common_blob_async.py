@@ -2776,6 +2776,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             assert data == actual
 
             temp_file.close()
+            os.unlink(temp_file.name)
 
     @BlobPreparer()
     @recorded_by_proxy_async
