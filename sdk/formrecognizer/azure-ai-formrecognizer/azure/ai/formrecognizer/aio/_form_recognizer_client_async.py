@@ -48,14 +48,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_key_async]
             :end-before: [END create_fr_client_with_key_async]
             :language: python
             :dedent: 8
             :caption: Creating the FormRecognizerClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.1/async_samples/sample_authentication_v3_1_async.py
             :start-after: [START create_fr_client_with_aad_async]
             :end-before: [END create_fr_client_with_aad_async]
             :language: python
@@ -452,7 +452,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise e
 
     @distributed_trace_async
-    async def begin_recognize_invoices(self, invoice: str, **kwargs: Any) -> AsyncLROPoller[List[RecognizedForm]]:
+    async def begin_recognize_invoices(
+        self, invoice: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
