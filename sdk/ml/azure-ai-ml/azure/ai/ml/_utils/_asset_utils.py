@@ -78,7 +78,7 @@ class IgnoreFile(object):
 
         :param file_path: Relative path, or absolute path to the ignore file.
         """
-        path = Path(file_path).resolve() if file_path else None
+        path = os.path.abspath(file_path) if file_path else None
         self._path = path
         self._path_spec = None
 
@@ -452,7 +452,7 @@ def construct_local_and_remote_paths(
     :return: List of tuples each containing a validated local path and a remote upload path for each file
     :rtype: List[Tuple[str, str]]
     """
-    source_path = Path(source).resolve()
+    source_path = os.path.abspath(source)
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
@@ -608,7 +608,7 @@ def upload_directory(
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: None
     """
-    source_path = Path(source).resolve()
+    source_path = os.path.abspath(source)
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
