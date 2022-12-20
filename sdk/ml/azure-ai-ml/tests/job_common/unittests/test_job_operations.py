@@ -10,7 +10,7 @@ from msrest import Deserializer
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command
@@ -74,23 +74,23 @@ def mock_environment_operation(
 def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
     mock_machinelearning_client: Mock,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
 
 @pytest.fixture
 def mock_runs_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> RunOperations:
     yield RunOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
     )
 
 
