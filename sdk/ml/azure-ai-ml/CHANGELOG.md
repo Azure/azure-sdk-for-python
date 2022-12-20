@@ -4,6 +4,7 @@
 
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
+- Added property to enable/disable public ip addresses to Compute Instances and AML Computes.
 
 ### Bugs Fixed
 - Fixed print on Command objects when job id is empty

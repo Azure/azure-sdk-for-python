@@ -332,6 +332,25 @@ class TestComputeEntity:
         assert compute_from_rest.type == "computeinstance"
         assert compute_from_rest.identity.type == "system_assigned"
 
+    def test_compute_no_public_ip_from_yaml(self):
+        compute_instance: ComputeInstance = load_compute(
+            "tests/test_configs/compute/compute-ci-no-public-ip.yaml"
+        )
+
+        aml_compute: AmlCompute = load_compute(
+            "tests/test_configs/compute/compute-aml-no-public-ip.yaml"
+        )
+
+        def validate_no_public_ip(compute: Compute):
+            assert compute.enable_node_public_ip == False
+            compute_resource = compute._to_rest_object()
+            assert compute_resource.properties.properties.enable_node_public_ip == False
+            compute_from_rest = Compute._from_rest_object(compute_resource)
+            assert compute.enable_node_public_ip == False
+
+        validate_no_public_ip(compute=compute_instance)
+        validate_no_public_ip(compute=aml_compute)
+
     def test_synapse_compute_from_rest(self):
         with open("tests/test_configs/compute/compute-synapsespark.yaml", "r") as f:
             data = yaml.safe_load(f)
