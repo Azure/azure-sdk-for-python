@@ -7,9 +7,9 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01.models import BatchRetrySettings as RestBatchRetrySettings
-from azure.ai.ml._restclient.v2022_10_01.models import OnlineRequestSettings as RestOnlineRequestSettings
-from azure.ai.ml._restclient.v2022_10_01.models import ProbeSettings as RestProbeSettings
+from azure.ai.ml._restclient.v2022_05_01.models import BatchRetrySettings as RestBatchRetrySettings
+from azure.ai.ml._restclient.v2022_05_01.models import OnlineRequestSettings as RestOnlineRequestSettings
+from azure.ai.ml._restclient.v2022_05_01.models import ProbeSettings as RestProbeSettings
 from azure.ai.ml._utils.utils import (
     from_iso_duration_format,
     from_iso_duration_format_ms,

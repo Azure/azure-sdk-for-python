@@ -5,7 +5,7 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException

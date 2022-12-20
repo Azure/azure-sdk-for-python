@@ -7,7 +7,7 @@
 import logging
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01.models import ContainerResourceRequirements
+from azure.ai.ml._restclient.v2022_05_01.models import ContainerResourceRequirements
 from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
