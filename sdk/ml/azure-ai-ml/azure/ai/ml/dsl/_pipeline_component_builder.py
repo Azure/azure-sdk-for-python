@@ -12,7 +12,6 @@ from typing import Callable, Union
 from azure.ai.ml._utils._func_utils import persistent_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
-    is_private_preview_enabled,
     is_valid_node_name,
     parse_args_description_from_docstring,
 )
@@ -55,15 +54,6 @@ class _PipelineComponentBuilderStack:
 
         # TODO: validate cycle
         self.items.append(item)
-        if not is_private_preview_enabled() and self.size() >= 2:
-            current_pipelines = [p.name for p in self.items]
-            # clear current pipeline stack
-            self.items = []
-            msg = "Currently only single layer pipeline is supported. Got: {}"
-            raise UserErrorException(
-                message=msg.format(current_pipelines),
-                no_personal_data_message=msg.format("[current_pipeline]"),
-            )
         if self.size() >= _BUILDER_STACK_MAX_DEPTH:
             current_pipeline = self.items[0].name
             # clear current pipeline stack
