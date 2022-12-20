@@ -111,7 +111,7 @@ class IgnoreFile(object):
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
+            file_path = os.path.relpath(os.path.abspath(file_path), os.path.abspath(ignore_dirname))
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -343,8 +343,9 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
+                    relative_path = os.path.relpath(os.path.abspath(target), os.path.abspath(source))
                     symlink_dict[file] = {
-                        "target file": convert_windows_path_to_unix(os.path.relpath(target, source)),
+                        "target file": convert_windows_path_to_unix(relative_path),
                         "directory": False
                     }
                     if os.path.isdir(target):
@@ -392,10 +393,8 @@ def construct_remote_paths(
 
     for file_path in original_file_paths:
         local = file_path
-        assert os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)) == os.path.relpath(file_path, source)
-        print("absolute:", os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)))
-        print("normal:", os.path.relpath(file_path, source))
-        remote = prefix + convert_windows_path_to_unix(os.path.relpath(os.path.abspath(file_path), os.path.abspath(source)))
+        relative_path = os.path.relpath(os.path.abspath(file_path), os.path.abspath(source))
+        remote = prefix + convert_windows_path_to_unix(relative_path)
         upload_pairs.append((local, remote))
 
     for local, remote in upload_pairs:
