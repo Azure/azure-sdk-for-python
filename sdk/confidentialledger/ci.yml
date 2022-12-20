@@ -34,5 +34,3 @@ extends:
       safeName: azureconfidentialledger
     - name: azure-mgmt-confidentialledger
       safeName: azuremgmtconfidentialledger
-    - name: azure-confidentialledgertools-receiptverification
-      safeName: azureconfidentialledgertoolsreceiptverification
