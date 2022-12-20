@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
@@ -15,10 +15,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
 
 class ConfidentialLedgerCertificateClient(
@@ -76,15 +72,12 @@ class ConfidentialLedgerCertificateClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ConfidentialLedgerCertificateClient
+    def __enter__(self) -> "ConfidentialLedgerCertificateClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

@@ -6,12 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -30,7 +36,7 @@ class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint
 
     def __init__(self, certificate_endpoint: str, **kwargs: Any) -> None:
         super(ConfidentialLedgerCertificateClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
+        api_version: Literal["2022-05-13"] = kwargs.pop("api_version", "2022-05-13")
 
         if certificate_endpoint is None:
             raise ValueError("Parameter 'certificate_endpoint' must not be None.")

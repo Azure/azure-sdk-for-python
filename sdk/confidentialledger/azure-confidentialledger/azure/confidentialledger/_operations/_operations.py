@@ -8,13 +8,14 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -25,12 +26,16 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC, _format_url_section
+from .._vendor import ConfidentialLedgerClientMixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -39,11 +44,11 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_constitution_request(**kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_constitution_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,11 +63,11 @@ def build_get_constitution_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_consortium_members_request(**kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_list_consortium_members_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,11 +82,11 @@ def build_list_consortium_members_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_enclave_quotes_request(**kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_enclave_quotes_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,11 +101,11 @@ def build_get_enclave_quotes_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_collections_request(**kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_list_collections_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -115,7 +120,7 @@ def build_list_collections_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_ledger_entries_request(
+def build_confidential_ledger_list_ledger_entries_request(
     *,
     collection_id: Optional[str] = None,
     from_transaction_id: Optional[str] = None,
@@ -125,7 +130,7 @@ def build_list_ledger_entries_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -146,13 +151,14 @@ def build_list_ledger_entries_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_ledger_entry_request(**kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_create_ledger_entry_request(
+    *, collection_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    collection_id = kwargs.pop("collection_id", _params.pop("collectionId", None))  # type: Optional[str]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -171,13 +177,13 @@ def build_create_ledger_entry_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_ledger_entry_request(
+def build_confidential_ledger_get_ledger_entry_request(
     transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -186,7 +192,7 @@ def build_get_ledger_entry_request(
         "transactionId": _SERIALIZER.url("transaction_id", transaction_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -199,11 +205,11 @@ def build_get_ledger_entry_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_receipt_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_receipt_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +218,7 @@ def build_get_receipt_request(transaction_id: str, **kwargs: Any) -> HttpRequest
         "transactionId": _SERIALIZER.url("transaction_id", transaction_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -223,11 +229,11 @@ def build_get_receipt_request(transaction_id: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_transaction_status_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_transaction_status_request(transaction_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +242,7 @@ def build_get_transaction_status_request(transaction_id: str, **kwargs: Any) -> 
         "transactionId": _SERIALIZER.url("transaction_id", transaction_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -247,11 +253,13 @@ def build_get_transaction_status_request(transaction_id: str, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_current_ledger_entry_request(*, collection_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_current_ledger_entry_request(
+    *, collection_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,11 +276,11 @@ def build_get_current_ledger_entry_request(*, collection_id: Optional[str] = Non
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_delete_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +289,7 @@ def build_delete_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
         "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -292,11 +300,11 @@ def build_delete_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_get_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,7 +313,7 @@ def build_get_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
         "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -316,12 +324,12 @@ def build_get_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_create_or_update_user_request(user_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-05-13"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -330,7 +338,7 @@ def build_create_or_update_user_request(user_id: str, **kwargs: Any) -> HttpRequ
         "userId": _SERIALIZER.url("user_id", user_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -343,7 +351,7 @@ def build_create_or_update_user_request(user_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConfidentialLedgerClientOperationsMixin(MixinABC):
+class ConfidentialLedgerClientOperationsMixin(ConfidentialLedgerClientMixinABC):
     @distributed_trace
     def get_constitution(self, **kwargs: Any) -> JSON:
         """Gets the constitution used for governance.
@@ -363,15 +371,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                     "script": "str"  # Contents of the constitution. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_constitution_request(
+        request = build_confidential_ledger_get_constitution_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -381,9 +394,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -426,15 +439,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_consortium_members_request(
+                request = build_confidential_ledger_list_consortium_members_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -444,20 +462,27 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -465,13 +490,13 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["members"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -504,26 +529,31 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                       the request. Required.
                     "enclaveQuotes": {
                         "str": {
-                            "mrenclave": "str",  # Optional. MRENCLAVE value of the code
-                              running in the enclave.
                             "nodeId": "str",  # ID assigned to this node. Required.
                             "quoteVersion": "str",  # Version of the quote presented.
                               Required.
-                            "raw": "str"  # Raw SGX quote, parsable by tools like Open
+                            "raw": "str",  # Raw SGX quote, parsable by tools like Open
                               Enclave's oeverify. Required.
+                            "mrenclave": "str"  # Optional. MRENCLAVE value of the code
+                              running in the enclave.
                         }
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_enclave_quotes_request(
+        request = build_confidential_ledger_get_enclave_quotes_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -533,9 +563,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -576,15 +606,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_collections_request(
+                request = build_confidential_ledger_list_collections_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -594,20 +629,27 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -615,13 +657,13 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["collections"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -664,8 +706,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
+                    "collectionId": "str",  # Optional.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
                       the entry was read.
@@ -674,15 +716,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_ledger_entries_request(
+                request = build_confidential_ledger_list_ledger_entries_request(
                     collection_id=collection_id,
                     from_transaction_id=from_transaction_id,
                     to_transaction_id=to_transaction_id,
@@ -695,20 +742,27 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "ledgerEndpoint": self._serialize.url(
                         "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -716,13 +770,13 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["entries"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -759,8 +813,8 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 entry = {
-                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
+                    "collectionId": "str",  # Optional.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
                       the entry was read.
@@ -827,14 +881,19 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                     "collectionId": "str"  # Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -844,7 +903,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         else:
             _json = entry
 
-        request = build_create_ledger_entry_request(
+        request = build_confidential_ledger_create_ledger_entry_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -858,9 +917,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -907,27 +966,32 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # response body for status code(s): 200
                 response == {
+                    "state": "str",  # State of a ledger query. Required. Known values are:
+                      "Loading" and "Ready".
                     "entry": {
+                        "contents": "str",  # Contents of the ledger entry. Required.
                         "collectionId": "str",  # Optional. The ledger entry found as a
                           result of the query. This is only available if the query is in Ready state.
-                        "contents": "str",  # Contents of the ledger entry. Required.
                         "transactionId": "str"  # Optional. A unique identifier for the state
                           of the ledger. If returned as part of a LedgerEntry, it indicates the state
                           from which the entry was read.
-                    },
-                    "state": "str"  # State of a ledger query. Required. Known values are:
-                      "Loading" and "Ready".
+                    }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_ledger_entry_request(
+        request = build_confidential_ledger_get_ledger_entry_request(
             transaction_id=transaction_id,
             collection_id=collection_id,
             api_version=self._config.api_version,
@@ -939,9 +1003,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -978,14 +1042,12 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # response body for status code(s): 200
                 response == {
+                    "state": "str",  # State of a ledger query. Required. Known values are:
+                      "Loading" and "Ready".
+                    "transactionId": "str",  # A unique identifier for the state of the ledger.
+                      If returned as part of a LedgerEntry, it indicates the state from which the entry
+                      was read. Required.
                     "receipt": {
-                        "cert": "str",  # Optional.
-                        "leaf": "str",  # Optional.
-                        "leafComponents": {
-                            "claimsDigest": "str",  # Optional.
-                            "commitEvidence": "str",  # Optional.
-                            "writeSetDigest": "str"  # Optional.
-                        },
                         "nodeId": "str",  # Required.
                         "proof": [
                             {
@@ -993,28 +1055,35 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                                 "right": "str"  # Optional. Required.
                             }
                         ],
+                        "signature": "str",  # Required.
+                        "cert": "str",  # Optional.
+                        "leaf": "str",  # Optional.
+                        "leafComponents": {
+                            "claimsDigest": "str",  # Optional.
+                            "commitEvidence": "str",  # Optional.
+                            "writeSetDigest": "str"  # Optional.
+                        },
                         "root": "str",  # Optional.
                         "serviceEndorsements": [
                             "str"  # Optional.
-                        ],
-                        "signature": "str"  # Required.
-                    },
-                    "state": "str",  # State of a ledger query. Required. Known values are:
-                      "Loading" and "Ready".
-                    "transactionId": "str"  # A unique identifier for the state of the ledger. If
-                      returned as part of a LedgerEntry, it indicates the state from which the entry
-                      was read. Required.
+                        ]
+                    }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_receipt_request(
+        request = build_confidential_ledger_get_receipt_request(
             transaction_id=transaction_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1025,9 +1094,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1071,15 +1140,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                       was read. Required.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_transaction_status_request(
+        request = build_confidential_ledger_get_transaction_status_request(
             transaction_id=transaction_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1090,9 +1164,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1129,22 +1203,27 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "collectionId": "str",  # Optional.
                     "contents": "str",  # Contents of the ledger entry. Required.
+                    "collectionId": "str",  # Optional.
                     "transactionId": "str"  # Optional. A unique identifier for the state of the
                       ledger. If returned as part of a LedgerEntry, it indicates the state from which
                       the entry was read.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_current_ledger_entry_request(
+        request = build_confidential_ledger_get_current_ledger_entry_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1155,9 +1234,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1189,15 +1268,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_user_request(
+        request = build_confidential_ledger_delete_user_request(
             user_id=user_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1208,9 +1292,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1246,15 +1330,20 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                       AAD object id or a certificate fingerprint.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_user_request(
+        request = build_confidential_ledger_get_user_request(
             user_id=user_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1265,9 +1354,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1386,14 +1475,19 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                       AAD object id or a certificate fingerprint.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1403,7 +1497,7 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
         else:
             _json = user_details
 
-        request = build_create_or_update_user_request(
+        request = build_confidential_ledger_create_or_update_user_request(
             user_id=user_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1417,9 +1511,9 @@ class ConfidentialLedgerClientOperationsMixin(MixinABC):
                 "self._config.ledger_endpoint", self._config.ledger_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 

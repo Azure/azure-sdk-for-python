@@ -12,7 +12,7 @@ output-folder: ../azure/confidentialledger
 namespace: azure.confidentialledger
 package-name: azure-confidentialledger
 license-header: MICROSOFT_MIT_NO_VERSION
-clear-output-folder: true
+clear-output-folder: false
 no-namespace-folders: true
 title: ConfidentialLedgerClient
 version-tolerant: true
