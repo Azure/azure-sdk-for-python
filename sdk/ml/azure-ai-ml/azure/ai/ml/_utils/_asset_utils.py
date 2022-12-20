@@ -78,7 +78,7 @@ class IgnoreFile(object):
 
         :param file_path: Relative path, or absolute path to the ignore file.
         """
-        path = os.path.abspath(file_path) if file_path else None
+        path = Path(file_path).resolve() if file_path else None
         self._path = path
         self._path_spec = None
 
