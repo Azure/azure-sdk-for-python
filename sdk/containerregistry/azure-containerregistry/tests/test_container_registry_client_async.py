@@ -17,8 +17,8 @@ from azure.containerregistry import (
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
-
-from asynctestcase import AsyncContainerRegistryTestClass, get_authority
+from azure.identity import AzureAuthorityHosts
+from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -67,7 +67,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
+    async def test_delete_repository(self, containerregistry_endpoint):
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -591,16 +591,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
-    async def test_construct_container_registry_client(self, containerregistry_endpoint):
+    async def test_construct_container_registry_client(self, **kwargs):
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
         
         client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
-            properties = await client.get_repository_properties(HELLO_WORLD)       
-        with pytest.raises(TypeError):
-            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
+            properties = await client.get_repository_properties(HELLO_WORLD)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -612,6 +610,36 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_set_audience(self, containerregistry_endpoint):
+        authority = get_authority(containerregistry_endpoint)
+        credential = self.get_credential(authority=authority)
+        valid_audience = get_audience(authority)
+
+        client = ContainerRegistryClient(
+            endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
+        )
+        async for repo in client.list_repository_names():
+            pass
+        
+        client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            async for repo in client.list_repository_names():
+                pass
+
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            invalid_client = ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            )
+            with pytest.raises(ClientAuthenticationError):
+                async for repo in invalid_client.list_repository_names():
+                    pass
+        else:
+            with pytest.raises(ClientAuthenticationError):
+                async for repo in client.list_repository_names():
+                    pass
 
 
 def test_set_api_version():

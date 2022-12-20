@@ -26,7 +26,6 @@
 import collections.abc
 import asyncio
 from itertools import groupby
-from typing import AsyncIterator
 from multidict import CIMultiDict
 from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator

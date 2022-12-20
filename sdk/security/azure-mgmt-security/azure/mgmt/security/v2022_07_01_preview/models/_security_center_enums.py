@@ -17,6 +17,8 @@ class ApplicationConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     #: Checks that the string value of the data defined in Property contains the given value
     CONTAINS = "Contains"
+    #: Checks that the string value of the data defined in Property equals the given value
+    EQUALS = "Equals"
     #: Checks that the string value of the data defined in Property equals any of the given values
     #: (exact fit)
     IN = "In"

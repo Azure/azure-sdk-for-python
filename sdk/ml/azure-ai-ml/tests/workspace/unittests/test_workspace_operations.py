@@ -2,13 +2,17 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
-from azure.ai.ml._utils.utils import camel_to_snake
 from pytest_mock import MockFixture
 
+from azure.ai.ml import MLClient, load_workspace
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+)
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import CustomerManagedKey, Workspace, \
-    IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml.entities import CustomerManagedKey, IdentityConfiguration, ManagedIdentityConfiguration, Workspace
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -106,7 +110,6 @@ class TestWorkspaceOperation:
         def outgoing_call(rg, name, params, polling, cls):
             assert name == "name"
             return DEFAULT
-
         mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=Workspace(name="name"))
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
@@ -130,6 +133,7 @@ class TestWorkspaceOperation:
                 ],
             ),
             primary_user_assigned_identity="resource2",
+            customer_managed_key = CustomerManagedKey(key_uri="new_cmk_uri")
         )
 
         def outgoing_call(rg, name, params, polling, cls):
@@ -145,6 +149,11 @@ class TestWorkspaceOperation:
             assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
             assert len(params.identity.user_assigned_identities) == 2
             assert params.primary_user_assigned_identity == "resource2"
+            assert params.encryption == EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier="new_cmk_uri",
+                )
+            )            
             assert polling is True
             assert callable(cls)
             return DEFAULT
@@ -243,3 +252,10 @@ class TestWorkspaceOperation:
         mock_workspace_operation._default_workspace_name = None
         with pytest.raises(Exception):
             mock_workspace_operation._check_workspace_name(None)
+
+    def test_load_uai_workspace_from_yaml(self, mock_workspace_operation: WorkspaceOperations):
+        params_override = []
+        wps = load_workspace("./tests/test_configs/workspace/workspace_uai.yaml", params_override=params_override)
+        assert isinstance(wps.identity, IdentityConfiguration)
+        assert isinstance(wps.identity.user_assigned_identities, list)
+        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration) 

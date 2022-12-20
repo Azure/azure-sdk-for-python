@@ -4,6 +4,7 @@ from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
 
 _PIPELINE_JOB_TIMEOUT_SECOND = 20 * 60  # timeout for pipeline job's tests, unit in second.
+_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND = 40 * 60  # timeout for pipeline job's long-running tests, unit in second.
 
 DATABINDING_EXPRESSION_TEST_CASES = [
     (

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     FlavorData,
@@ -60,15 +60,15 @@ class Model(Artifact):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        type: str = None,  # pylint: disable=redefined-builtin
-        path: Union[str, PathLike] = None,
-        utc_time_created: str = None,
-        flavors: Dict[str, Dict[str, Any]] = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        path: Optional[Union[str, PathLike]] = None,
+        utc_time_created: Optional[str] = None,
+        flavors: Optional[Dict[str, Dict[str, Any]]] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         self.job_name = kwargs.pop("job_name", None)
@@ -93,9 +93,9 @@ class Model(Artifact):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Model":
         params_override = params_override or []

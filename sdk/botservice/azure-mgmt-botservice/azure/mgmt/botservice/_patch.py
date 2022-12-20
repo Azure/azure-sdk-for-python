@@ -54,31 +54,24 @@ class WebChatSite(msrest.serialization.Model):
     """
 
     _validation = {
-        'site_id': {'readonly': True},
-        'site_name': {'required': True},
-        'key': {'readonly': True},
-        'key2': {'readonly': True},
-        'is_enabled': {'required': True},
-        'is_webchat_preview_enabled': {'required': True},
+        "site_id": {"readonly": True},
+        "site_name": {"required": True},
+        "key": {"readonly": True},
+        "key2": {"readonly": True},
+        "is_enabled": {"required": True},
+        "is_webchat_preview_enabled": {"required": True},
     }
 
     _attribute_map = {
-        'site_id': {'key': 'siteId', 'type': 'str'},
-        'site_name': {'key': 'siteName', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'is_webchat_preview_enabled': {'key': 'isWebchatPreviewEnabled', 'type': 'bool'},
+        "site_id": {"key": "siteId", "type": "str"},
+        "site_name": {"key": "siteName", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "key2": {"key": "key2", "type": "str"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "is_webchat_preview_enabled": {"key": "isWebchatPreviewEnabled", "type": "bool"},
     }
 
-    def __init__(
-            self,
-            *,
-            site_name: str,
-            is_enabled: bool,
-            is_webchat_preview_enabled: bool,
-            **kwargs
-    ):
+    def __init__(self, *, site_name: str, is_enabled: bool, is_webchat_preview_enabled: bool, **kwargs):
         """
         :keyword site_name: Required. Site name.
         :paramtype site_name: str
@@ -89,10 +82,7 @@ class WebChatSite(msrest.serialization.Model):
         :paramtype is_webchat_preview_enabled: bool
         """
         super(WebChatSite, self).__init__(
-            site_name=site_name,
-            is_enabled=is_enabled,
-            is_webchat_preview_enabled=is_webchat_preview_enabled,
-            **kwargs
+            site_name=site_name, is_enabled=is_enabled, is_webchat_preview_enabled=is_webchat_preview_enabled, **kwargs
         )
         self.site_id = None
         self.site_name = site_name
@@ -136,39 +126,39 @@ class DirectLineSite(msrest.serialization.Model):
     """
 
     _validation = {
-        'site_id': {'readonly': True},
-        'site_name': {'required': True},
-        'key': {'readonly': True},
-        'key2': {'readonly': True},
-        'is_enabled': {'required': True},
-        'is_v1_enabled': {'required': True},
-        'is_v3_enabled': {'required': True},
+        "site_id": {"readonly": True},
+        "site_name": {"required": True},
+        "key": {"readonly": True},
+        "key2": {"readonly": True},
+        "is_enabled": {"required": True},
+        "is_v1_enabled": {"required": True},
+        "is_v3_enabled": {"required": True},
     }
 
     _attribute_map = {
-        'site_id': {'key': 'siteId', 'type': 'str'},
-        'site_name': {'key': 'siteName', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'is_v1_enabled': {'key': 'isV1Enabled', 'type': 'bool'},
-        'is_v3_enabled': {'key': 'isV3Enabled', 'type': 'bool'},
-        'is_secure_site_enabled': {'key': 'isSecureSiteEnabled', 'type': 'bool'},
-        'is_block_user_upload_enabled': {'key': 'isBlockUserUploadEnabled', 'type': 'bool'},
-        'trusted_origins': {'key': 'trustedOrigins', 'type': '[str]'},
+        "site_id": {"key": "siteId", "type": "str"},
+        "site_name": {"key": "siteName", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "key2": {"key": "key2", "type": "str"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "is_v1_enabled": {"key": "isV1Enabled", "type": "bool"},
+        "is_v3_enabled": {"key": "isV3Enabled", "type": "bool"},
+        "is_secure_site_enabled": {"key": "isSecureSiteEnabled", "type": "bool"},
+        "is_block_user_upload_enabled": {"key": "isBlockUserUploadEnabled", "type": "bool"},
+        "trusted_origins": {"key": "trustedOrigins", "type": "[str]"},
     }
 
     def __init__(
-            self,
-            *,
-            site_name: str,
-            is_enabled: bool,
-            is_v1_enabled: bool,
-            is_v3_enabled: bool,
-            is_secure_site_enabled: Optional[bool] = None,
-            is_block_user_upload_enabled: Optional[bool] = None,
-            trusted_origins: Optional[List[str]] = None,
-            **kwargs
+        self,
+        *,
+        site_name: str,
+        is_enabled: bool,
+        is_v1_enabled: bool,
+        is_v3_enabled: bool,
+        is_secure_site_enabled: Optional[bool] = None,
+        is_block_user_upload_enabled: Optional[bool] = None,
+        trusted_origins: Optional[List[str]] = None,
+        **kwargs
     ):
         """
         :keyword site_name: Required. Site name.
@@ -250,46 +240,46 @@ class Site(WebChatSite, DirectLineSite):
     """
 
     _validation = {
-        'is_v1_enabled': {'required': True},
-        'is_v3_enabled': {'required': True},
-        'site_id': {'readonly': True},
-        'site_name': {'required': True},
-        'key': {'readonly': True},
-        'key2': {'readonly': True},
-        'is_enabled': {'required': True},
-        'is_webchat_preview_enabled': {'required': True},
+        "is_v1_enabled": {"required": True},
+        "is_v3_enabled": {"required": True},
+        "site_id": {"readonly": True},
+        "site_name": {"required": True},
+        "key": {"readonly": True},
+        "key2": {"readonly": True},
+        "is_enabled": {"required": True},
+        "is_webchat_preview_enabled": {"required": True},
     }
 
     _attribute_map = {
-        'is_v1_enabled': {'key': 'isV1Enabled', 'type': 'bool'},
-        'is_v3_enabled': {'key': 'isV3Enabled', 'type': 'bool'},
-        'is_secure_site_enabled': {'key': 'isSecureSiteEnabled', 'type': 'bool'},
-        'is_block_user_upload_enabled': {'key': 'isBlockUserUploadEnabled', 'type': 'bool'},
-        'trusted_origins': {'key': 'trustedOrigins', 'type': '[str]'},
-        'site_id': {'key': 'siteId', 'type': 'str'},
-        'site_name': {'key': 'siteName', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'is_webchat_preview_enabled': {'key': 'isWebchatPreviewEnabled', 'type': 'bool'},
-        'is_token_enabled': {'key': 'isTokenEnabled', 'type': 'bool'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        "is_v1_enabled": {"key": "isV1Enabled", "type": "bool"},
+        "is_v3_enabled": {"key": "isV3Enabled", "type": "bool"},
+        "is_secure_site_enabled": {"key": "isSecureSiteEnabled", "type": "bool"},
+        "is_block_user_upload_enabled": {"key": "isBlockUserUploadEnabled", "type": "bool"},
+        "trusted_origins": {"key": "trustedOrigins", "type": "[str]"},
+        "site_id": {"key": "siteId", "type": "str"},
+        "site_name": {"key": "siteName", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "key2": {"key": "key2", "type": "str"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "is_webchat_preview_enabled": {"key": "isWebchatPreviewEnabled", "type": "bool"},
+        "is_token_enabled": {"key": "isTokenEnabled", "type": "bool"},
+        "e_tag": {"key": "eTag", "type": "str"},
     }
 
     def __init__(
-            self,
-            *,
-            is_v1_enabled: bool,
-            is_v3_enabled: bool,
-            site_name: str,
-            is_enabled: bool,
-            is_webchat_preview_enabled: bool,
-            is_secure_site_enabled: Optional[bool] = None,
-            is_block_user_upload_enabled: Optional[bool] = None,
-            trusted_origins: Optional[List[str]] = None,
-            is_token_enabled: Optional[bool] = None,
-            e_tag: Optional[str] = None,
-            **kwargs
+        self,
+        *,
+        is_v1_enabled: bool,
+        is_v3_enabled: bool,
+        site_name: str,
+        is_enabled: bool,
+        is_webchat_preview_enabled: bool,
+        is_secure_site_enabled: Optional[bool] = None,
+        is_block_user_upload_enabled: Optional[bool] = None,
+        trusted_origins: Optional[List[str]] = None,
+        is_token_enabled: Optional[bool] = None,
+        e_tag: Optional[str] = None,
+        **kwargs
     ):
         """
         :keyword is_v1_enabled: Required. Whether this site is enabled for Bot Framework V1 protocol.
@@ -316,11 +306,17 @@ class Site(WebChatSite, DirectLineSite):
         :keyword e_tag: Entity Tag.
         :paramtype e_tag: str
         """
-        super(Site, self).__init__(site_name=site_name, is_enabled=is_enabled,
-                                   is_webchat_preview_enabled=is_webchat_preview_enabled, is_v1_enabled=is_v1_enabled,
-                                   is_v3_enabled=is_v3_enabled, is_secure_site_enabled=is_secure_site_enabled,
-                                   is_block_user_upload_enabled=is_block_user_upload_enabled,
-                                   trusted_origins=trusted_origins, **kwargs)
+        super(Site, self).__init__(
+            site_name=site_name,
+            is_enabled=is_enabled,
+            is_webchat_preview_enabled=is_webchat_preview_enabled,
+            is_v1_enabled=is_v1_enabled,
+            is_v3_enabled=is_v3_enabled,
+            is_secure_site_enabled=is_secure_site_enabled,
+            is_block_user_upload_enabled=is_block_user_upload_enabled,
+            trusted_origins=trusted_origins,
+            **kwargs
+        )
         self.is_v1_enabled = is_v1_enabled
         self.is_v3_enabled = is_v3_enabled
         self.is_secure_site_enabled = is_secure_site_enabled

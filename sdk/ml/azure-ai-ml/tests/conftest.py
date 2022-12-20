@@ -1,42 +1,47 @@
 import base64
+import json
 import os
 import random
 import time
 import uuid
 from datetime import datetime
+from importlib import reload
 from os import getenv
 from pathlib import Path
 from typing import Callable, Tuple, Union
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
-from azure.ai.ml import MLClient, load_component, load_job
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.entities import AzureBlobDatastore, Component
-from azure.ai.ml.entities._assets import Data, Model
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
-from azure.ai.ml.entities._job.job_name_generator import generate_job_name
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
     is_live,
+    set_bodiless_matcher,
     set_custom_default_matcher,
-    test_proxy,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
-from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
+from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
-
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+
+from azure.ai.ml import MLClient, load_component, load_job
+from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml._utils.utils import hash_dict
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.entities import AzureBlobDatastore, Component
+from azure.ai.ml.entities._assets import Data, Model
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._job.job_name_generator import generate_job_name
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -56,7 +61,7 @@ def fake_datastore_key() -> str:
 
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
-    add_remove_header_sanitizer(headers="x-azureml-token,Log-URL")
+    add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
         excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
     )
@@ -68,6 +73,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_sha256", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
+    add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(
@@ -78,10 +84,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     # for internal code whose upload_hash is of length 36
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s\"]{36})\\/?", group_for_replace="1"
     )
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s\"]{36})\\/",
         group_for_replace="1"
     )
 
@@ -148,6 +154,28 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
+def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
+    mock_response = json.dumps(
+        {
+            "registryName": "testFeed",
+            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
+            "resourceGroup": "resourceGroup",
+            "subscriptionId": "subscriptionId"
+        }
+    )
+    mocker.patch(
+        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        return_val=mock_response,
+    )
+    yield MLClient(
+        credential=Mock(spec_set=DefaultAzureCredential),
+        subscription_id=Test_Subscription,
+        resource_group_name=Test_Resource_Group,
+        registry_name=Test_Registry_Name,
+    )
+
+
+@pytest.fixture
 def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
 
@@ -170,6 +198,11 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
 
 
 @pytest.fixture
@@ -202,6 +235,45 @@ def randstr(variable_recorder: VariableRecorder) -> Callable[[str], str]:
 
     return generate_random_string
 
+@pytest.fixture
+def rand_batch_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch endpoint name string  e.g. batch-ept-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-ept-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_batch_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch deployment name string  e.g. batch-dpm-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-dpm-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_online_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random online endpoint name string  e.g. online-ept-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"online-ept-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_online_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random online deployment name string  e.g. online-dpm-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"online-dpm-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
 
 @pytest.fixture
 def rand_compute_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
@@ -277,6 +349,16 @@ def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
 
 
 @pytest.fixture
+def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using in Pipelines end-to-end tests."""
+    return MLClient(
+        credential=auth,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdk-test",
+    )
+
+
+@pytest.fixture
 def resource_group_name(location: str) -> str:
     return f"test-rg-{location}-v2-{_get_week_format()}"
 
@@ -318,8 +400,8 @@ def batch_endpoint_model(client: MLClient) -> Model:
 
 
 @pytest.fixture
-def light_gbm_model(client: MLClient) -> Model:
-    job_name = "light_gbm_job_" + uuid.uuid4().hex
+def light_gbm_model(client: MLClient, variable_recorder: VariableRecorder) -> Model:
+    job_name = variable_recorder.get_or_record("job_name", "light_gbm_job_" + uuid.uuid4().hex)
     model_name = "lightgbm_predict"  # specified in the mlflow training script
 
     try:
@@ -381,10 +463,10 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
-    def generate_hash():
+    def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
-    if is_live_and_not_recording():
+    if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
@@ -533,6 +615,30 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
+
+
+@pytest.fixture()
+def enable_private_preview_schema_features():
+    """Schemas will be imported at the very beginning, so need to reload related classes."""
+    from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import input_output
+    from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml.entities._component import command_component as command_component_entity
+    from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
+
+    def _reload_related_classes():
+        reload(input_output)
+        reload(command_component_schema)
+        reload(pipeline_component_schema)
+        command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
+        pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+
+    with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+        _reload_related_classes()
+        yield
+    _reload_related_classes()
 
 
 @pytest.fixture()
@@ -554,3 +660,51 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+        yield  # run test with env var overwritten
+
+
+@pytest.fixture()
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
+
+
+@pytest.fixture(autouse=True)
+def skip_sleep_for_playback():
+    """Mock time.sleep() for playback mode.
+    time.sleep() is usually used to wait for long-running operations to complete.
+    While in playback mode, we don't need wait as no actual remote operations are being performed.
+
+    Works on sync requests only for now. Need to mock asyncio.sleep and
+    trio.sleep if we want to apply this to async requests.
+
+    Please disable this fixture if you want to use time.sleep() for other reason.
+    """
+    if not is_live():
+        time.sleep = lambda *_: None
+
+
+def skip_sleep_in_lro_polling():
+    """A less aggressive version of skip_sleep_for_playback. Mock time.sleep() only for sync LRO polling.
+    You may use this fixture and utils.sleep_if_live() together when you disabled skip_sleep_for_playback.
+    """
+    if not is_live():
+        HttpTransport.sleep = lambda *_, **__: None
+
+
+def pytest_configure(config):
+    # register customized pytest markers
+    for marker, description in [
+        ("e2etest", "marks tests as end to end tests, which involve requests to the server"),
+        ("unittest", "marks tests as unit tests, which do not involve requests to the server"),
+        ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
+        ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
+        ("core_sdk_test", "marks tests as core sdk tests"),
+        ("production_experiences_test", "marks tests as production experience tests"),
+        ("training_experiences_test", "marks tests as training experience tests"),
+        ("data_experiences_test", "marks tests as data experience tests"),
+        ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
+        ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+    ]:
+        config.addinivalue_line("markers", f"{marker}: {description}")
+
+    config.addinivalue_line("markers", f"{marker}: {description}")

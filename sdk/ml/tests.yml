@@ -2,20 +2,22 @@ parameters:
   - name: TestMarkArgument
     type: string
     default: ''
+  - name: CloudConfig
+    type: object
+    default:
+      Public:
+        SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
+        Location: eastus2euap
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      TestProxy: true
       ServiceDirectory: ml
       MatrixReplace:
         - TestSamples=.*/true
       TestTimeoutInMinutes: 270
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
-      CloudConfig:
-        Public:
-          SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
-          Location: eastus2euap
+      CloudConfig: ${{ parameters.CloudConfig }}
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord' # use when allowing preparers to create the rgs for you
         AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script

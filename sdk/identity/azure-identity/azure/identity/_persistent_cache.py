@@ -5,12 +5,11 @@
 import logging
 import os
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import six
 
 if TYPE_CHECKING:
-    from typing import Any
     import msal_extensions
 
 _LOGGER = logging.getLogger(__name__)

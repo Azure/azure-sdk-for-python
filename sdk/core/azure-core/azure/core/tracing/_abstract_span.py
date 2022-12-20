@@ -4,15 +4,9 @@
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
 from enum import Enum
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from typing import TYPE_CHECKING, Any, Sequence, Dict, Optional, Union, Callable, ContextManager
 
 if TYPE_CHECKING:
-    from typing import Any, Sequence, Dict, Optional, Union, Callable, ContextManager
-
     from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
     AttributeValue = Union[

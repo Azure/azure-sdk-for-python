@@ -22,7 +22,6 @@ from azure.keyvault.keys import (
 )
 from azure.keyvault.keys.aio import KeyClient
 import pytest
-from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, AsyncKeysClientPreparer
@@ -250,7 +249,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = await self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.asyncio

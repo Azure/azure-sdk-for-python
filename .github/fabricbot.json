@@ -1061,8 +1061,33 @@
             ]
           },
           {
+            "label": "Cognitive - Personalizer",
+            "pathFilter": [
+              "sdk/personalizer/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "Machine Learning",
+            "pathFilter": [
+              "sdk/ml/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
+              "/sdk/ml/automl.tests.yml",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/automl",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/automl_node.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/automl",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/automl",
+              "/sdk/ml/azure-ai-ml/tests/automl_job",
+              "/sdk/ml/azure-ai-ml/tests/test_configs/automl_job",
               "/sdk/ml/automl.tests.yml"
             ],
             "exclude": [
@@ -1072,6 +1097,14 @@
           {
             "label": "ML-Data",
             "pathFilter": [
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_datastore",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/data.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/data.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_data",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_datastore",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_data_operations.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_datastore_operations.py",
               "/sdk/ml/data-experiences.tests.yml"
             ],
             "exclude": [
@@ -1154,6 +1187,40 @@
               "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_deployment",
               "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_endpoint",
               "/sdk/ml/production-experiences.tests.yml"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "ML-Workspace",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "ML-WorkspaceConnections",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "ML-ImportJob",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/import_job.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/pipeline_import_job.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_func.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_node.py"
             ],
             "exclude": [
               ""
@@ -1740,7 +1807,7 @@
               "Cognitive - Text Analytics"
             ],
             "mentionees": [
-              "assafi"
+              "mikaelsitruk"
             ]
           },
           {
@@ -1849,7 +1916,8 @@
               "Cognitive - Personalizer"
             ],
             "mentionees": [
-              "dwaijam"
+              "dwaijam",
+              "sharathmalladi"
             ]
           },
           {

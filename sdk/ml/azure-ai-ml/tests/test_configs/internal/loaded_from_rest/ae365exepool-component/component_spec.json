@@ -10,7 +10,8 @@
   "is_deterministic": true,
   "inputs": {
     "DataToLookAt": {
-      "type": "AnyFile"
+      "type": "AnyFile",
+      "optional": false
     },
     "GoldHitRTAData": {
       "type": "AnyFile",
@@ -19,11 +20,13 @@
     "ComplianceCluster": {
       "type": "string",
       "default": "MsResearch-EyesOn-Annotation",
-      "description": "compliance cluster name"
+      "description": "compliance cluster name",
+      "optional": false
     },
     "HeronId": {
       "type": "string",
-      "description": "Heron ID"
+      "description": "Heron ID",
+      "optional": false
     },
     "localoutputfolderEnc": {
       "type": "string",

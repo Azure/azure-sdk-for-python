@@ -1,24 +1,22 @@
-import time
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
-from azure.ai.ml.entities import AmlTokenConfiguration
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import jwt
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
+from azure.ai.ml.entities import AmlTokenConfiguration
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.distribution import MpiDistribution
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.exceptions import ValidationException
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.polling import LROPoller
 
@@ -27,10 +25,7 @@ from azure.core.polling import LROPoller
 # here and in the script.
 TEST_PARAMS = {"a_param": "1", "another_param": "2"}
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.timeout(600)
@@ -330,7 +325,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
         def get_job_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             job_list = client.jobs.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [j.name for j in job_list if j is not None]
 
@@ -345,19 +340,13 @@ class TestCommandJob(AzureRecordedTestCase):
     def test_command_job_download(self, tmp_path: Path, randstr: Callable[[], str], client: MLClient) -> None:
         client: MLClient = client
 
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/command_job/command_job_quick_with_output.yml",
                 params_override=[{"name": randstr("name")}],
             )
         )
-        wait_until_done(job)
+        wait_until_done(client=client, job=job)
 
         client.jobs.download(name=job.name, download_path=tmp_path, all=True)
 
@@ -374,12 +363,6 @@ class TestCommandJob(AzureRecordedTestCase):
     def test_command_job_local_run_download(self, tmp_path: Path, randstr: Callable[[], str], client: MLClient) -> None:
         client: MLClient = client
 
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/command_job/command_job_quick_with_output.yml",
@@ -387,7 +370,7 @@ class TestCommandJob(AzureRecordedTestCase):
             )
         )
 
-        wait_until_done(job)
+        wait_until_done(client=client, job=job)
 
         client.jobs.download(name=job.name, download_path=tmp_path, all=True)
 

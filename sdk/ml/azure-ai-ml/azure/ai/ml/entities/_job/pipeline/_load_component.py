@@ -3,27 +3,27 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from functools import partial
-from typing import Any, Callable, Dict, List, Mapping, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Union
 
 from marshmallow import INCLUDE
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
 from azure.ai.ml.constants._component import ControlFlowType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._util import extract_label
+from azure.ai.ml.entities._util import get_type_from_spec
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -61,7 +61,7 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.SWEEP,
-            create_instance_func=None,
+            create_instance_func=lambda: Sweep.__new__(Sweep),
             load_from_rest_object_func=Sweep._from_rest_object,
             nested_schema=NestedField(SweepSchema, unknown=INCLUDE),
         )
@@ -89,30 +89,27 @@ class _PipelineNodeFactory:
             load_from_rest_object_func=ConditionNode._from_rest_object,
             nested_schema=None,
         )
+        self.register_type(
+            _type=ControlFlowType.PARALLEL_FOR,
+            create_instance_func=None,
+            load_from_rest_object_func=ParallelFor._from_rest_object,
+            nested_schema=None,
+        )
 
     @classmethod
-    def _get_func(cls, _type: str, funcs):
-        _type, _ = extract_label(_type)
-        exception = partial(
-            ValidationException,
-            target=ErrorTarget.COMPONENT,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+    def _get_func(cls, _type: str, funcs: Dict[str, Callable]) -> Callable:
         if _type == NodeType._CONTAINER:
             msg = (
                 "Component returned by 'list' is abbreviated and can not be used directly, "
                 "please use result from 'get'."
             )
-            raise exception(
+            raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
             )
-        if _type not in funcs:
-            msg = f"Unsupported component type: {_type}."
-            raise exception(
-                message=msg,
-                no_personal_data_message=msg,
-            )
+        _type = get_type_from_spec({CommonYamlFields.TYPE: _type}, valid_keys=funcs)
         return funcs[_type]
 
     def get_create_instance_func(self, _type: str) -> Callable[..., BaseNode]:
@@ -122,7 +119,9 @@ class _PipelineNodeFactory:
         """
         return self._get_func(_type, self._create_instance_funcs)
 
-    def get_load_from_rest_object_func(self, _type: str) -> Callable[[Any], BaseNode]:
+    def get_load_from_rest_object_func(
+        self, _type: str
+    ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
         """Get the function to load a node from a rest object.
 
         param _type: The type of the node. type _type: str
@@ -133,9 +132,9 @@ class _PipelineNodeFactory:
         self,
         _type: str,
         *,
-        create_instance_func: Callable[..., Union[BaseNode, AutoMLJob]] = None,
-        load_from_rest_object_func: Callable[[Any], Union[BaseNode, AutoMLJob]] = None,
-        nested_schema: Union[NestedField, List[NestedField]] = None,
+        create_instance_func: Optional[Callable[..., Union[BaseNode, AutoMLJob]]] = None,
+        load_from_rest_object_func: Optional[Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]] = None,
+        nested_schema: Optional[Union[NestedField, List[NestedField]]] = None,
     ):
         """Register a type of node.
 
@@ -168,7 +167,7 @@ class _PipelineNodeFactory:
                 for nested_field in nested_schema:
                     jobs_value_field.insert_type_sensitive_field(type_name=_type, field=nested_field)
 
-    def load_from_dict(self, *, data: dict, _type: str = None) -> Union[BaseNode, AutoMLJob]:
+    def load_from_dict(self, *, data: dict, _type: Optional[str] = None) -> Union[BaseNode, AutoMLJob]:
         """Load a node from a dict.
 
         param data: A dict containing the node's data. type data: dict
@@ -186,17 +185,17 @@ class _PipelineNodeFactory:
             # parse component
             component_key = new_instance._get_component_attr_name()
             if component_key in data and isinstance(data[component_key], dict):
-                data[component_key] = component_factory.load_from_dict(
+                data[component_key] = Component._load(
                     data=data[component_key],
-                    context={
-                        BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
-                    }
+                    yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
                 )
 
         new_instance.__init__(**data)
         return new_instance
 
-    def load_from_rest_object(self, *, obj: dict, _type: str = None) -> Union[BaseNode, AutoMLJob]:
+    def load_from_rest_object(
+        self, *, obj: dict, _type: Optional[str] = None, **kwargs
+    ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
         param obj: A rest object containing the node's data. type obj:
@@ -213,7 +212,7 @@ class _PipelineNodeFactory:
         else:
             obj[CommonYamlFields.TYPE] = _type
 
-        return self.get_load_from_rest_object_func(_type)(obj)
+        return self.get_load_from_rest_object_func(_type)(obj, **kwargs)
 
     @classmethod
     def _automl_from_rest_object(cls, node: Dict) -> AutoMLJob:
@@ -236,7 +235,7 @@ class _PipelineNodeFactory:
 
 def _generate_component_function(
     component_entity: Component,
-    override_definitions: Mapping[str, OverrideDefinition] = None,  # pylint: disable=unused-argument
+    override_definitions: Optional[Mapping[str, OverrideDefinition]] = None,  # pylint: disable=unused-argument
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
     def create_component_func(**kwargs):

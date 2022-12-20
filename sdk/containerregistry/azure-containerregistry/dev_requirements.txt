@@ -4,4 +4,3 @@
 ../azure-mgmt-containerregistry
 aiohttp>=3.0
 azure-identity
-msrestazure>=0.4.11

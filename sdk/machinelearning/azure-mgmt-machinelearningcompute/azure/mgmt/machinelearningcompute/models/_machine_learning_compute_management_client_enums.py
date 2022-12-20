@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AgentVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Azure VM size of the agent VM nodes. This cannot be changed once the cluster is created.
     This list is non exhaustive; refer to
     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes for the possible VM
@@ -81,14 +65,15 @@ class AgentVMSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_GS4 = "Standard_GS4"
     STANDARD_GS5 = "Standard_GS5"
 
-class ClusterType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The cluster type.
-    """
+
+class ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The cluster type."""
 
     ACS = "ACS"
     LOCAL = "Local"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provision state of the cluster. Valid values are Unknown, Updating, Provisioning,
     Succeeded, and Failed.
     """
@@ -101,31 +86,31 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class OrchestratorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of orchestrator. It cannot be changed once the cluster is created.
-    """
+
+class OrchestratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of orchestrator. It cannot be changed once the cluster is created."""
 
     KUBERNETES = "Kubernetes"
     NONE = "None"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """SSL status. Allowed values are Enabled and Disabled.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SSL status. Allowed values are Enabled and Disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SystemServiceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The system service type
-    """
+
+class SystemServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The system service type."""
 
     NONE = "None"
     SCORING_FRONT_END = "ScoringFrontEnd"
     BATCH_FRONT_END = "BatchFrontEnd"
 
-class UpdatesAvailable(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Yes if updates are available for the system services, No if not.
-    """
+
+class UpdatesAvailable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Yes if updates are available for the system services, No if not."""
 
     YES = "Yes"
     NO = "No"

@@ -1142,15 +1142,15 @@ class TestDirectory(StorageRecordedTestCase):
         assert properties is not None
         assert properties.get('content_settings') is None
 
-    @pytest.mark.skip(reason="Investigate why renaming from shorter path to longer path does not work")
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_rename_from_a_shorter_directory_to_longer_directory(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
-        self._create_directory_and_get_directory_client(directory_name="old")
+        self._create_directory_and_get_directory_client(directory_name=directory_name)
 
         new_name = "newname"
         new_directory_client = self._create_directory_and_get_directory_client(directory_name=new_name)

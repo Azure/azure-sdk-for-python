@@ -1,3 +1,5 @@
+import json
+import re
 from pathlib import Path
 from unittest.mock import patch
 
@@ -12,6 +14,7 @@ from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
+from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -191,13 +194,11 @@ class TestPipelineJobValidate:
         code_path = "./tests/test_configs/python"
         pipeline_job_dict = pipeline_job._to_dict()
         # return rebased path after serialization
-        assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["code"], code_path)
         assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["component"]["code"], code_path)
-        # can't resolve pipeline_job.jobs.command_node.component.environment.build.path for now
-        # assert_the_same_path(
-        #     pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
-        #     "./tests/test_configs/environment/environment_files",
-        # )
+        assert_the_same_path(
+            pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
+            "./tests/test_configs/environment/environment_files",
+        )
 
     def test_pipeline_job_base_path_resolution(self, mocker: MockFixture):
         job: PipelineJob = load_job("./tests/test_configs/pipeline_jobs/my_exp/azureml-job.yaml")
@@ -545,8 +546,8 @@ class TestDSLPipelineJobValidate:
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
         validation_result = dsl_pipeline._validate()
-        assert "jobs.node2.limits.max_total_trials" in validation_result.error_messages
-        assert validation_result.error_messages["jobs.node2.limits.max_total_trials"] == "Missing data for required field."
+        assert "jobs.node2.limits" in validation_result.error_messages
+        assert validation_result.error_messages["jobs.node2.limits"] == "Missing data for required field."
 
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
@@ -573,6 +574,10 @@ class TestDSLPipelineJobValidate:
             mock_logging.assert_not_called()
 
     def test_node_base_path_resolution(self):
+        # load with a different root_base_path first as nested.schema will be initialized only once by default
+        test_path = "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/pipeline.yml"
+        load_job(test_path)
+
         component_path = (
             "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/component/component.yml"
         )
@@ -637,3 +642,32 @@ class TestDSLPipelineJobValidate:
         pipeline_job = pipeline_with_compute_binding('cpu-cluster')
         # Assert compute binding validate not raise error when validate
         assert pipeline_job._validate().passed
+
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+        "update_pipeline_schema",
+        "enable_private_preview_schema_features",
+    )
+    def test_pipeline_with_invalid_do_while_node(self) -> None:
+        with pytest.raises(ValidationError) as exception:
+            load_job(
+                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
+            )
+        error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
+        error_messages = json.loads(error_message_str)
+
+        def assert_error_message(path, except_message, error_messages):
+            msgs = next(filter(lambda item: item["path"] == path, error_messages))
+            assert except_message == msgs["message"]
+
+        assert_error_message("jobs.empty_mapping.mapping", "Missing data for required field.", error_messages["errors"])
+        assert_error_message(
+            "jobs.out_of_range_max_iteration_count.limits.max_iteration_count",
+            "Must be greater than or equal to 1 and less than or equal to 1000.",
+            error_messages["errors"],
+        )
+        assert_error_message(
+            "jobs.invalid_max_iteration_count.limits.max_iteration_count",
+            "Not a valid integer.",
+            error_messages["errors"],
+        )

@@ -1,13 +1,12 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities._compute.aml_compute import AmlCompute
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.e2etest
@@ -71,6 +70,14 @@ class TestCompute(AzureRecordedTestCase):
         # so this is a preferred approach to assert
         assert isinstance(outcome, LROPoller)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason=(
+            "Test takes 5 minutes in automation. "
+            "Already have unit tests verifying correct _restclient method is called. "
+            "Can be validated in live build only."
+        )
+    )
     def test_compute_instance_stop_start_restart(
         self, client: MLClient, rand_compute_name: Callable[[str], str]
     ) -> None:

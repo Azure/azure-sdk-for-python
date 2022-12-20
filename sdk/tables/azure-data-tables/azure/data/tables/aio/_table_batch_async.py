@@ -4,22 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
-import msrest
 
 from azure.core import MatchConditions
 
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
-from .._entity import TableEntity
 from .._table_batch import EntityType, TransactionOperationType
 from .._serialize import (
     _prepare_key,
     _get_match_headers,
     _add_entity_properties,
 )
-
-from .._generated.aio._azure_table import AzureTable
+from .._generated.aio import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
+from .._generated._serialization import Serializer, Deserializer
 
 if TYPE_CHECKING:
     from .._generated import models
@@ -40,8 +38,8 @@ class TableBatchOperations(object):
     def __init__(
         self,
         client: AzureTable,
-        serializer: msrest.Serializer,
-        deserializer: msrest.Deserializer,
+        serializer: Serializer,
+        deserializer: Deserializer,
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,
@@ -117,7 +115,7 @@ class TableBatchOperations(object):
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         response_preference: Optional[Union[str, "models.ResponseFormat"]] = "return-no-content",
-        query_options: Optional["models.QueryOptions"] = None,
+        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """
@@ -134,10 +132,18 @@ class TableBatchOperations(object):
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
         :type: entity: dict or :class:`~azure.data.tables.models.Entity`
+        :param timeout: The timeout parameter is expressed in seconds.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when analytics logging is enabled.
+        :type request_id_parameter: str
+        :param response_preference: Specifies the return format. Default is return without content.
+        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :param format: Specifies the media type for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata".
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         """
-        _format = None
-        if query_options is not None:
-            _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
         accept = "application/json;odata=minimalmetadata"
@@ -160,9 +166,9 @@ class TableBatchOperations(object):
             query_parameters["timeout"] = self._serialize.query(
                 "timeout", timeout, "int", minimum=0
             )
-        if _format is not None:
+        if format is not None:
             query_parameters["$format"] = self._serialize.query(
-                "format", _format, "str"
+                "format", format, "str"
             )
 
         # Construct headers
@@ -275,7 +281,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        query_options: Optional["models.QueryOptions"] = None,
+        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """Update entity in a table.
@@ -298,13 +304,11 @@ class TableBatchOperations(object):
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
-        :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :param format: Specifies the media type for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata".
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         """
-
-        _format = None
-        if query_options is not None:
-            _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -329,9 +333,9 @@ class TableBatchOperations(object):
             query_parameters["timeout"] = self._serialize.query(
                 "timeout", timeout, "int", minimum=0
             )
-        if _format is not None:
+        if format is not None:
             query_parameters["$format"] = self._serialize.query(
-                "format", _format, "str"
+                "format", format, "str"
             )
 
         # Construct headers
@@ -379,7 +383,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        query_options: Optional["models.QueryOptions"] = None,
+        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
         **kwargs
     ) -> None:
         """Merge entity in a table.
@@ -402,13 +406,11 @@ class TableBatchOperations(object):
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
-        :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :param format: Specifies the media type for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata".
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         """
-
-        _format = None
-        if query_options is not None:
-            _format = query_options.format
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -433,9 +435,9 @@ class TableBatchOperations(object):
             query_parameters["timeout"] = self._serialize.query(
                 "timeout", timeout, "int", minimum=0
             )
-        if _format is not None:
+        if format is not None:
             query_parameters["$format"] = self._serialize.query(
-                "format", _format, "str"
+                "format", format, "str"
             )
 
         # Construct headers
@@ -533,7 +535,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        query_options: Optional["models.QueryOptions"] = None,
+        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -552,13 +554,11 @@ class TableBatchOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
-        :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :param format: Specifies the media type for the response. Known values are:
+         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
+         "application/json;odata=fullmetadata".
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
         """
-
-        _format = None
-        if query_options is not None:
-            _format = query_options.format
         data_service_version = "3.0"
         accept = "application/json;odata=minimalmetadata"
 
@@ -582,9 +582,9 @@ class TableBatchOperations(object):
             query_parameters["timeout"] = self._serialize.query(
                 "timeout", timeout, "int", minimum=0
             )
-        if _format is not None:
+        if format is not None:
             query_parameters["$format"] = self._serialize.query(
-                "format", _format, "str"
+                "format", format, "str"
             )
 
         # Construct headers

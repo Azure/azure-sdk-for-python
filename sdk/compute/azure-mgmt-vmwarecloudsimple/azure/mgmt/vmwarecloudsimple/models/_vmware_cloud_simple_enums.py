@@ -6,36 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric's aggregation type for e.g. (Average, Total)
-    """
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric's aggregation type for e.g. (Average, Total)."""
 
     AVERAGE = "Average"
     TOTAL = "Total"
 
-class CustomizationHostNameType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of host name
-    """
+
+class CustomizationHostNameType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of host name."""
 
     USER_DEFINED = "USER_DEFINED"
     PREFIX_BASED = "PREFIX_BASED"
@@ -43,56 +26,56 @@ class CustomizationHostNameType(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     VIRTUAL_MACHINE_NAME = "VIRTUAL_MACHINE_NAME"
     CUSTOM_NAME = "CUSTOM_NAME"
 
-class CustomizationIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Identity type
-    """
+
+class CustomizationIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity type."""
 
     WINDOWS_TEXT = "WINDOWS_TEXT"
     WINDOWS = "WINDOWS"
     LINUX = "LINUX"
 
-class CustomizationIPAddressType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Customization Specification ip type
-    """
+
+class CustomizationIPAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Customization Specification ip type."""
 
     CUSTOM = "CUSTOM"
     DHCP_IP = "DHCP_IP"
     FIXED_IP = "FIXED_IP"
     USER_DEFINED = "USER_DEFINED"
 
-class CustomizationPolicyPropertiesType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of customization (Linux or Windows)
-    """
+
+class CustomizationPolicyPropertiesType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of customization (Linux or Windows)."""
 
     LINUX = "LINUX"
     WINDOWS = "WINDOWS"
 
-class DiskIndependenceMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Disk's independence mode type
-    """
+
+class DiskIndependenceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Disk's independence mode type."""
 
     PERSISTENT = "persistent"
     INDEPENDENT_PERSISTENT = "independent_persistent"
     INDEPENDENT_NONPERSISTENT = "independent_nonpersistent"
 
-class GuestOSNICCustomizationAllocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """IP address allocation method
-    """
+
+class GuestOSNICCustomizationAllocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address allocation method."""
 
     STATIC = "static"
     DYNAMIC = "dynamic"
 
-class GuestOSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The Guest OS type
-    """
+
+class GuestOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Guest OS type."""
 
     LINUX = "linux"
     WINDOWS = "windows"
     OTHER = "other"
 
-class NICType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """NIC type
-    """
+
+class NICType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type."""
 
     E1000 = "E1000"
     E1000_E = "E1000E"
@@ -101,42 +84,42 @@ class NICType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VMXNET2 = "VMXNET2"
     VMXNET3 = "VMXNET3"
 
-class NodeStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Node status, indicates is private cloud set up on this node or not
-    """
+
+class NodeStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Node status, indicates is private cloud set up on this node or not."""
 
     UNUSED = "unused"
     USED = "used"
 
-class OnboardingStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """indicates whether account onboarded or not in a given region
-    """
+
+class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """indicates whether account onboarded or not in a given region."""
 
     NOT_ON_BOARDED = "notOnBoarded"
     ON_BOARDED = "onBoarded"
     ON_BOARDING_FAILED = "onBoardingFailed"
     ON_BOARDING = "onBoarding"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The origin of operation
-    """
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The origin of operation."""
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class StopMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """mode indicates a type of stop operation - reboot, suspend, shutdown or power-off
-    """
+
+class StopMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """mode indicates a type of stop operation - reboot, suspend, shutdown or power-off."""
 
     REBOOT = "reboot"
     SUSPEND = "suspend"
     SHUTDOWN = "shutdown"
     POWEROFF = "poweroff"
 
-class UsageCount(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The usages' unit
-    """
+
+class UsageCount(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The usages' unit."""
 
     COUNT = "Count"
     BYTES = "Bytes"
@@ -145,9 +128,9 @@ class UsageCount(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
 
-class VirtualMachineStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of Virtual machine
-    """
+
+class VirtualMachineStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of Virtual machine."""
 
     RUNNING = "running"
     SUSPENDED = "suspended"

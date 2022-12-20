@@ -45,7 +45,6 @@ class BaseClientPreparer(AzureRecordedTestCase):
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
 
-
 class KeyVaultBackupClientPreparer(BaseClientPreparer):
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
@@ -87,6 +86,25 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
             KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
+
+class KeyVaultSettingsClientPreparer(BaseClientPreparer):
+    def __call__(self, fn):
+        async def _preparer(test_class, api_version, **kwargs):
+            self._skip_if_not_configured(api_version)
+            client = self.create_access_control_client(api_version=api_version, **kwargs)
+
+            async with client:
+                await fn(test_class, client, **kwargs)
+        return _preparer
+
+    def create_access_control_client(self, **kwargs):
+        from azure.keyvault.administration.aio import \
+            KeyVaultSettingsClient
+
+        credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
+        return self.create_client_from_credential(
+            KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+        )
 
 
 def get_decorator(**kwargs):

@@ -26,11 +26,7 @@
 import pytest
 import json
 import requests
-try:
-    from unittest.mock import Mock
-except ImportError:
-    # python < 3.3
-    from mock import Mock
+from unittest.mock import Mock
 
 # module under test
 from azure.core.exceptions import HttpResponseError, ODataV4Error, ODataV4Format, SerializationError, DeserializationError

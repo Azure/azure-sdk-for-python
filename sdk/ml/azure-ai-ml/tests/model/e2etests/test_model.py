@@ -2,20 +2,19 @@ import os
 import re
 import uuid
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from six import Iterator
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_model
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
-
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
 
 
 @pytest.fixture
@@ -30,15 +29,12 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     file_name.write("content")
     return str(file_name)
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModel(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")
@@ -117,8 +113,7 @@ class TestModel(AzureRecordedTestCase):
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            if is_live():
-                sleep(30)
+            sleep_if_live(30)
             model_list = client.models.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 
@@ -140,7 +135,7 @@ class TestModel(AzureRecordedTestCase):
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             model_list = client.models.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.name for m in model_list if m is not None]
 

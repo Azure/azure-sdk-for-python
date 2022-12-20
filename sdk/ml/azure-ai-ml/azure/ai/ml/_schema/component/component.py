@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_load, pre_load
+from marshmallow import fields, post_dump, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, PythonFuncNameStr, UnionField
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
@@ -49,13 +49,21 @@ class ComponentSchema(AssetSchema):
         self._declared_fields.pop("schema_ignored", None)  # pylint: disable=no-member
         super().__init__(*args, **kwargs)
 
-    @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,
-        data[BASE_PATH_CONTEXT_KEY] = self.context[BASE_PATH_CONTEXT_KEY]
-        return data
-
     @pre_load
     def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
         if isinstance(data, dict) and data.get("version", None):
             data["version"] = str(data["version"])
+        return data
+
+    @post_dump
+    def convert_input_value_to_str(self, data, **kwargs):  # pylint:disable=unused-argument, no-self-use
+        if isinstance(data, dict) and data.get("inputs", None):
+            input_dict = data["inputs"]
+            for input_value in input_dict.values():
+                input_type = input_value.get("type", None)
+                if isinstance(input_type, str) and input_type.lower() == "float":
+                    # Convert number to string to avoid precision issue
+                    for key in ["default", "min", "max"]:
+                        if input_value.get(key, None) is not None:
+                            input_value[key] = str(input_value[key])
         return data

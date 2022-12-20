@@ -5,14 +5,19 @@
 # pylint: disable=protected-access
 
 import time
-from typing import Dict, Iterable, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import WorkspaceUpdateParameters
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+    WorkspaceUpdateParameters,
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
     delete_resource_by_arm_id,
@@ -21,7 +26,10 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
+from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -30,10 +38,6 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._version import VERSION
-from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -41,7 +45,7 @@ from azure.core.polling import LROPoller, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations:
@@ -55,12 +59,12 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient052022,
+        service_client: ServiceClient102022Preview,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -70,7 +74,7 @@ class WorkspaceOperations:
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current
         resource group or subscription.
@@ -90,9 +94,9 @@ class WorkspaceOperations:
             cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
         )
 
-    @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get(self, name: str = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
         :param name: Name of the workspace.
@@ -106,9 +110,9 @@ class WorkspaceOperations:
         obj = self._operation.get(resource_group, workspace_name)
         return Workspace._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get_keys(self, name: str = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 
         :param name: Name of the workspace.
@@ -120,9 +124,9 @@ class WorkspaceOperations:
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
         return WorkspaceKeys._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: str = None) -> LROPoller:
+    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be
@@ -137,7 +141,7 @@ class WorkspaceOperations:
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
-    @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_create(
         self,
@@ -213,7 +217,7 @@ class WorkspaceOperations:
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
         )
 
-    @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_update(
         self,
@@ -239,26 +243,28 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
+        existing_workspace = self.get(workspace.name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
-        update_param = WorkspaceUpdateParameters(
-            tags=workspace.tags,
-            description=kwargs.get("description", workspace.description),
-            friendly_name=kwargs.get("display_name", workspace.display_name),
-            public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
-            image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
-            identity=identity,
-            primary_user_assigned_identity=kwargs.get(
-                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
-            ),
-        )
+            rest_user_assigned_identities = identity.user_assigned_identities
+            # add the uai resource_id which needs to be deleted (which is not provided in the list)
+            if (
+                existing_workspace
+                and existing_workspace.identity
+                and existing_workspace.identity.user_assigned_identities
+            ):
+                if rest_user_assigned_identities is None:
+                    rest_user_assigned_identities = {}
+                for uai in existing_workspace.identity.user_assigned_identities:
+                    if uai.resource_id not in rest_user_assigned_identities:
+                        rest_user_assigned_identities[uai.resource_id] = None
+                identity.user_assigned_identities = rest_user_assigned_identities
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
-        old_workspace = self.get(workspace.name, **kwargs)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
         if (
             container_registry is not None
-            and container_registry != old_workspace.container_registry
+            and container_registry != existing_workspace.container_registry
             and not update_dependent_resources
         ):
             msg = (
@@ -277,7 +283,7 @@ class WorkspaceOperations:
         # Empty string is for erasing the value of application_insights, None is to be ignored value
         if (
             application_insights is not None
-            and application_insights != old_workspace.application_insights
+            and application_insights != existing_workspace.application_insights
             and not update_dependent_resources
         ):
             msg = (
@@ -291,8 +297,30 @@ class WorkspaceOperations:
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        update_param.container_registry = container_registry
-        update_param.application_insights = application_insights
+
+        update_param = WorkspaceUpdateParameters(
+            tags=workspace.tags,
+            description=kwargs.get("description", workspace.description),
+            friendly_name=kwargs.get("display_name", workspace.display_name),
+            public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
+            image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
+            identity=identity,
+            primary_user_assigned_identity=kwargs.get(
+                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
+            ),
+        )
+        update_param.container_registry = container_registry or None
+        update_param.application_insights = application_insights or None
+
+        # Only the key uri property of customer_managed_key can be updated.
+        # Check if user is updating CMK key uri, if so, add to update_param
+        if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
+            customer_managed_key_uri = workspace.customer_managed_key.key_uri
+            update_param.encryption = EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier=customer_managed_key_uri,
+                )
+            )
 
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
 
@@ -303,7 +331,7 @@ class WorkspaceOperations:
         poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
         return poller
 
-    @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a workspace.
@@ -353,7 +381,7 @@ class WorkspaceOperations:
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
     def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller[DiagnoseResponseResultValue]:
         """Diagnose workspace setup problems.
 
@@ -493,7 +521,8 @@ class WorkspaceOperations:
         else:
             # pylint: disable=protected-access
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+            )._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:

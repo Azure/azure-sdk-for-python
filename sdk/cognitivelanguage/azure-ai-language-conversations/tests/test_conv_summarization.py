@@ -63,12 +63,19 @@ class TestConversationalSummarization(AzureRecordedTestCase):
                     },
                     "tasks": [
                         {
-                            "taskName": "analyze 1",
+                            "taskName": "Issue task",
                             "kind": "ConversationalSummarizationTask",
                             "parameters": {
-                                "summaryAspects": ["Issue", "Resolution"]
+                                "summaryAspects": ["issue"]
                             }
-                        }
+                        },
+                        {
+                            "taskName": "Resolution task",
+                            "kind": "ConversationalSummarizationTask",
+                            "parameters": {
+                                "summaryAspects": ["resolution"]
+                            }
+                        },
                     ]
                 }
             )
@@ -91,3 +98,93 @@ class TestConversationalSummarization(AzureRecordedTestCase):
                 assert summary["aspect"] in ["issue", "resolution"]
                 assert summary["text"]
 
+    def test_conv_summ_chapter_narrative(self, recorded_test, conversation_creds):
+        # analyze query
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
+        with client:
+            poller = client.begin_conversation_analysis(
+                task={
+                  "displayName": "Conversation Summarization Example",
+                  "analysisInput": {
+                    "conversations": [
+                      {
+                        "id": "1",
+                        "language": "en",
+                        "modality": "transcript",
+                        "conversationItems": [
+                          {
+                            "participantId": "speaker 1",
+                            "id": "1",
+                            "text": "Let's get started.",
+                            "lexical": "",
+                            "itn": "",
+                            "maskedItn": "",
+                            "conversationItemLevelTiming": {
+                              "offset": 0,
+                              "duration": 20000000
+                            }
+                          },
+                          {
+                            "participantId": "speaker 2",
+                            "id": "2",
+                            "text": "OK. How many remaining bugs do we have now?",
+                            "lexical": "",
+                            "itn": "",
+                            "maskedItn": "",
+                            "conversationItemLevelTiming": {
+                              "offset": 20000000,
+                              "duration": 50000000
+                            }
+                          },
+                          {
+                            "participantId": "speaker 3",
+                            "id": "3",
+                            "text": "Only 3.",
+                            "lexical": "",
+                            "itn": "",
+                            "maskedItn": "",
+                            "conversationItemLevelTiming": {
+                              "offset": 50000000,
+                              "duration": 60000000
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "tasks": [
+                    {
+                      "taskName": "Conversation Summarization Task 1",
+                      "kind": "ConversationalSummarizationTask",
+                      "parameters": {
+                        "summaryAspects": [
+                          "chapterTitle",
+                          "narrative"
+                        ]
+                      }
+                    }
+                  ]
+                }
+            )
+
+            # assert - main object
+            result = poller.result()
+            assert result is not None
+            assert result["status"] == "succeeded"
+
+            # assert - task result
+            task_result = result["tasks"]["items"][0]
+            assert task_result["status"] == "succeeded"
+            assert task_result["kind"] == "conversationalSummarizationResults"
+
+            # assert - conv result
+            conversation_result = task_result["results"]["conversations"][0]
+            summaries = conversation_result["summaries"]
+            assert summaries
+            for summary in summaries:
+                assert summary["aspect"] in ["chapterTitle", "narrative"]
+                assert summary["text"]
+                assert summary["contexts"]

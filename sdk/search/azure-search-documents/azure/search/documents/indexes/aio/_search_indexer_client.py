@@ -9,7 +9,8 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio import SearchClient as _SearchServiceClient
+from .._generated.aio import SearchServiceClient as _SearchServiceClient
+from .._generated.models import SkillNames
 from ..models import SearchIndexerSkillset
 from .._utils import (
     get_access_conditions,
@@ -133,7 +134,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = indexer.name
         result = await self._client.indexers.create_or_update(
-            indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
+            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result
 
@@ -380,6 +381,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = await self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -643,6 +645,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -666,5 +669,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = skillset.name
         except AttributeError:
             name = skillset
-        result = await self._client.skillsets.reset_skills(name, skill_names, **kwargs)
+        names = SkillNames(skill_names=skill_names)
+        result = await self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
         return result

@@ -47,10 +47,7 @@ if TYPE_CHECKING:
     PipelineResponseType = PipelineResponse[HttpRequest, ResponseType]
 
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+ABC = abc.ABC
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])

@@ -23,8 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, Optional
-
 from azure.core.exceptions import TooManyRedirectsError
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase

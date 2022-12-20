@@ -26,12 +26,16 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC
+from .._vendor import ConversationAnalysisClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -40,12 +44,14 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,12 +68,14 @@ def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,13 +92,13 @@ def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
     @overload
     def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -209,7 +217,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -223,6 +231,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -286,7 +295,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -301,6 +310,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -369,8 +379,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -380,7 +390,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -391,9 +401,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -425,8 +435,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -436,7 +446,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_conversation_analysis_request(
+        request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -447,9 +457,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -486,8 +496,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -609,8 +620,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -717,8 +729,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.
@@ -820,13 +833,13 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._conversation_analysis_initial(  # type: ignore
+            raw_result = self._conversation_analysis_initial(
                 task=task, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -838,7 +851,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -846,9 +859,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -860,4 +873,4 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

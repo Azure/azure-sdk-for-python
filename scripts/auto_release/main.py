@@ -251,12 +251,6 @@ class CodegenTestPR:
         folder_info = glob(f'sdk/*/azure-mgmt-{self.package_name}')[0]
         self.sdk_folder = Path(folder_info).parts[1]
 
-    def prepare_branch(self):
-        if self.spec_readme:
-            self.prepare_branch_with_readme()
-        # else:
-        # self.prepare_branch_with_base_branch()
-
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
@@ -380,8 +374,8 @@ class CodegenTestPR:
 
     @staticmethod
     def get_need_dependency() -> List[str]:
-        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
-        items = ["msrest>", "azure-mgmt-core", "typing_extensions"]
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/packaging_files/setup.py')
+        items = ["msrest>", "azure-mgmt-core", "typing-extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()
         dependencies = []
@@ -408,7 +402,7 @@ class CodegenTestPR:
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
-            dependency_name = re.compile("[a-zA-Z-_]*").findall(dependency)[0]
+            dependency_name = re.compile("[a-zA-Z-]*").findall(dependency)[0]
             for i in range(len(content)):
                 if new_line in content[i]:
                     return
@@ -470,12 +464,13 @@ class CodegenTestPR:
     def run_test_proc(self):
         # run test
         os.chdir(self.sdk_code_path())
-        succeeded_result = 'Live test success'
-        failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
+        test_mode = "Live test" if os.getenv("AZURE_TEST_RUN_LIVE") else "Recording test"
+        succeeded_result = f'{test_mode} success'
+        failed_result = f'{test_mode} fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
             print_check(f'pytest  --collect-only')
         except:
-            log('live test run done, do not find any test !!!')
+            log(f'{test_mode} run done, do not find any test !!!')
             self.test_result = succeeded_result
             return
 
@@ -485,7 +480,7 @@ class CodegenTestPR:
             log('some test failed, please fix it locally')
             self.test_result = failed_result
         else:
-            log('live test run done, do not find failure !!!')
+            log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
     def run_test(self):
@@ -494,7 +489,7 @@ class CodegenTestPR:
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
-        pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
+        pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
         pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
@@ -575,7 +570,9 @@ class CodegenTestPR:
 
         # comment for hint
         body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
-               'Otherwise we will release it ASAP after your check.'
+               'Otherwise we will follow ' \
+               '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
+               'to release it before target date'
         api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):
@@ -595,10 +592,16 @@ class CodegenTestPR:
         self.issue_comment()
 
     def run(self):
-        self.prepare_branch()
-        self.check_file()
-        self.run_test()
-        self.create_pr()
+        if "https:" in self.spec_readme:
+            self.prepare_branch_with_readme()
+            self.check_file()
+            self.run_test()
+            self.create_pr()
+        else:
+            self.sdk_folder = self.spec_readme.split('/')[0]
+            self.package_name = self.spec_readme.split('/')[-1].split('-')[-1]
+            self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+            self.run_test()
 
 
 if __name__ == '__main__':

@@ -63,7 +63,7 @@ class SampleTablesQuery(object):
                 e["Name"] = random.choice(names)
                 e["Brand"] = random.choice(brands)
                 e["Color"] = random.choice(colors)
-                e["Value"] = random.randint(0, 100)
+                e["Value"] = random.randint(0, 100) # type: ignore[assignment]
                 table_client.create_entity(entity=e)
 
     def sample_query_entities(self):

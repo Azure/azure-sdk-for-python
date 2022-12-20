@@ -5,9 +5,10 @@
 import asyncio
 import sys
 import os
-from typing import TYPE_CHECKING, List
+from typing import List
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.credentials import AccessToken
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -21,10 +22,6 @@ from ..._credentials.azure_cli import (
     sanitize_output,
 )
 from ..._internal import _scopes_to_resource, resolve_tenant
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import AccessToken
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -43,17 +40,17 @@ class AzureCliCredential(AsyncContextManager):
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.

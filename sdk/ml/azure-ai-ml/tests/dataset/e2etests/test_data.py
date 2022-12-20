@@ -1,22 +1,17 @@
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
 import pytest
 import yaml
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_data
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
-
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
-
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.e2etest
@@ -203,7 +198,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
                     params_override=[{"name": name}, {"version": version}],
                 )
             )
-            sleep(3)
+            sleep_if_live(3)
             assert client.data.get(name, label="latest").version == version
 
     @pytest.mark.e2etest
@@ -221,7 +216,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
 
         def get_data_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             data_list = client.data.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [d.version for d in data_list if d is not None]
 
@@ -245,7 +240,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
 
         def get_data_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             data_list = client.data.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [d.name for d in data_list if d is not None]
 
