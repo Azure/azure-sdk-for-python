@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication_async.py
+FILE: sample_authentication_v3_1.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Form Recognizer service.
@@ -20,7 +20,7 @@ DESCRIPTION:
     https://docs.microsoft.com/azure/cognitive-services/authentication
 
 USAGE:
-    python sample_authentication_async.py
+    python sample_authentication_v3_1.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -31,78 +31,70 @@ USAGE:
 """
 
 import os
-import asyncio
 
 
-class AuthenticationSampleAsync(object):
+class AuthenticationSample(object):
 
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 
-    async def authentication_with_api_key_credential_form_recognizer_client_async(self):
-        # [START create_fr_client_with_key_async]
+    def authentication_with_api_key_credential_form_recognizer_client(self):
+        # [START create_fr_client_with_key]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer.aio import FormRecognizerClient
+        from azure.ai.formrecognizer import FormRecognizerClient
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
-        # [END create_fr_client_with_key_async]
-        async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
-            result = await poller.result()
+        # [END create_fr_client_with_key]
+        poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
+        result = poller.result()
 
-    async def authentication_with_azure_active_directory_form_recognizer_client_async(self):
-        # [START create_fr_client_with_aad_async]
+    def authentication_with_azure_active_directory_form_recognizer_client(self):
+        # [START create_fr_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        from azure.ai.formrecognizer.aio import FormRecognizerClient
-        from azure.identity.aio import DefaultAzureCredential
+        from azure.ai.formrecognizer import FormRecognizerClient
+        from azure.identity import DefaultAzureCredential
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_recognizer_client = FormRecognizerClient(endpoint, credential)
-        # [END create_fr_client_with_aad_async]
-        async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
-            result = await poller.result()
+        # [END create_fr_client_with_aad]
+        poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
+        result = poller.result()
 
-    async def authentication_with_api_key_credential_form_training_client_async(self):
-        # [START create_ft_client_with_key_async]
+    def authentication_with_api_key_credential_form_training_client(self):
+        # [START create_ft_client_with_key]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer.aio import FormTrainingClient
+        from azure.ai.formrecognizer import FormTrainingClient
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_training_client = FormTrainingClient(endpoint, AzureKeyCredential(key))
-        # [END create_ft_client_with_key_async]
-        async with form_training_client:
-            properties = await form_training_client.get_account_properties()
+        # [END create_ft_client_with_key]
+        properties = form_training_client.get_account_properties()
 
-    async def authentication_with_azure_active_directory_form_training_client_async(self):
-        # [START create_ft_client_with_aad_async]
+    def authentication_with_azure_active_directory_form_training_client(self):
+        # [START create_ft_client_with_aad]
         """DefaultAzureCredential will use the values from these environment
         variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
         """
-        from azure.ai.formrecognizer.aio import FormTrainingClient
-        from azure.identity.aio import DefaultAzureCredential
+        from azure.ai.formrecognizer import FormTrainingClient
+        from azure.identity import DefaultAzureCredential
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
         form_training_client = FormTrainingClient(endpoint, credential)
-        # [END create_ft_client_with_aad_async]
-        async with form_training_client:
-            properties = await form_training_client.get_account_properties()
+        # [END create_ft_client_with_aad]
+        properties = form_training_client.get_account_properties()
 
-
-async def main():
-    sample = AuthenticationSampleAsync()
-    await sample.authentication_with_api_key_credential_form_recognizer_client_async()
-    await sample.authentication_with_azure_active_directory_form_recognizer_client_async()
-    await sample.authentication_with_api_key_credential_form_training_client_async()
-    await sample.authentication_with_azure_active_directory_form_training_client_async()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    sample = AuthenticationSample()
+    sample.authentication_with_api_key_credential_form_recognizer_client()
+    sample.authentication_with_azure_active_directory_form_recognizer_client()
+    sample.authentication_with_api_key_credential_form_training_client()
+    sample.authentication_with_azure_active_directory_form_training_client()
