@@ -71,7 +71,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         )
 
         if tenant:
-            command += " --tenant " + tenant
+            command += " --tenant-id " + tenant
         output = await _run_command(command)
 
         token = parse_token(output)

@@ -80,7 +80,7 @@ class AzureDeveloperCliCredential(object):
             **kwargs
         )
         if tenant:
-            command += " --tenant " + tenant
+            command += " --tenant-id " + tenant
         output = _run_command(command)
 
         token = parse_token(output)
