@@ -182,8 +182,7 @@ class TestJobOperations:
     @patch.object(Job, "_from_rest_object")
     def test_user_identity_get_aml_token(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
-        # job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
-        job = load_job(source="E:\\Repos\\singankit\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\tests\\test_configs\command_job\\command_job_test_user_identity.yml")
+        job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
 
         aml_resource_id = _get_aml_resource_id_from_metadata()
         azure_ml_scopes = _resource_to_scopes(aml_resource_id)
