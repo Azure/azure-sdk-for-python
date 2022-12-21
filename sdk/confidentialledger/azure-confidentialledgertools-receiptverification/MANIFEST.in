@@ -1,8 +1,0 @@
-include *.md
-include LICENSE
-include azure/__init__.py
-include azure/confidentialledgertools/__init__.py
-include azure/confidentialledgertools/receiptverification/__init__.py
-include azure/confidentialledgertools/receiptverification/py.typed
-recursive-include tests *.py
-recursive-include samples *.py
