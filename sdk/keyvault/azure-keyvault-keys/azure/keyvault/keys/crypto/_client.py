@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from copy import deepcopy
 import logging
 from typing import TYPE_CHECKING, cast
 
@@ -21,7 +20,6 @@ if TYPE_CHECKING:
     from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
     from . import KeyWrapAlgorithm, SignatureAlgorithm
     from .._shared import KeyVaultResourceId
 
@@ -515,23 +513,3 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)
-
-    @distributed_trace
-    def send_request(self, request: "HttpRequest", *, stream: bool = False, **kwargs: "Any") -> "HttpResponse":
-        """Runs a network request using the client's existing pipeline.
-
-        This method does not raise if the response is an error; to raise an exception, call `raise_for_status()` on the
-        returned response object. For more information about how to send custom requests with this method, see
-        https://aka.ms/azsdk/dpcodegen/python/send_request.
-
-        :param request: The network request you want to make.
-        :type request: ~azure.core.rest.HttpRequest
-
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        request_copy = deepcopy(request)
-        request_copy.url = self._client._client.format_url(request_copy.url)
-        return self._client._client.send_request(request_copy, stream=stream, **kwargs)

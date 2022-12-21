@@ -3,9 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
+
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from . import AsyncChallengeAuthPolicy
-from .client_base import ApiVersion, DEFAULT_VERSION
+from .client_base import ApiVersion, DEFAULT_VERSION, _format_api_version, _SERIALIZER
 from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
@@ -14,6 +17,7 @@ if TYPE_CHECKING:
         # pylint:disable=unused-import
         from typing import Any
         from azure.core.credentials_async import AsyncTokenCredential
+        from azure.core.rest import AsyncHttpResponse, HttpRequest
     except ImportError:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
@@ -81,3 +85,27 @@ class AsyncKeyVaultClientBase(object):
         Calling this method is unnecessary when using the client as a context manager.
         """
         await self._client.close()
+
+    @distributed_trace_async
+    async def send_request(
+        self, request: "HttpRequest", *, stream: bool = False, **kwargs: "Any"
+    ) -> "AsyncHttpResponse":
+        """Runs a network request using the client's existing pipeline.
+
+        The request URL can be relative to the vault URL. The service API version used for the request is the same as
+        the client's unless otherwise specified. This method does not raise if the response is an error; to raise an
+        exception, call `raise_for_status()` on the returned response object. For more information about how to send
+        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        request_copy = _format_api_version(request, self.api_version)
+        path_format_arguments = {
+            "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
+        }
+        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
+        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)

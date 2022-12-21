@@ -782,8 +782,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         # fetch the key we just created
         request = HttpRequest(
             method="GET",
-            url=f"{client._vault_url}/keys/{key_name}/{key.properties.version}",
-            params={"api-version": client.api_version},
+            url=f"keys/{key_name}/{key.properties.version}",
             headers={"Accept": "application/json"},
         )
         response = await client.send_request(request)

@@ -644,8 +644,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         # sign using a custom request
         request = HttpRequest(
             method="POST",
-            url=f"{key_client.vault_url}/keys/{key_name}/{imported_key.properties.version}/sign",
-            params={"api-version": key_client.api_version},
+            url=f"keys/{key_name}/{imported_key.properties.version}/sign",
             headers={"Accept": "application/json"},
             json=json
         )

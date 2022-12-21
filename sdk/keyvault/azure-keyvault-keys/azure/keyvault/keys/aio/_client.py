@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from copy import deepcopy
 from typing import TYPE_CHECKING
 from functools import partial
 
@@ -26,7 +25,6 @@ from .. import (
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from azure.core.async_paging import AsyncItemPaged
-    from azure.core.rest import AsyncHttpResponse, HttpRequest
     from typing import Any, Optional, Union
     from .. import KeyType
 
@@ -845,25 +843,3 @@ class KeyClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)
-
-    @distributed_trace_async
-    async def send_request(
-        self, request: "HttpRequest", *, stream: bool = False, **kwargs: "Any"
-    ) -> "AsyncHttpResponse":
-        """Runs a network request using the client's existing pipeline.
-
-        This method does not raise if the response is an error; to raise an exception, call `raise_for_status()` on the
-        returned response object. For more information about how to send custom requests with this method, see
-        https://aka.ms/azsdk/dpcodegen/python/send_request.
-
-        :param request: The network request you want to make.
-        :type request: ~azure.core.rest.HttpRequest
-
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
-        """
-        request_copy = deepcopy(request)
-        request_copy.url = self._client._client.format_url(request_copy.url)
-        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)
