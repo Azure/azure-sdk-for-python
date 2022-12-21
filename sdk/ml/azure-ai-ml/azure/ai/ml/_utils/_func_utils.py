@@ -1,117 +1,140 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import abc
 import sys
 from contextlib import contextmanager
 from types import FunctionType, MethodType
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union, Tuple
 import logging
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 
-ERRORS = {
-    "not_callable": "func must be a function or a callable object",
-    "conflict_argument": "Injected param name __self conflicts with function args {}",
-    "not_all_template_separators_used": "Not all template separators are used, "
-                                        "please switch to a compatible version of Python.",
-}
 logger = logging.getLogger(__name__)
 
 
-@contextmanager
-def replace_sys_profiler(profiler):
-    """A context manager which replaces sys profiler to given profiler."""
-    original_profiler = sys.getprofile()
-    sys.setprofile(profiler)
-    try:
-        yield
-    finally:
-        sys.setprofile(original_profiler)
+class PersistentLocalsFunctionBuilder(abc.ABC):
+    errors = {
+        "not_callable": "func must be a function or a callable object",
+        "conflict_argument": "Injected param name __self conflicts with function args {args}",
+        "not_all_template_separators_used": "Not all template separators are used, "
+                                            "please switch to a compatible version of Python.",
+    }
 
+    def make_error(self, error_name, **kwargs):
+        """Make error message with error_name and kwargs."""
+        return self.errors[error_name].format(**kwargs)
 
-def get_func_variable_tracer(_locals_data, func_code):
-    """Get a tracer to trace variable names in dsl.pipeline function.
+    @abc.abstractmethod
+    def call(self, func, _all_kwargs) -> Tuple[Any, dict]:
+        """Get outputs and locals in calling func with _all_kwargs.
+        Locals will be used to update node variable names.
 
-    :param _locals_data: A dict to save locals data.
-    :type _locals_data: dict
-    :param func_code: An code object to compare if current frame is inside user function.
-    :type func_code: CodeType
-    """
-
-    def tracer(frame, event, arg):  # pylint: disable=unused-argument
-        if frame.f_code == func_code and event == "return":
-            # Copy the locals of user's dsl function when it returns.
-            _locals_data.update(frame.f_locals.copy())
-
-    return tracer
-
-
-def _get_outputs_and_locals(func, _all_kwargs):
-    _locals = {}
-
-    if not hasattr(func, '__code__'):
-        if hasattr(func, '__call__'):
-            func = func.__call__
-        else:
-            raise TypeError(ERRORS["not_callable"])
-
-    if "__self" in func.__code__.co_varnames:
-        raise ValueError(ERRORS["conflict_argument"].format(list(func.__code__.co_varnames)))
-
-    func_variable_profiler = get_func_variable_tracer(_locals, func.__code__)
-    with replace_sys_profiler(func_variable_profiler):
-        outputs = func(**_all_kwargs)
-    return outputs, _locals
-
-
-class PersistentLocalsFunction(object):
-    """Wrapper class for the 'persistent_locals' decorator.
-
-    Refer to the docstring of instances for help about the wrapped
-    function.
-    """
-
-    def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
+        :param func: The function to execute.
+        :type func: Union[FunctionType, MethodType]
+        :param _all_kwargs: All kwargs to call self.func.
+        :type _all_kwargs: typing.Dict[str, typing.Any]
+        :return: A tuple of outputs and locals.
+        :rtype: typing.Tuple[typing.Any, typing.Dict]
         """
-        :param _func: The function to be wrapped.
-        :param _self: If original func is a method, _self should be provided, which is the instance of the method.
-        :param skip_locals: A list of local variables to skip when saving the locals.
-        """
-        self.locals = {}
-        self._self = _self
-        # make function an instance method
-        self._func = MethodType(_func, self)
-        self._skip_locals = skip_locals
+        raise NotImplementedError()
 
-    def __call__(__self, *args, **kwargs):  # pylint: disable=no-self-argument
-        # Use __self in case self is also passed as a named argument in kwargs
-        __self.locals.clear()
+
+class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
+    @staticmethod
+    @contextmanager
+    def replace_sys_profiler(profiler):
+        """A context manager which replaces sys profiler to given profiler."""
+        original_profiler = sys.getprofile()
+        sys.setprofile(profiler)
         try:
-            if __self._self:
-                return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
-            return __self._func(*args, **kwargs)  # pylint: disable=not-callable
+            yield
         finally:
-            # always pop skip locals even if exception is raised in user code
-            if __self._skip_locals is not None:
-                for skip_local in __self._skip_locals:
-                    __self.locals.pop(skip_local, None)
+            sys.setprofile(original_profiler)
 
+    @staticmethod
+    def get_func_variable_tracer(_locals_data, func_code):
+        """Get a tracer to trace variable names in dsl.pipeline function.
 
-def _source_template_func(mock_arg):
-    return mock_arg
+        :param _locals_data: A dict to save locals data.
+        :type _locals_data: dict
+        :param func_code: An code object to compare if current frame is inside user function.
+        :type func_code: CodeType
+        """
 
+        def tracer(frame, event, arg):  # pylint: disable=unused-argument
+            if frame.f_code == func_code and event == "return":
+                # Copy the locals of user's dsl function when it returns.
+                _locals_data.update(frame.f_locals.copy())
 
-def _target_template_func(__self, mock_arg):
-    try:
-        return mock_arg
-    finally:
-        __self.locals = locals().copy()
+        return tracer
+
+    def call(self, func, _all_kwargs):
+        _locals = {}
+
+        if not hasattr(func, '__code__'):
+            if hasattr(func, '__call__'):
+                func = func.__call__
+            else:
+                raise TypeError(self.make_error("not_callable"))
+
+        if "__self" in func.__code__.co_varnames:
+            raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
+
+        func_variable_profiler = self.get_func_variable_tracer(_locals, func.__code__)
+        with self.replace_sys_profiler(func_variable_profiler):
+            outputs = func(**_all_kwargs)
+        return outputs, _locals
 
 
 try:
     from bytecode import Bytecode, Instr
 
-    class PersistentLocalsFunctionBuilder(object):
+    class PersistentLocalsFunction(object):
+        """Wrapper class for the 'persistent_locals' decorator.
+
+        Refer to the docstring of instances for help about the wrapped
+        function.
+        """
+
+        def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
+            """
+            :param _func: The function to be wrapped.
+            :param _self: If original func is a method, _self should be provided, which is the instance of the method.
+            :param skip_locals: A list of local variables to skip when saving the locals.
+            """
+            self.locals = {}
+            self._self = _self
+            # make function an instance method
+            self._func = MethodType(_func, self)
+            self._skip_locals = skip_locals
+
+        def __call__(__self, *args, **kwargs):  # pylint: disable=no-self-argument
+            # Use __self in case self is also passed as a named argument in kwargs
+            __self.locals.clear()
+            try:
+                if __self._self:
+                    return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
+                return __self._func(*args, **kwargs)  # pylint: disable=not-callable
+            finally:
+                # always pop skip locals even if exception is raised in user code
+                if __self._skip_locals is not None:
+                    for skip_local in __self._skip_locals:
+                        __self.locals.pop(skip_local, None)
+
+
+    def _source_template_func(mock_arg):
+        return mock_arg
+
+
+    def _target_template_func(__self, mock_arg):
+        try:
+            return mock_arg
+        finally:
+            __self.locals = locals().copy()
+
+
+    class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
         def __init__(self):
             self._template_separators = self._clear_location(Bytecode.from_code(_source_template_func.__code__))
 
@@ -160,7 +183,7 @@ try:
             pieces.append(piece)
 
             if cur_separator is not None:
-                raise ValueError(ERRORS["not_all_template_separators_used"])
+                raise ValueError(self.make_error("not_all_template_separators_used"))
             return pieces
 
         @classmethod
@@ -184,7 +207,7 @@ try:
             generated_bytecode.clear()
 
             if self._injected_param in generated_bytecode.argnames:
-                raise ValueError(ERRORS["conflict_argument"].format(generated_bytecode.argnames))
+                raise ValueError(self.make_error("conflict_argument", args=generated_bytecode.argnames))
             generated_bytecode.argnames.insert(0, self._injected_param)
             generated_bytecode.argcount += 1  # pylint: disable=no-member
             return generated_bytecode
@@ -193,12 +216,12 @@ try:
             generated_bytecode = self._create_base_bytecode(func)
 
             for template_piece, input_piece, separator in zip(
-                self._template_body,
-                self.split_bytecode(
-                    Bytecode.from_code(func.__code__),
-                    skip_body_instr=True
-                ),
-                self._template_separators,
+                    self._template_body,
+                    self.split_bytecode(
+                        Bytecode.from_code(func.__code__),
+                        skip_body_instr=True
+                    ),
+                    self._template_separators,
             ):
                 generated_bytecode.extend(template_piece)
                 generated_bytecode.extend(input_piece)
@@ -244,16 +267,17 @@ try:
             elif hasattr(func, '__call__'):
                 func = func.__call__
             else:
-                raise TypeError(ERRORS['not_callable'])
+                raise TypeError(self.make_error('not_callable'))
             return self._build_func(func)
 
-    def _get_outputs_and_locals_private_preview(func, _all_kwargs):
-        persistent_func = PersistentLocalsFunctionBuilder().build(func)
-        outputs = persistent_func(**_all_kwargs)
-        return outputs, persistent_func.locals
-
+        def call(self, func, _all_kwargs) -> Tuple[Any, dict]:
+            persistent_func = self.build(func)
+            outputs = persistent_func(**_all_kwargs)
+            return outputs, persistent_func.locals
 except ImportError:
-    pass
+    # Fall back to the old implementation
+    class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):
+        pass
 
 
 def get_outputs_and_locals(func, _all_kwargs):
@@ -268,9 +292,5 @@ def get_outputs_and_locals(func, _all_kwargs):
     :rtype: typing.Tuple[typing.Dict, typing.Dict]
     """
     if is_private_preview_enabled():
-        try:
-            return _get_outputs_and_locals_private_preview(func, _all_kwargs)
-        except NameError:
-            pass
-    # Fallback to the old way.
-    return _get_outputs_and_locals(func, _all_kwargs)
+        return PersistentLocalsFunctionBytecodeBuilder().call(func, _all_kwargs)
+    return PersistentLocalsFunctionProfilerBuilder().call(func, _all_kwargs)
