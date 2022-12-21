@@ -16,8 +16,7 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=locally-disabled,fixme,too-few-public-methods,import-outside-toplevel,deprecated-module,assigning-non-slot,deprecated-class,deprecated-argument,deprecated-decorator,consider-using-dict-items,consider-iterating-dictionary,signature-differs,duplicate-code,cyclic-import,consider-using-f-string,no-name-in-module,missing-module-docstring,invalid-name,check-docstrings,networking-import-outside-azure-core-transport,non-abstract-transport-import,
-name-too-long,delete-operation-wrong-return-type,async-return-async-iterable,no-raise-with-traceback,
+disable=locally-disabled,fixme,too-few-public-methods,import-outside-toplevel,deprecated-module,assigning-non-slot,deprecated-class,deprecated-argument,deprecated-decorator,consider-using-dict-items,consider-iterating-dictionary,signature-differs,duplicate-code,cyclic-import,consider-using-f-string,no-name-in-module,missing-module-docstring,inconsistent-return-statements, invalid-name,check-docstrings,networking-import-outside-azure-core-transport,non-abstract-transport-import,name-too-long,delete-operation-wrong-return-type,async-return-async-iterable,no-raise-with-traceback
 
 
 [FORMAT]
