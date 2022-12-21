@@ -297,7 +297,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
-    "azure-eventgrid",
     "azure-eventhub",
     "azure-eventhub-checkpointstoreblob",
     "azure-eventhub-checkpointstoreblob-aio",
