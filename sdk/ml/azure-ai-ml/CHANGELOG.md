@@ -13,6 +13,9 @@
 - Improved intellisense with VS Code for fields supporting local paths and datastores.
 - Fixed print on Command objects when job id is empty
 
+### Other Changes
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
+
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
