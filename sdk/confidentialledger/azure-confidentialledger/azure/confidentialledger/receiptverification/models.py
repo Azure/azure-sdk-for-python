@@ -47,60 +47,55 @@ class ProofElement(Model):
 
 
 class LeafComponents(Model):
-    """LeafComponents represents the object contained in the `leaf_components`
+    """LeafComponents represents the object contained in the `leafComponents`
     field of an Azure Confidential Ledger write transaction receipt. The
-    `leaf_components` field contains the elements that are hashed to compute
+    `leafComponents` field contains the elements that are hashed to compute
     the leaf node corresponding to the transaction associated to the given
     receipt.
 
-    :ivar claims_digest: Hexadecimal string representing the digest of
+    :ivar claimsDigest: Hexadecimal string representing the digest of
         the application claim attached by the Azure Confidential Ledger application.
-    :vartype claims_digest: str
-    :ivar commit_evidence: A unique string that identifies a transaction / commit,
+    :vartype claimsDigest: str
+    :ivar commitEvidence: A unique string that identifies a transaction / commit,
         derived from the transaction ID and the secrets used by the Azure Confidential Ledger.
-    :vartype commit_evidence: str
-    :ivar write_set_digest: Hexadecimal string representing the digest of the keys
+    :vartype commitEvidence: str
+    :ivar writeSetDigest: Hexadecimal string representing the digest of the keys
         and values written during a transaction, that captures the state of the
         ledger at the time the transaction was committed.
-    :vartype write_set_digest: str
+    :vartype writeSetDigest: str
     """
 
     _validation = {
-        "claims_digest": {"required": True},
-        "commit_evidence": {"required": True},
-        "write_set_digest": {"required": True},
+        "claimsDigest": {"required": True},
+        "commitEvidence": {"required": True},
+        "writeSetDigest": {"required": True},
     }
 
     _attribute_map = {
-        "claims_digest": {"key": "claims_digest", "type": "str"},
-        "commit_evidence": {"key": "commit_evidence", "type": "str"},
-        "write_set_digest": {"key": "write_set_digest", "type": "str"},
+        "claimsDigest": {"key": "claimsDigest", "type": "str"},
+        "commitEvidence": {"key": "commitEvidence", "type": "str"},
+        "writeSetDigest": {"key": "writeSetDigest", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        claims_digest: str,
-        commit_evidence: str,
-        write_set_digest: str,
-        **kwargs
+        self, *, claimsDigest: str, commitEvidence: str, writeSetDigest: str, **kwargs
     ):
         """
-        :keyword claims_digest: Hexadecimal string representing the digest of
+        :keyword claimsDigest: Hexadecimal string representing the digest of
             the application claim attached by the Azure Confidential Ledger application.
-        :paramtype claims_digest: str
-        :keyword commit_evidence: A unique string that identifies a transaction / commit,
+        :paramtype claimsDigest: str
+        :keyword commitEvidence: A unique string that identifies a transaction / commit,
             derived from the transaction ID and the secrets used by the Azure Confidential Ledger.
-        :paramtype commit_evidence: str
-        :keyword write_set_digest: Hexadecimal string representing the digest of the keys
+        :paramtype commitEvidence: str
+        :keyword writeSetDigest: Hexadecimal string representing the digest of the keys
             and values written during a transaction, that captures the state of the
             ledger at the time the transaction was committed.
-        :paramtype write_set_digest: str
+        :paramtype writeSetDigest: str
         """
         super().__init__(**kwargs)
-        self.claims_digest = claims_digest
-        self.commit_evidence = commit_evidence
-        self.write_set_digest = write_set_digest
+        self.claimsDigest = claimsDigest
+        self.commitEvidence = commitEvidence
+        self.writeSetDigest = writeSetDigest
 
 
 class Receipt(Model):
@@ -116,21 +111,18 @@ class Receipt(Model):
 
     :ivar cert: PEM-encoded certificate string of the CCF node that signed the transaction.
     :vartype cert: str
-    :ivar is_signature_transaction: Boolean value representing whether the receipt is
-        related to a signature transaction or not.
-    :vartype is_signature_transaction: bool
-    :ivar leaf_components: Components of the leaf node in the Merkle Tree associated to
+    :ivar leafComponents: Components of the leaf node in the Merkle Tree associated to
         the committed transaction.
-    :vartype leaf_components: ~azure.confidentialledgertools.receiptverification.models.LeafComponents
-    :ivar node_id: Hexadecimal string representing the digest of the public key of the
+    :vartype leafComponents: ~azure.confidentialledgertools.receiptverification.models.LeafComponents
+    :ivar nodeId: Hexadecimal string representing the digest of the public key of the
         CCF node that signed the transaction.
-    :vartype node_id: str
+    :vartype nodeId: str
     :ivar proof: List of nodes' hashes to be used to re-compute the root of the Merkle Tree,
         together with the leaf node hash, by iteratively concatenating and hashing the given values.
     :vartype proof: list[~azure.confidentialledgertools.receiptverification.models.ProofElement]
-    :ivar service_endorsements: List of PEM-encoded certificates strings representing
+    :ivar serviceEndorsements: List of PEM-encoded certificates strings representing
         previous service identities.
-    :vartype service_endorsements: list[str]
+    :vartype serviceEndorsements: list[str]
     :ivar signature: Base64 string representing the signature of the root of the Merkle Tree at
         the given transaction.
     :vartype signature: str
@@ -138,69 +130,59 @@ class Receipt(Model):
 
     _validation = {
         "cert": {"required": True},
-        "is_signature_transaction": {"required": True},
-        "leaf_components": {"required": True},
-        "node_id": {"required": True},
+        "leafComponents": {"required": True},
+        "nodeId": {"required": True},
         "proof": {"required": True},
-        "service_endorsements": {"required": True},
+        "serviceEndorsements": {"required": False},
         "signature": {"required": True},
     }
 
     _attribute_map = {
         "cert": {"key": "cert", "type": "str"},
-        "is_signature_transaction": {
-            "key": "is_signature_transaction",
-            "type": "bool",
-        },
-        "leaf_components": {"key": "leaf_components", "type": "LeafComponents"},
-        "node_id": {"key": "node_id", "type": "str"},
+        "leafComponents": {"key": "leafComponents", "type": "LeafComponents"},
+        "nodeId": {"key": "nodeId", "type": "str"},
         "proof": {"key": "proof", "type": "[ProofElement]"},
-        "service_endorsements": {
-            "key": "service_endorsements",
+        "serviceEndorsements": {
+            "key": "serviceEndorsements",
             "type": "[str]",
         },
         "signature": {"key": "signature", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=dangerous-default-value
         self,
         *,
         cert: str,
-        is_signature_transaction: bool,
-        leaf_components: LeafComponents,
-        node_id: str,
+        leafComponents: LeafComponents,
+        nodeId: str,
         proof: List[ProofElement],
-        service_endorsements: List[str],
+        serviceEndorsements: List[str] = [],
         signature: str,
         **kwargs
     ):
         """
         :keyword cert: PEM-encoded certificate string of the CCF node that signed the transaction.
         :paramtype cert: str
-        :keyword is_signature_transaction: Boolean value representing whether the receipt is
-            related to a signature transaction or not.
-        :paramtype is_signature_transaction: bool
-        :keyword leaf_components: Components of the leaf node in the Merkle Tree associated to
+        :keyword leafComponents: Components of the leaf node in the Merkle Tree associated to
             the committed transaction.
-        :paramtype leaf_components: ~azure.confidentialledgertools.receiptverification.models.LeafComponents
-        :keyword node_id: Hexadecimal string representing the digest of the public key of the
+        :paramtype leafComponents: ~azure.confidentialledgertools.receiptverification.models.LeafComponents
+        :keyword nodeId: Hexadecimal string representing the digest of the public key of the
             CCF node that signed the transaction.
-        :paramtype node_id: str
+        :paramtype nodeId: str
         :keyword proof: List of nodes' hashes to be used to re-compute the root of the Merkle Tree,
             together with the leaf node hash, by iteratively concatenating and hashing the given values.
         :paramtype proof: list[~azure.confidentialledgertools.receiptverification.models.ProofElement]
-        :keyword service_endorsements: List of PEM-encoded certificates strings representing
+        :keyword serviceEndorsements: List of PEM-encoded certificates strings representing
             previous service identities.
-        :paramtype service_endorsements: list[str]
+        :paramtype serviceEndorsements: list[str]
         :keyword signature: Base64 string representing the signature of the root of the Merkle Tree at
             the given transaction.
         :paramtype signature: str
         """
         super().__init__(**kwargs)
         self.cert = cert
-        self.is_signature_transaction = is_signature_transaction
-        self.leaf_components = leaf_components
-        self.node_id = node_id
+        self.leafComponents = leafComponents
+        self.nodeId = nodeId
         self.proof = proof
-        self.service_endorsements = service_endorsements
+        self.serviceEndorsements = serviceEndorsements
         self.signature = signature
