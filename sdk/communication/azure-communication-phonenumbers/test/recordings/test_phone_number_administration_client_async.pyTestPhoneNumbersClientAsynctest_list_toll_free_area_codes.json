@@ -23,7 +23,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "3285ms"
+        "X-Processing-Time": "2974ms"
       },
       "ResponseBody": {
         "areaCodes": [

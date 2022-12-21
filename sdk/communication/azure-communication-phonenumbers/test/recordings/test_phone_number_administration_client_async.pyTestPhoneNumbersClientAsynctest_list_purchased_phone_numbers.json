@@ -23,7 +23,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1709ms"
+        "X-Processing-Time": "1690ms"
       },
       "ResponseBody": {
         "phoneNumbers": [
@@ -1754,7 +1754,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1010ms"
+        "X-Processing-Time": "981ms"
       },
       "ResponseBody": {
         "phoneNumbers": []

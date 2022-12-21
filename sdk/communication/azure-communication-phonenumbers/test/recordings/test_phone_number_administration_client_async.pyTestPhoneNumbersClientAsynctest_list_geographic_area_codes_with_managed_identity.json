@@ -53,7 +53,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "436ms"
+        "X-Processing-Time": "346ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
@@ -597,13 +597,6 @@
             }
           },
           {
-            "localizedName": "Boston",
-            "administrativeDivision": {
-              "localizedName": "MA",
-              "abbreviatedName": "MA"
-            }
-          },
-          {
             "localizedName": "Chicopee",
             "administrativeDivision": {
               "localizedName": "MA",
@@ -730,13 +723,6 @@
             }
           },
           {
-            "localizedName": "Bloomington",
-            "administrativeDivision": {
-              "localizedName": "MN",
-              "abbreviatedName": "MN"
-            }
-          },
-          {
             "localizedName": "Duluth",
             "administrativeDivision": {
               "localizedName": "MN",
@@ -755,6 +741,20 @@
             "administrativeDivision": {
               "localizedName": "MN",
               "abbreviatedName": "MN"
+            }
+          },
+          {
+            "localizedName": "St. Paul",
+            "administrativeDivision": {
+              "localizedName": "MN",
+              "abbreviatedName": "MN"
+            }
+          },
+          {
+            "localizedName": "Kansas City",
+            "administrativeDivision": {
+              "localizedName": "MO",
+              "abbreviatedName": "MO"
             }
           }
         ],
@@ -784,7 +784,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1148ms"
+        "X-Processing-Time": "1086ms"
       },
       "ResponseBody": {
         "areaCodes": [

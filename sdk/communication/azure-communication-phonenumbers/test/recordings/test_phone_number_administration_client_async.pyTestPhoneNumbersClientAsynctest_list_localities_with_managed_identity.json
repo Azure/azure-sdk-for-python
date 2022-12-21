@@ -53,7 +53,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "414ms"
+        "X-Processing-Time": "352ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
@@ -597,13 +597,6 @@
             }
           },
           {
-            "localizedName": "Boston",
-            "administrativeDivision": {
-              "localizedName": "MA",
-              "abbreviatedName": "MA"
-            }
-          },
-          {
             "localizedName": "Chicopee",
             "administrativeDivision": {
               "localizedName": "MA",
@@ -730,13 +723,6 @@
             }
           },
           {
-            "localizedName": "Bloomington",
-            "administrativeDivision": {
-              "localizedName": "MN",
-              "abbreviatedName": "MN"
-            }
-          },
-          {
             "localizedName": "Duluth",
             "administrativeDivision": {
               "localizedName": "MN",
@@ -755,6 +741,20 @@
             "administrativeDivision": {
               "localizedName": "MN",
               "abbreviatedName": "MN"
+            }
+          },
+          {
+            "localizedName": "St. Paul",
+            "administrativeDivision": {
+              "localizedName": "MN",
+              "abbreviatedName": "MN"
+            }
+          },
+          {
+            "localizedName": "Kansas City",
+            "administrativeDivision": {
+              "localizedName": "MO",
+              "abbreviatedName": "MO"
             }
           }
         ],
@@ -780,24 +780,10 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "461ms"
+        "X-Processing-Time": "353ms"
       },
       "ResponseBody": {
         "phoneNumberLocalities": [
-          {
-            "localizedName": "St. Paul",
-            "administrativeDivision": {
-              "localizedName": "MN",
-              "abbreviatedName": "MN"
-            }
-          },
-          {
-            "localizedName": "Kansas City",
-            "administrativeDivision": {
-              "localizedName": "MO",
-              "abbreviatedName": "MO"
-            }
-          },
           {
             "localizedName": "Marshall",
             "administrativeDivision": {
@@ -1142,21 +1128,7 @@
             }
           },
           {
-            "localizedName": "Philadelphia",
-            "administrativeDivision": {
-              "localizedName": "PA",
-              "abbreviatedName": "PA"
-            }
-          },
-          {
             "localizedName": "Pittsburgh",
-            "administrativeDivision": {
-              "localizedName": "PA",
-              "abbreviatedName": "PA"
-            }
-          },
-          {
-            "localizedName": "Scranton",
             "administrativeDivision": {
               "localizedName": "PA",
               "abbreviatedName": "PA"
@@ -1191,13 +1163,6 @@
             }
           },
           {
-            "localizedName": "Greenville",
-            "administrativeDivision": {
-              "localizedName": "SC",
-              "abbreviatedName": "SC"
-            }
-          },
-          {
             "localizedName": "Sioux Falls",
             "administrativeDivision": {
               "localizedName": "SD",
@@ -1220,13 +1185,6 @@
           },
           {
             "localizedName": "Jackson",
-            "administrativeDivision": {
-              "localizedName": "TN",
-              "abbreviatedName": "TN"
-            }
-          },
-          {
-            "localizedName": "Knoxville",
             "administrativeDivision": {
               "localizedName": "TN",
               "abbreviatedName": "TN"
@@ -1262,13 +1220,6 @@
           },
           {
             "localizedName": "Corpus Christi",
-            "administrativeDivision": {
-              "localizedName": "TX",
-              "abbreviatedName": "TX"
-            }
-          },
-          {
-            "localizedName": "Denton",
             "administrativeDivision": {
               "localizedName": "TX",
               "abbreviatedName": "TX"

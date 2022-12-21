@@ -53,7 +53,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1588ms"
+        "X-Processing-Time": "894ms"
       },
       "ResponseBody": {
         "phoneNumberOfferings": [
