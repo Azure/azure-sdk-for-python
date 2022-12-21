@@ -209,7 +209,7 @@ class TestJobOperations:
     def test_parse_corrupt_job_data(self, mocker: MockFixture, corrupt_job_data: str) -> None:
         with open(corrupt_job_data, "r") as f:
             resource = json.load(f)
-        resource = models.JobBaseData.deserialize(resource)
+        resource = models.JobBase.deserialize(resource)
         with pytest.raises(Exception, match="Unknown search space type"):
             # Convert from REST object
             Job._from_rest_object(resource)

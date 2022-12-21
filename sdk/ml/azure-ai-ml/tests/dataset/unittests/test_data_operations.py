@@ -391,7 +391,7 @@ class TestDataOperations:
 
     def test_archive_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.archive(name=name, version=version)
@@ -405,7 +405,7 @@ class TestDataOperations:
 
     def test_archive_container(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails())))
+        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.archive(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
@@ -417,7 +417,7 @@ class TestDataOperations:
 
     def test_restore_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.restore(name=name, version=version)
@@ -431,7 +431,7 @@ class TestDataOperations:
 
     def test_restore_container(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails())))
+        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.restore(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
