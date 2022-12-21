@@ -111,10 +111,7 @@ class IgnoreFile(object):
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
-            if callable(hasattr(Path(file_path), "relative_to")):
-                file_path = file_path.relative_to(ignore_dirname)
-            else:
-                file_path = os.path.relpath(file_path, ignore_dirname)
+            file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -346,10 +343,8 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    if callable(hasattr(Path(target), "relative_to")):
-                        relative_path = target.relative_to(source)
-                    else:
-                        relative_path = os.path.relpath(target, source)
+                    source = source.replace("\\\\?\\", "")  # Clean paths on Windows with Python 3.10
+                    relative_path = os.path.relpath(target, source)
 
                     symlink_dict[file] = {
                         "target file": convert_windows_path_to_unix(relative_path),
@@ -400,12 +395,7 @@ def construct_remote_paths(
 
     for file_path in original_file_paths:
         local = file_path
-
-        if callable(hasattr(Path(file_path), "relative_to")):
-            relative_path = file_path.relative_to(source)
-        else:
-            relative_path = os.path.relpath(file_path, source)
-
+        relative_path = os.path.relpath(file_path, source)
         remote = prefix + convert_windows_path_to_unix(relative_path)
         upload_pairs.append((local, remote))
 
@@ -464,7 +454,9 @@ def construct_local_and_remote_paths(
     :return: List of tuples each containing a validated local path and a remote upload path for each file
     :rtype: List[Tuple[str, str]]
     """
+    print(f"Source path before resolve: {source}")
     source_path = Path(source).resolve()
+    print(f"Source path after resolve: {source_path}")
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
