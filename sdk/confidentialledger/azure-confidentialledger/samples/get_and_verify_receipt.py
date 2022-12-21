@@ -27,9 +27,7 @@ from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
 from azure.confidentialledger.receiptverification import (
-    verify_receipt,
-    ReceiptVerificationException,
-    Receipt,
+    verify_receipt_from_dict,
 )
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -121,18 +119,15 @@ def main():
                 print("No response found")
             raise
 
-        # Convert receipt content to a Receipt object.
-        receipt_content = Receipt.from_dict(get_receipt_result["receipt"])
-
         # Read content of service certificate file saved in previous step.
         with open(ledger_cert_file, "r") as service_cert_file:
             service_cert_content = service_cert_file.read()
 
         try:
             # Verify the contents of the receipt.
-            verify_receipt(receipt_content, service_cert_content)
+            verify_receipt_from_dict(get_receipt_result, service_cert_content)
             print(f"Receipt for transaction id {transaction_id} successfully verified")
-        except ReceiptVerificationException:
+        except Exception:
             print(f"Receipt verification for transaction id {transaction_id} failed")
             raise
 
