@@ -6,10 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, overload, Callable, Union, Optional, Dict
+from typing import Any, overload, Callable, Union, Optional, Dict
 import sys
 import logging
-import time
 import threading
 
 import websocket
@@ -44,8 +43,11 @@ from ._models import (
     DisconnectedMessage,
     GroupDataMessage,
     ServerDataMessage,
+    JoinGroupMessage,
+    LeaveGroupMessage,
 )
 from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType
+from ._util import delay
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -64,7 +66,7 @@ class WebPubSubClientCredential:
     def __init__(self, client_access_url_provider: Callable[[Any], str]) -> None:
         ...
 
-    def __init__(self, client_access_url_provider: Union[str, Callable[[Any], str]]) -> None:
+    def __init__(self, client_access_url_provider: Union[str, Callable[[], str]]) -> None:
         if isinstance(client_access_url_provider, str):
             self._client_access_url_provider = lambda: client_access_url_provider
         else:
@@ -161,7 +163,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
 
         message = message_provider(ack_id)
         if ack_id not in self._ack_map:
-            self._ack_map[ack_id] = None
+            self._ack_map[ack_id] = SendMessageErrorOptions()
         try:
             self._send_message(message)
         except Exception as e:
@@ -169,13 +171,13 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
             raise e
 
         # wait for ack from service
-        while True:
-            self.switch_thread()
-            if self._ack_map[ack_id]:
-                options = self._ack_map.pop(ack_id)
-                if options.error_detail is not None:
-                    raise SendMessageError(message="Failed to send message.", options=options)
-                break
+        with self._ack_map[ack_id].cv:
+            self._ack_map[ack_id].cv.wait()
+            options = self._ack_map.pop(ack_id)
+            if options.error_detail is not None:
+                raise SendMessageError(
+                    message="Failed to send message.", ack_id=options.ack_id, error_detail=options.error_detail
+                )
 
     def _get_or_add_group(self, name: str) -> WebPubSubGroup:
         if name not in self._group_map:
@@ -273,29 +275,21 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                 if delay_in_ms is None:
                     raise e
 
-            time.sleep(float(delay_in_ms) / 1000.0)
-
-    @staticmethod
-    def switch_thread():
-        time.sleep(0.000001)
-
-    def on(self, type: str, listener: Callable[[Any], None]):
-        self._handler[type].append(listener)
+            delay(delay_in_ms)
 
     def _call_back(self, type: CallBackType, *args):
         for func in self._handler[type]:
-            if self._state == WebPubSubClientState.CONNECTED:
-                func(args)
+            func(args)
 
     def on_message(self, data: str):
         def handle_ack_message(message: AckMessage):
             if message.ack_id in self._ack_map:
-                if message.success or (message.error and message.error.name == "Duplicate"):
-                    self._ack_map[message.ack_id] = SendMessageErrorOptions()
-                else:
-                    self._ack_map[message.ack_id] = SendMessageErrorOptions(
-                        ack_id=message.ack_id, error_detail=message.error
-                    )
+                if not (message.success or (message.error and message.error.name == "Duplicate")):
+                    self._ack_map[message.ack_id].ack_id = message.ack_id
+                    self._ack_map[message.ack_id].error_detail = message.error
+                with self._ack_map[message.ack_id].cv:
+                    self._ack_map[message.ack_id].cv.notify()
+
 
         def handle_connected_message(message: ConnectedMessage):
             self._connection_id = message.connection_id
@@ -390,7 +384,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                 delay_in_ms = self._reconnect_retry_policy.next_retry_delay_in_ms(attempt)
                 if not delay_in_ms:
                     break
-                time.sleep(float(delay_in_ms) / 1000.0)
+                delay(delay_in_ms)
         if not success:
             self._handle_connection_stopped()
 
@@ -453,7 +447,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                 self._connect(recovery_url)
                 return
             except:
-                time.sleep(1)
+                delay(1000)
             i = i + 1
 
         _LOGGER.warn("Recovery attempts failed more then 30 seconds or the client is stopping")
@@ -469,7 +463,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
             ) as e:
                 if self._state == WebPubSubClientState.CONNECTED:
                     raise e
-                pass
             else:
                 if op_code == websocket.ABNF.OPCODE_CLOSE:
                     close_status_code, close_reason = self._get_close_args(frame)
@@ -483,15 +476,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                     if op_code == websocket.ABNF.OPCODE_TEXT:
                         data = data.decode("utf-8")
                     self.on_message(data)
+        self._thread = None
 
-    def sequence_id_ack_periodically(self):
+    def _sequence_id_ack_periodically(self):
         while self._state == WebPubSubClientState.CONNECTED:
             try:
                 is_updated, seq_id = self._sequence_id.try_get_sequence_id()
                 if is_updated:
                     self._send_message(SequenceAckMessage(sequence_id=seq_id))
             finally:
-                time.sleep(1)
+                delay(1000)
+        self._thread_seq_ack = None
 
     def _connect(self, url: str):
         self._ws = websocket.WebSocket()
@@ -504,12 +499,13 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                 return
 
         self._state = WebPubSubClientState.CONNECTED
-        if self._protocol.is_reliable_sub_protocol:
-            self._thread_seq_ack = threading.Thread(target=self.sequence_id_ack_periodically, daemon=True)
+        if self._protocol.is_reliable_sub_protocol and self._thread_seq_ack is None:
+            self._thread_seq_ack = threading.Thread(target=self._sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
 
-        self._thread = threading.Thread(target=self._listen, daemon=True)
-        self._thread.start()
+        if self._thread is None:
+            self._thread = threading.Thread(target=self._listen, daemon=True)
+            self._thread.start()
 
     def _start_core(self):
         self._state = WebPubSubClientState.CONNECTING
@@ -529,11 +525,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def start(self):
         if self._is_stopping:
-            _LOGGER.error("Can't start a client during stopping")
-            return
+            raise Exception("Can't start a client during stopping")
         if self._state != WebPubSubClientState.STOPPED:
-            _LOGGER.warn("Client can be only started when it's Stopped")
-            return
+            raise Exception("Client can be only started when it's Stopped")
 
         try:
             self._start_core()
@@ -548,6 +542,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._is_stopping = True
         if self._ws:
             self._ws.close()
+        self._thread = None
+        self._thread_seq_ack = None
 
     @staticmethod
     def _build_default_options(self, options: WebPubSubClientOptions):

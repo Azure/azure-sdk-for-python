@@ -11,6 +11,7 @@ import sys
 from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple
 import json
 import math
+import threading
 
 from .. import _model_base
 from ._model_base import rest_discriminator, rest_field, AzureJSONEncoder
@@ -373,7 +374,7 @@ def parse_payload(data: Any, data_type: str) -> Any:
     raise TypeError(f"Unsupported dataType: {data_type}")
 
 
-class WebPubSubClientProtocolBase:
+class WebPubSubClientProtocol:
     def __init__(self) -> None:
         self.is_reliable_sub_protocol = None
         self.name = None
@@ -426,14 +427,14 @@ class WebPubSubClientProtocolBase:
         return json.dumps(data, cls=AzureJSONEncoder)
 
 
-class WebPubSubJsonProtocol(WebPubSubClientProtocolBase):
+class WebPubSubJsonProtocol(WebPubSubClientProtocol):
     def __init__(self) -> None:
         super().__init__()
         self.is_reliable_sub_protocol = False
         self.name = "json.webpubsub.azure.v1"
 
 
-class WebPubSubJsonReliableProtocol(WebPubSubClientProtocolBase):
+class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
     def __init__(self) -> None:
         super().__init__()
         self.is_reliable_sub_protocol = True
@@ -457,7 +458,7 @@ class WebPubSubRetryOptions:
 class WebPubSubClientOptions:
     def __init__(
         self,
-        protocol: Optional[WebPubSubClientProtocolBase] = None,
+        protocol: Optional[WebPubSubClientProtocol] = None,
         auto_reconnect: Optional[bool] = None,
         auto_restore_groups: Optional[bool] = None,
         message_retry_options: Optional[WebPubSubRetryOptions] = None,
@@ -472,14 +473,15 @@ class SendMessageErrorOptions:
     def __init__(self, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
+        self.cv = threading.Condition()
 
 
 class SendMessageError(Exception):
-    def __init__(self, message: str, options: SendMessageErrorOptions, *args: object) -> None:
+    def __init__(self, message: str, ack_id: Optional[int]=None, error_detail: Optional[AckMessageError]=None, *args: object) -> None:
         super().__init__(message, *args)
         self.name = "SendMessageError"
-        self.ack_id = options.ack_id
-        self.error_detail = options.error_detail
+        self.ack_id = ack_id
+        self.error_detail = error_detail
 
 
 class OnGroupDataMessageArgs:
