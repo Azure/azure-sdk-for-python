@@ -343,7 +343,7 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    source = Path(str(source).replace("\\\\?\\", ""))  # Clean paths on Windows with Python 3.10
+                    target = Path(str(target).replace("\\\\?\\", ""))  # Clean paths on Windows with Python 3.10
                     relative_path = os.path.relpath(target, source)
 
                     symlink_dict[file] = {
@@ -454,9 +454,7 @@ def construct_local_and_remote_paths(
     :return: List of tuples each containing a validated local path and a remote upload path for each file
     :rtype: List[Tuple[str, str]]
     """
-    print(f"Source path before resolve: {source}")
     source_path = Path(source).resolve()
-    print(f"Source path after resolve: {source_path}")
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
