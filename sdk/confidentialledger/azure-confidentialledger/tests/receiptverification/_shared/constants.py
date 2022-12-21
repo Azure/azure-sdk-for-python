@@ -42,14 +42,13 @@ qsUPm+U8mwLeOOk7TgIgL7JFqyJmnigevF2Ju/k4QkkBMZm4McuywM1f2n8+8Qk=
 
 def get_test_valid_receipt_1():
     return Receipt(
-        is_signature_transaction=False,
         cert="-----BEGIN CERTIFICATE-----\nMIIB0zCCAXqgAwIBAgIRALXhnOIN/WoLnD69pfR2rvQwCgYIKoZIzj0EAwIwFjEU\nMBIGA1UEAwwLQ0NGIE5ldHdvcmswHhcNMjIxMTAxMTg1NDM2WhcNMjMwMTMwMTg1\nNDM1WjATMREwDwYDVQQDDAhDQ0YgTm9kZTBZMBMGByqGSM49AgEGCCqGSM49AwEH\nA0IABAUkp7vj54d1qr51leVMEwn/GXFozJQ1Ycx+AYoCb++0a6lrekGEgN91dR6D\nYdaBRKbYPMphAf4vDQEcVIjpFwKjgaswgagwCQYDVR0TBAIwADAdBgNVHQ4EFgQU\n54/ExTbNk7ZnZWImu6xq+8vOngEwHwYDVR0jBBgwFoAUQgzYFOQLy0vDkm3wqLSl\ncJsbQm8wWwYDVR0RBFQwUocECvACNYIRYXAtc3RhZ2luZy1sZWRnZXKCN2FwLXN0\nYWdpbmctbGVkZ2VyLmNvbmZpZGVudGlhbC1sZWRnZXItc3RhZ2luZy5henVyZS5j\nb20wCgYIKoZIzj0EAwIDRwAwRAIgBkB5XGxiiB5hhyWuHrM5TDlLfDUNR4GV1vie\ntpmGmLsCIF76tqizqk+s5Wuoa8ePLvGxUXIy3Q+H2rfRFi2LIB0B\n-----END CERTIFICATE-----\n",
-        node_id="708c2e71b2533e5eb38e05cc344390d133c8fb336cb80481ab4e5e902e6131a5",
-        service_endorsements=[],
-        leaf_components=LeafComponents(
-            claims_digest="0000000000000000000000000000000000000000000000000000000000000000",
-            commit_evidence="ce:2.35:fa08b4eae4a034971b97f0b21810951ec64b06fb2f4b5a1e80f6f4b83a23c719",
-            write_set_digest="fef1aa22972daba05864a7e986c1bb94aa6b8fea43781cb48907c972e9761e71",
+        nodeId="708c2e71b2533e5eb38e05cc344390d133c8fb336cb80481ab4e5e902e6131a5",
+        serviceEndorsements=[],
+        leafComponents=LeafComponents(
+            claimsDigest="0000000000000000000000000000000000000000000000000000000000000000",
+            commitEvidence="ce:2.35:fa08b4eae4a034971b97f0b21810951ec64b06fb2f4b5a1e80f6f4b83a23c719",
+            writeSetDigest="fef1aa22972daba05864a7e986c1bb94aa6b8fea43781cb48907c972e9761e71",
         ),
         proof=[
             ProofElement(
@@ -69,13 +68,12 @@ def get_test_valid_receipt_1():
 def get_test_valid_receipt_2():
     return Receipt(
         cert="-----BEGIN CERTIFICATE-----\nMIIBzzCCAXWgAwIBAgIQIqJhTJJl+Oxf8Fl0oH622TAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjEwMjUxMjMwNTZaFw0yMzAxMjMxMjMw\nNTVaMBMxETAPBgNVBAMMCENDRiBOb2RlMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEqmsG0x22ZuFBjDItZruC+jVJza8qpXh/HKeX5yG/0/HKyjMOEce2g/C7Z/fi\nbf/bYXiCbz4WP/YbU3crQUtc7qOBpzCBpDAJBgNVHRMEAjAAMB0GA1UdDgQWBBSY\nw8oZLUv/qjpB/u0uaJyEGsMM9zAfBgNVHSMEGDAWgBRK2CouVttJOtybCzI92Rv3\n/z2mcDBXBgNVHREEUDBOghNhcC10ZXN0LWxlZGdlci1wcml2gjFhcC10ZXN0LWxl\nZGdlci1wcml2LmNvbmZpZGVudGlhbC1sZWRnZXIuYXp1cmUuY29thwQK8Eq3MAoG\nCCqGSM49BAMCA0gAMEUCIQCbokInYEKX7ItmjJDlnG/0EbIwgcCCGnRubIzHYhiX\n8gIgbqhPG68pxR43ZhJy6y6JeWuB+kSXsqRmQdYP3UMkzXg=\n-----END CERTIFICATE-----\n",
-        is_signature_transaction=False,
-        leaf_components=LeafComponents(
-            claims_digest="0000000000000000000000000000000000000000000000000000000000000000",
-            commit_evidence="ce:16.7415:e718636e480d0ea56650406cece0abf6c010f58e6635dce8f404e2d2779fbc9d",
-            write_set_digest="4242b251a0800c9b6857b5da503d92a152e43da79f3da20758f9c5db65d8dd4c",
+        leafComponents=LeafComponents(
+            claimsDigest="0000000000000000000000000000000000000000000000000000000000000000",
+            commitEvidence="ce:16.7415:e718636e480d0ea56650406cece0abf6c010f58e6635dce8f404e2d2779fbc9d",
+            writeSetDigest="4242b251a0800c9b6857b5da503d92a152e43da79f3da20758f9c5db65d8dd4c",
         ),
-        node_id="a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
+        nodeId="a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
         proof=[
             ProofElement(
                 left="113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"
@@ -108,7 +106,7 @@ def get_test_valid_receipt_2():
                 left="b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"
             ),
         ],
-        service_endorsements=[],
+        serviceEndorsements=[],
         signature="MEUCIBehRsSl0CyNwMHiObY3Kxw9cV5e/rSQKmCrEJooxWvmAiEAnYwaT5yVGFkSFuJ8JdbW0ZolbDHzRrfl+fm6jIrDzxw=",
     )
 
@@ -142,13 +140,12 @@ def get_test_valid_receipt_1_dict():
 def get_test_valid_receipt_2_dict():
     return {
         "cert": "-----BEGIN CERTIFICATE-----\nMIIBzzCCAXWgAwIBAgIQIqJhTJJl+Oxf8Fl0oH622TAKBggqhkjOPQQDAjAWMRQw\nEgYDVQQDDAtDQ0YgTmV0d29yazAeFw0yMjEwMjUxMjMwNTZaFw0yMzAxMjMxMjMw\nNTVaMBMxETAPBgNVBAMMCENDRiBOb2RlMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcD\nQgAEqmsG0x22ZuFBjDItZruC+jVJza8qpXh/HKeX5yG/0/HKyjMOEce2g/C7Z/fi\nbf/bYXiCbz4WP/YbU3crQUtc7qOBpzCBpDAJBgNVHRMEAjAAMB0GA1UdDgQWBBSY\nw8oZLUv/qjpB/u0uaJyEGsMM9zAfBgNVHSMEGDAWgBRK2CouVttJOtybCzI92Rv3\n/z2mcDBXBgNVHREEUDBOghNhcC10ZXN0LWxlZGdlci1wcml2gjFhcC10ZXN0LWxl\nZGdlci1wcml2LmNvbmZpZGVudGlhbC1sZWRnZXIuYXp1cmUuY29thwQK8Eq3MAoG\nCCqGSM49BAMCA0gAMEUCIQCbokInYEKX7ItmjJDlnG/0EbIwgcCCGnRubIzHYhiX\n8gIgbqhPG68pxR43ZhJy6y6JeWuB+kSXsqRmQdYP3UMkzXg=\n-----END CERTIFICATE-----\n",
-        "is_signature_transaction": False,
-        "leaf_components": {
-            "claims_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-            "commit_evidence": "ce:16.7415:e718636e480d0ea56650406cece0abf6c010f58e6635dce8f404e2d2779fbc9d",
-            "write_set_digest": "4242b251a0800c9b6857b5da503d92a152e43da79f3da20758f9c5db65d8dd4c",
+        "leafComponents": {
+            "claimsDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+            "commitEvidence": "ce:16.7415:e718636e480d0ea56650406cece0abf6c010f58e6635dce8f404e2d2779fbc9d",
+            "writeSetDigest": "4242b251a0800c9b6857b5da503d92a152e43da79f3da20758f9c5db65d8dd4c",
         },
-        "node_id": "a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
+        "nodeId": "a16d14661618d220365594fc4986f4401ff74785b70818b00e6590bb3c1a1a5d",
         "proof": [
             {
                 "left": "113d89bdcb5282bf773ca12ba97a7baa1b2515a5ffecdb9feaae67bddc89c639"
@@ -181,6 +178,6 @@ def get_test_valid_receipt_2_dict():
                 "left": "b5acc41d51ebc21112882d9e444dffcddc1135a6a1edd9b287ec6927e7baac84"
             },
         ],
-        "service_endorsements": [],
+        "serviceEndorsements": [],
         "signature": "MEUCIBehRsSl0CyNwMHiObY3Kxw9cV5e/rSQKmCrEJooxWvmAiEAnYwaT5yVGFkSFuJ8JdbW0ZolbDHzRrfl+fm6jIrDzxw=",
     }
