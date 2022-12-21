@@ -343,7 +343,7 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    source = source.replace("\\\\?\\", "")  # Clean paths on Windows with Python 3.10
+                    source = Path(str(source).replace("\\\\?\\", ""))  # Clean paths on Windows with Python 3.10
                     relative_path = os.path.relpath(target, source)
 
                     symlink_dict[file] = {
