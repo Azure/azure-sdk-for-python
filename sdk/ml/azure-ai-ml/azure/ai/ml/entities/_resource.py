@@ -12,9 +12,8 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
-
-from azure.ai.ml._utils.utils import dump_yaml
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
+from azure.ai.ml._utils.utils import dump_yaml
 
 from ._system_data import SystemData
 
@@ -138,9 +137,9 @@ class Resource(ABC):
     @abstractmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
@@ -158,7 +157,7 @@ class Resource(ABC):
     # pylint: disable:unused-argument
     def _get_arm_resource(
         self,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Get arm resource.
 

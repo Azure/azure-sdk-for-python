@@ -30,48 +30,46 @@ from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentitiesValue
 
-
-from ._fluid_relay_management_client_enums import (
-    CmkIdentityType,
-    CreatedByType,
-    KeyName,
-    ProvisioningState,
-    ResourceIdentityType,
-    StorageSKU,
-)
+from ._fluid_relay_management_client_enums import CmkIdentityType
+from ._fluid_relay_management_client_enums import CreatedByType
+from ._fluid_relay_management_client_enums import KeyName
+from ._fluid_relay_management_client_enums import ProvisioningState
+from ._fluid_relay_management_client_enums import ResourceIdentityType
+from ._fluid_relay_management_client_enums import StorageSKU
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CustomerManagedKeyEncryptionProperties',
-    'CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity',
-    'EncryptionProperties',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'FluidRelayContainer',
-    'FluidRelayContainerList',
-    'FluidRelayEndpoints',
-    'FluidRelayServer',
-    'FluidRelayServerKeys',
-    'FluidRelayServerList',
-    'FluidRelayServerUpdate',
-    'Identity',
-    'OperationDisplay',
-    'OperationListResult',
-    'OperationResult',
-    'ProxyResource',
-    'RegenerateKeyRequest',
-    'Resource',
-    'SystemData',
-    'TrackedResource',
-    'UserAssignedIdentitiesValue',
-    'CmkIdentityType',
-    'CreatedByType',
-    'KeyName',
-    'ProvisioningState',
-    'ResourceIdentityType',
-    'StorageSKU',
+    "CustomerManagedKeyEncryptionProperties",
+    "CustomerManagedKeyEncryptionPropertiesKeyEncryptionKeyIdentity",
+    "EncryptionProperties",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "FluidRelayContainer",
+    "FluidRelayContainerList",
+    "FluidRelayEndpoints",
+    "FluidRelayServer",
+    "FluidRelayServerKeys",
+    "FluidRelayServerList",
+    "FluidRelayServerUpdate",
+    "Identity",
+    "OperationDisplay",
+    "OperationListResult",
+    "OperationResult",
+    "ProxyResource",
+    "RegenerateKeyRequest",
+    "Resource",
+    "SystemData",
+    "TrackedResource",
+    "UserAssignedIdentitiesValue",
+    "CmkIdentityType",
+    "CreatedByType",
+    "KeyName",
+    "ProvisioningState",
+    "ResourceIdentityType",
+    "StorageSKU",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

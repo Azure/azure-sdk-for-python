@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
@@ -11,13 +11,17 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, \
-    DistributionConfiguration
+from azure.ai.ml.entities._job.distribution import (
+    DistributionConfiguration,
+    MpiDistribution,
+    PyTorchDistribution,
+    TensorFlowDistribution,
+)
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from ..._restclient.v2022_05_01.models import ComponentVersionData
 
+from ..._restclient.v2022_05_01.models import ComponentVersionData
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -68,21 +72,21 @@ class CommandComponent(Component, ParameterizedCommand):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        command: str = None,
-        code: str = None,
-        environment: Union[str, Environment] = None,
-        distribution: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution] = None,
-        resources: JobResourceConfiguration = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        instance_count: int = None,  # promoted property from resources.instance_count
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        command: Optional[str] = None,
+        code: Optional[str] = None,
+        environment: Optional[Union[str, Environment]] = None,
+        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
-        properties: Dict = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         # validate init params are valid type

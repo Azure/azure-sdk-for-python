@@ -116,8 +116,8 @@ class OnlineDeployment(Deployment):
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         model_mount_path: Optional[str] = None,
-        code_path:  Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script:  Optional[Union[str, PathLike]] = None, # promoted property code_configuration.scoring_script
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property code_configuration.scoring_script
         **kwargs: Any,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -281,9 +281,9 @@ class OnlineDeployment(Deployment):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "OnlineDeployment":
         data = data or {}
@@ -346,24 +346,26 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         self,
         *,
         name: str,
-        endpoint_name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
-        model: Union[str, "Model"] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, "Environment"] = None,
+        endpoint_name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
         app_insights_enabled: bool = False,
-        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
-        request_settings: OnlineRequestSettings = None,
-        liveness_probe: ProbeSettings = None,
-        readiness_probe: ProbeSettings = None,
-        environment_variables: Dict[str, str] = None,
-        resources: ResourceRequirementsSettings = None,
-        instance_count: int = None,
-        instance_type: str = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
+        scale_settings: Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]] = None,
+        request_settings: Optional[OnlineRequestSettings] = None,
+        liveness_probe: Optional[ProbeSettings] = None,
+        readiness_probe: Optional[ProbeSettings] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        resources: Optional[ResourceRequirementsSettings] = None,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
     ):
 
@@ -531,24 +533,26 @@ class ManagedOnlineDeployment(OnlineDeployment):
         self,
         *,
         name: str,
-        endpoint_name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
-        model: Union[str, "Model"] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, "Environment"] = None,
+        endpoint_name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
         app_insights_enabled: bool = False,
-        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
-        request_settings: OnlineRequestSettings = None,
-        liveness_probe: ProbeSettings = None,
-        readiness_probe: ProbeSettings = None,
-        environment_variables: Dict[str, str] = None,
-        instance_type: str = None,
-        instance_count: int = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
-        egress_public_network_access = None,
+        scale_settings: Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]] = None,
+        request_settings: Optional[OnlineRequestSettings] = None,
+        liveness_probe: Optional[ProbeSettings] = None,
+        readiness_probe: Optional[ProbeSettings] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        instance_type: Optional[str] = None,
+        instance_count: Optional[int] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
+        egress_public_network_access=None,
         **kwargs,
     ):
 

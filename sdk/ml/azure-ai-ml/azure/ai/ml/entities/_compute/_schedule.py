@@ -30,8 +30,8 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        trigger: Union[CronTrigger, RecurrenceTrigger] = None,
-        action: ComputePowerAction = None,
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]] = None,
+        action: Optional[ComputePowerAction] = None,
         state: ScheduleState = ScheduleState.ENABLED,
         **kwargs
     ):
@@ -110,7 +110,7 @@ class ComputeSchedules(RestTranslatableMixin):
     :type kwargs: dict
     """
 
-    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None):
+    def __init__(self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None):
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:

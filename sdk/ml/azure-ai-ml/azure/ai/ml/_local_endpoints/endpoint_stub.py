@@ -54,6 +54,7 @@ class EndpointStub:
         """
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         shutil.rmtree(build_directory)
+
     # pylint: disable=no-self-use
     def invoke(self):
         """Invoke a local endpoint.
@@ -102,6 +103,7 @@ class EndpointStub:
         :returns Path: path to endpoint build directory.
         """
         return Path(self._get_inferencing_cache_dir(), endpoint_name)
+
     @classmethod
     def _get_inferencing_cache_dir(cls) -> Path:
         """Get a local inferencing directory. Idempotent.

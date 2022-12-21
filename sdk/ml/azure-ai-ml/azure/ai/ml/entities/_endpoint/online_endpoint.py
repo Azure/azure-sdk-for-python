@@ -9,10 +9,10 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthMode,
-    OnlineEndpointData,
-)
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
@@ -25,14 +25,10 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys as RestEndpointAuthKeys,
-    EndpointAuthToken as RestEndpointAuthToken
-)
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -71,19 +67,19 @@ class OnlineEndpoint(Endpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        scoring_uri: str = None,
-        openapi_uri: str = None,
-        provisioning_state: str = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scoring_uri: Optional[str] = None,
+        openapi_uri: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
@@ -186,8 +182,9 @@ class OnlineEndpoint(Endpoint):
     def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
         # pylint: disable=protected-access
-        identity = IdentityConfiguration._from_online_endpoint_rest_object(
-            resource.identity) if resource.identity else None
+        identity = (
+            IdentityConfiguration._from_online_endpoint_rest_object(resource.identity) if resource.identity else None
+        )
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
@@ -246,9 +243,9 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Endpoint":
         data = data or {}
@@ -292,17 +289,17 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        compute: str = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        compute: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
         super(KubernetesOnlineEndpoint, self).__init__(
@@ -323,7 +320,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -386,17 +383,17 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
         auth_mode: str = KEY,
-        description: str = None,
-        location: str = None,
-        traffic: Dict[str, int] = None,
-        mirror_traffic: Dict[str, int] = None,
-        identity: IdentityConfiguration = None,
-        kind: str = None,
-        public_network_access = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        traffic: Optional[Dict[str, int]] = None,
+        mirror_traffic: Optional[Dict[str, int]] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        kind: Optional[str] = None,
+        public_network_access=None,
         **kwargs,
     ):
         self.public_network_access = public_network_access
@@ -417,7 +414,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
     def dump(
         self,
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -436,31 +433,22 @@ class EndpointAuthKeys(RestTranslatableMixin):
     :vartype secondary_key: str
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword primary_key: The primary key.
         :paramtype primary_key: str
         :keyword secondary_key: The secondary key.
         :paramtype secondary_key: str
         """
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
+        self.primary_key = kwargs.get("primary_key", None)
+        self.secondary_key = kwargs.get("secondary_key", None)
 
     @classmethod
     def _from_rest_object(cls, obj: RestEndpointAuthKeys) -> "EndpointAuthKeys":
-        return cls(
-            primary_key=obj.primary_key,
-            secondary_key=obj.secondary_key
-        )
+        return cls(primary_key=obj.primary_key, secondary_key=obj.secondary_key)
 
     def _to_rest_object(self) -> RestEndpointAuthKeys:
-        return RestEndpointAuthKeys(
-            primary_key=self.primary_key,
-            secondary_key=self.secondary_key
-        )
+        return RestEndpointAuthKeys(primary_key=self.primary_key, secondary_key=self.secondary_key)
 
 
 class EndpointAuthToken(RestTranslatableMixin):
@@ -476,10 +464,7 @@ class EndpointAuthToken(RestTranslatableMixin):
     :vartype token_type: str
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword access_token: Access token for endpoint authentication.
         :paramtype access_token: str
@@ -490,10 +475,10 @@ class EndpointAuthToken(RestTranslatableMixin):
         :keyword token_type: Access token type.
         :paramtype token_type: str
         """
-        self.access_token = kwargs.get('access_token', None)
-        self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
-        self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
-        self.token_type = kwargs.get('token_type', None)
+        self.access_token = kwargs.get("access_token", None)
+        self.expiry_time_utc = kwargs.get("expiry_time_utc", 0)
+        self.refresh_after_time_utc = kwargs.get("refresh_after_time_utc", 0)
+        self.token_type = kwargs.get("token_type", None)
 
     @classmethod
     def _from_rest_object(cls, obj: RestEndpointAuthToken) -> "EndpointAuthToken":
