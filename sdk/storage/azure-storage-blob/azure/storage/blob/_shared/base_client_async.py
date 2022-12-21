@@ -27,11 +27,11 @@ from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
+    QueueMessagePolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
-    QueueMessagePolicy
 )
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 

@@ -6,10 +6,12 @@
 import logging
 import uuid
 from typing import (  # pylint: disable=unused-import
-    Optional,
     Any,
+    Dict,
+    Optional,
     Tuple,
-    TYPE_CHECKING
+    TYPE_CHECKING,
+    Union,
 )
 
 try:
@@ -26,30 +28,30 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
-    RedirectPolicy,
+    AzureSasCredentialPolicy,
     ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    ProxyPolicy,
+    RedirectPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
-    StorageHeadersPolicy,
+    ExponentialRetry,
+    QueueMessagePolicy,
+    StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
+    StorageHeadersPolicy,
+    StorageHosts,
+    StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
-    StorageLoggingPolicy,
-    StorageHosts,
-    QueueMessagePolicy,
-    ExponentialRetry,
 )
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
@@ -64,6 +66,7 @@ _SERVICE_PARAMS = {
     "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
     "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
 }
+
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -207,18 +210,18 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if sas_token and not credential:
-            query_str += sas_token
-        elif is_credential_sastoken(credential):
+        if is_credential_sastoken(credential):
             query_str += credential.lstrip("?")
             credential = None
+        elif sas_token:
+            query_str += sas_token
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

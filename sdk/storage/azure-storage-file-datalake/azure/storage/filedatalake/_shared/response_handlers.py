@@ -67,7 +67,7 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -81,6 +81,10 @@ def return_headers_and_deserialized(response, deserialized, response_headers):  
 
 def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized
+
+
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements

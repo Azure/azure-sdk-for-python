@@ -8,10 +8,10 @@ import uuid
 from typing import (  # pylint: disable=unused-import
     Any,
     Dict,
-    Tuple,
-    Union,
     Optional,
-    TYPE_CHECKING
+    Tuple,
+    TYPE_CHECKING,
+    Union,
 )
 
 try:
@@ -32,8 +32,8 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    RedirectPolicy,
     ProxyPolicy,
+    RedirectPolicy,
     UserAgentPolicy,
 )
 
@@ -44,6 +44,7 @@ from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     ExponentialRetry,
+    QueueMessagePolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
@@ -51,7 +52,6 @@ from .policies import (
     StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
-    QueueMessagePolicy,
 )
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException

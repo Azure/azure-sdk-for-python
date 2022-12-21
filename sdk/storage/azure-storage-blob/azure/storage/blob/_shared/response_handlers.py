@@ -22,6 +22,7 @@ from azure.core.exceptions import (
 from .parser import _to_utc_datetime
 from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 
+
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.exceptions import AzureError
