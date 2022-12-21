@@ -723,7 +723,7 @@ def _get_latest(
 
     if latest and isinstance(latest, ModelVersionResourceArmPaginatedResult):
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
-        latest = cast(ModelVersionData, latest)
+        latest = cast(ModelVersion, latest)
     if not latest:
         message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
         no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
