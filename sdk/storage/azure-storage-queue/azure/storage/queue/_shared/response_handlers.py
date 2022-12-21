@@ -67,7 +67,7 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -83,16 +83,18 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized
 
 
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+
+
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
-    if not storage_error.response or storage_error.response.status_code in [200, 204]:
+    if not storage_error.response:
         raise storage_error
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (PartialBatchErrorException,
-                                  ClientAuthenticationError,
-                                  ResourceNotFoundError,
-                                  ResourceExistsError)):
+                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
         serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -162,11 +164,11 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
 
     # Error message should include all the error properties
     try:
-        error_message += f"\nErrorCode:{error_code.value}"
+        error_message += "\nErrorCode:{}".format(error_code.value)
     except AttributeError:
-        error_message += f"\nErrorCode:{error_code}"
+        error_message += "\nErrorCode:{}".format(error_code)
     for name, info in additional_data.items():
-        error_message += f"\n{name}:{info}"
+        error_message += "\n{}:{}".format(name, info)
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:
