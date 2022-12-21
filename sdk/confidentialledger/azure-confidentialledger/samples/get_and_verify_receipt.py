@@ -125,7 +125,7 @@ def main():
 
         try:
             # Verify the contents of the receipt.
-            verify_receipt_from_dict(get_receipt_result, service_cert_content)
+            verify_receipt_from_dict(get_receipt_result["receipt"], service_cert_content)
             print(f"Receipt for transaction id {transaction_id} successfully verified")
         except Exception:
             print(f"Receipt verification for transaction id {transaction_id} failed")

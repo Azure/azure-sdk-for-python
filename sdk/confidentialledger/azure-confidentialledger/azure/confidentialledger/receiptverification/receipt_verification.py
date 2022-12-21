@@ -47,7 +47,7 @@ def verify_receipt_from_dict(
     receipt_dict = _convert_dict_to_camel_case(receipt_dict)
 
     # Convert receipt JSON object to Receipt model
-    receipt = Receipt.from_dict(receipt_dict["receipt"])
+    receipt = Receipt.from_dict(receipt_dict)
 
     # Call the main verify receipt function
     verify_receipt(receipt, service_cert_str)
