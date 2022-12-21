@@ -95,10 +95,10 @@ class TestPersistentLocals:
 @pytest.mark.usefixtures('enable_pipeline_private_preview_features')
 class TestPersistentLocalsPrivatePreview(TestPersistentLocals):
     def get_output_and_locals(self, func, injected_params):
+        try:
+            import bytecode
+        except ImportError:
+            import pip
+            pip.main(['install', 'bytecode'])
         from azure.ai.ml._utils._func_utils import _get_outputs_and_locals_private_preview
         return _get_outputs_and_locals_private_preview(func, injected_params)
-
-    @pytest.fixture(scope='class')
-    def install_bytecode(self):
-        import pip
-        pip.main(['install', 'bytecode'])
