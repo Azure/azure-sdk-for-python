@@ -40,10 +40,12 @@ def _get_test_phone_number():
     test_agent = os.environ["AZURE_TEST_AGENT"]
     return os.environ["AZURE_PHONE_NUMBER_" + test_agent]
 
+
 @pytest.mark.asyncio
 class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     def setup_method(self):
-        super(TestPhoneNumbersClientAsync, self).setUp(use_dynamic_resource=False)
+        super(TestPhoneNumbersClientAsync, self).setUp(
+            use_dynamic_resource=False)
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
@@ -281,20 +283,22 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     async def test_list_toll_free_area_codes_with_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
-            area_codes = phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+            area_codes = phone_number_client.list_available_area_codes(
+                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
-        assert len(items) > 0  
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
-            area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+            area_codes = self.phone_number_client.list_available_area_codes(
+                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
-        assert len(items) > 0      
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes_with_managed_identity(self):
@@ -302,7 +306,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         async with phone_number_client:
             localities = phone_number_client.list_available_localities("US")
             async for first_locality in localities:
-                area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)
@@ -312,9 +317,11 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             async for first_locality in localities:
-                area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)
@@ -329,7 +336,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             items = []
             async for item in countries:
                 items.append(item)
-        assert len(items) > 0  
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_countries(self):
@@ -338,7 +345,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             items = []
             async for item in countries:
                 items.append(item)
-        assert len(items) > 0        
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_localities_with_managed_identity(self):
@@ -348,16 +355,17 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             items = []
             async for item in localities:
                 items.append(item)
-        assert len(items) > 0 
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_localities(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             items = []
             async for item in localities:
                 items.append(item)
-        assert len(items) > 0      
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_localities_with_ad_and_managed_identity(self):
@@ -365,24 +373,27 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         async with phone_number_client:
             localities = phone_number_client.list_available_localities("US")
             async for first_locality in localities:
-                localities = phone_number_client.list_available_localities("US", administrative_division=first_locality.administrative_division.abbreviated_name)
+                localities = phone_number_client.list_available_localities(
+                    "US", administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in localities:
                     items.append(item)
                 break
-        assert len(items) > 0 
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_localities_with_ad(self):
         async with self.phone_number_client:
-            localities = self.phone_number_client.list_available_localities("US")
+            localities = self.phone_number_client.list_available_localities(
+                "US")
             async for first_locality in localities:
-                localities = self.phone_number_client.list_available_localities("US", administrative_division=first_locality.administrative_division.abbreviated_name)
+                localities = self.phone_number_client.list_available_localities(
+                    "US", administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in localities:
                     items.append(item)
                 break
-        assert len(items) > 0      
+        assert len(items) > 0
 
     @recorded_by_proxy_async
     async def test_list_offerings_with_managed_identity(self):
@@ -401,4 +412,4 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             items = []
             async for item in offerings:
                 items.append(item)
-        assert len(items) > 0                    
+        assert len(items) > 0
