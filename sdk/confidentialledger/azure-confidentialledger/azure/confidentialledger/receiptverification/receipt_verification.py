@@ -7,25 +7,50 @@ transaction receipts."""
 
 from base64 import b64decode
 from hashlib import sha256
-from typing import List, cast
+from typing import Dict, List, Any, cast
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, utils
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from azure.confidentialledger.receiptverification.exceptions import (
-    ReceiptVerificationException,
-    RootSignatureVerificationException,
-    RootNodeComputationException,
-    LeafNodeComputationException,
-    EndorsementVerificationException,
-)
 from azure.confidentialledger.receiptverification.models import (
     LeafComponents,
     ProofElement,
     Receipt,
 )
+
+from azure.confidentialledger.receiptverification._utils import (
+    _convert_dict_to_camel_case,
+)
+
+
+def verify_receipt_from_dict(
+    receipt_dict: Dict[str, Any], service_cert_str: str
+) -> None:
+    """Verify that a given Azure Confidential Ledger write transaction receipt
+    is valid from its content and the Confidential Ledger service identity
+    certificate.
+
+    :param receipt: JSON object containing the content of an Azure
+    Confidential Ledger write transaction receipt.
+    :type receipt: Dict[str, Any]
+    :param service_cert_str: String containing the PEM-encoded
+    certificate of the Confidential Ledger service identity.
+    :type service_cert_str: str
+    """
+
+    # Convert any key in the receipt dictionary to camel case
+    # to match the model fields (we do this because customers may
+    # provide receipts with snake case keys since they were returned
+    # by older ACL instances)
+    receipt_dict = _convert_dict_to_camel_case(receipt_dict)
+
+    # Convert receipt JSON object to Receipt model
+    receipt = Receipt.from_dict(receipt_dict["receipt"])
+
+    # Call the main verify receipt function
+    verify_receipt(receipt, service_cert_str)
 
 
 def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
@@ -34,50 +59,34 @@ def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
     certificate.
 
     :param receipt: Receipt object containing the content of an Azure
-    Confidential Ledger write transaction receipt. :type receipt:
-    ~azure.confidentialledgertools.receiptverification.models.Receipt
+    Confidential Ledger write transaction receipt.
+    :type receipt: ~azure.confidentialledgertools.receiptverification.models.Receipt
     :param service_cert_str: String containing the PEM-encoded
-    certificate of the Confidential Ledger service identity. :type
-    service_cert_str: str :raises ~azure.confidentialledgertools.receipt
-    verification.exceptions.ReceiptVerificationException: exception
-    raised when the receipt verification fails
+    certificate of the Confidential Ledger service identity.
+    :type service_cert_str: str
     """
 
-    try:
-        # Receipt verification for signature transactions is not supported
-        if receipt.is_signature_transaction is None or receipt.is_signature_transaction:
-            raise ValueError(
-                "Receipt verification for signature transactions is not supported."
-            )
+    # Load node PEM certificate
+    node_cert = _load_and_verify_pem_certificate(receipt.cert)
 
-        # Load node PEM certificate
-        node_cert = _load_and_verify_pem_certificate(receipt.cert)
+    # Verify node certificate is endorsed by the service certificate
+    # through endorsements certificates
+    _verify_node_cert_endorsed_by_service_cert(
+        node_cert, service_cert_str, receipt.serviceEndorsements
+    )
 
-        # Verify node certificate is endorsed by the service certificate
-        # through endorsements certificates
-        _verify_node_cert_endorsed_by_service_cert(
-            node_cert, service_cert_str, receipt.service_endorsements
-        )
+    # Compute hash of the leaf node in the Merkle Tree corresponding
+    # to the transaction associated to the given receipt
+    leaf_node_hash = _compute_leaf_node_hash(receipt.leafComponents)
 
-        # Compute hash of the leaf node in the Merkle Tree corresponding
-        # to the transaction associated to the given receipt
-        leaf_node_hash = _compute_leaf_node_hash(receipt.leaf_components)
+    # Compute root of the Merkle Tree at the time the transaction was committed
+    root_node_hash = _compute_root_node_hash(leaf_node_hash, receipt.proof)
 
-        # Compute root of the Merkle Tree at the time the transaction was committed
-        root_node_hash = _compute_root_node_hash(leaf_node_hash, receipt.proof)
-
-        # Verify signature of the signing node over the root of the tree with
-        # node certificate public key
-        _verify_signature_over_root_node_hash(
-            receipt.signature, node_cert, receipt.node_id, root_node_hash
-        )
-
-    except Exception as exception:
-        # Raise ReceiptVerificationException if any exception is thrown
-        # during the verification process
-        raise ReceiptVerificationException(
-            f"Encountered exception when verifying receipt {receipt} with service certificate {service_cert_str}."
-        ) from exception
+    # Verify signature of the signing node over the root of the tree with
+    # node certificate public key
+    _verify_signature_over_root_node_hash(
+        receipt.signature, node_cert, receipt.nodeId, root_node_hash
+    )
 
 
 def _verify_signature_over_root_node_hash(
@@ -99,7 +108,7 @@ def _verify_signature_over_root_node_hash(
         )
 
     except Exception as exception:
-        raise RootSignatureVerificationException(
+        raise ValueError(
             f"Encountered exception when verifying signature {signature} over root node hash."
         ) from exception
 
@@ -111,14 +120,14 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
     try:
         # Digest commit evidence string
         commit_evidence_digest = sha256(
-            leaf_components.commit_evidence.encode()
+            leaf_components.commitEvidence.encode()
         ).digest()
 
         # Convert write set digest to bytes
-        write_set_digest = bytes.fromhex(leaf_components.write_set_digest)
+        write_set_digest = bytes.fromhex(leaf_components.writeSetDigest)
 
         # Convert claims digest to bytes
-        claims_digest = bytes.fromhex(leaf_components.claims_digest)
+        claims_digest = bytes.fromhex(leaf_components.claimsDigest)
 
         # Create leaf node hash by hashing the concatenation of its three components
         # as bytes objects in the following order:
@@ -130,7 +139,7 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
         ).digest()
 
     except Exception as exception:
-        raise LeafNodeComputationException(
+        raise ValueError(
             f"Encountered exception when computing leaf node hash from leaf components {leaf_components}."
         ) from exception
 
@@ -173,7 +182,7 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
         return current_node_hash
 
     except Exception as exception:
-        raise RootNodeComputationException(
+        raise ValueError(
             f"Encountered exception when computing root node hash from proof list {proof}."
         ) from exception
 
@@ -195,7 +204,7 @@ def _verify_certificate_endorsement(
         _verify_ec_signature(endorser, endorsee.signature, cert_digest, hash_algorithm)
 
     except Exception as exception:
-        raise EndorsementVerificationException(
+        raise ValueError(
             f"Encountered exception when verifying endorsement of certificate {endorsee} by certificate {endorser}."
         ) from exception
 
@@ -231,7 +240,7 @@ def _verify_node_cert_endorsed_by_service_cert(
 
     # Validate endorsement certificates list is present
     if endorsements_certs is None:
-        raise ValueError("Endorsements certificates list need to be present.")
+        endorsements_certs = []
 
     # Add service certificate to the list of endorsements certificates
     endorsements_certs.append(service_cert_str)
