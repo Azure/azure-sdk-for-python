@@ -193,10 +193,12 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_get_operation_bad_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.get_operation("")
-        with pytest.raises(ValueError):
+        assert "'operation_id' cannot be None or empty." in str(e.value)
+        with pytest.raises(ValueError) as e:
             client.get_operation(None)
+        assert "'operation_id' cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()
