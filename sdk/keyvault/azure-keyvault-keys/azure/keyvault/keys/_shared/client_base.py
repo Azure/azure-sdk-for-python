@@ -42,28 +42,27 @@ _SERIALIZER.client_side_validation = False
 
 
 def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpRequest":
-        """Returns a request copy that includes an api-version query parameter if one wasn't originally present."""
-        request_copy = deepcopy(request)
-        params = {"api-version": api_version}  # By default, we want to use the client's API version
-        query = urlparse(request_copy.url).query
+    """Returns a request copy that includes an api-version query parameter if one wasn't originally present."""
+    request_copy = deepcopy(request)
+    params = {"api-version": api_version}  # By default, we want to use the client's API version
+    query = urlparse(request_copy.url).query
 
-        if query:
-            request_copy.url = request_copy.url.partition("?")[0]
-            existing_params = {
-                p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
-            }
-            params.update(existing_params)  # If an api-version was provided, this will overwrite our default
+    if query:
+        request_copy.url = request_copy.url.partition("?")[0]
+        existing_params = {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
+        params.update(existing_params)  # If an api-version was provided, this will overwrite our default
 
-        # Reconstruct the query parameters onto the URL
-        query_params = []
-        for k, v in params.items():
-            query_params.append("{}={}".format(k, v))
-        query = "?" + "&".join(query_params)
-        request_copy.url = request_copy.url + query
-        return request_copy
+    # Reconstruct the query parameters onto the URL
+    query_params = []
+    for k, v in params.items():
+        query_params.append("{}={}".format(k, v))
+    query = "?" + "&".join(query_params)
+    request_copy.url = request_copy.url + query
+    return request_copy
 
 
 class KeyVaultClientBase(object):
+    # pylint:disable=protected-access
     def __init__(self, vault_url, credential, **kwargs):
         # type: (str, TokenCredential, **Any) -> None
         if not credential:
