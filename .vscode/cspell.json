@@ -1183,6 +1183,18 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receiptverification/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
       "words": [
         "tids",

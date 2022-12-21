@@ -365,7 +365,7 @@ ledger_client = ConfidentialLedgerClient(
 
 ### Verify write transaction receipts
 
-Clients can leverage the receipt verification utlity in the SDK to verify write transaction receipts issued by Azure Confidential Legder instances. The utility can be used to fully verify receipts offline as the verification algorithm does not require to be connected to a Confidential ledger or any other Azure service.
+Clients can leverage the receipt verification library in the SDK to verify write transaction receipts issued by Azure Confidential Legder instances. The utility can be used to fully verify receipts offline as the verification algorithm does not require to be connected to a Confidential ledger or any other Azure service.
 
 Once a new entry has been appended to the ledger (please refer to [this example](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/confidentialledger/azure-confidentialledger#append-entry)), it is possible to get a receipt for the committed write transaction.
 
