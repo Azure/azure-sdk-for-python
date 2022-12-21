@@ -32,9 +32,9 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    DataVersionBase,
-    ModelVersion,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
+    ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
@@ -691,7 +691,7 @@ def _get_latest(
     registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersion, DataVersionBase]:
+) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most
@@ -723,7 +723,7 @@ def _get_latest(
 
     if latest and isinstance(latest, ModelVersionResourceArmPaginatedResult):
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
-        latest = cast(ModelVersion, latest)
+        latest = cast(ModelVersionData, latest)
     if not latest:
         message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
         no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
