@@ -41,7 +41,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
         type: str,  # pylint: disable=redefined-builtin
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: TimeZone = TimeZone.UTC,
+        time_zone: TimeZone = None,
     ):
         super().__init__()
         self.type = type
@@ -144,7 +144,7 @@ class CronTrigger(TriggerBase):
         expression: str,
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: Union[str, TimeZone] = TimeZone.UTC,
+        time_zone: Union[str, TimeZone] = None,
     ):
         super().__init__(
             type=RestTriggerType.CRON,
@@ -211,7 +211,7 @@ class RecurrenceTrigger(TriggerBase):
         schedule: Optional[RecurrencePattern] = None,
         start_time: Optional[Union[str, datetime]] = None,
         end_time: Optional[Union[str, datetime]] = None,
-        time_zone: Union[str, TimeZone] = TimeZone.UTC,
+        time_zone: Union[str, TimeZone] = None,
     ):
         super().__init__(
             type=RestTriggerType.RECURRENCE,
