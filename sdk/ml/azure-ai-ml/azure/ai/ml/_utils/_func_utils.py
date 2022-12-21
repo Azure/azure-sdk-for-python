@@ -137,13 +137,12 @@ try:
         def __init__(self):
             self._template_separators = self.get_instructions(_source_template_func)
 
-            template = self.get_instructions(_target_template_func)
-            self._template_body = self._split_instructions(template)
+            self._template_body = self._split_instructions(self.get_instructions(_target_template_func))
             # after split, the length of self._template_body will be len(self._separators) + 1
             # pop tail to make zip work
             self._template_tail = self._template_body.pop()
 
-        # region methods depends on bytecode
+        # region methods depending on package bytecode
         @classmethod
         def get_instructions(cls, func):
             return list(Bytecode.from_code(func.__code__))
@@ -180,16 +179,16 @@ try:
                 *,
                 skip_body_instr=False
         ) -> List[List[Any]]:
-            """Split bytecode into several pieces of instructions by template separators.
+            """Split instructions into several pieces by template separators.
             For example, in Python 3.11, the template separators will be:
             [
                 Instr('RESUME', 0),  # initial instruction shared by all functions
                 Instr('LOAD_FAST', 'mock_arg'),  # the body execution instruction
                 Instr('RETURN_VALUE'),  # the return instruction shared by all functions
             ]
-            Then we will split the target template bytecode into 4 parts.
+            Then we will split the target template bytecode into 4 pieces.
             For passed in bytecode, we should skip the body execution instruction, which is from template,
-            and split it into 3 parts.
+            and split it into 3 pieces.
             """
             pieces = []
             piece = []
