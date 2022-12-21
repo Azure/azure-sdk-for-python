@@ -176,8 +176,8 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
-def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
+def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
 
 
 @pytest.fixture
@@ -193,11 +193,6 @@ def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
 
 
 @pytest.fixture
