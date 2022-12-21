@@ -9,8 +9,8 @@ from azure.ai.ml import load_data
 from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     DataContainerData,
     DataContainerDetails,
-    DataVersionData,
-    DataVersionDetails,
+    DataVersionBaseData,
+    DataVersionBaseDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
@@ -391,7 +391,7 @@ class TestDataOperations:
 
     def test_archive_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DataVersionData(properties=Mock(DataVersionDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(paths=[]))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.archive(name=name, version=version)
@@ -417,7 +417,7 @@ class TestDataOperations:
 
     def test_restore_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DataVersionData(properties=Mock(DataVersionDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(paths=[]))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.restore(name=name, version=version)
