@@ -101,5 +101,4 @@ class TestPersistentLocalsPrivatePreview(TestPersistentLocals):
         except ImportError:
             import pip
             pip.main(['install', 'bytecode'])
-        assert not issubclass(PersistentLocalsFunctionBytecodeBuilder, PersistentLocalsFunctionProfilerBuilder)
         return PersistentLocalsFunctionBytecodeBuilder().call(func, injected_params)

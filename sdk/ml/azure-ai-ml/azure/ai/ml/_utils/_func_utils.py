@@ -4,8 +4,8 @@
 import abc
 import sys
 from contextlib import contextmanager
-from types import FunctionType, MethodType
-from typing import Any, Callable, List, Optional, Union, Tuple
+from types import FunctionType, MethodType, CodeType
+from typing import Any, List, Optional, Union, Tuple, Dict
 import logging
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
@@ -20,12 +20,16 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         "not_all_template_separators_used": "Not all template separators are used, "
                                             "please switch to a compatible version of Python.",
     }
+    injected_param = "__self"
 
-    def make_error(self, error_name, **kwargs):
+    def make_error(self, error_name: str, **kwargs):
         """Make error message with error_name and kwargs."""
         return self.errors[error_name].format(**kwargs)
 
     @abc.abstractmethod
+    def _call(self, func, _all_kwargs) -> Tuple[Any, dict]:
+        raise NotImplementedError()
+
     def call(self, func, _all_kwargs) -> Tuple[Any, dict]:
         """Get outputs and locals in calling func with _all_kwargs.
         Locals will be used to update node variable names.
@@ -37,7 +41,17 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         :return: A tuple of outputs and locals.
         :rtype: typing.Tuple[typing.Any, typing.Dict]
         """
-        raise NotImplementedError()
+        if isinstance(func, (FunctionType, MethodType)):
+            pass
+        elif hasattr(func, '__call__'):
+            func = func.__call__
+        else:
+            raise TypeError(self.make_error('not_callable'))
+
+        if self.injected_param in func.__code__.co_varnames:
+            raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
+
+        return self._call(func, _all_kwargs)
 
 
 class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
@@ -53,7 +67,7 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
             sys.setprofile(original_profiler)
 
     @staticmethod
-    def get_func_variable_tracer(_locals_data, func_code):
+    def get_func_variable_tracer(_locals_data: Dict[str, Any], func_code: CodeType):
         """Get a tracer to trace variable names in dsl.pipeline function.
 
         :param _locals_data: A dict to save locals data.
@@ -69,18 +83,8 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
 
         return tracer
 
-    def call(self, func, _all_kwargs):
+    def _call(self, func, _all_kwargs):
         _locals = {}
-
-        if not hasattr(func, '__code__'):
-            if hasattr(func, '__call__'):
-                func = func.__call__
-            else:
-                raise TypeError(self.make_error("not_callable"))
-
-        if "__self" in func.__code__.co_varnames:
-            raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
-
         func_variable_profiler = self.get_func_variable_tracer(_locals, func.__code__)
         with self.replace_sys_profiler(func_variable_profiler):
             outputs = func(**_all_kwargs)
@@ -90,13 +94,8 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
 try:
     from bytecode import Bytecode, Instr
 
+
     class PersistentLocalsFunction(object):
-        """Wrapper class for the 'persistent_locals' decorator.
-
-        Refer to the docstring of instances for help about the wrapped
-        function.
-        """
-
         def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
             """
             :param _func: The function to be wrapped.
@@ -136,17 +135,52 @@ try:
 
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
         def __init__(self):
-            self._template_separators = self._clear_location(Bytecode.from_code(_source_template_func.__code__))
+            self._template_separators = self.get_instructions(_source_template_func)
 
-            template = self._clear_location(Bytecode.from_code(_target_template_func.__code__))
-            self._template_body = self.split_bytecode(template)
-            # after split, len(self._template_body) will be len(self._separators) + 1
+            template = self.get_instructions(_target_template_func)
+            self._template_body = self._split_instructions(template)
+            # after split, the length of self._template_body will be len(self._separators) + 1
             # pop tail to make zip work
             self._template_tail = self._template_body.pop()
-            self._injected_param = template.argnames[0]
 
-        def split_bytecode(self, bytecode: Bytecode, *, skip_body_instr=False) -> List[List[Instr]]:
-            """Split bytecode into several parts by template separators.
+        # region methods depends on bytecode
+        @classmethod
+        def get_instructions(cls, func):
+            return list(Bytecode.from_code(func.__code__))
+
+        @classmethod
+        def is_instr_equal(cls, instr1: Instr, instr2: Instr) -> bool:
+            if instr1 is None and instr2 is None:
+                return True
+            if instr1 is None or instr2 is None:
+                return False
+            return instr1.opcode == instr2.opcode and instr1.arg == instr2.arg
+
+        @classmethod
+        def is_body_instruction(cls, instr: Instr) -> bool:
+            """Get the body execution instruction in template."""
+            return instr.name == "LOAD_FAST" and instr.arg == "mock_arg"
+
+        def _create_code(self, instructions: List[Instr], base_func: Union[FunctionType, MethodType]):
+            """Create the base bytecode for the function to be generated.
+            Will keep information of the function, such as name, globals, etc., but skip all instructions.
+            """
+            fn_code = Bytecode.from_code(base_func.__code__)
+            fn_code.clear()
+            fn_code.extend(instructions)
+            fn_code.argcount += 1
+            fn_code.argnames.insert(0, self.injected_param)
+            return fn_code.to_code()
+
+        # endregion
+
+        def _split_instructions(
+                self,
+                instructions,
+                *,
+                skip_body_instr=False
+        ) -> List[List[Any]]:
+            """Split bytecode into several pieces of instructions by template separators.
             For example, in Python 3.11, the template separators will be:
             [
                 Instr('RESUME', 0),  # initial instruction shared by all functions
@@ -158,26 +192,26 @@ try:
             and split it into 3 parts.
             """
             pieces = []
-            piece = Bytecode()
+            piece = []
 
             separator_iter = iter(self._template_separators)
 
             def get_next_separator():
                 try:
                     _s = next(separator_iter)
-                    if skip_body_instr and _s == self.get_body_instruction():
+                    if skip_body_instr and self.is_body_instruction(_s):
                         _s = next(separator_iter)
                     return _s
                 except StopIteration:
                     return None
 
             cur_separator = get_next_separator()
-            for instr in self._clear_location(bytecode):
-                if instr == cur_separator:
+            for instr in instructions:
+                if self.is_instr_equal(instr, cur_separator):
                     # skip the separator
                     pieces.append(piece)
                     cur_separator = get_next_separator()
-                    piece = Bytecode()
+                    piece = []
                 else:
                     piece.append(instr)
             pieces.append(piece)
@@ -186,66 +220,10 @@ try:
                 raise ValueError(self.make_error("not_all_template_separators_used"))
             return pieces
 
-        @classmethod
-        def get_body_instruction(cls):
-            """Get the body execution instruction in template."""
-            return Instr("LOAD_FAST", "mock_arg")
-
-        @classmethod
-        def _clear_location(cls, bytecode: Bytecode) -> Bytecode:
-            """Clear location information of bytecode instructions and return the cleared bytecode."""
-            for i, instr in enumerate(bytecode):
-                if isinstance(instr, Instr):
-                    bytecode[i] = Instr(instr.name, instr.arg)
-            return bytecode
-
-        def _create_base_bytecode(self, func: Union[FunctionType, MethodType]) -> Bytecode:
-            """Create the base bytecode for the function to be generated.
-            Will keep information of the function, such as name, globals, etc., but skip all instructions.
-            """
-            generated_bytecode = Bytecode.from_code(func.__code__)
-            generated_bytecode.clear()
-
-            if self._injected_param in generated_bytecode.argnames:
-                raise ValueError(self.make_error("conflict_argument", args=generated_bytecode.argnames))
-            generated_bytecode.argnames.insert(0, self._injected_param)
-            generated_bytecode.argcount += 1  # pylint: disable=no-member
-            return generated_bytecode
-
         def _build_func(self, func: Union[FunctionType, MethodType]) -> PersistentLocalsFunction:
-            generated_bytecode = self._create_base_bytecode(func)
-
-            for template_piece, input_piece, separator in zip(
-                    self._template_body,
-                    self.split_bytecode(
-                        Bytecode.from_code(func.__code__),
-                        skip_body_instr=True
-                    ),
-                    self._template_separators,
-            ):
-                generated_bytecode.extend(template_piece)
-                generated_bytecode.extend(input_piece)
-                if separator != self.get_body_instruction():
-                    generated_bytecode.append(separator)
-            generated_bytecode.extend(self._template_tail)
-
-            generated_code = generated_bytecode.to_code()
-            generated_func = FunctionType(
-                generated_code,
-                func.__globals__,
-                func.__name__,
-                func.__defaults__,
-                func.__closure__
-            )
-            return PersistentLocalsFunction(
-                generated_func,
-                _self=func.__self__ if isinstance(func, MethodType) else None,
-                skip_locals=[self._injected_param],
-            )
-
-        def build(self, func: Callable):
             """Build a persistent locals function from the given function.
-            Use bytecode injection to add try...finally statement around code to persistent the locals in the function.
+            Use bytecode injection to add try...finally statement around code to
+            persistent the locals in the function.
 
             It will change the func bytecode in this way:
                 def func(__self, *func_args):
@@ -262,18 +240,40 @@ try:
                 # Get the locals in the func.
                 func_locals = persistent_locals_func.locals
             """
-            if isinstance(func, (FunctionType, MethodType)):
-                pass
-            elif hasattr(func, '__call__'):
-                func = func.__call__
-            else:
-                raise TypeError(self.make_error('not_callable'))
-            return self._build_func(func)
+            generated_instructions = []
 
-        def call(self, func, _all_kwargs) -> Tuple[Any, dict]:
-            persistent_func = self.build(func)
+            for template_piece, input_piece, separator in zip(
+                    self._template_body,
+                    self._split_instructions(
+                        self.get_instructions(func),
+                        skip_body_instr=True
+                    ),
+                    self._template_separators,
+            ):
+                generated_instructions.extend(template_piece)
+                generated_instructions.extend(input_piece)
+                if not self.is_body_instruction(separator):
+                    generated_instructions.append(separator)
+            generated_instructions.extend(self._template_tail)
+
+            generated_func = FunctionType(
+                self._create_code(generated_instructions, func),
+                func.__globals__,
+                func.__name__,
+                func.__defaults__,
+                func.__closure__
+            )
+            return PersistentLocalsFunction(
+                generated_func,
+                _self=func.__self__ if isinstance(func, MethodType) else None,
+                skip_locals=[self.injected_param],
+            )
+
+        def _call(self, func, _all_kwargs) -> Tuple[Any, dict]:
+            persistent_func = self._build_func(func)
             outputs = persistent_func(**_all_kwargs)
             return outputs, persistent_func.locals
+
 except ImportError:
     # Fall back to the old implementation
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):
