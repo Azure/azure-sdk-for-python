@@ -407,17 +407,12 @@ get_receipt_result = get_receipt_poller.result()
 print(f"Write receipt for transaction id {transaction_id} was successfully retrieved: {get_receipt_result}")
 ```
 
-After fetching a receipt for a write transaction, it is possible to call the `verify_receipt` function to verify that the receipt is valid.
+After fetching a receipt for a write transaction, it is possible to call the `verify_receipt_from_dict` function to verify that the receipt is valid.
 
 ```python
 from azure.confidentialledger.receiptverification import (
-    verify_receipt,
-    ReceiptVerificationException,
-    Receipt,
+    verify_receipt_from_dict,
 )
-
-# Convert receipt content to a Receipt model.
-receipt_content = Receipt.from_dict(get_receipt_result["receipt"])
 
 # Read contents of service certificate file saved in previous step.
 with open(ledger_tls_cert_file_name, "r") as service_cert_file:
@@ -425,9 +420,9 @@ with open(ledger_tls_cert_file_name, "r") as service_cert_file:
 
 try:
     # Verify the contents of the receipt.
-    verify_receipt(receipt_content, service_cert_content)
+    verify_receipt_from_dict(get_receipt_result["receipt"], service_cert_content)
     print(f"Receipt for transaction id {transaction_id} successfully verified")
-except ReceiptVerificationException:
+except ValueError:
     print(f"Receipt verification for transaction id {transaction_id} failed")
 ```
 
