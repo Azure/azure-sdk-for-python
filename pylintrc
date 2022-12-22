@@ -46,5 +46,17 @@ min-similarity-lines=10
 # The invalid-name checker must be **enabled** for these hints to be used.
 include-naming-hint=yes
 
+# keep short; underscores are discouraged
+module-naming-style=snake_case
+const-naming-style=UPPER_CASE
+class-naming-style=PascalCase
+class-attribute-naming-style=snake_case
+attr-naming-style=snake_case
+method-naming-style=snake_case
+function-naming-style=snake_case
+argument-naming-style=snake_case
+variable-naming-style=snake_case
+inlinevar-naming-style=snake_case
+
 [TYPECHECK]
 generated-members=js.*
