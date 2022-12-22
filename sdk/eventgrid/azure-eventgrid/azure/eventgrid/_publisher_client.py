@@ -20,6 +20,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    BearerTokenCredentialPolicy
 )
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -106,7 +107,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     def _policies(credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
         **kwargs: Any) -> List[Any]:
         
-        auth_policy = _get_authentication_policy(credential)
+        auth_policy = _get_authentication_policy(credential, BearerTokenCredentialPolicy)
         sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
             RequestIdPolicy(**kwargs),

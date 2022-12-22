@@ -17,7 +17,7 @@ except ImportError:
 
 from msrest import Serializer
 from azure.core.exceptions import raise_with_traceback
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
@@ -70,7 +70,7 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
+def _get_authentication_policy(credential, bearer_token_policy):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if hasattr(credential, "get_token"):
@@ -171,7 +171,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     if body is None:
         data = None
     else:
-        data = json.dumps(body)
+        data = body
         header_parameters['Content-Length'] = str(len(data))
 
     request = HttpRequest(
