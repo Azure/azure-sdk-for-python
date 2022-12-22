@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:29:03 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUDAAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:29:03 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwCQAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:45:11 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUDAAAAGJT9toOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwCQAAAI7GNtsOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:29:03 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:11 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUDAAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:29:03 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwCQAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:45:11 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -185,7 +185,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:29:03 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:13 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -194,7 +194,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:5f0aef2c-e073-4eae-92d5-d0e30b2829a6_G23, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-11-04T00:29:04"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:29cf0078-cbe0-49cf-a783-3b2a491612d0_G18, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-12-22T21:45:13"
         }
       }
     }

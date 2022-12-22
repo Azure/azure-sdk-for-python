@@ -38,11 +38,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 04 Nov 2022 00:30:23 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:04 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "de6c2f0d28fe47568ccd20df4e499aa8",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/de6c2f0d28fe47568ccd20df4e499aa8?api-version=2022-10",
+        "Schema-Id": "f05ef3eeb95c4ed4aa23c57d19d3410f",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/f05ef3eeb95c4ed4aa23c57d19d3410f?api-version=2022-10",
         "Schema-Name": "test-schema-negative-version-avro7d143f2",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions?api-version=2022-10",
@@ -63,7 +63,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:24 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:04 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -72,7 +72,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroup/test-schema-negative-version-avro7d143f2/ver.2 does not exist. TrackingId:0f1d12e7-32bc-48ac-a07d-be8e31c17305_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/2, Timestamp:2022-11-04T00:30:24"
+          "message": "Schema fakegroup/test-schema-negative-version-avro7d143f2/ver.2 does not exist. TrackingId:def3cc1e-ed68-4a96-8c27-d86cc5058c9e_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/2, Timestamp:2022-12-22T21:46:05"
         }
       }
     }

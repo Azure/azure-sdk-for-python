@@ -14,7 +14,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:33 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:15 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:3e108f24-11ed-4f3b-adf3-5192cdce7124_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-04T00:30:33"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:4c885f8e-112c-4030-98e3-edf65a42c5a3_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-12-22T21:46:16"
         }
       }
     },
@@ -61,7 +61,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:33 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:16 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -70,7 +70,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:5dbfdc1f-fac2-45f8-8745-1f73b9baaa4e_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-04T00:30:34"
+          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:776740ad-2f86-4200-85ec-6030e899de12_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-12-22T21:46:17"
         }
       }
     },
@@ -108,7 +108,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:34 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:16 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -117,7 +117,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroup/never-registered does not exist. TrackingId:538ff272-c677-49b0-8d94-922859427402_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/never-registered:get-id, Timestamp:2022-11-04T00:30:34"
+          "message": "Schema fakegroup/never-registered does not exist. TrackingId:6fc4fbd6-f2a5-4f6b-95d4-2a7e42de5f29_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/never-registered:get-id, Timestamp:2022-12-22T21:46:17"
         }
       }
     }

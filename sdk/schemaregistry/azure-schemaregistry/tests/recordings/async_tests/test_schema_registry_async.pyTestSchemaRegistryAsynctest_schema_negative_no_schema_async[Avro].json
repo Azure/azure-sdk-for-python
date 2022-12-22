@@ -12,7 +12,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:19 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:58 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:da8df829-0b34-42eb-966f-ca85a6dc89ee_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-04T00:30:19"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:bfbe3612-35e3-4d49-8465-36b0447e04b1_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-12-22T21:45:59"
         }
       }
     },
@@ -37,7 +37,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:19 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:59 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -46,7 +46,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:69352f43-7eea-4888-82f4-51970376b8a2_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-04T00:30:19"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:ab658bd4-b7d4-46e7-a913-5aebdae6c090_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-12-22T21:45:59"
         }
       }
     }

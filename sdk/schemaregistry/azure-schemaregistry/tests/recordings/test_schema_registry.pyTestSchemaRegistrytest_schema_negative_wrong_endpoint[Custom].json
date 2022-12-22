@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:28:32 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:33 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUBwAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:28:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:44:34 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUBwAAAGJT9toOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:28:32 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:33 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUBwAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:28:32 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:44:34 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {

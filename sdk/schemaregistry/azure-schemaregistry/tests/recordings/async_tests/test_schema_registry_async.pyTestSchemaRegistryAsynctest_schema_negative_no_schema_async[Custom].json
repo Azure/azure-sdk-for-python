@@ -12,7 +12,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:22 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:01 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:399f6c8e-7965-4cb7-9f2c-cab6e1521838_G6, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-04T00:30:22"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:109b7d06-f19f-40fa-8c30-e03b5e192ec5_G18, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-12-22T21:46:01"
         }
       }
     },
@@ -37,7 +37,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:22 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:02 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -46,7 +46,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:573c1615-5edb-4be6-8352-12a3b4acb373_G6, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-04T00:30:22"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:d4a9a168-92f7-44d2-9de3-504530c6d278_G18, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-12-22T21:46:02"
         }
       }
     }

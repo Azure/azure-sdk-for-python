@@ -12,7 +12,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:20 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:59 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:b9edbf63-0bca-4942-9983-cd0d5ff8ceff_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-04T00:30:20"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:a533c618-d47c-46b4-9fea-0a5ab151cea5_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-12-22T21:46:00"
         }
       }
     },
@@ -37,7 +37,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:20 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:00 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -46,7 +46,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:92bba479-25f6-41e1-82bb-6320ee12efeb_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-04T00:30:21"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:0b9a67bd-a992-443e-b875-7f2f6de15700_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-12-22T21:46:00"
         }
       }
     }

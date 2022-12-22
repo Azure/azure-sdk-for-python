@@ -14,7 +14,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:28 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:09 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:ebeb2bd7-b4b4-4cab-8829-93b352f55d84_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:28"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:0a321346-0d79-4a81-8517-49deb83f9164_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-12-22T21:46:09"
         }
       }
     },
@@ -65,7 +65,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:28 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:10 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -74,7 +74,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:a5de5590-f874-42b3-9e99-3a782be112f7_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:28"
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:d0b63e70-716b-4382-869b-a748b41df2c4_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-12-22T21:46:10"
         }
       }
     }

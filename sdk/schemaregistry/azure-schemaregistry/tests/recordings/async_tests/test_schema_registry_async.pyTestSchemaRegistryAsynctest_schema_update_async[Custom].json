@@ -7,18 +7,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "28",
-        "Content-Type": "application/octet-stream",
+        "Content-Type": "text/plain; charset=utf-8",
         "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "TXkgZmF2b3JpdGUgY29sb3IgaXMgeWVsbG93Lg==",
+      "RequestBody": "My favorite color is yellow.",
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 04 Nov 2022 00:29:37 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:31 GMT",
         "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "b93c657c9a944a2c884a73e7d13a9b3e",
-        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/b93c657c9a944a2c884a73e7d13a9b3e?api-version=2022-10",
+        "Schema-Id": "c16abed1aaf94f67b59bdee99e402474",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/c16abed1aaf94f67b59bdee99e402474?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-custom6f9b3c94",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
@@ -34,18 +34,18 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "27",
-        "Content-Type": "application/octet-stream",
+        "Content-Type": "text/plain; charset=utf-8",
         "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "TXkgZmF2b3JpdGUgZm9vZCBpcyB5ZWxsb3cu",
+      "RequestBody": "My favorite food is yellow.",
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 04 Nov 2022 00:29:37 GMT",
+        "Date": "Thu, 22 Dec 2022 21:45:31 GMT",
         "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/2?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "793e858f3e8d422f8ed39c07e576bf8c",
-        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/793e858f3e8d422f8ed39c07e576bf8c?api-version=2022-10",
+        "Schema-Id": "e98a4d9d350c4d9eab7ae47b0bf60d0f",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/e98a4d9d350c4d9eab7ae47b0bf60d0f?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-custom6f9b3c94",
         "Schema-Version": "2",
         "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
@@ -53,6 +53,58 @@
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/$schemas/e98a4d9d350c4d9eab7ae47b0bf60d0f?api-version=2022-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Thu, 22 Dec 2022 21:45:32 GMT",
+        "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/2?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "e98a4d9d350c4d9eab7ae47b0bf60d0f",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/e98a4d9d350c4d9eab7ae47b0bf60d0f?api-version=2022-10",
+        "Schema-Name": "test-schema-update-async-custom6f9b3c94",
+        "Schema-Version": "2",
+        "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": "My favorite food is yellow."
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/1?api-version=2022-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Thu, 22 Dec 2022 21:45:33 GMT",
+        "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "c16abed1aaf94f67b59bdee99e402474",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/c16abed1aaf94f67b59bdee99e402474?api-version=2022-10",
+        "Schema-Name": "test-schema-update-async-custom6f9b3c94",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": "My favorite color is yellow."
     }
   ],
   "Variables": {}

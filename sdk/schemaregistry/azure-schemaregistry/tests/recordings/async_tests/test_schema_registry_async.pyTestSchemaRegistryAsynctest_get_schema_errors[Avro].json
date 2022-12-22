@@ -12,7 +12,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:37 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:20 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:b82789bd-0521-496a-8a83-69e71fc02340_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-11-04T00:30:37"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:72bccd30-8bbd-4791-9f63-076e448125ac_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-12-22T21:46:20"
         }
       }
     }

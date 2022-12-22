@@ -34,11 +34,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 04 Nov 2022 00:30:24 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:05 GMT",
         "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "1ed6ee2fac0f47f3a0bea3d3b8f79c54",
-        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/1ed6ee2fac0f47f3a0bea3d3b8f79c54?api-version=2022-10",
+        "Schema-Id": "643a5a39c9de4659b71ab71c39faefe4",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/643a5a39c9de4659b71ab71c39faefe4?api-version=2022-10",
         "Schema-Name": "test-schema-negative-version-json7f543f4",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions?api-version=2022-10",
@@ -59,7 +59,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:25 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:06 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -68,7 +68,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroup/test-schema-negative-version-json7f543f4/ver.2 does not exist. TrackingId:f342a093-7101-4c38-9e6d-cca1ddd9b1a6_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/2, Timestamp:2022-11-04T00:30:26"
+          "message": "Schema fakegroup/test-schema-negative-version-json7f543f4/ver.2 does not exist. TrackingId:2bbd89af-245d-4eec-bd11-7a002372d5c8_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/2, Timestamp:2022-12-22T21:46:07"
         }
       }
     }

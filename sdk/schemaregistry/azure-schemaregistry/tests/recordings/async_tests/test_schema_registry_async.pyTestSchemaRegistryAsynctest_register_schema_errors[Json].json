@@ -14,7 +14,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:28 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:10 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:5260a82f-aa91-4354-b516-6b9729c72ba2_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:29"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:8a86b21f-dba3-463a-be72-3dfcd993278d_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-12-22T21:46:11"
         }
       }
     },
@@ -61,7 +61,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:30:29 GMT",
+        "Date": "Thu, 22 Dec 2022 21:46:11 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -70,7 +70,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:80c384da-b7c9-4971-90a6-6b7979851486_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:29"
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:1ceb7cb3-7e71-4f6e-919b-cfa872bf0c71_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-12-22T21:46:11"
         }
       }
     }

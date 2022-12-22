@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:28:43 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:46 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUCQAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:28:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:44:47 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUCQAAAGJT9toOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 04 Nov 2022 00:28:44 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:46 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUCQAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:28:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AtQ6GhHHNS1LmWSSB6yjVNGoYsMwBwAAAI7GNtsOAAAA; expires=Sat, 21-Jan-2023 21:44:47 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -211,11 +211,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 04 Nov 2022 00:28:44 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:47 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-negative-version-avrod5c8381b/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "e60ac0fc6198412b8736b20b20ba26a2",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/e60ac0fc6198412b8736b20b20ba26a2?api-version=2022-10",
+        "Schema-Id": "a8983e8d2bb6495f982b50dd7ab29bbc",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/a8983e8d2bb6495f982b50dd7ab29bbc?api-version=2022-10",
         "Schema-Name": "test-schema-negative-version-avrod5c8381b",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-negative-version-avrod5c8381b/versions?api-version=2022-10",
@@ -237,7 +237,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 04 Nov 2022 00:28:45 GMT",
+        "Date": "Thu, 22 Dec 2022 21:44:48 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -246,7 +246,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroup/test-schema-negative-version-avrod5c8381b/ver.2 does not exist. TrackingId:a7e5bff6-ce47-49b4-9ef2-f7c29963a63f_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-avrod5c8381b/versions/2, Timestamp:2022-11-04T00:28:45"
+          "message": "Schema fakegroup/test-schema-negative-version-avrod5c8381b/ver.2 does not exist. TrackingId:969148ba-62ed-4eeb-938c-49120fcb0e39_G12, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-avrod5c8381b/versions/2, Timestamp:2022-12-22T21:44:49"
         }
       }
     }
