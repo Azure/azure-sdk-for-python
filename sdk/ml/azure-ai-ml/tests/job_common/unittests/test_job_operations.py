@@ -3,9 +3,13 @@ import os
 from typing import Callable
 from unittest.mock import Mock, patch
 
+import jwt
 import pytest
 import vcr
 import yaml
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml.exceptions import ValidationException
+from azure.core.credentials import AccessToken
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
@@ -174,6 +178,27 @@ class TestJobOperations:
         assert git_props.items() <= job.properties.items()
         mock_job_operation._operation_2022_10_preview.create_or_update.assert_called_once()
         mock_job_operation._credential.get_token.assert_called_once_with("https://ml.azure.com/.default")
+
+    @patch.object(Job, "_from_rest_object")
+    def test_user_identity_get_aml_token(self, mock_method, mock_job_operation: JobOperations) -> None:
+        mock_method.return_value = Command(component=None)
+        job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
+
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
+
+        with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
+            mock_get_token.return_value = AccessToken(
+                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234)
+            mock_job_operation.create_or_update(job=job)
+            mock_job_operation._operation_2022_10_preview.create_or_update.assert_called_once()
+            mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
+
+        with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
+            mock_get_token.return_value = AccessToken(
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
+            with pytest.raises(ValidationException):
+                mock_job_operation.create_or_update(job=job)
 
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
