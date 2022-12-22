@@ -112,7 +112,7 @@ class ComputeOperations(_ScopeDependentOperations):
         """
         if compute.location and compute.type != ComputeType.AMLCOMPUTE:
             module_logger.warning(
-                "Warning: Setting a custom location is not supported for compute type %s and will not be used.",
+                "Warning: 'Location' is not supported for compute type %s and will not be used.",
                 compute.type,
                 )
             compute.location = self._get_workspace_location()

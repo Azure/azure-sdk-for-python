@@ -323,7 +323,7 @@ class YAMLRefDocLinks:
     DATA = "https://aka.ms/ml-cli-v2-data-yaml-reference"
     MODEL = "https://aka.ms/ml-cli-v2-model-yaml-reference"
     AML_COMPUTE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
-    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
+    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-instance-yaml-reference"
     VIRTUAL_MACHINE_COMPUTE = "https://aka.ms/ml-cli-v2-compute-vm-yaml-reference"
     COMMAND_JOB = "https://aka.ms/ml-cli-v2-job-command-yaml-reference"
     PARALLEL_JOB = "https://aka.ms/ml-cli-v2-job-parallel-yaml-reference"
