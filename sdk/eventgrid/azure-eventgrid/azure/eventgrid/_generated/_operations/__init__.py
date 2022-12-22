@@ -6,14 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CloudEvent
-    from ._models_py3 import EventGridEvent
-except (SyntaxError, ImportError):
-    from ._models import CloudEvent  # type: ignore
-    from ._models import EventGridEvent  # type: ignore
+from ._operations import EventGridPublisherClientOperationsMixin
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CloudEvent',
-    'EventGridEvent',
+    "EventGridPublisherClientOperationsMixin",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
