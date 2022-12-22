@@ -39,12 +39,12 @@ resources:
 @pytest.fixture
 def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
