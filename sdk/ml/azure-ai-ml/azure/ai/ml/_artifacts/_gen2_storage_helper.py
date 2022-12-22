@@ -20,10 +20,11 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _build_metadata_dict,
     generate_asset_id,
+    get_directory_size,
     upload_directory,
     upload_file,
 )
-from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR, FILE_SIZE_WARNING
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationException
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient
@@ -76,6 +77,12 @@ class Gen2StorageClient:
 
             # configure progress bar description
             msg = Fore.GREEN + f"Uploading {formatted_path}"
+
+            # warn if large file (> 100 MB)
+            file_size, _ = get_directory_size(source)
+            file_size_in_mb = file_size / 10**6
+            if file_size_in_mb > 100:
+                module_logger.warning(FILE_SIZE_WARNING)
 
             # start upload
             self.directory_client = self.file_system_client.get_directory_client(asset_id)
