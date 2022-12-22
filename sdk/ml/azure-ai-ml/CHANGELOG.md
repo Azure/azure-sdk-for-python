@@ -13,6 +13,7 @@
 
 ### Other Changes
 - Switched compute operations to go through 2022-12-01-preview API version.
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce size of azure-ai-ml package.
 
 ## 1.2.0 (2022-12-05)
 
