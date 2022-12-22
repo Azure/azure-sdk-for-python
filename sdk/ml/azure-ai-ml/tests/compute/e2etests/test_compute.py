@@ -95,8 +95,6 @@ class TestCompute(AzureRecordedTestCase):
         compute_resource = compute_resource_poller.result()
         assert compute_resource.name == compute_name
         assert compute_resource.state == "Running"
-        compute_resource_get = client.compute.get(name=compute_name)
-        assert compute_resource_get.location == "eastus"
 
         # CI Stop
         compute_resource_poller = client.compute.begin_stop(name=compute_name)
