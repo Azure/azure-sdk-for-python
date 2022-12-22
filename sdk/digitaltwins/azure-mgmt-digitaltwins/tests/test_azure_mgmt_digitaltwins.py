@@ -110,8 +110,9 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
 
     def create_digital_twins_and_validate(self, resource_group_name, resource_name):
         # Setup User Assigned Identity
+        identity_name = self.get_resource_name("identityResource")
         if self.is_live:
-            msi = self.msi_client.user_assigned_identities.create_or_update(resource_group_name, self.get_resource_name("identityResource"), {"location": AZURE_LOCATION})
+            msi = self.msi_client.user_assigned_identities.create_or_update(resource_group_name, identity_name, {"location": AZURE_LOCATION})
             msi_id = msi.id    
         else:
             msi_id = f"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity_name}"
