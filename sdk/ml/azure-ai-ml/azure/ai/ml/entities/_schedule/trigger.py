@@ -233,7 +233,8 @@ class RecurrenceTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:  # v2022_12_01_preview.models.RecurrenceTrigger
+    def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:
+        # v2022_12_01_preview.models.RecurrenceTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
