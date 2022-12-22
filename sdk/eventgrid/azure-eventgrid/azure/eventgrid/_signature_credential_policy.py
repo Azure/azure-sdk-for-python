@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 import six
-from __future__ import annotations
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
