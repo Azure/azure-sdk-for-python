@@ -61,7 +61,7 @@ class TestScheduleEntity:
                 },
             },
             "display_name": "weekly retrain schedule",
-            "trigger": {"time_zone": "UTC", "trigger_type": "Cron", "expression": "15 10 * * 1"},
+            "trigger": {"trigger_type": "Cron", "expression": "15 10 * * 1"},
         }
 
     def test_create_schedule_entity(self):
@@ -92,7 +92,6 @@ class TestScheduleEntity:
         assert trigger._to_rest_object().as_dict() == {
             "end_time": "2022-06-10 10:15:00",
             "start_time": "2022-03-10 10:15:00",
-            "time_zone": "UTC",
             "trigger_type": "Recurrence",
             "frequency": "day",
             "interval": 1,
@@ -113,7 +112,6 @@ class TestScheduleEntity:
             "interval": 1,
             "schedule": {"hours": [1, 3, 4, 5], "minutes": [0], "week_days": ["tuesday", "thursday"]},
             "start_time": "2022-03-10 10:15:00",
-            "time_zone": "UTC",
             "trigger_type": "Recurrence",
         }
 

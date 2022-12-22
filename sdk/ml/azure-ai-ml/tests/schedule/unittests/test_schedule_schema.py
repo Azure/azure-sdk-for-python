@@ -94,7 +94,7 @@ class TestScheduleSchema:
             "name": "weekly_retrain_2022_cron_arm",
             "description": "a weekly retrain schedule",
             "display_name": "weekly retrain schedule",
-            "trigger": {"time_zone": "UTC", "type": "cron", "expression": "15 10 * * 1"},
+            "trigger": {"type": "cron", "expression": "15 10 * * 1"},
             "create_job": "azureml:/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
         }
         assert schedule._to_dict() == expected_dict
@@ -114,7 +114,6 @@ class TestScheduleSchema:
             "trigger": {
                 "expression": "15 10 * * 1",
                 "start_time": "2022-03-10T10:15:00",
-                "time_zone": "UTC",
                 "type": "cron",
             },
         }
