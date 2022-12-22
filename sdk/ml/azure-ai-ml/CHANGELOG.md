@@ -9,7 +9,8 @@
 ### Bugs Fixed
 - Fixed issue with date-time format for utc_time_created field when creating models.
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
-- Improved intellisense with VS Code for fields supporting local paths and datastores.
+- Improved intellisense with VS Code for fields supporting local paths and datastores
+- Fixed issue where computes could only be created in a workspace's default region.
 
 ## 1.2.0 (2022-12-05)
 
