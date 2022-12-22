@@ -10,8 +10,10 @@ import logging
 import sys
 import time
 
-from azure.core.polling import PollingMethod, AsyncPollingMethod
-from typing import Any
+from azure.core.polling import PollingMethod, AsyncPollingMethod, LROPoller, AsyncLROPoller
+from typing import Any, Callable
+
+from azure.core.polling._poller import PollingReturnType
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -72,7 +74,52 @@ class ValidationCheckPoller(PollingMethod):
         return self._resource
 
 
-class ValidationCheckPollerAsync(AsyncPollingMethod):
+class TestRunStatusPoller(PollingMethod):
+
+    def __init__(self, interval=5) -> None:
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+
+    def _update_status(self) -> None:
+        self._status = self._resource["status"]
+
+    def _update_resource(self) -> None:
+        self._resource = self._command()
+
+    def initialize(self, client, initial_response, deserialization_callback) -> None:
+        self._command = client
+        self._initial_response = initial_response
+        self._resource = initial_response
+
+    def run(self) -> None:
+        try:
+            while not self.finished():
+                self._update_resource()
+                self._update_status()
+
+                if not self.finished():
+                    time.sleep(self._polling_interval)
+
+        except Exception as e:
+            logger.error(e)
+            raise e
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        if self._status in self._termination_statuses:
+            return True
+        return False
+
+    def resource(self) -> JSON:
+        return self._resource
+
+class AsyncValidationCheckPoller(AsyncPollingMethod):
 
     def __init__(self, interval=5) -> None:
         self._resource = None
@@ -116,3 +163,108 @@ class ValidationCheckPollerAsync(AsyncPollingMethod):
 
     def resource(self) -> JSON:
         return self._resource
+
+class AsyncTestRunStatusPoller(PollingMethod):
+
+    def __init__(self, interval=5) -> None:
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+
+    def _update_status(self) -> None:
+        self._status = self._resource["status"]
+
+    async def _update_resource(self) -> None:
+        self._resource = await self._command()
+
+    def initialize(self, client, initial_response, deserialization_callback) -> None:
+        self._command = client
+        self._initial_response = initial_response
+        self._resource = initial_response
+
+    async def run(self) -> None:
+        try:
+            while not self.finished():
+                await self._update_resource()
+                self._update_status()
+
+                if not self.finished():
+                    time.sleep(self._polling_interval)
+
+        except Exception as e:
+            logger.error(e)
+            raise e
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        if self._status in self._termination_statuses:
+            return True
+        return False
+
+    def resource(self) -> JSON:
+        return self._resource
+
+
+class LoadTestingLROPoller(LROPoller):
+    """LoadTesting Poller for long running operations.
+
+    :param client: A pipeline service client
+    :type client: ~azure.core.PipelineClient
+    :param initial_response: The initial call response
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
+    :type deserialization_callback: callable or msrest.serialization.Model
+    :param polling_method: The polling strategy to adopt
+    :type polling_method: ~azure.core.polling.PollingMethod
+    """
+    def __init__(self, client, initial_response, deserialization_callback, polling_method):
+        # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
+        self._initial_response = initial_response
+        super(LoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
+
+    def get_initial_response(self) -> Any:
+        """Return the result of the initial operation.
+
+        :return: The result of the initial operation.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        return self._initial_response
+
+
+class AsyncLoadTestingLROPoller(AsyncLROPoller):
+    """Async poller for long running operations.
+
+    :param client: A pipeline service client
+    :type client: ~azure.core.PipelineClient
+    :param initial_response: The initial call response
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
+    :type deserialization_callback: callable or msrest.serialization.Model
+    :param polling_method: The polling strategy to adopt
+    :type polling_method: ~azure.core.polling.AsyncPollingMethod
+    """
+
+    def __init__(
+            self,
+            client: Any,
+            initial_response: Any,
+            deserialization_callback: Callable,
+            polling_method: AsyncPollingMethod[PollingReturnType]
+        ):
+        self._initial_response = initial_response
+        super(AsyncLoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
+
+    def get_initial_response(self) -> Any:
+        """Return the result of the initial operation.
+
+        :return: The result of the initial operation.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        return self._initial_response

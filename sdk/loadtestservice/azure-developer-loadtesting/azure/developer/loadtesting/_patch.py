@@ -7,40 +7,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-from enum import Enum
 
 
-class TestFileValidationStatus(Enum):
-    ValidationInitiated = 10
-    ValidationSuccess = 20
-    ValidationFailed = 30
-    ValidationCheckTimeout = 40
-
-
-class TestRunStatus(Enum):
-    Accepted = 10
-    NotStarted = 20
-    Provisioning = 30
-    Provisioned = 40
-    Configuring = 50
-    Configured = 60
-    Executing = 70
-    Executed = 80
-    Deprovisioning = 90
-    Deprovisioned = 100
-    Done = 110
-    Cancelling = 120
-    Cancelled = 130
-    Failed = 140
-    ValidationSuccess = 150
-    ValidationFailed = 160
-    CheckTimeout = 170
-
-
-__all__: List[str] = [
-    "TestFileValidationStatus",
-    "TestRunStatus",
-]  # Add all objects you want publicly available to users at this
+__all__: List[str] = []  # Add all objects you want publicly available to users at this
 # package level
 
 

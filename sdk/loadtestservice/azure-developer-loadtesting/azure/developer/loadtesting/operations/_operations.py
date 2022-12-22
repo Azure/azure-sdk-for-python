@@ -300,7 +300,7 @@ def build_load_test_administration_create_or_update_app_components_request(test_
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_list_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_get_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -353,7 +353,7 @@ def build_load_test_administration_create_or_update_server_metrics_config_reques
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_list_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_get_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -375,32 +375,6 @@ def build_load_test_administration_list_server_metrics_config_request(test_id: s
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_load_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/test-runs/{testRunId}"
-    path_format_arguments = {
-        "testRunId": _SERIALIZER.url(
-            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
-        ),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_load_test_run_create_or_update_test_run_request(
@@ -460,6 +434,32 @@ def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) ->
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_load_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_load_test_run_get_test_run_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
@@ -730,7 +730,7 @@ def build_load_test_run_create_or_update_app_components_request(test_run_id: str
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_run_get_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -785,7 +785,7 @@ def build_load_test_run_create_or_update_server_metrics_config_request(test_run_
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_run_get_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -977,7 +977,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1143,7 +1143,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1333,7 +1333,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1521,7 +1521,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1816,7 +1816,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -2066,7 +2066,7 @@ class LoadTestAdministrationOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -2772,7 +2772,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_app_components(self, test_id: str, **kwargs: Any) -> JSON:
+    def get_app_components(self, test_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test.
 
         Get associated app component (collection of azure resources) for the given test.
@@ -2829,7 +2829,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_list_app_components_request(
+        request = build_load_test_administration_get_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3089,7 +3089,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
+    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -3141,7 +3141,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_list_server_metrics_config_request(
+        request = build_load_test_administration_get_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3189,58 +3189,6 @@ class LoadTestRunOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def delete_test_run(  # pylint: disable=inconsistent-return-statements
-        self, test_run_id: str, **kwargs: Any
-    ) -> None:
-        """Delete a test run by its name.
-
-        Delete a test run by its name.
-
-        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_load_test_run_delete_test_run_request(
-            test_run_id=test_run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
 
     @overload
     def create_or_update_test_run(
@@ -3334,7 +3282,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -3578,7 +3526,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -3857,7 +3805,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -4130,7 +4078,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -4454,7 +4402,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -4685,6 +4633,58 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
+    def delete_test_run(  # pylint: disable=inconsistent-return-statements
+        self, test_run_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a test run by its name.
+
+        Delete a test run by its name.
+
+        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_run_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_load_test_run_delete_test_run_request(
+            test_run_id=test_run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
     def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test run file by file name.
 
@@ -4864,7 +4864,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -5204,7 +5204,7 @@ class LoadTestRunOperations:
                             "str": {
                                 "action": "continue",  # Optional. Default value is
                                   "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "stop" and "continue".
+                                  "u2018continue"u2019. Known values are: "continue" and "stop".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -5618,7 +5618,7 @@ class LoadTestRunOperations:
         interval: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5643,8 +5643,8 @@ class LoadTestRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5665,25 +5665,17 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
-                      of paginated results, if applicable.
-                    "timeseries": [
+                    "data": [
                         {
-                            "data": [
-                                {
-                                    "timestamp": "str",  # Optional. The
-                                      timestamp for the metric value in ISO 8601 format.
-                                    "value": 0.0  # Optional. The metric value.
-                                }
-                            ],
-                            "dimensionValues": [
-                                {
-                                    "name": "str",  # Optional. The name of the
-                                      dimension.
-                                    "value": "str"  # Optional. The value of the
-                                      dimension.
-                                }
-                            ]
+                            "timestamp": "str",  # Optional. The timestamp for the metric
+                              value in ISO 8601 format.
+                            "value": 0.0  # Optional. The metric value.
+                        }
+                    ],
+                    "dimensionValues": [
+                        {
+                            "name": "str",  # Optional. The name of the dimension.
+                            "value": "str"  # Optional. The value of the dimension.
                         }
                     ]
                 }
@@ -5702,7 +5694,7 @@ class LoadTestRunOperations:
         interval: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5727,8 +5719,8 @@ class LoadTestRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5736,25 +5728,17 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
-                      of paginated results, if applicable.
-                    "timeseries": [
+                    "data": [
                         {
-                            "data": [
-                                {
-                                    "timestamp": "str",  # Optional. The
-                                      timestamp for the metric value in ISO 8601 format.
-                                    "value": 0.0  # Optional. The metric value.
-                                }
-                            ],
-                            "dimensionValues": [
-                                {
-                                    "name": "str",  # Optional. The name of the
-                                      dimension.
-                                    "value": "str"  # Optional. The value of the
-                                      dimension.
-                                }
-                            ]
+                            "timestamp": "str",  # Optional. The timestamp for the metric
+                              value in ISO 8601 format.
+                            "value": 0.0  # Optional. The metric value.
+                        }
+                    ],
+                    "dimensionValues": [
+                        {
+                            "name": "str",  # Optional. The name of the dimension.
+                            "value": "str"  # Optional. The value of the dimension.
                         }
                     ]
                 }
@@ -5772,7 +5756,7 @@ class LoadTestRunOperations:
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5798,8 +5782,8 @@ class LoadTestRunOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5807,29 +5791,27 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
-                      of paginated results, if applicable.
-                    "timeseries": [
+                    "data": [
                         {
-                            "data": [
-                                {
-                                    "timestamp": "str",  # Optional. The
-                                      timestamp for the metric value in ISO 8601 format.
-                                    "value": 0.0  # Optional. The metric value.
-                                }
-                            ],
-                            "dimensionValues": [
-                                {
-                                    "name": "str",  # Optional. The name of the
-                                      dimension.
-                                    "value": "str"  # Optional. The value of the
-                                      dimension.
-                                }
-                            ]
+                            "timestamp": "str",  # Optional. The timestamp for the metric
+                              value in ISO 8601 format.
+                            "value": 0.0  # Optional. The metric value.
+                        }
+                    ],
+                    "dimensionValues": [
+                        {
+                            "name": "str",  # Optional. The name of the dimension.
+                            "value": "str"  # Optional. The value of the dimension.
                         }
                     ]
                 }
         """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5837,13 +5819,6 @@ class LoadTestRunOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-
         content_type = content_type or "application/json"
         _json = None
         _content = None
@@ -5855,44 +5830,74 @@ class LoadTestRunOperations:
             else:
                 _json = None
 
-        request = build_load_test_run_list_metrics_request(
-            test_run_id=test_run_id,
-            metricname=metricname,
-            metric_namespace=metric_namespace,
-            timespan=timespan,
-            aggregation=aggregation,
-            interval=interval,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+                request = build_load_test_run_list_metrics_request(
+                    test_run_id=test_run_id,
+                    metricname=metricname,
+                    metric_namespace=metric_namespace,
+                    timespan=timespan,
+                    aggregation=aggregation,
+                    interval=interval,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    json=_json,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        response = pipeline_response.http_response
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            return request
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        return cast(JSON, deserialized)
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_metric_dimension_values(
@@ -5905,7 +5910,7 @@ class LoadTestRunOperations:
         timespan: str,
         interval: Optional[str] = None,
         **kwargs: Any
-    ) -> JSON:
+    ) -> Iterable[str]:
         """List the dimension values for the given metric dimension name.
 
         List the dimension values for the given metric dimension name.
@@ -5925,22 +5930,21 @@ class LoadTestRunOperations:
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
         :paramtype interval: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == {
-                    "nextLink": "str",  # Optional. Link for the next set of values in case of
-                      paginated results, if applicable.
-                    "value": [
-                        "str"  # Optional. The dimension values.
-                    ]
-                }
+                response == "str"  # Optional.
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5949,46 +5953,71 @@ class LoadTestRunOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+                request = build_load_test_run_list_metric_dimension_values_request(
+                    test_run_id=test_run_id,
+                    name=name,
+                    metricname=metricname,
+                    metric_namespace=metric_namespace,
+                    timespan=timespan,
+                    interval=interval,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        request = build_load_test_run_list_metric_dimension_values_request(
-            test_run_id=test_run_id,
-            name=name,
-            metricname=metricname,
-            metric_namespace=metric_namespace,
-            timespan=timespan,
-            interval=interval,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+            return request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return cast(JSON, deserialized)
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @overload
     def create_or_update_app_components(
@@ -6239,7 +6268,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
+    def get_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test run.
 
         Get associated app component (collection of azure resources) for the given test run.
@@ -6296,7 +6325,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_app_components_request(
+        request = build_load_test_run_get_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6556,7 +6585,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
+    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
         """List server metrics configuration for the given test run.
 
         List server metrics configuration for the given test run.
@@ -6608,7 +6637,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_server_metrics_config_request(
+        request = build_load_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,

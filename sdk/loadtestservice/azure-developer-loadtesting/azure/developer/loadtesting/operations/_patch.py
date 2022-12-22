@@ -7,27 +7,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from functools import partial
-from typing import cast, List, BinaryIO, IO, Optional, Any, Dict
-import time
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
-from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import case_insensitive_dict
-from azure.core.polling import PollingMethod, LROPoller, NoPolling
+from typing import List, IO, Optional, Any, Union
 
-from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON, ClsType
-from .._polling import ValidationCheckPoller
-from .._serialization import Serializer
-from .._vendor import _format_url_section
-from .._patch import TestFileValidationStatus
-from .._patch import TestRunStatus
+from azure.core.polling import NoPolling
+from azure.core.tracing.decorator import distributed_trace
+
+from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
 from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
+from .._polling import ValidationCheckPoller, LoadTestingLROPoller, TestRunStatusPoller
+from .._serialization import Serializer
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -41,48 +29,17 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
     def __init__(self, *args, **kwargs):
         super(LoadTestAdministrationOperations, self).__init__(*args, **kwargs)
 
-    # def begin_get_test_script_validation_status(
-    #         self, test_id: str, *, refresh_time: int = 10, timeout: int = 60
-    # ) -> TestFileValidationStatus:
-    #     """Check if JMX file is validated or not
-    #
-    #     :param test_id: Unique id for the test
-    #     :type test_id: str`
-    #     :param refresh_time: time to wait before checking the status of the JMX file (in seconds) (default is 10)
-    #     :type refresh_time: int
-    #     :param timeout: time to wait before timing out (in seconds) (default is 60)
-    #     :type timeout: int
-    #     :return: TestFileValidationStatus
-    #     :rtype: TestFileValidationStatus
-    #     :raises ~azure.core.exceptions.HttpResponseError:
-    #     :raises ~azure.core.exceptions.ResourceNotFoundError:
-    #     """
-    #
-    #     start_time = time.time()
-    #
-    #     while True:
-    #         result = self.get_test(test_id=test_id)
-    #
-    #         try:
-    #             status = result["inputArtifacts"]["testScriptFileInfo"]["validationStatus"]
-    #
-    #         except TypeError:
-    #             raise ResourceNotFoundError(f"JMX file not found with TestId: {test_id}")
-    #
-    #         if status == "VALIDATION_SUCCESS":
-    #             return TestFileValidationStatus.ValidationSuccess
-    #
-    #         if status == "VALIDATION_FAILED":
-    #             return TestFileValidationStatus.ValidationFailed
-    #
-    #         if time.time() - start_time + refresh_time > timeout:
-    #             return TestFileValidationStatus.ValidationCheckTimeout
-    #
-    #         time.sleep(refresh_time)
-
     @distributed_trace
-    def begin_upload_test_file(self, test_id: str, file_name: str, body: IO, *, poll_for_validation_status: bool = True,
-                               file_type: Optional[str] = None, **kwargs: Any) -> LROPoller:
+    def begin_upload_test_file(
+        self,
+        test_id: str,
+        file_name: str,
+        body: IO,
+        *,
+        poll_for_validation_status: bool = True,
+        file_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> LoadTestingLROPoller:
         """Upload file to the test
 
         :param test_id: Unique id for the test
@@ -93,30 +50,33 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         :type body: IO
         :param file_type: Type of the file to be uploaded
         :type file_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An instance of LROPoller object to check the validation status of file
         :param poll_for_validation_status: If true, polls for validation status of the file, else does not
         :type poll_for_validation_status: bool
-        :rtype: ~azure.core.polling.LROPoller
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An instance of LROPoller object to check the validation status of file
+        :rtype: ~azure.developer.loadtesting._polling.LoadTestingLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        polling_interval = kwargs.pop('_polling_interval', None)
+        polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
 
-        upload_test_file_operation = self.upload_test_file(test_id=test_id, file_name=file_name, body=body,
-                                                           file_type=file_type, **kwargs)
+        upload_test_file_operation = self.upload_test_file(
+            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
+        )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
         if poll_for_validation_status:
             create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-            return LROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
+            return LoadTestingLROPoller(
+                command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
+            )
 
         else:
-            return LROPoller(command, upload_test_file_operation, lambda *_: None, NoPolling())
+            return LoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, NoPolling())
 
 
 class LoadTestRunOperations(LoadTestRunOperationsGenerated):
@@ -127,41 +87,62 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(LoadTestRunOperations, self).__init__(*args, **kwargs)
 
-    def begin_test_run_status(self, test_run_id: str, *, refresh_time: int = 10, timeout: int = 60) -> TestRunStatus:
-        """Check if test run is completed
+    @distributed_trace
+    def begin_create_or_update_test_run(
+        self,
+        test_run_id: str,
+        body: Union[JSON, IO],
+        *,
+        poll_for_test_run_status=True,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> LoadTestingLROPoller:
+        """Create and start a new test run with the given name.
 
-        :param test_run_id: Unique id for the test run
+        Create and start a new test run with the given name.
+
+        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param refresh_time: time to wait before checking the status of the test run (in seconds) (default is 10)
-        :type refresh_time: int
-        :param timeout: time to wait before timing out (in seconds) (default is 60)
-        :type timeout: int
-        :return: TestRunStatus
-        :rtype: TestRunStatus
+        :param body: Load test run model. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
+         provided, the test will run with the JMX file, configuration and app components from the
+         existing test run. You can override the configuration values for new test run in the request
+         body. Default value is None.
+        :param poll_for_test_run_status: If true, polls for test run status, else does not
+        :type poll_for_test_run_status: bool
+        :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
+        :paramtype content_type: str
+
+        :rtype: ~azure.developer.loadtesting._polling.LoadTestingLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
 
-        start_time = time.time()
+        polling_interval = kwargs.pop("_polling_interval", None)
+        if polling_interval is None:
+            polling_interval = 5
 
-        while True:
-            result = self.get_test_run(test_run_id=test_run_id)
+        create_or_update_test_run_operation = self.create_or_update_test_run(
+            test_run_id,
+            body,
+            poll_for_test_run_status=poll_for_test_run_status,
+            old_test_run_id=old_test_run_id,
+            **kwargs
+        )
 
-            status = result["status"]
+        command = partial(self.get_test_run, test_run_id=test_run_id)
 
-            if status == "DONE":
-                return TestRunStatus.Done
-
-            if status == "FAILED":
-                return TestRunStatus.Failed
-
-            if status == "CANCELLED":
-                return TestRunStatus.Cancelled
-
-            if time.time() - start_time + refresh_time > timeout:
-                return TestRunStatus.CheckTimeout
-
-            time.sleep(refresh_time)
+        if poll_for_test_run_status:
+            create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
+            return LoadTestingLROPoller(
+                command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
+            )
+        else:
+            return LoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
 
 
 __all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations"]
