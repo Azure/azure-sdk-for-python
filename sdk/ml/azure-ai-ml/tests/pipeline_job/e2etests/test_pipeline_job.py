@@ -1353,6 +1353,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    def test_pipeline_job_output_with_name_version(self, client: MLClient):
+        test_path = "./test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_name_version.yaml"
+        pipeline = load_job(source=test_path)
+        pipeline_job = client.jobs.create_or_update(pipeline)
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest

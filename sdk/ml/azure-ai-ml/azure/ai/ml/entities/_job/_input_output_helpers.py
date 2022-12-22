@@ -95,7 +95,7 @@ def get_output_rest_init_func_dict():
     return {
         AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobOutput(uri=uri, mode=mode),
         AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda uri, mode: RestMLTableJobOutput(uri=uri, mode=mode),
+        AssetTypes.MLTABLE: lambda uri, mode, name, version: RestMLTableJobOutput(uri=uri, mode=mode, name=name, version=version),
         AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobOutput(uri=uri, mode=mode),
         AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobOutput(uri=uri, mode=mode),
         AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobOutput(uri=uri, mode=mode),
@@ -311,6 +311,8 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
                 output = target_init_func_dict[output_value_type](
                     output_value.path,
                     OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                    output_value.name,
+                    output_value.version,
                 )
             else:
                 msg = "unsupported JobOutput type: {}".format(output_value.type)

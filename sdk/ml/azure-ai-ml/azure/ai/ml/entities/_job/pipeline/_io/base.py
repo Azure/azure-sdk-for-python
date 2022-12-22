@@ -366,11 +366,16 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
+        self._version = kwargs.pop('version', None)
         self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
         return self._is_control
+    
+    @property
+    def version(self) -> str:
+        return self._version
 
     def _build_default_data(self):
         """Build default data when output not configured."""

@@ -72,10 +72,11 @@ class Output(_InputOutputBase):
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
-        self.name = None
+        # self.name = None
+        self.name = kwargs.pop('name', None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
-
+        self.version = kwargs.pop('version', None)
         self.path = path
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
