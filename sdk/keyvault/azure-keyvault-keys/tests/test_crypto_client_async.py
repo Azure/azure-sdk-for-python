@@ -12,15 +12,25 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyCurveName,
-                                 KeyOperation, KeyVaultKey)
+from azure.core.rest import HttpRequest
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyCurveName,
+    KeyOperation,
+    KeyVaultKey,
+)
 from azure.keyvault.keys.crypto._key_validity import _UTC
-from azure.keyvault.keys.crypto._providers import (
-    NoLocalCryptography, get_local_cryptography_provider)
-from azure.keyvault.keys.crypto.aio import (CryptographyClient,
-                                            EncryptionAlgorithm,
-                                            KeyWrapAlgorithm,
-                                            SignatureAlgorithm)
+from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
+from azure.keyvault.keys.crypto.aio import (
+    CryptographyClient,
+    EncryptionAlgorithm,
+    KeyWrapAlgorithm,
+    SignatureAlgorithm,
+)
+from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated_models import KeySignParameters
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -36,6 +46,7 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 all_api_versions = get_decorator(is_async=True)
 only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
 only_hsm = get_decorator(only_hsm=True, is_async=True)
+only_vault_latest = get_decorator(only_vault=True, is_async=True, api_versions=[DEFAULT_VERSION])
 no_get = get_decorator(is_async=True, permissions=NO_GET)
 
 
@@ -612,6 +623,39 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         await test_operations(
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_send_request(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        md = hashlib.sha256()
+        md.update(self.plaintext)
+        digest = md.digest()
+
+        imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
+        crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
+
+        parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
+        json = Serializer().body(parameters, "KeySignParameters")
+
+        # sign using a custom request
+        request = HttpRequest(
+            method="POST",
+            url=f"keys/{key_name}/{imported_key.properties.version}/sign",
+            headers={"Accept": "application/json"},
+            json=json
+        )
+        response = await crypto_client.send_request(request)
+        result = response.json()
+        signature = Deserializer().deserialize_base64(result["value"])
+        assert result["kid"] == imported_key.id
+
+        # verify that the operation round-trips
+        verified = await crypto_client.verify(SignatureAlgorithm.rs256, digest, signature)
+        assert verified.is_valid
 
 
 def test_custom_hook_policy():
