@@ -6,7 +6,7 @@
 
 from typing import Any, TYPE_CHECKING
 import six
-
+from __future__ import annotations
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 if TYPE_CHECKING:

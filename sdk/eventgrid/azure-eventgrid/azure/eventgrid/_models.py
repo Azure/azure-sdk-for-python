@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-# pylint:disable=protected-access
+# pylint:disable=protected-
+from __future__ import annotations
 from typing import Any, cast
 import datetime as dt
 import uuid

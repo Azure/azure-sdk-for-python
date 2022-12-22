@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import json
+from __future__ import annotations
 from typing import TYPE_CHECKING
 import logging
 from azure.core.pipeline.policies import SansIOHTTPPolicy
