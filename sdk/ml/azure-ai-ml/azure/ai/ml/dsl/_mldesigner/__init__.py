@@ -35,6 +35,8 @@ __all__ = [
     "PathAwareSchema",
     "SchemaValidatableMixin",
     "_get_annotation_by_value",
+    "experimental",
+    "load_yaml",
 
     # to be put in main package
     "condition",
@@ -42,12 +44,10 @@ __all__ = [
     "group",
 
     # must keep
-    "experimental",
     "get_ignore_file",
     "_get_param_with_standard_annotation",
     "_generate_component_function",
     "component_factory_load_from_dict",
     "load_yaml",
     "V1_COMPONENT_TO_NODE",
-
 ]
