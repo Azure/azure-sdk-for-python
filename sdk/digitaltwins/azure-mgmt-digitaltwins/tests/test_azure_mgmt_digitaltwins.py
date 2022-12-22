@@ -28,7 +28,7 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
     def test_create_digital_twin_with_identity(self, resource_group):
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP_NAME = resource_group.name
-        RESOURCE_NAME = "".join(random.choices(string.ascii_lowercase, k = 10))
+        RESOURCE_NAME = self.get_resource_name("digitalTwin")
 
         # Setup Digital Twin
         self.create_digital_twins_and_validate(resource_group_name = RESOURCE_GROUP_NAME, resource_name = RESOURCE_NAME)
@@ -41,13 +41,13 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
     def test_create_endpoint_with_identity(self, resource_group):
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP_NAME = resource_group.name
-        RESOURCE_NAME = "".join(random.choices(string.ascii_lowercase, k = 10))
+        RESOURCE_NAME = self.get_resource_name("digitalTwin")
 
         # Setup Digital Twin
         msi_id = self.create_digital_twins_and_validate(resource_group_name = RESOURCE_GROUP_NAME, resource_name = RESOURCE_NAME)
 
         # Create endpoint
-        ENDPOINT_NAME = "".join(random.choices(string.ascii_lowercase, k = 10))
+        ENDPOINT_NAME = self.get_resource_name("endpoint")
         ENDPOINT_BODY = { 
             "properties": {
                 "endpointType": "ServiceBus",
@@ -75,13 +75,13 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
     def test_create_tsdbconnection_with_identity(self, resource_group):
         SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP_NAME = resource_group.name
-        RESOURCE_NAME = "".join(random.choices(string.ascii_lowercase, k = 10))
+        RESOURCE_NAME = self.get_resource_name("digitalTwin")
 
         # Setup Digital Twin
         msi_id = self.create_digital_twins_and_validate(resource_group_name = RESOURCE_GROUP_NAME, resource_name = RESOURCE_NAME)
 
         # Create TSDB connection
-        TSDB_CONNECTION_NAME = "".join(random.choices(string.ascii_lowercase, k = 10))
+        TSDB_CONNECTION_NAME = self.get_resource_name("tsdbConnection")
         TSDB_CONNECTION_BODY = { 
             "properties": {
                 "connectionType":"AzureDataExplorer",
@@ -110,8 +110,11 @@ class TestDigitalTwin(AzureMgmtRecordedTestCase):
 
     def create_digital_twins_and_validate(self, resource_group_name, resource_name):
         # Setup User Assigned Identity
-        msi = self.msi_client.user_assigned_identities.create_or_update(resource_group_name, "".join(random.choices(string.ascii_lowercase, k = 10)), AZURE_LOCATION)
-        msi_id = msi.id
+        if self.is_live:
+            msi = self.msi_client.user_assigned_identities.create_or_update(resource_group_name, self.get_resource_name("identityResource"), {"location": AZURE_LOCATION})
+            msi_id = msi.id    
+        else:
+            msi_id = f"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgname/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity_name}"
 
         # Create digital twin with UserAssigned
         BODY = {
