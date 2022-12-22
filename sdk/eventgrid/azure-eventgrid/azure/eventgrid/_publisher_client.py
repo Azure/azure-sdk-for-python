@@ -4,9 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import TYPE_CHECKING, cast, Dict, List, Any, Union, Optional
 from __future__ import annotations
+from typing import TYPE_CHECKING, cast, Dict, List, Any, Union, Optional
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import (

@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
 from __future__ import annotations
+import json
 from typing import TYPE_CHECKING
 import logging
 from azure.core.pipeline.policies import SansIOHTTPPolicy
