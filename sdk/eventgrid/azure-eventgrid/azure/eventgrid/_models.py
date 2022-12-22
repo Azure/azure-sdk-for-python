@@ -9,12 +9,8 @@ import datetime as dt
 import uuid
 from msrest.serialization import UTC
 from ._messaging_shared import _get_json_content
-from ._generated.models import (
-    EventGridEvent as InternalEventGridEvent,
-)
 
-
-class EventGridEvent(InternalEventGridEvent):
+class EventGridEvent():
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -92,6 +88,14 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("data_version", data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.topic = kwargs.get('topic', None)
+        self.subject = kwargs['subject']
+        self.data = kwargs['data']
+        self.event_type = kwargs['event_type']
+        self.event_time = kwargs['event_time']
+        self.metadata_version = None
+        self.data_version = kwargs['data_version']
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(

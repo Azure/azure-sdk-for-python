@@ -23,9 +23,7 @@ from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
-from ._generated.models import (
-    CloudEvent as InternalCloudEvent,
-)
+from azure.core.messaging import CloudEvent as InternalCloudEvent
 
 if TYPE_CHECKING:
     from datetime import datetime
