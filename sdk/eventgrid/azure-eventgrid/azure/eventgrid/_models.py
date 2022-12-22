@@ -82,8 +82,7 @@ class EventGridEvent(InternalEventGridEvent):
         "data_version": {"key": "dataVersion", "type": "str"},
     }
 
-    def __init__(self, subject, event_type, data, data_version, **kwargs):
-        # type: (str, str, object, str, Any) -> None
+    def __init__(self, subject: str, event_type: str, data: object, data_version: str, **kwargs: Any) -> None:
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
@@ -99,8 +98,7 @@ class EventGridEvent(InternalEventGridEvent):
         )[:1024]
 
     @classmethod
-    def from_json(cls, event):
-        # type: (Any) -> EventGridEvent
+    def from_json(cls, event: Any) -> EventGridEvent:
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
         :param event: The json string that should be converted into a EventGridEvent. This can also be

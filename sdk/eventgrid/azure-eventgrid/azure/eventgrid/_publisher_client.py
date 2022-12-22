@@ -94,16 +94,14 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential], **kwargs: Any) -> None:
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
 
     @staticmethod
-    def _policies(credential, **kwargs):
-        # type: (Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> List[Any]
+    def _policies(credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential], **kwargs: Any) -> List[Any]:
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
@@ -224,16 +222,13 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> EventGridPublisherClient
+    def __enter__(self) -> EventGridPublisherClient:
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member
