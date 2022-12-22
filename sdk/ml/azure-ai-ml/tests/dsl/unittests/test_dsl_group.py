@@ -405,14 +405,14 @@ class TestDSLGroup:
         sys.stdout = stdout_str_IO = StringIO()
         help(MixedGroup.__init__)
         assert (
-            "__init__(self,*,"
-            "int_param:int=None,"
-            "str_default_param:str='test',"
-            "str_param:str=None,"
-            "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
-            "optional_int_param:int=5,"
-            "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
-            "->None" in stdout_str_IO.getvalue().replace(" ", "")
+                "__init__(self,*,"
+                "int_param:int=None,"
+                "str_default_param:str='test',"
+                "str_param:str=None,"
+                "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
+                "optional_int_param:int=5,"
+                "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
+                "->None" in stdout_str_IO.getvalue().replace(" ", "")
         )
         sys.stdout = original_out
 
@@ -421,13 +421,13 @@ class TestDSLGroup:
             int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")
         )
         assert (
-            "MixedGroup("
-            "int_param=1,"
-            "str_default_param='test',"
-            "str_param='test-str',"
-            "input_folder={'type':'uri_folder','path':'input'},"
-            "optional_int_param=5,"
-            "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
+                "MixedGroup("
+                "int_param=1,"
+                "str_default_param='test',"
+                "str_param='test-str',"
+                "input_folder={'type':'uri_folder','path':'input'},"
+                "optional_int_param=5,"
+                "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
         )
 
         # __set_attribute__ func test
@@ -505,3 +505,41 @@ class TestDSLGroup:
                                                *common_omit_fields)
         expected_pipeline_job2 = {}
         assert rest_pipeline_job == expected_pipeline_job2
+
+    def test_group_outputs_return(self):
+        @group
+        class PortOutputs:
+            output1: Output(type="uri_folder")
+            output2: Output(type="uri_folder")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @pipeline
+        def my_pipeline_dict_return() -> PortOutputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            node2 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return {
+                "output1": node1.outputs.component_out_path,
+                "output2": node2.outputs.component_out_path
+            }
+
+        pipeline_job1 = my_pipeline_dict_return()
+
+        @pipeline
+        def my_pipeline() -> PortOutputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            node2 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return PortOutputs(output1=node1.outputs.component_out_path, output2=node2.outputs.component_out_path)
+
+        pipeline_job2 = my_pipeline()
+
+        assert pipeline_job1._to_dict()["outputs"] == pipeline_job2._to_dict()["outputs"]
+
+    def test_group_outputs_validation(self):
+        # test raise validation error if mismatch
+        pass
+
+    def test_group_outputs_overwrite(self):
+        # test group outputs description overwrite
+        pass

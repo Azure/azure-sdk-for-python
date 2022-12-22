@@ -23,7 +23,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
-from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
+from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value, is_group
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
@@ -263,7 +263,8 @@ class PipelineComponentBuilder:
             "The return type of dsl.pipeline decorated function should be a mapping from output name to "
             "azure.ai.ml.Output with owner."
         )
-
+        if is_group(outputs):
+            outputs = outputs.__dict__
         if not isinstance(outputs, dict):
             raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
         output_dict = {}
@@ -309,6 +310,8 @@ class PipelineComponentBuilder:
                 description=self._args_description.get(key, None),
             )
             output_dict[key] = pipeline_output
+
+        # TODO: add validation
         return output_dict
 
     def _get_group_parameter_defaults(self):
