@@ -5,8 +5,9 @@
 # pylint: disable=protected-access,no-member,arguments-renamed,unidiomatic-typecheck
 
 import logging
+import os
+import typing
 from abc import abstractmethod
-from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
@@ -47,9 +48,8 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
@@ -60,17 +60,17 @@ class OnlineDeployment(Deployment):
     :param name: Name of the resource.
     :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Dict[str, str]
+    :type tags: typing.Dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any]
+    :type properties: typing.Dict[str, typing.Any]
     :param description: Description of the resource.
     :type description: str
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, ~azure.ai.ml.entities.Model]
+    :type model: typing.Union[str, ~azure.ai.ml.entities.Model]
     :param code_configuration: Default value is None.
     :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment]
+    :type environment: typing.Union[str, Environment]
     :param app_insights_enabled: Default value is False
     :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale.
@@ -82,7 +82,7 @@ class OnlineDeployment(Deployment):
     :param readiness_probe: Readiness probe settings.
     :type readiness_probe: ProbeSettings
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: Dict[str, str]
+    :type environment_variables: typing.Dict[str, str]
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
     :param instance_type: Azure compute sku.
@@ -90,10 +90,10 @@ class OnlineDeployment(Deployment):
     :param model_mount_path: The path to mount the model in custom container..
     :type model_mount_path: str
     :param code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present.
-    :type code_path: Union[str, PathLike]
+    :type code_path: typing.Union[str, os.PathLike]
     :param scoring_script: Equivalent to code_configuration.code.scoring_script
         Will be ignored if code_configuration is present.
-    :type scoring_script: Union[str, PathLike]
+    :type scoring_script: typing.Union[str, os.PathLike]
     """
 
     def __init__(
@@ -101,8 +101,8 @@ class OnlineDeployment(Deployment):
         name: str,
         *,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -116,9 +116,9 @@ class OnlineDeployment(Deployment):
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         model_mount_path: Optional[str] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property code_configuration.scoring_script
-        **kwargs: Any,
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[Union[str, os.PathLike]] = None,  # promoted property code_configuration.scoring_script
+        **kwargs: typing.Any,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
@@ -156,7 +156,7 @@ class OnlineDeployment(Deployment):
         """
         return self._provisioning_state
 
-    def _generate_dependencies(self) -> Any:
+    def _generate_dependencies(self) -> typing.Any:
         """Convert dependencies into ARM id or REST wrapper."""
         code = None
 
@@ -282,7 +282,7 @@ class OnlineDeployment(Deployment):
     def _load(
         cls,
         data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
+        yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "OnlineDeployment":
@@ -307,39 +307,39 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param name: Name of the resource.
     :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: typing.Dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any], optional
+    :type properties: typing.Dict[str, typing.Any]
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: typing.Union[str, Model]
     :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: typing.Union[str, Environment]
     :param app_insights_enabled: defaults to False
-    :type app_insights_enabled: bool, optional
+    :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
+    :type scale_settings: typing.Union[DefaultScaleSettings, TargetUtilizationScaleSettings]
     :param request_settings: defaults to RequestSettings()
-    :type request_settings: OnlineRequestSettings, optional
+    :type request_settings: OnlineRequestSettings
     :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings, optional
+    :type liveness_probe: ProbeSettings
     :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings, optional
+    :type readiness_probe: ProbeSettings
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param resources: defaults to None
-    :type resources: ResourceRequirementsSettings, optional
+    :type resources: ResourceRequirementsSettings
     :param instance_type: The instance type defined by K8S cluster admin.
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: typing.Union[str, os.PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: typing.Union[str, os.PathLike], optional
     """
 
     def __init__(
@@ -347,8 +347,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         *,
         name: str,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -362,9 +362,9 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         resources: Optional[ResourceRequirementsSettings] = None,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
-            Union[str, PathLike]
+            Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
     ):
@@ -493,37 +493,37 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :param name: Name of the resource.
     :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: typing.Dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any], optional
+    :type properties: typing.Dict[str, typing.Any]
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: typing.Union[str, Model]
     :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: typing.Union[str, Environment]
     :param app_insights_enabled: defaults to False
-    :type app_insights_enabled: bool, optional
+    :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
+    :type scale_settings: typing.Union[DefaultScaleSettings, TargetUtilizationScaleSettings]
     :param request_settings: defaults to RequestSettings()
-    :type request_settings: OnlineRequestSettings, optional
+    :type request_settings: OnlineRequestSettings
     :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings, optional
+    :type liveness_probe: ProbeSettings
     :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings, optional
+    :type readiness_probe: ProbeSettings
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param instance_type: Azure compute sku.
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: typing.Union[str, os.PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: typing.Union[str, os.PathLike]
     :param egress_public_network_access: Whether to restrict communication between a deployment
         and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
     :type egress_public_network_access: str
@@ -534,8 +534,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
         *,
         name: str,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -548,9 +548,9 @@ class ManagedOnlineDeployment(OnlineDeployment):
         environment_variables: Optional[Dict[str, str]] = None,
         instance_type: Optional[str] = None,
         instance_count: Optional[int] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
-            Union[str, PathLike]
+            Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         egress_public_network_access=None,
         **kwargs,

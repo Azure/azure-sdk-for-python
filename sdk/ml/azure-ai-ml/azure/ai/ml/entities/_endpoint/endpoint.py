@@ -17,25 +17,25 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
     :param auth_mode: the authentication mode, defaults to None
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
+    :type traffic: typing.Dict[str, int]
     :param name: Name of the resource.
-    :type name: str, optional
+    :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: typing.Dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :type properties: typing.Dict[str, str]
     :param scoring_uri: str, Endpoint URI, readonly
-    :type scoring_uri: str, optional
+    :type scoring_uri: str
     :param openapi_uri: str, Endpoint Open API URI, readonly
-    :type openapi_uri: str, optional
+    :type openapi_uri: str
     :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str, optional
+    :type provisioning_state: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     """
 
     def __init__(
@@ -63,7 +63,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         """URI to use to perform a prediction, readonly.
 
         :return: The scoring URI
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._scoring_uri
 
@@ -72,7 +72,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         """URI to check the open api definition of the endpoint.
 
         :return: The open API URI
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._openapi_uri
 
@@ -81,7 +81,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 

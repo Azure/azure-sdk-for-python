@@ -4,7 +4,7 @@
 
 
 import os
-from abc import ABC, abstractmethod
+import abc
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
@@ -18,11 +18,14 @@ from azure.ai.ml._utils.utils import dump_yaml
 from ._system_data import SystemData
 
 
-class Resource(ABC):
-    """Base class for entity classes, can't be instantiated directly.
+class Resource(abc.ABC):
+    """
+    Base class for entity classes, can't be instantiated directly.
+
+    Resource abstract object that serves as a base for creating resources.
 
     :param ABC: Helper class that provides a standard way to create an ABC using inheritance.
-    :type ABC: class
+    :type ABC: abc.ABC
     """
 
     def __init__(
@@ -33,22 +36,21 @@ class Resource(ABC):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        """Class Resource constructor.
+        """
+        Class Resource constructor.
 
         :param name: Name of the resource.
         :type name: str
         :param description: Description of the resource., defaults to None
-        :type description: str, optional
-        :param tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
-        :type tags: Dict, optional
-        :param properties: The asset property dictionary. Defaults to None
-        :type properties: Dict, optional
-        :param: print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
+        :type description: typing.Optional[str]
+        :param tags: Tags can be added, removed, and updated., defaults to None
+        :type tags: typing.Optional[typing.Dict]
+        :param properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict]
+        :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
             False will force a more-compact printing style. By default, the YAML output is only used in jupyter
             notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-        :type print_as_yaml: bool, optional
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype print_as_yaml: bool
         """
         self.name = name
         self.description = description
@@ -106,7 +108,7 @@ class Resource(ABC):
         """
         return self._base_path
 
-    @abstractmethod
+    @abc.abstractmethod
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
@@ -134,7 +136,7 @@ class Resource(ABC):
         return cls, None
 
     @classmethod
-    @abstractmethod
+    @abc.abstractmethod
     def _load(
         cls,
         data: Optional[Dict] = None,

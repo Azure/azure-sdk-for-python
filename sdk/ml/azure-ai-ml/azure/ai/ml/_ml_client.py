@@ -6,11 +6,14 @@
 
 import json
 import logging
+import os
 from functools import singledispatch
 from itertools import product
-from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+
+from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
@@ -88,23 +91,21 @@ class MLClient(object):
     Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
     :param credential: Credential to use for authentication.
-    :type credential: TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Azure subscription ID, optional for registry assets only.
     :type subscription_id: str
     :param resource_group_name: Azure resource group, optional for registry assets only.
     :type resource_group_name: str
     :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only.
             Defaults to None
-    :type workspace_name: str, optional
+    :type workspace_name: str
     :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
             Defaults to None
-    :type registry_name: str, optional
-    :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
-            to set this to False if not using this SDK in an interactive setup. Defaults to True.
-    :type show_progress: bool, optional
-    :param kwargs: A dictionary of additional configuration parameters.
-            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
-    :type kwargs: dict
+    :type registry_name: str
+    :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
+            setting this to False if not using this SDK in an interactive setup. Defaults to True.
+    :type show_progress: bool
+    :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
 
     .. admonition:: Example:
 
@@ -187,12 +188,6 @@ class MLClient(object):
         if registry_name:
             properties.update({"registry_name": registry_name})
 
-        # user_agent = None
-        # if "user_agent" in kwargs:
-        #     user_agent = kwargs.get("user_agent")
-
-        # app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
-        # app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
         app_insights_handler_kwargs: Dict[str, str] = {}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
@@ -413,7 +408,7 @@ class MLClient(object):
         cls,
         credential: TokenCredential,
         *,
-        path: Optional[Union[PathLike, str]] = None,
+        path: Optional[Union[os.PathLike, str]] = None,
         file_name=None,
         **kwargs,
     ) -> "MLClient":
@@ -428,16 +423,15 @@ class MLClient(object):
         retyping the workspace ARM properties.
 
         :param credential: The credential object for the workspace.
-        :type credential: ~azureml.core.credentials.TokenCredential
+        :type credential: ~azure.core.credentials.TokenCredential
         :param path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
-        :type path: Union[PathLike, str]. (Default value = None)
+            Defaults to None
+        :type path: typing.Union[os.PathLike, str]
         :param file_name: Allows overriding the config file name to search for when path is a directory path.
             (Default value = None)
         :type file_name: str
-        :param kwargs: A dictionary of additional configuration parameters.
-            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
-        :type kwargs: dict
+        :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
             Details will be provided in the error message.
         :returns: The workspace object for an existing Azure ML Workspace.
@@ -546,7 +540,7 @@ class MLClient(object):
         """A collection of job related operations.
 
         :return: Job operations
-        :rtype: JObOperations
+        :rtype: JobOperations
         """
         return self._jobs
 
@@ -673,14 +667,15 @@ class MLClient(object):
         in.
 
         :return: Default workspace name
-        :rtype: Optional[str]
+        :rtype: str
         """
         return self._operation_scope.workspace_name
 
     def _get_new_client(self, workspace_name: str, **kwargs) -> "MLClient":
         """Returns a new MLClient object with the specified arguments.
 
-        :param str workspace_name: AzureML workspace of the new MLClient
+        :param workspace_name: AzureML workspace of the new MLClient
+        :type workspace_name: str
         """
 
         return MLClient(
@@ -746,23 +741,19 @@ class MLClient(object):
         **kwargs,
     ) -> T:
         """Creates or updates an Azure ML resource.
-
-            :param entity: The resource to create or update.
-            :type entity: Union[azure.ai.ml.entities.Job,
-        azure.ai.ml.entities.Model,
-        azure.ai.ml.entities.Environment,
-        azure.ai.ml.entities.Component,
-        azure.ai.ml.entities.Datastore,
-        azure.ai.ml.entities.WorkspaceModelReference]
-            :param entity: T:
-            :param **kwargs:
-            :returns: The created or updated resource
-            :rtype: Union[azure.ai.ml.entities.Job,
-        azure.ai.ml.entities.Model,
-        azure.ai.ml.entities.Environment,
-        azure.ai.ml.entities.Component,
-        azure.ai.ml.entities.Datastore]
-
+        :param entity: The resource to create or update.
+        :type entity: typing.Union[azure.ai.ml.entities.Job,
+            azure.ai.ml.entities.Model,
+            azure.ai.ml.entities.Environment,
+            azure.ai.ml.entities.Component,
+            azure.ai.ml.entities.Datastore,
+            azure.ai.ml.entities.WorkspaceModelReference]
+        :return: The created or updated resource
+        :rtype: typing.Union[azure.ai.ml.entities.Job,
+            azure.ai.ml.entities.Model,
+            azure.ai.ml.entities.Environment,
+            azure.ai.ml.entities.Component,
+            azure.ai.ml.entities.Datastore]
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -779,28 +770,24 @@ class MLClient(object):
         **kwargs,
     ) -> LROPoller[R]:
         """Creates or updates an Azure ML resource asynchronously.
-
-            :param entity: The resource to create or update.
-            :type entity: Union[azure.ai.ml.entities.Workspace,
-        azure.ai.ml.entities.Registry,
-        azure.ai.ml.entities.Compute,
-        azure.ai.ml.entities.OnlineDeployment,
-        azure.ai.ml.entities.OnlineEndpoint,
-        azure.ai.ml.entities.BatchDeployment,
-        azure.ai.ml.entities.BatchEndpoint,
-        azure.ai.ml.entities.JobSchedule]
-            :param entity: R:
-            :param **kwargs:
-            :returns: The resource after create/update operation
-            :rtype: azure.core.polling.LROPoller[Union[azure.ai.ml.entities.Workspace,
-        azure.ai.ml.entities.Registry,
-        azure.ai.ml.entities.Compute,
-        azure.ai.ml.entities.OnlineDeployment,
-        azure.ai.ml.entities.OnlineEndpoint,
-        azure.ai.ml.entities.BatchDeployment,
-        azure.ai.ml.entities.BatchEndpoint,
-        azure.ai.ml.entities.JobSchedule]]
-
+        :param entity: The resource to create or update.
+        :type entity: typing.Union[azure.ai.ml.entities.Workspace,
+            azure.ai.ml.entities.Registry,
+            azure.ai.ml.entities.Compute,
+            azure.ai.ml.entities.OnlineDeployment,
+            azure.ai.ml.entities.OnlineEndpoint,
+            azure.ai.ml.entities.BatchDeployment,
+            azure.ai.ml.entities.BatchEndpoint,
+            azure.ai.ml.entities.JobSchedule]
+        :return: The resource after create/update operation
+        :rtype: azure.core.polling.LROPoller[typing.Union[azure.ai.ml.entities.Workspace,
+            azure.ai.ml.entities.Registry,
+            azure.ai.ml.entities.Compute,
+            azure.ai.ml.entities.OnlineDeployment,
+            azure.ai.ml.entities.OnlineEndpoint,
+            azure.ai.ml.entities.BatchDeployment,
+            azure.ai.ml.entities.BatchEndpoint,
+            azure.ai.ml.entities.JobSchedule]]
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
