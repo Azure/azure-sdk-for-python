@@ -9,8 +9,12 @@
 ### Bugs Fixed
 - Fixed issue with date-time format for utc_time_created field when creating models.
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
-- Improved intellisense with VS Code for fields supporting local paths and datastores
 - Fixed issue where computes could only be created in a workspace's default region.
+- Improved intellisense with VS Code for fields supporting local paths and datastores.
+- Added validation for token generation with aml scope when user_identity is used in job definition aka OBO flow
+
+### Other Changes
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
 
 ## 1.2.0 (2022-12-05)
 
