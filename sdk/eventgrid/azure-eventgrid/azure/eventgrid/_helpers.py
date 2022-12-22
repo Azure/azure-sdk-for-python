@@ -12,7 +12,7 @@ import six
 try:
     from urllib.parse import quote
 except ImportError:
-    from urllib2 import quote
+    from urllib2 import quote # type: ignore[no-redef]
 
 from msrest import Serializer
 from azure.core.exceptions import raise_with_traceback
