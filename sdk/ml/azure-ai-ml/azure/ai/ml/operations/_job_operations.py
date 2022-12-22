@@ -1226,13 +1226,13 @@ class JobOperations(_ScopeDependentOperations):
             Please validate if token with {0} scope can be fetched using credentials provided to MLClient.
             Token with {0} scope can be fetched using credentials.get_token({0})
             """
-            raise JobException(
+            raise ValidationException(
                 message=msg.format(*azure_ml_scopes),
                 target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
             )
-
 
         headers = kwargs.pop("headers", {})
         headers["x-azureml-token"] = aml_token
