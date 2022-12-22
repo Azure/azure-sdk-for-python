@@ -94,14 +94,18 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
             :caption: Creating the EventGridPublisherClient with an endpoint and AzureSasCredential.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
+        **kwargs: Any) -> None:
+
         self._endpoint = endpoint
         self._client = EventGridPublisherClientImpl(
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
 
     @staticmethod
-    def _policies(credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential], **kwargs: Any) -> List[Any]:
+    def _policies(credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
+        **kwargs: Any) -> List[Any]:
+        
         auth_policy = _get_authentication_policy(credential)
         sdk_moniker = "eventgrid/{}".format(VERSION)
         policies = [
