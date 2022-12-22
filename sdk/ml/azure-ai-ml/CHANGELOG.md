@@ -11,6 +11,8 @@
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
 - Improved intellisense with VS Code for fields supporting local paths and datastores.
 - Added validation for token generation with aml scope when user_identity is used in job definition aka OBO flow
+- Resolve the cross references for MLClient, Resource and OnlineDeployment.
+- Explicit use of Optional (or a Union with None), as per PEP 484, disallowing implicit Optional
 
 ### Other Changes
 - Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.

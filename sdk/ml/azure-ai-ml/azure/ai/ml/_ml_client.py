@@ -78,8 +78,6 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
-from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller
 
 module_logger = logging.getLogger(__name__)
 
