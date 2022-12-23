@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-instance-attributes
     """These APIs allow end users to operate on Azure Machine Learning Workspace resources.
+
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.machinelearningservices.operations.Operations
     :ivar workspaces: WorkspacesOperations operations
@@ -198,12 +199,15 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     ):
         # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
+
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
+
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.

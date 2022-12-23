@@ -134,8 +134,8 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
 
 
 class OutputSchema(PathAwareSchema):
-    name = fields.Str()
-    version = fields.Str()
+    asset_name = fields.Str()
+    asset_version = fields.Str()
     mode = StringTransformedEnum(
         allowed_values=[
             InputOutputModes.MOUNT,

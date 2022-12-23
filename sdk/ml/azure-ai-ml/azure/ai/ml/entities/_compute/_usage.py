@@ -5,8 +5,8 @@
 from os import PathLike
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.v2022_12_01_preview.models import Usage as RestUsage
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UsageUnit
 from azure.ai.ml._schema.compute.usage import UsageSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

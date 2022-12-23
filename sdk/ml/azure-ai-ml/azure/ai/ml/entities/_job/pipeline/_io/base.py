@@ -73,7 +73,12 @@ class InputOutputBase(ABC):
         self._original_data = data
         self._data = self._build_data(data)
         self._default_data = default_data
-        self._type = meta.type if meta is not None else kwargs.pop("type", None)
+        if meta is not None:
+            self._type = meta.type
+        elif data is not None and hasattr(data, 'type'):
+            self._type = data.type
+        else:
+            self._type = kwargs.pop("type", None)
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
@@ -366,16 +371,21 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._version = kwargs.pop('version', None)
+        self._asset_name = data.asset_name if data else None
+        self._asset_version = data.asset_version if data else None
         self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
         return self._is_control
-    
+
     @property
-    def version(self) -> str:
-        return self._version
+    def asset_name(self):
+        return self._asset_name
+
+    @property
+    def asset_version(self) -> str:
+        return self._asset_version
 
     def _build_default_data(self):
         """Build default data when output not configured."""
