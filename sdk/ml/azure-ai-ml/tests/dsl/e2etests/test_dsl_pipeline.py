@@ -2379,3 +2379,26 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert default_services["Studio"]["job_service_type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
         assert default_services["Tracking"]["job_service_type"] == "Tracking"
+
+    def test_group_outputs_overwrite(self, client):
+        # test group outputs description overwrite
+        @group
+        class Outputs:
+            output1: Output(type="uri_folder", description="new description")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=job_input)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        # overwrite group outputs description will only appear in pipeline component level
+        expected_outputs = {'output1': {'description': 'new description', 'type': 'uri_folder'}}
+        assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
+        component = client.components.create_or_update(pipeline_job.component)
+        assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
