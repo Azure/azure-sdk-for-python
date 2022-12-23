@@ -12,6 +12,7 @@
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
 - Improved intellisense with VS Code for fields supporting local paths and datastores.
 - Added validation for token generation with aml scope when user_identity is used in job definition aka OBO flow
+- Fixed duplicate node name error in pipeline when two node names assigned to the same node and get renamed by node.name='xx'.
 - Fixed print on Command objects when job id is empty
 
 ### Other Changes
