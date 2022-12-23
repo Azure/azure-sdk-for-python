@@ -6,6 +6,7 @@
 import cProfile
 import os
 import aiohttp
+import pstats
 import time
 from typing import Optional, Any, Dict, List
 
@@ -13,6 +14,10 @@ from urllib.parse import urljoin
 
 from ._perf_stress_base import _PerfTestBase
 from ._policies import PerfTestProxyPolicy
+
+
+PSTATS_PRINT_DEFAULT_SORT_KEY = pstats.SortKey.TIME
+PSTATS_PRINT_DEFAULT_LINE_COUNT = 36
 
 
 class BatchPerfTest(_PerfTestBase):
@@ -61,7 +66,7 @@ class BatchPerfTest(_PerfTestBase):
             await self._start_recording()
             self._test_proxy_policy.recording_id = self._recording_id
             self._test_proxy_policy.mode = "record"
-            
+
             # Record one call to run()
             if self.args.sync:
                 self.run_batch_sync()
@@ -78,6 +83,7 @@ class BatchPerfTest(_PerfTestBase):
         Pre-cleanup called once per parallel test instance.
         Used by base classes to cleanup state (like test-proxy) before all derived class cleanup runs.
         """
+        # cSpell:ignore inmemory
         # Only stop playback if it was successfully started
         if self._test_proxy_policy and self._test_proxy_policy.mode == 'playback':
             headers = {
@@ -119,7 +125,7 @@ class BatchPerfTest(_PerfTestBase):
 
     def run_batch_sync(self) -> int:
         """
-        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        Run cumulative operation(s) - i.e. an operation that results in more than a single logical result.
         :returns: The number of completed results.
         :rtype: int
         """
@@ -127,7 +133,7 @@ class BatchPerfTest(_PerfTestBase):
 
     async def run_batch_async(self) -> int:
         """
-        Run cumultive operation(s) - i.e. an operation that results in more than a single logical result.
+        Run cumulative operation(s) - i.e. an operation that results in more than a single logical result.
         :returns: The number of completed results.
         :rtype: int
         """
@@ -150,7 +156,8 @@ class BatchPerfTest(_PerfTestBase):
             finally:
                 profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "sync")
+            self._save_profile(profile, "sync", output_path=self.args.profile_path)
+            self._print_profile_stats(profile)
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += self.run_batch_sync()
@@ -164,7 +171,7 @@ class BatchPerfTest(_PerfTestBase):
         self._last_completion_time = 0.0
         starttime = time.time()
         if self.args.profile:
-            # If the profiler is used, ignore the duration and run once. 
+            # If the profiler is used, ignore the duration and run once.
             import cProfile
             profile = cProfile.Profile()
             try:
@@ -173,18 +180,19 @@ class BatchPerfTest(_PerfTestBase):
             finally:
                 profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "async")
+            self._save_profile(profile, "async", output_path=self.args.profile_path)
+            self._print_profile_stats(profile)
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += await self.run_batch_async()
                 self._last_completion_time = time.time() - starttime
 
-    def _save_profile(self, profile: cProfile.Profile, sync: str) -> None:
+    def _save_profile(self, profile: cProfile.Profile, sync: str, output_path: Optional[str] = None) -> None:
         """
-        Dump the profiler data to file in the current working directory.
+        Dump the profiler data to the file path specified. If no path is specified, use the current working directory.
         """
         if profile:
-            profile_name = "{}/cProfile-{}-{}-{}.pstats".format(
+            profile_name = output_path or "{}/cProfile-{}-{}-{}.pstats".format(
                 os.getcwd(),
                 self.__class__.__name__,
                 self._parallel_index,
@@ -193,3 +201,18 @@ class BatchPerfTest(_PerfTestBase):
             profile.dump_stats(profile_name)
         else:
             print("No profile generated.")
+
+    def _print_profile_stats(
+        self,
+        profile: cProfile.Profile,
+        *,
+        sort_key: pstats.SortKey = PSTATS_PRINT_DEFAULT_SORT_KEY,
+        count: int = PSTATS_PRINT_DEFAULT_LINE_COUNT
+    ) -> None:
+        """Print the profile stats to stdout.
+
+        A sort key can be specified to establish how stats should be sorted, and a line count can also be
+        specified to limit the number of lines printed.
+        """
+        stats = pstats.Stats(profile).sort_stats(sort_key)
+        stats.print_stats(count)

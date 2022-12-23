@@ -99,6 +99,9 @@ class _PerfStressRunner:
             "--profile", action="store_true", help="Run tests with profiler.  Default is False.", default=False
         )
         per_test_arg_parser.add_argument(
+            "--profile-path", nargs="?", type=str, help="File path to store profiler results. If not specified, results will be stored in the current directory."
+        )
+        per_test_arg_parser.add_argument(
             "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')",
             type=lambda s: s.split(';')
         )
@@ -215,7 +218,7 @@ class _PerfStressRunner:
 
             # If a warm up is configured, wait till all tests have finished all setup
             # stages before beginning "Warmup".
-            if self.per_test_args.warmup:
+            if self.per_test_args.warmup and not self.per_test_args.profile:
                 self._next_stage("Warmup", track_status=True)
 
             # Wait till all tests have completed setup and warmup before beginning "Tests".

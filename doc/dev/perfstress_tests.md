@@ -184,7 +184,8 @@ The framework has a series of common command line options built in:
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 - `--insecure` Whether to run without SSL validation. Default is False.
 - `-x --test-proxies` Whether to run the tests against the test proxy server. Specify the URL(s) for the proxy endpoint(s) (e.g. "https://localhost:5001"). Multiple values should be semi-colon-separated.
-- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of a single iteration will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync|async>.pstats"`. **Note:** The profiler is not currently supported for the `EventPerfTest` baseclass.
+- `--profile` Whether to run the perftest with cProfile. **Note:** The profiler is not currently supported for the `EventPerfTest` baseclass.
+- `--profile-path` The file path to output profiling data to if profiling is enabled with `--profile`. If not specified, the output file of a single iteration will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync|async>.pstats"`.
 
 ## Running with the test proxy
 Follow the instructions here to install and run the test proxy server:
@@ -443,7 +444,7 @@ class MessageReceiveTest(BatchPerfTest):
             min_messages=self.args.min_message_count
         )
         return len(messages)
-        
+
     @staticmethod
     def add_arguments(parser):
         super(MessageReceiveTest, MessageReceiveTest).add_arguments(parser)
