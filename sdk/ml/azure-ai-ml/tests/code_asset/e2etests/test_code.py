@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Callable
 from unittest.mock import patch
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import get_arm_id
 
 from azure.ai.ml import MLClient
@@ -20,6 +20,7 @@ def code_asset_path(tmp_path: Path) -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.core_sdk_test
 class TestCode(AzureRecordedTestCase):
     def test_create_and_get(self, client: MLClient, code_asset_path: str, randstr: Callable[[], str]) -> None:
         name = randstr("name")

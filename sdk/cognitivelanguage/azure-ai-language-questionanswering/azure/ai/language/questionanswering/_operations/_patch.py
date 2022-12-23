@@ -21,6 +21,7 @@ from ..models import (
     ShortAnswerOptions,
     TextDocument,
 )
+
 JSON = MutableMapping[str, Any]
 
 
@@ -113,7 +114,7 @@ def _get_answers_prepare_options(*args: AnswersOptions, **kwargs: Any) -> Tuple[
 
 def _get_answers_from_text_prepare_options(
     *args: AnswersFromTextOptions, **kwargs: Any
-) -> Tuple[AnswersFromTextOptions, Any]:
+) -> Tuple[Union[JSON, AnswersFromTextOptions], Any]:
     default_language = kwargs.pop("language", None)
     options = _get_positional_body(*args, **kwargs) or AnswersFromTextOptions(
         question=kwargs.pop("question"),
@@ -122,9 +123,12 @@ def _get_answers_from_text_prepare_options(
     )
     try:
         options = cast(JSON, options)
+        # pylint: disable=unsubscriptable-object,unsupported-assignment-operation
         options["records"] = _validate_text_records(options["records"])
-        options["language"] = options.get("language", None) or default_language  # pylint: disable=no-member
+        # pylint: disable=no-member,unsupported-assignment-operation
+        options["language"] = options.get("language", None) or default_language
     except TypeError:
+        options = cast(AnswersFromTextOptions, options)
         options.text_documents = _validate_text_records(options.text_documents)
         options.language = options.language or default_language
     return options, kwargs
@@ -193,7 +197,16 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype include_unstructured_sources: bool
         :return: AnswersResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_knowledgebase.py
+                :start-after: [START query_knowledgebase]
+                :end-before: [END query_knowledgebase]
+                :language: python
+                :dedent: 4
+                :caption: Answer the specified question using your knowledge base.
         """
         options, kwargs = _get_answers_prepare_options(*args, **kwargs)
         return super().get_answers(options, **kwargs)
@@ -230,12 +243,21 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype language: str
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_text.py
+                :start-after: [START query_text]
+                :end-before: [END query_text]
+                :language: python
+                :dedent: 4
+                :caption: Answers the specified question using the provided text.
         """
         options, kwargs = _get_answers_from_text_prepare_options(
             *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
         )
-        return super().get_answers_from_text(options, **kwargs)
+        return super().get_answers_from_text(options, **kwargs)  # type: ignore
 
 
 __all__: List[str] = [

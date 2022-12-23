@@ -15,6 +15,8 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
 
+from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
 
 _HASH = 5381
 _INTEGER_MAX = Int32.maxval
@@ -34,7 +36,7 @@ class ApplicationInsightsSampler(Sampler):
         if not 0.0 <= sampling_ratio <= 1.0:
             raise ValueError("sampling_ratio must be in the range [0,1]")
         self._ratio = sampling_ratio
-        self._sample_rate = round(sampling_ratio * 100)
+        self._sample_rate = sampling_ratio * 100
 
     # pylint:disable=C0301
     # See https://github.com/microsoft/Telemetry-Collection-Spec/blob/main/OpenTelemetry/trace/ApplicationInsightsSampler.md
@@ -62,7 +64,7 @@ class ApplicationInsightsSampler(Sampler):
         # Add sample rate as span attribute
         if attributes is None:
             attributes = {}
-        attributes["sampleRate"] = self._sample_rate
+        attributes[_SAMPLE_RATE_KEY] = self._sample_rate
         return SamplingResult(
             decision,
             attributes,
@@ -87,3 +89,11 @@ class ApplicationInsightsSampler(Sampler):
 
     def get_description(self) -> str:
         return "ApplicationInsightsSampler{}".format(self._ratio)
+
+
+def azure_monitor_opentelemetry_sampler_factory(sampler_argument):
+    try:
+        rate = float(sampler_argument)
+        return ApplicationInsightsSampler(rate)
+    except ValueError:
+        return ApplicationInsightsSampler()

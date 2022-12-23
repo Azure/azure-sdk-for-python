@@ -47,5 +47,6 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             config_settings = self.client.list_configuration_settings()
             async for config_setting in config_settings:
                 await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+            await self.client.close()
         else:
             raise ValueError("Client is None!")

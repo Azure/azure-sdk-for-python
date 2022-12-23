@@ -258,7 +258,7 @@ function FallbackValidation
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder `
-        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
+        --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
@@ -266,7 +266,7 @@ function FallbackValidation
         install `
         $packageExpression `
         --no-cache-dir `
-        --target $installTargetFolder 2>&1 | Out-Null
+        --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
@@ -286,7 +286,6 @@ function FallbackValidation
 $PackageExclusions = @{
   'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
   'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
-  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';

@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
 
@@ -15,7 +15,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
 from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -33,6 +32,7 @@ from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import (
         CorsRule,
         Metrics,
@@ -86,11 +86,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(QueueServiceClient, self).__init__( # type: ignore

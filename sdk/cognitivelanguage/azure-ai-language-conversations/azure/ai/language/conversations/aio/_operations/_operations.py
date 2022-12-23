@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -24,8 +25,11 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_analyze_conversation_request, build_conversation_analysis_request
-from .._vendor import MixinABC
+from ..._operations._operations import (
+    build_conversation_analysis_analyze_conversation_request,
+    build_conversation_analysis_conversation_analysis_request,
+)
+from .._vendor import ConversationAnalysisClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -36,10 +40,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
     @overload
     async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
+
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Required.
         :type task: JSON
@@ -61,12 +69,12 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                     "analysisInput": {
                         "conversationItem": {
                             "id": "str",  # The ID of a conversation item. Required.
+                            "participantId": "str",  # The participant ID of a
+                              conversation item. Required.
                             "language": "str",  # Optional. The override language of a
                               conversation item in BCP 47 language representation.
                             "modality": "str",  # Optional. Enumeration of supported
                               conversational modalities. Known values are: "transcript" and "text".
-                            "participantId": "str",  # The participant ID of a
-                              conversation item. Required.
                             "role": "str"  # Optional. The role of the participant. Known
                               values are: "agent", "customer", and "generic".
                         }
@@ -75,11 +83,11 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                     "parameters": {
                         "deploymentName": "str",  # The name of the deployment to use.
                           Required.
+                        "projectName": "str",  # The name of the project to use. Required.
                         "directTarget": "str",  # Optional. The name of a target project to
                           forward the request to.
                         "isLoggingEnabled": bool,  # Optional. If true, the service will keep
                           the query for further review.
-                        "projectName": "str",  # The name of the project to use. Required.
                         "stringIndexType": "TextElements_v8",  # Optional. Default value is
                           "TextElements_v8". Specifies the method used to interpret string offsets. Set
                           to "UnicodeCodePoint" for Python strings. Known values are:
@@ -101,12 +109,51 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 analyze_conversation_task_result = {
                     "kind": "ConversationResult",
                     "result": {
-                        "detectedLanguage": "str",  # Optional. The system detected language
-                          for the query in BCP 47 language representation..
                         "prediction": base_prediction,
-                        "query": "str"  # The conversation utterance given by the caller.
+                        "query": "str",  # The conversation utterance given by the caller.
                           Required.
+                        "detectedLanguage": "str"  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
                     }
+                }
+
+                # JSON input template for discriminator value "Conversation":
+                base_prediction = {
+                    "entities": [
+                        {
+                            "category": "str",  # The entity category. Required.
+                            "confidenceScore": 0.0,  # The entity confidence score.
+                              Required.
+                            "length": 0,  # The length of the text. Required.
+                            "offset": 0,  # The starting index of this entity in the
+                              query. Required.
+                            "text": "str",  # The predicted entity text. Required.
+                            "extraInformation": [
+                                base_extra_information
+                            ],
+                            "resolutions": [
+                                base_resolution
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str",  # A predicted class. Required.
+                            "confidenceScore": 0.0  # The confidence score of the class
+                              from 0.0 to 1.0. Required.
+                        }
+                    ],
+                    "projectKind": "Conversation",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                base_prediction = {
+                    "intents": {
+                        "str": target_intent_result
+                    },
+                    "projectKind": "Orchestration",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
                 }
 
                 # response body for status code(s): 200
@@ -116,6 +163,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
     @overload
     async def analyze_conversation(self, task: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
+
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Required.
         :type task: IO
@@ -128,6 +179,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -135,12 +187,51 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 analyze_conversation_task_result = {
                     "kind": "ConversationResult",
                     "result": {
-                        "detectedLanguage": "str",  # Optional. The system detected language
-                          for the query in BCP 47 language representation..
                         "prediction": base_prediction,
-                        "query": "str"  # The conversation utterance given by the caller.
+                        "query": "str",  # The conversation utterance given by the caller.
                           Required.
+                        "detectedLanguage": "str"  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
                     }
+                }
+
+                # JSON input template for discriminator value "Conversation":
+                base_prediction = {
+                    "entities": [
+                        {
+                            "category": "str",  # The entity category. Required.
+                            "confidenceScore": 0.0,  # The entity confidence score.
+                              Required.
+                            "length": 0,  # The length of the text. Required.
+                            "offset": 0,  # The starting index of this entity in the
+                              query. Required.
+                            "text": "str",  # The predicted entity text. Required.
+                            "extraInformation": [
+                                base_extra_information
+                            ],
+                            "resolutions": [
+                                base_resolution
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str",  # A predicted class. Required.
+                            "confidenceScore": 0.0  # The confidence score of the class
+                              from 0.0 to 1.0. Required.
+                        }
+                    ],
+                    "projectKind": "Conversation",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                base_prediction = {
+                    "intents": {
+                        "str": target_intent_result
+                    },
+                    "projectKind": "Orchestration",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
                 }
 
                 # response body for status code(s): 200
@@ -150,6 +241,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
     @distributed_trace_async
     async def analyze_conversation(self, task: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
+
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
+        for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
          Required.
@@ -163,6 +258,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -170,25 +266,69 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 analyze_conversation_task_result = {
                     "kind": "ConversationResult",
                     "result": {
-                        "detectedLanguage": "str",  # Optional. The system detected language
-                          for the query in BCP 47 language representation..
                         "prediction": base_prediction,
-                        "query": "str"  # The conversation utterance given by the caller.
+                        "query": "str",  # The conversation utterance given by the caller.
                           Required.
+                        "detectedLanguage": "str"  # Optional. The system detected language
+                          for the query in BCP 47 language representation..
                     }
+                }
+
+                # JSON input template for discriminator value "Conversation":
+                base_prediction = {
+                    "entities": [
+                        {
+                            "category": "str",  # The entity category. Required.
+                            "confidenceScore": 0.0,  # The entity confidence score.
+                              Required.
+                            "length": 0,  # The length of the text. Required.
+                            "offset": 0,  # The starting index of this entity in the
+                              query. Required.
+                            "text": "str",  # The predicted entity text. Required.
+                            "extraInformation": [
+                                base_extra_information
+                            ],
+                            "resolutions": [
+                                base_resolution
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str",  # A predicted class. Required.
+                            "confidenceScore": 0.0  # The confidence score of the class
+                              from 0.0 to 1.0. Required.
+                        }
+                    ],
+                    "projectKind": "Conversation",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                base_prediction = {
+                    "intents": {
+                        "str": target_intent_result
+                    },
+                    "projectKind": "Orchestration",
+                    "topIntent": "str"  # Optional. The intent with the highest score.
                 }
 
                 # response body for status code(s): 200
                 response == analyze_conversation_task_result
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -198,7 +338,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -209,9 +349,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -232,14 +372,19 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     async def _conversation_analysis_initial(self, task: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -249,7 +394,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_conversation_analysis_request(
+        request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -260,9 +405,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -299,6 +444,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
+
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
         :type task: JSON
@@ -326,16 +475,30 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                             conversation
                         ]
                     },
-                    "displayName": "str",  # Optional. Optional display name for the analysis
-                      job.
                     "tasks": [
                         analyze_conversation_lro_task
-                    ]
+                    ],
+                    "displayName": "str"  # Optional. Optional display name for the analysis job.
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "total": 0,  # Total count of tasks submitted as part of the job.
+                          Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ]
+                    },
                     "displayName": "str",  # Optional.
                     "errors": [
                         {
@@ -348,6 +511,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -360,45 +525,36 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
                     "nextLink": "str",  # Optional.
                     "statistics": {
                         "conversationsCount": 0,  # Number of conversations submitted in the
                           request. Required.
+                        "documentsCount": 0,  # Number of documents submitted in the request.
+                          Required.
                         "erroneousConversationsCount": 0,  # Number of invalid documents.
                           This includes empty, over-size limit or non-supported languages documents.
                           Required.
+                        "erroneousDocumentsCount": 0,  # Number of invalid documents. This
+                          includes empty, over-size limit or non-supported languages documents.
+                          Required.
                         "transactionsCount": 0,  # Number of transactions for the request.
                           Required.
-                        "validConversationsCount": 0  # Number of conversations documents.
+                        "validConversationsCount": 0,  # Number of conversations documents.
                           This excludes empty, over-size limit or non-supported languages documents.
                           Required.
-                    },
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
-                    "tasks": {
-                        "completed": 0,  # Count of tasks completed successfully. Required.
-                        "failed": 0,  # Count of tasks that failed. Required.
-                        "inProgress": 0,  # Count of tasks in progress currently. Required.
-                        "items": [
-                            analyze_conversation_job_result
-                        ],
-                        "total": 0  # Total count of tasks submitted as part of the job.
-                          Required.
+                        "validDocumentsCount": 0  # Number of valid documents. This excludes
+                          empty, over-size limit or non-supported languages documents. Required.
                     }
                 }
         """
@@ -411,6 +567,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
+
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -435,6 +595,21 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "total": 0,  # Total count of tasks submitted as part of the job.
+                          Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ]
+                    },
                     "displayName": "str",  # Optional.
                     "errors": [
                         {
@@ -447,6 +622,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -459,45 +636,36 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
                     "nextLink": "str",  # Optional.
                     "statistics": {
                         "conversationsCount": 0,  # Number of conversations submitted in the
                           request. Required.
+                        "documentsCount": 0,  # Number of documents submitted in the request.
+                          Required.
                         "erroneousConversationsCount": 0,  # Number of invalid documents.
                           This includes empty, over-size limit or non-supported languages documents.
                           Required.
+                        "erroneousDocumentsCount": 0,  # Number of invalid documents. This
+                          includes empty, over-size limit or non-supported languages documents.
+                          Required.
                         "transactionsCount": 0,  # Number of transactions for the request.
                           Required.
-                        "validConversationsCount": 0  # Number of conversations documents.
+                        "validConversationsCount": 0,  # Number of conversations documents.
                           This excludes empty, over-size limit or non-supported languages documents.
                           Required.
-                    },
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
-                    "tasks": {
-                        "completed": 0,  # Count of tasks completed successfully. Required.
-                        "failed": 0,  # Count of tasks that failed. Required.
-                        "inProgress": 0,  # Count of tasks in progress currently. Required.
-                        "items": [
-                            analyze_conversation_job_result
-                        ],
-                        "total": 0  # Total count of tasks submitted as part of the job.
-                          Required.
+                        "validDocumentsCount": 0  # Number of valid documents. This excludes
+                          empty, over-size limit or non-supported languages documents. Required.
                     }
                 }
         """
@@ -508,6 +676,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
+
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.
@@ -532,6 +704,21 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
+                    "jobId": "str",  # Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
+                    "tasks": {
+                        "completed": 0,  # Count of tasks completed successfully. Required.
+                        "failed": 0,  # Count of tasks that failed. Required.
+                        "inProgress": 0,  # Count of tasks in progress currently. Required.
+                        "total": 0,  # Total count of tasks submitted as part of the job.
+                          Required.
+                        "items": [
+                            analyze_conversation_job_result
+                        ]
+                    },
                     "displayName": "str",  # Optional.
                     "errors": [
                         {
@@ -544,6 +731,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -556,58 +745,49 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
                     "nextLink": "str",  # Optional.
                     "statistics": {
                         "conversationsCount": 0,  # Number of conversations submitted in the
                           request. Required.
+                        "documentsCount": 0,  # Number of documents submitted in the request.
+                          Required.
                         "erroneousConversationsCount": 0,  # Number of invalid documents.
                           This includes empty, over-size limit or non-supported languages documents.
                           Required.
+                        "erroneousDocumentsCount": 0,  # Number of invalid documents. This
+                          includes empty, over-size limit or non-supported languages documents.
+                          Required.
                         "transactionsCount": 0,  # Number of transactions for the request.
                           Required.
-                        "validConversationsCount": 0  # Number of conversations documents.
+                        "validConversationsCount": 0,  # Number of conversations documents.
                           This excludes empty, over-size limit or non-supported languages documents.
                           Required.
-                    },
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
-                    "tasks": {
-                        "completed": 0,  # Count of tasks completed successfully. Required.
-                        "failed": 0,  # Count of tasks that failed. Required.
-                        "inProgress": 0,  # Count of tasks in progress currently. Required.
-                        "items": [
-                            analyze_conversation_job_result
-                        ],
-                        "total": 0  # Total count of tasks submitted as part of the job.
-                          Required.
+                        "validDocumentsCount": 0  # Number of valid documents. This excludes
+                          empty, over-size limit or non-supported languages documents. Required.
                     }
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._conversation_analysis_initial(  # type: ignore
+            raw_result = await self._conversation_analysis_initial(
                 task=task, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -619,7 +799,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -627,10 +807,10 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -642,4 +822,4 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

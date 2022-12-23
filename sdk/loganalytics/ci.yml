@@ -27,9 +27,8 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: loganalytics
+    BuildTargetingString: azure-mgmt-loganalytics
     TestProxy: true
     Artifacts:
-    - name: azure-loganalytics
-      safeName: azureloganalytics
     - name: azure-mgmt-loganalytics
       safeName: azuremgmtloganalytics

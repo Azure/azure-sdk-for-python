@@ -4,10 +4,12 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
@@ -31,7 +33,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient012022Preview,
+        service_client: ServiceClient102022Preview,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
@@ -44,7 +46,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.List", ActivityType.PUBLICAPI)
-    def list(self, *, compute_type: str = None) -> Iterable[Compute]:
+    def list(self, *, compute_type: Optional[str] = None) -> Iterable[Compute]:
         """List computes of the workspace.
 
         :param compute_type: the type of the compute to be listed, defaults to amlcompute
@@ -236,7 +238,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.ListUsage", ActivityType.PUBLICAPI)
-    def list_usage(self, *, location: str = None) -> Iterable[Usage]:
+    def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
         """Gets the current usage information as well as limits for AML
         resources for given subscription and location.
 
@@ -255,7 +257,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.ListSizes", ActivityType.PUBLICAPI)
-    def list_sizes(self, *, location: str = None, compute_type: str = None) -> Iterable[VmSize]:
+    def list_sizes(self, *, location: Optional[str] = None, compute_type: Optional[str] = None) -> Iterable[VmSize]:
         """Returns supported VM Sizes in a location.
 
         :param location: The location upon which virtual-machine-sizes is queried.

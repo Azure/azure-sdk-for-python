@@ -142,7 +142,7 @@ class RegistryComponentContainersOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -158,7 +158,7 @@ class RegistryComponentContainersOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -186,7 +186,7 @@ class RegistryComponentContainersOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -194,7 +194,7 @@ class RegistryComponentContainersOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete container.
@@ -205,8 +205,8 @@ class RegistryComponentContainersOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -231,7 +231,7 @@ class RegistryComponentContainersOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                component_name=component_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -243,7 +243,7 @@ class RegistryComponentContainersOperations:
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -255,14 +255,14 @@ class RegistryComponentContainersOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        component_name: str,
         **kwargs: Any
     ) -> "_models.ComponentContainer":
         """Get container.
@@ -273,8 +273,8 @@ class RegistryComponentContainersOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ComponentContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ComponentContainer
@@ -293,7 +293,7 @@ class RegistryComponentContainersOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -319,14 +319,14 @@ class RegistryComponentContainersOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        component_name: str,
         body: "_models.ComponentContainer",
         **kwargs: Any
     ) -> "_models.ComponentContainer":
@@ -345,7 +345,7 @@ class RegistryComponentContainersOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -380,7 +380,7 @@ class RegistryComponentContainersOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -388,7 +388,7 @@ class RegistryComponentContainersOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        component_name: str,
         body: "_models.ComponentContainer",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.ComponentContainer"]:
@@ -400,8 +400,8 @@ class RegistryComponentContainersOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ComponentContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -431,7 +431,7 @@ class RegistryComponentContainersOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                component_name=component_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -448,7 +448,7 @@ class RegistryComponentContainersOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -460,4 +460,4 @@ class RegistryComponentContainersOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore

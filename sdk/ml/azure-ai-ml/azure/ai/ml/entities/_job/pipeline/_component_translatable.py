@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use input as argument name
 import re
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from pydash import get
 
@@ -333,7 +333,7 @@ class ComponentTranslatableMixin:
             translated_component_outputs[output_name] = self._to_output(output_value, pipeline_job_dict)
         return translated_component_outputs
 
-    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
         """Translate to Component.
 
         :return: Translated Component.
@@ -342,7 +342,7 @@ class ComponentTranslatableMixin:
         # And should be set after called _to_component/_to_node as job has no _source now.
         raise NotImplementedError()
 
-    def _to_node(self, context: Dict = None, **kwargs) -> "BaseNode":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "BaseNode":
         """Translate to pipeline node.
 
         :param kwargs:

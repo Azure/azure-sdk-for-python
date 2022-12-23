@@ -7,6 +7,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 from azure.ai.ml.entities._job.automl.tabular import ColumnTransformer, TabularFeaturizationSettings
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestFeaturizationSettings:
     def test_to_rest(self) -> None:

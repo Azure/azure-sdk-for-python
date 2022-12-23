@@ -34,6 +34,7 @@ def mock_endpoint_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
     def test_mock_endpoint_operation(mock_endpoint_operations):
         assert mock_endpoint_operations is not None

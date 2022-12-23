@@ -2,19 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
 
+from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
     InternalInputPortSchema,
     InternalOutputPortSchema,
     InternalParameterSchema,
+    InternalPrimitiveOutputSchema,
 )
 
 
@@ -41,7 +43,10 @@ class NodeType:
         return all_values
 
 
-class InternalBaseComponentSchema(ComponentSchema):
+class InternalComponentSchema(ComponentSchema):
+    class Meta:
+        unknown = INCLUDE
+
     # override name as 1p components allow . in name, which is not allowed in v2 components
     name = fields.Str()
 
@@ -60,12 +65,22 @@ class InternalBaseComponentSchema(ComponentSchema):
             ]
         ),
     )
-    outputs = fields.Dict(keys=fields.Str(), values=NestedField(InternalOutputPortSchema))
+    # support primitive output for all internal components for now
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(InternalPrimitiveOutputSchema, unknown=EXCLUDE),
+                NestedField(InternalOutputPortSchema, unknown=EXCLUDE),
+            ]
+        ),
+    )
 
     # type field is required for registration
     type = StringTransformedEnum(
         allowed_values=NodeType.all_values(),
-        casing_transform=lambda x: x.rsplit("@", 1)[0],
+        casing_transform=lambda x: parse_name_label(x)[0],
+        pass_original=True,
     )
 
     # need to resolve as it can be a local field
@@ -84,8 +99,8 @@ class InternalBaseComponentSchema(ComponentSchema):
     def _serialize(self, obj, *, many: bool = False):
         # pylint: disable=no-member
         if many and obj is not None:
-            return super(InternalBaseComponentSchema, self)._serialize(obj, many=many)
-        ret = super(InternalBaseComponentSchema, self)._serialize(obj)
+            return super(InternalComponentSchema, self)._serialize(obj, many=many)
+        ret = super(InternalComponentSchema, self)._serialize(obj)
         for attr_name in obj.__dict__.keys():
             if (
                 not attr_name.startswith("_")
@@ -104,9 +119,21 @@ class InternalBaseComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            if "default" in port_definition:
-                data["inputs"][port_name]["default"] = original.inputs[port_name].default
+            input_type = port_definition.get("type", None)
+            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
+            for key in ["default", "min", "max"]:
+                if key in port_definition:
+                    value = getattr(original.inputs[port_name], key)
+                    # Keep value in float input as string to avoid precision issue.
+                    data["inputs"][port_name][key] = str(value) if is_float_type else value
             if "mode" in port_definition:
                 del port_definition["mode"]
 
+        return data
+
+    @post_dump(pass_original=True)
+    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+        type_label = original._type_label  # pylint:disable=protected-access
+        if type_label:
+            data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
         return data

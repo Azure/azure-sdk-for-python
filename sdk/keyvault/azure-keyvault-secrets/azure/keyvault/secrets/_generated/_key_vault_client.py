@@ -9,9 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional
 
 from azure.core import PipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
@@ -19,10 +17,7 @@ from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import KeyVaultClientConfiguration
 from ._operations_mixin import KeyVaultClientOperationsMixin
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+from ._serialization import Deserializer, Serializer
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):

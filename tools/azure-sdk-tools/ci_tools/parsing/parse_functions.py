@@ -1,7 +1,6 @@
 import os
 import ast
 import textwrap
-import sys
 import re
 from typing import Dict, List, Tuple
 
@@ -47,6 +46,7 @@ class ParsedSetup:
         self.namespace = name_space
         self.package_data = package_data
         self.include_package_data = include_package_data
+        self.folder = os.path.dirname(self.setup_filename)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -195,13 +195,13 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     """
     req_object = Requirement.parse(req.split(";")[0].lower())
     pkg_name = req_object.key
-    spec_object_str = str(req_object)
 
     # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
     if not req_object.specifier:
         return [pkg_name, None]
 
-    isolated_spec = str(req_object).replace(pkg_name, "")
+    # regex details ripped from https://peps.python.org/pep-0508/
+    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
     spec = SpecifierSet(isolated_spec)
     return (pkg_name, spec)
 

@@ -3,6 +3,7 @@ import pytest
 from azure.ai.ml.entities import CodeConfiguration
 
 
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestCodeConfiguration:
     def test_scoring_script_missing_throw(self) -> None:

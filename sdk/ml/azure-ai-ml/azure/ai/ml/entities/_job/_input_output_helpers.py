@@ -64,6 +64,7 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 }
 
 
+# TODO: Remove this as both rest type and sdk type are snake case now.
 def get_output_type_mapping_from_rest():
     """Get output type mapping."""
     return {
@@ -255,6 +256,7 @@ def from_rest_inputs_to_dataset_literal(
         if input_value is None:
             continue
 
+        # TODO: Remove this as both rest type and sdk type are snake case now.
         type_transfer_dict = get_output_type_mapping_from_rest()
         # deal with invalid input type submitted by feb api
         # todo: backend help convert node level input/output type

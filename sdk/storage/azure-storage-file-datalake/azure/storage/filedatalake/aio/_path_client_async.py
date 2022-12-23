@@ -22,6 +22,7 @@ from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import ContentSettings, FileProperties
 
 
@@ -50,13 +51,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     """
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            path_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            self, account_url: str,
+            file_system_name: str,
+            path_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
         super(PathClient, self).__init__(account_url,  # pylint: disable=specify-parameter-names-in-call

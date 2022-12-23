@@ -30,31 +30,32 @@ from ._deleted_workspaces_operations import DeletedWorkspacesOperations
 from ._tables_operations import TablesOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'QueryPacksOperations',
-    'QueriesOperations',
-    'DataExportsOperations',
-    'DataSourcesOperations',
-    'IntelligencePacksOperations',
-    'LinkedServicesOperations',
-    'LinkedStorageAccountsOperations',
-    'ManagementGroupsOperations',
-    'OperationStatusesOperations',
-    'SharedKeysOperations',
-    'UsagesOperations',
-    'StorageInsightConfigsOperations',
-    'SavedSearchesOperations',
-    'AvailableServiceTiersOperations',
-    'GatewaysOperations',
-    'SchemaOperations',
-    'WorkspacePurgeOperations',
-    'ClustersOperations',
-    'Operations',
-    'WorkspacesOperations',
-    'DeletedWorkspacesOperations',
-    'TablesOperations',
+    "QueryPacksOperations",
+    "QueriesOperations",
+    "DataExportsOperations",
+    "DataSourcesOperations",
+    "IntelligencePacksOperations",
+    "LinkedServicesOperations",
+    "LinkedStorageAccountsOperations",
+    "ManagementGroupsOperations",
+    "OperationStatusesOperations",
+    "SharedKeysOperations",
+    "UsagesOperations",
+    "StorageInsightConfigsOperations",
+    "SavedSearchesOperations",
+    "AvailableServiceTiersOperations",
+    "GatewaysOperations",
+    "SchemaOperations",
+    "WorkspacePurgeOperations",
+    "ClustersOperations",
+    "Operations",
+    "WorkspacesOperations",
+    "DeletedWorkspacesOperations",
+    "TablesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

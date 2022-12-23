@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import ValidationError
 
@@ -45,7 +45,7 @@ class DoWhile(LoopNode):
         body: Pipeline,
         condition: str,
         mapping: Dict[Union[str, Output], Union[str, Input, List]],
-        limits: Union[dict, DoWhileJobLimits] = None,
+        limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -80,6 +80,7 @@ class DoWhile(LoopNode):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
+            **super(DoWhile, cls)._attr_type_map(),
             "mapping": dict,
             "limits": (dict, DoWhileJobLimits),
         }
@@ -101,7 +102,7 @@ class DoWhile(LoopNode):
                 port = body.inputs.get(port_name, None)
             else:
                 port = body.outputs.get(port_name, None)
-            if not port:
+            if port is None:
                 if validate_port:
                     raise ValidationError(
                         message=f"Cannot find {port_name} in do_while loop body {'inputs' if is_input else 'outputs'}.",
@@ -115,14 +116,7 @@ class DoWhile(LoopNode):
 
         # Get body object from pipeline job list.
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
-        if body_name not in pipeline_jobs:
-            raise ValidationError(
-                message=f'Cannot find the do-while loop body "{body_name}" in the pipeline.',
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        body = pipeline_jobs[body_name]
+        body = cls._get_body_from_pipeline_jobs(pipeline_jobs, body_name)
 
         # Convert mapping key-vault to input/output object
         mapping = {}
@@ -148,8 +142,7 @@ class DoWhile(LoopNode):
             **loaded_data,
         )
         do_while_instance.set_limits(**limits)
-        # Update referenced control flow node instance id.
-        body._set_referenced_control_flow_node_instance_id(do_while_instance._instance_id)
+
         return do_while_instance
 
     @classmethod
@@ -157,26 +150,23 @@ class DoWhile(LoopNode):
         return DoWhileSchema(context=context)
 
     @classmethod
-    def _from_rest_object(cls, obj: dict, reference_node_list: List) -> "DoWhile":
+    def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "DoWhile":
         # pylint: disable=protected-access
 
-        obj = BaseNode._rest_object_to_init_params(obj)
-        return cls._create_instance_from_schema_dict(reference_node_list, obj, validate_port=False)
+        obj = BaseNode._from_rest_object_to_init_params(obj)
+        return cls._create_instance_from_schema_dict(pipeline_jobs, obj, validate_port=False)
 
     def set_limits(
         self,
         *,
         max_iteration_count: int,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         """Set max iteration count for do while job. The range of the iteration count is (0, 1000]."""
         if isinstance(self.limits, DoWhileJobLimits):
-            self.limits._max_iteration_count = max_iteration_count # pylint: disable=protected-access
+            self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
         else:
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
-
-    def _get_body_binding_str(self):
-        return "${{parent.jobs.%s}}" % self.body.name
 
     def _customized_validate(self):
         validation_result = self._validate_loop_condition(raise_error=False)
@@ -192,21 +182,24 @@ class DoWhile(LoopNode):
             port_obj = node_ports.get(port, None)
         else:
             port_obj = port
-        if port_obj and port_obj._owner._instance_id != self.body._instance_id: # pylint: disable=protected-access
+        if (
+            port_obj is not None
+            and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
+        ):
             # Check the port owner is dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, " # pylint: disable=protected-access
+                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, "  # pylint: disable=protected-access
                     f"dowhile only accept {port_type} of the body: {self.body.name}."
                 ),
             )
-        elif not port_obj or port_obj._name not in node_ports: # pylint: disable=protected-access
+        elif port_obj is None or port_obj._name not in node_ports:  # pylint: disable=protected-access
             # Check port is exist in dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not " # pylint: disable=protected-access
+                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not "  # pylint: disable=protected-access
                     f"exist in {self.body.name} {port_type}, existing {port_type}: {node_ports.keys()}"
                 ),
             )
@@ -216,7 +209,7 @@ class DoWhile(LoopNode):
         # pylint: disable=protected-access
 
         validation_result = self._create_empty_validation_result()
-        if not self.condition:
+        if self.condition is None:
             validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
         else:
             # Check condition exists in dowhile body.
@@ -226,7 +219,7 @@ class DoWhile(LoopNode):
             if validation_result.passed:
                 # Check condition is a control output.
                 condition_name = self.condition if isinstance(self.condition, str) else self.condition._name
-                if not self.body.component.outputs[condition_name].is_control:
+                if not self.body._outputs[condition_name].is_control:
                     validation_result.append_error(
                         yaml_path="condition",
                         message=(
@@ -248,18 +241,14 @@ class DoWhile(LoopNode):
         elif self.limits.max_iteration_count > DO_WHILE_MAX_ITERATION or self.limits.max_iteration_count < 0:
             validation_result.append_error(
                 yaml_path="limit.max_iteration_count",
-                message=f"The max iteration count cannot be less than 0 and larger than {DO_WHILE_MAX_ITERATION}.",
+                message=f"The max iteration count cannot be less than 0 or larger than {DO_WHILE_MAX_ITERATION}.",
             )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
     def _validate_body_output_mapping(self, raise_error=True):
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
-        if not self.mapping:
-            validation_result.append_error(
-                yaml_path="mapping", message="The mapping of body output to input cannot be empty."
-            )
-        elif not isinstance(self.mapping, dict):
+        if not isinstance(self.mapping, dict):
             validation_result.append_error(
                 yaml_path="mapping", message=f"Mapping expects a dict type but passes in a {type(self.mapping)} type."
             )
@@ -274,7 +263,7 @@ class DoWhile(LoopNode):
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
                 )
                 if validate_results.passed:
-                    is_control_output = self.body.component.outputs[output_name].is_control
+                    is_control_output = self.body._outputs[output_name].is_control
                     inputs = inputs if isinstance(inputs, list) else [inputs]
                     for item in inputs:
                         input_validate_results = self._validate_port(
@@ -284,11 +273,12 @@ class DoWhile(LoopNode):
                         # pylint: disable=protected-access
                         input_name = item if isinstance(item, str) else item._name
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
+                        is_primitive_type = self.body._inputs[input_name]._meta._is_primitive_type
 
                         if (
                             input_validate_results.passed
                             and not is_control_output
-                            and self.body.component.inputs[input_name]._is_primitive_type # pylint: disable=protected-access
+                            and is_primitive_type  # pylint: disable=protected-access
                         ):
                             validate_results.append_error(
                                 yaml_path="mapping",

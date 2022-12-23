@@ -4,9 +4,20 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._schema import StringTransformedEnum, UnionField
-from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField
+from azure.ai.ml._schema import PatchedSchemaMeta, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema
+from azure.ai.ml._schema.core.fields import DumpableEnumField, PrimitiveValueField
+
+SUPPORTED_INTERNAL_PARAM_TYPES = [
+    "integer",
+    "Integer",
+    "boolean",
+    "Boolean",
+    "string",
+    "String",
+    "float",
+    "Float",
+]
 
 
 class InternalInputPortSchema(InputPortSchema):
@@ -29,29 +40,29 @@ class InternalInputPortSchema(InputPortSchema):
         return data
 
 
-class InternalOutputPortSchema(OutputPortSchema):
+class InternalOutputPortSchema(metaclass=PatchedSchemaMeta):
     # skip client-side validate for type enum
     type = fields.Str(
         required=True,
         data_key="type",
     )
+    description = fields.Str()
     is_link_mode = fields.Bool()
     datastore_mode = fields.Str()
 
 
+class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
+        required=True,
+    )
+    description = fields.Str()
+    is_control = fields.Bool()
+
+
 class InternalParameterSchema(ParameterSchema):
-    type = StringTransformedEnum(
-        allowed_values=[
-            "integer",
-            "Integer",
-            "boolean",
-            "Boolean",
-            "string",
-            "String",
-            "float",
-            "Float",
-        ],
-        casing_transform=lambda x: x,
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
         required=True,
         data_key="type",
     )
@@ -63,29 +74,9 @@ class InternalEnumParameterSchema(ParameterSchema):
         required=True,
         data_key="type",
     )
-    default = UnionField(
-        [
-            DumpableIntegerField(strict=True),
-            # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
-            DumpableFloatField(),
-            # put string schema after Int and Float to make sure they won't dump to string
-            fields.Str(),
-            # fields.Bool comes last since it'll parse anything non-falsy to True
-            fields.Bool(),
-        ],
-    )
+    default = PrimitiveValueField()
     enum = fields.List(
-        UnionField(
-            [
-                DumpableIntegerField(strict=True),
-                # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
-                DumpableFloatField(),
-                # put string schema after Int and Float to make sure they won't dump to string
-                fields.Str(),
-                # fields.Bool comes last since it'll parse anything non-falsy to True
-                fields.Bool(),
-            ]
-        ),
+        PrimitiveValueField(),
         required=True,
     )
 

@@ -8,22 +8,24 @@ from __future__ import absolute_import
 
 from io import BytesIO
 from email.message import Message
-
-try:
-    from email import message_from_bytes as message_parser
-except ImportError:  # 2.7
-    from email import message_from_string as message_parser  # type: ignore
+from email.policy import HTTP
+from email import message_from_bytes as message_parser
 import os
-from typing import TYPE_CHECKING, cast, IO
-
+from typing import (
+    TYPE_CHECKING,
+    cast,
+    IO,
+    Dict,
+    List,
+    Union,
+    Tuple,
+    Optional,
+    Callable,
+    Type,
+    Iterator,
+)
 from http.client import HTTPConnection
-
-try:
-    binary_type = str
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    binary_type = bytes  # type: ignore
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from ..pipeline import (
     PipelineRequest,
@@ -33,24 +35,13 @@ from ..pipeline import (
 from ..pipeline._tools import await_result as _await_result
 
 if TYPE_CHECKING:
-    from typing import (  # pylint: disable=ungrouped-imports
-        Dict,
-        List,
-        Union,
-        Tuple,
-        Optional,
-        Callable,
-        Type,
-        Iterator,
-    )
     # importing both the py3 RestHttpRequest and the fallback RestHttpRequest
     from azure.core.rest._rest_py3 import HttpRequest as RestHttpRequestPy3
-    from azure.core.rest._rest import HttpRequest as RestHttpRequestPy2
     from azure.core.pipeline.transport import (
         HttpRequest as PipelineTransportHttpRequest
     )
     HTTPRequestType = Union[
-        RestHttpRequestPy3, RestHttpRequestPy2, PipelineTransportHttpRequest
+        RestHttpRequestPy3, PipelineTransportHttpRequest
     ]
     from ..pipeline.policies import SansIOHTTPPolicy
     from azure.core.pipeline.transport import (
@@ -60,6 +51,8 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport._base import (
         _HttpResponseBase as PipelineTransportHttpResponseBase
     )
+
+binary_type = str
 
 class BytesIOSocket(object):
     """Mocking the "makefile" of socket for HTTPResponse.
@@ -163,19 +156,8 @@ def _prepare_multipart_body_helper(http_request, content_index=0):
         part_message.set_payload(payload)
         main_message.attach(part_message)
 
-    try:
-        from email.policy import HTTP
-
-        full_message = main_message.as_bytes(policy=HTTP)
-        eol = b"\r\n"
-    except ImportError:  # Python 2.7
-        # Right now we decide to not support Python 2.7 on serialization, since
-        # it doesn't serialize a valid HTTP request (and our main scenario Storage refuses it)
-        raise NotImplementedError(
-            "Multipart request are not supported on Python 2.7"
-        )
-        # full_message = main_message.as_string()
-        # eol = b'\n'
+    full_message = main_message.as_bytes(policy=HTTP)
+    eol = b"\r\n"
     _, _, body = full_message.split(eol, 2)
     http_request.set_bytes_body(body)
     http_request.headers["Content-Type"] = (

@@ -4,18 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint:disable=unused-import
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
-try:
-    from typing import TYPE_CHECKING  # pylint:disable=unused-import
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Optional
     from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 

@@ -1,15 +1,62 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b12 (Unreleased)
 
 ### Features Added
-
-- Add validation logic to ApplicationInsightsSampler
-    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b11 (2022-12-15)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Add azure-sdk usage to instrumentations statsbeat
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
+
+### Bugs Fixed
+
+- Pinning OpenTelemetry SDK and API to between 1.12 and 1.14 to avoid bug from change in module path. Reverting [#27913]
+    ([#27958](https://github.com/Azure/azure-sdk-for-python/pull/27958))
+- Pass along sampleRate in SpanEvents from Span
+    ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
+
+## 1.0.0b10 (2022-11-10)
+
+### Bugs Fixed
+
+- Fix missing local storage attribute
+    ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
+- Fix offline storage rename
+    ([#27414](https://github.com/Azure/azure-sdk-for-python/pull/27414))
+
+## 1.0.0b9 (2022-11-08)
+
+### Features Added
+
+- Add Sampler factory and entry point
+    ([#27236](https://github.com/Azure/azure-sdk-for-python/pull/27236))
+- Add validation logic to ApplicationInsightsSampler
+    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+- Change default temporality of metrics to follow OTLP
+    ([#26924](https://github.com/Azure/azure-sdk-for-python/pull/26924))
+
+### Breaking Changes
+
+- Rename local storage configuration, change default path
+    ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+- Change default storage retention period to 48 hours
+    ([#26960](https://github.com/Azure/azure-sdk-for-python/pull/26960))
+
+### Bugs Fixed
+
+- Fixed sampleRate field in ApplicationInsightsSampler, changed attribute to `_MS.sampleRate`
+    ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
 
 ### Other Changes
 

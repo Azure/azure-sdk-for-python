@@ -4,81 +4,60 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.storage.queue.aio import QueueServiceClient
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+import pytest
+from azure.storage.queue.aio import QueueServiceClient
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
-SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
-
-SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
-
-
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTestAsync(AsyncStorageTestCase):
+class TestAsyncQueueServiceStats(AsyncStorageRecordedTestCase):
+
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'live')
-        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'live'
+        assert stats['geo_replication']['last_sync_time'] is not None
 
     def _assert_stats_unavailable(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
-        self.assertIsNone(stats['geo_replication']['last_sync_time'])
-
-    @staticmethod
-    def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_UNAVAILABLE_RESP_BODY
-
-    @staticmethod
-    def override_response_body_with_live_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
+        assert stats['geo_replication']['status'] == 'unavailable'
+        assert stats['geo_replication']['last_sync_time'] is None
 
     # --Test cases per service ---------------------------------------
+    @pytest.mark.playback_test_only
     @QueuePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_f(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_queue_service_stats(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         # Act
-        stats = await qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
+        stats = await qsc.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
+    @pytest.mark.playback_test_only
     @QueuePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_queue_service_stats_when_unavailable(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
-        stats = await qsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = await qsc.get_service_stats()
 
         # Assert
         self._assert_stats_unavailable(stats)

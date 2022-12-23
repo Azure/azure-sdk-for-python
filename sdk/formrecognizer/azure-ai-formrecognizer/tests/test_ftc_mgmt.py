@@ -17,12 +17,14 @@ from azure.ai.formrecognizer import (
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestManagement(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -32,6 +34,7 @@ class TestManagement(FormRecognizerTest):
         assert properties.custom_model_limit
         assert properties.custom_model_count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -69,6 +72,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_custom_model(labeled_model_from_train.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -105,6 +109,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_custom_model(unlabeled_model_from_train.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):

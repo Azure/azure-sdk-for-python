@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.0b1 (2022-11-28)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 1.1.0 (2022-06-07)
 
 **Features**

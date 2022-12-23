@@ -20,7 +20,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
@@ -595,7 +595,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
             properties = _convert_to_entity(entity)

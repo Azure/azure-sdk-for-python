@@ -6,94 +6,70 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AccountKeyRegenerateRequest
-    from ._models_py3 import AccountKeys
-    from ._models_py3 import CheckNameAvailabilityRequest
-    from ._models_py3 import CheckNameAvailabilityResponse
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import Identity
-    from ._models_py3 import LogSpecification
-    from ._models_py3 import MetricDimension
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import ObjectAnchorsAccount
-    from ._models_py3 import ObjectAnchorsAccountIdentity
-    from ._models_py3 import ObjectAnchorsAccountPage
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationPage
-    from ._models_py3 import OperationProperties
-    from ._models_py3 import RemoteRenderingAccount
-    from ._models_py3 import RemoteRenderingAccountPage
-    from ._models_py3 import Resource
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import Sku
-    from ._models_py3 import SpatialAnchorsAccount
-    from ._models_py3 import SpatialAnchorsAccountPage
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import AccountKeyRegenerateRequest  # type: ignore
-    from ._models import AccountKeys  # type: ignore
-    from ._models import CheckNameAvailabilityRequest  # type: ignore
-    from ._models import CheckNameAvailabilityResponse  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import LogSpecification  # type: ignore
-    from ._models import MetricDimension  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import ObjectAnchorsAccount  # type: ignore
-    from ._models import ObjectAnchorsAccountIdentity  # type: ignore
-    from ._models import ObjectAnchorsAccountPage  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationPage  # type: ignore
-    from ._models import OperationProperties  # type: ignore
-    from ._models import RemoteRenderingAccount  # type: ignore
-    from ._models import RemoteRenderingAccountPage  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SpatialAnchorsAccount  # type: ignore
-    from ._models import SpatialAnchorsAccountPage  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import AccountKeyRegenerateRequest
+from ._models_py3 import AccountKeys
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import CloudErrorBody
+from ._models_py3 import Identity
+from ._models_py3 import LogSpecification
+from ._models_py3 import MetricDimension
+from ._models_py3 import MetricSpecification
+from ._models_py3 import ObjectAnchorsAccount
+from ._models_py3 import ObjectAnchorsAccountIdentity
+from ._models_py3 import ObjectAnchorsAccountPage
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationPage
+from ._models_py3 import OperationProperties
+from ._models_py3 import RemoteRenderingAccount
+from ._models_py3 import RemoteRenderingAccountPage
+from ._models_py3 import Resource
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import Sku
+from ._models_py3 import SpatialAnchorsAccount
+from ._models_py3 import SpatialAnchorsAccountPage
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
 
-from ._mixed_reality_client_enums import (
-    CreatedByType,
-    NameUnavailableReason,
-    Serial,
-    SkuTier,
-)
+from ._mixed_reality_client_enums import CreatedByType
+from ._mixed_reality_client_enums import NameUnavailableReason
+from ._mixed_reality_client_enums import Serial
+from ._mixed_reality_client_enums import SkuTier
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccountKeyRegenerateRequest',
-    'AccountKeys',
-    'CheckNameAvailabilityRequest',
-    'CheckNameAvailabilityResponse',
-    'CloudErrorBody',
-    'Identity',
-    'LogSpecification',
-    'MetricDimension',
-    'MetricSpecification',
-    'ObjectAnchorsAccount',
-    'ObjectAnchorsAccountIdentity',
-    'ObjectAnchorsAccountPage',
-    'Operation',
-    'OperationDisplay',
-    'OperationPage',
-    'OperationProperties',
-    'RemoteRenderingAccount',
-    'RemoteRenderingAccountPage',
-    'Resource',
-    'ServiceSpecification',
-    'Sku',
-    'SpatialAnchorsAccount',
-    'SpatialAnchorsAccountPage',
-    'SystemData',
-    'TrackedResource',
-    'CreatedByType',
-    'NameUnavailableReason',
-    'Serial',
-    'SkuTier',
+    "AccountKeyRegenerateRequest",
+    "AccountKeys",
+    "CheckNameAvailabilityRequest",
+    "CheckNameAvailabilityResponse",
+    "CloudErrorBody",
+    "Identity",
+    "LogSpecification",
+    "MetricDimension",
+    "MetricSpecification",
+    "ObjectAnchorsAccount",
+    "ObjectAnchorsAccountIdentity",
+    "ObjectAnchorsAccountPage",
+    "Operation",
+    "OperationDisplay",
+    "OperationPage",
+    "OperationProperties",
+    "RemoteRenderingAccount",
+    "RemoteRenderingAccountPage",
+    "Resource",
+    "ServiceSpecification",
+    "Sku",
+    "SpatialAnchorsAccount",
+    "SpatialAnchorsAccountPage",
+    "SystemData",
+    "TrackedResource",
+    "CreatedByType",
+    "NameUnavailableReason",
+    "Serial",
+    "SkuTier",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

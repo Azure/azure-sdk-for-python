@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -16,9 +16,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
-from ...entities._validation import MutableValidationResult
 from .._schema.component import NodeType
-from ._input_outputs import InternalInput
 
 
 class InternalBaseNode(BaseNode):
@@ -44,23 +42,25 @@ class InternalBaseNode(BaseNode):
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        properties: Dict = None,
-        compute: str = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        properties: Optional[Dict] = None,
+        compute: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)
@@ -75,17 +75,14 @@ class InternalBaseNode(BaseNode):
             **kwargs,
         )
 
-    def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
-
     @property
     def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
-    def _to_node(self, context: Dict = None, **kwargs) -> BaseNode:
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> BaseNode:
         return self
 
-    def _to_component(self, context: Dict = None, **kwargs) -> Component:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> Component:
         return self.component
 
     def _to_job(self) -> Job:
@@ -94,17 +91,6 @@ class InternalBaseNode(BaseNode):
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         raise RuntimeError("Internal components doesn't support load from dict")
-
-    def _schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalBaseNode, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class?
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -148,22 +134,6 @@ class InternalBaseNode(BaseNode):
         )
         return base_dict
 
-    @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = BaseNode._rest_object_to_init_params(obj)
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return obj
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "InternalBaseNode":
-        obj = cls._rest_object_to_init_params(obj)
-
-        instance = cls.__new__(cls)
-        instance.__init__(**obj)
-        return instance
-
 
 class DataTransfer(InternalBaseNode):
     def __init__(self, **kwargs):
@@ -176,6 +146,7 @@ class HDInsight(InternalBaseNode):
         kwargs.pop("type", None)
         super(HDInsight, self).__init__(type=NodeType.HDI, **kwargs)
         self._init = True
+        self._compute_name: str = kwargs.pop("compute_name", None)
         self._queue: str = kwargs.pop("queue", None)
         self._driver_memory: str = kwargs.pop("driver_memory", None)
         self._driver_cores: int = kwargs.pop("driver_cores", None)
@@ -185,6 +156,15 @@ class HDInsight(InternalBaseNode):
         self._conf: Union[dict, str] = kwargs.pop("conf", None)
         self._hdinsight_spark_job_name: str = kwargs.pop("hdinsight_spark_job_name", None)
         self._init = False
+
+    @property
+    def compute_name(self) -> str:
+        """Name of the compute to be used."""
+        return self._compute_name
+
+    @compute_name.setter
+    def compute_name(self, value: str):
+        self._compute_name = value
 
     @property
     def queue(self) -> str:
@@ -267,6 +247,7 @@ class HDInsight(InternalBaseNode):
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return [
+            "compute_name",
             "queue",
             "driver_cores",
             "executor_memory",

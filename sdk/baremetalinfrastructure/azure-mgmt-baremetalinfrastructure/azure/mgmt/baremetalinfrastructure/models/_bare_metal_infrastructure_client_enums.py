@@ -6,36 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AzureBareMetalHardwareTypeNamesEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Name of the hardware type (vendor and/or their product name)
-    """
+class AzureBareMetalHardwareTypeNamesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of the hardware type (vendor and/or their product name)."""
 
     CISCO_UCS = "Cisco_UCS"
     HPE = "HPE"
 
-class AzureBareMetalInstancePowerStateEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Resource power state
-    """
+
+class AzureBareMetalInstancePowerStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resource power state."""
 
     STARTING = "starting"
     STARTED = "started"
@@ -44,9 +27,9 @@ class AzureBareMetalInstancePowerStateEnum(with_metaclass(_CaseInsensitiveEnumMe
     RESTARTING = "restarting"
     UNKNOWN = "unknown"
 
-class AzureBareMetalInstanceSizeNamesEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the AzureBareMetal instance SKU.
-    """
+
+class AzureBareMetalInstanceSizeNamesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the AzureBareMetal instance SKU."""
 
     S72_M = "S72m"
     S144_M = "S144m"
@@ -92,9 +75,9 @@ class AzureBareMetalInstanceSizeNamesEnum(with_metaclass(_CaseInsensitiveEnumMet
     S896_OOO = "S896ooo"
     S960_M = "S960m"
 
-class AzureBareMetalProvisioningStatesEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """State of provisioning of the AzureBareMetalInstance
-    """
+
+class AzureBareMetalProvisioningStatesEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of provisioning of the AzureBareMetalInstance."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
@@ -104,9 +87,9 @@ class AzureBareMetalProvisioningStatesEnum(with_metaclass(_CaseInsensitiveEnumMe
     DELETING = "Deleting"
     MIGRATING = "Migrating"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"

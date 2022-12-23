@@ -6,6 +6,8 @@ from pathlib import Path, PurePath
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml._artifacts._artifact_utilities import _update_metadata
@@ -17,8 +19,6 @@ from azure.ai.ml._utils._asset_utils import _parse_name_version, get_object_hash
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 container_name = "testblob"
 file_share_name = "testfileshare"
@@ -94,6 +94,7 @@ except FileExistsError:
     condition=not is_live(),
     reason="test are flaky in playback"
 )
+@pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
@@ -472,6 +473,6 @@ class TestUpload(AzureRecordedTestCase):
         test_model = Model(path=artifact_path)
         created_model = client.models.create_or_update(test_model)
         assert test_model.name == created_model.name
-        time.sleep(5)  # wait for create/upload step
+        sleep_if_live(5)  # wait for create/upload step
 
         client.models.download(name=created_model.name, version=created_model.version)

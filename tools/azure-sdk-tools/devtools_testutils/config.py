@@ -5,5 +5,5 @@
 # --------------------------------------------------------------------------
 import os
 
-PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001")
+PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"

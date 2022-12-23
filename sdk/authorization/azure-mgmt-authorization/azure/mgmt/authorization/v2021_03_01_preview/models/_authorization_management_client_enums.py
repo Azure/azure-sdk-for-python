@@ -6,44 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRecommendationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The feature- generated recommendation shown to the reviewer.
-    """
+class AccessRecommendationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The feature- generated recommendation shown to the reviewer."""
 
     APPROVE = "Approve"
     DENY = "Deny"
     NO_INFO_AVAILABLE = "NoInfoAvailable"
 
-class AccessReviewActorIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type : user/servicePrincipal
-    """
+
+class AccessReviewActorIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type : user/servicePrincipal."""
 
     USER = "user"
     SERVICE_PRINCIPAL = "servicePrincipal"
 
-class AccessReviewApplyResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The outcome of applying the decision.
-    """
+
+class AccessReviewApplyResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The outcome of applying the decision."""
 
     NEW = "New"
     APPLYING = "Applying"
@@ -52,9 +35,9 @@ class AccessReviewApplyResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     APPLIED_SUCCESSFULLY_BUT_OBJECT_NOT_FOUND = "AppliedSuccessfullyButObjectNotFound"
     APPLY_NOT_SUPPORTED = "ApplyNotSupported"
 
-class AccessReviewInstanceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This read-only field specifies the status of an access review instance.
-    """
+
+class AccessReviewInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This read-only field specifies the status of an access review instance."""
 
     NOT_STARTED = "NotStarted"
     IN_PROGRESS = "InProgress"
@@ -68,24 +51,25 @@ class AccessReviewInstanceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     AUTO_REVIEWED = "AutoReviewed"
     STARTING = "Starting"
 
-class AccessReviewRecurrencePatternType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The recurrence type : weekly, monthly, etc.
-    """
+
+class AccessReviewRecurrencePatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The recurrence type : weekly, monthly, etc."""
 
     WEEKLY = "weekly"
     ABSOLUTE_MONTHLY = "absoluteMonthly"
 
-class AccessReviewRecurrenceRangeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The recurrence range type. The possible values are: endDate, noEnd, numbered.
-    """
+
+class AccessReviewRecurrenceRangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The recurrence range type. The possible values are: endDate, noEnd, numbered."""
 
     END_DATE = "endDate"
     NO_END = "noEnd"
     NUMBERED = "numbered"
 
-class AccessReviewResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccessReviewResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The decision on the approval step. This value is initially set to NotReviewed. Approvers can
-    take action of Approve/Deny
+    take action of Approve/Deny.
     """
 
     APPROVE = "Approve"
@@ -94,14 +78,15 @@ class AccessReviewResult(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DONT_KNOW = "DontKnow"
     NOT_NOTIFIED = "NotNotified"
 
-class AccessReviewReviewerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type : user/servicePrincipal
-    """
+
+class AccessReviewReviewerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type : user/servicePrincipal."""
 
     USER = "user"
     SERVICE_PRINCIPAL = "servicePrincipal"
 
-class AccessReviewScheduleDefinitionReviewersType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccessReviewScheduleDefinitionReviewersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field specifies the type of reviewers for a review. Usually for a review, reviewers are
     explicitly assigned. However, in some cases, the reviewers may not be assigned and instead be
     chosen dynamically. For example managers review or self review.
@@ -111,9 +96,9 @@ class AccessReviewScheduleDefinitionReviewersType(with_metaclass(_CaseInsensitiv
     SELF = "Self"
     MANAGERS = "Managers"
 
-class AccessReviewScheduleDefinitionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This read-only field specifies the status of an accessReview.
-    """
+
+class AccessReviewScheduleDefinitionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This read-only field specifies the status of an accessReview."""
 
     NOT_STARTED = "NotStarted"
     IN_PROGRESS = "InProgress"
@@ -127,37 +112,37 @@ class AccessReviewScheduleDefinitionStatus(with_metaclass(_CaseInsensitiveEnumMe
     AUTO_REVIEWED = "AutoReviewed"
     STARTING = "Starting"
 
-class AccessReviewScopeAssignmentState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The role assignment state eligible/active to review
-    """
+
+class AccessReviewScopeAssignmentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role assignment state eligible/active to review."""
 
     ELIGIBLE = "eligible"
     ACTIVE = "active"
 
-class AccessReviewScopePrincipalType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type user/servicePrincipal to review
-    """
+
+class AccessReviewScopePrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type user/servicePrincipal to review."""
 
     USER = "user"
     GUEST_USER = "guestUser"
     SERVICE_PRINCIPAL = "servicePrincipal"
 
-class DecisionResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of resource
-    """
+
+class DecisionResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of resource."""
 
     AZURE_ROLE = "azureRole"
 
-class DecisionTargetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of decision target : User/ServicePrincipal
-    """
+
+class DecisionTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of decision target : User/ServicePrincipal."""
 
     USER = "user"
     SERVICE_PRINCIPAL = "servicePrincipal"
 
-class DefaultDecisionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This specifies the behavior for the autoReview feature when an access review completes.
-    """
+
+class DefaultDecisionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This specifies the behavior for the autoReview feature when an access review completes."""
 
     APPROVE = "Approve"
     DENY = "Deny"

@@ -38,8 +38,6 @@ import pytest
 
 from requests import Request, Response
 
-from msrest import Deserializer
-
 from azure.core.polling import async_poller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient

@@ -33,7 +33,7 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     """HttpLoggingPolicy with ARM specific safe headers fopr loggers.
     """
 
-    DEFAULT_HEADERS_WHITELIST = HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST | set([
+    DEFAULT_HEADERS_ALLOWLIST = HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST | set([
         # https://docs.microsoft.com/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-ratelimit-remaining-subscription-writes",

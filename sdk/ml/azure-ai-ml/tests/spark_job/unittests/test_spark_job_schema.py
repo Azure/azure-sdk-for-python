@@ -13,6 +13,7 @@ from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSparkJobSchema:
     def test_deserialize(self):
         test_path = "./tests/test_configs/spark_job/spark_job_test.yml"

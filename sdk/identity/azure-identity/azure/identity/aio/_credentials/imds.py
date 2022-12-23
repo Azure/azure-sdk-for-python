@@ -3,10 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING, TypeVar
+from typing import Optional, TypeVar
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-
+from azure.core.credentials import AccessToken
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
@@ -14,15 +14,11 @@ from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from ..._credentials.imds import get_request, PIPELINE_SETTINGS
 
-if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
-
 T = TypeVar("T", bound="ImdsCredential")
 
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__()
 
         self._client = AsyncManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
@@ -33,17 +29,17 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         self._error_message = None  # type: Optional[str]
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
-    async def __aenter__(self:T) -> T:
+    async def __aenter__(self: T) -> T:
         await self._client.__aenter__()
         return self
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_token(*scopes)
 
-    async def _request_token(self, *scopes, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+    async def _request_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (because it lacks the Metadata header),

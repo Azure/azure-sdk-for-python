@@ -144,8 +144,7 @@ def test_string_content():
     assert request.headers == {"Content-Length": "13", "Content-Type": "text/plain"}
     assert request.content == "Hello, world!"
 
-@pytest.mark.skipif(sys.version_info < (3, 0),
-                    reason="In 2.7, b'' is the same as a string, so will have text/plain content type")
+
 def test_bytes_content():
     request = HttpRequest("PUT", "http://example.org", content=b"Hello, world!")
     assert request.headers == {"Content-Length": "13"}
@@ -224,8 +223,6 @@ def test_multipart_invalid_key(key):
     assert repr(key) in str(e.value)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0),
-                    reason="In 2.7, b'' is the same as a string, so check doesn't fail")
 def test_multipart_invalid_key_binary_string():
 
     data = {b"abc": "abc"}
@@ -340,7 +337,7 @@ def test_request_policies_raw_request_hook(port):
         client.send_request(request)
     assert "I entered the callback!" in str(ex.value)
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+
 def test_request_policies_chain(port):
     class OldPolicyModifyBody(SansIOHTTPPolicy):
         def on_request(self, request):

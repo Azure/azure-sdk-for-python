@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
-from ._validation import SchemaValidatableMixin, _ValidationResultBuilder, ValidationResult
+from ._validation import SchemaValidatableMixin, ValidationResult, _ValidationResultBuilder
 
 
 def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
@@ -30,7 +30,7 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
     except ValidationException as err:
         return _ValidationResultBuilder.from_single_message(err.message)
     except ValidationError as err:
-        return _ValidationResultBuilder.from_validation_error(err, path)
+        return _ValidationResultBuilder.from_validation_error(err, source_path=path)
 
 
 def validate_component(path, ml_client=None, params_override=None) -> ValidationResult:

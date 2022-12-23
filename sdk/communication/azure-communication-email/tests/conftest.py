@@ -32,7 +32,7 @@ from azure.communication.email._shared.utils import parse_connection_str
 def add_sanitizers(test_proxy):
     set_default_session_settings()
     
-    communication_connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING", "endpoint=https://someEndpoint/;accesskey=someAccessKeyw==")
+    communication_connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL", "endpoint=https://someEndpoint/;accesskey=someAccessKeyw==")
     sender_address = os.getenv("SENDER_ADDRESS", "someSender@contoso.com")
     recipient_address = os.getenv("RECIPIENT_ADDRESS", "someRecipient@domain.com")
 

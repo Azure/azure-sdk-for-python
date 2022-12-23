@@ -29,3 +29,5 @@ for i in range(100):
     # Approximately 25% of these spans should be sampled out
     with tracer.start_as_current_span("hello"):
         print("Hello, World!")
+
+input()

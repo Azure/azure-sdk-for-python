@@ -13,11 +13,13 @@ from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 class TestTraining(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy
@@ -46,6 +48,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy
@@ -72,6 +75,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.name
 
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy
@@ -100,6 +104,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy
@@ -146,6 +151,7 @@ class TestTraining(FormRecognizerTest):
         assert e.value.error.code
         assert e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -175,6 +181,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -200,6 +207,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
@@ -229,6 +237,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy

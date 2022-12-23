@@ -9,6 +9,7 @@ from azure.ai.ml._utils._asset_utils import get_content_hash
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestGetContentHash:
     def test_get_content_hash_should_not_change(self, tmp_path: Path):
         content1 = b"test\n"
@@ -54,4 +55,3 @@ class TestGetContentHash:
         actual_hash.update(b"#file1.txt#" + str(len(content1)).encode())
         actual_hash.update(content1)
         assert actual_hash.hexdigest() == hash == "f27673a89617f7808d3ed1bba0299a524bc23da2ba1aab4d508961f8b215ab84"
-    

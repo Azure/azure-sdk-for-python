@@ -23,7 +23,6 @@
             "inputs": {
                 "component_in_path": {
                     "name": "component_in_path",
-                    "optional": "False",
                     "description": "A path",
                     "type": "uri_folder"
                 },

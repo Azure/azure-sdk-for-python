@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -29,6 +28,7 @@ RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspace
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
+LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
 DATASTORE_RESOURCE_ID = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
 )
@@ -37,6 +37,8 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
+LABELLED_RESOURCE_NAME = "{}@{}"
+LABEL_SPLITTER = "@"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -65,7 +67,6 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
-REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
@@ -78,6 +79,7 @@ JOB_URI_FORMAT = "azureml://jobs/{}/outputs/{}/paths/{}"
 LONG_URI_FORMAT = "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
 SHORT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/paths/(.+)"
 MLFLOW_URI_REGEX_FORMAT = "runs:/([^/?]+)/(.+)"
+AZUREML_REGEX_FORMAT = "azureml:([^/]+):(.+)"
 JOB_URI_REGEX_FORMAT = "azureml://jobs/([^/]+)/outputs/([^/]+)/paths/(.+)"
 OUTPUT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/(ExperimentRun/.+)"
 LONG_URI_REGEX_FORMAT = (
@@ -102,7 +104,7 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "For a more detailed breakdown of the {} schema, please see: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "\nVisit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
@@ -132,23 +134,26 @@ STORAGE_ACCOUNT_URLS = {
     "AzureFile": "https://{}.file.{}",
 }
 
+DEFAULT_LABEL_NAME = "default"
+DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
-    "\n\nError: {description}\n{error_msg}\n\n"
+    "\n{text_color}{description}\n{error_msg}{reset}\n\n"
     "Details: {parsed_error_details}\n"
-    "Resolutions:\n{resolutions}"
+    "Resolutions: {resolutions}"
     "If using the CLI, you can also check the full log in debug mode for more details by adding --debug "
     "to the end of your command\n"
-    "Additional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
+    "\nAdditional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
     "auto-completion Azure ML VS code extension provides: "
-    "https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
-    "To set up VS Code, visit https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code\n"
+    "{link_color}https://code.visualstudio.com/docs/datascience/azure-machine-learning.{reset} "
+    "To set up VS Code, visit {link_color}https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-"
+    "code{reset}\n"
 )
 
 YAML_CREATION_ERROR_DESCRIPTION = (
     "The yaml file you provided does not match the prescribed schema "
-    "for {entity_type} yaml files and/or has the following issues:"
+    "for {entity_type} yaml files and/or has the following issues:\n"
 )
 DATASTORE_SCHEMA_TYPES = [
     "AzureFileSchema",
@@ -526,6 +531,13 @@ class AssetTypes:
     CUSTOM_MODEL = "custom_model"
 
 
+class InputTypes:
+    INTEGER = "integer"
+    NUMBER = "number"
+    STRING = "string"
+    BOOLEAN = "boolean"
+
+
 class WorkspaceResourceConstants(object):
     ENCRYPTION_STATUS_ENABLED = "Enabled"
 
@@ -562,3 +574,14 @@ class RollingRate:
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
+
+
+class Scope:
+    SUBSCRIPTION = "subscription"
+    RESOURCE_GROUP = "resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"

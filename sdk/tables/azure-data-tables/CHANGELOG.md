@@ -1,5 +1,19 @@
 # Release History
 
+## 12.4.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+* Added support for Python 3.11.
+* Dropped `msrest` requirement.
+* Added dependency `isodate` with version range `>=0.6.0`(`isodate` was required by `msrest`).
+* Added dependency `typing-extensions` with version range `>=4.3.0`.
+
 ## 12.4.1 (2022-10-11)
 
 ### Bugs Fixed

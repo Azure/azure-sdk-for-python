@@ -219,6 +219,7 @@ def mock_online_endpoint_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
     def test_online_list(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         mock_online_endpoint_operations.list()

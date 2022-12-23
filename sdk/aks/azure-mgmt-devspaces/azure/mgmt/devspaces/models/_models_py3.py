@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,46 +7,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._dev_spaces_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ContainerHostMapping(msrest.serialization.Model):
+class ContainerHostMapping(_serialization.Model):
     """Container host mapping object specifying the Container host resource ID and its associated Controller resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param container_host_resource_id: ARM ID of the Container Host resource.
-    :type container_host_resource_id: str
+    :ivar container_host_resource_id: ARM ID of the Container Host resource.
+    :vartype container_host_resource_id: str
     :ivar mapped_controller_resource_id: ARM ID of the mapped Controller resource.
     :vartype mapped_controller_resource_id: str
     """
 
     _validation = {
-        'mapped_controller_resource_id': {'readonly': True},
+        "mapped_controller_resource_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'container_host_resource_id': {'key': 'containerHostResourceId', 'type': 'str'},
-        'mapped_controller_resource_id': {'key': 'mappedControllerResourceId', 'type': 'str'},
+        "container_host_resource_id": {"key": "containerHostResourceId", "type": "str"},
+        "mapped_controller_resource_id": {"key": "mappedControllerResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        container_host_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ContainerHostMapping, self).__init__(**kwargs)
+    def __init__(self, *, container_host_resource_id: Optional[str] = None, **kwargs):
+        """
+        :keyword container_host_resource_id: ARM ID of the Container Host resource.
+        :paramtype container_host_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.container_host_resource_id = container_host_resource_id
         self.mapped_controller_resource_id = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -59,22 +60,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -91,39 +90,39 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Tags for the Azure resource.
-    :type tags: dict[str, str]
-    :param location: Region where the Azure resource is located.
-    :type location: str
+    :ivar tags: Tags for the Azure resource.
+    :vartype tags: dict[str, str]
+    :ivar location: Region where the Azure resource is located.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        location: Optional[str] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+        """
+        :keyword tags: Tags for the Azure resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: Region where the Azure resource is located.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Controller(TrackedResource):
+class Controller(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Controller.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -136,68 +135,83 @@ class Controller(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Tags for the Azure resource.
-    :type tags: dict[str, str]
-    :param location: Region where the Azure resource is located.
-    :type location: str
-    :param sku: Required. Model representing SKU for Azure Dev Spaces Controller.
-    :type sku: ~dev_spaces_management_client.models.Sku
-    :ivar provisioning_state: Provisioning state of the Azure Dev Spaces Controller. Possible
-     values include: "Succeeded", "Failed", "Canceled", "Updating", "Creating", "Deleting",
-     "Deleted".
-    :vartype provisioning_state: str or ~dev_spaces_management_client.models.ProvisioningState
+    :ivar tags: Tags for the Azure resource.
+    :vartype tags: dict[str, str]
+    :ivar location: Region where the Azure resource is located.
+    :vartype location: str
+    :ivar sku: Model representing SKU for Azure Dev Spaces Controller. Required.
+    :vartype sku: ~azure.mgmt.devspaces.models.Sku
+    :ivar provisioning_state: Provisioning state of the Azure Dev Spaces Controller. Known values
+     are: "Succeeded", "Failed", "Canceled", "Updating", "Creating", "Deleting", and "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.devspaces.models.ProvisioningState
     :ivar host_suffix: DNS suffix for public endpoints running in the Azure Dev Spaces Controller.
     :vartype host_suffix: str
     :ivar data_plane_fqdn: DNS name for accessing DataPlane services.
     :vartype data_plane_fqdn: str
     :ivar target_container_host_api_server_fqdn: DNS of the target container host's API server.
     :vartype target_container_host_api_server_fqdn: str
-    :param target_container_host_resource_id: Required. Resource ID of the target container host.
-    :type target_container_host_resource_id: str
-    :param target_container_host_credentials_base64: Required. Credentials of the target container
-     host (base64).
-    :type target_container_host_credentials_base64: str
+    :ivar target_container_host_resource_id: Resource ID of the target container host. Required.
+    :vartype target_container_host_resource_id: str
+    :ivar target_container_host_credentials_base64: Credentials of the target container host
+     (base64). Required.
+    :vartype target_container_host_credentials_base64: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sku': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'host_suffix': {'readonly': True},
-        'data_plane_fqdn': {'readonly': True},
-        'target_container_host_api_server_fqdn': {'readonly': True},
-        'target_container_host_resource_id': {'required': True},
-        'target_container_host_credentials_base64': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "sku": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "host_suffix": {"readonly": True},
+        "data_plane_fqdn": {"readonly": True},
+        "target_container_host_api_server_fqdn": {"readonly": True},
+        "target_container_host_resource_id": {"required": True},
+        "target_container_host_credentials_base64": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'host_suffix': {'key': 'properties.hostSuffix', 'type': 'str'},
-        'data_plane_fqdn': {'key': 'properties.dataPlaneFqdn', 'type': 'str'},
-        'target_container_host_api_server_fqdn': {'key': 'properties.targetContainerHostApiServerFqdn', 'type': 'str'},
-        'target_container_host_resource_id': {'key': 'properties.targetContainerHostResourceId', 'type': 'str'},
-        'target_container_host_credentials_base64': {'key': 'properties.targetContainerHostCredentialsBase64', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "host_suffix": {"key": "properties.hostSuffix", "type": "str"},
+        "data_plane_fqdn": {"key": "properties.dataPlaneFqdn", "type": "str"},
+        "target_container_host_api_server_fqdn": {"key": "properties.targetContainerHostApiServerFqdn", "type": "str"},
+        "target_container_host_resource_id": {"key": "properties.targetContainerHostResourceId", "type": "str"},
+        "target_container_host_credentials_base64": {
+            "key": "properties.targetContainerHostCredentialsBase64",
+            "type": "str",
+        },
     }
 
     def __init__(
         self,
         *,
-        sku: "Sku",
+        sku: "_models.Sku",
         target_container_host_resource_id: str,
         target_container_host_credentials_base64: str,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs
     ):
-        super(Controller, self).__init__(tags=tags, location=location, **kwargs)
+        """
+        :keyword tags: Tags for the Azure resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: Region where the Azure resource is located.
+        :paramtype location: str
+        :keyword sku: Model representing SKU for Azure Dev Spaces Controller. Required.
+        :paramtype sku: ~azure.mgmt.devspaces.models.Sku
+        :keyword target_container_host_resource_id: Resource ID of the target container host. Required.
+        :paramtype target_container_host_resource_id: str
+        :keyword target_container_host_credentials_base64: Credentials of the target container host
+         (base64). Required.
+        :paramtype target_container_host_credentials_base64: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.provisioning_state = None
         self.host_suffix = None
@@ -207,96 +221,109 @@ class Controller(TrackedResource):
         self.target_container_host_credentials_base64 = target_container_host_credentials_base64
 
 
-class ControllerConnectionDetails(msrest.serialization.Model):
+class ControllerConnectionDetails(_serialization.Model):
     """ControllerConnectionDetails.
 
-    :param orchestrator_specific_connection_details: Base class for types that supply values used
-     to connect to container orchestrators.
-    :type orchestrator_specific_connection_details:
-     ~dev_spaces_management_client.models.OrchestratorSpecificConnectionDetails
+    :ivar orchestrator_specific_connection_details: Base class for types that supply values used to
+     connect to container orchestrators.
+    :vartype orchestrator_specific_connection_details:
+     ~azure.mgmt.devspaces.models.OrchestratorSpecificConnectionDetails
     """
 
     _attribute_map = {
-        'orchestrator_specific_connection_details': {'key': 'orchestratorSpecificConnectionDetails', 'type': 'OrchestratorSpecificConnectionDetails'},
+        "orchestrator_specific_connection_details": {
+            "key": "orchestratorSpecificConnectionDetails",
+            "type": "OrchestratorSpecificConnectionDetails",
+        },
     }
 
     def __init__(
         self,
         *,
-        orchestrator_specific_connection_details: Optional["OrchestratorSpecificConnectionDetails"] = None,
+        orchestrator_specific_connection_details: Optional["_models.OrchestratorSpecificConnectionDetails"] = None,
         **kwargs
     ):
-        super(ControllerConnectionDetails, self).__init__(**kwargs)
+        """
+        :keyword orchestrator_specific_connection_details: Base class for types that supply values used
+         to connect to container orchestrators.
+        :paramtype orchestrator_specific_connection_details:
+         ~azure.mgmt.devspaces.models.OrchestratorSpecificConnectionDetails
+        """
+        super().__init__(**kwargs)
         self.orchestrator_specific_connection_details = orchestrator_specific_connection_details
 
 
-class ControllerConnectionDetailsList(msrest.serialization.Model):
+class ControllerConnectionDetailsList(_serialization.Model):
     """ControllerConnectionDetailsList.
 
-    :param connection_details_list: List of Azure Dev Spaces Controller connection details.
-    :type connection_details_list:
-     list[~dev_spaces_management_client.models.ControllerConnectionDetails]
+    :ivar connection_details_list: List of Azure Dev Spaces Controller connection details.
+    :vartype connection_details_list:
+     list[~azure.mgmt.devspaces.models.ControllerConnectionDetails]
     """
 
     _attribute_map = {
-        'connection_details_list': {'key': 'connectionDetailsList', 'type': '[ControllerConnectionDetails]'},
+        "connection_details_list": {"key": "connectionDetailsList", "type": "[ControllerConnectionDetails]"},
     }
 
     def __init__(
-        self,
-        *,
-        connection_details_list: Optional[List["ControllerConnectionDetails"]] = None,
-        **kwargs
+        self, *, connection_details_list: Optional[List["_models.ControllerConnectionDetails"]] = None, **kwargs
     ):
-        super(ControllerConnectionDetailsList, self).__init__(**kwargs)
+        """
+        :keyword connection_details_list: List of Azure Dev Spaces Controller connection details.
+        :paramtype connection_details_list:
+         list[~azure.mgmt.devspaces.models.ControllerConnectionDetails]
+        """
+        super().__init__(**kwargs)
         self.connection_details_list = connection_details_list
 
 
-class ControllerList(msrest.serialization.Model):
+class ControllerList(_serialization.Model):
     """ControllerList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of Azure Dev Spaces Controllers.
-    :type value: list[~dev_spaces_management_client.models.Controller]
+    :ivar value: List of Azure Dev Spaces Controllers.
+    :vartype value: list[~azure.mgmt.devspaces.models.Controller]
     :ivar next_link: The URI that can be used to request the next page for list of Azure Dev Spaces
      Controllers.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Controller]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Controller]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Controller"]] = None,
-        **kwargs
-    ):
-        super(ControllerList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Controller"]] = None, **kwargs):
+        """
+        :keyword value: List of Azure Dev Spaces Controllers.
+        :paramtype value: list[~azure.mgmt.devspaces.models.Controller]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ControllerUpdateParameters(msrest.serialization.Model):
+class ControllerUpdateParameters(_serialization.Model):
     """Parameters for updating an Azure Dev Spaces Controller.
 
-    :param tags: A set of tags. Tags for the Azure Dev Spaces Controller.
-    :type tags: dict[str, str]
-    :param target_container_host_credentials_base64: Credentials of the target container host
+    :ivar tags: Tags for the Azure Dev Spaces Controller.
+    :vartype tags: dict[str, str]
+    :ivar target_container_host_credentials_base64: Credentials of the target container host
      (base64).
-    :type target_container_host_credentials_base64: str
+    :vartype target_container_host_credentials_base64: str
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'target_container_host_credentials_base64': {'key': 'properties.targetContainerHostCredentialsBase64', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "target_container_host_credentials_base64": {
+            "key": "properties.targetContainerHostCredentialsBase64",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -306,33 +333,39 @@ class ControllerUpdateParameters(msrest.serialization.Model):
         target_container_host_credentials_base64: Optional[str] = None,
         **kwargs
     ):
-        super(ControllerUpdateParameters, self).__init__(**kwargs)
+        """
+        :keyword tags: Tags for the Azure Dev Spaces Controller.
+        :paramtype tags: dict[str, str]
+        :keyword target_container_host_credentials_base64: Credentials of the target container host
+         (base64).
+        :paramtype target_container_host_credentials_base64: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.target_container_host_credentials_base64 = target_container_host_credentials_base64
 
 
-class DevSpacesErrorResponse(msrest.serialization.Model):
+class DevSpacesErrorResponse(_serialization.Model):
     """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
-    :param error: The details of the error.
-    :type error: ~dev_spaces_management_client.models.ErrorDetails
+    :ivar error: The details of the error.
+    :vartype error: ~azure.mgmt.devspaces.models.ErrorDetails
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetails"] = None,
-        **kwargs
-    ):
-        super(DevSpacesErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+        """
+        :keyword error: The details of the error.
+        :paramtype error: ~azure.mgmt.devspaces.models.ErrorDetails
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorDetails(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
     """ErrorDetails.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -346,58 +379,52 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
 
 
-class OrchestratorSpecificConnectionDetails(msrest.serialization.Model):
+class OrchestratorSpecificConnectionDetails(_serialization.Model):
     """Base class for types that supply values used to connect to container orchestrators.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: KubernetesConnectionDetails.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KubernetesConnectionDetails
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar instance_type: Required. Gets the Instance type.Constant filled by server.
+    :ivar instance_type: Gets the Instance type. Required.
     :vartype instance_type: str
     """
 
     _validation = {
-        'instance_type': {'required': True, 'readonly': True},
+        "instance_type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
+        "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    _subtype_map = {
-        'instance_type': {'Kubernetes': 'KubernetesConnectionDetails'}
-    }
+    _subtype_map = {"instance_type": {"Kubernetes": "KubernetesConnectionDetails"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OrchestratorSpecificConnectionDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.instance_type = None  # type: Optional[str]
 
 
@@ -408,104 +435,109 @@ class KubernetesConnectionDetails(OrchestratorSpecificConnectionDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar instance_type: Required. Gets the Instance type.Constant filled by server.
+    :ivar instance_type: Gets the Instance type. Required.
     :vartype instance_type: str
-    :param kube_config: Gets the kubeconfig for the cluster.
-    :type kube_config: str
+    :ivar kube_config: Gets the kubeconfig for the cluster.
+    :vartype kube_config: str
     """
 
     _validation = {
-        'instance_type': {'required': True, 'readonly': True},
+        "instance_type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'kube_config': {'key': 'kubeConfig', 'type': 'str'},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "kube_config": {"key": "kubeConfig", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kube_config: Optional[str] = None,
-        **kwargs
-    ):
-        super(KubernetesConnectionDetails, self).__init__(**kwargs)
-        self.instance_type = 'Kubernetes'  # type: str
+    def __init__(self, *, kube_config: Optional[str] = None, **kwargs):
+        """
+        :keyword kube_config: Gets the kubeconfig for the cluster.
+        :paramtype kube_config: str
+        """
+        super().__init__(**kwargs)
+        self.instance_type = "Kubernetes"  # type: str
         self.kube_config = kube_config
 
 
-class ListConnectionDetailsParameters(msrest.serialization.Model):
+class ListConnectionDetailsParameters(_serialization.Model):
     """Parameters for listing connection details of an Azure Dev Spaces Controller.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_container_host_resource_id: Required. Resource ID of the target container host
-     mapped to the Azure Dev Spaces Controller.
-    :type target_container_host_resource_id: str
+    :ivar target_container_host_resource_id: Resource ID of the target container host mapped to the
+     Azure Dev Spaces Controller. Required.
+    :vartype target_container_host_resource_id: str
     """
 
     _validation = {
-        'target_container_host_resource_id': {'required': True},
+        "target_container_host_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'target_container_host_resource_id': {'key': 'targetContainerHostResourceId', 'type': 'str'},
+        "target_container_host_resource_id": {"key": "targetContainerHostResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_container_host_resource_id: str,
-        **kwargs
-    ):
-        super(ListConnectionDetailsParameters, self).__init__(**kwargs)
+    def __init__(self, *, target_container_host_resource_id: str, **kwargs):
+        """
+        :keyword target_container_host_resource_id: Resource ID of the target container host mapped to
+         the Azure Dev Spaces Controller. Required.
+        :paramtype target_container_host_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.target_container_host_resource_id = target_container_host_resource_id
 
 
-class ResourceProviderOperationDefinition(msrest.serialization.Model):
+class ResourceProviderOperationDefinition(_serialization.Model):
     """ResourceProviderOperationDefinition.
 
-    :param name: Resource provider operation name.
-    :type name: str
-    :param display:
-    :type display: ~dev_spaces_management_client.models.ResourceProviderOperationDisplay
+    :ivar name: Resource provider operation name.
+    :vartype name: str
+    :ivar display:
+    :vartype display: ~azure.mgmt.devspaces.models.ResourceProviderOperationDisplay
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
         **kwargs
     ):
-        super(ResourceProviderOperationDefinition, self).__init__(**kwargs)
+        """
+        :keyword name: Resource provider operation name.
+        :paramtype name: str
+        :keyword display:
+        :paramtype display: ~azure.mgmt.devspaces.models.ResourceProviderOperationDisplay
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class ResourceProviderOperationDisplay(msrest.serialization.Model):
+class ResourceProviderOperationDisplay(_serialization.Model):
     """ResourceProviderOperationDisplay.
 
-    :param provider: Name of the resource provider.
-    :type provider: str
-    :param resource: Name of the resource type.
-    :type resource: str
-    :param operation: Name of the resource provider operation.
-    :type operation: str
-    :param description: Description of the resource provider operation.
-    :type description: str
+    :ivar provider: Name of the resource provider.
+    :vartype provider: str
+    :ivar resource: Name of the resource type.
+    :vartype resource: str
+    :ivar operation: Name of the resource provider operation.
+    :vartype operation: str
+    :ivar description: Description of the resource provider operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -517,74 +549,83 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Name of the resource provider.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type.
+        :paramtype resource: str
+        :keyword operation: Name of the resource provider operation.
+        :paramtype operation: str
+        :keyword description: Description of the resource provider operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ResourceProviderOperationList(msrest.serialization.Model):
+class ResourceProviderOperationList(_serialization.Model):
     """ResourceProviderOperationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: Resource provider operations list.
-    :type value: list[~dev_spaces_management_client.models.ResourceProviderOperationDefinition]
+    :ivar value: Resource provider operations list.
+    :vartype value: list[~azure.mgmt.devspaces.models.ResourceProviderOperationDefinition]
     :ivar next_link: The URI that can be used to request the next page for list of Azure
      operations.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceProviderOperationDefinition"]] = None,
-        **kwargs
-    ):
-        super(ResourceProviderOperationList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperationDefinition"]] = None, **kwargs):
+        """
+        :keyword value: Resource provider operations list.
+        :paramtype value: list[~azure.mgmt.devspaces.models.ResourceProviderOperationDefinition]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Model representing SKU for Azure Dev Spaces Controller.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU for Azure Dev Spaces Controller. Possible values
-     include: "S1".
-    :type name: str or ~dev_spaces_management_client.models.SkuName
-    :param tier: The tier of the SKU for Azure Dev Spaces Controller. Possible values include:
-     "Standard".
-    :type tier: str or ~dev_spaces_management_client.models.SkuTier
+    :ivar name: The name of the SKU for Azure Dev Spaces Controller. Required. "S1"
+    :vartype name: str or ~azure.mgmt.devspaces.models.SkuName
+    :ivar tier: The tier of the SKU for Azure Dev Spaces Controller. "Standard"
+    :vartype tier: str or ~azure.mgmt.devspaces.models.SkuTier
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Union[str, "SkuName"],
-        tier: Optional[Union[str, "SkuTier"]] = None,
-        **kwargs
+        self, *, name: Union[str, "_models.SkuName"], tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs
     ):
-        super(Sku, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the SKU for Azure Dev Spaces Controller. Required. "S1"
+        :paramtype name: str or ~azure.mgmt.devspaces.models.SkuName
+        :keyword tier: The tier of the SKU for Azure Dev Spaces Controller. "Standard"
+        :paramtype tier: str or ~azure.mgmt.devspaces.models.SkuTier
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier

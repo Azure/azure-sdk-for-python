@@ -26,8 +26,8 @@
 
 import logging
 from typing import Generic, TypeVar, List, Union, Any, Dict
+from contextlib import AbstractContextManager
 from azure.core.pipeline import (
-    AbstractContextManager,
     PipelineRequest,
     PipelineResponse,
     PipelineContext,

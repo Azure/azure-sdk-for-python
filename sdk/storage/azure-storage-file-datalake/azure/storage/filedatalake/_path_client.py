@@ -6,13 +6,9 @@
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
-    TYPE_CHECKING)
-
-try:
-    from urllib.parse import urlparse, quote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote
 
 import six
 
@@ -30,6 +26,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ContentSettings, FileProperties
 
 
@@ -58,14 +55,12 @@ class PathClient(StorageAccountHostsMixin):
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     """
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            path_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-
+            self, account_url: str,
+            file_system_name: str,
+            path_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url

@@ -17,13 +17,10 @@ DEPENDENCIES = [
     "pytest-cov",
     "pytest>=3.5.1",
     "readme_renderer",
-    "azure-storage-common<1.4.1",
     "pyopenssl",
-    "azure-mgmt-resource",
-    "azure-mgmt-storage",
-    "azure-mgmt-keyvault",
     "python-dotenv",
     "PyYAML",
+    "urllib3"
 ]
 
 setup(
@@ -39,8 +36,6 @@ setup(
         "console_scripts": [
             "generate_package=packaging_tools.generate_package:generate_main",
             "generate_sdk=packaging_tools.generate_sdk:generate_main",
-            "auto_codegen=packaging_tools.auto_codegen:generate_main",
-            "auto_package=packaging_tools.auto_package:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
@@ -48,6 +43,7 @@ setup(
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
+            "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
         ],
     },
     extras_require={

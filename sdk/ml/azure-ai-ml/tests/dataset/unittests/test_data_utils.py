@@ -28,6 +28,7 @@ def mock_requests_pipeline(mock_machinelearning_client) -> HttpPipeline:
 
 
 @pytest.mark.unittest
+@pytest.mark.data_experiences_test
 class TestDataUtils:
     @patch("azure.ai.ml._utils._data_utils.get_datastore_info")
     @patch("azure.ai.ml._utils._data_utils.get_storage_client")
@@ -59,7 +60,7 @@ class TestDataUtils:
         ):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
@@ -68,16 +69,16 @@ class TestDataUtils:
         with pytest.raises(Exception) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
-        assert "Invalid URL" in str(ex)
+        assert "Failed to establish a new connection" in str(ex)
 
         # remote azureml accessible
         with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
@@ -86,7 +87,7 @@ class TestDataUtils:
         with pytest.raises(Exception) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
         assert "No such file or directory" in str(ex)

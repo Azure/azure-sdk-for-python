@@ -52,7 +52,7 @@ class RegistryCodeVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         order_by: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[str] = None,
@@ -66,8 +66,8 @@ class RegistryCodeVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param code_name: Container name.
+        :type code_name: str
         :param order_by: Ordering of list.
         :type order_by: str
         :param top: Maximum number of records to return.
@@ -95,7 +95,7 @@ class RegistryCodeVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    name=name,
+                    code_name=code_name,
                     api_version=api_version,
                     order_by=order_by,
                     top=top,
@@ -111,7 +111,7 @@ class RegistryCodeVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    name=name,
+                    code_name=code_name,
                     api_version=api_version,
                     order_by=order_by,
                     top=top,
@@ -151,13 +151,13 @@ class RegistryCodeVersionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions"}  # type: ignore
+    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         version: str,
         **kwargs: Any
     ) -> None:
@@ -174,7 +174,7 @@ class RegistryCodeVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            code_name=code_name,
             version=version,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
@@ -203,7 +203,7 @@ class RegistryCodeVersionsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions/{version}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -211,7 +211,7 @@ class RegistryCodeVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -223,8 +223,8 @@ class RegistryCodeVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param code_name: Container name.
+        :type code_name: str
         :param version: Version identifier.
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -251,7 +251,7 @@ class RegistryCodeVersionsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                code_name=code_name,
                 version=version,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
@@ -264,7 +264,7 @@ class RegistryCodeVersionsOperations:
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -276,14 +276,14 @@ class RegistryCodeVersionsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions/{version}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         version: str,
         **kwargs: Any
     ) -> "_models.CodeVersion":
@@ -295,8 +295,8 @@ class RegistryCodeVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param code_name: Container name.
+        :type code_name: str
         :param version: Version identifier.
         :type version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -317,7 +317,7 @@ class RegistryCodeVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            code_name=code_name,
             version=version,
             api_version=api_version,
             template_url=self.get.metadata['url'],
@@ -344,14 +344,14 @@ class RegistryCodeVersionsOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions/{version}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         version: str,
         body: "_models.CodeVersion",
         **kwargs: Any
@@ -371,7 +371,7 @@ class RegistryCodeVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            code_name=code_name,
             version=version,
             api_version=api_version,
             content_type=content_type,
@@ -407,7 +407,7 @@ class RegistryCodeVersionsOperations:
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions/{version}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -415,7 +415,7 @@ class RegistryCodeVersionsOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        name: str,
+        code_name: str,
         version: str,
         body: "_models.CodeVersion",
         **kwargs: Any
@@ -428,8 +428,8 @@ class RegistryCodeVersionsOperations:
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param code_name: Container name.
+        :type code_name: str
         :param version: Version identifier.
         :type version: str
         :param body: Version entity to create or update.
@@ -461,7 +461,7 @@ class RegistryCodeVersionsOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                code_name=code_name,
                 version=version,
                 body=body,
                 api_version=api_version,
@@ -479,7 +479,7 @@ class RegistryCodeVersionsOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -491,4 +491,4 @@ class RegistryCodeVersionsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}/versions/{version}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore

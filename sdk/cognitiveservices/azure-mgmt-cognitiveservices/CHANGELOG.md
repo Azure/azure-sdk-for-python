@@ -1,5 +1,15 @@
 # Release History
 
+## 13.3.0 (2022-10-24)
+
+### Features Added
+
+  - Model AccountModel has a new parameter call_rate_limit
+  - Model DeploymentModel has a new parameter call_rate_limit
+  - Model DeploymentProperties has a new parameter call_rate_limit
+  - Model DeploymentProperties has a new parameter capabilities
+  - Model DeploymentProperties has a new parameter rai_policy_name
+
 ## 13.2.0 (2022-06-08)
 
 **Features**

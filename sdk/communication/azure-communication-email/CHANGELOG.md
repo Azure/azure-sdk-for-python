@@ -3,8 +3,10 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+- Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Breaking Changes
+- Made the SDK Model-less. Objects are now constructed using a dictionary instead of a model.
 
 ### Bugs Fixed
 

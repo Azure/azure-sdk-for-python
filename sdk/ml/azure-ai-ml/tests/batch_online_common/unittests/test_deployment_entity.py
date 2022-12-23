@@ -25,6 +25,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestDeploymentSanity:
     def test_instantiate_OnlineEndpoint_fail(self) -> None:

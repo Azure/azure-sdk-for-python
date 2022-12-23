@@ -2,8 +2,8 @@ import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    BanditPolicy as RestBanditPolicy,
     JobBase,
     LogVerbosity,
     MLTableJobInput,
@@ -29,6 +29,7 @@ from azure.ai.ml.entities._job.automl.nlp.text_ner_job import TextNerJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLTextNerJob:
     """Tests for AutoML NLP Text NER Job."""

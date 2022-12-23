@@ -10,12 +10,22 @@ from ._workspaces_operations import WorkspacesOperations
 from ._operations import Operations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._outbound_network_dependencies_endpoints_operations import OutboundNetworkDependenciesEndpointsOperations
 from ._vnet_peering_operations import VNetPeeringOperations
+from ._access_connectors_operations import AccessConnectorsOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'WorkspacesOperations',
-    'Operations',
-    'PrivateLinkResourcesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'VNetPeeringOperations',
+    "WorkspacesOperations",
+    "Operations",
+    "PrivateLinkResourcesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "OutboundNetworkDependenciesEndpointsOperations",
+    "VNetPeeringOperations",
+    "AccessConnectorsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -65,6 +65,7 @@ def operation_orchestrator(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestExceptions:
     def test_error_preprocess(self, mock_component_operation: ComponentOperations):
         with patch.object(mock_component_operation._version_operation, "get") as mock_client:

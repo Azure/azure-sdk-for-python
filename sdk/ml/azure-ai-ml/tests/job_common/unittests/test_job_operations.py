@@ -11,7 +11,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2021_10_01 import models
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -124,6 +124,7 @@ def mock_job_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()

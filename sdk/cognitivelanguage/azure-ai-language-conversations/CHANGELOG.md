@@ -1,12 +1,32 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b3 (2022-11-10)
+
+### Features Added
+- Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
+- Added support for "chapterTitle" and "narrative" `summaryAspects` options for ConversationalSummarizationTasks.
+- Added methods to the `ConversationAuthoringClient` to manage deployment resources:
+  - `begin_assign_deployment_resources`
+  - `get_assign_deployment_resources_status`
+  - `begin_unassign_deployment_resources`
+  - `get_unassign_deployment_resources_status`
+  - `begin_delete_deployment_from_resources`
+  - `get_deployment_delete_from_resources_status`
+  - `begin_load_snapshot`
+  - `get_load_snapshot_status`
+  - `list_assigned_resource_deployments`
+  - `list_deployment_resources`
+- Added optional `trained_model_label` keyword argument to `begin_export_project`.
 
 ### Other Changes
 * This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.

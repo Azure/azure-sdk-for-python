@@ -39,6 +39,10 @@ from ._universal import (
     HttpLoggingPolicy,
     RequestIdPolicy,
 )
+from ._base_async import AsyncHTTPPolicy
+from ._authentication_async import AsyncBearerTokenCredentialPolicy
+from ._redirect_async import AsyncRedirectPolicy
+from ._retry_async import AsyncRetryPolicy
 
 __all__ = [
     'HTTPPolicy',
@@ -59,20 +63,8 @@ __all__ = [
     'RequestHistory',
     'HttpLoggingPolicy',
     'RequestIdPolicy',
+    'AsyncHTTPPolicy',
+    'AsyncBearerTokenCredentialPolicy',
+    'AsyncRedirectPolicy',
+    'AsyncRetryPolicy'
 ]
-
-#pylint: disable=unused-import
-
-try:
-    from ._base_async import AsyncHTTPPolicy
-    from ._authentication_async import AsyncBearerTokenCredentialPolicy
-    from ._redirect_async import AsyncRedirectPolicy
-    from ._retry_async import AsyncRetryPolicy
-    __all__.extend([
-        'AsyncHTTPPolicy',
-        'AsyncBearerTokenCredentialPolicy',
-        'AsyncRedirectPolicy',
-        'AsyncRetryPolicy'
-    ])
-except (ImportError, SyntaxError):
-    pass  # Async not supported

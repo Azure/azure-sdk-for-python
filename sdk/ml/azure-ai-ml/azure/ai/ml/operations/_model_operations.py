@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from os import PathLike, path
-from typing import Dict, Iterable, Union
+from typing import Dict, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -26,6 +26,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -224,7 +226,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(self, name: str, version: str = None) -> ModelVersionData:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -251,7 +253,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Model:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -304,6 +306,7 @@ class ModelOperations(_ScopeDependentOperations):
         """
 
         model_uri = self.get(name=name, version=version).path
+        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
@@ -315,10 +318,8 @@ class ModelOperations(_ScopeDependentOperations):
                 uri=model_uri,
             )
             storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
-            path_prefix = model_uri.split("/")[-1]
 
         else:
-            ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
             acc_name = ds.account_name
 
@@ -351,7 +352,9 @@ class ModelOperations(_ScopeDependentOperations):
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
     # @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -372,7 +375,9 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Restore an archived model asset.
 
         :param name: Name of model asset.
@@ -395,7 +400,7 @@ class ModelOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        name: str = None,
+        name: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Model]:
@@ -457,7 +462,9 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     # pylint: disable=no-self-use
-    def _prepare_to_copy(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
+    def _prepare_to_copy(
+        self, model: Model, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceModelReference:
 
         """Returns WorkspaceModelReference
         to copy a registered model to registry given the asset id

@@ -41,12 +41,7 @@ from typing import (
     AsyncIterable
 )
 import xml.etree.ElementTree as ET
-try:
-    binary_type = str
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    binary_type = bytes  # type: ignore
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 from azure.core.serialization import AzureJSONEncoder
 from ..utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -58,8 +53,8 @@ from ..utils._pipeline_transport_rest_shared import (
 
 ################################### TYPES SECTION #########################
 
+binary_type = str
 PrimitiveData = Optional[Union[str, int, float, bool]]
-
 
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 

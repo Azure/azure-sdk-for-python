@@ -10,6 +10,12 @@ from dateutil.parser import parse
 from collections import Counter
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
+from router_test_constants import (
+    SANITIZED,
+    FAKE_FUNCTION_URI,
+    FAKE_ENDPOINT,
+    FAKE_CONNECTION_STRING
+)
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from azure.communication.jobrouter import (
     BestWorkerMode,
@@ -206,20 +212,20 @@ class RouterRuleValidator(object):
             **kwargs: Any
     ):
         assert actual.kind == expected.kind
-        assert actual.function_uri == expected.function_uri or actual.function_uri == 'sanitized'
+        assert actual.function_uri == expected.function_uri or actual.function_uri == FAKE_FUNCTION_URI
         if actual.credential:
             assert expected.credential is not None
 
             actual_credential: FunctionRuleCredential = actual.credential
             if actual_credential.function_key:
                 assert actual_credential.function_key == actual.credential.function_key \
-                       or actual_credential.function_key == 'sanitized'
+                       or actual_credential.function_key == SANITIZED
             if actual_credential.app_key:
                 assert actual_credential.app_key == actual.credential.app_key \
-                       or actual_credential.app_key == 'sanitized'
+                       or actual_credential.app_key == SANITIZED
             if actual_credential.client_id:
                 assert actual_credential.client_id == actual.credential.client_id \
-                       or actual_credential.client_id == 'sanitized'
+                       or actual_credential.client_id == SANITIZED
 
     @staticmethod
     def validate_router_rule(

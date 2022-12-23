@@ -22,31 +22,30 @@ USAGE:
 """
 
 import os
-from azure.ai.anomalydetector import AnomalyDetectorClient
-from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
-    AnomalyDetectorError
-from azure.core.credentials import AzureKeyCredential
 import pandas as pd
+
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.anomalydetector.models import *
 
 
 class DetectLastAnomalySample(object):
-
     def detect_last_point(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("./sample_data", "request-data.csv")
+        TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
 
         # Create an Anomaly Detector client
 
         # <client>
-        client = AnomalyDetectorClient(AzureKeyCredential(SUBSCRIPTION_KEY), ANOMALY_DETECTOR_ENDPOINT)
+        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
         # </client>
 
         # Load in the time series data file
 
         # <loadDataFile>
         series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
+        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
         for index, row in data_file.iterrows():
             series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
         # </loadDataFile>
@@ -54,26 +53,32 @@ class DetectLastAnomalySample(object):
         # Create a request from the data file
 
         # <request>
-        request = DetectRequest(series=series, granularity=TimeGranularity.daily)
+        request = UnivariateDetectionOptions(
+            series=series,
+            granularity=TimeGranularity.DAILY,
+        )
         # </request>
 
         # Detect the anomaly status of the latest data point
 
         # <latestPointDetection>
-        print('Detecting the anomaly status of the latest data point.')
+        print("Detecting the anomaly status of the latest data point.")
 
         try:
-            response = client.detect_last_point(request)
+            response = client.detect_univariate_last_point(request)
         except Exception as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
 
         if response.is_anomaly:
-            print('The latest point is detected as anomaly.')
+            print("The latest point is detected as anomaly.")
         else:
-            print('The latest point is not detected as anomaly.')
+            print("The latest point is not detected as anomaly.")
         # </latestPointDetection>
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DetectLastAnomalySample()
     sample.detect_last_point()

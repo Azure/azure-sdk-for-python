@@ -5,14 +5,14 @@
 import logging
 from abc import ABC
 from datetime import datetime
-from typing import List, Union
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
 from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -39,8 +39,8 @@ class TriggerBase(RestTranslatableMixin, ABC):
         self,
         *,
         type: str,  # pylint: disable=redefined-builtin
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: TimeZone = TimeZone.UTC,
     ):
         super().__init__()
@@ -76,8 +76,8 @@ class RecurrencePattern(RestTranslatableMixin):
         *,
         hours: Union[int, List[int]],
         minutes: Union[int, List[int]],
-        week_days: Union[str, List[str]] = None,
-        month_days: Union[int, List[int]] = None,
+        week_days: Optional[Union[str, List[str]]] = None,
+        month_days: Optional[Union[int, List[int]]] = None,
     ):
         self.hours = hours
         self.minutes = minutes
@@ -121,10 +121,17 @@ class CronTrigger(TriggerBase):
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
     :type expression: str
-    :param start_time: Specifies start time of schedule in ISO 8601 format.
+    :param start_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                       ``time_zone`` property to specify a time zone if needed. You can also specify this
+                       parameter as a string in this format: YYYY-MM-DDThh:mm:ss. If None is provided, the
+                       first workload is run instantly and the future workloads are run based on the schedule.
+                       If the start time is in the past, the first workload is run at the next calculated run time.
     :type start_time: Union[str, datetime]
-    :param end_time: Specifies end time of schedule in ISO 8601 format.
-        Note that end_time is not supported for compute schedules.
+    :param end_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                     ``time_zone`` property to specify a time zone if needed. You can also specify this
+                     parameter as a string in this format: YYYY-MM-DDThh:mm:ss. End time in the past is invalid
+                     and will raise exception when creating schedule.
+                     Note that end_time is not supported for compute schedules.
     :type end_time: Union[str, datetime]
     :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
         This does apply to the start_time and end_time.
@@ -135,8 +142,8 @@ class CronTrigger(TriggerBase):
         self,
         *,
         expression: str,
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ):
         super().__init__(
@@ -156,7 +163,7 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_01_01_preview.models.Cron
+    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_10_01_preview.models.Cron
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
@@ -201,9 +208,9 @@ class RecurrenceTrigger(TriggerBase):
         *,
         frequency: str,
         interval: int,
-        schedule: RecurrencePattern = None,
-        start_time: Union[str, datetime] = None,
-        end_time: Union[str, datetime] = None,
+        schedule: Optional[RecurrencePattern] = None,
+        start_time: Optional[Union[str, datetime]] = None,
+        end_time: Optional[Union[str, datetime]] = None,
         time_zone: Union[str, TimeZone] = TimeZone.UTC,
     ):
         super().__init__(
@@ -227,7 +234,7 @@ class RecurrenceTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_recurrence_object(self) -> Recurrence:  # v2022_01_01_preview.models.Recurrence
+    def _to_rest_compute_recurrence_object(self) -> Recurrence:  # v2022_10_01_preview.models.Recurrence
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:

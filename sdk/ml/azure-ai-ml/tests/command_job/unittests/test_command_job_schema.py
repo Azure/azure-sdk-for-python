@@ -21,6 +21,7 @@ from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestCommandJob:
     def test_deserialize(self):
         test_path = "./tests/test_configs/command_job/command_job_test.yml"

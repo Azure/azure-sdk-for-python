@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._private_endpoint_operations import build_get_operation_status_request
 from .._vendor import MixinABC
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class PrivateEndpointOperations:
     """
@@ -42,7 +51,6 @@ class PrivateEndpointOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def get_operation_status(
         self,
@@ -56,40 +64,42 @@ class PrivateEndpointOperations:
 
         Gets the operation status for a private endpoint connection.
 
-        :param vault_name: The name of the recovery services vault.
+        :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
-         present.
+         present. Required.
         :type resource_group_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection.
+        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param operation_id: Operation id.
+        :param operation_id: Operation id. Required.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: OperationStatus, or the result of cls(response)
+        :return: OperationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.OperationStatus
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.OperationStatus]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationStatus]
 
-        
         request = build_get_operation_status_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
-            subscription_id=self._config.subscription_id,
             private_endpoint_connection_name=private_endpoint_connection_name,
             operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_operation_status.metadata['url'],
+            template_url=self.get_operation_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -97,10 +107,9 @@ class PrivateEndpointOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -108,12 +117,11 @@ class PrivateEndpointOperations:
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('OperationStatus', pipeline_response)
+        deserialized = self._deserialize("OperationStatus", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_operation_status.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}/operationsStatus/{operationId}"}  # type: ignore
-
+    get_operation_status.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}/operationsStatus/{operationId}"}  # type: ignore

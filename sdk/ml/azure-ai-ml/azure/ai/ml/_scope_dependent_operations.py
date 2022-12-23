@@ -4,9 +4,8 @@
 
 # pylint: disable=protected-access
 
-import functools
 import logging
-from typing import Any, Callable, Dict, Optional, TypeVar, cast
+from typing import Callable, Dict, Optional, TypeVar, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -73,22 +72,6 @@ class OperationScope(object):
         self._registry_name = value
 
 
-def workspace_none_check(func: Callable[..., Any]) -> Callable[..., Any]:
-    @functools.wraps(func)  # This is to preserve metadata of func
-    def new_function(self: Any, *args: Any, **kwargs: Any) -> Any:
-        if not self._operation_scope.workspace_name:
-            msg = "Please set the default workspace with MLClient."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.GENERAL,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        return func(self, *args, **kwargs)
-
-    return new_function
-
-
 class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
@@ -98,7 +81,6 @@ class _ScopeDependentOperations(object):
         }
 
     @property  # type: ignore
-    @workspace_none_check
     def _workspace_name(self) -> str:
         return cast(str, self._operation_scope.workspace_name)
 

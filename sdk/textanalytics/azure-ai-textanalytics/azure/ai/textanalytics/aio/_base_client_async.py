@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union
+from typing import Any, Union, Optional
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
+from .._base_client import TextAnalyticsApiVersion
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
 from .._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from .._user_agent import USER_AGENT
@@ -33,6 +34,8 @@ class AsyncTextAnalyticsClientBase:
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        *,
+        api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -43,6 +46,9 @@ class AsyncTextAnalyticsClientBase:
                 "x-envoy-upstream-service-time",
                 "Strict-Transport-Security",
                 "x-content-type-options",
+                "warn-code",
+                "warn-agent",
+                "warn-text",
             }
         )
         http_logging_policy.allowed_query_params.update(
@@ -63,10 +69,13 @@ class AsyncTextAnalyticsClientBase:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
+        if hasattr(self._api_version, "value"):
+            self._api_version = self._api_version.value  # type: ignore
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
+            api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),

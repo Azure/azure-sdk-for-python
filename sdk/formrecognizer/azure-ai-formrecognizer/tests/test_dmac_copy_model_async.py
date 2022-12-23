@@ -97,6 +97,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
                     assert field["type"]
                     assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async

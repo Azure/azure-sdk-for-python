@@ -6,74 +6,58 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ConnectedCluster
-    from ._models_py3 import ConnectedClusterIdentity
-    from ._models_py3 import ConnectedClusterList
-    from ._models_py3 import ConnectedClusterPatch
-    from ._models_py3 import CredentialResult
-    from ._models_py3 import CredentialResults
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import HybridConnectionConfig
-    from ._models_py3 import ListClusterUserCredentialProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import ConnectedCluster  # type: ignore
-    from ._models import ConnectedClusterIdentity  # type: ignore
-    from ._models import ConnectedClusterList  # type: ignore
-    from ._models import ConnectedClusterPatch  # type: ignore
-    from ._models import CredentialResult  # type: ignore
-    from ._models import CredentialResults  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import HybridConnectionConfig  # type: ignore
-    from ._models import ListClusterUserCredentialProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import ConnectedCluster
+from ._models_py3 import ConnectedClusterIdentity
+from ._models_py3 import ConnectedClusterList
+from ._models_py3 import ConnectedClusterPatch
+from ._models_py3 import CredentialResult
+from ._models_py3 import CredentialResults
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import HybridConnectionConfig
+from ._models_py3 import ListClusterUserCredentialProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationList
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
 
-from ._connected_kubernetes_client_enums import (
-    AuthenticationMethod,
-    ConnectivityStatus,
-    CreatedByType,
-    LastModifiedByType,
-    ProvisioningState,
-    ResourceIdentityType,
-)
+from ._connected_kubernetes_client_enums import AuthenticationMethod
+from ._connected_kubernetes_client_enums import ConnectivityStatus
+from ._connected_kubernetes_client_enums import CreatedByType
+from ._connected_kubernetes_client_enums import LastModifiedByType
+from ._connected_kubernetes_client_enums import ProvisioningState
+from ._connected_kubernetes_client_enums import ResourceIdentityType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ConnectedCluster',
-    'ConnectedClusterIdentity',
-    'ConnectedClusterList',
-    'ConnectedClusterPatch',
-    'CredentialResult',
-    'CredentialResults',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'HybridConnectionConfig',
-    'ListClusterUserCredentialProperties',
-    'Operation',
-    'OperationDisplay',
-    'OperationList',
-    'Resource',
-    'SystemData',
-    'TrackedResource',
-    'AuthenticationMethod',
-    'ConnectivityStatus',
-    'CreatedByType',
-    'LastModifiedByType',
-    'ProvisioningState',
-    'ResourceIdentityType',
+    "ConnectedCluster",
+    "ConnectedClusterIdentity",
+    "ConnectedClusterList",
+    "ConnectedClusterPatch",
+    "CredentialResult",
+    "CredentialResults",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "HybridConnectionConfig",
+    "ListClusterUserCredentialProperties",
+    "Operation",
+    "OperationDisplay",
+    "OperationList",
+    "Resource",
+    "SystemData",
+    "TrackedResource",
+    "AuthenticationMethod",
+    "ConnectivityStatus",
+    "CreatedByType",
+    "LastModifiedByType",
+    "ProvisioningState",
+    "ResourceIdentityType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -15,12 +15,14 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersi
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestInvoiceFromUrl(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -41,6 +43,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError):
             poller = client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -83,6 +86,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_invoice_continuation_token(self, **kwargs):
@@ -103,6 +107,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
         assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -120,6 +125,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
             client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
         assert "locale" in e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -129,6 +135,7 @@ class TestInvoiceFromUrl(FormRecognizerTest):
         result = poller.result()
         assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
