@@ -485,9 +485,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
-    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
-    # used, non-async calls are not recorded.
     async def test_tls_cert_convenience_aad_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
@@ -502,9 +499,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
-    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
-    # used, non-async calls are not recorded.
     async def test_tls_cert_convenience_cert_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
