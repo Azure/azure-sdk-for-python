@@ -385,8 +385,9 @@ to the process of updating recordings.
 - [Docker][docker_install] or [Podman][podman] is installed.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
   - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
-- The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user (in your environment or your local `.env` file).
+- The environment variable `GIT_TOKEN` is set to a valid [personal access token (classic)][git_token] for your user (in your environment or your local `.env` file).
   - This token is necessary for authenticating git requests made in a Docker/Podman container.
+  - Fine-grained tokens are known to be problematic for this script; create a classic token instead.
 - Membership in the `azure-sdk-write` GitHub group.
 
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
