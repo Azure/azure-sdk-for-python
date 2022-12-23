@@ -44,24 +44,24 @@ class OnlineEndpoint(Endpoint):
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :type properties: dict[str, typing.Any]
     :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
+    :type description: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
+    :type traffic: typing.Dict[str, int]
     :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
-    :type mirror_traffic: Dict[str, int], optional
+    :type mirror_traffic: typing.Dict[str, int]
     :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str, optional
+    :type provisioning_state: str
     :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints,
         defaults to None.
-    :type kind: str, optional
+    :type kind: str
     """
 
     def __init__(
@@ -107,7 +107,7 @@ class OnlineEndpoint(Endpoint):
         """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 
@@ -271,19 +271,19 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
+    :type description: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
+    :type traffic: typing.Dict[str, int]
     :param compute: Compute cluster id.
-    :type compute: str, optional
+    :type compute: str
     :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional
+    :type kind: str
     """
 
     def __init__(
@@ -364,17 +364,17 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
+    :type description: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
+    :type traffic: typing.Dict[str, int]
     :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration, optional
+    :type identity: IdentityConfiguration
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional,
+    :type kind: str
     :param public_network_access: Whether to allow public endpoint connectivity
         Allowed values are: "enabled", "disabled"
     :type public_network_access: str
@@ -434,7 +434,8 @@ class EndpointAuthKeys(RestTranslatableMixin):
     """
 
     def __init__(self, **kwargs):
-        """
+        """Constructor for keys for endpoint authentication.
+
         :keyword primary_key: The primary key.
         :paramtype primary_key: str
         :keyword secondary_key: The secondary key.
@@ -457,21 +458,23 @@ class EndpointAuthToken(RestTranslatableMixin):
     :ivar access_token: Access token for endpoint authentication.
     :vartype access_token: str
     :ivar expiry_time_utc: Access token expiry time (UTC).
-    :vartype expiry_time_utc: long
+    :vartype expiry_time_utc: float
     :ivar refresh_after_time_utc: Refresh access token after time (UTC).
-    :vartype refresh_after_time_utc: long
+    :vartype refresh_after_time_utc: float
     :ivar token_type: Access token type.
     :vartype token_type: str
     """
 
     def __init__(self, **kwargs):
         """
+        Constuctor for Endpoint authentication token.
+
         :keyword access_token: Access token for endpoint authentication.
         :paramtype access_token: str
         :keyword expiry_time_utc: Access token expiry time (UTC).
-        :paramtype expiry_time_utc: long
+        :paramtype expiry_time_utc: float
         :keyword refresh_after_time_utc: Refresh access token after time (UTC).
-        :paramtype refresh_after_time_utc: long
+        :paramtype refresh_after_time_utc: float
         :keyword token_type: Access token type.
         :paramtype token_type: str
         """

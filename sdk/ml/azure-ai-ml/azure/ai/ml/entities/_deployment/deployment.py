@@ -34,23 +34,23 @@ class Deployment(Resource, RestTranslatableMixin):
     :param name: Name of the resource.
     :type name: str
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param model: the Model entity, defaults to None
-    :type model: Union[str, Model], optional
+    :type model: typing.Union[str, Model]
     :param code_configuration: the CodeConfiguration entity, defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type code_configuration: CodeConfiguration
     :param environment: the Environment entity, defaults to None
-    :type environment: Union[str, Environment], optional
+    :type environment: typing.Union[str, Environment]
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: dict
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: typing.Union[str, typing.PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: typing.Union[str, typing.PathLike]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -130,7 +130,7 @@ class Deployment(Resource, RestTranslatableMixin):
             and an exception is raised if the file exists.
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
-        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :type dest: typing.Union[typing.PathLike, str, typing.IO[typing.AnyStr]]
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

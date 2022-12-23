@@ -41,7 +41,7 @@ class Resource(abc.ABC):
 
         :param name: Name of the resource.
         :type name: str
-        :param description: Description of the resource., defaults to None
+        :param description: Description of the resource, defaults to None
         :type description: typing.Optional[str]
         :param tags: Tags can be added, removed, and updated., defaults to None
         :type tags: typing.Optional[typing.Dict]
@@ -86,7 +86,7 @@ class Resource(abc.ABC):
         """Resource ID.
 
         :return: Global id of the resource, Azure Resource Manager ID
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._id
 
@@ -95,7 +95,7 @@ class Resource(abc.ABC):
         """Creation context.
 
         :return: Creation metadata of the resource.
-        :rtype: Optional[~azure.ai.ml.entities.SystemData]
+        :rtype: typing.Optional[~azure.ai.ml.entities.SystemData]
         """
         return self._creation_context
 
@@ -110,7 +110,9 @@ class Resource(abc.ABC):
 
     @abc.abstractmethod
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the object content into a file.
+        """
+        Dump the object content into a file.
+
 
         :param dest: The destination to receive this object's data.
             Must be either a path to a local file, or an already-open file stream.
@@ -118,20 +120,21 @@ class Resource(abc.ABC):
             and an exception is raised if the file exists.
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
-        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :type dest: typing.Union[str, typing.PathLike, typing.IO[typing.AnyStr]]
         """
 
     @classmethod
     # pylint: disable=unused-argument
     def _resolve_cls_and_type(cls, data, params_override):
-        """Resolve the class to use for deserializing the data. Return current class if no override is provided.
+        """
+        Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
         :type data: dict
-        :param params_override: Parameters to override.
-        :type params_override: List[dict]
+        :param params_override: Parameters to override, defaults to None
+        :type params_override: typing.Optional[list]
         :return: Class to use for deserializing the data & its "type". Type will be None if no override is provided.
-        :rtype: tuple[class, Optional[str]]
+        :rtype: tuple[class, typing.Optional[str]]
         """
         return cls, None
 
@@ -144,12 +147,17 @@ class Resource(abc.ABC):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Resource":
-        """Construct a resource object from a file. @classmethod.
+        """
+        Construct a resource object from a file. @classmethod.
 
         :param cls: Indicates that this is a class method.
         :type cls: class
-        :param path: Path to a local file as the source.
-        :type path: Union[PathLike, str]
+        :param data: Path to a local file as the source, defaults to None
+        :type data: typing.Optional[typing.Dict]
+        :param yaml_path: Path to a yaml file as the source, defaults to None
+        :type yaml_path: typing.Optional[typing.Union[typing.PathLike, str]]
+        :param params_override: Parameters to override, defaults to None
+        :type params_override: typing.Optional[list]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         :return: Resource

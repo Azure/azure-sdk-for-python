@@ -152,7 +152,7 @@ class OnlineDeployment(Deployment):
         """Deployment provisioning state, readonly.
 
         :return: Deployment provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 
@@ -339,7 +339,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: typing.Union[str, os.PathLike]
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: typing.Union[str, os.PathLike], optional
+    :type scoring_script: typing.Union[str, os.PathLike]
     """
 
     def __init__(

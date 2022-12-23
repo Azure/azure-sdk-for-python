@@ -16,9 +16,9 @@ module_logger = logging.getLogger(__name__)
 class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
-    :param auth_mode: the authentication mode, defaults to None
+    :param auth_mode: The authentication mode, defaults to None
     :type auth_mode: str
-    :param location: defaults to None
+    :param location: The location of the endpoint, defaults to None
     :type location: str
     :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
     :type traffic: typing.Dict[str, int]

@@ -51,7 +51,7 @@ from ._deployment.container_resource_settings import ResourceSettings
 from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
 from ._deployment.online_deployment import KubernetesOnlineDeployment, ManagedOnlineDeployment, OnlineDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import (
@@ -153,6 +153,7 @@ __all__ = [
     "KubernetesOnlineDeployment",
     "ManagedOnlineDeployment",
     "OnlineRequestSettings",
+    "OnlineScaleSettings",
     "ProbeSettings",
     "BatchRetrySettings",
     "RetrySettings",

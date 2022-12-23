@@ -17,6 +17,7 @@ from ._model_operations import ModelOperations
 from ._online_deployment_operations import OnlineDeploymentOperations
 from ._online_endpoint_operations import OnlineEndpointOperations
 from ._registry_operations import RegistryOperations
+from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
 
@@ -36,4 +37,5 @@ __all__ = [
     "ComponentOperations",
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
+    "ScheduleOperations",
 ]
