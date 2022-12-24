@@ -553,11 +553,13 @@ class ComponentOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-    def _resolve_arm_id_and_inputs(self, component):
+    def _resolve_arm_id_and_inputs(self, component, resolver: Callable = None):
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return
         self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
-        self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.get_asset_arm_id)
+        if resolver is None:
+            resolver = self._orchestrators.get_asset_arm_id
+        self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, resolver)
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:
