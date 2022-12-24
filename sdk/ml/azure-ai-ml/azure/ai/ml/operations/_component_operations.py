@@ -530,12 +530,17 @@ class ComponentOperations(_ScopeDependentOperations):
         def preprocess_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
+            # TODO: the same anonymous component with different node name will have different anonymous hash
+            # as their display name will be different.
             if (
-                isinstance(node.component, Component)
-                and node.component._is_anonymous
-                and not node.component.display_name
+                isinstance(node._component, Component)
+                # check if component is anonymous and not created based on its id. We can't directly check
+                # node._component._is_anonymous as it will be set to True on component creation,
+                # which is later than this check
+                and not node._component.id
+                and not node._component.display_name
             ):
-                node.component.display_name = name
+                node._component.display_name = name
             if not isinstance(node.component, PipelineComponent):
                 # Resolve compute for other type
                 # Keep data binding expression as they are
