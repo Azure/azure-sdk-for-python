@@ -493,23 +493,39 @@ class ComponentOperations(_ScopeDependentOperations):
             elif isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
-    def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
-
-        from azure.ai.ml.entities._builders import BaseNode
-        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+    @classmethod
+    def _resolve_binding_on_supported_fields_for_node(cls, node):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
-        def preprocess_job(node):
-            """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
-            # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute", "compute_name"]
-            for field_name in supported_fields:
-                val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
-                if isinstance(val, PipelineInput):
-                    # Put binding string to field
-                    setattr(node, field_name, val._data_binding())
+        # compute binding to pipeline input is supported on node.
+        supported_fields = ["compute", "compute_name"]
+        for field_name in supported_fields:
+            val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+            if isinstance(val, PipelineInput):
+                # Put binding string to field
+                setattr(node, field_name, val._data_binding())
+
+    def _resolve_dependencies_for_pipeline_component_jobs(
+        self,
+        component: Union[Component, str],
+        resolver: Callable = None,
+        *,
+        resolve_inputs: bool = True
+    ):
+        from azure.ai.ml.entities._builders import BaseNode
+        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+
+        if not isinstance(component, PipelineComponent) or not component.jobs:
+            return
+
+        if resolve_inputs:
+            self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
+
+        if resolver is None:
+            resolver = self._orchestrators.get_asset_arm_id
 
         def resolve_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
@@ -538,8 +554,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
 
-        for key, job_instance in jobs.items():
-            preprocess_job(job_instance)
+        for key, job_instance in component.jobs.items():
+            self._resolve_binding_on_supported_fields_for_node(job_instance)
             if isinstance(job_instance, LoopNode):
                 job_instance = job_instance.body
             if isinstance(job_instance, AutoMLJob):
@@ -556,23 +572,6 @@ class ComponentOperations(_ScopeDependentOperations):
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
-    def _resolve_dependencies_for_pipeline_component_jobs(
-        self,
-        component: Union[Component, str],
-        resolver: Callable = None,
-        *,
-        resolve_inputs: bool = True
-    ):
-        if not isinstance(component, PipelineComponent) or not component.jobs:
-            return
-
-        if resolve_inputs:
-            self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
-
-        if resolver is None:
-            resolver = self._orchestrators.get_asset_arm_id
-        self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, resolver)
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:

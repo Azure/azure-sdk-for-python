@@ -472,8 +472,7 @@
         "fhir",
         "FHIR",
         "naam",
-        "aenter",
-        "ruamel"
+        "aenter"
       ]
     },
     {
@@ -882,7 +881,8 @@
         "posixpath",
         "SEPS",
         "wargs",
-        "pycache"
+        "pycache",
+        "ruamel"
       ]
     },
     {
