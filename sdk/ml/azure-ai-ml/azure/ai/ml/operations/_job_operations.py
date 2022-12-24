@@ -1171,7 +1171,9 @@ class JobOperations(_ScopeDependentOperations):
 
         # Process each component job
         try:
-            self._component_operations._resolve_arm_id_and_inputs(pipeline_job.component, resolver)
+            self._component_operations._resolve_dependencies_for_pipeline_component_jobs(
+                pipeline_job.component, resolver
+            )
         except ComponentException as e:
             raise JobException(
                 message=e.message,

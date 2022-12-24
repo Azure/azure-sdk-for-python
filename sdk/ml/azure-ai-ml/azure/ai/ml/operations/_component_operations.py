@@ -347,8 +347,12 @@ class ComponentOperations(_ScopeDependentOperations):
             component = self.get(name=component.name, version=component.version)
         else:
             component = Component._from_rest_object(result)
-        if isinstance(component, PipelineComponent):
-            self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.resolve_azureml_id)
+
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=self._orchestrators.resolve_azureml_id,
+            resolve_inputs=False,
+        )
         return component
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
@@ -466,7 +470,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
 
-        self._resolve_arm_id_and_inputs(component)
+        self._resolve_dependencies_for_pipeline_component_jobs(component)
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs, base_path):
         from azure.ai.ml.entities._builders import BaseNode, Pipeline
@@ -518,7 +522,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.component.display_name = name
             if isinstance(node.component, PipelineComponent):
                 # Resolve nested arm id for pipeline component
-                self._resolve_arm_id_and_inputs(node.component)
+                self._resolve_dependencies_for_pipeline_component_jobs(node.component)
             else:
                 # Resolve compute for other type
                 # Keep data binding expression as they are
@@ -553,10 +557,19 @@ class ComponentOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-    def _resolve_arm_id_and_inputs(self, component, resolver: Callable = None):
+    def _resolve_dependencies_for_pipeline_component_jobs(
+        self,
+        component: Union[Component, str],
+        resolver: Callable = None,
+        *,
+        resolve_inputs: bool = True
+    ):
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return
-        self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
+
+        if resolve_inputs:
+            self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
+
         if resolver is None:
             resolver = self._orchestrators.get_asset_arm_id
         self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, resolver)
