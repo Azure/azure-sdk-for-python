@@ -527,7 +527,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if resolver is None:
             resolver = self._orchestrators.get_asset_arm_id
 
-        def resolve_base_node(name, node: BaseNode):
+        def preprocess_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
             if (
@@ -536,10 +536,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 and not node.component.display_name
             ):
                 node.component.display_name = name
-            if isinstance(node.component, PipelineComponent):
-                # Resolve nested arm id for pipeline component
-                self._resolve_dependencies_for_pipeline_component_jobs(node.component)
-            else:
+            if not isinstance(node.component, PipelineComponent):
                 # Resolve compute for other type
                 # Keep data binding expression as they are
                 if not is_data_binding_expression(node.compute):
@@ -547,21 +544,31 @@ class ComponentOperations(_ScopeDependentOperations):
                     node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
                 if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
                     node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
-            # Get the component id for each job's component
-            # Note: do not use node.component as Sweep don't have that
-            node._component = resolver(
-                node._component,
-                azureml_type=AzureMLResourceType.COMPONENT,
-            )
 
-        for key, job_instance in component.jobs.items():
+        queue, head = list(component.jobs.items()), 0
+
+        while head < len(queue):
+            key, job_instance = queue[head]
+            head += 1
+
             self._resolve_binding_on_supported_fields_for_node(job_instance)
             if isinstance(job_instance, LoopNode):
                 job_instance = job_instance.body
+
+            if isinstance(job_instance, BaseNode):
+                preprocess_base_node(key, job_instance)
+
+                if isinstance(job_instance._component, PipelineComponent):
+                    queue.extend(job_instance.component.jobs.items())
+
+        for key, job_instance in reversed(queue):
+            if isinstance(job_instance, LoopNode):
+                job_instance = job_instance.body
+
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
-                resolve_base_node(key, job_instance)
+                job_instance._component = resolver(job_instance._component, azureml_type=AzureMLResourceType.COMPONENT)
             elif isinstance(job_instance, ConditionNode):
                 pass
             else:
@@ -572,6 +579,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                 )
+        return component
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:
