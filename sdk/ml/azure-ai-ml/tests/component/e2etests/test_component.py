@@ -721,7 +721,9 @@ class TestComponent(AzureRecordedTestCase):
         )
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_dependencies_for_pipeline_component_jobs(
-            component, resolve_inputs=False
+            component,
+            resolver=client.components._orchestrators.get_asset_arm_id,
+            resolve_inputs=False
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E

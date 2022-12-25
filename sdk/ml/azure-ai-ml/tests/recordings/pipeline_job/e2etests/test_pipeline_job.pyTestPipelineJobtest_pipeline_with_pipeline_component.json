@@ -3325,7 +3325,7 @@
                 }
               },
               "_source": "YAML.COMPONENT",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/ca741e53-e5c1-4243-bbd1-b9d54d5def48"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b9ab549b-4332-4e0e-b812-6bcd6a6fab4e"
             },
             "train_and_evaludate_model2": {
               "name": "train_and_evaludate_model2",
@@ -3349,7 +3349,7 @@
                 }
               },
               "_source": "YAML.COMPONENT",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b9ab549b-4332-4e0e-b812-6bcd6a6fab4e"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/ca741e53-e5c1-4243-bbd1-b9d54d5def48"
             },
             "compare": {
               "name": "compare",
@@ -3504,7 +3504,7 @@
                 }
               },
               "_source": "YAML.COMPONENT",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/ca741e53-e5c1-4243-bbd1-b9d54d5def48"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b9ab549b-4332-4e0e-b812-6bcd6a6fab4e"
             },
             "train_and_evaludate_model2": {
               "name": "train_and_evaludate_model2",
@@ -3528,7 +3528,7 @@
                 }
               },
               "_source": "YAML.COMPONENT",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b9ab549b-4332-4e0e-b812-6bcd6a6fab4e"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/ca741e53-e5c1-4243-bbd1-b9d54d5def48"
             },
             "compare": {
               "name": "compare",
