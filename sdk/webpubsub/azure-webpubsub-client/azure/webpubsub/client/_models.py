@@ -28,22 +28,6 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class WebPubSubGroup(_model_base.Model):
-    name: str = rest_field()
-    is_joined: str = rest_field(name="isJoined")
-
-    @overload
-    def __init__(self, *, name: str, is_joined: bool = False) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class JoinGroupMessage(_model_base.Model):
     kind: str = rest_field(default="joinGroup")
     group: str = rest_field()
@@ -203,6 +187,32 @@ class LeaveGroupData(_model_base.Model):
         *,
         type: Literal["leaveGroup"] = "leaveGroup",
         group: str,
+        ack_id: Optional[int] = None,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class SendEventData(_model_base.Model):
+    type: Literal["event"] = rest_field(default="event")
+    data_type: WebPubSubDataType = rest_field(name="dataType")
+    data: Any = rest_field()
+    event: str = rest_field()
+    ack_id: Optional[int] = rest_field(name="ackId")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Literal["event"] = "event",
+        data_type: WebPubSubDataType,
+        data: Any,
+        event: str,
         ack_id: Optional[int] = None,
     ) -> None:
         ...
@@ -423,6 +433,8 @@ class WebPubSubClientProtocol:
             data = JoinGroupData(group=message.group, ack_id=message.ack_id)
         elif message.kind == "leaveGroup":
             data = LeaveGroupData(group=message.group, ack_id=message.ack_id)
+        elif message.kind == "sendEvent":
+            data = SendEventData()
 
         return json.dumps(data, cls=AzureJSONEncoder)
 
