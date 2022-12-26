@@ -619,17 +619,12 @@ class TestDSLGroup:
                 }
         assert "Nested group annotation is not supported in pipeline output." in str(e.value)
 
-        @group
-        class GroupOutputs:
-            output1: PipelineInput
+
 
         with pytest.raises(UserErrorException) as e:
-            @pipeline
-            def my_pipeline() -> GroupOutputs:
-                node1 = hello_world_component_func(component_in_number=1)
-                return {
-                    "output1": node1.outputs.component_out_path,
-                }
+            @group
+            class GroupOutputs:
+                output1: PipelineInput
         assert "Unsupported annotation type" in str(e.value)
 
     def test_input_in_output_group(self):

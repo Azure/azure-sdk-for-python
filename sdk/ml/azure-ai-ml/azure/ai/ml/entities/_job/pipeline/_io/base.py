@@ -126,6 +126,16 @@ class InputOutputBase(ABC):
     def description(self) -> str:
         return self._description
 
+    @description.setter
+    def description(self, description):
+        # For un-configured input/output, we build a default data entry for them.
+        self._build_default_data()
+        self._description = description
+        if isinstance(self._data, (Input, Output)):
+            self._data.description = description
+        else:
+            self._data._description = description
+
     @property
     def path(self) -> str:
         # This property is introduced for static intellisense.

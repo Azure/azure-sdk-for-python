@@ -2569,3 +2569,18 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_return_annotation(self, client: MLClient) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline() -> Output(type="uri_folder", description="new description", mode="upload"):
+            node = hello_world_component_func(component_in_path=Input(path="path/on/ds"), component_in_number=10)
+            return {"output": node.outputs.component_out_path}
+
+        pipeline_job = my_pipeline()
+        expected_outputs = {'output': {
+            'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
+        }}
+        assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs

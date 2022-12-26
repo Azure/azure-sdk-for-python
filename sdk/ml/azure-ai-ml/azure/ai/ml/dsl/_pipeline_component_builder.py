@@ -113,6 +113,7 @@ class PipelineComponentBuilder:
         "bool": "boolean",
         "str": "string",
     }
+    DEFAULT_OUTPUT_NAME = "output"
 
     def __init__(
         self,
@@ -440,10 +441,15 @@ class PipelineComponentBuilder:
     def _get_output_annotation(cls, func):
         """Get the output annotation of the function, validate & refine it."""
         return_annotation = inspect.signature(func).return_annotation
-        # skip if return annotation is not group
-        if not is_group(return_annotation):
+
+        if is_group(return_annotation):
+            outputs = _get_param_with_standard_annotation(return_annotation, is_func=False)
+        elif isinstance(return_annotation, Output):
+            outputs = {cls.DEFAULT_OUTPUT_NAME: return_annotation}
+        else:
+            # skip if return annotation is not group or output
             return {}
-        outputs = _get_param_with_standard_annotation(return_annotation, is_func=False)
+
         output_annotations = {}
         for key, val in outputs.items():
             if isinstance(val, GroupInput):
@@ -484,7 +490,7 @@ class PipelineComponentBuilder:
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
             if expected_description:
-                output_dict[key]._description = expected_description
+                output_dict[key].description = expected_description
             if expected_mode:
                 output_dict[key].mode = expected_mode
 

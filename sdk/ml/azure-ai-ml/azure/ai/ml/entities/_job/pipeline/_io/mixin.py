@@ -306,7 +306,7 @@ class PipelineIOMixin(PipelineNodeIOMixin):
         result = PipelineOutput(name=name, meta=meta, data=data, owner=self)
         # copy mode & description from meta so they won't loss when transform from a pipeline component to pipeline job
         if meta and meta.description:
-            result._description = meta.description  # pylint: disable=protected-access
+            result.description = meta.description
         if meta and meta.mode:
             result.mode = meta.mode
         return result
