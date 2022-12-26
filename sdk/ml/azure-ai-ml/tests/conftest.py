@@ -2,6 +2,7 @@ import base64
 import json
 import os
 import random
+import re
 import time
 import uuid
 from datetime import datetime
@@ -487,17 +488,51 @@ def mock_asset_name(mocker: MockFixture):
 
 @pytest.fixture
 def mock_component_hash(mocker: MockFixture):
-    fake_component_hash = "000000000000000000000"
+    """Mock the component hash function.
+
+    In playback mode, workspace information in returned arm_id will be normalized like this:
+    /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/.../codes/xxx/versions/xxx
+    =>
+    /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/.../codes/xxx/versions/xxx
+    So the component hash will be different from the recorded one.
+    In this mock, we replace the original hash in recordings with the same hash in playback mode.
+
+    Note that component hash value in playback mode can be different from the one in live mode,
+    so tests that check component hash directly should be skipped if not is_live.
+    """
+    regex = re.compile(
+        r"/subscriptions/[\-0-9a-z]+/resourceGroups/[\-0-9a-z]+/providers/"
+        r"Microsoft\.MachineLearningServices/workspaces/[_\-0-9a-z]+/"
+    )
+    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
+                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+
+    def normalized_arm_id_in_object(items):
+        if isinstance(items, dict):
+            for key, value in items.items():
+                if isinstance(value, str):
+                    items[key] = regex.sub(replacement, value)
+                else:
+                    normalized_arm_id_in_object(value)
+        elif isinstance(items, list):
+            for i, value in enumerate(items):
+                if isinstance(value, str):
+                    items[i] = regex.sub(replacement, value)
+                else:
+                    normalized_arm_id_in_object(value)
+
+    def normalized_hash_dict(items: dict, keys_to_omit=None):
+        normalized_arm_id_in_object(items)
+        return hash_dict(items, keys_to_omit)
 
     def generate_compononent_hash(*args, **kwargs):
         dict_hash = hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=fake_component_hash, target=dict_hash)
+        normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
+        add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
         return dict_hash
 
     if is_live():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
-    else:
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", return_value=fake_component_hash)
 
 
 @pytest.fixture
