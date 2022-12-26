@@ -2581,3 +2581,19 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_component_early_available_property(self):
+        component_func = load_component("./tests/test_configs/components/streaming_component_basic.yml")
+
+        @dsl.pipeline
+        def pipeline_component_func():
+            streaming_node = component_func()
+            return streaming_node.outputs
+
+        @dsl.pipeline
+        def root_pipeline_func():
+            node = pipeline_component_func()  # noqa: F841
+
+        pipeline_job = root_pipeline_func()
+        assert pipeline_job.jobs["node"].outputs.output.is_control is True
+        assert pipeline_job.jobs["node"].outputs.output.early_available is True

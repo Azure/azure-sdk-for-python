@@ -1,0 +1,23 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
+
+name: microsoft_streaming_component_basic
+display_name: StreamingComponentBasic
+description: This is the basic streaming component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+outputs:
+  output:
+    type: string
+    is_control: true
+    early_available: true
+
+command: >-
+  echo Hello World &
+  echo Hello Streaming Pipeline
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
