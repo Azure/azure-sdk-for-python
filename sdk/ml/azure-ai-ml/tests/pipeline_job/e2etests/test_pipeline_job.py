@@ -53,6 +53,8 @@ def assert_job_input_output_types(job: PipelineJob):
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
+    # Please set ML_TENANT_ID in your environment variables when recording this test.
+    # It will to help sanitize RequestBody.Studio.endpoint for job creation request.
     def test_pipeline_job_create(
         self,
         client: MLClient,
