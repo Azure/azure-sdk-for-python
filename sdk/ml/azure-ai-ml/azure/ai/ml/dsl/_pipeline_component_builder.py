@@ -279,6 +279,7 @@ class PipelineComponentBuilder:
                     mode=value.mode,
                     description=value.description,
                     is_control=value.is_control,
+                    early_available=value.early_available,
                 )
 
             # hack: map component output type to valid pipeline output type
