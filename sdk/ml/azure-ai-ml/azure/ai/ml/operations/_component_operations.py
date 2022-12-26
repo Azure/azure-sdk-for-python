@@ -562,15 +562,32 @@ class ComponentOperations(_ScopeDependentOperations):
         component: PipelineComponent,
         extra_operations: List[Callable]
     ):
-        """Divide nodes to resolve into layers. Deeper layer nodes will be resolved
-        first so that their resolution result can be used by upper layer nodes.
+        """Traverse the pipeline component and divide nodes to resolve into layers.
+        For example, for below pipeline component, assuming that all nodes need to be resolved:
+          A
+         /|\
+        B C D
+        | |
+        E F
+        return value will be:
+        [
+          [("B", B), ("C", C), ("D", D)],
+          [("E", E), ("F", F)],
+        ]
+
+        :param component: The pipeline component to resolve.
+        :type component: PipelineComponent
+        :param extra_operations: Extra operations to apply on nodes during the traversing.
+        :type extra_operations: List[Callable]
+        :return: A list of layers of nodes to resolve.
+        :rtype: List[List[Tuple[str, BaseNode]]]
         """
         # add an empty layer to mark the end of the first layer
-        layers, cur_head_in_layer, cur_layer_i = [list(component.jobs.items()), []], 0, 0
+        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
 
-        while cur_layer_i < len(layers) and cur_head_in_layer < len(layers[cur_layer_i]):
-            key, job_instance = layers[cur_layer_i][cur_head_in_layer]
-            cur_head_in_layer += 1
+        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
+            key, job_instance = layers[cur_layer][cur_layer_head]
+            cur_layer_head += 1
 
             cls._resolve_binding_on_supported_fields_for_node(job_instance)
             if isinstance(job_instance, LoopNode):
@@ -580,13 +597,13 @@ class ComponentOperations(_ScopeDependentOperations):
                 extra_operation(job_instance, key)
 
             if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
-                if cur_layer_i + 1 == len(layers):
+                if cur_layer + 1 == len(layers):
                     layers.append([])
-                layers[cur_layer_i+1].extend(job_instance.component.jobs.items())
+                layers[cur_layer+1].extend(job_instance.component.jobs.items())
 
-            if cur_head_in_layer == len(layers[cur_layer_i]):
-                cur_layer_i += 1
-                cur_head_in_layer = 0
+            if cur_layer_head == len(layers[cur_layer]):
+                cur_layer += 1
+                cur_layer_head = 0
 
         # if there is no subgraph, pop the empty layer inserted at the beginning
         if len(layers[-1]) == 0:
@@ -629,10 +646,10 @@ class ComponentOperations(_ScopeDependentOperations):
         # cache anonymous component only for now
         # request level in-memory cache can be a better solution for other type of assets as they are
         # relatively simple and of small number of distinct instances
-        component_cache = CachedNodeResolver(
-            resolver=lambda x: resolver(x, azureml_type=AzureMLResourceType.COMPONENT)
-        )
-        # start from the last layer and resolve layer by layer to ensure all dependencies are resolved
+        component_cache = CachedNodeResolver(resolver=resolver)
+
+        # Deeper layer nodes will be resolved first so that all dependencies have already been resolved when
+        # trying to resolve nodes in upper layer.
         for layer in reversed(layers):
             for _, job_instance in layer:
                 if isinstance(job_instance, LoopNode):
