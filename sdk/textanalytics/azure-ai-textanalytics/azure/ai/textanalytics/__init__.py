@@ -98,6 +98,7 @@ from ._generated.models import (
     VolumeUnit,
     WeightUnit,
     ClassificationType,
+    DateTimeSubKind,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
@@ -196,6 +197,7 @@ __all__ = [
     "AbstractSummaryAction",
     "ClassificationType",
     "DynamicClassificationResult",
+    "DateTimeSubKind",
 ]
 
 __version__ = VERSION

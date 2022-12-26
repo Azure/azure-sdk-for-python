@@ -1,7 +1,7 @@
+import json
 from pathlib import Path
 
 import pytest
-import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_component, load_environment
@@ -13,7 +13,7 @@ from azure.ai.ml.entities._assets.environment import BuildContext
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestEnvironmentEntity:
     def test_eq_neq(self) -> None:
         environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04")
@@ -97,6 +97,6 @@ class TestEnvironmentEntity:
                 )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
-        assert env_no_inference_config.version != env_with_inference_config.version 
+        assert env_no_inference_config.version != env_with_inference_config.version
         assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
         assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"

@@ -8,6 +8,7 @@ from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import DumpableEnumField, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes
 
@@ -56,7 +57,10 @@ class PrimitiveOutputSchema(OutputPortSchema):
         allowed_values=SUPPORTED_PARAM_TYPES,
         required=True,
     )
-    is_control = fields.Bool()
+    # hide is_control and early_available in spec
+    if is_private_preview_enabled():
+        is_control = fields.Bool()
+        early_available = fields.Bool()
 
 
 class ParameterSchema(metaclass=PatchedSchemaMeta):

@@ -4,24 +4,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 # pylint: disable=anomalous-backslash-in-string
+from typing import Any, List
 
-from typing import TYPE_CHECKING, Any, List
-from msrest.serialization import Serializer
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated._monitor_query_client import (
-    MonitorQueryClient,
-)
-
+from ._generated._serialization import Serializer
+from ._generated.metrics._client import MonitorMetricsClient
 from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
-
-if TYPE_CHECKING:
-    from datetime import timedelta
-    from azure.core.credentials import TokenCredential
-    from azure.core.paging import ItemPaged
 
 
 class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -46,16 +39,15 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, Any) -> None
+    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
         audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._client = MonitorQueryClient(
+        self._client = MonitorMetricsClient(
             credential=credential,
-            base_url=self._endpoint,
+            endpoint=self._endpoint,
             authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
@@ -64,8 +56,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace
-    def query_resource(self, resource_uri, metric_names, **kwargs):
-        # type: (str, List[str], Any) -> MetricsQueryResult
+    def query_resource(self, resource_uri: str, metric_names: List[str], **kwargs: Any) -> MetricsQueryResult:
         """Lists the metric values for a resource.
 
         :param resource_uri: The identifier of the resource.
@@ -134,8 +125,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         )
 
     @distributed_trace
-    def list_metric_namespaces(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricNamespace]
+    def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> ItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -152,7 +142,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             start_time = Serializer.serialize_iso(start_time)
         return self._namespace_op.list(
             resource_uri,
-            start_time,
+            start_time=start_time,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -164,8 +154,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         )
 
     @distributed_trace
-    def list_metric_definitions(self, resource_uri, **kwargs):
-        # type: (str, Any) -> ItemPaged[MetricDefinition]
+    def list_metric_definitions(self, resource_uri: str, **kwargs: Any) -> ItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -179,7 +168,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         metric_namespace = kwargs.pop("namespace", None)
         return self._definitions_op.list(
             resource_uri,
-            metric_namespace,
+            metricnamespace=metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -190,16 +179,13 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             **kwargs
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.monitor.query.MetricsQueryClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> MetricsQueryClient
+    def __enter__(self) -> "MetricsQueryClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

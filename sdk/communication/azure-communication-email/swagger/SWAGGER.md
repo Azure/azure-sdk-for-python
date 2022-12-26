@@ -30,6 +30,8 @@ no-async: false
 add-credential: false
 security: Anonymous
 title: Azure Communication Email Service
+use-extension:
+  "@autorest/python": "6.1.1"
 ```
 
 ### Change the bCC property to bcc

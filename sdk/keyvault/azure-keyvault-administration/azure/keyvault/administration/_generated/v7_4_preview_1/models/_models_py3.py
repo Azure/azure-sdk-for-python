@@ -903,23 +903,23 @@ class SettingsListResult(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A response message containing a list of account settings with their associated
+    :ivar settings: A response message containing a list of account settings with their associated
      value.
-    :vartype value: list[~azure.keyvault.v7_4_preview_1.models.Setting]
+    :vartype settings: list[~azure.keyvault.v7_4_preview_1.models.Setting]
     """
 
     _validation = {
-        "value": {"readonly": True},
+        "settings": {"readonly": True},
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[Setting]"},
+        "settings": {"key": "settings", "type": "[Setting]"},
     }
 
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.settings = None
 
 
 class UpdateSettingsRequest(_serialization.Model):

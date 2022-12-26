@@ -17,6 +17,7 @@ from ._firewall_rules_operations import FirewallRulesOperations
 from ._servers_operations import ServersOperations
 from ._operations import Operations
 from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
+from ._replicas_operations import ReplicasOperations
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 
 from ._patch import __all__ as _patch_all
@@ -35,6 +36,7 @@ __all__ = [
     "ServersOperations",
     "Operations",
     "GetPrivateDnsZoneSuffixOperations",
+    "ReplicasOperations",
     "VirtualNetworkSubnetUsageOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

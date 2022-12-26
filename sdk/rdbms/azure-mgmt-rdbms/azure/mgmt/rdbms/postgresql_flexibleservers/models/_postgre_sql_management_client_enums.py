@@ -120,6 +120,7 @@ class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Used to indicate role of the server in replication set."""
 
+    NONE = "None"
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
     WAL_REPLICA = "WalReplica"

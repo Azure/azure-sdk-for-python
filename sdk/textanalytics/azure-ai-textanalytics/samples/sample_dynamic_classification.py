@@ -11,6 +11,9 @@ DESCRIPTION:
     This sample demonstrates how to dynamically classify documents into one or multiple categories.
     No model training is required to use dynamic classification.
 
+    The dynamic classification feature is part of a gated preview. Request access here:
+    https://aka.ms/applyforgatedlanguagefeature
+
 USAGE:
     python sample_dynamic_classification.py
 

@@ -21,21 +21,29 @@ from ._analysis_results_operations import AnalysisResultsOperations
 from ._email_events_operations import EmailEventsOperations
 from ._customer_events_operations import CustomerEventsOperations
 from ._operations import Operations
+from ._billing_hub_service_operations import BillingHubServiceOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'SkusOperations',
-    'TestBaseAccountsOperations',
-    'UsageOperations',
-    'AvailableOSOperations',
-    'FlightingRingsOperations',
-    'TestTypesOperations',
-    'PackagesOperations',
-    'TestSummariesOperations',
-    'TestResultsOperations',
-    'OSUpdatesOperations',
-    'FavoriteProcessesOperations',
-    'AnalysisResultsOperations',
-    'EmailEventsOperations',
-    'CustomerEventsOperations',
-    'Operations',
+    "SkusOperations",
+    "TestBaseAccountsOperations",
+    "UsageOperations",
+    "AvailableOSOperations",
+    "FlightingRingsOperations",
+    "TestTypesOperations",
+    "PackagesOperations",
+    "TestSummariesOperations",
+    "TestResultsOperations",
+    "OSUpdatesOperations",
+    "FavoriteProcessesOperations",
+    "AnalysisResultsOperations",
+    "EmailEventsOperations",
+    "CustomerEventsOperations",
+    "Operations",
+    "BillingHubServiceOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

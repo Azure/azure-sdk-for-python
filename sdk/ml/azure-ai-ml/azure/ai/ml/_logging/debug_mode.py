@@ -10,7 +10,7 @@ import sys
 import time
 import traceback
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 import six.moves.http_client as httpclient
 
@@ -61,7 +61,9 @@ class diagnostic_log(object):
     :type context_type: str
     """
 
-    def __init__(self, log_path: str = None, namespaces: list = None, context_name: str = None):
+    def __init__(
+        self, log_path: Optional[str] = None, namespaces: Optional[list] = None, context_name: Optional[str] = None
+    ):
         self._namespaces = INTERESTING_NAMESPACES if namespaces is None else namespaces
         self._filename = LOG_FILE if log_path is None else log_path
         self._filename = os.path.abspath(self._filename)
@@ -133,7 +135,7 @@ _debugging_enabled = False
 
 
 def debug_sdk() -> None:
-    global _debugging_enabled # pylint: disable=global-statement
+    global _debugging_enabled  # pylint: disable=global-statement
     if _debugging_enabled:
         module_logger.warning("Debug logs are already enabled at %s", LOG_FILE)
         return

@@ -4,9 +4,12 @@
 from pathlib import Path
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachine as VMResource
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineProperties, VirtualMachineSshCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    VirtualMachineSchemaProperties,
+    VirtualMachineSshCredentials,
+)
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -19,9 +22,9 @@ class VirtualMachineSshSettings:
         self,
         *,
         admin_username: str,
-        admin_password: str = None,
+        admin_password: Optional[str] = None,
         ssh_port: int = 22,
-        ssh_private_key_file: str = None,
+        ssh_private_key_file: Optional[str] = None,
     ):
         """SSH settings for a virtual machine.
 
@@ -62,7 +65,7 @@ class VirtualMachineCompute(Compute):
         name: str,
         description: Optional[str] = None,
         resource_id: str,
-        ssh_settings: VirtualMachineSshSettings = None,
+        ssh_settings: Optional[VirtualMachineSshSettings] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
@@ -130,7 +133,9 @@ class VirtualMachineCompute(Compute):
             public_key_data=self.public_key_data,
             private_key_data=ssh_key_value,
         )
-        properties = VirtualMachineProperties(ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials)
+        properties = VirtualMachineSchemaProperties(
+            ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
+        )
         vm_compute = VMResource(
             properties=properties,
             resource_id=self.resource_id,

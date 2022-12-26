@@ -1,71 +1,53 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import asyncio
+
 import pytest
+from azure.storage.fileshare.aio import ShareServiceClient
 
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
-
-from azure.storage.fileshare.aio import (
-    ShareServiceClient,
-)
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
-TEST_SHARE_NAME = 'test'
-TEST_SHARE_PREFIX = 'share'
-
-
+TEST_SHARE_NAME = 'test-share'
 # ------------------------------------------------------------------------------
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
 
 
-class StorageHandleTest(AsyncStorageTestCase):
+class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account, storage_account_key):
-        file_url = self.account_url(storage_account_name, "file")
+        file_url = self.account_url(storage_account, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
-        self.test_shares = []
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
 
     # --Helpers-----------------------------------------------------------------
 
     def _validate_handles(self, handles):
         # Assert
-        self.assertIsNotNone(handles)
-        self.assertGreaterEqual(len(handles), 1)
-        self.assertIsNotNone(handles[0])
+        assert handles is not None
+        assert len(handles) >= 1
+        assert handles[0] is not None
 
         # verify basic fields
         # path may or may not be present
         # last_connect_time_string has been missing in the test
-        self.assertIsNotNone(handles[0].id)
-        self.assertIsNotNone(handles[0].file_id)
-        self.assertIsNotNone(handles[0].parent_id)
-        self.assertIsNotNone(handles[0].session_id)
-        self.assertIsNotNone(handles[0].client_ip)
-        self.assertIsNotNone(handles[0].open_time)
+        assert handles[0].id is not None
+        assert handles[0].file_id is not None
+        assert handles[0].parent_id is not None
+        assert handles[0].session_id is not None
+        assert handles[0].client_ip is not None
+        assert handles[0].open_time is not None
 
-    @pytest.mark.skip(reason="Needs further investigation.")
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_close_single_handle_async(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_close_single_handle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
@@ -78,24 +60,24 @@ class StorageHandleTest(AsyncStorageTestCase):
         self._validate_handles(handles)
 
         # Act
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             await root.close_handle('*')
 
         handles_info = await root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        self.assertEqual(1, handles_info['closed_handles_count'])
-        self.assertEqual(handles_info['failed_handles_count'], 0)
+        assert 1 == handles_info['closed_handles_count']
+        assert handles_info['failed_handles_count'] == 0
 
-    @pytest.mark.skip(reason="Needs further investigation.")
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_close_all_handle_async(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_close_all_handle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if self.is_live:
-            pytest.skip("Cannot run in live without manual setup")
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
@@ -109,8 +91,8 @@ class StorageHandleTest(AsyncStorageTestCase):
         handles_info = await root.close_all_handles(recursive=True)
 
         # Assert at least 1 handle has been closed
-        self.assertTrue(handles_info['closed_handles_count'] > 1)
-        self.assertEqual(handles_info['failed_handles_count'], 0)
+        assert handles_info['closed_handles_count'] > 1
+        assert handles_info['failed_handles_count'] == 0
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

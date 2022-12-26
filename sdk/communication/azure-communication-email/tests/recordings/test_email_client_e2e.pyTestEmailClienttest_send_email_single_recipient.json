@@ -8,23 +8,21 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "235",
+        "Content-Length": "211",
         "Content-Type": "application/json",
         "repeatability-first-sent": "sanitized",
         "repeatability-request-id": "sanitized",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Fri, 24 Jun 2022 21:20:55 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:32 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "sender": "someSender@contoso.com",
         "content": {
           "subject": "This is the subject",
           "plainText": "This is the body"
         },
-        "importance": "normal",
         "recipients": {
           "to": [
             {
@@ -32,13 +30,15 @@
               "displayName": "Customer Name"
             }
           ]
-        }
+        },
+        "sender": "someSender@contoso.com"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "2021-10-01-preview",
         "Content-Length": "0",
         "Date": "sanitized",
+        "mise-correlation-id": "11ac7478-0845-4d24-9bac-e0d7469e53dc",
         "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
         "Repeatability-Result": "accepted",
         "X-Azure-Ref": "sanitized",

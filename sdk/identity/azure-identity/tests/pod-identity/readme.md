@@ -1,15 +1,15 @@
 # Testing managed identity in Azure Kubernetes Service
 
-# prerequisite tools
+## Prerequisite tools
 - Azure CLI
   - https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
-- Helm 2.x (3.x doesn't handle CRDs properly at time of writing)
-  - https://github.com/helm/helm/releases
+- Helm 3.x
+  - https://helm.sh/docs/intro/install/
 
 
-# Azure resources
+## Azure resources
 This test requires instances of these Azure resources:
 - Azure Key Vault
 - Azure Managed Identity
@@ -22,7 +22,7 @@ This test requires instances of these Azure resources:
 
 The rest of this section is a walkthrough of deploying these resources.
 
-### set environment variables to simplify copy-pasting
+### Set environment variables to simplify copy-pasting
 - RESOURCE_GROUP
   - name of an Azure resource group
   - must be unique in the Azure subscription
@@ -43,12 +43,12 @@ The rest of this section is a walkthrough of deploying these resources.
   - must begin with a letter
   - must be globally unique
 
-### resource group
+### Create resource group
 ```sh
 az group create -n $RESOURCE_GROUP --location westus2
 ```
 
-### managed identity
+### Create managed identity
 Create the managed identity:
 ```sh
 az identity create -g $RESOURCE_GROUP -n $MANAGED_IDENTITY_NAME
@@ -61,7 +61,7 @@ export MANAGED_IDENTITY_CLIENT_ID=$(az identity show -g $RESOURCE_GROUP -n $MANA
        MANAGED_IDENTITY_PRINCIPAL_ID=$(az identity show -g $RESOURCE_GROUP -n $MANAGED_IDENTITY_NAME --query principalId -o tsv)
 ```
 
-### Key Vault
+### Create key vault
 Create the Vault:
 ```sh
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard
@@ -72,35 +72,51 @@ Add an access policy for the managed identity:
 az keyvault set-policy -n $KEY_VAULT_NAME --object-id $MANAGED_IDENTITY_PRINCIPAL_ID --secret-permissions list
 ```
 
-### container registry
+### Create container registry
 ```sh
 az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
 ```
 
-### Kubernetes
+### Create Kubernetes cluster
 Deploy the cluster (this will take several minutes):
 ```sh
-az aks create -g $RESOURCE_GROUP -n $AKS_NAME --generate-ssh-keys --node-count 1 --disable-rbac --attach-acr $ACR_NAME
+az aks create -g $RESOURCE_GROUP -n $AKS_NAME --generate-ssh-keys --node-count 1 --disable-rbac --attach-acr $ACR_NAME --enable-managed-identity
 ```
 
-Grant the cluster's service principal permission to use the managed identity:
+Save information about the cluster's node resource group:
 ```sh
-az role assignment create --role "Managed Identity Operator" \
-  --assignee $(az aks show -g $RESOURCE_GROUP -n $AKS_NAME --query servicePrincipalProfile.clientId -o tsv) \
-  --scope $MANAGED_IDENTITY_ID
+export NODE_RESOURCE_GROUP=$(az aks show -g $RESOURCE_GROUP -n $AKS_NAME --query nodeResourceGroup -o tsv)
+export NODE_RESOURCE_GROUP_SCOPE=$(az group show -n $NODE_RESOURCE_GROUP --query id -o tsv)
+export KUBELET_IDENTITY_CLIENT_ID=$(az aks show -g $RESOURCE_GROUP -n $AKS_NAME --query identityProfile.kubeletidentity.clientId -o tsv)
+
 ```
 
+### Create role assignments
+Assign needed roles to the cluster managed identity:
+```sh
+az role assignment create --role "Managed Identity Operator" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $MANAGED_IDENTITY_ID
+```
 
-# build images
+Add role assignments required by AAD Pod Identity:
+```sh
+az role assignment create --role "Managed Identity Operator" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $NODE_RESOURCE_GROUP_SCOPE
+az role assignment create --role "Virtual Machine Contributor" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $NODE_RESOURCE_GROUP_SCOPE
+
+```
+
+**Note**: Sometimes the role assignments can take several minutes to propagate which may cause `Init:Error` statuses in the test pod
+if the tests are run too soon after the role assignments are created. If this is encountered, wait a few more minutes and try again.
+
+## Build images
 The test application must be packaged as a Docker image before deployment.
 Test runs must include Python 3.7+.
 
-### authenticate to ACR
+### Authenticate to ACR
 ```sh
 az acr login -n $ACR_NAME
 ```
 
-### acquire the test code
+### Acquire the test code
 ```sh
 git clone https://github.com/Azure/azure-sdk-for-python/ --branch main --single-branch --depth 1
 ```
@@ -110,7 +126,7 @@ The rest of this section assumes this working directory:
 cd azure-sdk-for-python/sdk/identity/azure-identity/tests
 ```
 
-### build images and push them to the container registry
+### Build image and push them to the container registry
 Set environment variables:
 ```sh
 export REPOSITORY=$ACR_NAME.azurecr.io IMAGE_NAME=test-pod-identity PYTHON_VERSION=3.9
@@ -126,26 +142,19 @@ Push it to ACR:
 docker push $REPOSITORY/$IMAGE_NAME:$PYTHON_VERSION
 ```
 
-# run the test
+## Run the tests
 
-### install kubectl
+### Install kubectl
 ```sh
 az aks install-cli
 ```
 
-### authenticate kubectl and helm
+### Authenticate kubectl and helm
 ```sh
 az aks get-credentials -g $RESOURCE_GROUP -n $AKS_NAME
 ```
 
-### install tiller
-```sh
-helm init --wait
-```
-
-### run the test script
-With `PYTHON_VERSION=3.x`
-(replacing x with the latest Python 3 minor version):
+### Run the test script
 ```sh
 python ./pod-identity/run-test.py \
  --client-id $MANAGED_IDENTITY_CLIENT_ID \
@@ -156,7 +165,31 @@ python ./pod-identity/run-test.py \
  --image-tag $PYTHON_VERSION
 ```
 
-### delete Azure resources
+Successful test output looks like this:
+```
+============================= test session starts ==============================
+platform linux -- Python 3.9.15, pytest-7.2.0, pluggy-1.0.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /sdk/identity/azure-identity
+plugins: cov-4.0.0, asyncio-0.20.2
+asyncio: mode=strict
+collecting ... collected 4 items
+
+test_cloud_shell.py::test_cloud_shell_live SKIPPED (Cloud Shell MSI ...) [ 25%]
+test_cloud_shell_async.py::test_cloud_shell_live SKIPPED (Cloud Shel...) [ 50%]
+test_managed_identity_live.py::test_managed_identity_live PASSED         [ 75%]
+test_managed_identity_live_async.py::test_managed_identity_live PASSED   [100%]
+
+=========================== short test summary info ============================
+SKIPPED [2] conftest.py:46: Cloud Shell MSI unavailable
+========================= 2 passed, 2 skipped in 1.29s =========================
+```
+
+**Note**: The `run_test.py` script may hang for a long time after the tests complete as it waits
+for one of the test resources (AzureAssignedIdentity) to be deleted. Feel free to Ctrl-C if
+the cluster will just be deleted afterwards.
+
+## Delete Azure resources
 ```sh
 az group delete -n $RESOURCE_GROUP -y --no-wait
 ```

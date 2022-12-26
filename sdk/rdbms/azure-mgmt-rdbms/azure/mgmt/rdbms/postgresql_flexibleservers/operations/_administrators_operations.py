@@ -223,7 +223,7 @@ class AdministratorsOperations:
         object_id: str,
         parameters: Union[_models.ActiveDirectoryAdministratorAdd, IO],
         **kwargs: Any
-    ) -> _models.ActiveDirectoryAdministrator:
+    ) -> Optional[_models.ActiveDirectoryAdministrator]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -239,7 +239,7 @@ class AdministratorsOperations:
             "api_version", _params.pop("api-version", self._config.api_version)
         )  # type: Literal["2022-03-08-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActiveDirectoryAdministrator]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ActiveDirectoryAdministrator]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -271,11 +271,12 @@ class AdministratorsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize("ActiveDirectoryAdministrator", pipeline_response)
 

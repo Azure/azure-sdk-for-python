@@ -4,15 +4,11 @@
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
-- Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
-- Conversational PII: Used to extract and redact personally-identifiable info (PII)
+- Conversational Summarization: Used to analyze conversations in the form of issues/resolution, chapter title, and narrative summarizations
+- Conversational PII: Used to extract and redact personally-identifiable information (PII)
+- Conversational Sentiment Analysis: Used to analyze the sentiment of conversations
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API documentation][conversationanalysis_restdocs] | [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
-
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 
 ## Getting started
 
@@ -31,7 +27,7 @@ Install the Azure Conversations client library for Python with [pip][pip_link]:
 pip install azure-ai-language-conversations --pre
 ```
 
-> Note: This version of the client library defaults to the 2022-05-15-preview version of the service
+> Note: This version of the client library defaults to the 2022-10-01-preview version of the service
 
 ### Authenticate the client
 In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysisclient_class] class, or [ConversationAuthoringClient][conversationauthoringclient_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
@@ -94,7 +90,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.ai.textanalytics import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -431,6 +427,80 @@ with client:
                     print("offset: {}".format(entity["offset"]))
                     print("length: {}".format(entity["length"]))
 ```
+
+
+### Conversational Sentiment Analysis
+
+Analyze sentiment in conversations.
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+# get secrets
+endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+key = os.environ["AZURE_CONVERSATIONS_KEY"]
+# analyze query
+client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+
+with client:
+    poller = client.begin_conversation_analysis(
+        task={
+          "displayName": "Sentiment Analysis from a call center conversation",
+          "analysisInput": {
+            "conversations": [
+              {
+                "id": "1",
+                "language": "en",
+                "modality": "transcript",
+                "conversationItems": [
+                  {
+                    "participantId": "1",
+                    "id": "1",
+                    "text": "I like the service. I do not like the food",
+                    "lexical": "i like the service i do not like the food",
+                  }
+                ]
+              }
+            ]
+          },
+          "tasks": [
+            {
+              "taskName": "Conversation Sentiment Analysis",
+              "kind": "ConversationalSentimentTask",
+              "parameters": {
+                "modelVersion": "latest",
+                "predictionSource": "text"
+              }
+            }
+          ]
+        }
+    )
+
+    result = poller.result()
+    task_result = result["tasks"]["items"][0]
+    print("... view task status ...")
+    print(f"status: {task_result['status']}")
+    conv_sentiment_result = task_result["results"]
+    if conv_sentiment_result["errors"]:
+        print("... errors occurred ...")
+        for error in conv_sentiment_result["errors"]:
+            print(error)
+    else:
+        conversation_result = conv_sentiment_result["conversations"][0]
+        if conversation_result["warnings"]:
+            print("... view warnings ...")
+            for warning in conversation_result["warnings"]:
+                print(warning)
+        else:
+            print("... view task result ...")
+            for conversation in conversation_result["conversationItems"]:
+                print(f"Participant ID: {conversation['participantId']}")
+                print(f"Sentiment: {conversation['sentiment']}")
+                print(f"confidenceScores: {conversation['confidenceScores']}")
+```
+
 
 ### Import a Conversation Project
 This sample shows a common scenario for the authoring part of the SDK

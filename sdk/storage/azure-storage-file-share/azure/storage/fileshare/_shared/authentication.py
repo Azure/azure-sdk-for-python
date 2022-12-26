@@ -6,6 +6,7 @@
 
 import logging
 import sys
+from typing import List, Tuple
 
 try:
     from urllib.parse import urlparse, unquote
@@ -46,6 +47,30 @@ def _wrap_exception(ex, desired_type):
     # However, we can keep the previous error type and message
     # TODO: In the future we will log the trace
     return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+
+# This method attempts to emulate the sorting done by the service
+def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
+    # Define the custom alphabet for weights
+    custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
+
+    # Build dict of tuples and list of keys
+    header_dict = dict()
+    header_keys = []
+    for k, v in input_headers:
+        header_dict[k] = v
+        header_keys.append(k)
+
+    # Sort according to custom defined weights
+    try:
+        header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
+    except ValueError:
+        raise ValueError("Illegal character encountered when sorting headers.")
+
+    # Build list of sorted tuples
+    sorted_headers = []
+    for key in header_keys:
+        sorted_headers.append((key, header_dict.get(key)))
+    return sorted_headers
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -95,7 +120,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         for name, value in request.http_request.headers.items():
             if name.startswith('x-ms-'):
                 x_ms_headers.append((name.lower(), value))
-        x_ms_headers.sort()
+        x_ms_headers = _storage_header_sort(x_ms_headers)
         for name, value in x_ms_headers:
             if value is not None:
                 string_to_sign += ''.join([name, ':', value, '\n'])

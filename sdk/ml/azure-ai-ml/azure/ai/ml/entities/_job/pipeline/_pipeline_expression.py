@@ -89,8 +89,10 @@ class PipelineExpressionMixin:
     def _validate_binary_operation(self, other, operator: str):
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
-        if other is not None and not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES) and not isinstance(
-            other, (PipelineInput, NodeOutput, PipelineExpression)
+        if (
+            other is not None
+            and not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES)
+            and not isinstance(other, (PipelineInput, NodeOutput, PipelineExpression))
         ):
             error_message = (
                 f"Operator '{operator}' is not supported with {type(other)}; "
@@ -199,6 +201,14 @@ class PipelineExpressionMixin:
         As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
         was rejected, logical operations are also not supported.
         """
+        from azure.ai.ml.dsl._pipeline_component_builder import _is_inside_dsl_pipeline_func
+
+        # note: unexpected bool test always be checking if the object is None;
+        # so for non-pipeline scenarios, directly return True to avoid unexpected breaking,
+        # and for pipeline scenarios, will use is not None to replace bool test.
+        if not _is_inside_dsl_pipeline_func():
+            return True
+
         error_message = f"Type {type(self)} is not supported for operation bool()."
         raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
@@ -452,8 +462,9 @@ class PipelineExpression(PipelineExpressionMixin):
             if _type != NONE_PARAMETER_TYPE and _type not in PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES:
                 error_message = (
                     f"Pipeline input type {_type!r} is not supported in expression; "
-                    f"currently only support None, " +
-                    ", ".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES) + "."
+                    f"currently only support None, "
+                    + ", ".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES)
+                    + "."
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
@@ -544,9 +555,14 @@ class PipelineExpression(PipelineExpressionMixin):
             for _name in sorted(self._inputs):
                 _type = self._inputs[_name].type
                 _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
+                _command_inputs_items.append(_name + '="${{inputs.' + _name + '}}"')
             _command_inputs_string = " ".join(_command_inputs_items)
-            _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
+            _command_output_string = 'output="${{outputs.output}}"'
+            _command = (
+                "mldesigner execute --source expression_component.py --name expression_func"
+                " --inputs " + _command_inputs_string + " --outputs " + _command_output_string
+            )
+            _data["command"] = _data["command"].format(command_placeholder=_command)
             dump_yaml_to_file(_path, _data)
 
         if self._created_component is None:

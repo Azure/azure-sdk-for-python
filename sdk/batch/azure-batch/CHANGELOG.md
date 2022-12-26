@@ -1,5 +1,25 @@
 # Release History
 
+## 13.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 13.0.0 (2022-11-08)
+
+### Features Added
+
+- Added new custom enum type `NodeCommunicationMode`.
+  - This property determines how a pool communicates with the Batch service.
+  - Possible values: Default, Classic, Simplified.
+- Added properties `current_node_communication_mode` and `target_node_communication_mode` of type `NodeCommunicationMode` to `CloudPool`.
+- Added property `target_node_communication_mode` of type `NodeCommunicationMode` to `PoolSpecification`, `PoolAddParameter`, `PoolPatchParameter`, and `PoolUpdatePropertiesParameter`.
+
 ## 12.0.0 (2022-02-01)
 
 ### Features

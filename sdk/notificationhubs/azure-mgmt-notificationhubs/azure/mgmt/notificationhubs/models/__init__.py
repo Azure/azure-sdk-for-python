@@ -38,46 +38,48 @@ from ._models_py3 import Sku
 from ._models_py3 import SubResource
 from ._models_py3 import WnsCredential
 
-
-from ._notification_hubs_management_client_enums import (
-    AccessRights,
-    NamespaceType,
-    SkuName,
-)
+from ._notification_hubs_management_client_enums import AccessRights
+from ._notification_hubs_management_client_enums import NamespaceType
+from ._notification_hubs_management_client_enums import SkuName
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AdmCredential',
-    'ApnsCredential',
-    'BaiduCredential',
-    'CheckAvailabilityParameters',
-    'CheckAvailabilityResult',
-    'DebugSendResponse',
-    'ErrorResponse',
-    'GcmCredential',
-    'MpnsCredential',
-    'NamespaceCreateOrUpdateParameters',
-    'NamespaceListResult',
-    'NamespacePatchParameters',
-    'NamespaceResource',
-    'NotificationHubCreateOrUpdateParameters',
-    'NotificationHubListResult',
-    'NotificationHubPatchParameters',
-    'NotificationHubResource',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PnsCredentialsResource',
-    'PolicykeyResource',
-    'Resource',
-    'ResourceListKeys',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleListResult',
-    'SharedAccessAuthorizationRuleProperties',
-    'SharedAccessAuthorizationRuleResource',
-    'Sku',
-    'SubResource',
-    'WnsCredential',
-    'AccessRights',
-    'NamespaceType',
-    'SkuName',
+    "AdmCredential",
+    "ApnsCredential",
+    "BaiduCredential",
+    "CheckAvailabilityParameters",
+    "CheckAvailabilityResult",
+    "DebugSendResponse",
+    "ErrorResponse",
+    "GcmCredential",
+    "MpnsCredential",
+    "NamespaceCreateOrUpdateParameters",
+    "NamespaceListResult",
+    "NamespacePatchParameters",
+    "NamespaceResource",
+    "NotificationHubCreateOrUpdateParameters",
+    "NotificationHubListResult",
+    "NotificationHubPatchParameters",
+    "NotificationHubResource",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PnsCredentialsResource",
+    "PolicykeyResource",
+    "Resource",
+    "ResourceListKeys",
+    "SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+    "SharedAccessAuthorizationRuleListResult",
+    "SharedAccessAuthorizationRuleProperties",
+    "SharedAccessAuthorizationRuleResource",
+    "Sku",
+    "SubResource",
+    "WnsCredential",
+    "AccessRights",
+    "NamespaceType",
+    "SkuName",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -3,6 +3,7 @@ import re
 import pydash
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import (
     Input,
@@ -10,11 +11,11 @@ from azure.ai.ml import (
     Output,
     PyTorchDistribution,
     TensorFlowDistribution,
+    UserIdentityConfiguration,
     command,
     load_component,
     load_job,
     spark,
-    UserIdentityConfiguration,
 )
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
@@ -22,7 +23,6 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
-from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -116,11 +116,8 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "name": "my_job",
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         actual_command = pydash.omit(
@@ -136,7 +133,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -152,7 +149,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": True,
                     "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -175,7 +171,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -191,7 +187,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": False,
                     "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -248,11 +243,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
             "type": "command",
         }
         actual_dict = pydash.omit(node1_dict, "componentId", "properties")
@@ -280,11 +271,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
         }
         # node1 copies test_command's dict
         assert node1_dict == expected_dict
@@ -315,9 +302,6 @@ class TestCommandFunction:
             },
             "limits": {"job_limits_type": "Command", "timeout": "PT10S"},
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
         }
         # node3 copies node2's property
         assert node3_dict == expected_dict
@@ -362,12 +346,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
-            "properties": {},
         }
         assert node1_dict == expected_dict
 
@@ -380,7 +359,7 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
@@ -395,7 +374,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": True,
                     "outputs": {"my_model": {"type": "mlflow_model"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -555,15 +533,12 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "echo hello",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
-                    "inputs": {},
                     "is_deterministic": True,
-                    "outputs": {},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -585,12 +560,7 @@ class TestCommandFunction:
             "display_name": "my-fancy-job",
             "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
             "environment_variables": {"foo": "bar"},
-            "inputs": {},
-            "limits": None,
             "name": "my_job",
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         assert actual_node == expected_node
@@ -639,7 +609,6 @@ class TestCommandFunction:
         assert rest_dict["resources"] == {
             "instance_count": 4,
             "instance_type": "STANDARD_D2",
-            "properties": {},
             "docker_args": "test command",
             "shm_size": "3g",
         }
@@ -660,10 +629,10 @@ class TestCommandFunction:
         rest_dict = node1._to_rest_object()
 
         assert rest_dict["distribution"] == {"distribution_type": "Mpi", "process_count_per_instance": 4}
-        assert rest_dict["resources"] == {"instance_count": 4, "instance_type": "STANDARD_D2", "properties": {}}
+        assert rest_dict["resources"] == {"instance_count": 4, "instance_type": "STANDARD_D2"}
 
     def test_resources_from_dict(self, test_command_params):
-        expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2", "properties": {}}
+        expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2"}
         test_command_params.update(
             {
                 "resources": JobResourceConfiguration(instance_count=4, instance_type="STANDARD_D2"),
@@ -698,7 +667,7 @@ class TestCommandFunction:
         )
         command_node = command(**test_command_params)
         rest_dict = command_node._to_rest_object()
-        assert rest_dict["resources"] == {"instance_type": "STANDARD_D2", "properties": {}}
+        assert rest_dict["resources"] == {"instance_type": "STANDARD_D2"}
 
     def test_to_component_input(self):
         # test literal input
@@ -996,12 +965,37 @@ class TestCommandFunction:
                         "uri": "https://my-blob/path/to/data",
                     },
                 },
-                "limits": None,
                 "name": "my_job",
                 "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-                "properties": {},
-                "resources": None,
-                "tags": {},
                 "type": "command",
             }
         }
+
+    def test_set_identity(self, test_command):
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
+        node1 = test_command()
+        node2 = node1()
+        node2.identity = AmlTokenConfiguration()
+        node3 = node1()
+        node3.identity = {'type': 'AMLToken'}
+        assert node2.identity == node3.identity
+
+    def test_sweep_set_search_space(self, test_command):
+        from azure.ai.ml.entities._job.sweep.search_space import Choice
+        node1 = test_command()
+        command_node_to_sweep_1 = node1()
+        sweep_node_1 = command_node_to_sweep_1.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_1.search_space = {'batch_size': {'type': 'choice', 'values': [25, 35]}}
+
+        command_node_to_sweep_2 = node1()
+        sweep_node_2 = command_node_to_sweep_2.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_2.search_space = {'batch_size': Choice(values=[25, 35])}
+        assert sweep_node_1.search_space == sweep_node_2.search_space

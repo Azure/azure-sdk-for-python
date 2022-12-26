@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pydash
 import pytest
-from test_utilities.utils import assert_final_job_status
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import cancel_job
 
 from azure.ai.ml import Input, MLClient, automl, dsl
 from azure.ai.ml.automl import (
@@ -16,24 +17,30 @@ from azure.ai.ml.automl import (
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageClassificationSearchSpace, ImageObjectDetectionSearchSpace
 from azure.ai.ml.entities._job.automl.nlp import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
-
-from devtools_testutils import AzureRecordedTestCase
 
 tests_root_dir = Path(__file__).parent.parent.parent
 
+# declare variables for compute, so that we can easily change them later
+CPU_CLUSTER = "cpu-cluster"
+GPU_CLUSTER = "gpu-cluster"
 
+
+@pytest.mark.usefixtures(
+    "enable_environment_id_arm_expansion",
+    "enable_pipeline_private_preview_features",
+    "mock_code_hash",
+    "mock_component_hash",
+    "recorded_test",
+)
 @pytest.mark.automle2etest
-@pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
 @pytest.mark.pipeline_test
 class TestAutomlDSLPipeline(AzureRecordedTestCase):
     def test_automl_classification_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_automl_classification_in_pipeline", default_compute_target="automl-cpu-cluster")
+        @dsl.pipeline(name="train_automl_classification_in_pipeline")
         def train_automl_classification_in_pipeline(
             class_train_data,
             class_valid_data,
@@ -59,9 +66,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_classification_in_pipeline(class_train, class_valid)
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -78,17 +86,13 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "log_verbosity": "info",
             "limits": {"max_trials": 1},
             "featurization": {"mode": "auto"},
-            "training": {
-                "enable_model_explainability": True,
-                "enable_stack_ensemble": False,
-                "enable_vote_ensemble": False,
-            },
+            "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
             "task": "classification",
             "primary_metric": "accuracy",
         }
 
     def test_automl_regression_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_automl_regression_in_pipeline", default_compute_target="automl-cpu-cluster")
+        @dsl.pipeline(name="train_automl_regression_in_pipeline")
         def train_automl_regression_in_pipeline(regression_train_data):
             regression_node = regression(
                 primary_metric="r2_score",
@@ -105,9 +109,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_regression_in_pipeline(regression_train)
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -122,17 +127,13 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "log_verbosity": "info",
             "limits": {"max_trials": 1},
             "featurization": {"mode": "auto"},
-            "training": {
-                "enable_model_explainability": True,
-                "enable_stack_ensemble": False,
-                "enable_vote_ensemble": False,
-            },
+            "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
             "task": "regression",
             "primary_metric": "r2_score",
         }
 
     def test_automl_forecasting_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="automl-cpu-cluster")
+        @dsl.pipeline(name="train_with_automl_in_pipeline")
         def train_automl_forecasting_in_pipeline(
             forecasting_train_data,
         ):
@@ -155,9 +156,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_forecasting_in_pipeline(forecasting_train_data=forecasting_train)
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -173,18 +175,14 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "log_verbosity": "info",
             "limits": {"max_trials": 1},
             "featurization": {"mode": "auto"},
-            "training": {
-                "enable_model_explainability": True,
-                "enable_stack_ensemble": False,
-                "enable_vote_ensemble": False,
-            },
+            "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
             "task": "forecasting",
             "forecasting": {"forecast_horizon": 12, "time_column_name": "DATE", "frequency": "MS"},
             "primary_metric": "normalized_root_mean_squared_error",
         }
 
     def test_automl_text_classification_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_automl_text_class_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_automl_text_class_in_pipeline")
         def train_automl_text_class_in_pipeline(
             text_classification_train,
             text_classification_valid,
@@ -210,8 +208,9 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_automl_text_class_in_pipeline(
             text_classification_train, text_classification_valid
         )
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -224,14 +223,14 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "tags": {},
             "type": "automl",
             "outputs": {},
-            "limits": {"max_trials": 1, "max_concurrent_trials": 1},
+            "limits": {"max_trials": 1, "max_nodes": 1, "max_concurrent_trials": 1},
             "featurization": {"dataset_language": "eng"},
             "task": "text_classification",
             "primary_metric": "accuracy",
         }
 
     def test_automl_text_classification_multilabel_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_automl_text_class_multilabel_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_automl_text_class_multilabel_in_pipeline")
         def train_automl_text_class_multilabel_in_pipeline(
             text_classification_multilabel_train,
             text_classification_multilabel_valid,
@@ -257,8 +256,9 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_automl_text_class_multilabel_in_pipeline(
             text_classification_multilabel_train, text_classification_multilabel_valid
         )
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -271,13 +271,13 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "tags": {},
             "type": "automl",
             "outputs": {},
-            "limits": {"max_trials": 1, "max_concurrent_trials": 1},
+            "limits": {"max_trials": 1, "max_nodes": 1, "max_concurrent_trials": 1},
             "task": "text_classification_multilabel",
             "primary_metric": "accuracy",
         }
 
     def test_automl_text_ner_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_automl_text_ner_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_automl_text_ner_in_pipeline")
         def train_automl_text_ner_in_pipeline(
             text_ner_train,
             text_ner_valid,
@@ -300,8 +300,9 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_text_ner_in_pipeline(text_ner_train, text_ner_valid)
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -314,13 +315,13 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "tags": {},
             "type": "automl",
             "outputs": {},
-            "limits": {"max_trials": 1, "max_concurrent_trials": 1},
+            "limits": {"max_trials": 1, "max_nodes": 1, "max_concurrent_trials": 1},
             "task": "text_ner",
             "primary_metric": "accuracy",
         }
 
     def test_automl_vision_multiclass_node_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_multiclass_with_automl_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_multiclass_with_automl_in_pipeline")
         def train_multiclass_with_automl_in_pipeline(
             image_multiclass_train_data,
             image_multiclass_valid_data,
@@ -347,10 +348,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 ]
             )
             image_multiclass_node.set_sweep(
-                max_trials=1,
-                max_concurrent_trials=1,
                 sampling_algorithm="Random",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            image_multiclass_node.set_limits(
+                max_trials=1,
+                max_concurrent_trials=1,
             )
 
         multiclass_train = Input(
@@ -363,16 +366,17 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_multiclass_with_automl_in_pipeline(multiclass_train, multiclass_valid)
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
 
         image_multiclass_dict = pydash.omit(actual_dict["properties"]["jobs"]["image_multiclass_node"], fields_to_omit)
         assert image_multiclass_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"max_concurrent_trials": 1, "max_trials": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -384,7 +388,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_multiclass_valid_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 1, "max_trials": 1},
                 "early_termination": {
                     "evaluation_interval": 2,
                     "delay_evaluation": 6,
@@ -406,7 +409,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         }
 
     def test_automl_vision_multilabel_node_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_multilabel_with_automl_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_multilabel_with_automl_in_pipeline")
         def train_multilabel_with_automl_in_pipeline(
             image_multilabel_train_data,
             image_multilabel_valid_data,
@@ -433,10 +436,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 ]
             )
             image_multilabel_node.set_sweep(
-                max_trials=1,
-                max_concurrent_trials=1,
                 sampling_algorithm="Random",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            image_multilabel_node.set_limits(
+                max_trials=1,
+                max_concurrent_trials=1,
             )
 
         multilabel_train = Input(
@@ -449,16 +454,17 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_multilabel_with_automl_in_pipeline(multilabel_train, multilabel_valid)
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
 
         image_multilabel_dict = pydash.omit(actual_dict["properties"]["jobs"]["image_multilabel_node"], fields_to_omit)
         assert image_multilabel_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"max_concurrent_trials": 1, "max_trials": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "iou",
@@ -470,7 +476,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "validation_data": "${{parent.inputs.image_multilabel_valid_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 1, "max_trials": 1},
                 "early_termination": {
                     "evaluation_interval": 2,
                     "delay_evaluation": 6,
@@ -492,7 +497,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         }
 
     def test_automl_vision_od_node_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_od_with_automl_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_od_with_automl_in_pipeline")
         def train_od_with_automl_in_pipeline(
             image_object_detection_train_data,
             image_object_detection_valid_data,
@@ -524,10 +529,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
                 timeout_minutes=60,
             )
             image_object_detection_node.set_sweep(
-                max_trials=1,
-                max_concurrent_trials=1,
                 sampling_algorithm="Random",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            image_object_detection_node.set_limits(
+                max_trials=1,
+                max_concurrent_trials=1,
             )
 
         object_detection_train = Input(
@@ -540,9 +547,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_od_with_automl_in_pipeline(object_detection_train, object_detection_valid)
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -551,7 +559,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             actual_dict["properties"]["jobs"]["image_object_detection_node"], fields_to_omit
         )
         assert image_object_detection_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"max_concurrent_trials": 1, "max_trials": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -564,7 +572,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "training_parameters": {"nms_iou_threshold": 0.7},
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 1, "max_trials": 1},
                 "early_termination": {
                     "evaluation_interval": 2,
                     "delay_evaluation": 6,
@@ -589,7 +596,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         }
 
     def test_automl_vision_segmentation_node_in_pipeline(self, client: MLClient):
-        @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="gpu-cluster")
+        @dsl.pipeline(name="train_with_automl_in_pipeline")
         def train_segmentation_with_automl_in_pipeline(
             image_instance_segmentation_train_data,
             image_instance_segmentation_valid_data,
@@ -617,10 +624,12 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             )
 
             image_instance_segmentation_node.set_sweep(
-                max_trials=10,
-                max_concurrent_trials=2,
                 sampling_algorithm="Random",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            image_instance_segmentation_node.set_limits(
+                max_trials=10,
+                max_concurrent_trials=2,
             )
 
         instance_segmentation_train = Input(
@@ -635,9 +644,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_segmentation_with_automl_in_pipeline(
             instance_segmentation_train, instance_segmentation_valid
         )
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert_final_job_status(from_rest_pipeline_job, client, PipelineJob, JobStatus.COMPLETED)
+        cancel_job(client, from_rest_pipeline_job)
 
         actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
@@ -646,7 +656,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             actual_dict["properties"]["jobs"]["image_instance_segmentation_node"], fields_to_omit
         )
         assert image_instance_segmentation_dict == {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"max_concurrent_trials": 2, "max_trials": 10, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -659,7 +669,6 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "training_parameters": {"nms_iou_threshold": 0.7},
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 2, "max_trials": 10},
                 "early_termination": {
                     "evaluation_interval": 2,
                     "delay_evaluation": 6,

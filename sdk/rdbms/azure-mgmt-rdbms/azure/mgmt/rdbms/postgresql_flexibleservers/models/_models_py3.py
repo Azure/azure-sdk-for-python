@@ -1651,7 +1651,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype point_in_time_utc: ~datetime.datetime
     :ivar availability_zone: availability zone information of the server.
     :vartype availability_zone: str
-    :ivar replication_role: Replication role of the server. Known values are: "Primary",
+    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
      "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
      "GeoAsyncReplica".
     :vartype replication_role: str or
@@ -1770,7 +1770,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype point_in_time_utc: ~datetime.datetime
         :keyword availability_zone: availability zone information of the server.
         :paramtype availability_zone: str
-        :keyword replication_role: Replication role of the server. Known values are: "Primary",
+        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
          "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
          "GeoAsyncReplica".
         :paramtype replication_role: str or
@@ -1927,6 +1927,11 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
      "Update".
     :vartype create_mode: str or
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateModeForUpdate
+    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
+     "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
+     "GeoAsyncReplica".
+    :vartype replication_role: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ReplicationRole
     """
 
     _attribute_map = {
@@ -1942,6 +1947,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "auth_config": {"key": "properties.authConfig", "type": "AuthConfig"},
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
         "create_mode": {"key": "properties.createMode", "type": "str"},
+        "replication_role": {"key": "properties.replicationRole", "type": "str"},
     }
 
     def __init__(
@@ -1959,6 +1965,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         auth_config: Optional["_models.AuthConfig"] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
         create_mode: Optional[Union[str, "_models.CreateModeForUpdate"]] = None,
+        replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         **kwargs
     ):
         """
@@ -1990,6 +1997,11 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
          and "Update".
         :paramtype create_mode: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateModeForUpdate
+        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
+         "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
+         "GeoAsyncReplica".
+        :paramtype replication_role: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ReplicationRole
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -2004,6 +2016,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.auth_config = auth_config
         self.data_encryption = data_encryption
         self.create_mode = create_mode
+        self.replication_role = replication_role
 
 
 class ServerListResult(_serialization.Model):

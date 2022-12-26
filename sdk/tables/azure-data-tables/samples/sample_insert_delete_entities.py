@@ -79,7 +79,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
 
             # Create entity to delete (to showcase etag)

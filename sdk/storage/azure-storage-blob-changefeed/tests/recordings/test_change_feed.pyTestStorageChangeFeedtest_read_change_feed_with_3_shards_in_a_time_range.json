@@ -1,0 +1,865 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=idx%2Fsegments%2F2022",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:32 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Eidx/segments/2022\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/16/2300/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EWed, 16 Nov 2022 23:17:50 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 00:04:23 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAC82F48899C7C\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003E06EkwGTf8I4P6/Iwcjd\u002BuQ==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/17/0000/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EThu, 17 Nov 2022 00:04:23 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 01:06:40 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAC837FBD8AFAF\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003EtfLvxvloqEfZpD3e9dXXkA==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/17/0100/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EThu, 17 Nov 2022 01:06:39 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:45 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E7DAA5C7\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003ECXrrcXuNbdSdpn9RXbnaKw==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/28/2100/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:44:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:44:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189BD603571\u003C/Etag\u003E\u003CContent-Length\u003E538\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003EnW7uN/EhMvVrBiudTExFSw==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/idx/segments/2022/11/28/2100/meta.json",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "538",
+        "Content-Range": "bytes 0-537/538",
+        "Content-Type": "application/json",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189BD603571\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:44:34 GMT",
+        "x-ms-blob-content-md5": "nW7uN/EhMvVrBiudTExFSw==",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:44:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": {
+        "version": 0,
+        "begin": "2022-11-28T21:00:00.000Z",
+        "intervalSecs": 3600,
+        "status": "Publishing",
+        "config": {
+          "version": 1,
+          "configVersionEtag": "0x8dad189bd5c84f6",
+          "numShards": 3,
+          "recordsFormat": "avro",
+          "formatSchemaVersion": 5,
+          "shardDistFnVersion": 1,
+          "streamAppendType": 3
+        },
+        "chunkFilePaths": [
+          "$blobchangefeed/log/00/2022/11/28/2100/",
+          "$blobchangefeed/log/01/2022/11/28/2100/",
+          "$blobchangefeed/log/02/2022/11/28/2100/"
+        ],
+        "storageDiagnostics": {
+          "version": 0,
+          "lastModifiedTime": "2022-11-28T21:44:34.402Z",
+          "data": {
+            "aid": "77cb7abe-2006-0000-0072-03e5680628a7"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F00%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/00/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/00/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E13ACD24\u003C/Etag\u003E\u003CContent-Length\u003E7275\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-range": "bytes=0-7274",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7275",
+        "Content-Range": "bytes 0-7274/7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JjoCAgICAgICAAN7GgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTICODIwMjItMTEtMjhUMjE6NDM6MjMuNjQ2MzkzN1pIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDYwYjRmAkhhZWYwZWRlMC02ZjY1LTExZWQtYmVkOS00ODUxYzU4ODI5ZTBIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMkZGMTQxMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUyYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyZAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDUsNDUsMzYpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNgI4MjAyMi0xMS0yOFQyMTo0MzoyMy44MjkzOTcyWkhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwNjBiNWMCSGFmMGQxMzQ5LTZmNjUtMTFlZC1iYmY2LTQ4NTFjNTg4MjllMEhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM0QkI2NjQwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTZgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDQ1AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsOSw2OSw2MykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU4AjgyMDIyLTExLTI4VDIxOjQzOjIzLjkxNTM5NDJaSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTA2MGI2MAJIYWYxOWVlZWYtNmY2NS0xMWVkLWFhZjItNDg1MWM1ODgyOWUwSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzU4RkQxNjBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNTEAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEcKDY4MywxMSw4MSw3NSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxMQI4MjAyMi0xMS0yOFQyMTo0MzoyNC4wNjUzOTUxWkhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwNjBiNjUCSGFmMmUxYThjLTZmNjUtMTFlZC05OTg3LTQ4NTFjNTg4MjllMEhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM2RkUwN0YwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTExYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA2MwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDE0LDk5LDkzKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTE1AjgyMDIyLTExLTI4VDIxOjQzOjI0LjI2MTM5ODVaSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTA2MGI2ZQJIYWY0ZTk2ZmUtNmY2NS0xMWVkLTkyMmUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzhEQTFERTBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTVgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDdiAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTgsMTIzLDExNykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNgI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zMDg0MDIxWkhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwNjBiNzECSGFmNTU3MDM4LTZmNjUtMTFlZC05YmZlLTQ4NTFjNTg4MjllMEhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5NEY0RjUwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE2YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4MQAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDE5LDEyOSwxMjMpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTgCODIwMjItMTEtMjhUMjE6NDM6MjQuNDAyNDA3NlpIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDYwYjdiAkhhZjYzZjljMC02ZjY1LTExZWQtYWQzZC00ODUxYzU4ODI5ZTBIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQTM0RDBDMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOGQAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMSwxNDEsMTM1KQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F01%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/01/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/01/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E15BEA73\u003C/Etag\u003E\u003CContent-Length\u003E6621\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-6620",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "6621",
+        "Content-Range": "bytes 0-6620/6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JjICAgICAgICAAMK8gICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTACODIwMjItMTEtMjhUMjE6NDM6MjMuNTMwMzg4NFpIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDYwYjQ1AkhhZTk4NWRmZi02ZjY1LTExZWQtODk0OS00ODUxYzU4ODI5ZTBIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMURFRjdGMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUwYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAxYgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRgoNjgzLDEsMjcsMCkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUzAjgyMDIyLTExLTI4VDIxOjQzOjIzLjY5NTM4NzNaSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTA2MGI1MAJIYWVmNzVmMTMtNmY2NS0xMWVkLThhMTQtNDg1MWM1ODgyOWUwSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzM3NDNGQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlM2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMzMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw2LDUxLDQ1KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTcCODIwMjItMTEtMjhUMjE6NDM6MjMuODcxMzg5NlpIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDYwYjVlAkhhZjEzMmM5Zi02ZjY1LTExZWQtOTg2Ni00ODUxYzU4ODI5ZTBIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNTIxRjJFMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA0YgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEwLDc1LDY5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTkCODIwMjItMTEtMjhUMjE6NDM6MjMuOTYxMzkwOVpIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDYwYjYyAkhhZjIwYmVjZi02ZjY1LTExZWQtYTYwZC00ODUxYzU4ODI5ZTBIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNUZEQjFEMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU5YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA1NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEyLDg3LDgxKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEwAjgyMDIyLTExLTI4VDIxOjQzOjI0LjAwNTM5NDhaSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTA2MGI2NAJIYWYyNzc3NGYtNmY2NS0xMWVkLTg1NTAtNDg1MWM1ODgyOWUwSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzY2QjhCQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTBgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDVkAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHCg2ODMsMTMsOTMsODcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTQCODIwMjItMTEtMjhUMjE6NDM6MjQuMjE2Mzk2OFpIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDYwYjZkAkhhZjQ3NjAwOC02ZjY1LTExZWQtODQ4MC00ODUxYzU4ODI5ZTBIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzODZFQjAwMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxNGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNzUAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywxNywxMTcsMTExKQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F02%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/02/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/02/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:46:45 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD18A0B8CCD0A\u003C/Etag\u003E\u003CContent-Length\u003E9900\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-9899",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9900",
+        "Content-Range": "bytes 0-9899/9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JkICAgICAgICAAJDRgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTECODIwMjItMTEtMjhUMjE6NDM6MjMuNjAzMzg2MlpIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDYwYjRjAkhhZWVhODEyMy02ZjY1LTExZWQtODQ5Yi00ODUxYzU4ODI5ZTBIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMjk2MTQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyNAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDMsMzYsMjcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNAI4MjAyMi0xMS0yOFQyMTo0MzoyMy43NDMzODU2WkhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwNjBiNTQCSGFlZmY4ZDY5LTZmNjUtMTFlZC04ZjUwLTQ4NTFjNTg4MjllMEhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTMzRTk3MUYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTRgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDM5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsNyw1Nyw1MSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU1AjgyMDIyLTExLTI4VDIxOjQzOjIzLjc4ODM5NjRaSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTA2MGI1OAJIYWYwNjM0OWYtNmY2NS0xMWVkLThlZDAtNDg1MWM1ODgyOWUwSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzQ1NzY4MzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlNWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwM2YAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw4LDYzLDU3KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEyAjgyMDIyLTExLTI4VDIxOjQzOjI0LjExODM5NDVaSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTA2MGI2OQJIYWYzODNhNzItNmY2NS0xMWVkLTg5NWUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5Mzc3Q0ZDQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTJgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHig2ODMsMTUsMTA1LDk5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEzAjgyMDIyLTExLTI4VDIxOjQzOjI0LjE3MTM5NTdaSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTA2MGI2YgJIYWY0MGIyMzgtNmY2NS0xMWVkLTk4M2EtNDg1MWM1ODgyOWUwSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzdGRTYxNzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTNgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDZmAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTYsMTExLDEwNSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNwI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zNTczOTg1WkhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwNjBiNzUCSGFmNWQwNzU2LTZmNjUtMTFlZC04N2U2LTQ4NTFjNTg4MjllMEhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5QzQ3REYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDIwLDEzNSwxMjkpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTkCODIwMjItMTEtMjhUMjE6NDM6MjQuNDUwNDAyMlpIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDYwYjdlAkhhZjZiNWQwMy02ZjY1LTExZWQtOWRkOC00ODUxYzU4ODI5ZTBIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQUE5RkQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOTMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMiwxNDcsMTQxKQAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGGSAS9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzLyRibG9iY2hhbmdlZmVlZC9ibG9icy9tZXRhL3NlZ21lbnRzLmpzb24KODIwMjItMTEtMjhUMjE6NDQ6MzQuNjA1ODM5NFpINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQyDEgzMjczNzI1My1iY2VmLTRjNDgtYTZhNS1kZWIxZDE2NDAzN2NINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQxIjB4RkZGRkZGRkZGRkZGRkZGIGNvbnRyb2wvaW50ZXJuYWwAAgACIDAxRDhGQTA0MzVCOTI0MjkAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMGE0AAAAAAAACgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMjcsMTY0LDE0NykGbGlkSDAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMAZsY3gAAA0HDwwEBAwAAQkBBwsPDgmEgICAgICAgIAAjpOAgICAgICAAAqIAi9zdWJzY3JpcHRpb25zLzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMC9yZXNvdXJjZUdyb3Vwcy9uYS9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YVAvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8vYmxvYnMvCjgyMDIyLTExLTI4VDIxOjQ0OjM0LjU1ODAzMjZaSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2NmZhMQxIMzI3MzcyNTMtYmNlZi00YzQ4LWE2YTUtZGViMWQxNjQwMzdjSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2MjhjNCIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAABiaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5jb3JlLndpbmRvd3MubmV0L2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMjAAAAAAAAAKBmJpZEg2MmNjOGU4YS1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwMDAwMDAGc2lkSDI3ZWMzMDZhLWIwMTYtNzY0MS1hYjIwLTFhNWY5YmYwMWM5YQZzZXEYKDY4MywyLDMyLDApBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFQL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvL2Jsb2JzLwo4MjAyMi0xMS0yOFQyMTo0NTo0NS42NzA3MzY3Wkg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMWEMSDhjNDY3M2RlLTcwODUtNDYyMi05ZWY0LWM0NTdjNTdjYWJhZUg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMTgiMHhGRkZGRkZGRkZGRkZGRkYgY29udHJvbC9pbnRlcm5hbAACAAAAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY1AAAAAAAACgZiaWRINjJjYzhlOGEtYjAwNi0wMDA5LTAwNzItMDMzYzRhMDAwMDAwBnNpZEgyN2VjMzA2YS1iMDE2LTc2NDEtYWIyMC0xYTVmOWJmMDFjOWEGc2VxHig2ODMsMTcsMTAxLDMyKQZsaWRIMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwBmxjeAAADQcPDAQEDAABCQEHCw8OCYKAgICAgICAgACyioCAgICAgIAACogCL3N1YnNjcmlwdGlvbnMvMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwL3Jlc291cmNlR3JvdXBzL25hL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhkgEvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8kYmxvYmNoYW5nZWZlZWQvYmxvYnMvbWV0YS9zZWdtZW50cy5qc29uCjgyMDIyLTExLTI4VDIxOjQ1OjQ1LjcwNTMwMDJaSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2NDY0ZQxIOGM0NjczZGUtNzA4NS00NjIyLTllZjQtYzQ1N2M1N2NhYmFlSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2N2IyMSIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAiAwMUQ4RkEwNDM1QjkyNDI5AGJodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLmNvcmUud2luZG93cy5uZXQvYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDBhZgAAAAAAAAoGYmlkSDc3Y2I3YzczLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDMwLDE3NSwxNjQpBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=idx%2Fsegments%2F2022",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Eidx/segments/2022\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/16/2300/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EWed, 16 Nov 2022 23:17:50 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 00:04:23 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAC82F48899C7C\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003E06EkwGTf8I4P6/Iwcjd\u002BuQ==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/17/0000/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EThu, 17 Nov 2022 00:04:23 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EThu, 17 Nov 2022 01:06:40 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAC837FBD8AFAF\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003EtfLvxvloqEfZpD3e9dXXkA==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/17/0100/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EThu, 17 Nov 2022 01:06:39 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:45 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E7DAA5C7\u003C/Etag\u003E\u003CContent-Length\u003E537\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003ECXrrcXuNbdSdpn9RXbnaKw==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003CBlob\u003E\u003CName\u003Eidx/segments/2022/11/28/2100/meta.json\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:44:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:44:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189BD603571\u003C/Etag\u003E\u003CContent-Length\u003E538\u003C/Content-Length\u003E\u003CContent-Type\u003Eapplication/json\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5\u003EnW7uN/EhMvVrBiudTExFSw==\u003C/Content-MD5\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EBlockBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/idx/segments/2022/11/28/2100/meta.json",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "538",
+        "Content-Range": "bytes 0-537/538",
+        "Content-Type": "application/json",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189BD603571\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:44:34 GMT",
+        "x-ms-blob-content-md5": "nW7uN/EhMvVrBiudTExFSw==",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:44:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": {
+        "version": 0,
+        "begin": "2022-11-28T21:00:00.000Z",
+        "intervalSecs": 3600,
+        "status": "Publishing",
+        "config": {
+          "version": 1,
+          "configVersionEtag": "0x8dad189bd5c84f6",
+          "numShards": 3,
+          "recordsFormat": "avro",
+          "formatSchemaVersion": 5,
+          "shardDistFnVersion": 1,
+          "streamAppendType": 3
+        },
+        "chunkFilePaths": [
+          "$blobchangefeed/log/00/2022/11/28/2100/",
+          "$blobchangefeed/log/01/2022/11/28/2100/",
+          "$blobchangefeed/log/02/2022/11/28/2100/"
+        ],
+        "storageDiagnostics": {
+          "version": 0,
+          "lastModifiedTime": "2022-11-28T21:44:34.402Z",
+          "data": {
+            "aid": "77cb7abe-2006-0000-0072-03e5680628a7"
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F00%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/00/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/00/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E13ACD24\u003C/Etag\u003E\u003CContent-Length\u003E7275\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-7274",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7275",
+        "Content-Range": "bytes 0-7274/7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JjoCAgICAgICAAN7GgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTICODIwMjItMTEtMjhUMjE6NDM6MjMuNjQ2MzkzN1pIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDYwYjRmAkhhZWYwZWRlMC02ZjY1LTExZWQtYmVkOS00ODUxYzU4ODI5ZTBIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMkZGMTQxMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUyYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyZAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDUsNDUsMzYpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNgI4MjAyMi0xMS0yOFQyMTo0MzoyMy44MjkzOTcyWkhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwNjBiNWMCSGFmMGQxMzQ5LTZmNjUtMTFlZC1iYmY2LTQ4NTFjNTg4MjllMEhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM0QkI2NjQwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTZgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDQ1AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsOSw2OSw2MykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU4AjgyMDIyLTExLTI4VDIxOjQzOjIzLjkxNTM5NDJaSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTA2MGI2MAJIYWYxOWVlZWYtNmY2NS0xMWVkLWFhZjItNDg1MWM1ODgyOWUwSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzU4RkQxNjBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNTEAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEcKDY4MywxMSw4MSw3NSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxMQI4MjAyMi0xMS0yOFQyMTo0MzoyNC4wNjUzOTUxWkhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwNjBiNjUCSGFmMmUxYThjLTZmNjUtMTFlZC05OTg3LTQ4NTFjNTg4MjllMEhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM2RkUwN0YwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTExYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA2MwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDE0LDk5LDkzKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTE1AjgyMDIyLTExLTI4VDIxOjQzOjI0LjI2MTM5ODVaSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTA2MGI2ZQJIYWY0ZTk2ZmUtNmY2NS0xMWVkLTkyMmUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzhEQTFERTBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTVgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDdiAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTgsMTIzLDExNykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNgI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zMDg0MDIxWkhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwNjBiNzECSGFmNTU3MDM4LTZmNjUtMTFlZC05YmZlLTQ4NTFjNTg4MjllMEhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5NEY0RjUwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE2YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4MQAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDE5LDEyOSwxMjMpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTgCODIwMjItMTEtMjhUMjE6NDM6MjQuNDAyNDA3NlpIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDYwYjdiAkhhZjYzZjljMC02ZjY1LTExZWQtYWQzZC00ODUxYzU4ODI5ZTBIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQTM0RDBDMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOGQAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMSwxNDEsMTM1KQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/00/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=2712-7274",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "4563",
+        "Content-Range": "bytes 2712-7274/7275",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E13ACD24\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "joCAgICAgICAAN7GgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTICODIwMjItMTEtMjhUMjE6NDM6MjMuNjQ2MzkzN1pIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDYwYjRmAkhhZWYwZWRlMC02ZjY1LTExZWQtYmVkOS00ODUxYzU4ODI5ZTBIZDk1MjMxMTgtMjAxZS0wMDA2LTA0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMkZGMTQxMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUyYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyZAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDUsNDUsMzYpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNgI4MjAyMi0xMS0yOFQyMTo0MzoyMy44MjkzOTcyWkhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwNjBiNWMCSGFmMGQxMzQ5LTZmNjUtMTFlZC1iYmY2LTQ4NTFjNTg4MjllMEhkOTUyMzExYy0yMDFlLTAwMDYtMDg3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM0QkI2NjQwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTZgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDQ1AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsOSw2OSw2MykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU4AjgyMDIyLTExLTI4VDIxOjQzOjIzLjkxNTM5NDJaSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTA2MGI2MAJIYWYxOWVlZWYtNmY2NS0xMWVkLWFhZjItNDg1MWM1ODgyOWUwSGQ5NTIzMTFlLTIwMWUtMDAwNi0wYTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzU4RkQxNjBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNTEAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEcKDY4MywxMSw4MSw3NSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxMQI4MjAyMi0xMS0yOFQyMTo0MzoyNC4wNjUzOTUxWkhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwNjBiNjUCSGFmMmUxYThjLTZmNjUtMTFlZC05OTg3LTQ4NTFjNTg4MjllMEhkOTUyMzEyMy0yMDFlLTAwMDYtMGQ3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM2RkUwN0YwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTExYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA2MwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDE0LDk5LDkzKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTE1AjgyMDIyLTExLTI4VDIxOjQzOjI0LjI2MTM5ODVaSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTA2MGI2ZQJIYWY0ZTk2ZmUtNmY2NS0xMWVkLTkyMmUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI3LTIwMWUtMDAwNi0xMTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzhEQTFERTBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTVgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDdiAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTgsMTIzLDExNykACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNgI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zMDg0MDIxWkhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwNjBiNzECSGFmNTU3MDM4LTZmNjUtMTFlZC05YmZlLTQ4NTFjNTg4MjllMEhkOTUyMzEyOC0yMDFlLTAwMDYtMTI3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5NEY0RjUwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE2YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4MQAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDE5LDEyOSwxMjMpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTgCODIwMjItMTEtMjhUMjE6NDM6MjQuNDAyNDA3NlpIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDYwYjdiAkhhZjYzZjljMC02ZjY1LTExZWQtYWQzZC00ODUxYzU4ODI5ZTBIZDk1MjMxMmEtMjAxZS0wMDA2LTE0NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQTM0RDBDMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOGQAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMSwxNDEsMTM1KQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F01%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/01/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/01/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD189E15BEA73\u003C/Etag\u003E\u003CContent-Length\u003E6621\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-6620",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "6621",
+        "Content-Range": "bytes 0-6620/6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JjICAgICAgICAAMK8gICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTACODIwMjItMTEtMjhUMjE6NDM6MjMuNTMwMzg4NFpIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDYwYjQ1AkhhZTk4NWRmZi02ZjY1LTExZWQtODk0OS00ODUxYzU4ODI5ZTBIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMURFRjdGMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUwYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAxYgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRgoNjgzLDEsMjcsMCkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUzAjgyMDIyLTExLTI4VDIxOjQzOjIzLjY5NTM4NzNaSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTA2MGI1MAJIYWVmNzVmMTMtNmY2NS0xMWVkLThhMTQtNDg1MWM1ODgyOWUwSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzM3NDNGQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlM2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMzMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw2LDUxLDQ1KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTcCODIwMjItMTEtMjhUMjE6NDM6MjMuODcxMzg5NlpIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDYwYjVlAkhhZjEzMmM5Zi02ZjY1LTExZWQtOTg2Ni00ODUxYzU4ODI5ZTBIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNTIxRjJFMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA0YgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEwLDc1LDY5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTkCODIwMjItMTEtMjhUMjE6NDM6MjMuOTYxMzkwOVpIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDYwYjYyAkhhZjIwYmVjZi02ZjY1LTExZWQtYTYwZC00ODUxYzU4ODI5ZTBIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNUZEQjFEMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU5YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA1NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEyLDg3LDgxKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEwAjgyMDIyLTExLTI4VDIxOjQzOjI0LjAwNTM5NDhaSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTA2MGI2NAJIYWYyNzc3NGYtNmY2NS0xMWVkLTg1NTAtNDg1MWM1ODgyOWUwSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzY2QjhCQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTBgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDVkAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHCg2ODMsMTMsOTMsODcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTQCODIwMjItMTEtMjhUMjE6NDM6MjQuMjE2Mzk2OFpIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDYwYjZkAkhhZjQ3NjAwOC02ZjY1LTExZWQtODQ4MC00ODUxYzU4ODI5ZTBIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzODZFQjAwMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxNGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNzUAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywxNywxMTcsMTExKQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:33 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/01/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=2712-6620",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "3909",
+        "Content-Range": "bytes 2712-6620/6621",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "ETag": "\u00220x8DAD189E15BEA73\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "jICAgICAgICAAMK8gICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTACODIwMjItMTEtMjhUMjE6NDM6MjMuNTMwMzg4NFpIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDYwYjQ1AkhhZTk4NWRmZi02ZjY1LTExZWQtODk0OS00ODUxYzU4ODI5ZTBIZDk1MjMxMTUtMjAxZS0wMDA2LTAyNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMURFRjdGMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUwYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAxYgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRgoNjgzLDEsMjcsMCkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUzAjgyMDIyLTExLTI4VDIxOjQzOjIzLjY5NTM4NzNaSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTA2MGI1MAJIYWVmNzVmMTMtNmY2NS0xMWVkLThhMTQtNDg1MWM1ODgyOWUwSGQ5NTIzMTE5LTIwMWUtMDAwNi0wNTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzM3NDNGQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlM2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMzMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw2LDUxLDQ1KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTcCODIwMjItMTEtMjhUMjE6NDM6MjMuODcxMzg5NlpIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDYwYjVlAkhhZjEzMmM5Zi02ZjY1LTExZWQtOTg2Ni00ODUxYzU4ODI5ZTBIZDk1MjMxMWQtMjAxZS0wMDA2LTA5NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNTIxRjJFMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA0YgAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEwLDc1LDY5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTkCODIwMjItMTEtMjhUMjE6NDM6MjMuOTYxMzkwOVpIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDYwYjYyAkhhZjIwYmVjZi02ZjY1LTExZWQtYTYwZC00ODUxYzU4ODI5ZTBIZDk1MjMxMWYtMjAxZS0wMDA2LTBiNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzNUZEQjFEMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGU5YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA1NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRwoNjgzLDEyLDg3LDgxKQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEwAjgyMDIyLTExLTI4VDIxOjQzOjI0LjAwNTM5NDhaSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTA2MGI2NAJIYWYyNzc3NGYtNmY2NS0xMWVkLTg1NTAtNDg1MWM1ODgyOWUwSGQ5NTIzMTIwLTIwMWUtMDAwNi0wYzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzY2QjhCQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTBgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDVkAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHCg2ODMsMTMsOTMsODcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTQCODIwMjItMTEtMjhUMjE6NDM6MjQuMjE2Mzk2OFpIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDYwYjZkAkhhZjQ3NjAwOC02ZjY1LTExZWQtODQ4MC00ODUxYzU4ODI5ZTBIZDk1MjMxMjYtMjAxZS0wMDA2LTEwNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzODZFQjAwMGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxNGAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwNzUAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywxNywxMTcsMTExKQANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed?restype=container\u0026comp=list\u0026prefix=log%2F02%2F2022%2F11%2F28%2F2100%2F",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.blob.core.windows.net/\u0022 ContainerName=\u0022%24blobchangefeed\u0022\u003E\u003CPrefix\u003Elog/02/2022/11/28/2100/\u003C/Prefix\u003E\u003CBlobs\u003E\u003CBlob\u003E\u003CName\u003Elog/02/2022/11/28/2100/00000.avro\u003C/Name\u003E\u003CProperties\u003E\u003CCreation-Time\u003EMon, 28 Nov 2022 21:45:34 GMT\u003C/Creation-Time\u003E\u003CLast-Modified\u003EMon, 28 Nov 2022 21:46:45 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E0x8DAD18A0B8CCD0A\u003C/Etag\u003E\u003CContent-Length\u003E9900\u003C/Content-Length\u003E\u003CContent-Type\u003Eavro/binary\u003C/Content-Type\u003E\u003CContent-Encoding /\u003E\u003CContent-Language /\u003E\u003CContent-CRC64 /\u003E\u003CContent-MD5 /\u003E\u003CCache-Control /\u003E\u003CContent-Disposition /\u003E\u003CBlobType\u003EAppendBlob\u003C/BlobType\u003E\u003CAccessTier\u003EHot\u003C/AccessTier\u003E\u003CAccessTierInferred\u003Etrue\u003C/AccessTierInferred\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CServerEncrypted\u003Etrue\u003C/ServerEncrypted\u003E\u003C/Properties\u003E\u003COrMetadata /\u003E\u003C/Blob\u003E\u003C/Blobs\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=0-9899",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9900",
+        "Content-Range": "bytes 0-9899/9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "T2JqAQQUYXZyby5jb2RlYwhudWxsFmF2cm8uc2NoZW1hyCl7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50IiwibmFtZXNwYWNlIjoiTWljcm9zb2Z0LlN0b3JhZ2UiLCJmaWVsZHMiOlt7Im5hbWUiOiJzY2hlbWFWZXJzaW9uIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0Ijo0fSx7Im5hbWUiOiJ0b3BpYyIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoic3ViamVjdCIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiZXZlbnRUeXBlIiwidHlwZSI6eyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJFdmVudFR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEV2ZW50VHlwZSIsIkJsb2JDcmVhdGVkIiwiQmxvYkRlbGV0ZWQiLCJCbG9iUHJvcGVydGllc1VwZGF0ZWQiLCJCbG9iU25hcHNob3RDcmVhdGVkIiwiQ29udHJvbCIsIkJsb2JUaWVyQ2hhbmdlZCIsIkJsb2JBc3luY09wZXJhdGlvbkluaXRpYXRlZCIsIlJlc3RvcmVQb2ludE1hcmtlckNyZWF0ZWQiXSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkRXZlbnRUeXBlIn19LHsibmFtZSI6ImV2ZW50VGltZSIsInR5cGUiOiJzdHJpbmciLCJkZWZhdWx0IjoiIn0seyJuYW1lIjoiaWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImRhdGEiLCJ0eXBlIjp7InR5cGUiOiJyZWNvcmQiLCJuYW1lIjoiQmxvYkNoYW5nZUV2ZW50RGF0YSIsImZpZWxkcyI6W3sibmFtZSI6ImFwaSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQXBpRW51bSIsInN5bWJvbHMiOlsiVW5zcGVjaWZpZWRBcGkiLCJQdXRCbG9iIiwiUHV0QmxvY2tMaXN0IiwiQ29weUJsb2IiLCJEZWxldGVCbG9iIiwiU2V0QmxvYk1ldGFkYXRhIiwiQ29udHJvbEV2ZW50IiwiVW5kZWxldGVCbG9iIiwiU2V0QmxvYlByb3BlcnRpZXMiLCJTbmFwc2hvdEJsb2IiLCJTZXRCbG9iVGllciIsIkFib3J0Q29weUJsb2IiLCJTZXRCbG9iVGFncyIsIkNyZWF0ZVJlc3RvcmVQb2ludE1hcmtlciJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRBcGkifSwiZGVmYXVsdCI6IlVuc3BlY2lmaWVkQXBpIn0seyJuYW1lIjoiY2xpZW50UmVxdWVzdElkIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJyZXF1ZXN0SWQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImV0YWciLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6ImNvbnRlbnRUeXBlIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJjb250ZW50TGVuZ3RoIiwidHlwZSI6ImxvbmciLCJkZWZhdWx0IjowfSx7Im5hbWUiOiJibG9iVHlwZSIsInR5cGUiOnsidHlwZSI6ImVudW0iLCJuYW1lIjoiQmxvYlR5cGVFbnVtIiwic3ltYm9scyI6WyJVbnNwZWNpZmllZEJsb2JUeXBlIiwiQmxvY2tCbG9iIiwiUGFnZUJsb2IiLCJBcHBlbmRCbG9iIl0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0sImRlZmF1bHQiOiJVbnNwZWNpZmllZEJsb2JUeXBlIn0seyJuYW1lIjoiYmxvYlZlcnNpb24iLCJ0eXBlIjpbIm51bGwiLCJzdHJpbmciXSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoiY29udGFpbmVyVmVyc2lvbiIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGllciIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoiZW51bSIsIm5hbWUiOiJCbG9iVGllckVudW0iLCJzeW1ib2xzIjpbIlVuc3BlY2lmaWVkQmxvYlRpZXIiLCJIb3QiLCJDb29sIiwiQXJjaGl2ZSJdLCJkZWZhdWx0IjoiVW5zcGVjaWZpZWRCbG9iVGllciJ9XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoidXJsIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifSx7Im5hbWUiOiJzZXF1ZW5jZXIiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJzbmFwc2hvdCIsInR5cGUiOlsibnVsbCIsInN0cmluZyJdLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iUHJvcGVydGllc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoicmVjb3JkIiwibmFtZSI6InZhbHVlcyIsImZpZWxkcyI6W3sibmFtZSI6ImN1cnJlbnQiLCJ0eXBlIjoic3RyaW5nIiwiZGVmYXVsdCI6IiJ9LHsibmFtZSI6InByZXZpb3VzIiwidHlwZSI6InN0cmluZyIsImRlZmF1bHQiOiIifV19fV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6ImFzeW5jT3BlcmF0aW9uSW5mbyIsInR5cGUiOlsibnVsbCIseyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn1dLCJkZWZhdWx0IjpudWxsfSx7Im5hbWUiOiJibG9iVGFnc1VwZGF0ZWQiLCJ0eXBlIjpbIm51bGwiLHsidHlwZSI6Im1hcCIsInZhbHVlcyI6eyJ0eXBlIjoibWFwIiwidmFsdWVzIjoic3RyaW5nIn19XSwiZGVmYXVsdCI6bnVsbH0seyJuYW1lIjoicmVzdG9yZVBvaW50TWFya2VyIiwidHlwZSI6WyJudWxsIix7InR5cGUiOiJtYXAiLCJ2YWx1ZXMiOiJzdHJpbmcifV0sImRlZmF1bHQiOm51bGx9LHsibmFtZSI6InN0b3JhZ2VEaWFnbm9zdGljcyIsInR5cGUiOnsidHlwZSI6Im1hcCIsInZhbHVlcyI6InN0cmluZyJ9LCJkZWZhdWx0Ijp7fX1dfX1dfQANBw8MBAQMAAEJAQcLDw4JkICAgICAgICAAJDRgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTECODIwMjItMTEtMjhUMjE6NDM6MjMuNjAzMzg2MlpIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDYwYjRjAkhhZWVhODEyMy02ZjY1LTExZWQtODQ5Yi00ODUxYzU4ODI5ZTBIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMjk2MTQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyNAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDMsMzYsMjcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNAI4MjAyMi0xMS0yOFQyMTo0MzoyMy43NDMzODU2WkhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwNjBiNTQCSGFlZmY4ZDY5LTZmNjUtMTFlZC04ZjUwLTQ4NTFjNTg4MjllMEhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTMzRTk3MUYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTRgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDM5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsNyw1Nyw1MSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU1AjgyMDIyLTExLTI4VDIxOjQzOjIzLjc4ODM5NjRaSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTA2MGI1OAJIYWYwNjM0OWYtNmY2NS0xMWVkLThlZDAtNDg1MWM1ODgyOWUwSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzQ1NzY4MzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlNWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwM2YAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw4LDYzLDU3KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEyAjgyMDIyLTExLTI4VDIxOjQzOjI0LjExODM5NDVaSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTA2MGI2OQJIYWYzODNhNzItNmY2NS0xMWVkLTg5NWUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5Mzc3Q0ZDQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTJgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHig2ODMsMTUsMTA1LDk5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEzAjgyMDIyLTExLTI4VDIxOjQzOjI0LjE3MTM5NTdaSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTA2MGI2YgJIYWY0MGIyMzgtNmY2NS0xMWVkLTk4M2EtNDg1MWM1ODgyOWUwSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzdGRTYxNzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTNgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDZmAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTYsMTExLDEwNSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNwI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zNTczOTg1WkhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwNjBiNzUCSGFmNWQwNzU2LTZmNjUtMTFlZC04N2U2LTQ4NTFjNTg4MjllMEhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5QzQ3REYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDIwLDEzNSwxMjkpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTkCODIwMjItMTEtMjhUMjE6NDM6MjQuNDUwNDAyMlpIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDYwYjdlAkhhZjZiNWQwMy02ZjY1LTExZWQtOWRkOC00ODUxYzU4ODI5ZTBIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQUE5RkQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOTMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMiwxNDcsMTQxKQAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGGSAS9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzLyRibG9iY2hhbmdlZmVlZC9ibG9icy9tZXRhL3NlZ21lbnRzLmpzb24KODIwMjItMTEtMjhUMjE6NDQ6MzQuNjA1ODM5NFpINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQyDEgzMjczNzI1My1iY2VmLTRjNDgtYTZhNS1kZWIxZDE2NDAzN2NINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQxIjB4RkZGRkZGRkZGRkZGRkZGIGNvbnRyb2wvaW50ZXJuYWwAAgACIDAxRDhGQTA0MzVCOTI0MjkAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMGE0AAAAAAAACgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMjcsMTY0LDE0NykGbGlkSDAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMAZsY3gAAA0HDwwEBAwAAQkBBwsPDgmEgICAgICAgIAAjpOAgICAgICAAAqIAi9zdWJzY3JpcHRpb25zLzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMC9yZXNvdXJjZUdyb3Vwcy9uYS9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YVAvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8vYmxvYnMvCjgyMDIyLTExLTI4VDIxOjQ0OjM0LjU1ODAzMjZaSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2NmZhMQxIMzI3MzcyNTMtYmNlZi00YzQ4LWE2YTUtZGViMWQxNjQwMzdjSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2MjhjNCIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAABiaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5jb3JlLndpbmRvd3MubmV0L2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMjAAAAAAAAAKBmJpZEg2MmNjOGU4YS1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwMDAwMDAGc2lkSDI3ZWMzMDZhLWIwMTYtNzY0MS1hYjIwLTFhNWY5YmYwMWM5YQZzZXEYKDY4MywyLDMyLDApBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFQL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvL2Jsb2JzLwo4MjAyMi0xMS0yOFQyMTo0NTo0NS42NzA3MzY3Wkg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMWEMSDhjNDY3M2RlLTcwODUtNDYyMi05ZWY0LWM0NTdjNTdjYWJhZUg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMTgiMHhGRkZGRkZGRkZGRkZGRkYgY29udHJvbC9pbnRlcm5hbAACAAAAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY1AAAAAAAACgZiaWRINjJjYzhlOGEtYjAwNi0wMDA5LTAwNzItMDMzYzRhMDAwMDAwBnNpZEgyN2VjMzA2YS1iMDE2LTc2NDEtYWIyMC0xYTVmOWJmMDFjOWEGc2VxHig2ODMsMTcsMTAxLDMyKQZsaWRIMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwBmxjeAAADQcPDAQEDAABCQEHCw8OCYKAgICAgICAgACyioCAgICAgIAACogCL3N1YnNjcmlwdGlvbnMvMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwL3Jlc291cmNlR3JvdXBzL25hL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhkgEvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8kYmxvYmNoYW5nZWZlZWQvYmxvYnMvbWV0YS9zZWdtZW50cy5qc29uCjgyMDIyLTExLTI4VDIxOjQ1OjQ1LjcwNTMwMDJaSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2NDY0ZQxIOGM0NjczZGUtNzA4NS00NjIyLTllZjQtYzQ1N2M1N2NhYmFlSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2N2IyMSIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAiAwMUQ4RkEwNDM1QjkyNDI5AGJodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLmNvcmUud2luZG93cy5uZXQvYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDBhZgAAAAAAAAoGYmlkSDc3Y2I3YzczLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDMwLDE3NSwxNjQpBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAANBw8MBAQMAAEJAQcLDw4J"
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/%24blobchangefeed/log/02/2022/11/28/2100/00000.avro",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-blob/12.14.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "x-ms-range": "bytes=2712-9899",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 206,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7188",
+        "Content-Range": "bytes 2712-9899/9900",
+        "Content-Type": "avro/binary",
+        "Date": "Mon, 28 Nov 2022 22:00:34 GMT",
+        "ETag": "\u00220x8DAD18A0B8CCD0A\u0022",
+        "Last-Modified": "Mon, 28 Nov 2022 21:46:45 GMT",
+        "x-ms-blob-committed-block-count": "2",
+        "x-ms-blob-type": "AppendBlob",
+        "x-ms-creation-time": "Mon, 28 Nov 2022 21:45:34 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": "kICAgICAgICAAJDRgICAgICAgAAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFqL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTECODIwMjItMTEtMjhUMjE6NDM6MjMuNjAzMzg2MlpIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDYwYjRjAkhhZWVhODEyMy02ZjY1LTExZWQtODQ5Yi00ODUxYzU4ODI5ZTBIZDk1MjMxMTctMjAxZS0wMDA2LTAzNzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzMjk2MTQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCOAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDAyNAAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcRooNjgzLDMsMzYsMjcpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWovYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlNAI4MjAyMi0xMS0yOFQyMTo0MzoyMy43NDMzODU2WkhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwNjBiNTQCSGFlZmY4ZDY5LTZmNjUtMTFlZC04ZjUwLTQ4NTFjNTg4MjllMEhkOTUyMzExYS0yMDFlLTAwMDYtMDY3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTMzRTk3MUYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AI4BaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTRgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDM5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxGig2ODMsNyw1Nyw1MSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhai9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGU1AjgyMDIyLTExLTI4VDIxOjQzOjIzLjc4ODM5NjRaSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTA2MGI1OAJIYWYwNjM0OWYtNmY2NS0xMWVkLThlZDAtNDg1MWM1ODgyOWUwSGQ5NTIzMTFiLTIwMWUtMDAwNi0wNzcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzQ1NzY4MzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAjgFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlNWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwM2YAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEaKDY4Myw4LDYzLDU3KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEyAjgyMDIyLTExLTI4VDIxOjQzOjI0LjExODM5NDVaSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTA2MGI2OQJIYWYzODNhNzItNmY2NS0xMWVkLTg5NWUtNDg1MWM1ODgyOWUwSGQ5NTIzMTI0LTIwMWUtMDAwNi0wZTcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5Mzc3Q0ZDQzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTJgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY5AAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxHig2ODMsMTUsMTA1LDk5KQAKrAIvc3Vic2NyaXB0aW9ucy84ODg4ODg4OC0wMDAxLTAwMDEtMDAwMS0xMjM0NTY3ODkxMzIvcmVzb3VyY2VHcm91cHMvYWNjb3VudHBvb2xzZXJ2aWNlcmcvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFsL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvdGVzdC9ibG9icy90ZXN0ZmlsZTEzAjgyMDIyLTExLTI4VDIxOjQzOjI0LjE3MTM5NTdaSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTA2MGI2YgJIYWY0MGIyMzgtNmY2NS0xMWVkLTk4M2EtNDg1MWM1ODgyOWUwSGQ5NTIzMTI1LTIwMWUtMDAwNi0wZjcyLTAzMDNhOTAwMDAwMCIweDhEQUQxODk5MzdGRTYxNzBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0WAgACIDAxRDhGQTExN0I3OTc2QjcAkAFodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLnByZXByb2QuY29yZS53aW5kb3dzLm5ldC90ZXN0L3Rlc3RmaWxlMTNgMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDZmAAAAAAAABgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMTYsMTExLDEwNSkACqwCL3N1YnNjcmlwdGlvbnMvODg4ODg4ODgtMDAwMS0wMDAxLTAwMDEtMTIzNDU2Nzg5MTMyL3Jlc291cmNlR3JvdXBzL2FjY291bnRwb29sc2VydmljZXJnL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhbC9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzL3Rlc3QvYmxvYnMvdGVzdGZpbGUxNwI4MjAyMi0xMS0yOFQyMTo0MzoyNC4zNTczOTg1WkhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwNjBiNzUCSGFmNWQwNzU2LTZmNjUtMTFlZC04N2U2LTQ4NTFjNTg4MjllMEhkOTUyMzEyOS0yMDFlLTAwMDYtMTM3Mi0wMzAzYTkwMDAwMDAiMHg4REFEMTg5OTM5QzQ3REYwYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtFgIAAiAwMUQ4RkExMTdCNzk3NkI3AJABaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5wcmVwcm9kLmNvcmUud2luZG93cy5uZXQvdGVzdC90ZXN0ZmlsZTE3YDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDA4NwAAAAAAAAYGYmlkSDc3Y2I3YjdiLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDIwLDEzNSwxMjkpAAqsAi9zdWJzY3JpcHRpb25zLzg4ODg4ODg4LTAwMDEtMDAwMS0wMDAxLTEyMzQ1Njc4OTEzMi9yZXNvdXJjZUdyb3Vwcy9hY2NvdW50cG9vbHNlcnZpY2VyZy9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YWwvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy90ZXN0L2Jsb2JzL3Rlc3RmaWxlMTkCODIwMjItMTEtMjhUMjE6NDM6MjQuNDUwNDAyMlpIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDYwYjdlAkhhZjZiNWQwMy02ZjY1LTExZWQtOWRkOC00ODUxYzU4ODI5ZTBIZDk1MjMxMmItMjAxZS0wMDA2LTE1NzItMDMwM2E5MDAwMDAwIjB4OERBRDE4OTkzQUE5RkQ2MGFwcGxpY2F0aW9uL29jdGV0LXN0cmVhbRYCAAIgMDFEOEZBMTE3Qjc5NzZCNwCQAWh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IucHJlcHJvZC5jb3JlLndpbmRvd3MubmV0L3Rlc3QvdGVzdGZpbGUxOWAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwOTMAAAAAAAAGBmJpZEg3N2NiN2I3Yi0yMDA2LTAwMDAtMDA3Mi0wM2U1NjgwMDAwMDAGc2lkSDM1YWU0MmEyLWNmZmYtMjRmNy1kM2U3LTVhMmY3ZjdmMzU4OQZzZXEgKDY4MywyMiwxNDcsMTQxKQAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGGSAS9ibG9iU2VydmljZXMvZGVmYXVsdC9jb250YWluZXJzLyRibG9iY2hhbmdlZmVlZC9ibG9icy9tZXRhL3NlZ21lbnRzLmpzb24KODIwMjItMTEtMjhUMjE6NDQ6MzQuNjA1ODM5NFpINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQyDEgzMjczNzI1My1iY2VmLTRjNDgtYTZhNS1kZWIxZDE2NDAzN2NINzdjYjdhYmUtMjAwNi0wMDAwLTAwNzItMDNlNTY4MDYyOGQxIjB4RkZGRkZGRkZGRkZGRkZGIGNvbnRyb2wvaW50ZXJuYWwAAgACIDAxRDhGQTA0MzVCOTI0MjkAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMGE0AAAAAAAACgZiaWRINzdjYjdiN2ItMjAwNi0wMDAwLTAwNzItMDNlNTY4MDAwMDAwBnNpZEgzNWFlNDJhMi1jZmZmLTI0ZjctZDNlNy01YTJmN2Y3ZjM1ODkGc2VxICg2ODMsMjcsMTY0LDE0NykGbGlkSDAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMAZsY3gAAA0HDwwEBAwAAQkBBwsPDgmEgICAgICAgIAAjpOAgICAgICAAAqIAi9zdWJzY3JpcHRpb25zLzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMC9yZXNvdXJjZUdyb3Vwcy9uYS9wcm92aWRlcnMvTWljcm9zb2Z0LlN0b3JhZ2Uvc3RvcmFnZUFjY291bnRzL2l2c3hzY25hcGJ5M3BldjI0YVAvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8vYmxvYnMvCjgyMDIyLTExLTI4VDIxOjQ0OjM0LjU1ODAzMjZaSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2NmZhMQxIMzI3MzcyNTMtYmNlZi00YzQ4LWE2YTUtZGViMWQxNjQwMzdjSDc3Y2I3YWJlLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODA2MjhjNCIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAABiaHR0cHM6Ly9pdnN4c2NuYXBieTNwZXYyNGEuYmxvYi5jb3JlLndpbmRvd3MubmV0L2AwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDJBQjAwMDAwMDAwMDAwMDAwMjAAAAAAAAAKBmJpZEg2MmNjOGU4YS1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwMDAwMDAGc2lkSDI3ZWMzMDZhLWIwMTYtNzY0MS1hYjIwLTFhNWY5YmYwMWM5YQZzZXEYKDY4MywyLDMyLDApBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAAKiAIvc3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3VyY2VHcm91cHMvbmEvcHJvdmlkZXJzL01pY3Jvc29mdC5TdG9yYWdlL3N0b3JhZ2VBY2NvdW50cy9pdnN4c2NuYXBieTNwZXYyNGFQL2Jsb2JTZXJ2aWNlcy9kZWZhdWx0L2NvbnRhaW5lcnMvL2Jsb2JzLwo4MjAyMi0xMS0yOFQyMTo0NTo0NS42NzA3MzY3Wkg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMWEMSDhjNDY3M2RlLTcwODUtNDYyMi05ZWY0LWM0NTdjNTdjYWJhZUg2MmNjOGRjOC1iMDA2LTAwMDktMDA3Mi0wMzNjNGEwNjdiMTgiMHhGRkZGRkZGRkZGRkZGRkYgY29udHJvbC9pbnRlcm5hbAACAAAAYmh0dHBzOi8vaXZzeHNjbmFwYnkzcGV2MjRhLmJsb2IuY29yZS53aW5kb3dzLm5ldC9gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyQUIwMDAwMDAwMDAwMDAwMDY1AAAAAAAACgZiaWRINjJjYzhlOGEtYjAwNi0wMDA5LTAwNzItMDMzYzRhMDAwMDAwBnNpZEgyN2VjMzA2YS1iMDE2LTc2NDEtYWIyMC0xYTVmOWJmMDFjOWEGc2VxHig2ODMsMTcsMTAxLDMyKQZsaWRIMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwBmxjeAAADQcPDAQEDAABCQEHCw8OCYKAgICAgICAgACyioCAgICAgIAACogCL3N1YnNjcmlwdGlvbnMvMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwL3Jlc291cmNlR3JvdXBzL25hL3Byb3ZpZGVycy9NaWNyb3NvZnQuU3RvcmFnZS9zdG9yYWdlQWNjb3VudHMvaXZzeHNjbmFwYnkzcGV2MjRhkgEvYmxvYlNlcnZpY2VzL2RlZmF1bHQvY29udGFpbmVycy8kYmxvYmNoYW5nZWZlZWQvYmxvYnMvbWV0YS9zZWdtZW50cy5qc29uCjgyMDIyLTExLTI4VDIxOjQ1OjQ1LjcwNTMwMDJaSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2NDY0ZQxIOGM0NjczZGUtNzA4NS00NjIyLTllZjQtYzQ1N2M1N2NhYmFlSDYyY2M4ZGM4LWIwMDYtMDAwOS0wMDcyLTAzM2M0YTA2N2IyMSIweEZGRkZGRkZGRkZGRkZGRiBjb250cm9sL2ludGVybmFsAAIAAiAwMUQ4RkEwNDM1QjkyNDI5AGJodHRwczovL2l2c3hzY25hcGJ5M3BldjI0YS5ibG9iLmNvcmUud2luZG93cy5uZXQvYDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMkFCMDAwMDAwMDAwMDAwMDBhZgAAAAAAAAoGYmlkSDc3Y2I3YzczLTIwMDYtMDAwMC0wMDcyLTAzZTU2ODAwMDAwMAZzaWRIMzVhZTQyYTItY2ZmZi0yNGY3LWQzZTctNWEyZjdmN2YzNTg5BnNlcSAoNjgzLDMwLDE3NSwxNjQpBmxpZEgwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAGbGN4AAANBw8MBAQMAAEJAQcLDw4J"
+    }
+  ],
+  "Variables": {}
+}

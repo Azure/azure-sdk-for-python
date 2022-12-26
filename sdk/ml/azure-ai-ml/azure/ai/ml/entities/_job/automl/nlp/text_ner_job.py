@@ -13,8 +13,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_
     ClassificationPrimaryMetrics,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
@@ -35,8 +35,8 @@ class TextNerJob(AutoMLNLPJob):
     def __init__(
         self,
         *,
-        training_data: Input = None,
-        validation_data: Input = None,
+        training_data: Optional[Input] = None,
+        validation_data: Optional[Input] = None,
         primary_metric: Optional[str] = None,
         log_verbosity: Optional[str] = None,
         **kwargs
@@ -122,11 +122,7 @@ class TextNerJob(AutoMLNLPJob):
             if task_details.featurization_settings
             else None
         )
-        sweep = (
-            NlpSweepSettings._from_rest_object(task_details.sweep_settings)
-            if task_details.sweep_settings
-            else None
-        )
+        sweep = NlpSweepSettings._from_rest_object(task_details.sweep_settings) if task_details.sweep_settings else None
         training_parameters = (
             NlpFixedParameters._from_rest_object(task_details.fixed_parameters)
             if task_details.fixed_parameters
@@ -159,15 +155,16 @@ class TextNerJob(AutoMLNLPJob):
             training_parameters=training_parameters,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         )
 
         text_ner_job._restore_data_inputs()
 
         return text_ner_job
 
-    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
         raise NotImplementedError()
 
     @classmethod

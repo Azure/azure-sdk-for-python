@@ -5,7 +5,7 @@ import yaml
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2021_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -25,7 +25,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestDeploymentSanity:
     def test_instantiate_OnlineEndpoint_fail(self) -> None:

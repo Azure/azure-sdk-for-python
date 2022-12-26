@@ -5,15 +5,16 @@
 # pylint: disable=arguments-renamed
 
 import logging
+from typing import Optional
 
-from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceSettings
+from azure.ai.ml._restclient.v2022_05_01.models import ContainerResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
 
 class ResourceSettings(RestTranslatableMixin):
-    def __init__(self, cpu: str = None, memory: str = None, gpu: str = None):
+    def __init__(self, cpu: Optional[str] = None, memory: Optional[str] = None, gpu: Optional[str] = None):
         self.cpu = cpu
         self.memory = memory
         self.gpu = gpu

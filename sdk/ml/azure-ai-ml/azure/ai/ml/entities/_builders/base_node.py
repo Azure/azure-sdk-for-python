@@ -99,29 +99,31 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Component,
-        inputs: Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        name: str = None,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        comment: str = None,
-        compute: str = None,
-        experiment_name: str = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        comment: Optional[str] = None,
+        compute: Optional[str] = None,
+        experiment_name: Optional[str] = None,
         **kwargs,
     ):
         self._init = True
@@ -181,6 +183,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             if isinstance(self._component, Component)
             else Component._resolve_component_source_from_id(id=self._component)
         )
+        self._validate_required_input_not_provided = True
         self._init = False
 
     @classmethod
@@ -234,7 +237,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+            elif type(value) == dict:  # pylint: disable=unidiomatic-typecheck
                 # Use type comparison instead of is_instance to skip _GroupAttrDict
                 # when loading from yaml io will be a dict,
                 # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
@@ -295,19 +298,20 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     def _validate_inputs(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
-        # validate inputs
-        if isinstance(self._component, Component):
-            for key, meta in self._component.inputs.items():
-                # raise error when required input with no default value not set
-                if (
-                    not self._is_input_set(input_name=key)  # input not provided
-                    and meta.optional is not True  # and it's required
-                    and meta.default is None  # and it does not have default
-                ):
-                    validation_result.append_error(
-                        yaml_path=f"inputs.{key}",
-                        message=f"Required input {key!r} for component {self.name!r} not provided.",
-                    )
+        if self._validate_required_input_not_provided:
+            # validate required inputs not provided
+            if isinstance(self._component, Component):
+                for key, meta in self._component.inputs.items():
+                    # raise error when required input with no default value not set
+                    if (
+                        not self._is_input_set(input_name=key)  # input not provided
+                        and meta.optional is not True  # and it's required
+                        and meta.default is None  # and it does not have default
+                    ):
+                        validation_result.append_error(
+                            yaml_path=f"inputs.{key}",
+                            message=f"Required input {key!r} for component {self.name!r} not provided.",
+                        )
 
         inputs = self._build_inputs()
         for input_name, input_obj in inputs.items():
@@ -324,7 +328,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
         Override this method to add customized validation logic.
         """
-        return self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs(raise_error=False)
+        return validate_result
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
@@ -334,7 +339,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             "name",
             "display_name",
             "experiment_name",  # name is not part of schema but may be set in dsl/yml file
-            cls._get_component_attr_name(),  # processed separately
             "kwargs",
         ]
 
@@ -361,6 +365,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
         instance.__init__(**init_kwargs)
@@ -391,6 +396,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # distribution, sweep won't have distribution
         if "distribution" in obj and obj["distribution"]:
             from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         return obj
@@ -408,9 +414,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Convert self to a rest object for remote call."""
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
-            if key not in base_dict:
-                rest_obj[key] = None
-            else:
+            if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(

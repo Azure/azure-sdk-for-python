@@ -8,12 +8,11 @@ import json
 import logging
 import typing
 from collections import Counter
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionDetails
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -62,15 +61,15 @@ class PipelineComponent(Component):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        jobs: Dict[str, BaseNode] = None,
-        is_deterministic: bool = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        jobs: Optional[Dict[str, BaseNode]] = None,
+        is_deterministic: Optional[bool] = None,
         **kwargs,
     ):
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
@@ -143,7 +142,7 @@ class PipelineComponent(Component):
                 pass
             elif isinstance(node, ControlFlowNode):
                 # Validate control flow node.
-                validation_result.merge_with(node._customized_validate(), "jobs.{}".format(node_name))
+                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             else:
                 validation_result.append_error(
                     yaml_path="jobs.{}".format(node_name),
@@ -325,16 +324,20 @@ class PipelineComponent(Component):
 
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
         sub_nodes = {}
         if rest_jobs is None:
             return sub_nodes
         for node_name, node in rest_jobs.items():
-            if LoopNode._is_loop_node_dict(node):
-                sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
-            else:
+            if not LoopNode._is_loop_node_dict(node):
+                # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
-                from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
                 sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
+        for node_name, node in rest_jobs.items():
+            if LoopNode._is_loop_node_dict(node):
+                # resolve LoopNode after all other nodes are resolved
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node, pipeline_jobs=sub_nodes)
         return sub_nodes
 
     @classmethod
