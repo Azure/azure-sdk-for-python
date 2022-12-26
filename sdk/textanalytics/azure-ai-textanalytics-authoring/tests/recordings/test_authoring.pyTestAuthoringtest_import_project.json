@@ -1,0 +1,145 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/LoanAgreements/:import?api-version=2022-10-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1255",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "projectFileVersion": "2022-05-01",
+        "stringIndexType": "Utf16CodeUnit",
+        "metadata": {
+          "projectKind": "CustomEntityRecognition",
+          "storageInputContainerName": "ct-data-assets",
+          "settings": {},
+          "projectName": "LoanAgreements",
+          "multilingual": false,
+          "description": "This is a sample dataset provided by the Azure Language service team to help users get started with [Custom named entity recognition](https://aka.ms/ct-docs). The provided sample dataset contains 20 loan agreements drawn up between two entities.",
+          "language": "en-us"
+        },
+        "assets": {
+          "projectKind": "CustomEntityRecognition",
+          "entities": [
+            {
+              "category": "Date"
+            },
+            {
+              "category": "LenderName"
+            },
+            {
+              "category": "LenderAddress"
+            }
+          ],
+          "documents": [
+            {
+              "location": "01.txt",
+              "language": "en-us",
+              "entities": [
+                {
+                  "regionOffset": 0,
+                  "regionLength": 1793,
+                  "labels": [
+                    {
+                      "category": "Date",
+                      "offset": 5,
+                      "length": 9
+                    },
+                    {
+                      "category": "LenderName",
+                      "offset": 273,
+                      "length": 14
+                    },
+                    {
+                      "category": "LenderAddress",
+                      "offset": 314,
+                      "length": 15
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "location": "02.txt",
+              "language": "en-us",
+              "entities": [
+                {
+                  "regionOffset": 0,
+                  "regionLength": 1804,
+                  "labels": [
+                    {
+                      "category": "Date",
+                      "offset": 5,
+                      "length": 10
+                    },
+                    {
+                      "category": "LenderName",
+                      "offset": 284,
+                      "length": 10
+                    },
+                    {
+                      "category": "LenderAddress",
+                      "offset": 321,
+                      "length": 20
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "548ab754-d37c-4077-ba48-2c011b5a153f",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Dec 2022 01:36:36 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/LoanAgreements/import/jobs/cbe58629-a0fe-4925-8f2b-3a99cf94492a_638076096000000000?api-version=2022-10-01-preview",
+        "request-id": "548ab754-d37c-4077-ba48-2c011b5a153f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "539",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/LoanAgreements/import/jobs/cbe58629-a0fe-4925-8f2b-3a99cf94492a_638076096000000000?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "38bb621c-8106-4c68-ba1a-7cfbd9adeee7",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 01:37:06 GMT",
+        "request-id": "38bb621c-8106-4c68-ba1a-7cfbd9adeee7",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "41",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "jobId": "cbe58629-a0fe-4925-8f2b-3a99cf94492a_638076096000000000",
+        "createdDateTime": "2022-12-26T01:36:36Z",
+        "lastUpdatedDateTime": "2022-12-26T01:36:37Z",
+        "expirationDateTime": "2023-01-02T01:36:36Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}

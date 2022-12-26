@@ -1,0 +1,105 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Emails/:train?api-version=2022-10-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "165",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "modelLabel": "model1",
+        "trainingConfigVersion": "latest",
+        "evaluationOptions": {
+          "kind": "percentage",
+          "testingSplitPercentage": 20,
+          "trainingSplitPercentage": 80
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "81795e09-3d8e-4daf-bd7e-441bd643b06f",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Dec 2022 01:55:37 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Emails/train/jobs/68cc821d-1e0a-4c12-afd1-c637d34f88c3_638076096000000000?api-version=2022-10-01-preview",
+        "request-id": "81795e09-3d8e-4daf-bd7e-441bd643b06f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "221",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Emails/train/jobs/68cc821d-1e0a-4c12-afd1-c637d34f88c3_638076096000000000?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "4b8c8bb2-8b90-4fa8-a1f6-ede9c14b6e5d",
+        "Content-Length": "1423",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 01:56:07 GMT",
+        "request-id": "4b8c8bb2-8b90-4fa8-a1f6-ede9c14b6e5d",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "202",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "result": {
+          "modelLabel": "model1",
+          "trainingStatus": {
+            "percentComplete": 0,
+            "status": "failed"
+          },
+          "evaluationStatus": {
+            "percentComplete": 0,
+            "status": "notStarted"
+          }
+        },
+        "jobId": "68cc821d-1e0a-4c12-afd1-c637d34f88c3_638076096000000000",
+        "createdDateTime": "2022-12-26T01:55:37Z",
+        "lastUpdatedDateTime": "2022-12-26T01:55:39Z",
+        "expirationDateTime": "2023-01-02T01:55:37Z",
+        "status": "failed",
+        "warnings": [],
+        "errors": [
+          {
+            "code": "InvalidArgument",
+            "message": "Your document location \u0060Movies/Archie_To_Riverdale_and_Back_Again.txt\u0060 is duplicated in the dataset \u0060Train\u0060. No duplicate document locations are allowed in the same dataset."
+          },
+          {
+            "code": "InvalidArgument",
+            "message": "Your document location \u0060Movies/Don_The_Chase_Begins_Again.txt\u0060 is duplicated in the dataset \u0060Train\u0060. No duplicate document locations are allowed in the same dataset."
+          },
+          {
+            "code": "InvalidArgument",
+            "message": "Your document location \u0060Movies/Dylan_Dog_Dead_of_Night.txt\u0060 is duplicated in the dataset \u0060Train\u0060. No duplicate document locations are allowed in the same dataset."
+          },
+          {
+            "code": "InvalidArgument",
+            "message": "Your document location \u0060Movies/Hathyar_Face_to_Face_with_Reality.txt\u0060 is duplicated in the dataset \u0060Train\u0060. No duplicate document locations are allowed in the same dataset."
+          },
+          {
+            "code": "InvalidArgument",
+            "message": "Your document location \u0060Movies/K-19_The_Widowmaker.txt\u0060 is duplicated in the dataset \u0060Train\u0060. No duplicate document locations are allowed in the same dataset."
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

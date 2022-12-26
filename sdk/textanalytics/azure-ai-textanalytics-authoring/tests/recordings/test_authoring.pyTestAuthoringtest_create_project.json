@@ -1,0 +1,148 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name?api-version=2022-10-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "199",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "projectName": "Project_Name",
+        "language": "en",
+        "projectKind": "customSingleLabelClassification",
+        "description": "Test Project",
+        "multilingual": true,
+        "storageInputContainerName": "ct-data-assets"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "4320cda9-a878-4204-b66a-d50e04d75906",
+        "Content-Length": "275",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 01:33:46 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name/Project_Name",
+        "request-id": "4320cda9-a878-4204-b66a-d50e04d75906",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "775",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2022-12-26T01:33:46Z",
+        "lastModifiedDateTime": "2022-12-26T01:33:46Z",
+        "projectKind": "CustomSingleLabelClassification",
+        "storageInputContainerName": "ct-data-assets",
+        "projectName": "Project_Name",
+        "multilingual": true,
+        "description": "Test Project",
+        "language": "en"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "f627ec76-4867-4cf9-a63b-281fce13a736",
+        "Content-Length": "2168",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 01:33:46 GMT",
+        "request-id": "f627ec76-4867-4cf9-a63b-281fce13a736",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "27",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "createdDateTime": "2022-12-26T01:33:46Z",
+            "lastModifiedDateTime": "2022-12-26T01:33:46Z",
+            "projectKind": "CustomSingleLabelClassification",
+            "storageInputContainerName": "ct-data-assets",
+            "projectName": "Project_Name",
+            "multilingual": true,
+            "description": "Test Project",
+            "language": "en"
+          },
+          {
+            "createdDateTime": "2022-10-23T01:59:29Z",
+            "lastModifiedDateTime": "2022-11-16T11:10:20Z",
+            "projectKind": "CustomMultiLabelClassification",
+            "storageInputContainerName": "ct-data-assets",
+            "projectName": "Emails",
+            "multilingual": false,
+            "description": "Project-description",
+            "language": "en-us"
+          },
+          {
+            "createdDateTime": "2022-08-09T13:25:43Z",
+            "lastModifiedDateTime": "2022-09-18T08:15:35Z",
+            "projectKind": "CustomEntityRecognition",
+            "storageInputContainerName": "ct-data-assets",
+            "projectName": "LoanAgreements",
+            "multilingual": false,
+            "description": "This is a sample dataset provided by the Azure Language service team to help users get started with [Custom named entity recognition](https://aka.ms/ct-docs). The provided sample dataset contains 20 loan agreements drawn up between two entities.",
+            "language": "en-us"
+          },
+          {
+            "createdDateTime": "2021-09-24T17:26:44Z",
+            "lastModifiedDateTime": "2021-09-24T17:26:44Z",
+            "projectKind": "CustomSingleLabelClassification",
+            "storageInputContainerName": "datasets",
+            "projectName": "SLTCCustomTest",
+            "multilingual": true,
+            "description": "SLTC with Custom Test",
+            "language": "en-us"
+          },
+          {
+            "createdDateTime": "2021-09-24T16:55:56Z",
+            "lastModifiedDateTime": "2021-09-24T16:55:56Z",
+            "projectKind": "CustomEntityRecognition",
+            "storageInputContainerName": "datasets",
+            "projectName": "SLTCTest1",
+            "multilingual": false,
+            "description": "SLTCTest1",
+            "language": "en-us"
+          },
+          {
+            "createdDateTime": "2021-09-24T16:41:34Z",
+            "lastModifiedDateTime": "2021-09-24T16:41:34Z",
+            "projectKind": "CustomEntityRecognition",
+            "storageInputContainerName": "datasets",
+            "projectName": "SLTCTest",
+            "multilingual": true,
+            "description": "SLTCTest",
+            "language": "en-us"
+          },
+          {
+            "createdDateTime": "2021-07-14T11:18:24Z",
+            "lastModifiedDateTime": "2022-10-23T02:14:08Z",
+            "projectKind": "CustomMultiLabelClassification",
+            "storageInputContainerName": "datasets",
+            "projectName": "multiclassificationKayousef2",
+            "multilingual": false,
+            "description": "",
+            "language": "en-us"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}

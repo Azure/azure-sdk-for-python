@@ -1,0 +1,39 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Emails/deployments/Deployment_Name?api-version=2022-10-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "27",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "trainedModelLabel": "v2"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "d2e89c16-5798-46b1-9632-8869f2058861",
+        "Content-Type": "application/json",
+        "Date": "Mon, 26 Dec 2022 01:53:07 GMT",
+        "request-id": "d2e89c16-5798-46b1-9632-8869f2058861",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "152",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotFound",
+          "message": "Model \u0060v2\u0060 is not trained. Please train the model first."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,63 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name/:export?stringIndexType=Utf16CodeUnit\u0026api-version=2022-10-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "85b93b2a-1944-4999-a303-4d6f2c868085",
+        "Content-Length": "0",
+        "Date": "Mon, 26 Dec 2022 01:33:52 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name/export/jobs/255d751e-49a9-48c4-98ab-85a0a6cd95fa_638076096000000000?api-version=2022-10-01-preview",
+        "request-id": "85b93b2a-1944-4999-a303-4d6f2c868085",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "63",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name/export/jobs/255d751e-49a9-48c4-98ab-85a0a6cd95fa_638076096000000000?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics-authoring/1.0.0b1 Python/3.10.5 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "2c876ece-fcf4-4a88-bcb1-ebd97a1abc39",
+        "Content-Length": "441",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 01:34:22 GMT",
+        "request-id": "2c876ece-fcf4-4a88-bcb1-ebd97a1abc39",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "42",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "resultUrl": "https://fakeendpoint.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Project_Name/export/jobs/255d751e-49a9-48c4-98ab-85a0a6cd95fa_638076096000000000/result?api-version=2022-10-01-preview",
+        "jobId": "255d751e-49a9-48c4-98ab-85a0a6cd95fa_638076096000000000",
+        "createdDateTime": "2022-12-26T01:33:53Z",
+        "lastUpdatedDateTime": "2022-12-26T01:33:54Z",
+        "expirationDateTime": "2023-01-02T01:33:53Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}
