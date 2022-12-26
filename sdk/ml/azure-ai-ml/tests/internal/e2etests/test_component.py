@@ -58,6 +58,7 @@ def load_registered_component(
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestComponent(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "yaml_path",

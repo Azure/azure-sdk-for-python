@@ -51,6 +51,7 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestDSLPipelineSamples(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:

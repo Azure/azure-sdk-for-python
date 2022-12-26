@@ -68,6 +68,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
     def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client: MLClient):

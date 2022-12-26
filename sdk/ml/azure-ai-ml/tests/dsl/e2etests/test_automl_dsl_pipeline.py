@@ -38,6 +38,7 @@ GPU_CLUSTER = "gpu-cluster"
 )
 @pytest.mark.automle2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestAutomlDSLPipeline(AzureRecordedTestCase):
     def test_automl_classification_in_pipeline(self, client: MLClient):
         @dsl.pipeline(name="train_automl_classification_in_pipeline")

@@ -16,6 +16,7 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_D
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]

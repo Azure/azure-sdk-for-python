@@ -69,6 +69,7 @@ common_omit_fields = [
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestDSLPipeline(AzureRecordedTestCase):
     def test_command_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_yaml = components_dir / "helloworld_component.yml"

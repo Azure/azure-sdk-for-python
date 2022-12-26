@@ -52,6 +52,7 @@ def assert_job_input_output_types(job: PipelineJob):
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
+@pytest.mark.mock_component_test
 class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_create(
         self,

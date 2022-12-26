@@ -30,6 +30,7 @@ def import_job_enabled(mocker: MockFixture):
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.mock_component_test
 class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
