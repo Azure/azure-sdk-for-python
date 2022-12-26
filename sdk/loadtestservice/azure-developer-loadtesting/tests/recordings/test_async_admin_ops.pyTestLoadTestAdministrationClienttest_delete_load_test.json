@@ -1,0 +1,181 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "189",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcnt-prod.loadtesting.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 13:30:38 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/d4ab4621-36b0-4e8b-a603-fb500b596a71?api-version=2022-11-01",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "319",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "description": "",
+        "displayName": "TestingResourcePyTest",
+        "loadTestConfig": {
+          "engineSize": "m",
+          "engineInstances": 1,
+          "splitAllCSVs": false
+        },
+        "secrets": {},
+        "environmentVariables": {},
+        "passFailCriteria": {
+          "passFailMetrics": {}
+        },
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "keyvaultReferenceIdentityId": null
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "423",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 13:30:40 GMT",
+        "Location": "https://https://myservice.azure.com/tests/d4ab4621-36b0-4e8b-a603-fb500b596a71?api-version=2022-11-01",
+        "mise-correlation-id": "26ff8084-59b4-4f09-ac26-9850b2459265",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a1637139-ed2d-44f6-b322-d30d56baa9e2"
+      },
+      "ResponseBody": {
+        "passFailCriteria": {
+          "passFailMetrics": {}
+        },
+        "loadTestConfiguration": {
+          "engineInstances": 1,
+          "splitAllCSVs": false,
+          "quickStartTest": false
+        },
+        "inputArtifacts": {
+          "additionalFileInfo": []
+        },
+        "testId": "d4ab4621-36b0-4e8b-a603-fb500b596a71",
+        "description": "",
+        "displayName": "TestingResourcePyTest",
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "createdDateTime": "2022-12-26T13:30:40.365Z",
+        "lastModifiedDateTime": "2022-12-26T13:30:40.365Z"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "189",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcnt-prod.loadtesting.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 13:30:39 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/d4ab4621-36b0-4e8b-a603-fb500b596a71?api-version=2022-11-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Date": "Mon, 26 Dec 2022 13:30:42 GMT",
+        "mise-correlation-id": "43761f22-ae5b-4504-a254-694d3251e935",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "707c4eaf-9a8c-44e6-b372-25b8a34cce97"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/4fdcbc67-f93c-45f5-8103-008619fa2e14?api-version=2022-11-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "118",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 26 Dec 2022 13:30:43 GMT",
+        "mise-correlation-id": "9f601e51-b764-459f-95ab-d27b638a0753",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "38016538-751f-48df-a5b4-592ca545c56c"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "TestNotFound",
+          "message": "Test not found with given name \u00224fdcbc67-f93c-45f5-8103-008619fa2e14\u0022."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

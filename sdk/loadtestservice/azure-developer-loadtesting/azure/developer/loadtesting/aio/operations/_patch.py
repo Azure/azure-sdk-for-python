@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from functools import partial
 from typing import List, Optional, Any, IO, Union
 
-from azure.core.polling import NoPolling
+from azure.core.polling import NoPolling, AsyncNoPolling
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
@@ -40,7 +40,7 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         poll_for_validation_status: bool = True,
         file_type: Optional[str] = None,
         **kwargs: Any
-    ):
+    ) -> AsyncLoadTestingLROPoller:
         """Upload file to the test
 
         :param test_id: Unique id for the test
@@ -72,12 +72,12 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
 
         if poll_for_validation_status:
             create_validation_status_polling = AsyncValidationCheckPoller(interval=polling_interval)
-            return await AsyncLoadTestingLROPoller(
+            return AsyncLoadTestingLROPoller(
                 command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
             )
 
         else:
-            return await AsyncLoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, NoPolling())
+            return AsyncLoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, AsyncNoPolling())
 
 
 class LoadTestRunOperations(LoadTestRunOperationsGenerated):
