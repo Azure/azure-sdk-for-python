@@ -376,7 +376,8 @@ class PipelineComponentBuilder:
             # TODO(1979547): refactor this
             if not isinstance(v, (BaseNode, AutoMLJob, PipelineJob, ControlFlowNode)):
                 continue
-            if getattr(v, "_instance_id", None) not in valid_component_ids:
+            instance_id = getattr(v, "_instance_id", None)
+            if instance_id not in valid_component_ids:
                 continue
             name = getattr(v, "name", None) or k
             if name is not None:
@@ -390,7 +391,7 @@ class PipelineComponentBuilder:
                 )
 
             # Raise error when setting a name that already exists, likely conflict with a variable name
-            if name in local_names:
+            if name in local_names and instance_id not in id_name_dict:
                 raise UserErrorException(
                     f"Duplicate node name found in pipeline: {self.name!r}, "
                     f"node name: {name!r}. Duplicate check is case-insensitive."
