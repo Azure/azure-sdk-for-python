@@ -577,10 +577,10 @@ class TestDSLGroup:
 
         @group
         class PrimitiveOutputs1:
-            output1: Output(type="boolean", is_control=True, mode="rw_mount")
-            output2: Output(type="boolean", is_control=True, mode="rw_mount")
-            output3: Output(type="boolean", mode="rw_mount")
-            output: Output(type="boolean", mode="rw_mount")
+            output1: Output(type="boolean", is_control=True)
+            output2: Output(type="boolean", is_control=True)
+            output3: Output(type="boolean")
+            output: Output(type="boolean")
 
         @pipeline
         def pipeline_is_control_mismatch() -> PrimitiveOutputs1:
@@ -595,29 +595,7 @@ class TestDSLGroup:
         with pytest.raises(UserErrorException) as e:
             pipeline_is_control_mismatch()
 
-        assert "{\'type\': \'boolean\', \'mode\': 'rw_mount', 'is_control': True} != annotation output" in str(e.value)
-
-        @group
-        class PrimitiveOutputs2:
-            output1: Output(type="boolean", is_control=True, mode="rw_mount")
-            output2: Output(type="boolean", is_control=True, mode="rw_mount")
-            output3: Output(type="boolean", mode="rw_mount")
-            output: Output(type="boolean", is_control=True)
-
-        @pipeline
-        def pipeline_mode_mismatch() -> PrimitiveOutputs2:
-            node1 = basic_component()
-            return PrimitiveOutputs2(
-                output1=node1.outputs.output1,
-                output2=node1.outputs.output2,
-                output3=node1.outputs.output3,
-                output=node1.outputs.output,
-            )
-
-        with pytest.raises(UserErrorException) as e:
-            pipeline_mode_mismatch()
-
-        assert "{\'type\': \'boolean\', \'mode\': 'rw_mount', 'is_control': True} != annotation output" in str(e.value)
+        assert "{\'type\': \'boolean\', 'is_control': True} != annotation output" in str(e.value)
 
     def test_group_outputs_unsupported_annotation(self):
         @group

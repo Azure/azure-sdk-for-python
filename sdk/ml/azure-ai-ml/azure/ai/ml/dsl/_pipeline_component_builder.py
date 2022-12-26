@@ -474,13 +474,17 @@ class PipelineComponentBuilder:
             expected_output = self.output_annotation[key]
             actual_output.pop("description", None)
             expected_description = expected_output.pop("description", None)
+            # skip comparing mode since when component's from remote, output mode is not available
+            actual_output.pop("mode", None)
+            expected_mode = expected_output.pop("mode", None)
             if expected_output != actual_output:
                 unmatched_outputs.append(
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
-            # TODO: verify if this works
             if expected_description:
                 output_dict[key]._description = expected_description
+            if expected_mode:
+                output_dict[key].mode = expected_mode
 
         if unmatched_outputs:
             raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")
