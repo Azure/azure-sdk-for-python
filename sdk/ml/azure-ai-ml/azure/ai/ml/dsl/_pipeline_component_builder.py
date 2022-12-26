@@ -297,7 +297,11 @@ class PipelineComponentBuilder:
                 name=key,
                 data=None,
                 meta=Output(
-                    type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+                    type=_map_type(meta),
+                    description=meta.description,
+                    mode=meta.mode,
+                    is_control=meta.is_control,
+                    early_available=meta.early_available,
                 ),
                 owner="pipeline",
                 description=self._args_description.get(key, None),

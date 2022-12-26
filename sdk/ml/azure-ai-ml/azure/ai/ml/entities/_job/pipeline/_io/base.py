@@ -367,10 +367,15 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         self._name = name
         self._owner = owner
         self._is_control = meta.is_control if meta is not None else None
+        self._early_available = meta.early_available if meta is not None else None
 
     @property
     def is_control(self) -> str:
         return self._is_control
+
+    @property
+    def early_available(self) -> str:
+        return self._early_available
 
     def _build_default_data(self):
         """Build default data when output not configured."""
