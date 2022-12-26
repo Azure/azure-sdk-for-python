@@ -461,6 +461,8 @@ class PipelineComponentBuilder:
 
     def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: dict):
         """Validate inferred output dict against annotation."""
+        if not self.output_annotation:
+            return
         error_prefix = "Unmatched outputs between actual pipeline output and output in annotation"
         if output_meta_dict.keys() != self.output_annotation.keys():
             raise UserErrorException(
