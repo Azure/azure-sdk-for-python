@@ -48,7 +48,7 @@
         "service_client_specific": {
             "sync": {
                 "api_version": {
-                    "signature": "api_version=None, # type: Optional[str]",
+                    "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false
@@ -60,7 +60,7 @@
                     "required": false
                 },
                 "profile": {
-                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false
@@ -107,6 +107,8 @@
         "snapshots": "SnapshotsOperations",
         "managed_cluster_snapshots": "ManagedClusterSnapshotsOperations",
         "trusted_access_roles": "TrustedAccessRolesOperations",
-        "trusted_access_role_bindings": "TrustedAccessRoleBindingsOperations"
+        "trusted_access_role_bindings": "TrustedAccessRoleBindingsOperations",
+        "fleets": "FleetsOperations",
+        "fleet_members": "FleetMembersOperations"
     }
 }

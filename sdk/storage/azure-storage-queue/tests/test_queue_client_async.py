@@ -103,9 +103,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service.credential is None
 
     @QueuePreparer()
-    def test_create_service_with_token(self, **kwargs):
+    async def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
         self.setUp()
 
         for service_type in SERVICES:
@@ -122,9 +121,8 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert hasattr(service.credential, 'get_token')
 
     @QueuePreparer()
-    def test_create_service_with_token_and_http(self, **kwargs):
+    async def test_create_service_with_token_and_http(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
         self.setUp()
 
         for service_type in SERVICES:

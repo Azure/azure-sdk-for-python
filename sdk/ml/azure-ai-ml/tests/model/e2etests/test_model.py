@@ -6,17 +6,15 @@ from typing import Callable
 from unittest.mock import patch
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from six import Iterator
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_model
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
-
-from devtools_testutils import AzureRecordedTestCase, is_live
-
-from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -36,7 +34,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModel(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")

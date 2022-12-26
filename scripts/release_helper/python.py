@@ -30,7 +30,6 @@ class IssueProcessPython(IssueProcess):
                  assignee_candidates: Set[str], language_owner: Set[str]):
         IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
         self.output_folder = ''
-        self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
         self.python_tag = ''
@@ -49,47 +48,24 @@ class IssueProcessPython(IssueProcess):
                 return line.split(":", 1)[-1].strip()
         return ""
 
-    def init_readme_link(self) -> None:
-        issue_body_list = self.get_issue_body()
-
-        # Get the origin link and readme tag in issue body
-        origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-
-        # Get the specified tag and rest repo hash in issue body
-        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
-        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
-
-        # get readme_link
-        self.get_readme_link(origin_link)
-
     def multi_api_policy(self) -> None:
-        if self.is_multiapi:
-            if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
-                self.bot_advice.append(_MultiAPI)
-            if _MultiAPI not in self.issue_package.labels_name:
-                self.add_label(_MultiAPI)
-
-    def get_package_and_output(self) -> None:
-        self.init_readme_link()
-        readme_python_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
-        pattern_package = re.compile(r'package-name: [\w+-.]+')
-        pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
-        self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
-        self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        self.is_multiapi = (_MultiAPI in self.issue_package.labels_name) or ('multi-api' in contents)
+        if (_MultiAPI in self.issue_package.labels_name) and (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name):
+            self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
-                            f'\nReadme Tag: {self.target_readme_tag}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
+
+    @property
+    def is_multiapi(self):
+        return _MultiAPI in self.issue_package.labels_name
 
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        if 'package-' not in self.target_readme_tag:
-            return True
         if _CONFIGURED in self.issue_package.labels_name:
             return False
+        if 'package-' not in self.target_readme_tag:
+            return True
         readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
@@ -99,26 +75,31 @@ class IssueProcessPython(IssueProcess):
         return whether_change_readme
 
     def auto_reply(self) -> None:
-        if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
+        if (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name) or (_CONFIGURED in self.issue_package.labels_name):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
-                issue_link = self.issue_package.issue.html_url
-                release_pipeline_url = get_python_release_pipeline(self.output_folder)
-                res_run = run_pipeline(issue_link=issue_link,
-                                       pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link + '/readme.md',
-                                       python_tag=self.python_tag,
-                                       rest_repo_hash=self.rest_repo_hash
-                                       )
-                if res_run:
-                    self.log(f'{issue_number} run pipeline successfully')
-                    if _CONFIGURED in self.issue_package.labels_name:
-                        self.issue_package.issue.remove_from_labels(_CONFIGURED)
-                else:
-                    self.log(f'{issue_number} run pipeline fail')
-                self.add_label(_AUTO_ASK_FOR_CHECK)
+                try:
+                    issue_link = self.issue_package.issue.html_url
+                    release_pipeline_url = get_python_release_pipeline(self.output_folder)
+                    res_run = run_pipeline(issue_link=issue_link,
+                                           pipeline_url=release_pipeline_url,
+                                           spec_readme=self.readme_link + '/readme.md',
+                                           python_tag=self.python_tag,
+                                           rest_repo_hash=self.rest_repo_hash
+                                           )
+                    if res_run:
+                        self.log(f'{issue_number} run pipeline successfully')
+                    else:
+                        self.log(f'{issue_number} run pipeline fail')
+                except Exception as e:
+                    self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
+                if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
+                    self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
+
+            if _CONFIGURED in self.issue_package.labels_name:
+                self.issue_package.issue.remove_from_labels(_CONFIGURED)
 
     def attention_policy(self):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
@@ -166,8 +147,31 @@ class IssueProcessPython(IssueProcess):
             self.log(f"{self.issue_package.issue.number} has been closed!")
             record_release(self.package_name, self.issue_package.issue, _FILE_OUT, last_version)
 
+    def auto_parse(self):
+        super().auto_parse()
+        issue_body_list = self.get_issue_body()
+        self.readme_link = issue_body_list[0]
+        if not re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
+            return
+
+        # Get the specified tag and rest repo hash in issue body
+        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
+        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
+
+        try:
+            readme_python_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
+            contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
+        except Exception as e:
+            raise Exception(f"fail to read readme.python.md: {e}")
+        pattern_package = re.compile(r'package-name: [\w+-.]+')
+        pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
+        self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
+        self.output_folder = pattern_output.search(contents).group().split('/')[1]
+        if ('multi-api' in contents) and (_MultiAPI not in self.issue_package.labels_name):
+            self.add_label(_MultiAPI)
+
+
     def run(self) -> None:
-        self.get_package_and_output()
         super().run()
         self.auto_reply()
         self.auto_close()

@@ -70,7 +70,6 @@ setup(
         "azure-common~=1.1",
         "azure-core<2.0.0,>=1.24.0",
         "isodate>=0.6.1",
-        "six>=1.11.0",
         "typing-extensions>=4.0.1",
     ],
 )

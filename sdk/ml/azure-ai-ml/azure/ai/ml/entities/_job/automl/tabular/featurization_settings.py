@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ColumnTransformer as RestColumnTransformer
@@ -32,8 +32,8 @@ class ColumnTransformer(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        fields: List[str] = None,
-        parameters: Dict[str, Union[str, float]] = None,
+        fields: Optional[List[str]] = None,
+        parameters: Optional[Dict[str, Union[str, float]]] = None,
     ):
         self.fields = fields
         self.parameters = parameters
@@ -63,12 +63,12 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     def __init__(
         self,
         *,
-        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
-        column_name_and_types: Dict[str, str] = None,
-        dataset_language: str = None,
-        transformer_params: Dict[str, List[ColumnTransformer]] = None,
-        mode: str = None,
-        enable_dnn_featurization: bool = None,
+        blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
+        column_name_and_types: Optional[Dict[str, str]] = None,
+        dataset_language: Optional[str] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        mode: Optional[str] = None,
+        enable_dnn_featurization: Optional[bool] = None,
     ):
         """
         :param blocked_transformers: A list of transformers to ignore when featurizing.
@@ -109,7 +109,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
 
     @property
     def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
-        """ A list of transformers to ignore when featurizing."""
+        """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter

@@ -12,7 +12,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestDeploymentSchema:
     def test_deserialize(self) -> None:
         path = Path("./tests/test_configs/deployments/online/online_deployment_mir.yaml")

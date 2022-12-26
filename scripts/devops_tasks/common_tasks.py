@@ -243,9 +243,12 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
     client = PyPIClient()
     versions = []
     try:
-        versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+        versions = client.get_ordered_versions(package_name)
+
+        if spec:
+            versions = [str(v) for v in versions if str(v) in spec]
     except:
-        logging.error("Package {} is not found on PyPI", package_name)
+        logging.error("Package {} is not found on PyPI".format(package_name))
     return versions
 
 

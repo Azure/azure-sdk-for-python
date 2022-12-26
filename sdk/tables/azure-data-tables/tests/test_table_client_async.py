@@ -6,6 +6,7 @@
 from azure.core.credentials import AzureNamedKeyCredential
 import pytest
 import platform
+import os
 
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -14,9 +15,11 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
+from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
+from test_table_client import validate_standard_account_endpoints
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
@@ -172,18 +175,10 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         await valid_tc.delete_table()
 
 
-class TestTableClientUnit(AsyncTableTestCase):
+class TestTableClientAsyncUnitTests(AsyncTableTestCase):
     tables_storage_account_name = "fake_storage_account"
     tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
     credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)
-
-    # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, account_name, account_key):
-        assert service is not None
-        assert service.account_name == account_name
-        assert service.credential.named_key.name == account_name
-        assert service.credential.named_key.key == account_key
-        assert ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url)
 
     # --Direct Parameters Test Cases --------------------------------------------
     @pytest.mark.asyncio
@@ -196,7 +191,7 @@ class TestTableClientUnit(AsyncTableTestCase):
                 self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service.scheme == 'https'
 
     @pytest.mark.asyncio
@@ -205,17 +200,16 @@ class TestTableClientUnit(AsyncTableTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string(self.tables_storage_account_name, self.tables_primary_storage_account_key), table_name="test")
+                self.storage_connection_string(self.tables_storage_account_name, self.tables_primary_storage_account_key), table_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service.scheme == 'https'
 
     @pytest.mark.asyncio
     async def test_create_service_with_sas(self):
         # Arrange
-        url = self.account_url(self.tables_storage_account_name, "table")
-        suffix = '.table.core.windows.net'
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         token = AzureSasCredential(self.generate_sas_token())
         for service_type in SERVICES:
             # Act
@@ -225,13 +219,13 @@ class TestTableClientUnit(AsyncTableTestCase):
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
+            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.' + endpoint_suffix)
             assert isinstance(service.credential, AzureSasCredential)
 
     @pytest.mark.asyncio
     async def test_create_service_with_token_async(self):
         url = self.account_url(self.tables_storage_account_name, "table")
-        suffix = '.table.core.windows.net'
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         self.token_credential = AzureSasCredential("fake_sas_credential")
         for service_type in SERVICES:
             # Act
@@ -240,7 +234,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith('https://' + self.tables_storage_account_name + suffix)
+            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.' + endpoint_suffix)
             assert service.credential == self.token_credential
             assert not hasattr(service.credential, 'account_key')
 
@@ -254,22 +248,6 @@ class TestTableClientUnit(AsyncTableTestCase):
                 service_type(url, credential=AzureSasCredential("fake_sas_credential"), table_name='foo')
 
     @pytest.mark.asyncio
-    async def test_create_service_china_async(self):
-        # Arrange
-        for service_type in SERVICES.items():
-            # Act
-            url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
-            service = service_type[0](
-                url, credential=self.credential, table_name='foo')
-
-            # Assert
-            assert service is not None
-            assert service.account_name == self.tables_storage_account_name
-            assert service.credential.named_key.name == self.tables_storage_account_name
-            assert service.credential.named_key.key == self.tables_primary_storage_account_key
-            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
-
-    @pytest.mark.asyncio
     async def test_create_service_protocol_async(self):
         # Arrange
 
@@ -280,7 +258,7 @@ class TestTableClientUnit(AsyncTableTestCase):
                 url, credential=self.credential, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service.scheme == 'http'
 
     @pytest.mark.asyncio
@@ -308,7 +286,7 @@ class TestTableClientUnit(AsyncTableTestCase):
                 table_name='foo', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout == 300
 
@@ -332,7 +310,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
+            validate_standard_account_endpoints(service, self.tables_storage_account_name, self.tables_primary_storage_account_key)
             assert service.scheme == 'https'
 
     @pytest.mark.asyncio
@@ -344,47 +322,12 @@ class TestTableClientUnit(AsyncTableTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type.from_connection_string(conn_string, table_name='foo')
-
+            endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
+            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.' + endpoint_suffix)
             assert isinstance(service.credential , AzureSasCredential)
-
-    @pytest.mark.asyncio
-    async def test_create_service_with_connection_string_cosmos_async(self):
-        # Arrange
-        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-
-        for service_type in SERVICES:
-            # Act
-            service = service_type.from_connection_string(conn_string, table_name='foo')
-
-            # Assert
-            assert service is not None
-            assert service.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
-            assert service.credential.named_key.name == self.tables_storage_account_name
-            assert service.credential.named_key.key == self.tables_primary_storage_account_key
-            assert service._primary_endpoint.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
-            assert service.scheme == 'https'
-
-    @pytest.mark.asyncio
-    async def test_create_service_with_connection_string_endpoint_protocol_async(self):
-        # Arrange
-        conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-
-        for service_type in SERVICES.items():
-            # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
-
-            # Assert
-            assert service is not None
-            assert service.credential.named_key.name == self.tables_storage_account_name
-            assert service.credential.named_key.key == self.tables_primary_storage_account_key
-            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
-            assert service.scheme == 'http'
 
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_emulated_async(self):
@@ -531,7 +474,8 @@ class TestTableClientUnit(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_create_table_client_with_complete_url_async(self):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+        table_url = "https://{}.table.{}:443/foo".format(self.tables_storage_account_name, endpoint_suffix)
         service = TableClient(endpoint=table_url, table_name='bar', credential=self.credential)
 
         # Assert
@@ -541,8 +485,6 @@ class TestTableClientUnit(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_error_with_malformed_conn_str_async(self):
-        # Arrange
-
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
             for service_type in SERVICES.items():
                 # Act
@@ -560,7 +502,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
+                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name='table')
 
             # Assert
             async with service:
@@ -573,7 +515,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(self.tables_storage_account_name, "table"), credential=self.credential, table_name='table')
+                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name='table')
             await service.close()
 
     @pytest.mark.asyncio

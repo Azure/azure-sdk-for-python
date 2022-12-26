@@ -3,6 +3,9 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from pytest_mock import MockFixture
+from test_utilities.utils import assert_job_cancel, wait_until_done
 
 from azure.ai.ml import MLClient, Output, dsl, load_component, load_job
 from azure.ai.ml.constants import JobType
@@ -11,12 +14,6 @@ from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._job.import_job import DatabaseImportSource, ImportJob
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-
-
-from devtools_testutils import AzureRecordedTestCase
-from pytest_mock import MockFixture
-
-from test_utilities.utils import assert_job_cancel, wait_until_done
 
 
 @pytest.fixture(autouse=True)
@@ -88,12 +85,14 @@ class TestImportJob(AzureRecordedTestCase):
         import_job_3 = client.jobs.get(import_job.name)
         assert import_job_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED, JobStatus.FAILED)
 
+    @pytest.mark.skip("Skip for not ready.")
     @pytest.mark.e2etest
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
         pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
+    @pytest.mark.skip("Skip for not ready.")
     @pytest.mark.e2etest
     def test_import_dsl_pipeline_submit_cancel(self, client: MLClient) -> None:
         def generate_dsl_pipeline():

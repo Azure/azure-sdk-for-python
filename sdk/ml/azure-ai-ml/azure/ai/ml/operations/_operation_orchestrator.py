@@ -10,12 +10,11 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
+    AMLLabelledArmId,
     AMLNamedArmId,
     AMLVersionedArmId,
-    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -28,18 +27,19 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     CURATED_ENV_PREFIX,
+    DEFAULT_LABEL_NAME,
     FILE_PREFIX,
     FOLDER_PREFIX,
     HTTPS_PREFIX,
     JOB_URI_REGEX_FORMAT,
+    LABELLED_RESOURCE_ID_FORMAT,
+    LABELLED_RESOURCE_NAME,
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
+    REGISTRY_VERSION_PATTERN,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
-    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
-    LABELLED_RESOURCE_ID_FORMAT,
-    DEFAULT_LABEL_NAME,
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -49,7 +49,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MlException,
+    MLException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -139,9 +139,8 @@ class OperationOrchestrator(object):
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
                 # Short form of curated env will be expanded on the backend side.
                 # CLI strips off azureml: in the schema, appending it back as required by backend
-                if (
-                    azureml_type == "environments"
-                    and asset.startswith(CURATED_ENV_PREFIX)
+                if azureml_type == "environments" and (
+                    asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}")
                 ):
                     return f"azureml:{asset}"
 
@@ -181,7 +180,7 @@ class OperationOrchestrator(object):
                             "Use fully qualified name to reference custom environments "
                             "when creating assets in registry. "
                             "The syntax for fully qualified names is "
-                            "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
+                            "azureml://registries/azureml/environments/{{env-name}}/versions/{{version}}"
                         )
                         raise ValidationException(
                             message=msg.format(asset, azureml_type),
@@ -267,7 +266,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -280,6 +279,8 @@ class OperationOrchestrator(object):
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
+            if environment.id:
+                return environment.id
             env_response = self._environments.create_or_update(environment)
             return env_response.id
         environment = _check_and_upload_env_build_context(
@@ -298,6 +299,8 @@ class OperationOrchestrator(object):
             self._validate_datastore_name(model.path)
 
             if register_asset:
+                if model.id:
+                    return model.id
                 return self._model.create_or_update(model).id
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
@@ -312,7 +315,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(
@@ -374,7 +377,7 @@ class OperationOrchestrator(object):
         )
 
     # pylint: disable=unused-argument
-    def resolve_azureml_id(self, arm_id: str = None, **kwargs) -> str:
+    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
         """This function converts ARM id to name or name:version AzureML id. It
         parses the ARM id and matches the subscription Id, resource group name
         and workspace_name.
@@ -425,15 +428,10 @@ class OperationOrchestrator(object):
             and id_.workspace_name == self._operation_scope.workspace_name
         )
 
-    def _validate_datastore_name(self, datastore_uri: Optional[Union[UriReference, str, PathLike]]) -> None:
+    def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
         if datastore_uri:
             try:
-                if isinstance(datastore_uri, UriReference):
-                    if datastore_uri.file:
-                        datastore_uri = datastore_uri.file
-                    else:
-                        datastore_uri = datastore_uri.folder
-                elif isinstance(datastore_uri, str):
+                if isinstance(datastore_uri, str):
                     if datastore_uri.startswith(FILE_PREFIX):
                         datastore_uri = datastore_uri[len(FILE_PREFIX) :]
                     elif datastore_uri.startswith(FOLDER_PREFIX):

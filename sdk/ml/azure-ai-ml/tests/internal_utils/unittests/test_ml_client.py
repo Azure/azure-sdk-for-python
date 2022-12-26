@@ -23,10 +23,10 @@ from azure.ai.ml import (
     load_workspace_connection,
 )
 from azure.ai.ml._azure_environments import AzureEnvironments
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
-from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.exceptions import ValidationException
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 
 @pytest.mark.unittest

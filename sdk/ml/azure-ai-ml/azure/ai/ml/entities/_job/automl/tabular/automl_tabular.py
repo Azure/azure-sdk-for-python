@@ -5,7 +5,7 @@
 # pylint: disable=too-many-instance-attributes
 
 from abc import ABC
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoNCrossValidations,
@@ -17,12 +17,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
-)
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
-    StackEnsembleSettings
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
@@ -34,9 +32,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self,
         *,
         task_type: str,
-        featurization: TabularFeaturizationSettings = None,
-        limits: TabularLimitSettings = None,
-        training: TrainingSettings = None,
+        featurization: Optional[TabularFeaturizationSettings] = None,
+        limits: Optional[TabularLimitSettings] = None,
+        training: Optional[TrainingSettings] = None,
         **kwargs,
     ) -> None:
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
@@ -128,13 +126,13 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        enable_early_termination: bool = None,
-        exit_score: float = None,
-        max_concurrent_trials: int = None,
-        max_cores_per_trial: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        enable_early_termination: Optional[bool] = None,
+        exit_score: Optional[float] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_cores_per_trial: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ) -> None:
         """Set limits for the job.
 
@@ -221,15 +219,15 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_training(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ) -> None:
         """Method to configure training related settings.
 
@@ -309,12 +307,12 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_featurization(
         self,
         *,
-        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
-        column_name_and_types: Dict[str, str] = None,
-        dataset_language: str = None,
-        transformer_params: Dict[str, List[ColumnTransformer]] = None,
-        mode: str = None,
-        enable_dnn_featurization: bool = None,
+        blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
+        column_name_and_types: Optional[Dict[str, str]] = None,
+        dataset_language: Optional[str] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        mode: Optional[str] = None,
+        enable_dnn_featurization: Optional[bool] = None,
     ) -> None:
         """Define feature engineering configuration.
 
@@ -359,13 +357,13 @@ class AutoMLTabular(AutoMLVertical, ABC):
         *,
         training_data: Input,
         target_column_name: str,
-        weight_column_name: str = None,
-        validation_data: Input = None,
-        validation_data_size: float = None,
-        n_cross_validations: Union[str, int] = None,
-        cv_split_column_names: List[str] = None,
-        test_data: Input = None,
-        test_data_size: float = None,
+        weight_column_name: Optional[str] = None,
+        validation_data: Optional[Input] = None,
+        validation_data_size: Optional[float] = None,
+        n_cross_validations: Optional[Union[str, int]] = None,
+        cv_split_column_names: Optional[List[str]] = None,
+        test_data: Optional[Input] = None,
+        test_data_size: Optional[float] = None,
     ) -> None:
         self.target_column_name = target_column_name if target_column_name is not None else self.target_column_name
         self.weight_column_name = weight_column_name if weight_column_name is not None else self.weight_column_name

@@ -7,20 +7,21 @@ import os
 import signal
 import tempfile
 import time
-from typing import Dict, Callable
-from zipfile import ZipFile
 from io import StringIO
+from pathlib import Path
+from typing import Callable, Dict
+from zipfile import ZipFile
 
 import pydash
 import urllib3
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
@@ -292,7 +293,7 @@ def assert_job_cancel(
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-        cancel_job(client, created_job)
+    cancel_job(client, created_job)
     return created_job
 
 
@@ -318,3 +319,21 @@ def sleep_if_live(seconds):
     """
     if is_live():
         time.sleep(seconds)
+
+
+def parse_local_path(origin_path, base_path=None):
+    """Relative path in LocalPathField will be dumped to absolute path in _to_dict.
+    In e2e tests, it will be uploaded and resolved into an uri before _to_rest_object.
+    However, developers usually directly compare the result of _to_dict/_to_rest_object with a fixed dict.
+    So we provide this function to parse the original value in the same way as LocalPathField serialization
+    to avoid updating test cases after updating LocalPathField serialization logic.
+
+    :param origin_path: The original value filled in LocalPathField
+    :param base_path: The base path of the original value, usually from resource.base_path.
+    Will use current working directory if not provided.
+    """
+    if base_path is None:
+        base_path = Path.cwd()
+    else:
+        base_path = Path(base_path)
+    return (base_path / origin_path).resolve().absolute().as_posix()

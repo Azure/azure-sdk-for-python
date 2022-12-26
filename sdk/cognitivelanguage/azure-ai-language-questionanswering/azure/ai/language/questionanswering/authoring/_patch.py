@@ -68,9 +68,7 @@ class AuthoringClient(AuthoringClientGenerated):
         )
 
 
-__all__: List[str] = [
-    "AuthoringClient"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AuthoringClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

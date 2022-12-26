@@ -6,7 +6,6 @@ import logging
 import datetime
 import warnings
 from typing import TYPE_CHECKING, Any, Union, Optional
-import six
 
 from ._common.utils import utc_from_timestamp, utc_now
 from ._common.constants import (
@@ -146,7 +145,7 @@ class ServiceBusSession(BaseSession):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         state = (
-            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+            state.encode(self._encoding) if isinstance(state, str) else state
         )
         return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,

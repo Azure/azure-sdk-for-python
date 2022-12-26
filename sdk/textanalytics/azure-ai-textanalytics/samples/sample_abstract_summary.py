@@ -14,6 +14,9 @@ DESCRIPTION:
     Abstractive summarization generates a summary that may not use the same words as those in
     the document, but captures the main idea.
 
+    The abstractive summarization feature is part of a gated preview. Request access here:
+    https://aka.ms/applyforgatedsummarizationfeatures
+
 USAGE:
     python sample_abstract_summary.py
 

@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import (
     HttpResponseError,
 )
-from _router_test_case_async import AsyncRouterTestCase
+from _router_test_case_async import AsyncRouterRecordedTestCase
 from _shared.asynctestcase import AsyncCommunicationTestCase
 
 from _decorators_async import RouterPreparersAsync
@@ -41,16 +42,9 @@ channel_id = 'fakeChannel1'
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestAssignmentScenarioAsync(AsyncRouterTestCase):
-    def __init__(self, method_name):
-        super(TestAssignmentScenarioAsync, self).__init__(method_name)
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-        self.worker_ids = {}  # type: Dict[str, List[str]]
-        self.job_ids = {}  # type: Dict[str, List[str]]
+class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
 
-    async def clean_up(self):
+    async def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_admin_client: RouterAdministrationClient = self.create_admin_client()
@@ -91,19 +85,10 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
                         for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                             await router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
-    def setUp(self):
-        super(TestAssignmentScenarioAsync, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestAssignmentScenarioAsync, self).tearDown()
-
-    def get_distribution_policy_id(self):
+    def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp_async"
 
-    async def setup_distribution_policy(self):
+    async def setup_distribution_policy(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
@@ -129,10 +114,10 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
             else:
                 self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
-    def get_job_queue_id(self):
+    def get_job_queue_id(self, **kwargs):
         return self._testMethodName + "_tst_q_async"
 
-    async def setup_job_queue(self):
+    async def setup_job_queue(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
@@ -155,10 +140,10 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
             else:
                 self.queue_ids[self._testMethodName] = [job_queue_id]
 
-    def get_router_worker_id(self):
+    def get_router_worker_id(self, **kwargs):
         return self._testMethodName + "_tst_w"
 
-    async def setup_router_worker(self):
+    async def setup_router_worker(self, **kwargs):
         w_identifier = self.get_router_worker_id()
         router_client: RouterClient = self.create_client()
 
@@ -219,12 +204,13 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
             router_worker: RouterWorker = await router_client.get_worker(worker_id = worker_id)
             assert router_worker.state == RouterWorkerState.INACTIVE
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_router_worker')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
-    async def test_assignment_scenario(self):
+    async def test_assignment_scenario(self, **kwargs):
         router_client: RouterClient = self.create_client()
 
         async with router_client:

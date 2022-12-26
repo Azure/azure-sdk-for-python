@@ -2,9 +2,22 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
 from ...entities._assets import Code
+from ...entities._component.code import ComponentIgnoreFile
+
+
+class InternalComponentIgnoreFile(ComponentIgnoreFile):
+    _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
+
+    def __init__(self, directory_path: Union[str, Path]):
+        super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
+
+    def _get_ignore_list(self) -> List[str]:
+        """Override to add custom ignores for internal component."""
+        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + self._INTERNAL_COMPONENT_CODE_IGNORES
 
 
 class InternalCode(Code):

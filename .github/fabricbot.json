@@ -1061,6 +1061,24 @@
             ]
           },
           {
+            "label": "Cognitive - Personalizer",
+            "pathFilter": [
+              "sdk/personalizer/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "Machine Learning",
+            "pathFilter": [
+              "sdk/ml/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
               "/sdk/ml/automl.tests.yml",
@@ -1179,7 +1197,7 @@
             "pathFilter": [
               "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace",
               "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace",
-              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py"
             ],
             "exclude": [
               ""
@@ -1898,7 +1916,8 @@
               "Cognitive - Personalizer"
             ],
             "mentionees": [
-              "dwaijam"
+              "dwaijam",
+              "sharathmalladi"
             ]
           },
           {

@@ -26,6 +26,7 @@ from .operations import (
     GetPrivateDnsZoneSuffixOperations,
     LocationBasedCapabilitiesOperations,
     Operations,
+    ReplicasOperations,
     ServersOperations,
     VirtualNetworkSubnetUsageOperations,
 )
@@ -70,6 +71,8 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.postgresql_flexibleservers.operations.GetPrivateDnsZoneSuffixOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.rdbms.postgresql_flexibleservers.operations.ReplicasOperations
     :ivar virtual_network_subnet_usage: VirtualNetworkSubnetUsageOperations operations
     :vartype virtual_network_subnet_usage:
      azure.mgmt.rdbms.postgresql_flexibleservers.operations.VirtualNetworkSubnetUsageOperations
@@ -121,6 +124,7 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_network_subnet_usage = VirtualNetworkSubnetUsageOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

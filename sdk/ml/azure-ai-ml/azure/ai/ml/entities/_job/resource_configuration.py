@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2021_10_01.models import ResourceConfiguration as RestResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01.models import ResourceConfiguration as RestResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
@@ -17,9 +17,9 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        instance_count: int = None,
-        instance_type: str = None,
-        properties: Dict[str, Any] = None,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
         self.instance_count = instance_count

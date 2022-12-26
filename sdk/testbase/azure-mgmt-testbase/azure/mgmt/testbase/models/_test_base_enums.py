@@ -6,29 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Action(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The action of the command.
-    """
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action of the command."""
 
     INSTALL = "Install"
     LAUNCH = "Launch"
@@ -36,7 +19,9 @@ class Action(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNINSTALL = "Uninstall"
     CUSTOM = "Custom"
 
-class AnalysisResultName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AnalysisResultName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AnalysisResultName."""
 
     SCRIPT_EXECUTION = "scriptExecution"
     RELIABILITY = "reliability"
@@ -46,9 +31,9 @@ class AnalysisResultName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CPU_REGRESSION = "cpuRegression"
     TEST_ANALYSIS = "testAnalysis"
 
-class AnalysisResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Analysis Result.
-    """
+
+class AnalysisResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Analysis Result."""
 
     SCRIPT_EXECUTION = "ScriptExecution"
     RELIABILITY = "Reliability"
@@ -58,9 +43,9 @@ class AnalysisResultType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MEMORY_REGRESSION = "MemoryRegression"
     TEST_ANALYSIS = "TestAnalysis"
 
-class AnalysisStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The analysis status.
-    """
+
+class AnalysisStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The analysis status."""
 
     NONE = "None"
     COMPLETED = "Completed"
@@ -70,9 +55,9 @@ class AnalysisStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "Available"
     NOT_AVAILABLE = "NotAvailable"
 
-class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The category of the failure.
-    """
+
+class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of the failure."""
 
     NONE = "None"
     UNIDENTIFIED = "Unidentified"
@@ -80,26 +65,26 @@ class Category(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OS_UPDATE = "OSUpdate"
     INFRASTRUCTURE = "Infrastructure"
 
-class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of command content.
-    """
+
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of command content."""
 
     INLINE = "Inline"
     FILE = "File"
     PATH = "Path"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The execution status of a test.
-    """
+
+class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The execution status of a test."""
 
     NONE = "None"
     IN_PROGRESS = "InProgress"
@@ -110,23 +95,25 @@ class ExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
 
-class Grade(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The grade of a test.
-    """
+
+class Grade(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The grade of a test."""
 
     NONE = "None"
     NOT_AVAILABLE = "NotAvailable"
-    PASS_ENUM = "Pass"
+    PASS = "Pass"
     FAIL = "Fail"
 
-class OsUpdateType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class OsUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the OS update type to test against."""
 
     SECURITY_UPDATE = "SecurityUpdate"
     FEATURE_UPDATE = "FeatureUpdate"
 
-class PackageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the package.
-    """
+
+class PackageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the package."""
 
     UNKNOWN = "Unknown"
     REGISTERED = "Registered"
@@ -138,9 +125,10 @@ class PackageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VALIDATION_LONGER_THAN_USUAL = "ValidationLongerThanUsual"
     VERIFYING_PACKAGE = "VerifyingPackage"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ARM provisioning state, see
-    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
     """
 
     SUCCEEDED = "Succeeded"
@@ -150,25 +138,25 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     UPDATING = "Updating"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for unavailability of a name. Required if nameAvailable == false.
-    """
+
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for unavailability of a name. Required if nameAvailable == false."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class TestAnalysisStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the analysis.
-    """
+
+class TestAnalysisStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the analysis."""
 
     NONE = "None"
     ANALYZING = "Analyzing"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
-class TestStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a test.
-    """
+
+class TestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a test."""
 
     NONE = "None"
     TEST_EXECUTION_IN_PROGRESS = "TestExecutionInProgress"
@@ -179,29 +167,29 @@ class TestStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INFRASTRUCTURE_FAILURE = "InfrastructureFailure"
     COMPLETED = "Completed"
 
-class TestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The test type.
-    """
+
+class TestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The test type."""
 
     OUT_OF_BOX_TEST = "OutOfBoxTest"
     FUNCTIONAL_TEST = "FunctionalTest"
 
-class Tier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The tier of this particular SKU.
-    """
+
+class Tier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tier of this particular SKU."""
 
     STANDARD = "Standard"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of this release (OS update).
-    """
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of this release (OS update)."""
 
     SECURITY_UPDATE = "SecurityUpdate"
     FEATURE_UPDATE = "FeatureUpdate"
 
-class ValidationRunStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the validation run of the package.
-    """
+
+class ValidationRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the validation run of the package."""
 
     UNKNOWN = "Unknown"
     PENDING = "Pending"

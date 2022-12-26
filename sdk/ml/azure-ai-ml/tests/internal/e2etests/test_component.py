@@ -5,9 +5,9 @@ import json
 import os.path
 from typing import Callable, Dict, List
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent

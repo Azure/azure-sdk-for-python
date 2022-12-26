@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, List, Union
+from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineSize
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachineSize
 from azure.ai.ml._schema.compute.vm_size import VmSizeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -17,16 +17,16 @@ class VmSize(RestTranslatableMixin):
 
     def __init__(
         self,
-        name: str = None,
-        family: str = None,
-        v_cp_us: int = None,
-        gpus: int = None,
-        os_vhd_size_mb: int = None,
-        max_resource_volume_mb: int = None,
-        memory_gb: float = None,
-        low_priority_capable: bool = None,
-        premium_io: bool = None,
-        supported_compute_types: List[str] = None,
+        name: Optional[str] = None,
+        family: Optional[str] = None,
+        v_cp_us: Optional[int] = None,
+        gpus: Optional[int] = None,
+        os_vhd_size_mb: Optional[int] = None,
+        max_resource_volume_mb: Optional[int] = None,
+        memory_gb: Optional[float] = None,
+        low_priority_capable: Optional[bool] = None,
+        premium_io: Optional[bool] = None,
+        supported_compute_types: Optional[List[str]] = None,
     ):
         """Virtual machine size.
 
@@ -97,7 +97,7 @@ class VmSize(RestTranslatableMixin):
     def _load(
         cls,
         path: Union[PathLike, str],
-        params_override: list = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "VmSize":
 

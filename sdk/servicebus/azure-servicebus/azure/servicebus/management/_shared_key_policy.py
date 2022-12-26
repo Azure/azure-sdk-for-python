@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 
 import time
-import six
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .._base_handler import ServiceBusSharedKeyCredential
@@ -25,7 +24,7 @@ class ServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self._endpoint = endpoint
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, six.string_types):
+        if not isinstance(name, str):
             raise TypeError("name must be a string.")
         self._name = name
         self._token_expiry_on = 0

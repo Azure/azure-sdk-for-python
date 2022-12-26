@@ -9,14 +9,14 @@ import copy
 from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
-from inspect import Parameter, signature
+from inspect import Parameter, getmro, signature
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.exceptions  import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 
-def is_parameter_group(obj):
-    """Return True if obj is a parameter group or an instance of a parameter group class."""
+def is_group(obj):
+    """Return True if obj is a group or an instance of a parameter group class."""
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 
@@ -87,7 +87,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
 
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
-            if is_parameter_group(annotation):
+            if is_group(annotation):
                 annotation = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
@@ -126,6 +126,11 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
                 # )
                 pass
             complete_annotation._update_default(default)
+        if isinstance(complete_annotation, Output) and default is not None:
+            msg = (
+                f"Default value of Output {complete_annotation.name!r} cannot be set: " f"Output has no default value."
+            )
+            raise UserErrorException(msg)
         return complete_annotation
 
     def _update_fields_with_default(annotation_fields, defaults_dict):
@@ -152,7 +157,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         # In reversed order so that more derived classes
         # override earlier field definitions in base classes.
         for base in cls_or_func.__mro__[-1:0:-1]:
-            if is_parameter_group(base):
+            if is_group(base):
                 # merge and reorder fields from current base with previous
                 _fields = _merge_and_reorder(_fields, copy.deepcopy(getattr(base, IOConstants.GROUP_ATTR_NAME).values))
         return _fields
@@ -165,11 +170,11 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         Note: If cls overwrite an inherited no default field with default, it will be put in the
         cls_default_fields part and deleted from inherited_no_default_fields:
         e.g.
-        @dsl.parameter_group
+        @dsl.group
         class SubGroup:
             int_param0: Integer
             int_param1: int
-        @dsl.parameter_group
+        @dsl.group
         class Group(SubGroup):
             int_param3: Integer
             int_param1: int = 1
@@ -211,20 +216,21 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
     annotations = getattr(cls_or_func, "__annotations__", {})
+    annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
     # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
         defaults_dict = {
-            key: val for key, val in cls_or_func.__dict__.items()
-            if not key.startswith("_") and key not in skip_params
+            key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_") and key not in skip_params
         }
     else:
         # Infer parameter type from value if is function
         defaults_dict = {
-            key: val.default for key, val in signature(cls_or_func).parameters.items()
-            if key not in skip_params
+            key: val.default
+            for key, val in signature(cls_or_func).parameters.items()
+            if key not in skip_params and val.kind != val.VAR_KEYWORD
         }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)
@@ -240,7 +246,16 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     to IO entities.
     """
     from azure.ai.ml import Input, Output
+
+    from .enum_input import EnumInput
+
     mldesigner_pkg = "mldesigner"
+    param_name = "_Param"
+    return_annotation_key = "return"
+
+    def _is_primitive_type(io: type):
+        """Return true if type is subclass of mldesigner._input_output._Param"""
+        return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
 
     def _is_input_or_output_type(io: type, type_str: str):
         """Return true if type name contains type_str"""
@@ -258,6 +273,8 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
             elif _is_input_or_output_type(io, "Output"):
                 # mldesigner.Output -> entities.Output
                 io = Output
+            elif _is_primitive_type(io):
+                io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):
@@ -266,6 +283,15 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                 elif _is_input_or_output_type(type(io), "Output"):
                     # mldesigner.Output() -> entities.Output()
                     io = Output(**io._to_io_entity_args_dict())
+                elif _is_primitive_type(type(io)):
+                    if io._is_enum():
+                        io = EnumInput(**io._to_io_entity_args_dict())
+                    else:
+                        io = (
+                            Output(**io._to_io_entity_args_dict())
+                            if key == return_annotation_key
+                            else Input(**io._to_io_entity_args_dict())
+                        )
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
         result[key] = io

@@ -8,7 +8,7 @@ from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -40,12 +40,12 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        auth_mode: str = None,
-        location: str = None,
-        name: str = None,
-        tags: Dict[str, str] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
+        auth_mode: Optional[str] = None,
+        location: Optional[str] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
         # MFE is case-insensitive for Name. So convert the name into lower case here.
@@ -86,7 +86,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs) -> None:
+    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
         pass
 
     @abstractmethod
@@ -102,6 +102,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
                     target=ErrorTarget.ENDPOINT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             self.description = other.description or self.description
             if other.tags:

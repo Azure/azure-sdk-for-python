@@ -49,3 +49,18 @@ class WebpubsubSmokeAsyncTest(WebpubsubAsyncTest):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
         assert not await client.user_exists(user_id="fake user")
         assert not await client.group_exists(group="fake group")
+
+    @WebpubsubPowerShellPreparer()
+    async def test_remove_connection_from_all_groups(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.remove_connection_from_all_groups(connection_id="fake connection id")
+
+    @WebpubsubPowerShellPreparer()
+    async def test_send_with_filter(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.send_to_all(message={"hello": "world!"}, filter="userId ne 'user1'", content_type="text/plain")
+
+    @WebpubsubPowerShellPreparer()
+    async def test_get_client_access_key_with_groups(self, webpubsub_connection_string):
+        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        await client.get_client_access_token(user_id="user1", groups=["groups1"])

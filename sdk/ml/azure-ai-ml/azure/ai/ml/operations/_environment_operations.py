@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Iterable, Union
+from typing import Any, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -21,11 +21,12 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
     _get_latest,
+    _get_next_version_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -35,7 +36,7 @@ from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -55,7 +56,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -67,12 +68,12 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, environment: Environment) -> Environment:
         """Returns created or updated environment asset.
 
         :param environment: Environment object
-        :type environment: Environment
+        :type environment: ~azure.ai.ml.entities._assets.Environment
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
@@ -80,18 +81,15 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
-            sas_uri = None
-
-            if not environment.version and self._registry_name:
-                msg = "Environment version is required for registry"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.ENVIRONMENT,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
+            if not environment.version and environment._auto_increment_version:
+                environment.version = _get_next_version_from_container(
+                    name=environment.name,
+                    container_operation=self._containers_operations,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    registry_name=self._registry_name,
+                    **self._kwargs,
                 )
-
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -111,52 +109,39 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )
                     return self.get(name=environment.name, version=environment.version)
-
-            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
-
+                environment = _check_and_upload_env_build_context(
+                    environment=environment, operations=self, sas_uri=sas_uri
+                )
             env_version_resource = environment._to_rest_object()
-
-            if environment._auto_increment_version:
-                env_rest_obj = _create_or_update_autoincrement(
+            env_rest_obj = (
+                self._version_operations.begin_create_or_update(
                     name=environment.name,
+                    version=environment.version,
+                    registry_name=self._registry_name,
                     body=env_version_resource,
-                    version_operation=self._version_operations,
-                    container_operation=self._containers_operations,
+                    **self._scope_kwargs,
+                    **self._kwargs,
+                ).result()
+                if self._registry_name
+                else self._version_operations.create_or_update(
+                    name=environment.name,
+                    version=environment.version,
                     workspace_name=self._workspace_name,
+                    body=env_version_resource,
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            else:
-                env_rest_obj = (
-                    self._version_operations.begin_create_or_update(
-                        name=environment.name,
-                        version=environment.version,
-                        registry_name=self._registry_name,
-                        body=env_version_resource,
-                        **self._scope_kwargs,
-                        **self._kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._version_operations.create_or_update(
-                        name=environment.name,
-                        version=environment.version,
-                        workspace_name=self._workspace_name,
-                        body=env_version_resource,
-                        **self._scope_kwargs,
-                        **self._kwargs,
-                    )
-                )
-
+            )
             if not env_rest_obj and self._registry_name:
                 env_rest_obj = self._get(name=environment.name, version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex: # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
-    def _get(self, name: str, version: str = None) -> EnvironmentVersionData:
+    def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersionData:
         if version:
             return (
                 self._version_operations.get(
@@ -191,8 +176,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Environment:
+    # @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
         :param name: Name of the environment.
@@ -233,10 +218,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         return Environment._from_rest_object(env_version_resource)
 
-    @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        name: str = None,
+        name: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Environment]:
@@ -286,8 +271,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
+    def archive(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+    ) -> None:
         """Archive an environment or an environment version.
 
         :param name: Name of the environment.
@@ -308,8 +298,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
+    def restore(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+    ) -> None:
         """Restore an archived environment version.
 
         :param name: Name of the environment.

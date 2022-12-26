@@ -1,12 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
 import tempfile
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -32,9 +31,11 @@ from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override, _copy_folder_ignore_pycache
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+
+from .code import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -91,20 +92,20 @@ class Component(
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        id: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        display_name: str = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        id: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        display_name: Optional[str] = None,
         is_deterministic: bool = True,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        yaml_str: str = None,
-        _schema: str = None,
-        creation_context: SystemData = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        _schema: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
         **kwargs,
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -296,17 +297,14 @@ class Component(
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Component":
         data = data or {}
         params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
 
         type_in_override = find_type_in_override(params_override)
 
@@ -316,19 +314,25 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(
-            data[CommonYamlFields.TYPE],
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
+
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
+            **(
+                create_schema_func(
+                    {
+                        BASE_PATH_CONTEXT_KEY: base_path,
+                        PARAMS_OVERRIDE_KEY: params_override,
+                    }
+                ).load(data, unknown=INCLUDE, **kwargs)
+            ),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
-        new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
         if yaml_path:
             new_instance._source_path = yaml_path
         return new_instance
@@ -347,6 +351,7 @@ class Component(
             # Set this field to None as it hold a default True in init.
             is_deterministic=None,
         )
+        component.latest_version = component_container_details.latest_version
         return component
 
     @classmethod
@@ -362,12 +367,8 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, _ = component_factory.get_create_funcs(
-            obj.properties.component_spec[CommonYamlFields.TYPE],
-            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
-            if CommonYamlFields.SCHEMA in obj.properties.component_spec
-            else None,
-        )
+
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))
@@ -394,14 +395,16 @@ class Component(
         init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
             rest_component_version.component_spec, unknown=INCLUDE
         )
-        init_kwargs.update(dict(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            name=origin_name,
-        ))
+        init_kwargs.update(
+            dict(
+                id=obj.id,
+                is_anonymous=rest_component_version.is_anonymous,
+                creation_context=obj.system_data,
+                inputs=inputs,
+                outputs=outputs,
+                name=origin_name,
+            )
+        )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
@@ -468,6 +471,9 @@ class Component(
             component["type"] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
+            # method _to_dict() will remove empty keys
+            if "tags" not in component:
+                component["tags"] = {}
             component["tags"]["component_type_overwrite"] = NodeType.IMPORT
             component["command"] = NodeType.IMPORT
 
@@ -509,37 +515,18 @@ class Component(
         if not hasattr(self, "code"):
             raise ValueError(f"{self.__class__} does not have attribute code.")
         code = getattr(self, "code")
-        # special check for git path code value
-        if code is not None and isinstance(code, str) and code.startswith("git+"):
-            yield Code(base_path=self._base_path, path=code)
-        elif code is not None and os.path.isfile(code):
-            yield Code(base_path=self._base_path, path=code)
-        else:
+        if code is None:
+            # Hack: when code not specified, we generated a file which contains
+            # COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a
+            # code, and we need to make sure when component updated some field(eg: description),
+            # the code remains the same. Benefit of using a constant code for all components
+            # without code is this will generate same code for anonymous components which
+            # enables component reuse
             with tempfile.TemporaryDirectory() as tmp_dir:
-                if code is None:
-                    # Hack: when code not specified, we generated a file which contains
-                    # COMPONENT_PLACEHOLDER as code
-                    # This hack was introduced because job does not allow running component without a
-                    # code, and we need to make sure when component updated some field(eg: description),
-                    # the code remains the same. Benefit of using a constant code for all components
-                    # without code is this will generate same code for anonymous components which
-                    # enables component reuse
-                    code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                    with open(code, "w") as f:
-                        f.write(COMPONENT_CODE_PLACEHOLDER)
-                    yield Code(base_path=self._base_path, path=code)
-                else:
-                    # copy to temp folder to filter potential __pycache__
-                    # note that the dst here is one level deeper than the temp folder,
-                    # when upload code asset, the URL contains one level higher than the file,
-                    # if we simply copy to temp folder, the URL will contain random temp folder name,
-                    # that might result in unexpected issues and also break related tests.
-                    # therefore we copy deeper to avoid this break.
-                    src_path = Path(self._base_path) / code
-                    # .name will return empty string for UNC drive names
-                    # so we need src_path.resolve() here to avoid empty string
-                    # that leads to FileExistsError during shutil.copytree
-                    # TODO(2056980): replace temp code folder name with constant value
-                    dst_path = Path(tmp_dir) / src_path.resolve().name
-                    _copy_folder_ignore_pycache(src_path, dst_path)
-                    yield Code(base_path=self._base_path, path=dst_path)
+                code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
+                with open(code, "w") as f:
+                    f.write(COMPONENT_CODE_PLACEHOLDER)
+                yield Code(base_path=self._base_path, path=code)
+        else:
+            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))

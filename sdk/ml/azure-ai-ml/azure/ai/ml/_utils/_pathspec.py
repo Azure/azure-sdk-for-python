@@ -7,9 +7,9 @@
 This file code has been vendored from pathspec repo.
 Please do not edit it, unless really necessary
 """
+import dataclasses
 import os
 import posixpath
-import dataclasses
 import re
 import warnings
 from typing import Any, AnyStr, Iterable, Iterator
@@ -197,7 +197,6 @@ class RegexMatchResult(object):
     """
     *match* (:class:`re.Match`) is the regex match result.
     """
-
 
 
 class GitWildMatchPatternError(ValueError):
@@ -566,11 +565,11 @@ def normalize_file(file, separators=None):
     for sep in separators:
         norm_file = norm_file.replace(sep, posixpath.sep)
 
-    if norm_file.startswith('/'):
+    if norm_file.startswith("/"):
         # Make path relative.
         norm_file = norm_file[1:]
 
-    elif norm_file.startswith('./'):
+    elif norm_file.startswith("./"):
         # Remove current directory prefix.
         norm_file = norm_file[2:]
 

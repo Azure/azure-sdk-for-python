@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
 
 ### Other Changes
 

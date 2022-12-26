@@ -15,6 +15,8 @@ from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
+_DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
+
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials_async import AsyncTokenCredential
@@ -92,12 +94,14 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             search_id,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -116,12 +120,14 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -156,7 +162,7 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
@@ -167,9 +173,11 @@ class PhoneNumbersClient(object):
             quantity=kwargs.pop('quantity', None),
             area_code=kwargs.pop('area_code', None)
         )
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -195,14 +203,16 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             calling,
             sms,
+            polling_interval=polling_interval,
             **kwargs
         )
 
