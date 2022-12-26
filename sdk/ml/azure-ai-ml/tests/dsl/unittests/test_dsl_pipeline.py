@@ -2590,10 +2590,16 @@ class TestDSLPipeline:
             streaming_node = component_func()
             return streaming_node.outputs
 
+        # one-layer pipeline job maintains the properties
+        pipeline_job = pipeline_component_func()
+        assert pipeline_job.outputs.output.is_control is True
+        assert pipeline_job.outputs.output.early_available is True
+
         @dsl.pipeline
         def root_pipeline_func():
             node = pipeline_component_func()  # noqa: F841
 
+        # pipeline component in pipeline job maintains the properties
         pipeline_job = root_pipeline_func()
         assert pipeline_job.jobs["node"].outputs.output.is_control is True
         assert pipeline_job.jobs["node"].outputs.output.early_available is True
