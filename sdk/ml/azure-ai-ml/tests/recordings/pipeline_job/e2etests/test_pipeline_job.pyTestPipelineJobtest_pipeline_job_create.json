@@ -1121,7 +1121,7 @@
               "jobServiceType": "Tracking"
             },
             "Studio": {
-              "endpoint": "https://ml.azure.com/runs/test_406072182505?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000\u0026tid=72f988bf-86f1-41af-91ab-2d7cd011db47",
+              "endpoint": "https://ml.azure.com/runs/test_406072182505?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "jobServiceType": "Studio"
             }
           },
