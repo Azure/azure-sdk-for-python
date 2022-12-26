@@ -40,6 +40,7 @@ class WebPubSubDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEXT = "text"
     PROTOBUF = "protobuf"
 
+
 class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED = "connected"
     DISCONNECTED = "disconnected"
@@ -47,6 +48,7 @@ class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVER_MESSAGE = "server-message"
     GROUP_MESSAGE = "gourp-message"
     REJOIN_GROUP_FAILED = "rejoin-group-failed"
+
 
 class AckResultCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"

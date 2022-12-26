@@ -12,10 +12,11 @@ from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple
 import json
 import math
 import threading
+import base64
 
 from .. import _model_base
 from ._model_base import rest_discriminator, rest_field, AzureJSONEncoder
-from ._enums import WebPubSubDataType
+from ._enums import WebPubSubDataType, UpstreamMessageType
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -29,88 +30,39 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class JoinGroupMessage(_model_base.Model):
-    kind: str = rest_field(default="joinGroup")
-    group: str = rest_field()
-    ack_id: Optional[int] = rest_field(name="ackId")
-
-    @overload
-    def __init__(self, *, kind: str = "joinGroup", group: str, ack_id: Optional[int] = None) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
+        self.kind: Literal["joinGroup"] = "joinGroup"
+        self.group = group
+        self.ack_id = ack_id
 
 
-class LeaveGroupMessage(_model_base.Model):
-    kind: str = rest_field(default="leaveGroup")
-    group: str = rest_field()
-    ack_id: Optional[int] = rest_field(name="ackId")
-
-    @overload
-    def __init__(self, *, kind: str = "leaveGroup", group: str, ack_id: Optional[int] = None) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class LeaveGroupMessage:
+    def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
+        self.kind: Literal["leaveGroup"] = "leaveGroup"
+        self.group = group
+        self.ack_id = ack_id
 
 
-class AckMessageError(_model_base.Model):
-    name: str = rest_field()
-    message: str = rest_field()
-
-    @overload
+class AckMessageError:
     def __init__(self, *, name: str, message: str):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.name = name
+        self.message = message
 
 
-class AckMessage(_model_base.Model):
-    kind: Literal["ack"] = rest_field(default="ack")
-    ack_id: int = rest_field(name="ackId")
-    success: bool = rest_field()
-    error: Optional[AckMessageError] = rest_field()
-
-    @overload
+class AckMessage:
     def __init__(
         self,
-        *,
-        kind: Literal["ack"] = "ack",
         ack_id: int,
         success: bool,
         error: Optional[AckMessageError] = None,
     ) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.kind: Literal["ack"] = "ack"
+        self.ack_id = ack_id
+        self.success = success
+        self.error = error
 
 
-class SendEventMessage(_model_base.Model):
-    kind: Literal["sendEvent"] = rest_field(default="sendEvent")
-    data_type: WebPubSubDataType = rest_field(name="dataType")
-    data: Any = rest_field()
-    event: str = rest_field()
-    ack_id: Optional[int] = rest_field(name="ackId")
-
-    @overload
+class SendEventMessage:
     def __init__(
         self,
         data_type: WebPubSubDataType,
@@ -118,39 +70,11 @@ class SendEventMessage(_model_base.Model):
         event: str,
         ack_id: Optional[int] = None,
     ) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class SendToGroupMessage(_model_base.Model):
-    kind: Literal["sendToGroup"] = rest_field(default="sendToGroup")
-    data_type: WebPubSubDataType = rest_field(name="dataType")
-    data: Any = rest_field()
-    no_echo: bool = rest_field(name="noEcho")
-    ack_id: Optional[int] = rest_field(name="ackId")
-
-    @overload
-    def __init__(
-        self,
-        data_type: WebPubSubDataType,
-        data: Any,
-        no_echo: bool,
-        ack_id: Optional[int] = None,
-    ) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        self.kind: Literal["sendEvent"] = "sendEvent"
+        self.data_type = data_type
+        self.data = (data,)
+        self.event = event
+        self.ack_id = ack_id
 
 
 class JoinGroupData(_model_base.Model):
@@ -198,6 +122,7 @@ class LeaveGroupData(_model_base.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class SendEventData(_model_base.Model):
     type: Literal["event"] = rest_field(default="event")
     data_type: WebPubSubDataType = rest_field(name="dataType")
@@ -225,15 +150,44 @@ class SendEventData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SequenceAckMessage(_model_base.Model):
-    kind: Literal["sequenceAck"] = rest_field(default="sequenceAck")
+class SendToGroupData(_model_base.Model):
+    type: Literal["sendToGroup"] = rest_field(default="sendToGroup")
+    group: str = rest_field()
+    data_type: WebPubSubDataType = rest_field(name="dataType")
+    data: Any = rest_field()
+    no_echo: bool = rest_field(name="noEcho")
+    ack_id: Optional[int] = rest_field(name="ackId")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Literal["sendToGroup"] = "sendToGroup",
+        group: str,
+        data_type: WebPubSubDataType,
+        data: Any,
+        no_echo: bool,
+        ack_id: Optional[int] = None,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class SequenceAckData(_model_base.Model):
+    type: Literal["sequenceAck"] = rest_field(default="sequenceAck")
     sequence_id: int = rest_field(name="sequenceId")
 
     @overload
     def __init__(
         self,
         *,
-        kind: Literal["sequenceAck"] = "sequenceAck",
+        type: Literal["sequenceAck"] = "sequenceAck",
         sequence_id: int,
     ) -> None:
         ...
@@ -244,6 +198,15 @@ class SequenceAckMessage(_model_base.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class SequenceAckMessage:
+    def __init__(
+        self,
+        sequence_id: int,
+    ) -> None:
+        sequence_id.kind: Literal["sequenceAck"] = "sequenceAck"
+        self.sequence_id = sequence_id
 
 
 class OnConnectedArgs(_model_base.Model):
@@ -262,50 +225,21 @@ class OnConnectedArgs(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WebPubSubMessageBase(_model_base.Model):
-    __mapping__ = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
-
-    @overload
-    def __init__(self) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
+class ConnectedMessage:
+    def __init__(self, connection_id: int, user_id: str, reconnection_token: str) -> None:
+        self.kind: Literal["connected"]
+        self.connection_id = connection_id
+        self.user_id - user_id
+        self.reconnection_token = reconnection_token
 
 
-class ConnectedMessage(_model_base.Model, discriminator="connected"):
-    kind: Literal["connected"] = rest_discriminator()
-    connection_id: int = rest_field(name="connectionId")
-    user_id: str = rest_field(name="userId")
-    reconnection_token: str = rest_field(name="reconnectionToken")
-
-    @overload
-    def __init__(self, *, connection_id: int, user_id: str, reconnection_token: str) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.kind = "connected"
-
-
-class DisconnectedMessage(WebPubSubMessageBase):
+class DisconnectedMessage:
     def __init__(self, message: str) -> None:
-        super().__init__()
         self.kind: Literal["disconnected"] = "disconnected"
         self.message = message
 
 
-class GroupDataMessage(WebPubSubMessageBase):
+class GroupDataMessage:
     def __init__(
         self,
         data_type: WebPubSubDataType,
@@ -314,7 +248,6 @@ class GroupDataMessage(WebPubSubMessageBase):
         from_user_id: str,
         sequence_id: Optional[int] = None,
     ) -> None:
-        super().__init__()
         self.kind: Literal["groupData"] = "groupData"
         self.data_type = data_type
         self.data = data
@@ -323,16 +256,15 @@ class GroupDataMessage(WebPubSubMessageBase):
         self.sequence_id = sequence_id
 
 
-class ServerDataMessage(WebPubSubMessageBase):
+class ServerDataMessage:
     def __init__(self, data_type: WebPubSubDataType, data: Any, sequence_id: Optional[int] = None) -> None:
-        super().__init__()
         self.kind: Literal["serverData"] = "serverData"
         self.data_type = data_type
         self.data = data
         self.sequence_id = sequence_id
 
 
-class SendToGroupMessage(WebPubSubMessageBase):
+class SendToGroupMessage:
     def __init__(
         self,
         data_type: WebPubSubDataType,
@@ -341,7 +273,6 @@ class SendToGroupMessage(WebPubSubMessageBase):
         no_echo: bool,
         ack_id: Optional[int] = None,
     ) -> None:
-        super().__init__()
         self.kind: Literal["sendToGroup"] = "sendToGroup"
         self.data_type = data_type
         self.data = data
@@ -371,16 +302,31 @@ WebPubSubMessage = TypeVar(
 )
 
 
-def parse_payload(data: Any, data_type: str) -> Any:
-    if data_type == "text":
+def get_pay_load(data: Any, data_type: WebPubSubDataType) -> Any:
+    if data_type == WebPubSubDataType.TEXT:
+        if not isinstance(data, str):
+            raise TypeError("Message must be a string.")
+        return data
+    if data_type == WebPubSubDataType.JSON:
+        return data
+    if data_type in (WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF):
+        if isinstance(data, (bytes, bytearray)):
+            return base64.b64encode(data).decode()
+        raise TypeError("Message must be a bytes or bytearray")
+    raise TypeError(f"Unsupported dataType: {data_type}")
+
+
+def parse_payload(data: Any, data_type: WebPubSubDataType) -> Any:
+    if data_type == WebPubSubDataType.TEXT:
         if not isinstance(data, str):
             raise TypeError("Message must be a string when dataType is text")
         return data
     if data_type == "json":
         return data
     if data_type == "binary" or data_type == "protobuf":
-        # // TODO
-        return data
+        if isinstance(data, (bytes, bytearray)):
+            return data
+        return bytes(base64.b64decode(data))
     raise TypeError(f"Unsupported dataType: {data_type}")
 
 
@@ -411,7 +357,12 @@ class WebPubSubClientProtocol:
         elif message["type"] == "message":
             if message["from"] == "group":
                 data = parse_payload(message["data"], message["data_type"])
-                result = GroupDataMessage(data=data, **message)
+                result = GroupDataMessage(
+                    data_type=message["data_type"],
+                    data=data,
+                    from_user_id=message["fromUserId"],
+                    sequence_id=message["sequenceId"],
+                )
             elif message["type"] == "server":
                 data = parse_payload(message["data"], message["data_type"])
                 result = ServerDataMessage(data=data, **message)
@@ -429,12 +380,29 @@ class WebPubSubClientProtocol:
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
-        if message.kind == "joinGroup":
+        if message.kind == UpstreamMessageType.JOIN_GROUP:
             data = JoinGroupData(group=message.group, ack_id=message.ack_id)
-        elif message.kind == "leaveGroup":
+        elif message.kind == UpstreamMessageType.LEAVE_GROUP:
             data = LeaveGroupData(group=message.group, ack_id=message.ack_id)
-        elif message.kind == "sendEvent":
-            data = SendEventData()
+        elif message.kind == UpstreamMessageType.SEND_EVENT:
+            data = SendEventData(
+                event=message.event,
+                ack_id=message.ack_id,
+                data_type=message.data_type,
+                data=get_pay_load(message.data, message.data_type),
+            )
+        elif message.kind == UpstreamMessageType.SEND_TO_GROUP:
+            data = SendToGroupData(
+                group=message.group,
+                ack_id=message.ack_id,
+                data_type=message.data_type,
+                data=get_pay_load(message.data, message.data_type),
+                no_echo=message.no_echo,
+            )
+        elif message.kind == UpstreamMessageType.SEQUENCE_ACK:
+            data = SequenceAckData(sequence_id=message.sequence_id)
+        else:
+            raise Exception(f"Unsupported type: {message.kind}")
 
         return json.dumps(data, cls=AzureJSONEncoder)
 
@@ -489,7 +457,9 @@ class SendMessageErrorOptions:
 
 
 class SendMessageError(Exception):
-    def __init__(self, message: str, ack_id: Optional[int]=None, error_detail: Optional[AckMessageError]=None, *args: object) -> None:
+    def __init__(
+        self, message: str, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None, *args: object
+    ) -> None:
         super().__init__(message, *args)
         self.name = "SendMessageError"
         self.ack_id = ack_id

@@ -46,7 +46,7 @@ from ._models import (
     JoinGroupMessage,
     LeaveGroupMessage,
 )
-from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType
+from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType, UpstreamMessageType
 from ._util import delay
 
 _LOGGER = logging.getLogger(__name__)
@@ -289,7 +289,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                     self._ack_map[message.ack_id].error_detail = message.error
                 with self._ack_map[message.ack_id].cv:
                     self._ack_map[message.ack_id].cv.notify()
-
 
         def handle_connected_message(message: ConnectedMessage):
             self._connection_id = message.connection_id
