@@ -2171,7 +2171,7 @@
                 }
               },
               "_source": "DSL",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/51e403a4-a249-4864-a108-76ce2b07e082"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/1de54e48-45a3-49b3-9cc8-db9b06967121"
             },
             "compare2_models": {
               "name": "compare2_models",
