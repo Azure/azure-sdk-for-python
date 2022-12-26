@@ -1,12 +1,46 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.3.0 (Unreleased)
+
+### Features Added
+- Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
+- Added property to enable/disable public ip addresses to Compute Instances and AML Computes.
 
 ### Bugs Fixed
-- Fixed Sweep node not excluding optional input with value `None` in REST object. 
-- Fixed bool test for output in download operation.
+- Fixed issue with date-time format for utc_time_created field when creating models.
+- Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
+- Improved intellisense with VS Code for fields supporting local paths and datastores.
+- Added validation for token generation with aml scope when user_identity is used in job definition aka OBO flow
+- Fixed duplicate node name error in pipeline when two node names assigned to the same node and get renamed by node.name='xx'.
 
-## 1.1.2 (Unreleased)
+### Other Changes
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
+
+## 1.2.0 (2022-12-05)
+
+### Breaking Changes
+- Removed description from Registry.
+- Disable sdk telemetry logging
+
+### Features Added
+- Enable updating the CMK encryption key (workspace.encryption.keyVaultProperties.keyIdentifier) for a workspace.
+- Mark JobService class and services param to command() as experimental.
+- Added a replication_count value to the schema of SystemCreatedStorageAccount in Registry.
+- Added support for Fairfax and MoonCake cloud for the registry discovery baseurl.
+- Added support for variable args as pipeline input in DSL Pipeline.
+- Added OS Patching Parameters to Compute Instance.
+
+### Bugs Fixed
+- Update the upper bound dependencies version for tqdm, strictyaml, colorama and opencensus-ext-azure.
+- Added missing "properties" to batch deployment.
+- Retain the cases for the names of system job services (Tracking and Studio).
+- Update registry begin_delete method return type.
+- Fixed sweep job optional input cannot be empty.
+- Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
+
+## 1.1.2 (2022-11-21)
 
 ### Features Added
 - Restored idle_time_before_shutdown property for Compute Instances. 
@@ -83,6 +117,7 @@
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Removed declaration on Python 3.6 support

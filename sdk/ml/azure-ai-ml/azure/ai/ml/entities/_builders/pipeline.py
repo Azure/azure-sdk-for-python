@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -42,20 +42,22 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        settings: PipelineJobSettings = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        settings: Optional[PipelineJobSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -106,6 +108,12 @@ class Pipeline(BaseNode):
     @property
     def _skip_required_compute_missing_validation(self):
         return True
+
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> List[str]:
+        # pipeline component must be a file reference when loading from yaml,
+        # so the created object can't pass schema validation.
+        return ["component"]
 
     @classmethod
     def _attr_type_map(cls) -> dict:

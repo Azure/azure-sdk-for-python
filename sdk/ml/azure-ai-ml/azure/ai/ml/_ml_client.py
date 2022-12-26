@@ -10,29 +10,28 @@ from functools import singledispatch
 from itertools import product
 from os import PathLike
 from pathlib import Path
-from typing import Any, Optional, Tuple, TypeVar, Union
+from typing import Any, Dict, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
-    _set_cloud,
     _get_registry_discovery_endpoint_from_metadata,
+    _set_cloud,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2021_10_01 import AzureMachineLearningWorkspaces as ServiceClient102021
 from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
-#from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
+
+# from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -86,86 +85,59 @@ module_logger = logging.getLogger(__name__)
 class MLClient(object):
     """A client class to interact with Azure ML services.
 
-    Use this client to manage Azure ML resources, e.g. workspaces, jobs,
-    models and so on.
+    Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
+
+    :param credential: Credential to use for authentication.
+    :type credential: TokenCredential
+    :param subscription_id: Azure subscription ID, optional for registry assets only.
+    :type subscription_id: str
+    :param resource_group_name: Azure resource group, optional for registry assets only.
+    :type resource_group_name: str
+    :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only.
+            Defaults to None
+    :type workspace_name: str, optional
+    :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
+            Defaults to None
+    :type registry_name: str, optional
+    :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
+            to set this to False if not using this SDK in an interactive setup. Defaults to True.
+    :type show_progress: bool, optional
+    :param kwargs: A dictionary of additional configuration parameters.
+            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
+    :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../samples/ml_samples_authentication_sovereign_cloud.py
+            :start-after: [START create_ml_client_default_credential]
+            :end-before: [END create_ml_client_default_credential]
+            :language: python
+            :dedent: 8
+            :caption: Creating the MLClient with Azure Identity credentials.
+
     """
 
     # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         credential: TokenCredential,
-        subscription_id: str = None,
-        resource_group_name: str = None,
-        workspace_name: str = None,
-        registry_name: str = None,
+        subscription_id: Optional[str] = None,
+        resource_group_name: Optional[str] = None,
+        workspace_name: Optional[str] = None,
+        registry_name: Optional[str] = None,
         **kwargs: Any,
     ):
-        """Initiate Azure ML client.
-
-        :param credential: Credential to use for authentication.
-        :type credential: TokenCredential
-        :param subscription_id: Azure subscription ID, optional for registry assets only.
-        :type subscription_id: str
-        :param resource_group_name: Azure resource group, optional for registry assets only.
-        :type resource_group_name: str
-        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only.
-            Defaults to None
-        :type workspace_name: str, optional
-        :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
-            Defaults to None
-        :type registry_name: str, optional
-        :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
-            to set this to False if not using this SDK in an interactive setup. Defaults to True.
-        :type show_progress: bool, optional
-        :param kwargs: A dictionary of additional configuration parameters.
-            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
-        :type kwargs: dict
-
-        .. note::
-
-                The cloud parameter in kwargs in this class is what gets
-                the MLClient to work for non-standard Azure Clouds,
-                e.g. AzureUSGovernment, AzureChinaCloud
-
-                The following pseudo-code shows how to get a list of workspaces using MLClient.
-        .. code-block:: python
-
-                    from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
-                    from azure.ai.ml import MLClient
-                    from azure.ai.ml.entities import Workspace
-
-                    # Enter details of your subscription
-                    subscription_id = "AZURE_SUBSCRIPTION_ID"
-                    resource_group = "RESOURCE_GROUP_NAME"
-
-                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-                    # you must use an authority with DefaultAzureCredential.
-                    # Default authority value : AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-                    # Expected values for authority for sovereign clouds:
-                    # AzureAuthorityHosts.AZURE_CHINA or AzureAuthorityHosts.AZURE_GOVERNMENT
-                    credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
-
-                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-                    # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
-                    kwargs = {"cloud": "AzureChinaCloud"}
-                    # get a handle to the subscription
-                    ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
-
-                    # Get a list of workspaces in a resource group
-                    for ws in ml_client.workspaces.list():
-                        print(ws.name, ":", ws.location, ":", ws.description)
-        """
 
         if credential is None:
             raise ValueError("credential can not be None")
 
         if registry_name and workspace_name:
             raise ValidationException(
-            message="Both workspace_name and registry_name cannot be used together, for the ml_client.",
-            no_personal_data_message="Both workspace_name and registry_name are used for ml_client.",
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+                message="Both workspace_name and registry_name cannot be used together, for the ml_client.",
+                no_personal_data_message="Both workspace_name and registry_name are used for ml_client.",
+                target=ErrorTarget.GENERAL,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         if not registry_name:
             _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
         self._credential = credential
@@ -221,7 +193,7 @@ class MLClient(object):
 
         # app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         # app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
-        app_insights_handler_kwargs = {}
+        app_insights_handler_kwargs: Dict[str, str] = {}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -249,13 +221,6 @@ class MLClient(object):
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
-        self._service_client_10_2021 = ServiceClient102021(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -280,13 +245,6 @@ class MLClient(object):
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
-
-        self._service_client_06_2022_preview = ServiceClient062022Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
 
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
@@ -455,7 +413,7 @@ class MLClient(object):
         cls,
         credential: TokenCredential,
         *,
-        path: Union[PathLike, str] = None,
+        path: Optional[Union[PathLike, str]] = None,
         file_name=None,
         **kwargs,
     ) -> "MLClient":
@@ -470,18 +428,19 @@ class MLClient(object):
         retyping the workspace ARM properties.
 
         :param credential: The credential object for the workspace.
-        :type credential: azureml.core.credentials.TokenCredential
+        :type credential: ~azureml.core.credentials.TokenCredential
         :param path: The path to the config file or starting directory to search.
             The parameter defaults to starting the search in the current directory.
-        :type path: str
+        :type path: Union[PathLike, str]. (Default value = None)
         :param file_name: Allows overriding the config file name to search for when path is a directory path.
+            (Default value = None)
         :type file_name: str
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
             Details will be provided in the error message.
-        :return: The workspace object for an existing Azure ML Workspace.
+        :returns: The workspace object for an existing Azure ML Workspace.
         :rtype: ~azure.ai.ml.MLClient
         """
 
@@ -788,19 +747,22 @@ class MLClient(object):
     ) -> T:
         """Creates or updates an Azure ML resource.
 
-        :param entity: The resource to create or update.
-        :type entity: Union[azure.ai.ml.entities.Job,
-            azure.ai.ml.entities.Model,
-            azure.ai.ml.entities.Environment,
-            azure.ai.ml.entities.Component,
-            azure.ai.ml.entities.Datastore,
-            azure.ai.ml.entities.WorkspaceModelReference]
-        :return: The created or updated resource
-        :rtype: Union[azure.ai.ml.entities.Job,
-            azure.ai.ml.entities.Model,
-            azure.ai.ml.entities.Environment,
-            azure.ai.ml.entities.Component,
-            azure.ai.ml.entities.Datastore]
+            :param entity: The resource to create or update.
+            :type entity: Union[azure.ai.ml.entities.Job,
+        azure.ai.ml.entities.Model,
+        azure.ai.ml.entities.Environment,
+        azure.ai.ml.entities.Component,
+        azure.ai.ml.entities.Datastore,
+        azure.ai.ml.entities.WorkspaceModelReference]
+            :param entity: T:
+            :param **kwargs:
+            :returns: The created or updated resource
+            :rtype: Union[azure.ai.ml.entities.Job,
+        azure.ai.ml.entities.Model,
+        azure.ai.ml.entities.Environment,
+        azure.ai.ml.entities.Component,
+        azure.ai.ml.entities.Datastore]
+
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -818,24 +780,27 @@ class MLClient(object):
     ) -> LROPoller[R]:
         """Creates or updates an Azure ML resource asynchronously.
 
-        :param entity: The resource to create or update.
-        :type entity: Union[azure.ai.ml.entities.Workspace,
-            azure.ai.ml.entities.Registry,
-            azure.ai.ml.entities.Compute,
-            azure.ai.ml.entities.OnlineDeployment,
-            azure.ai.ml.entities.OnlineEndpoint,
-            azure.ai.ml.entities.BatchDeployment,
-            azure.ai.ml.entities.BatchEndpoint,
-            azure.ai.ml.entities.JobSchedule]
-        :return: The resource after create/update operation
-        :rtype: azure.core.polling.LROPoller[Union[azure.ai.ml.entities.Workspace,
-            azure.ai.ml.entities.Registry,
-            azure.ai.ml.entities.Compute,
-            azure.ai.ml.entities.OnlineDeployment,
-            azure.ai.ml.entities.OnlineEndpoint,
-            azure.ai.ml.entities.BatchDeployment,
-            azure.ai.ml.entities.BatchEndpoint,
-            azure.ai.ml.entities.JobSchedule]]
+            :param entity: The resource to create or update.
+            :type entity: Union[azure.ai.ml.entities.Workspace,
+        azure.ai.ml.entities.Registry,
+        azure.ai.ml.entities.Compute,
+        azure.ai.ml.entities.OnlineDeployment,
+        azure.ai.ml.entities.OnlineEndpoint,
+        azure.ai.ml.entities.BatchDeployment,
+        azure.ai.ml.entities.BatchEndpoint,
+        azure.ai.ml.entities.JobSchedule]
+            :param entity: R:
+            :param **kwargs:
+            :returns: The resource after create/update operation
+            :rtype: azure.core.polling.LROPoller[Union[azure.ai.ml.entities.Workspace,
+        azure.ai.ml.entities.Registry,
+        azure.ai.ml.entities.Compute,
+        azure.ai.ml.entities.OnlineDeployment,
+        azure.ai.ml.entities.OnlineEndpoint,
+        azure.ai.ml.entities.BatchDeployment,
+        azure.ai.ml.entities.BatchEndpoint,
+        azure.ai.ml.entities.JobSchedule]]
+
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)

@@ -7,7 +7,7 @@
 import json
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ConnectionAuthType,
@@ -25,8 +25,13 @@ from azure.ai.ml._schema.workspace.connections.workspace_connection import Works
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
-    UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
+from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
+    PatTokenConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+    UsernamePasswordConfiguration,
+)
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
@@ -66,7 +71,7 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
         ],
-        metadata: Dict[str, Any] = None,
+        metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
@@ -101,13 +106,15 @@ class WorkspaceConnection(Resource):
         return self._target
 
     @property
-    def credentials(self) -> Union[
+    def credentials(
+        self,
+    ) -> Union[
         PatTokenConfiguration,
         SasTokenConfiguration,
         UsernamePasswordConfiguration,
         ManagedIdentityConfiguration,
         ServicePrincipalConfiguration,
-        ]:
+    ]:
         """Credentials for workspace connection.
 
         :return: Credentials for workspace connection.
@@ -148,9 +155,9 @@ class WorkspaceConnection(Resource):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "WorkspaceConnection":
         data = data or {}
@@ -182,18 +189,12 @@ class WorkspaceConnection(Resource):
         if properties.auth_type == ConnectionAuthType.SAS:
             credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
-            credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(
-                properties.credentials
-            )
+            credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
-            credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(
-                properties.credentials
-            )
+            credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
         if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
-            credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(
-                properties.credentials
-            )
+            credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
         workspace_connection = WorkspaceConnection(
             id=rest_obj.id,

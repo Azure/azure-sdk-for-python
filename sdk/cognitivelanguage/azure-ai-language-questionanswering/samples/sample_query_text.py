@@ -43,10 +43,12 @@ def sample_query_text():
         )
 
         output = client.get_answers_from_text(input)
-
-        best_answer = [a for a in output.answers if a.confidence > 0.9][0]
-        print(u"Q: {}".format(question))
-        print(u"A: {}".format(best_answer.answer))
+        if output.answers:
+            best_answer = [a for a in output.answers if a.confidence and a.confidence > 0.9][0]
+            print("Q: {}".format(question))
+            print("A: {}".format(best_answer.answer))
+        else:
+            print(f"No answers returned from question '{question}'")
 
     # [END query_text]
 

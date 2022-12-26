@@ -36,6 +36,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -64,7 +65,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -75,20 +76,17 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import (
-    SchemaValidatableMixin,
-    _ValidationResultBuilder,
-)
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
     ErrorTarget,
     JobException,
-    MlException,
+    JobParsingError,
+    MLException,
+    PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
-    JobParsingError,
-    PipelineChildJobError,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -100,7 +98,7 @@ from azure.core.tracing.decorator import distributed_trace
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
 from ..entities._builders.control_flow_node import ControlFlowNode
-from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
+from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupAttrDict
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
@@ -224,7 +222,7 @@ class JobOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        parent_job_name: str = None,
+        parent_job_name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs,
     ) -> Iterable[Job]:
@@ -436,10 +434,10 @@ class JobOperations(_ScopeDependentOperations):
         self,
         job: Job,
         *,
-        description: str = None,
-        compute: str = None,
-        tags: dict = None,
-        experiment_name: str = None,
+        description: Optional[str] = None,
+        compute: Optional[str] = None,
+        tags: Optional[dict] = None,
+        experiment_name: Optional[str] = None,
         skip_validation: bool = False,
         **kwargs,
     ) -> Job:
@@ -511,8 +509,7 @@ class JobOperations(_ScopeDependentOperations):
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
             if hasattr(rest_job_resource.properties, "identity") and (
-                rest_job_resource.properties.identity is None
-                or isinstance(rest_job_resource.properties.identity, UserIdentity)
+                isinstance(rest_job_resource.properties.identity, UserIdentity)
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
@@ -625,7 +622,7 @@ class JobOperations(_ScopeDependentOperations):
         name: str,
         *,
         download_path: Union[PathLike, str] = ".",
-        output_name: str = None,
+        output_name: Optional[str] = None,
         all: bool = False,  # pylint: disable=redefined-builtin
     ) -> None:
         """Download logs and output of a job.
@@ -644,13 +641,15 @@ class JobOperations(_ScopeDependentOperations):
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
+        :raises ~azure.ai.ml.exceptions.MLException: Raised if logs and outputs cannot be successfully downloaded.
             Details will be provided in the error message.
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
-        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE and \
-                PipelineConstants.REUSED_JOB_ID in job_details.properties:
+        if (
+            job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE
+            and PipelineConstants.REUSED_JOB_ID in job_details.properties
+        ):
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
             module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
@@ -1007,7 +1006,7 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ValidationException(
@@ -1213,9 +1212,28 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
-        azure_ml_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
         aml_token = self._credential.get_token(*azure_ml_scopes).token
+        # validate token has aml audience
+        decoded_token = jwt.decode(
+            aml_token,
+            options={"verify_signature": False, "verify_aud": False},
+        )
+        if decoded_token.get("aud") != aml_resource_id:
+            msg = """AAD token with aml scope could not be fetched using the credentials being used.
+            Please validate if token with {0} scope can be fetched using credentials provided to MLClient.
+            Token with {0} scope can be fetched using credentials.get_token({0})
+            """
+            raise ValidationException(
+                message=msg.format(*azure_ml_scopes),
+                target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
+                no_personal_data_message=msg.format("[job.code]"),
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         headers = kwargs.pop("headers", {})
         headers["x-azureml-token"] = aml_token
         kwargs["headers"] = headers

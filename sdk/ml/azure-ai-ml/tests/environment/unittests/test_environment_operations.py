@@ -106,23 +106,18 @@ class TestEnvironmentOperations:
         mock_environment_operation: EnvironmentOperations,
         mock_workspace_scope: OperationScope,
     ) -> None:
-
-        mock_environment_operation._containers_operations.get.return_value = Mock(EnvironmentContainerDetails())
-
-        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
-            env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
-            env.version = None
+        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
+        assert env._auto_increment_version
+        env.version = None
+        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None), patch(
+            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version") as mock_nextver:
             mock_environment_operation.create_or_update(env)
-            mock_environment_operation._version_operations.create_or_update.assert_called_once()
-            mock_environment_operation._containers_operations.get.assert_called_once_with(
-                name=env.name,
-                resource_group_name=mock_workspace_scope.resource_group_name,
-                workspace_name=mock_workspace_scope.workspace_name,
-            )
+            mock_nextver.assert_called_once()
+
             mock_environment_operation._version_operations.create_or_update.assert_called_once_with(
                 body=env._to_rest_object(),
                 name=env.name,
-                version=mock_environment_operation._containers_operations.get().properties.next_version,
+                version=mock_nextver.return_value,
                 resource_group_name=mock_workspace_scope.resource_group_name,
                 workspace_name=mock_workspace_scope.workspace_name,
             )

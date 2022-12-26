@@ -6,7 +6,6 @@ import logging
 import datetime
 import warnings
 from typing import Any, Union, Optional
-import six
 
 from .._servicebus_session import BaseSession
 from .._common.constants import (
@@ -99,7 +98,7 @@ class ServiceBusSession(BaseSession):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         state = (
-            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+            state.encode(self._encoding) if isinstance(state, str) else state
         )
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,

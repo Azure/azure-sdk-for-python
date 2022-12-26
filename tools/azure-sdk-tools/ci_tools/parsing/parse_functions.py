@@ -46,6 +46,7 @@ class ParsedSetup:
         self.namespace = name_space
         self.package_data = package_data
         self.include_package_data = include_package_data
+        self.folder = os.path.dirname(self.setup_filename)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -200,7 +201,7 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
         return [pkg_name, None]
 
     # regex details ripped from https://peps.python.org/pep-0508/
-    isolated_spec = re.sub(r'^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?', "", str(req_object))
+    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
     spec = SpecifierSet(isolated_spec)
     return (pkg_name, spec)
 
