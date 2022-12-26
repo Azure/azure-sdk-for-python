@@ -14,8 +14,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
 from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
-from ..._polling import AsyncLoadTestingLROPoller, LoadTestingLROPoller, AsyncValidationCheckPoller, \
-    AsyncTestRunStatusPoller
+from ..._polling import (
+    AsyncLoadTestingLROPoller,
+    LoadTestingLROPoller,
+    AsyncValidationCheckPoller,
+    AsyncTestRunStatusPoller,
+)
 
 
 class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
@@ -140,7 +144,6 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
             )
         else:
             return AsyncLoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
-
 
 
 __all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations"]
