@@ -24,7 +24,11 @@ class LoadTestingClient:
     """
     LoadTestingClient is deprecated, use LoadTestAdministrationClient or LoadTestRunClient instead.
     """
-    pass
+
+    def __init__(self, *args, **kwargs) -> None:
+        """LoadTestingClient is deprecated, use LoadTestAdministrationClient or LoadTestRunClient instead.
+        """
+        raise NotImplementedError("LoadTestingClient is deprecated, use LoadTestAdministrationClient or LoadTestRunClient instead.")
 
 class LoadTestAdministrationClient(LoadTestAdministrationOperations):  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to perform load test administration operations on Azure Load Test Service.
