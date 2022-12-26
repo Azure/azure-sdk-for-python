@@ -117,7 +117,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._options = options
         self._message_retry_policy = RetryPolicy(self._options.message_retry_options)
         self._reconnect_retry_policy = RetryPolicy(
-            WebPubSubRetryOptions(max_retries=sys.maxint, retry_delay_in_ms=1000, mode="Fixed")
+            WebPubSubRetryOptions(max_retries=sys.maxsize, retry_delay_in_ms=1000, mode="Fixed")
         )
         self._protocol = self._options.protocol
         self._group_map: Dict[str, WebPubSubGroup] = {}
@@ -141,6 +141,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._is_stopping = False
         self._last_close_event = None
         self._reconnection_token = None
+        self._cv = None
+        self._thread_seq_ack = None
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
@@ -148,7 +150,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def _send_message(self, message: WebPubSubMessage):
         pay_load = self._protocol.write_message(message)
-        if self._ws is None or not self._ws.connected:
+        if self._ws is None or not self._ws.sock.connected:
             raise Exception("The connection is not connected.")
 
         self._ws.send(pay_load)
@@ -185,12 +187,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         return self._group_map[name]
 
     def join_group(self, group_name: str, options: Optional[JoinGroupOptions] = None):
-        self._retry(self._join_group_attempt, group_name, options)
-
-    def _join_group_attempt(self, group_name: str, options: Optional[JoinGroupOptions] = None):
-        group = self._get_or_add_group(group_name)
-        self._join_group_core(group_name, options)
-        group.is_joined = True
+        def join_group_attempt():
+            group = self._get_or_add_group(group_name)
+            self._join_group_core(group_name, options)
+            group.is_joined = True
+        self._retry(join_group_attempt)
 
     def _join_group_core(self, group_name: str, options: Optional[JoinGroupOptions] = None):
         self._send_message_with_ack_id(
@@ -199,15 +200,16 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         )
 
     def leave_group(self, group_name: str, options: Optional[LeaveGroupOptions] = None):
-        self._retry(self._leave_group_attempt, group_name, options)
+        def _leave_group_attempt():
+            group = self._get_or_add_group(group_name)
+            self._send_message_with_ack_id(
+                message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
+                ack_id=options.ack_id if options else None,
+            )
+            group.is_joined = False
+        self._retry(leave_group_attempt)
 
-    def _leave_group_attempt(self, group_name: str, options: Optional[LeaveGroupOptions] = None):
-        group = self._get_or_add_group(group_name)
-        self._send_message_with_ack_id(
-            message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
-            ack_id=options.ack_id if options else None,
-        )
-        group.is_joined = False
+
 
     def send_event(
         self,
@@ -216,7 +218,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         data_type: WebPubSubDataType,
         options: Optional[SendEventOptions] = None,
     ):
-        self._retry(self._send_event_attempt, event_name, content, data_type, options)
+        def send_event_attempt():
+            fire_and_forget = options.fire_and_forget if options else False
+            if not fire_and_forget:
+                self._send_message_with_ack_id(
+                    message_provider=lambda id: SendEventMessage(
+                        data_type=data_type, data=content, ack_id=id, event=event_name
+                    )
+                )
+            else:
+                self._send_message(message=SendEventMessage(data_type=data_type, data=content, event=event_name))
+        self._retry(send_event_attempt)
 
     def _send_event_attempt(
         self,
@@ -242,33 +254,27 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         data_type: WebPubSubDataType,
         options: Optional[SendToGroupOptions] = None,
     ):
-        self._retry(self._send_to_group_attempt, group_name, content, data_type, options)
-
-    def _send_to_group_attempt(
-        self,
-        group_name: str,
-        content: Any,
-        data_type: WebPubSubDataType,
-        options: Optional[SendToGroupOptions] = None,
-    ):
-        fire_and_forget = options.fire_and_forget if options else False
-        no_echo = options.no_echo if options else False
-        if not fire_and_forget:
-            self._send_message_with_ack_id(
-                message_provider=lambda id: SendToGroupMessage(
-                    group=group_name, data_type=data_type, data=content, ack_id=id, no_echo=no_echo
+        def send_to_group_attempt():
+            fire_and_forget = options.fire_and_forget if options else False
+            no_echo = options.no_echo if options else False
+            if not fire_and_forget:
+                self._send_message_with_ack_id(
+                    message_provider=lambda id: SendToGroupMessage(
+                        group=group_name, data_type=data_type, data=content, ack_id=id, no_echo=no_echo
+                    )
                 )
-            )
-        else:
-            self._send_message(
-                message=SendToGroupMessage(group=group_name, data_type=data_type, data=content, no_echo=no_echo)
-            )
+            else:
+                self._send_message(
+                    message=SendToGroupMessage(group=group_name, data_type=data_type, data=content, no_echo=no_echo)
+                )
+        self._retry(send_to_group_attempt)
 
-    def _retry(self, func: Any, *args, **argv):
+
+    def _retry(self, func: Any):
         retry_attempt = 0
         while True:
             try:
-                func(self, *args, **argv)
+                func()
             except Exception as e:
                 retry_attempt = retry_attempt + 1
                 delay_in_ms = self._message_retry_policy.next_retry_delay_in_ms(retry_attempt)
@@ -281,82 +287,82 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         for func in self._handler[type]:
             func(args)
 
-    def on_message(self, data: str):
-        def handle_ack_message(message: AckMessage):
-            if message.ack_id in self._ack_map:
-                if not (message.success or (message.error and message.error.name == "Duplicate")):
-                    self._ack_map[message.ack_id].ack_id = message.ack_id
-                    self._ack_map[message.ack_id].error_detail = message.error
-                with self._ack_map[message.ack_id].cv:
-                    self._ack_map[message.ack_id].cv.notify()
+    # def on_message(self, data: str):
+    #     def handle_ack_message(message: AckMessage):
+    #         if message.ack_id in self._ack_map:
+    #             if not (message.success or (message.error and message.error.name == "Duplicate")):
+    #                 self._ack_map[message.ack_id].ack_id = message.ack_id
+    #                 self._ack_map[message.ack_id].error_detail = message.error
+    #             with self._ack_map[message.ack_id].cv:
+    #                 self._ack_map[message.ack_id].cv.notify()
 
-        def handle_connected_message(message: ConnectedMessage):
-            self._connection_id = message.connection_id
+    #     def handle_connected_message(message: ConnectedMessage):
+    #         self._connection_id = message.connection_id
 
-            if not self._is_initial_connected:
-                self._is_initial_connected = True
-                for group_name, group in self._group_map.items():
-                    if group.is_joined:
-                        try:
-                            self._join_group_core(group_name)
-                        except Exception as e:
-                            self._call_back(
-                                CallBackType.REJOIN_GROUP_FAILED,
-                                OnRestoreGroupFailedArgs(group=group_name, error=e),
-                            )
+    #         if not self._is_initial_connected:
+    #             self._is_initial_connected = True
+    #             for group_name, group in self._group_map.items():
+    #                 if group.is_joined:
+    #                     try:
+    #                         self._join_group_core(group_name)
+    #                     except Exception as e:
+    #                         self._call_back(
+    #                             CallBackType.REJOIN_GROUP_FAILED,
+    #                             OnRestoreGroupFailedArgs(group=group_name, error=e),
+    #                         )
 
-                connected_args = OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id)
-                self._call_back(CallBackType.CONNECTED, connected_args)
+    #             connected_args = OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id)
+    #             self._call_back(CallBackType.CONNECTED, connected_args)
 
-        def handle_disconnected_message(message: DisconnectedMessage):
-            self._last_disconnected_message = message
+    #     def handle_disconnected_message(message: DisconnectedMessage):
+    #         self._last_disconnected_message = message
 
-        def handle_group_data_message(message: GroupDataMessage):
-            if message.sequence_id is not None:
-                if not self._sequence_id.try_update(message.sequence_id):
-                    # // drop duplicated message
-                    return
+    #     def handle_group_data_message(message: GroupDataMessage):
+    #         if message.sequence_id is not None:
+    #             if not self._sequence_id.try_update(message.sequence_id):
+    #                 # // drop duplicated message
+    #                 return
 
-            self._call_back(CallBackType.GROUP_MESSAGE, OnGroupDataMessageArgs(message))
+    #         self._call_back(CallBackType.GROUP_MESSAGE, OnGroupDataMessageArgs(message))
 
-        def handle_server_data_message(message: ServerDataMessage):
-            if message.sequence_id is not None:
-                if not self._sequence_id.try_update(message.sequence_id):
-                    # // drop duplicated message
-                    return
+    #     def handle_server_data_message(message: ServerDataMessage):
+    #         if message.sequence_id is not None:
+    #             if not self._sequence_id.try_update(message.sequence_id):
+    #                 # // drop duplicated message
+    #                 return
 
-            self._call_back(CallBackType.SERVER_MESSAGE, OnServerDataMessageArgs(message))
+    #         self._call_back(CallBackType.SERVER_MESSAGE, OnServerDataMessageArgs(message))
 
-        parsed_message = self._protocol.parse_messages(data)
-        type_handler = {
-            "connected": handle_connected_message,
-            "disconnected": handle_disconnected_message,
-            "ack": handle_ack_message,
-            "groupData": handle_group_data_message,
-            "serverData": handle_server_data_message,
-        }
-        if parsed_message.kind in type_handler:
-            type_handler[parsed_message.kind](parsed_message)
-        else:
-            raise Exception(f"unknown message type: {parsed_message.kind}")
+    #     parsed_message = self._protocol.parse_messages(data)
+    #     type_handler = {
+    #         "connected": handle_connected_message,
+    #         "disconnected": handle_disconnected_message,
+    #         "ack": handle_ack_message,
+    #         "groupData": handle_group_data_message,
+    #         "serverData": handle_server_data_message,
+    #     }
+    #     if parsed_message.kind in type_handler:
+    #         type_handler[parsed_message.kind](parsed_message)
+    #     else:
+    #         raise Exception(f"unknown message type: {parsed_message.kind}")
 
-    def _get_close_args(self, close_frame):
-        """
-        _get_close_args extracts the close code and reason from the close body
-        if it exists (RFC6455 says WebSocket Connection Close Code is optional)
-        """
-        # Need to catch the case where close_frame is None
-        # Otherwise the following if statement causes an error
-        # Extract close frame status code
-        if close_frame is None:
-            return [None, None]
-        if close_frame.data and len(close_frame.data) >= 2:
-            close_status_code = 256 * close_frame.data[0] + close_frame.data[1]
-            reason = close_frame.data[2:].decode("utf-8")
-            return [close_status_code, reason]
-        else:
-            # Most likely reached this because len(close_frame_data.data) < 2
-            return [None, None]
+    # def _get_close_args(self, close_frame):
+    #     """
+    #     _get_close_args extracts the close code and reason from the close body
+    #     if it exists (RFC6455 says WebSocket Connection Close Code is optional)
+    #     """
+    #     # Need to catch the case where close_frame is None
+    #     # Otherwise the following if statement causes an error
+    #     # Extract close frame status code
+    #     if close_frame is None:
+    #         return [None, None]
+    #     if close_frame.data and len(close_frame.data) >= 2:
+    #         close_status_code = 256 * close_frame.data[0] + close_frame.data[1]
+    #         reason = close_frame.data[2:].decode("utf-8")
+    #         return [close_status_code, reason]
+    #     else:
+    #         # Most likely reached this because len(close_frame_data.data) < 2
+    #         return [None, None]
 
     def _start_from_restarting(self):
         if self._state != WebPubSubClientState.DISCONNECTED:
@@ -415,96 +421,227 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
             return new_url
         return None
 
-    def _handle_connection_close(self):
-        # clean ack cache
-        self._ack_map.clear()
+    # def _handle_connection_close(self):
+    #     # clean ack cache
+    #     self._ack_map.clear()
 
-        if self._is_stopping:
-            _LOGGER.warn("The client is stopping state. Stop recovery.")
-            self._handle_connection_close_and_no_recovery()
-            return
+    #     if self._is_stopping:
+    #         _LOGGER.warn("The client is stopping state. Stop recovery.")
+    #         self._handle_connection_close_and_no_recovery()
+    #         return
 
-        if self._last_close_event and self._last_close_event.close_status_code == 1008:
-            _LOGGER.warn("The websocket close with status code 1008. Stop recovery.")
-            self._handle_connection_close_and_no_recovery()
-            return
+    #     if self._last_close_event and self._last_close_event.close_status_code == 1008:
+    #         _LOGGER.warn("The websocket close with status code 1008. Stop recovery.")
+    #         self._handle_connection_close_and_no_recovery()
+    #         return
 
-        if not self._protocol.is_reliable_sub_protocol:
-            _LOGGER.warn("The protocol is not reliable, recovery is not applicable")
-            self._handle_connection_close_and_no_recovery()
-            return
+    #     if not self._protocol.is_reliable_sub_protocol:
+    #         _LOGGER.warn("The protocol is not reliable, recovery is not applicable")
+    #         self._handle_connection_close_and_no_recovery()
+    #         return
 
-        recovery_url = self._build_recovery_url()
-        if not recovery_url:
-            _LOGGER.warn("Connection id or reconnection token is not available")
-            self._handle_connection_close_and_no_recovery()
-            return
+    #     recovery_url = self._build_recovery_url()
+    #     if not recovery_url:
+    #         _LOGGER.warn("Connection id or reconnection token is not available")
+    #         self._handle_connection_close_and_no_recovery()
+    #         return
 
-        self._state = WebPubSubClientState.RECOVERING
-        while i < 30 or self._is_stopping:
-            try:
-                self._connect(recovery_url)
-                return
-            except:
-                delay(1000)
-            i = i + 1
+    #     self._state = WebPubSubClientState.RECOVERING
+    #     while i < 30 or self._is_stopping:
+    #         try:
+    #             self._connect(recovery_url)
+    #             return
+    #         except:
+    #             delay(1000)
+    #         i = i + 1
 
-        _LOGGER.warn("Recovery attempts failed more then 30 seconds or the client is stopping")
-        self._handle_connection_close_and_no_recovery()
+    #     _LOGGER.warn("Recovery attempts failed more then 30 seconds or the client is stopping")
+    #     self._handle_connection_close_and_no_recovery()
 
-    def _listen(self):
-        while self._state == WebPubSubClientState.CONNECTED:
-            try:
-                op_code, frame = self._ws.recv_data_frame(True)
-            except (
-                websocket.WebSocketConnectionClosedException,
-                websocket.KeyboardInterrupt,
-            ) as e:
-                if self._state == WebPubSubClientState.CONNECTED:
-                    raise e
-            else:
-                if op_code == websocket.ABNF.OPCODE_CLOSE:
-                    close_status_code, close_reason = self._get_close_args(frame)
-                    if self._state == WebPubSubClientState.CONNECTED:
-                        self._last_close_event = CloseEvent(
-                            close_status_code=close_status_code, close_reason=close_reason
-                        )
-                        self._handle_connection_close()
-                elif op_code == websocket.ABNF.OPCODE_TEXT or op_code == websocket.ABNF.OPCODE_BINARY:
-                    data = frame.data
-                    if op_code == websocket.ABNF.OPCODE_TEXT:
-                        data = data.decode("utf-8")
-                    self.on_message(data)
-        self._thread = None
+    # def _listen(self):
+    #     while self._state == WebPubSubClientState.CONNECTED:
+    #         try:
+    #             op_code, frame = self._ws.recv_data_frame(True)
+    #         except (
+    #             websocket.WebSocketConnectionClosedException,
+    #             websocket.KeyboardInterrupt,
+    #         ) as e:
+    #             if self._state == WebPubSubClientState.CONNECTED:
+    #                 raise e
+    #         else:
+    #             if op_code == websocket.ABNF.OPCODE_CLOSE:
+    #                 close_status_code, close_reason = self._get_close_args(frame)
+    #                 if self._state == WebPubSubClientState.CONNECTED:
+    #                     self._last_close_event = CloseEvent(
+    #                         close_status_code=close_status_code, close_reason=close_reason
+    #                     )
+    #                     self._handle_connection_close()
+    #             elif op_code == websocket.ABNF.OPCODE_TEXT or op_code == websocket.ABNF.OPCODE_BINARY:
+    #                 data = frame.data
+    #                 if op_code == websocket.ABNF.OPCODE_TEXT:
+    #                     data = data.decode("utf-8")
+    #                 self.on_message(data)
+    #     self._thread = None
 
-    def _sequence_id_ack_periodically(self):
-        while self._state == WebPubSubClientState.CONNECTED:
-            try:
-                is_updated, seq_id = self._sequence_id.try_get_sequence_id()
-                if is_updated:
-                    self._send_message(SequenceAckMessage(sequence_id=seq_id))
-            finally:
-                delay(1000)
-        self._thread_seq_ack = None
+    # def _sequence_id_ack_periodically(self):
+    #     while self._state == WebPubSubClientState.CONNECTED:
+    #         try:
+    #             is_updated, seq_id = self._sequence_id.try_get_sequence_id()
+    #             if is_updated:
+    #                 self._send_message(SequenceAckMessage(sequence_id=seq_id))
+    #         finally:
+    #             delay(1000)
+    #     self._thread_seq_ack = None
+
+    # def _connect(self, url: str):
+    #     self._ws = websocket.WebSocket()
+    #     self._ws.connect(url, subprotocols=[self._protocol.name])
+
+    #     if self._is_stopping:
+    #         try:
+    #             self._ws.close()
+    #         finally:
+    #             return
+
+    #     self._state = WebPubSubClientState.CONNECTED
+    #     if self._protocol.is_reliable_sub_protocol and self._thread_seq_ack is None:
+    #         self._thread_seq_ack = threading.Thread(target=self._sequence_id_ack_periodically, daemon=True)
+    #         self._thread_seq_ack.start()
+
+    #     if self._thread is None:
+    #         self._thread = threading.Thread(target=self._listen, daemon=True)
+    #         self._thread.start()
 
     def _connect(self, url: str):
-        self._ws = websocket.WebSocket()
-        self._ws.connect(url, subprotocols=[self._protocol.name])
+        def on_open(_: Any):
+            if self._is_stopping:
+                try:
+                    self._ws.close()
+                finally:
+                    return
 
-        if self._is_stopping:
-            try:
-                self._ws.close()
-            finally:
+            self._state = WebPubSubClientState.CONNECTED
+            with self._cv:
+                self._cv.notify()
+
+        def on_message(_: Any, data: str):
+            def handle_ack_message(message: AckMessage):
+                if message.ack_id in self._ack_map:
+                    if not (message.success or (message.error and message.error.name == "Duplicate")):
+                        self._ack_map[message.ack_id].ack_id = message.ack_id
+                        self._ack_map[message.ack_id].error_detail = message.error
+                    with self._ack_map[message.ack_id].cv:
+                        self._ack_map[message.ack_id].cv.notify()
+
+            def handle_connected_message(message: ConnectedMessage):
+                self._connection_id = message.connection_id
+
+                if not self._is_initial_connected:
+                    self._is_initial_connected = True
+                    for group_name, group in self._group_map.items():
+                        if group.is_joined:
+                            try:
+                                self._join_group_core(group_name)
+                            except Exception as e:
+                                self._call_back(
+                                    CallBackType.REJOIN_GROUP_FAILED,
+                                    OnRestoreGroupFailedArgs(group=group_name, error=e),
+                                )
+
+                    connected_args = OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id)
+                    self._call_back(CallBackType.CONNECTED, connected_args)
+
+            def handle_disconnected_message(message: DisconnectedMessage):
+                self._last_disconnected_message = message
+
+            def handle_group_data_message(message: GroupDataMessage):
+                if message.sequence_id is not None:
+                    if not self._sequence_id.try_update(message.sequence_id):
+                        # // drop duplicated message
+                        return
+
+                self._call_back(CallBackType.GROUP_MESSAGE, OnGroupDataMessageArgs(message))
+
+            def handle_server_data_message(message: ServerDataMessage):
+                if message.sequence_id is not None:
+                    if not self._sequence_id.try_update(message.sequence_id):
+                        # // drop duplicated message
+                        return
+
+                self._call_back(CallBackType.SERVER_MESSAGE, OnServerDataMessageArgs(message))
+
+            parsed_message = self._protocol.parse_messages(data)
+            type_handler = {
+                "connected": handle_connected_message,
+                "disconnected": handle_disconnected_message,
+                "ack": handle_ack_message,
+                "groupData": handle_group_data_message,
+                "serverData": handle_server_data_message,
+            }
+            if parsed_message.kind in type_handler:
+                type_handler[parsed_message.kind](parsed_message)
+            else:
+                raise Exception(f"unknown message type: {parsed_message.kind}")
+
+        def on_close(close_status_code: int, close_msg: str):
+            self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_reason)
+            # clean ack cache
+            self._ack_map.clear()
+
+            if self._is_stopping:
+                _LOGGER.warn("The client is stopping state. Stop recovery.")
+                self._handle_connection_close_and_no_recovery()
                 return
 
-        self._state = WebPubSubClientState.CONNECTED
+            if self._last_close_event and self._last_close_event.close_status_code == 1008:
+                _LOGGER.warn("The websocket close with status code 1008. Stop recovery.")
+                self._handle_connection_close_and_no_recovery()
+                return
+
+            if not self._protocol.is_reliable_sub_protocol:
+                _LOGGER.warn("The protocol is not reliable, recovery is not applicable")
+                self._handle_connection_close_and_no_recovery()
+                return
+
+            recovery_url = self._build_recovery_url()
+            if not recovery_url:
+                _LOGGER.warn("Connection id or reconnection token is not available")
+                self._handle_connection_close_and_no_recovery()
+                return
+
+            self._state = WebPubSubClientState.RECOVERING
+            while i < 30 or self._is_stopping:
+                try:
+                    self._connect(recovery_url)
+                    return
+                except:
+                    delay(1000)
+                i = i + 1
+
+            _LOGGER.warn("Recovery attempts failed more then 30 seconds or the client is stopping")
+            self._handle_connection_close_and_no_recovery()
+
+
+        self._ws = websocket.WebSocketApp(url=url, on_open=on_open, on_message=on_message, on_close=on_close)
+        # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol and self._thread_seq_ack is None:
-            self._thread_seq_ack = threading.Thread(target=self._sequence_id_ack_periodically, daemon=True)
+            def sequence_id_ack_periodically():
+                while self._state == WebPubSubClientState.CONNECTED:
+                    try:
+                        is_updated, seq_id = self._sequence_id.try_get_sequence_id()
+                        if is_updated:
+                            self._send_message(SequenceAckMessage(sequence_id=seq_id))
+                    finally:
+                        delay(1000)
+                self._thread_seq_ack = None
+            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
 
-        if self._thread is None:
-            self._thread = threading.Thread(target=self._listen, daemon=True)
-            self._thread.start()
+        # set thread to start listen to server
+        threading.Thread(target=self._ws.run_forever, daemon=True).start()
+        self._cv = threading.Condition()
+        with self._cv:
+            self._cv.wait(timeout=5)
 
     def _start_core(self):
         self._state = WebPubSubClientState.CONNECTING
@@ -544,7 +681,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._thread = None
         self._thread_seq_ack = None
 
-    @staticmethod
     def _build_default_options(self, options: WebPubSubClientOptions):
         if options.auto_reconnect is None:
             options.auto_reconnect = True
@@ -613,7 +749,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         """"""
 
     @overload
-    def on(event: Literal["stopped"], listener: Callable[[], None]) -> None:
+    def off(event: Literal["stopped"], listener: Callable[[], None]) -> None:
         """"""
 
     @overload

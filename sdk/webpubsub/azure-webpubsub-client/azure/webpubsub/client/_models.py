@@ -14,7 +14,7 @@ import math
 import threading
 import base64
 
-from .. import _model_base
+from . import _model_base
 from ._model_base import rest_discriminator, rest_field, AzureJSONEncoder
 from ._enums import WebPubSubDataType, UpstreamMessageType
 
@@ -521,7 +521,7 @@ class RetryPolicy:
     def __init__(self, retry_options: WebPubSubRetryOptions) -> None:
         self.retry_options = retry_options
         self.max_retries_to_get_max_delay = math.ceil(
-            math.log2(self.retry_options.max_retry_delay_in_ms) - math.log2(self.retry_options.retry_delay_in_ms) + 1
+            math.log2(self.retry_options.max_retry_delay_in_ms or 1) - math.log2(self.retry_options.retry_delay_in_ms or 1) + 1
         )
 
     def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
