@@ -4,18 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import random
-import asyncio
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.digitaltwins.core import DigitalTwinsModelData
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+from devtools_testutils import AzureRecordedTestCase
 
 
-class DigitalTwinsModelsTestsAsync(AzureTestCase):
+class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient, is_async=True)
@@ -39,7 +35,7 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
             models = []
             async for m in client.list_models():
                 models.append(m)
-    
+
     async def _get_unique_component_id(self, client):
         id = "dtmi:com:samples:{};1".format(self.create_random_name("ComponentModel"))
         try:
@@ -48,7 +44,7 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
             return id
         await self._clean_up_models(client)
         return id
-    
+
     async def _get_unique_model_id(self, client):
         id =  "dtmi:com:samples:{};1".format(self.create_random_name("TempModel"))
         try:
@@ -58,23 +54,21 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         await self._clean_up_models(client)
         return id
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_models_empty_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_create_models_empty_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             await client.create_models([])
 
         with pytest.raises(HttpResponseError):
             await client.create_models([{}])
-        
+
         with pytest.raises(HttpResponseError):
             await client.create_models(None)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_models_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_create_models_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         model_id = await self._get_unique_model_id(client)
         component_id = await self._get_unique_component_id(client)
         component = {
@@ -127,10 +121,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         assert isinstance(models[1], DigitalTwinsModelData)
         assert models[1].id == model_id
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_model_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_create_model_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         model_id = await self._get_unique_model_id(client)
         component_id = await self._get_unique_component_id(client)
         component = {
@@ -177,10 +170,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.get_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_model_invalid_model_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_create_model_invalid_model_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         model = {
             "@context": "dtmi:dtdl:context;2",
@@ -206,10 +198,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         with pytest.raises(HttpResponseError):
             await client.create_models([model])
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_model_invalid_reference_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_create_model_invalid_reference_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         model_id = await self._get_unique_model_id(client)
         model = {
@@ -238,10 +229,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         with pytest.raises(HttpResponseError):
             await client.create_models([model])
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_model_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_model_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -267,10 +257,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         assert model.id == component_id
         assert model.model is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_model_with_definition_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_model_with_definition_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -297,17 +286,15 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         assert model.id == component_id
         assert model.model == component
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_model_not_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.get_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_list_models_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_list_models_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -334,10 +321,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         assert len(listed_models) >= 1
         assert component_id in listed_models
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_list_models_with_definition_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_list_models_with_definition_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -365,10 +351,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         assert component in listed_models
         assert all(listed_models)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_decommission_model_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_decommission_model_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -398,17 +383,15 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         model = await client.get_model(component_id)
         assert model.decommissioned
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_decommission_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_decommission_model_not_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.decommission_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_decommission_model_already_decommissioned_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_decommission_model_already_decommissioned_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -438,10 +421,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         model = await client.get_model(component_id)
         assert model.decommissioned
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_model_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_delete_model_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -469,17 +451,15 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.get_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_delete_model_not_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.delete_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_model_already_deleted_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_delete_model_already_deleted_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -504,10 +484,9 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.delete_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_models_with_dependencies_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_delete_models_with_dependencies_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = await self._get_unique_component_id(client)
         model_id = await self._get_unique_model_id(client)
         component = {
@@ -555,7 +534,7 @@ class DigitalTwinsModelsTestsAsync(AzureTestCase):
         await client.create_models([component, model])
         with pytest.raises(ResourceExistsError):
             await client.delete_model(component_id)
-        
+
         await client.get_model(component_id)
         await client.delete_model(model_id)
         await client.delete_model(component_id)

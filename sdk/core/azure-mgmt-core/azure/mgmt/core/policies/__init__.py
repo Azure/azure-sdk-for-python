@@ -27,13 +27,14 @@
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._authentication import ARMChallengeAuthenticationPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
-
+from ._authentication_async import AsyncARMChallengeAuthenticationPolicy
+from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
 
 class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     """HttpLoggingPolicy with ARM specific safe headers fopr loggers.
     """
 
-    DEFAULT_HEADERS_WHITELIST = HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST | set([
+    DEFAULT_HEADERS_ALLOWLIST = HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST | set([
         # https://docs.microsoft.com/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-ratelimit-remaining-subscription-writes",
@@ -49,13 +50,10 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     ])
 
 
-__all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMChallengeAuthenticationPolicy", "ARMHttpLoggingPolicy"]
-
-try:
-    # pylint: disable=unused-import
-    from ._authentication_async import AsyncARMChallengeAuthenticationPolicy
-    from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
-
-    __all__.extend(["AsyncARMAutoResourceProviderRegistrationPolicy", "AsyncARMChallengeAuthenticationPolicy"])
-except (ImportError, SyntaxError):
-    pass  # Async not supported
+__all__ = [
+    "ARMAutoResourceProviderRegistrationPolicy",
+    "ARMChallengeAuthenticationPolicy",
+    "ARMHttpLoggingPolicy",
+    "AsyncARMAutoResourceProviderRegistrationPolicy",
+    "AsyncARMChallengeAuthenticationPolicy"
+]

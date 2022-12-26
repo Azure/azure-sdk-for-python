@@ -5,11 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.purview.scanning import PurviewScanningClient
 
 
-class PurviewScanningTest(AzureTestCase):
+class PurviewScanningTest(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
         credential = self.get_credential(PurviewScanningClient)

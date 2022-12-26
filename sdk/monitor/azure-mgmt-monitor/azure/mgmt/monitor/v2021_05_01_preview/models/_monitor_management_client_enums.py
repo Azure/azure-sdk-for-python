@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CategoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the diagnostic settings category.
-    """
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the diagnostic settings category."""
 
     METRICS = "Metrics"
     LOGS = "Logs"
 
-class ComparisonOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the operator that is used to compare the metric data and the threshold.
-    """
+
+class ComparisonOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the operator that is used to compare the metric data and the threshold."""
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
@@ -29,18 +27,18 @@ class ComparisonOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class MetricStatisticType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the metric statistic type. How the metrics from multiple instances are combined.
-    """
+
+class MetricStatisticType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the metric statistic type. How the metrics from multiple instances are combined."""
 
     AVERAGE = "Average"
     MIN = "Min"
@@ -48,15 +46,16 @@ class MetricStatisticType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUM = "Sum"
     COUNT = "Count"
 
-class PredictiveAutoscalePolicyScaleMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the predictive autoscale mode
-    """
+
+class PredictiveAutoscalePolicyScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the predictive autoscale mode."""
 
     DISABLED = "Disabled"
     FORECAST_ONLY = "ForecastOnly"
     ENABLED = "Enabled"
 
-class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the recurrence frequency. How often the schedule profile should take effect. This value must be
     Week, meaning each week will have the same set of profiles. For example, to set a daily
     schedule, set **schedule** to every day of the week. The frequency property specifies that the
@@ -72,32 +71,34 @@ class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MONTH = "Month"
     YEAR = "Year"
 
-class ScaleDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the scale direction. Whether the scaling action increases or decreases the number of instances.
-    """
+
+class ScaleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the scale direction. Whether the scaling action increases or decreases the number of instances."""
 
     NONE = "None"
     INCREASE = "Increase"
     DECREASE = "Decrease"
 
-class ScaleRuleMetricDimensionOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleRuleMetricDimensionOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to
-    any of the values. 'NotEquals' being not equal to all of the values
+    any of the values. 'NotEquals' being not equal to all of the values.
     """
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
 
-class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the type of action that should occur when the scale rule fires.
-    """
+
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the type of action that should occur when the scale rule fires."""
 
     CHANGE_COUNT = "ChangeCount"
     PERCENT_CHANGE_COUNT = "PercentChangeCount"
     EXACT_COUNT = "ExactCount"
     SERVICE_ALLOWED_NEXT_VALUE = "ServiceAllowedNextValue"
 
-class TimeAggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class TimeAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """time aggregation type. How the data that is collected should be combined over time. The default
     value is Average.
     """

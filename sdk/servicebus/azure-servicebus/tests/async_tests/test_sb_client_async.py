@@ -36,6 +36,7 @@ _logger = get_logger(logging.DEBUG)
 
 class ServiceBusClientAsyncTests(AzureMgmtTestCase):
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -51,6 +52,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("test"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     async def test_sb_client_bad_namespace_async(self, **kwargs):
@@ -64,6 +66,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                 async with client.get_queue_sender('invalidqueue') as sender:
                     await sender.send_messages(ServiceBusMessage("test"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -98,6 +101,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         fake_client.get_topic_sender('topic')
         fake_client.get_subscription_receiver('topic', 'subscription')
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -115,6 +119,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("test"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -135,6 +140,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
                 with pytest.raises(TypeError):
                     await sender.send_messages("cat")
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -224,6 +230,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert len(client._handlers) < 15
         await client.close()
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -279,6 +286,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             ) as receiver:
                 messages = await receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -306,6 +314,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -345,6 +354,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -371,6 +381,7 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -521,3 +532,25 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
             assert subscription_receiver.client_identifier is not None
             assert subscription_receiver.client_identifier == custom_id
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    async def test_connection_verify_exception_async(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+
+        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem")
+        async with client:
+            with pytest.raises(ServiceBusError):
+                async with client.get_queue_sender(servicebus_queue.name) as sender:
+                    await sender.send_messages(ServiceBusMessage("foo"))
+

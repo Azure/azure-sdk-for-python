@@ -1,5 +1,24 @@
 # Release History
 
+## 3.0.0 (2022-09-15)
+
+### Features Added
+
+  - Model AttachedDatabaseConfiguration has a new parameter database_name_override
+  - Model AttachedDatabaseConfiguration has a new parameter database_name_prefix
+  - Model EventHubDataConnection has a new parameter retrieval_start_date
+  - Model FollowerDatabaseDefinition has a new parameter database_share_origin
+  - Model FollowerDatabaseDefinition has a new parameter table_level_sharing_properties
+  - Model IotHubDataConnection has a new parameter retrieval_start_date
+  - Model ReadOnlyFollowingDatabase has a new parameter database_share_origin
+  - Model ReadOnlyFollowingDatabase has a new parameter original_database_name
+  - Model ReadOnlyFollowingDatabase has a new parameter table_level_sharing_properties
+
+### Breaking Changes
+
+  - Operation DatabasesOperations.begin_create_or_update has a new parameter caller_role
+  - Operation DatabasesOperations.begin_update has a new parameter caller_role
+
 ## 2.2.0 (2022-02-22)
 
 **Features**

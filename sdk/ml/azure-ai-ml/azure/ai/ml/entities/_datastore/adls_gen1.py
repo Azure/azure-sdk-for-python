@@ -2,27 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from pathlib import Path
-from typing import Dict, Union
+# pylint: disable=protected-access,no-member
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore,
-    DatastoreData,
-    DatastoreType,
-)
-from azure.ai.ml.entities._datastore.credentials import (
-    ServicePrincipalCredentials,
-    CertificateCredentials,
-)
-from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
+from pathlib import Path
+from typing import Dict, Optional, Union
+
+from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore
+from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore.adls_gen1 import AzureDataLakeGen1Schema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._credentials import CertificateConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
+from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._util import load_from_dict
 
 
 class AzureDataLakeGen1Datastore(Datastore):
-    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML workspace
+    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML
+    workspace.
 
     :param name: Name of the datastore.
     :type name: str
@@ -45,10 +42,10 @@ class AzureDataLakeGen1Datastore(Datastore):
         *,
         name: str,
         store_name: str,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        credentials: Union[ServicePrincipalCredentials, CertificateCredentials] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[CertificateConfiguration, ServicePrincipalConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN1
@@ -60,7 +57,7 @@ class AzureDataLakeGen1Datastore(Datastore):
 
     def _to_rest_object(self) -> DatastoreData:
         gen1_ds = RestAzureDatalakeGen1Datastore(
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             store_name=self.store_name,
             description=self.description,
             tags=self.tags,

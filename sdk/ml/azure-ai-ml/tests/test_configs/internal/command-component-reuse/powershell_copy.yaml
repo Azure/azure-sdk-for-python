@@ -1,0 +1,32 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+# This is the component from aether module be05880f-b455-44f8-a892-97b620e92afc
+name: ps_copy_command
+display_name: Powershell Copy Command
+version: 0.0.1
+type: CommandComponent
+is_deterministic: true
+inputs:
+  input_dir:
+    type: path
+    optional: false
+  file_names:
+    type: string
+    optional: false
+outputs:
+  output_dir:
+    type: path
+command: >-
+  powershell -File copyfiles.ps1 -inputdir {inputs.input_dir} -outputdir {outputs.output_dir} -copyfilelist {inputs.file_names}
+environment:
+  docker:
+    image: viennaprivate.azurecr.io/base-windowsservercore-3.5dotnet-ltsc2019:latest
+  conda:
+    conda_dependencies:
+      name: project_environment
+      channels:
+      - defaults
+      dependencies:
+      - python=3.7.9
+      - pip:
+        - azureml-defaults==1.19
+  os: Windows

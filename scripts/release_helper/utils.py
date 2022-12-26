@@ -26,7 +26,7 @@ _LOG = logging.getLogger(__name__)
 def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
     link, readme_tag = '', ''
     for row in issue_body_list:
-        if 'link' in row.lower() and link == '':
+        if 'link' in row.lower() and 'release request' not in row.lower() and link == '':
             link = row.split(":", 1)[-1].strip()
         if 'readme tag' in row.lower() and readme_tag == '':
             readme_tag = row.split(":", 1)[-1].strip()
@@ -72,7 +72,7 @@ def get_python_release_pipeline(output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
+def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash=""):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -101,6 +101,10 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
             },
             "PYTHON_TAG": {
                 "value": python_tag,
+                "isSecret": False
+            },
+            "REST_REPO_HASH": {
+                "value": rest_repo_hash,
                 "isSecret": False
             }
         }

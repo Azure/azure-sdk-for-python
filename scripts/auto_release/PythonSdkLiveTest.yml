@@ -47,11 +47,16 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
+          if [ "$(REST_REPO_HASH)" ]; then
+            cd azure-rest-api-specs
+            git reset --hard $(REST_REPO_HASH)
+            cd ../
+          fi
 
           # install autorest
           sudo npm install -g n
-          sudo n 14.15.0
-          export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
+          sudo n 16.15.0
+          export PATH=/usr/local/n/versions/node/16.15.0/bin:$PATH
           sudo npm init -f
           sudo npm install -g autorest --save
 
@@ -60,6 +65,7 @@ jobs:
           export SPEC_README=$(SPEC_README)
           export SPEC_REPO=$(pwd)/azure-rest-api-specs
           export TEMP_FOLDER=$(pwd)/temp_folder
+          export DEBUG_REST_BRANCH=$(DEBUG_REST_BRANCH)
         fi
 
         # create virtual env
@@ -68,7 +74,7 @@ jobs:
         pip install -r $script_path/requirement.txt
 
         # import env variable
-        export AZURE_TEST_RUN_LIVE=true
+        export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
         export TENANT_ID=$(ENV-TENANT-ID)
         export CLIENT_ID=$(ENV-CLIENT-ID)
         export CLIENT_SECRET=$(ENV-CLIENT-SECRET)
@@ -84,6 +90,7 @@ jobs:
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
+        export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
 
         # run
         cd azure-sdk-for-python

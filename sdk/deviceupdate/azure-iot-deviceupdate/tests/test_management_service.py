@@ -4,12 +4,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from devtools_testutils import recorded_by_proxy
 from testcase import DeviceUpdateTest, DeviceUpdatePowerShellPreparer
 from azure.core.exceptions import ResourceNotFoundError
 import pytest
-import os
 
-class DeviceUpdateSmokeTest(DeviceUpdateTest):
+class TestDeviceManagementClient(DeviceUpdateTest):
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_devices(
             self,
@@ -20,10 +21,11 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         try:
             response = client.device_management.list_devices()
             result = [item for item in response]
-            self.assertTrue(len(result) > 0)
+            assert len(result) > 0
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_device_not_found(
             self,
@@ -33,10 +35,11 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         try:
             client.device_management.get_device("foo")
-            self.fail("NotFound response expected")
+            pytest.fail("NotFound response expected")
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_groups(
             self,
@@ -47,10 +50,11 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         try:
             response = client.device_management.list_groups()
             result = [item for item in response]
-            self.assertTrue(len(result) > 0)
+            assert len(result) > 0
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_group(
             self,
@@ -60,8 +64,9 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
     ):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.get_group(deviceupdate_device_group)
-        self.assertIsNotNone(response)
+        assert response is not None
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_group_not_found(
             self,
@@ -73,8 +78,9 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
             client.device_management.get_group("foo")
             self.fail("NotFound response expected")
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def _test_get_device_classes(
             self,
@@ -85,10 +91,11 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         try:
             response = client.device_management.list_device_classes()
             result = [item for item in response]
-            self.assertTrue(len(result) > 0)
+            assert len(result) > 0
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_device_class_not_found(
             self,
@@ -100,8 +107,9 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
             client.device_management.get_device_class("foo")
             self.fail("NotFound response expected")
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def _test_get_best_updates_for_group(
             self,
@@ -112,8 +120,9 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.list_best_updates_for_group(deviceupdate_device_group)
         result = [item for item in response]
-        self.assertTrue(len(result) > 0)
+        assert len(result) > 0
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_best_updates_for_group_not_found(
             self,
@@ -124,10 +133,11 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         try:
             response = client.device_management.list_best_updates_for_group("foo")
             result = [item for item in response]
-            self.assertTrue(len(result) > 0)
+            assert len(result) > 0
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def _test_get_deployments_for_group(
             self,
@@ -138,8 +148,9 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         client = self.create_client(endpoint=deviceupdate_endpoint, instance_id=deviceupdate_instance_id)
         response = client.device_management.list_best_updates_for_group(deviceupdate_device_group)
         result = [item for item in response]
-        self.assertTrue(len(result) > 0)
+        assert len(result) > 0
 
+    @recorded_by_proxy
     @DeviceUpdatePowerShellPreparer()
     def test_get_deployments_for_group_not_found(
             self,
@@ -150,7 +161,7 @@ class DeviceUpdateSmokeTest(DeviceUpdateTest):
         try:
             response = client.device_management.list_best_updates_for_group("foo")
             result = [item for item in response]
-            self.assertTrue(len(result) > 0)
+            assert len(result) > 0
         except ResourceNotFoundError as e:
-            self.assertEqual(404, e.status_code)
+            assert 404 == e.status_code
 

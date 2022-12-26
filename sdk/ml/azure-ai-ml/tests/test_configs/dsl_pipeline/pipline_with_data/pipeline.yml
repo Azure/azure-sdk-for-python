@@ -37,4 +37,3 @@ jobs:
       componentC_input: ${{parent.jobs.component_b_job.outputs.componentB_output}}
     outputs:
       componentC_output: ${{parent.outputs.pipeline_sample_output_data_C}}
-

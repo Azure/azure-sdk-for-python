@@ -19,12 +19,14 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from ._graph_resources_operations import GraphResourcesOperations
 from ._sql_resources_operations import SqlResourcesOperations
 from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
 from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
 from ._locations_operations import LocationsOperations
+from ._data_transfer_jobs_operations import DataTransferJobsOperations
 from ._cassandra_clusters_operations import CassandraClustersOperations
 from ._cassandra_data_centers_operations import CassandraDataCentersOperations
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations
@@ -37,44 +39,57 @@ from ._restorable_sql_resources_operations import RestorableSqlResourcesOperatio
 from ._restorable_mongodb_databases_operations import RestorableMongodbDatabasesOperations
 from ._restorable_mongodb_collections_operations import RestorableMongodbCollectionsOperations
 from ._restorable_mongodb_resources_operations import RestorableMongodbResourcesOperations
+from ._restorable_gremlin_databases_operations import RestorableGremlinDatabasesOperations
+from ._restorable_gremlin_graphs_operations import RestorableGremlinGraphsOperations
+from ._restorable_gremlin_resources_operations import RestorableGremlinResourcesOperations
+from ._restorable_tables_operations import RestorableTablesOperations
+from ._restorable_table_resources_operations import RestorableTableResourcesOperations
 from ._service_operations import ServiceOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DatabaseAccountsOperations',
-    'Operations',
-    'DatabaseOperations',
-    'CollectionOperations',
-    'CollectionRegionOperations',
-    'DatabaseAccountRegionOperations',
-    'PercentileSourceTargetOperations',
-    'PercentileTargetOperations',
-    'PercentileOperations',
-    'CollectionPartitionRegionOperations',
-    'CollectionPartitionOperations',
-    'PartitionKeyRangeIdOperations',
-    'PartitionKeyRangeIdRegionOperations',
-    'SqlResourcesOperations',
-    'MongoDBResourcesOperations',
-    'TableResourcesOperations',
-    'CassandraResourcesOperations',
-    'GremlinResourcesOperations',
-    'LocationsOperations',
-    'CassandraClustersOperations',
-    'CassandraDataCentersOperations',
-    'NotebookWorkspacesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'RestorableDatabaseAccountsOperations',
-    'RestorableSqlDatabasesOperations',
-    'RestorableSqlContainersOperations',
-    'RestorableSqlResourcesOperations',
-    'RestorableMongodbDatabasesOperations',
-    'RestorableMongodbCollectionsOperations',
-    'RestorableMongodbResourcesOperations',
-    'ServiceOperations',
+    "DatabaseAccountsOperations",
+    "Operations",
+    "DatabaseOperations",
+    "CollectionOperations",
+    "CollectionRegionOperations",
+    "DatabaseAccountRegionOperations",
+    "PercentileSourceTargetOperations",
+    "PercentileTargetOperations",
+    "PercentileOperations",
+    "CollectionPartitionRegionOperations",
+    "CollectionPartitionOperations",
+    "PartitionKeyRangeIdOperations",
+    "PartitionKeyRangeIdRegionOperations",
+    "GraphResourcesOperations",
+    "SqlResourcesOperations",
+    "MongoDBResourcesOperations",
+    "TableResourcesOperations",
+    "CassandraResourcesOperations",
+    "GremlinResourcesOperations",
+    "LocationsOperations",
+    "DataTransferJobsOperations",
+    "CassandraClustersOperations",
+    "CassandraDataCentersOperations",
+    "NotebookWorkspacesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "RestorableDatabaseAccountsOperations",
+    "RestorableSqlDatabasesOperations",
+    "RestorableSqlContainersOperations",
+    "RestorableSqlResourcesOperations",
+    "RestorableMongodbDatabasesOperations",
+    "RestorableMongodbCollectionsOperations",
+    "RestorableMongodbResourcesOperations",
+    "RestorableGremlinDatabasesOperations",
+    "RestorableGremlinGraphsOperations",
+    "RestorableGremlinResourcesOperations",
+    "RestorableTablesOperations",
+    "RestorableTableResourcesOperations",
+    "ServiceOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -118,7 +118,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             if self._options and ("enableCrossPartitionQuery" in self._options
                                   and self._options["enableCrossPartitionQuery"]):
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
-                                  "Cross partition query only supports 'VALUE <AggreateFunc>' for aggregates")
+                                  "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
 
         execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,

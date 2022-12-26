@@ -21,9 +21,9 @@ import uuid
 from azure.servicebus.management import SqlRuleFilter
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-TOPIC_NAME = os.environ['SERVICE_BUS_TOPIC_NAME']
-SUBSCRIPTION_NAME = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
+CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+SUBSCRIPTION_NAME = os.environ['SERVICEBUS_SUBSCRIPTION_NAME']
 RULE_NAME = "sb_mgmt_rule" + str(uuid.uuid4())
 RULE_WITH_SQL_FILTER_NAME = "sb_sql_rule" + str(uuid.uuid4())
 

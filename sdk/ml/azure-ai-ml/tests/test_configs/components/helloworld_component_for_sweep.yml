@@ -46,7 +46,7 @@ command: >-
   echo "Start training ..." &&
   python mnist.py --data_folder ${{inputs.data_folder}} --batch_size ${{inputs.batch_size}}
   --first_layer_neurons ${{inputs.first_layer_neurons}} --second_layer_neurons ${{inputs.second_layer_neurons}}
-  --third_layer_neurons ${{inputs.third_layer_neurons}} --epochs ${{inputs.epochs}} 
+  --third_layer_neurons ${{inputs.third_layer_neurons}} --epochs ${{inputs.epochs}}
   --f1 ${{inputs.f1}} --f2 ${{inputs.f2}} --weight_decay ${{inputs.weight_decay}} --momentum ${{inputs.momentum}}
   --learning_rate ${{inputs.learning_rate}} --saved_model ${{outputs.trained_model_dir}}
 

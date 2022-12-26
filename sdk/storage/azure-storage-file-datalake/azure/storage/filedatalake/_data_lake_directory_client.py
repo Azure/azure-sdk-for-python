@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import ( # pylint: disable=unused-import
-    Any, Dict, Optional, Type, TypeVar, Union,
-    TYPE_CHECKING)
+from typing import (
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING
+)
+from urllib.parse import quote, unquote
 
-try:
-    from urllib.parse import quote, unquote
-except ImportError:
-    from urllib2 import quote, unquote # type: ignore
+from typing_extensions import Self
+
 from azure.core.pipeline import Pipeline
 from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import TransportWrapper, parse_connection_str
@@ -19,9 +19,8 @@ from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-
-ClassType = TypeVar("ClassType")
 
 
 class DataLakeDirectoryClient(PathClient):
@@ -67,25 +66,23 @@ class DataLakeDirectoryClient(PathClient):
             :caption: Creating the DataLakeServiceClient from connection string.
     """
     def __init__(
-        self, account_url,  # type: str
-        file_system_name,  # type: str
-        directory_name,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, account_url: str,
+        file_system_name: str,
+        directory_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name,
                                                       credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            file_system_name,  # type: str
-            directory_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            file_system_name: str,
+            directory_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """
         Create DataLakeDirectoryClient from a Connection String.
 
@@ -304,7 +301,7 @@ class DataLakeDirectoryClient(PathClient):
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
         :keyword source_lease:
             A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword lease:

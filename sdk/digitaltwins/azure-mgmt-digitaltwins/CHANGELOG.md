@@ -1,5 +1,17 @@
 # Release History
 
+## 6.3.0 (2022-12-15)
+
+### Features Added
+
+  - Model AzureDataExplorerConnectionProperties has a new parameter identity
+  - Model DigitalTwinsEndpointResourceProperties has a new parameter identity
+  - Model DigitalTwinsIdentity has a new parameter user_assigned_identities
+  - Model EventGrid has a new parameter identity
+  - Model EventHub has a new parameter identity
+  - Model ServiceBus has a new parameter identity
+  - Model TimeSeriesDatabaseConnectionProperties has a new parameter identity
+
 ## 6.2.0 (2022-06-28)
 
 **Features**

@@ -2,12 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any
 
 from .._internal import InteractiveCredential, wrap_exceptions
-
-if TYPE_CHECKING:
-    from typing import Any
 
 
 class UsernamePasswordCredential(InteractiveCredential):
@@ -25,23 +22,34 @@ class UsernamePasswordCredential(InteractiveCredential):
     <https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
     account types.
 
-    :param str client_id: the application's client ID
-    :param str username: the user's username (usually an email address)
-    :param str password: the user's password
+    :param str client_id: The application's client ID
+    :param str username: The user's username (usually an email address)
+    :param str password: The user's password
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
+    :keyword str tenant_id: Tenant ID or a domain associated with a tenant. If not provided, defaults to the
         "organizations" tenant, which supports only Azure Active Directory work or school accounts.
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+    :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
+        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
+        for more WAM information.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, client_id, username, password, **kwargs):
-        # type: (str, str, str, Any) -> None
-
+    def __init__(
+            self,
+            client_id: str,
+            username: str,
+            password: str,
+            **kwargs
+    ) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we

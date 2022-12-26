@@ -26,6 +26,8 @@ body = [
     ]
 
 response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-if response.status != UploadLogsStatus.SUCCESS:
-    failed_logs = response.failed_logs_index
-    print(failed_logs)
+
+## iterates directly over Tuple[HttpResponseError, JSON]:
+for error, failed_logs in response:
+    # prints nothing if there are no failed_logs (i/e the status is success)
+    print(failed_logs, error)

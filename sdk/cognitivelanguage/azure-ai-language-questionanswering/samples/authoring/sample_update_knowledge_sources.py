@@ -22,14 +22,14 @@ def sample_update_knowledge_sources():
     # [START update_knowledge_sources]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
+    from azure.ai.language.questionanswering.authoring import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringProjectsClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
         # create project
@@ -60,15 +60,11 @@ def sample_update_knowledge_sources():
                 }
             }]
         )
-        sources_poller.result() # wait until done
-
-        sources = client.list_sources(
-            project_name=project_name
-        )
+        sources = sources_poller.result() # wait until done
         for item in sources:
-            print("source name: {}".format(item["displayName"]))
+            print("source name: {}".format(item.get("displayName", "N/A")))
             print("\tsource: {}".format(item["source"]))
-            print("\tsource uri: {}".format(item["sourceUri"]))
+            print("\tsource uri: {}".format(item.get("sourceUri", "N/A")))
             print("\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas
@@ -84,11 +80,7 @@ def sample_update_knowledge_sources():
                 }
             }]
         )
-        qna_poller.result()
-
-        qnas = client.list_qnas(
-            project_name=project_name
-        )
+        qnas = qna_poller.result()
         for item in qnas:
             print("qna: {}".format(item["id"]))
             print("\tquestions:")

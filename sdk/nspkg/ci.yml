@@ -70,9 +70,6 @@ extends:
     - name: azure-search-nspkg
       safeName: azuresearchnspkg
       skipVerifyChangeLog: true
-    - name: azure-mixedreality-nspkg
-      safeName: azuremixedrealitynspkg
-      skipVerifyChangeLog: true
     - name: azure-security-nspkg
       safeName: azuresecuritynspkg
       skipVerifyChangeLog: true

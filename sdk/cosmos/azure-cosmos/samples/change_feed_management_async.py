@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import azure.cosmos.documents as documents
 import azure.cosmos.partition_key as partition_key
@@ -13,7 +13,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https:#azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
@@ -64,7 +64,7 @@ async def read_change_feed(container):
 
 
 async def run_sample():
-    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
+    async with CosmosClient(HOST, MASTER_KEY) as client:
         try:
             # setup database for this sample
             try:
@@ -100,5 +100,4 @@ async def run_sample():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
+    asyncio.run(run_sample())

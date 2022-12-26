@@ -16,12 +16,14 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ClientAuthenticationError
 
 from asynctestcase import AsyncContainerRegistryTestClass
-from constants import HELLO_WORLD, ALPINE
+from constants import HELLO_WORLD
 from preparer import acr_preparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
-class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
+class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_list_repository_names(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -43,6 +45,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -69,6 +72,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert total_pages >= 1
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -82,6 +86,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert properties.name == "library/alpine"
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -96,6 +101,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -110,6 +116,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert registry_artifact.repository_name == "library/alpine"
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -124,6 +131,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
         assert count > 0
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_delete_repository(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -135,6 +143,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.delete_repository("library/hello-world")
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_delete_tag(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -146,6 +155,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.delete_tag("library/hello-world", "latest")
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -157,6 +167,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.delete_manifest("library/hello-world", "latest")
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -169,6 +180,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
@@ -181,6 +193,7 @@ class TestContainerRegistryClient(AsyncContainerRegistryTestClass):
             await client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
 
     @acr_preparer()
+    @recorded_by_proxy_async
     async def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")

@@ -23,22 +23,19 @@ class Column(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Column, self).__init__(**kwargs)
-        self.name = kwargs['name']
-        self.type = kwargs['type']
+        self.name = kwargs["name"]
+        self.type = kwargs["type"]
 
 
 class DateTimeInterval(msrest.serialization.Model):
@@ -57,22 +54,19 @@ class DateTimeInterval(msrest.serialization.Model):
     """
 
     _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
+        "start": {"required": True},
+        "end": {"required": True},
     }
 
     _attribute_map = {
-        'start': {'key': 'start', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        "start": {"key": "start", "type": "iso-8601"},
+        "end": {"key": "end", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(DateTimeInterval, self).__init__(**kwargs)
-        self.start = kwargs['start']
-        self.end = kwargs['end']
+        self.start = kwargs["start"]
+        self.end = kwargs["end"]
 
 
 class Error(msrest.serialization.Model):
@@ -89,24 +83,21 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetails]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Error, self).__init__(**kwargs)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
-        self.details = kwargs.get('details', None)
+        self.code = kwargs["code"]
+        self.message = kwargs["message"]
+        self.details = kwargs.get("details", None)
 
 
 class ErrorDetails(msrest.serialization.Model):
@@ -124,24 +115,21 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorDetails, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.code = kwargs['code']
-        self.message = kwargs['message']
+        self.additional_properties = kwargs.get("additional_properties", None)
+        self.code = kwargs["code"]
+        self.message = kwargs["message"]
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -154,19 +142,16 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs['error']
+        self.error = kwargs["error"]
 
 
 class Facet(msrest.serialization.Model):
@@ -184,25 +169,20 @@ class Facet(msrest.serialization.Model):
     """
 
     _validation = {
-        'expression': {'required': True},
-        'result_type': {'required': True},
+        "expression": {"required": True},
+        "result_type": {"required": True},
     }
 
     _attribute_map = {
-        'expression': {'key': 'expression', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
+        "expression": {"key": "expression", "type": "str"},
+        "result_type": {"key": "resultType", "type": "str"},
     }
 
-    _subtype_map = {
-        'result_type': {'FacetError': 'FacetError', 'FacetResult': 'FacetResult'}
-    }
+    _subtype_map = {"result_type": {"FacetError": "FacetError", "FacetResult": "FacetResult"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Facet, self).__init__(**kwargs)
-        self.expression = kwargs['expression']
+        self.expression = kwargs["expression"]
         self.result_type = None  # type: Optional[str]
 
 
@@ -220,24 +200,21 @@ class FacetError(Facet):
     """
 
     _validation = {
-        'expression': {'required': True},
-        'result_type': {'required': True},
-        'errors': {'required': True},
+        "expression": {"required": True},
+        "result_type": {"required": True},
+        "errors": {"required": True},
     }
 
     _attribute_map = {
-        'expression': {'key': 'expression', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[ErrorDetails]'},
+        "expression": {"key": "expression", "type": "str"},
+        "result_type": {"key": "resultType", "type": "str"},
+        "errors": {"key": "errors", "type": "[ErrorDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FacetError, self).__init__(**kwargs)
-        self.result_type = 'FacetError'  # type: str
-        self.errors = kwargs['errors']
+        self.result_type = "FacetError"  # type: str
+        self.errors = kwargs["errors"]
 
 
 class FacetRequest(msrest.serialization.Model):
@@ -252,21 +229,18 @@ class FacetRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'expression': {'required': True},
+        "expression": {"required": True},
     }
 
     _attribute_map = {
-        'expression': {'key': 'expression', 'type': 'str'},
-        'options': {'key': 'options', 'type': 'FacetRequestOptions'},
+        "expression": {"key": "expression", "type": "str"},
+        "options": {"key": "options", "type": "FacetRequestOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FacetRequest, self).__init__(**kwargs)
-        self.expression = kwargs['expression']
-        self.options = kwargs.get('options', None)
+        self.expression = kwargs["expression"]
+        self.options = kwargs.get("options", None)
 
 
 class FacetRequestOptions(msrest.serialization.Model):
@@ -286,25 +260,22 @@ class FacetRequestOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'top': {'maximum': 1000, 'minimum': 1},
+        "top": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'sort_by': {'key': 'sortBy', 'type': 'str'},
-        'sort_order': {'key': 'sortOrder', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-        'top': {'key': '$top', 'type': 'int'},
+        "sort_by": {"key": "sortBy", "type": "str"},
+        "sort_order": {"key": "sortOrder", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "top": {"key": "$top", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FacetRequestOptions, self).__init__(**kwargs)
-        self.sort_by = kwargs.get('sort_by', None)
-        self.sort_order = kwargs.get('sort_order', "desc")
-        self.filter = kwargs.get('filter', None)
-        self.top = kwargs.get('top', None)
+        self.sort_by = kwargs.get("sort_by", None)
+        self.sort_order = kwargs.get("sort_order", "desc")
+        self.filter = kwargs.get("filter", None)
+        self.top = kwargs.get("top", None)
 
 
 class FacetResult(Facet):
@@ -326,30 +297,27 @@ class FacetResult(Facet):
     """
 
     _validation = {
-        'expression': {'required': True},
-        'result_type': {'required': True},
-        'total_records': {'required': True},
-        'count': {'required': True},
-        'data': {'required': True},
+        "expression": {"required": True},
+        "result_type": {"required": True},
+        "total_records": {"required": True},
+        "count": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'expression': {'key': 'expression', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
-        'total_records': {'key': 'totalRecords', 'type': 'long'},
-        'count': {'key': 'count', 'type': 'int'},
-        'data': {'key': 'data', 'type': 'object'},
+        "expression": {"key": "expression", "type": "str"},
+        "result_type": {"key": "resultType", "type": "str"},
+        "total_records": {"key": "totalRecords", "type": "long"},
+        "count": {"key": "count", "type": "int"},
+        "data": {"key": "data", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(FacetResult, self).__init__(**kwargs)
-        self.result_type = 'FacetResult'  # type: str
-        self.total_records = kwargs['total_records']
-        self.count = kwargs['count']
-        self.data = kwargs['data']
+        self.result_type = "FacetResult"  # type: str
+        self.total_records = kwargs["total_records"]
+        self.count = kwargs["count"]
+        self.data = kwargs["data"]
 
 
 class Operation(msrest.serialization.Model):
@@ -364,19 +332,16 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
+        self.name = kwargs.get("name", None)
+        self.display = kwargs.get("display", None)
+        self.origin = kwargs.get("origin", None)
 
 
 class OperationDisplay(msrest.serialization.Model):
@@ -393,21 +358,18 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
-        self.operation = kwargs.get('operation', None)
-        self.description = kwargs.get('description', None)
+        self.provider = kwargs.get("provider", None)
+        self.resource = kwargs.get("resource", None)
+        self.operation = kwargs.get("operation", None)
+        self.description = kwargs.get("description", None)
 
 
 class OperationListResult(msrest.serialization.Model):
@@ -419,15 +381,12 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(OperationListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = kwargs.get("value", None)
 
 
 class QueryRequest(msrest.serialization.Model):
@@ -449,27 +408,24 @@ class QueryRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'query': {'required': True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
-        'management_groups': {'key': 'managementGroups', 'type': '[str]'},
-        'query': {'key': 'query', 'type': 'str'},
-        'options': {'key': 'options', 'type': 'QueryRequestOptions'},
-        'facets': {'key': 'facets', 'type': '[FacetRequest]'},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
+        "management_groups": {"key": "managementGroups", "type": "[str]"},
+        "query": {"key": "query", "type": "str"},
+        "options": {"key": "options", "type": "QueryRequestOptions"},
+        "facets": {"key": "facets", "type": "[FacetRequest]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QueryRequest, self).__init__(**kwargs)
-        self.subscriptions = kwargs.get('subscriptions', None)
-        self.management_groups = kwargs.get('management_groups', None)
-        self.query = kwargs['query']
-        self.options = kwargs.get('options', None)
-        self.facets = kwargs.get('facets', None)
+        self.subscriptions = kwargs.get("subscriptions", None)
+        self.management_groups = kwargs.get("management_groups", None)
+        self.query = kwargs["query"]
+        self.options = kwargs.get("options", None)
+        self.facets = kwargs.get("facets", None)
 
 
 class QueryRequestOptions(msrest.serialization.Model):
@@ -494,28 +450,25 @@ class QueryRequestOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'top': {'maximum': 1000, 'minimum': 1},
-        'skip': {'minimum': 0},
+        "top": {"maximum": 1000, "minimum": 1},
+        "skip": {"minimum": 0},
     }
 
     _attribute_map = {
-        'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'top': {'key': '$top', 'type': 'int'},
-        'skip': {'key': '$skip', 'type': 'int'},
-        'result_format': {'key': 'resultFormat', 'type': 'str'},
-        'allow_partial_scopes': {'key': 'allowPartialScopes', 'type': 'bool'},
+        "skip_token": {"key": "$skipToken", "type": "str"},
+        "top": {"key": "$top", "type": "int"},
+        "skip": {"key": "$skip", "type": "int"},
+        "result_format": {"key": "resultFormat", "type": "str"},
+        "allow_partial_scopes": {"key": "allowPartialScopes", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QueryRequestOptions, self).__init__(**kwargs)
-        self.skip_token = kwargs.get('skip_token', None)
-        self.top = kwargs.get('top', None)
-        self.skip = kwargs.get('skip', None)
-        self.result_format = kwargs.get('result_format', "objectArray")
-        self.allow_partial_scopes = kwargs.get('allow_partial_scopes', False)
+        self.skip_token = kwargs.get("skip_token", None)
+        self.top = kwargs.get("top", None)
+        self.skip = kwargs.get("skip", None)
+        self.result_format = kwargs.get("result_format", "objectArray")
+        self.allow_partial_scopes = kwargs.get("allow_partial_scopes", False)
 
 
 class QueryResponse(msrest.serialization.Model):
@@ -541,32 +494,29 @@ class QueryResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'total_records': {'required': True},
-        'count': {'required': True},
-        'result_truncated': {'required': True},
-        'data': {'required': True},
+        "total_records": {"required": True},
+        "count": {"required": True},
+        "result_truncated": {"required": True},
+        "data": {"required": True},
     }
 
     _attribute_map = {
-        'total_records': {'key': 'totalRecords', 'type': 'long'},
-        'count': {'key': 'count', 'type': 'long'},
-        'result_truncated': {'key': 'resultTruncated', 'type': 'str'},
-        'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
-        'facets': {'key': 'facets', 'type': '[Facet]'},
+        "total_records": {"key": "totalRecords", "type": "long"},
+        "count": {"key": "count", "type": "long"},
+        "result_truncated": {"key": "resultTruncated", "type": "str"},
+        "skip_token": {"key": "$skipToken", "type": "str"},
+        "data": {"key": "data", "type": "object"},
+        "facets": {"key": "facets", "type": "[Facet]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(QueryResponse, self).__init__(**kwargs)
-        self.total_records = kwargs['total_records']
-        self.count = kwargs['count']
-        self.result_truncated = kwargs['result_truncated']
-        self.skip_token = kwargs.get('skip_token', None)
-        self.data = kwargs['data']
-        self.facets = kwargs.get('facets', None)
+        self.total_records = kwargs["total_records"]
+        self.count = kwargs["count"]
+        self.result_truncated = kwargs["result_truncated"]
+        self.skip_token = kwargs.get("skip_token", None)
+        self.data = kwargs["data"]
+        self.facets = kwargs.get("facets", None)
 
 
 class ResourceChangeData(msrest.serialization.Model):
@@ -590,31 +540,28 @@ class ResourceChangeData(msrest.serialization.Model):
     """
 
     _validation = {
-        'change_id': {'required': True},
-        'before_snapshot': {'required': True},
-        'after_snapshot': {'required': True},
+        "change_id": {"required": True},
+        "before_snapshot": {"required": True},
+        "after_snapshot": {"required": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'change_id': {'key': 'changeId', 'type': 'str'},
-        'before_snapshot': {'key': 'beforeSnapshot', 'type': 'ResourceChangeDataBeforeSnapshot'},
-        'after_snapshot': {'key': 'afterSnapshot', 'type': 'ResourceChangeDataAfterSnapshot'},
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'property_changes': {'key': 'propertyChanges', 'type': '[ResourcePropertyChange]'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "change_id": {"key": "changeId", "type": "str"},
+        "before_snapshot": {"key": "beforeSnapshot", "type": "ResourceChangeDataBeforeSnapshot"},
+        "after_snapshot": {"key": "afterSnapshot", "type": "ResourceChangeDataAfterSnapshot"},
+        "change_type": {"key": "changeType", "type": "str"},
+        "property_changes": {"key": "propertyChanges", "type": "[ResourcePropertyChange]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangeData, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
-        self.change_id = kwargs['change_id']
-        self.before_snapshot = kwargs['before_snapshot']
-        self.after_snapshot = kwargs['after_snapshot']
-        self.change_type = kwargs.get('change_type', None)
-        self.property_changes = kwargs.get('property_changes', None)
+        self.resource_id = kwargs.get("resource_id", None)
+        self.change_id = kwargs["change_id"]
+        self.before_snapshot = kwargs["before_snapshot"]
+        self.after_snapshot = kwargs["after_snapshot"]
+        self.change_type = kwargs.get("change_type", None)
+        self.property_changes = kwargs.get("property_changes", None)
 
 
 class ResourceSnapshotData(msrest.serialization.Model):
@@ -635,23 +582,20 @@ class ResourceSnapshotData(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'required': True},
+        "timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'content': {'key': 'content', 'type': 'object'},
+        "snapshot_id": {"key": "snapshotId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "content": {"key": "content", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceSnapshotData, self).__init__(**kwargs)
-        self.snapshot_id = kwargs.get('snapshot_id', None)
-        self.timestamp = kwargs['timestamp']
-        self.content = kwargs.get('content', None)
+        self.snapshot_id = kwargs.get("snapshot_id", None)
+        self.timestamp = kwargs["timestamp"]
+        self.content = kwargs.get("content", None)
 
 
 class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
@@ -672,19 +616,16 @@ class ResourceChangeDataAfterSnapshot(ResourceSnapshotData):
     """
 
     _validation = {
-        'timestamp': {'required': True},
+        "timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'content': {'key': 'content', 'type': 'object'},
+        "snapshot_id": {"key": "snapshotId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "content": {"key": "content", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangeDataAfterSnapshot, self).__init__(**kwargs)
 
 
@@ -706,19 +647,16 @@ class ResourceChangeDataBeforeSnapshot(ResourceSnapshotData):
     """
 
     _validation = {
-        'timestamp': {'required': True},
+        "timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'snapshot_id': {'key': 'snapshotId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'content': {'key': 'content', 'type': 'object'},
+        "snapshot_id": {"key": "snapshotId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "content": {"key": "content", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangeDataBeforeSnapshot, self).__init__(**kwargs)
 
 
@@ -734,22 +672,19 @@ class ResourceChangeDetailsRequestParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_ids': {'required': True},
-        'change_ids': {'required': True},
+        "resource_ids": {"required": True},
+        "change_ids": {"required": True},
     }
 
     _attribute_map = {
-        'resource_ids': {'key': 'resourceIds', 'type': '[str]'},
-        'change_ids': {'key': 'changeIds', 'type': '[str]'},
+        "resource_ids": {"key": "resourceIds", "type": "[str]"},
+        "change_ids": {"key": "changeIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangeDetailsRequestParameters, self).__init__(**kwargs)
-        self.resource_ids = kwargs['resource_ids']
-        self.change_ids = kwargs['change_ids']
+        self.resource_ids = kwargs["resource_ids"]
+        self.change_ids = kwargs["change_ids"]
 
 
 class ResourceChangeList(msrest.serialization.Model):
@@ -757,8 +692,8 @@ class ResourceChangeList(msrest.serialization.Model):
 
     :param changes: The pageable value returned by the operation, i.e. a list of changes to the
      resource.
-    
-    
+
+
      * The list is ordered from the most recent changes to the least recent changes.
      * This list will be empty if there were no changes during the requested interval.
      * The ``Before`` snapshot timestamp value of the oldest change can be outside of the specified
@@ -770,17 +705,14 @@ class ResourceChangeList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'changes': {'key': 'changes', 'type': '[ResourceChangeData]'},
-        'skip_token': {'key': '$skipToken', 'type': 'object'},
+        "changes": {"key": "changes", "type": "[ResourceChangeData]"},
+        "skip_token": {"key": "$skipToken", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangeList, self).__init__(**kwargs)
-        self.changes = kwargs.get('changes', None)
-        self.skip_token = kwargs.get('skip_token', None)
+        self.changes = kwargs.get("changes", None)
+        self.skip_token = kwargs.get("skip_token", None)
 
 
 class ResourceChangesRequestParameters(msrest.serialization.Model):
@@ -807,34 +739,31 @@ class ResourceChangesRequestParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'interval': {'required': True},
-        'top': {'maximum': 1000, 'minimum': 1},
+        "interval": {"required": True},
+        "top": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'resource_ids': {'key': 'resourceIds', 'type': '[str]'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'ResourceChangesRequestParametersInterval'},
-        'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'top': {'key': '$top', 'type': 'int'},
-        'table': {'key': 'table', 'type': 'str'},
-        'fetch_property_changes': {'key': 'fetchPropertyChanges', 'type': 'bool'},
-        'fetch_snapshots': {'key': 'fetchSnapshots', 'type': 'bool'},
+        "resource_ids": {"key": "resourceIds", "type": "[str]"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "interval": {"key": "interval", "type": "ResourceChangesRequestParametersInterval"},
+        "skip_token": {"key": "$skipToken", "type": "str"},
+        "top": {"key": "$top", "type": "int"},
+        "table": {"key": "table", "type": "str"},
+        "fetch_property_changes": {"key": "fetchPropertyChanges", "type": "bool"},
+        "fetch_snapshots": {"key": "fetchSnapshots", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangesRequestParameters, self).__init__(**kwargs)
-        self.resource_ids = kwargs.get('resource_ids', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.interval = kwargs['interval']
-        self.skip_token = kwargs.get('skip_token', None)
-        self.top = kwargs.get('top', None)
-        self.table = kwargs.get('table', None)
-        self.fetch_property_changes = kwargs.get('fetch_property_changes', None)
-        self.fetch_snapshots = kwargs.get('fetch_snapshots', None)
+        self.resource_ids = kwargs.get("resource_ids", None)
+        self.subscription_id = kwargs.get("subscription_id", None)
+        self.interval = kwargs["interval"]
+        self.skip_token = kwargs.get("skip_token", None)
+        self.top = kwargs.get("top", None)
+        self.table = kwargs.get("table", None)
+        self.fetch_property_changes = kwargs.get("fetch_property_changes", None)
+        self.fetch_snapshots = kwargs.get("fetch_snapshots", None)
 
 
 class ResourceChangesRequestParametersInterval(DateTimeInterval):
@@ -853,19 +782,16 @@ class ResourceChangesRequestParametersInterval(DateTimeInterval):
     """
 
     _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
+        "start": {"required": True},
+        "end": {"required": True},
     }
 
     _attribute_map = {
-        'start': {'key': 'start', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        "start": {"key": "start", "type": "iso-8601"},
+        "end": {"key": "end", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourceChangesRequestParametersInterval, self).__init__(**kwargs)
 
 
@@ -889,29 +815,26 @@ class ResourcePropertyChange(msrest.serialization.Model):
     """
 
     _validation = {
-        'property_name': {'required': True},
-        'change_category': {'required': True},
-        'property_change_type': {'required': True},
+        "property_name": {"required": True},
+        "change_category": {"required": True},
+        "property_change_type": {"required": True},
     }
 
     _attribute_map = {
-        'property_name': {'key': 'propertyName', 'type': 'str'},
-        'before_value': {'key': 'beforeValue', 'type': 'str'},
-        'after_value': {'key': 'afterValue', 'type': 'str'},
-        'change_category': {'key': 'changeCategory', 'type': 'str'},
-        'property_change_type': {'key': 'propertyChangeType', 'type': 'str'},
+        "property_name": {"key": "propertyName", "type": "str"},
+        "before_value": {"key": "beforeValue", "type": "str"},
+        "after_value": {"key": "afterValue", "type": "str"},
+        "change_category": {"key": "changeCategory", "type": "str"},
+        "property_change_type": {"key": "propertyChangeType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcePropertyChange, self).__init__(**kwargs)
-        self.property_name = kwargs['property_name']
-        self.before_value = kwargs.get('before_value', None)
-        self.after_value = kwargs.get('after_value', None)
-        self.change_category = kwargs['change_category']
-        self.property_change_type = kwargs['property_change_type']
+        self.property_name = kwargs["property_name"]
+        self.before_value = kwargs.get("before_value", None)
+        self.after_value = kwargs.get("after_value", None)
+        self.change_category = kwargs["change_category"]
+        self.property_change_type = kwargs["property_change_type"]
 
 
 class ResourcesHistoryRequest(msrest.serialization.Model):
@@ -928,21 +851,18 @@ class ResourcesHistoryRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subscriptions': {'key': 'subscriptions', 'type': '[str]'},
-        'query': {'key': 'query', 'type': 'str'},
-        'options': {'key': 'options', 'type': 'ResourcesHistoryRequestOptions'},
-        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
+        "query": {"key": "query", "type": "str"},
+        "options": {"key": "options", "type": "ResourcesHistoryRequestOptions"},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcesHistoryRequest, self).__init__(**kwargs)
-        self.subscriptions = kwargs.get('subscriptions', None)
-        self.query = kwargs.get('query', None)
-        self.options = kwargs.get('options', None)
-        self.management_group_id = kwargs.get('management_group_id', None)
+        self.subscriptions = kwargs.get("subscriptions", None)
+        self.query = kwargs.get("query", None)
+        self.options = kwargs.get("options", None)
+        self.management_group_id = kwargs.get("management_group_id", None)
 
 
 class ResourcesHistoryRequestOptions(msrest.serialization.Model):
@@ -963,23 +883,20 @@ class ResourcesHistoryRequestOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'interval': {'key': 'interval', 'type': 'DateTimeInterval'},
-        'top': {'key': '$top', 'type': 'int'},
-        'skip': {'key': '$skip', 'type': 'int'},
-        'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'result_format': {'key': 'resultFormat', 'type': 'str'},
+        "interval": {"key": "interval", "type": "DateTimeInterval"},
+        "top": {"key": "$top", "type": "int"},
+        "skip": {"key": "$skip", "type": "int"},
+        "skip_token": {"key": "$skipToken", "type": "str"},
+        "result_format": {"key": "resultFormat", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(ResourcesHistoryRequestOptions, self).__init__(**kwargs)
-        self.interval = kwargs.get('interval', None)
-        self.top = kwargs.get('top', None)
-        self.skip = kwargs.get('skip', None)
-        self.skip_token = kwargs.get('skip_token', None)
-        self.result_format = kwargs.get('result_format', None)
+        self.interval = kwargs.get("interval", None)
+        self.top = kwargs.get("top", None)
+        self.skip = kwargs.get("skip", None)
+        self.skip_token = kwargs.get("skip_token", None)
+        self.result_format = kwargs.get("result_format", None)
 
 
 class Table(msrest.serialization.Model):
@@ -994,19 +911,16 @@ class Table(msrest.serialization.Model):
     """
 
     _validation = {
-        'columns': {'required': True},
-        'rows': {'required': True},
+        "columns": {"required": True},
+        "rows": {"required": True},
     }
 
     _attribute_map = {
-        'columns': {'key': 'columns', 'type': '[Column]'},
-        'rows': {'key': 'rows', 'type': '[[object]]'},
+        "columns": {"key": "columns", "type": "[Column]"},
+        "rows": {"key": "rows", "type": "[[object]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(Table, self).__init__(**kwargs)
-        self.columns = kwargs['columns']
-        self.rows = kwargs['rows']
+        self.columns = kwargs["columns"]
+        self.rows = kwargs["rows"]

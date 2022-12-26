@@ -1,0 +1,12 @@
+name: blue
+endpoint_name: deploytest
+description: description for online deployment
+model: azureml://registries/UnsecureTest-mirv2reg/models/integration-test-model/versions/3
+code_configuration:
+  code: azureml://registries/UnsecureTest-mirv2reg/codes/integration-test-code/versions/test
+  scoring_script: score.py
+environment: azureml://registries/UnsecureTest-mirv2reg/environments/integration-test-env-cli/versions/1
+instance_count: 1
+instance_type: Standard_DS2_V2
+scale_settings:
+  type: default

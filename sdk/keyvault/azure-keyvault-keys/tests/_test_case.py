@@ -41,8 +41,8 @@ def get_release_policy(attestation_uri, **kwargs):
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
     """generates a list of parameter pairs for test case parameterization, where [x, y] = [api_version, is_hsm]"""
     combinations = []
-    versions = api_versions or ApiVersion
-    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3}
+    versions = api_versions or pytest.api_version
+    hsm_supported_versions = {ApiVersion.V7_2, ApiVersion.V7_3, ApiVersion.V7_4_PREVIEW_1}
 
     for api_version in versions:
         if not only_vault and api_version in hsm_supported_versions:
@@ -59,7 +59,7 @@ def is_public_cloud():
 class KeysClientPreparer(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
-        hsm_playback_url = "https://managedhsmvaultname.vault.azure.net"
+        hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
         if self.is_live:
@@ -103,6 +103,7 @@ class KeysClientPreparer(AzureRecordedTestCase):
             os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
 
     def _skip_if_not_configured(self, api_version, is_hsm):
+
         if self.is_live and api_version != DEFAULT_VERSION:
             pytest.skip("This test only uses the default API version for live tests")
         if self.is_live and is_hsm and self.managed_hsm_url is None:

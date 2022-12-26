@@ -14,11 +14,12 @@ from .storage_testcase import (
     BlobAccountPreparer,
     CachedStorageAccountPreparer,
 )
-from .keyvault_preparer import KeyVaultPreparer
+
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
+
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
-from .proxy_fixtures import recorded_test, variable_recorder
+from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
@@ -39,13 +40,17 @@ from .sanitizers import (
     add_uri_regex_sanitizer,
     add_uri_string_sanitizer,
     add_uri_subscription_id_sanitizer,
+    PemCertificate,
     set_bodiless_matcher,
     set_custom_default_matcher,
     set_default_function_settings,
     set_default_session_settings,
+    set_function_recording_options,
     set_headerless_matcher,
+    set_session_recording_options,
 )
-from .helpers import ResponseCallback, RetryCounter
+from .cert import create_combined_bundle
+from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording
 from .fake_credentials import FakeTokenCredential
 
 __all__ = [
@@ -79,11 +84,12 @@ __all__ = [
     "AzureTestCase",
     "is_live",
     "get_region_override",
-    "KeyVaultPreparer",
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
+    "PemCertificate",
     "PowerShellPreparer",
     "EnvironmentVariableLoader",
+    "environment_variables",
     "recorded_by_proxy",
     "recorded_test",
     "test_proxy",
@@ -91,11 +97,15 @@ __all__ = [
     "set_custom_default_matcher",
     "set_default_function_settings",
     "set_default_session_settings",
+    "set_function_recording_options",
     "set_headerless_matcher",
+    "set_session_recording_options",
     "start_test_proxy",
     "stop_test_proxy",
     "variable_recorder",
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
+    "create_combined_bundle",
+    "is_live_and_not_recording"
 ]

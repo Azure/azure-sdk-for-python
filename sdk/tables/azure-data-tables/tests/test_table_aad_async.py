@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 import pytest
 from datetime import datetime
-import sys
 
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -172,7 +171,6 @@ class TestTableAADAsync(AzureRecordedTestCase, AsyncTableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_aad_batch_all_operations_together(self, tables_storage_account_name):

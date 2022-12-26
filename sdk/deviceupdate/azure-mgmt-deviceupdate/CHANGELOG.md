@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2022-08-26)
+
+### Breaking Changes
+
+  - Client name is changed from `DeviceUpdate` to `DeviceUpdateMgmtClient`
+
 ## 1.0.0b4 (2022-05-26)
 
 **Features**

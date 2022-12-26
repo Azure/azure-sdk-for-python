@@ -2,12 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Optional
 
 
 class EndpointConnection:
     def __init__(
-        self, subscription_id: str, resource_group: str, vnet_name: str, subnet_name: str, location: str = None
+        self,
+        subscription_id: str,
+        resource_group: str,
+        vnet_name: str,
+        subnet_name: str,
+        location: Optional[str] = None,
     ):
         self.subscription_id = subscription_id
         self.resource_group = resource_group
@@ -17,6 +22,10 @@ class EndpointConnection:
 
 
 class PrivateEndpoint:
-    def __init__(self, approval_type: str = None, connections: Dict[str, EndpointConnection] = None):
+    def __init__(
+        self,
+        approval_type: Optional[str] = None,
+        connections: Optional[Dict[str, EndpointConnection]] = None,
+    ):
         self.approval_type = approval_type
         self.connections = connections

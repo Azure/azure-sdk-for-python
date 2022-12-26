@@ -2,37 +2,34 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access, too-many-instance-attributes
+
 import os
-from typing import Dict, Union, Optional
 from pathlib import Path
+from typing import Dict, Optional, Union
+
 import yaml
 
-from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2022_05_01.models import BuildContext as RestBuildContext
 from azure.ai.ml._restclient.v2022_05_01.models import (
-    BuildContext as RestBuildContext,
-    EnvironmentVersionDetails,
-    EnvironmentVersionData,
     EnvironmentContainerData,
-)
-from azure.ai.ml._utils.utils import load_yaml, load_file
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    DockerTypes,
-    ArmConstants,
-    ANONYMOUS_ENV_NAME,
+    EnvironmentVersionData,
+    EnvironmentVersionDetails,
 )
 from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml.entities._util import load_from_dict, get_md5_string
 from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
-from azure.ai.ml._utils.utils import is_url
-
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
+from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
+from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class BuildContext:
-    """Docker build context for Environment
+    """Docker build context for Environment.
 
     :param path: The local or remote path to the the docker build context directory.
     :type path: Union[str, os.PathLike]
@@ -40,7 +37,12 @@ class BuildContext:
     :type dockerfile_path: str
     """
 
-    def __init__(self, *, dockerfile_path: Optional[str] = None, path: Union[str, os.PathLike] = None):
+    def __init__(
+        self,
+        *,
+        dockerfile_path: Optional[str] = None,
+        path: Optional[Union[str, os.PathLike]] = None,
+    ):
         self.dockerfile_path = dockerfile_path
         self.path = path
 
@@ -80,6 +82,8 @@ class Environment(Asset):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param datastore: The datastore to upload the local artifact to.
+    :type datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -87,14 +91,15 @@ class Environment(Asset):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        image: str = None,
-        build: BuildContext = None,
-        conda_file: Union[str, os.PathLike] = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        image: Optional[str] = None,
+        build: Optional[BuildContext] = None,
+        conda_file: Optional[Union[str, os.PathLike]] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        datastore: Optional[str] = None,
         **kwargs,
     ):
         inference_config = kwargs.pop("inference_config", None)
@@ -117,15 +122,16 @@ class Environment(Asset):
         self._arm_type = ArmConstants.ENVIRONMENT_VERSION_TYPE
         self._conda_file_path = (
             _resolve_path(base_path=self.base_path, input=conda_file)
-            if isinstance(conda_file, os.PathLike) or isinstance(conda_file, str)
+            if isinstance(conda_file, (os.PathLike, str))
             else None
         )
         self.path = None
+        self.datastore = datastore
         self._upload_hash = None
 
         self._translated_conda_file = None
         if self.conda_file:
-            self._translated_conda_file = yaml.dump(self.conda_file)  # service needs str representation
+            self._translated_conda_file = dump_yaml(self.conda_file, sort_keys=True)  # service needs str representation
 
         if self.build and self.build.path and not is_url(self.build.path):
             path = Path(self.build.path)
@@ -139,7 +145,9 @@ class Environment(Asset):
                 self._upload_hash = get_object_hash(path, self._ignore_file)
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
-                self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file)
+                self._generate_anonymous_name_version(
+                    source="image", conda_file=self._translated_conda_file, inference_config=self.inference_config
+                )
 
     @property
     def conda_file(self) -> Dict:
@@ -165,9 +173,9 @@ class Environment(Asset):
     @classmethod
     def _load(
         cls,
-        data: dict = None,
-        yaml_path: Union[os.PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[dict] = None,
+        yaml_path: Optional[Union[os.PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Environment":
         params_override = params_override or []
@@ -213,7 +221,9 @@ class Environment(Asset):
             version=arm_id.asset_version,
             description=rest_env_version.description,
             tags=rest_env_version.tags,
-            creation_context=env_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_rest_object.system_data)
+            if env_rest_object.system_data
+            else None,
             is_anonymous=rest_env_version.is_anonymous,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
@@ -224,6 +234,7 @@ class Environment(Asset):
         if rest_env_version.conda_file:
             translated_conda_file = yaml.safe_load(rest_env_version.conda_file)
             environment.conda_file = translated_conda_file
+            environment._translated_conda_file = rest_env_version.conda_file
 
         return environment
 
@@ -233,17 +244,16 @@ class Environment(Asset):
             name=env_container_rest_object.name,
             version="1",
             id=env_container_rest_object.id,
-            creation_context=env_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_container_rest_object.system_data),
         )
         env.latest_version = env_container_rest_object.properties.latest_version
 
         # Setting version to None since if version is not provided it is defaulted to "1".
         # This should go away once container concept is finalized.
-        env.docker = None
         env.version = None
         return env
 
-    def _to_arm_resource_param(self, **kwargs):
+    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
         properties = self._to_rest_object().properties
 
         return {
@@ -255,35 +265,43 @@ class Environment(Asset):
         }
 
     def _to_dict(self) -> Dict:
-        return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     def validate(self):
         if self.name is None:
             msg = "Environment name is required"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
+            log_and_raise_error(err)
         if self.image is None and self.build is None:
             msg = "Docker image or Dockerfile is required for environments"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
+            log_and_raise_error(err)
         if self.image and self.build:
             msg = "Docker image or Dockerfile should be provided not both"
-            raise ValidationException(
+            err = ValidationException(
                 message=msg,
                 target=ErrorTarget.ENVIRONMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
+            log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
+        if not isinstance(other, Environment):
+            return NotImplemented
         return (
             self.name == other.name
             and self.id == other.id
@@ -303,13 +321,16 @@ class Environment(Asset):
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def _generate_anonymous_name_version(self, source: str, conda_file: str = None):
+    def _generate_anonymous_name_version(
+        self, source: str, conda_file: Optional[str] = None, inference_config: Optional[Dict] = None
+    ):
         hash_str = ""
         if source == "image":
-            if not conda_file:
-                hash_str = hash_str.join(get_md5_string(self.image))
-            else:
-                hash_str = hash_str.join(get_md5_string(self.image)).join(get_md5_string(conda_file))
+            hash_str = hash_str.join(get_md5_string(self.image))
+            if inference_config:
+                hash_str = hash_str.join(get_md5_string(yaml.dump(inference_config, sort_keys=True)))
+            if conda_file:
+                hash_str = hash_str.join(get_md5_string(conda_file))
         if source == "build":
             if not self.build.dockerfile_path:
                 hash_str = hash_str.join(get_md5_string(self._upload_hash))
@@ -324,12 +345,17 @@ class Environment(Asset):
 
 # TODO: Remove _DockerBuild and _DockerConfiguration classes once local endpoint moves to using updated env
 class _DockerBuild:
-    """Helper class to encapsulate Docker build info for Environment"""
+    """Helper class to encapsulate Docker build info for Environment."""
 
-    def __init__(self, base_path: Optional[Union[str, os.PathLike]] = None, dockerfile: Optional[str] = None):
+    def __init__(
+        self,
+        base_path: Optional[Union[str, os.PathLike]] = None,
+        dockerfile: Optional[str] = None,
+    ):
         self.dockerfile = _deserialize(base_path, dockerfile)
 
-    def _to_rest_object(self):
+    @classmethod
+    def _to_rest_object(cls):
         return None
 
     def _from_rest_object(self, rest_obj) -> None:
@@ -343,9 +369,11 @@ class _DockerBuild:
 
 
 def _deserialize(
-    base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict], is_conda: bool = False
+    base_path: Union[str, os.PathLike],
+    input: Union[str, os.PathLike, Dict],  # pylint: disable=redefined-builtin
+    is_conda: bool = False,
 ) -> Union[str, Dict]:
-    """Deserialize user input files for conda and docker
+    """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]
@@ -366,8 +394,10 @@ def _deserialize(
     return input
 
 
-def _resolve_path(base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]):
-    """Deserialize user input files for conda and docker
+def _resolve_path(
+    base_path: Union[str, os.PathLike], input: Union[str, os.PathLike, Dict]
+):  # pylint: disable=redefined-builtin
+    """Deserialize user input files for conda and docker.
 
     :param base_path: The base path for all files supplied by user.
     :type base_path: Union[str, os.PathLike]

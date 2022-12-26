@@ -10,9 +10,9 @@ products:
 
 These code samples show common champion scenario operations with the AzureMonitorMetricExporter.
 
-* Metrics: [sample_metrics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_metrics.py)
+* Attributes: [sample_attributes.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_attributes.py)
 * Instruments: [sample_instruments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_instruments.py)
-
+* Views: [sample_views.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/metrics/sample_views.py)
 
 ## Installation
 
@@ -22,7 +22,7 @@ $ pip install azure-monitor-opentelemetry-exporter --pre
 
 ## Run the Applications
 
-### Metrics
+### Metrics with attributes
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
@@ -30,7 +30,7 @@ $ pip install azure-monitor-opentelemetry-exporter --pre
 
 ```sh
 $ # from this directory
-$ python sample_metrics.py
+$ python sample_attributes.py
 ```
 
 ### Instrument usage
@@ -42,6 +42,17 @@ $ python sample_metrics.py
 ```sh
 $ # from this directory
 $ python sample_instruments.py
+```
+
+### Configuring metrics with views
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_views.py
 ```
 
 ## Explore the data

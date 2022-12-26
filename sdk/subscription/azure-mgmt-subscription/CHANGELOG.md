@@ -1,5 +1,17 @@
 # Release History
 
+## 3.1.1 (2022-09-05)
+
+### Bugs Fixed
+
+  - Fix error about `api_version` in operation
+
+## 3.1.0 (2022-08-30)
+
+### Features Added
+
+  - Model AcceptOwnershipStatusResponse has a new parameter provisioning_state
+
 ## 3.0.0 (2022-01-21)
 
 **Features**

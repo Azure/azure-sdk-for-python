@@ -1,5 +1,27 @@
 # Release History
 
+## 10.1.0 (2022-09-14)
+
+### Features Added
+
+  - Added operation LiveEventsOperations.async_operation
+  - Added operation LiveEventsOperations.operation_location
+  - Added operation LiveOutputsOperations.async_operation
+  - Added operation LiveOutputsOperations.operation_location
+  - Added operation StreamingEndpointsOperations.async_operation
+  - Added operation StreamingEndpointsOperations.operation_location
+  - Model AudioTrack has a new parameter bit_rate
+  - Model AudioTrack has a new parameter dash_settings
+  - Model AudioTrack has a new parameter display_name
+  - Model AudioTrack has a new parameter file_name
+  - Model AudioTrack has a new parameter hls_settings
+  - Model AudioTrack has a new parameter language_code
+  - Model AudioTrack has a new parameter mpeg4_track_id
+  - Model CommonEncryptionCbcs has a new parameter clear_key_encryption_configuration
+  - Model CommonEncryptionCenc has a new parameter clear_key_encryption_configuration
+  - Model ContentKeyPolicyPlayReadyLicense has a new parameter security_level
+  - Model LiveOutput has a new parameter rewind_window_length
+
 ## 10.0.0 (2022-07-01)
 
 **Features**

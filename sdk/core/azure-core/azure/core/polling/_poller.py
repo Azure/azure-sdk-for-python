@@ -27,18 +27,10 @@ import base64
 import logging
 import threading
 import uuid
-try:
-    from urlparse import urlparse # type: ignore # pylint: disable=unused-import
-except ImportError:
-    from urllib.parse import urlparse
-
-from typing import TYPE_CHECKING, TypeVar, Generic
+from typing import TypeVar, Generic, Any, Callable, List, Optional
 from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
-
-if TYPE_CHECKING:
-    from typing import Any, Callable, Union, List, Optional, Tuple
 
 
 PollingReturnType = TypeVar("PollingReturnType")

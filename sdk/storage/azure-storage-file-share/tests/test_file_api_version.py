@@ -3,26 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 
+import pytest
 from azure.core.exceptions import ResourceExistsError
+from azure.storage.fileshare import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
 from azure.storage.fileshare._shared.constants import X_MS_VERSION
-from azure.storage.fileshare import (
-    ShareServiceClient,
-    ShareClient,
-    ShareDirectoryClient,
-    ShareFileClient
-)
-from devtools_testutils.storage import StorageTestCase
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
 
 
-class StorageClientTest(StorageTestCase):
+class TestStorageClient(StorageRecordedTestCase):
     def setUp(self):
-        super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
         self.api_version_2 = X_MS_VERSION
         self.short_byte_data = self.get_random_bytes(1024)
@@ -52,11 +48,12 @@ class StorageClientTest(StorageTestCase):
     # --Test Cases--------------------------------------------------------------
 
     def test_service_client_api_version_property(self):
+        self.setUp()
         service_client = ShareServiceClient(
             "https://foo.file.core.windows.net/account",
             credential="fake_key")
-        self.assertEqual(service_client.api_version, self.api_version_2)
-        self.assertEqual(service_client._client._config.version, self.api_version_2)
+        assert service_client.api_version == self.api_version_2
+        assert service_client._client._config.version == self.api_version_2
 
         with pytest.raises(AttributeError):
             service_client.api_version = self.api_version_1
@@ -65,45 +62,47 @@ class StorageClientTest(StorageTestCase):
             "https://foo.file.core.windows.net/account",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(service_client.api_version, self.api_version_1)
-        self.assertEqual(service_client._client._config.version, self.api_version_1)
+        assert service_client.api_version == self.api_version_1
+        assert service_client._client._config.version == self.api_version_1
 
         share_client = service_client.get_share_client("foo")
-        self.assertEqual(share_client.api_version, self.api_version_1)
-        self.assertEqual(share_client._client._config.version, self.api_version_1)
+        assert share_client.api_version == self.api_version_1
+        assert share_client._client._config.version == self.api_version_1
 
     def test_share_client_api_version_property(self):
+        self.setUp()
         share_client = ShareClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
             credential="fake_key")
-        self.assertEqual(share_client.api_version, self.api_version_2)
-        self.assertEqual(share_client._client._config.version, self.api_version_2)
+        assert share_client.api_version == self.api_version_2
+        assert share_client._client._config.version == self.api_version_2
 
         share_client = ShareClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(share_client.api_version, self.api_version_1)
-        self.assertEqual(share_client._client._config.version, self.api_version_1)
+        assert share_client.api_version == self.api_version_1
+        assert share_client._client._config.version == self.api_version_1
 
         dir_client = share_client.get_directory_client("foo")
-        self.assertEqual(dir_client.api_version, self.api_version_1)
-        self.assertEqual(dir_client._client._config.version, self.api_version_1)
+        assert dir_client.api_version == self.api_version_1
+        assert dir_client._client._config.version == self.api_version_1
 
         file_client = share_client.get_file_client("foo")
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_directory_client_api_version_property(self):
+        self.setUp()
         dir_client = ShareDirectoryClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
             "dir_path",
             credential="fake_key")
-        self.assertEqual(dir_client.api_version, self.api_version_2)
-        self.assertEqual(dir_client._client._config.version, self.api_version_2)
+        assert dir_client.api_version == self.api_version_2
+        assert dir_client._client._config.version == self.api_version_2
 
         dir_client = ShareDirectoryClient(
             "https://foo.file.core.windows.net/account",
@@ -111,25 +110,26 @@ class StorageClientTest(StorageTestCase):
             "dir_path",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(dir_client.api_version, self.api_version_1)
-        self.assertEqual(dir_client._client._config.version, self.api_version_1)
+        assert dir_client.api_version == self.api_version_1
+        assert dir_client._client._config.version == self.api_version_1
 
         subdir_client = dir_client.get_subdirectory_client("foo")
-        self.assertEqual(subdir_client.api_version, self.api_version_1)
-        self.assertEqual(subdir_client._client._config.version, self.api_version_1)
+        assert subdir_client.api_version == self.api_version_1
+        assert subdir_client._client._config.version == self.api_version_1
 
         file_client = dir_client.get_file_client("foo")
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_file_client_api_version_property(self):
+        self.setUp()
         file_client = ShareFileClient(
             "https://foo.file.core.windows.net/account",
             "share",
             self._get_file_reference(),
             credential="fake_key")
-        self.assertEqual(file_client.api_version, self.api_version_2)
-        self.assertEqual(file_client._client._config.version, self.api_version_2)
+        assert file_client.api_version == self.api_version_2
+        assert file_client._client._config.version == self.api_version_2
 
         file_client = ShareFileClient(
             "https://foo.file.core.windows.net/account",
@@ -137,16 +137,17 @@ class StorageClientTest(StorageTestCase):
             self._get_file_reference(),
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_invalid_api_version(self):
+        self.setUp()
         with pytest.raises(ValueError) as error:
             ShareServiceClient(
                 "https://foo.file.core.windows.net/account",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareClient(
@@ -154,7 +155,7 @@ class StorageClientTest(StorageTestCase):
                 "share_name",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareDirectoryClient(
@@ -163,7 +164,7 @@ class StorageClientTest(StorageTestCase):
                 "dir_path",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareFileClient(
@@ -172,10 +173,15 @@ class StorageClientTest(StorageTestCase):
                 self._get_file_reference(),
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
     @FileSharePreparer()
-    def test_old_api_copy_file_succeeds(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_old_api_copy_file_succeeds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self.setUp()
         fsc = ShareServiceClient(
             self.account_url(storage_account_name, "file"),
             credential=storage_account_key,
@@ -202,13 +208,13 @@ class StorageClientTest(StorageTestCase):
         # Assert
         dest_prop = file_client.get_file_properties()
         # to make sure the acl is copied from source
-        self.assertEqual(source_prop['permission_key'], dest_prop['permission_key'])
+        assert source_prop['permission_key'] == dest_prop['permission_key']
 
-        self.assertIsNotNone(copy)
-        self.assertEqual(copy['copy_status'], 'success')
-        self.assertIsNotNone(copy['copy_id'])
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
 
         copy_file = file_client.download_file().readall()
-        self.assertEqual(copy_file, self.short_byte_data)
+        assert copy_file == self.short_byte_data
 
 # ------------------------------------------------------------------------------

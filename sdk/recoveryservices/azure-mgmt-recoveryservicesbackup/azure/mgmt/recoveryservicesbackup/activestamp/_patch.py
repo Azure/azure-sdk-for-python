@@ -33,6 +33,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
     def __init__(self, duplicate_param_names):
         # type: (List[str]) -> None
@@ -41,17 +42,19 @@ class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         parsed_url = urllib.parse.urlparse(request.http_request.url)
         query_params = urllib.parse.parse_qs(parsed_url.query)
-        filtered_query_params = {
-            k: v[-1:] if k in self.duplicate_param_names else v
-            for k, v in query_params.items()
-        }
-        request.http_request.url = request.http_request.url.replace(parsed_url.query, "") + urllib.parse.urlencode(filtered_query_params, doseq=True)
+        filtered_query_params = {k: v[-1:] if k in self.duplicate_param_names else v for k, v in query_params.items()}
+        request.http_request.url = request.http_request.url.replace(parsed_url.query, "") + urllib.parse.urlencode(
+            filtered_query_params, doseq=True
+        )
         return super().on_request(request)
+
 
 DUPLICATE_PARAMS_POLICY = RemoveDuplicateParamsPolicy(duplicate_param_names=["$filter", "$skiptoken", "api-version"])
 
+
 class RecoveryServicesBackupClient(RecoveryServicesBackupClientGenerated):
     __doc__ = RecoveryServicesBackupClientGenerated.__doc__
+
     def __init__(
         self,
         credential: "TokenCredential",
@@ -71,6 +74,7 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientGenerated):
             per_call_policies=per_call_policies,
             **kwargs
         )
+
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md

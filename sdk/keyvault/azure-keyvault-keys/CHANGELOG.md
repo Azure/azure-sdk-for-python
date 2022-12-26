@@ -1,14 +1,72 @@
 # Release History
 
-## 4.6.0b2 (Unreleased)
+## 4.8.0b3 (Unreleased)
 
 ### Features Added
+- Clients each have a `send_request` method that can be used to send custom requests using the
+  client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0b2 (2022-11-15)
+
+### Features Added
+- Added support for service API version `7.4-preview.1`
+- `KeyClient` has a `create_okp_key` method to create an octet key pair (OKP) on Managed HSM
+- Added `eddsa` to `SignatureAlgorithm` enum to support signing and verifying using an
+  Edwards-Curve Digital Signature Algorithm (EdDSA) on Managed HSM
+- Added `okp` and `okp_hsm` to `KeyType` enum for octet key pairs
+- Added `ed25519` to `KeyCurveName` enum to support use of the Ed25519 Edwards curve
+
+### Other Changes
+- Key Vault API version `7.4-preview.1` is now the default
+- Dropped `msrest` requirement
+- Dropped `six` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
+
+## 4.8.0b1 (2022-09-22)
+
+### Features Added
+- An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
+- Updated minimum `msrest` version to 0.7.1
+
+## 4.7.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
+
+### Other Changes
+- Changes from version 4.7.0b1 have been reverted and will be included in version 4.8.0b1
+
+## 4.7.0b1 (2022-08-12)
+
+### Features Added
+- An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
+
+### Other Changes
+- The most recent release was version 4.6.1 instead of the intended version, 4.5.2.
+  The next stable release is planned to be version 4.7.0.
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
+
+## 4.6.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.6.0b1 (2022-06-07)
 

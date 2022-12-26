@@ -21,6 +21,7 @@ from ._path_client_async import PathClient
 from .._shared.base_client_async import AsyncTransportWrapper
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
 
 
@@ -68,13 +69,12 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            directory_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, account_url: str,
+        file_system_name: str,
+        directory_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
                                                       credential=credential, **kwargs)
 
@@ -269,7 +269,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             The value must have the following format: "{filesystem}/{directory}/{subdirectory}".
         :keyword source_lease:
             A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword lease:

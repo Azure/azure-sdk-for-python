@@ -4,8 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
+from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
 from .azure_cli import AzureCliCredential
@@ -17,8 +18,6 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
-    from typing import Any, List
-    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,9 +35,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
-    4. The user currently signed in to Visual Studio Code.
-    5. The identity currently logged in to the Azure CLI.
-    6. The identity currently logged in to Azure PowerShell.
+    4. The identity currently logged in to the Azure CLI.
+    5. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
@@ -50,7 +48,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         variables from the credential. Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **False**.
+        Defaults to **True**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
@@ -67,7 +65,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -97,7 +95,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
+        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
@@ -127,16 +125,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """

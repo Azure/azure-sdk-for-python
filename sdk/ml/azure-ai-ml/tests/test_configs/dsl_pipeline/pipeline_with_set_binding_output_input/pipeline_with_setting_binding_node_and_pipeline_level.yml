@@ -1,0 +1,31 @@
+
+type: pipeline
+
+inputs:
+  training_input:
+    path: ./data
+    mode: download
+  training_max_epochs: 20
+  training_learning_rate: 1.8
+  learning_rate_schedule: 'time-based'
+
+outputs:
+  trained_model:
+    mode: rw_mount
+
+jobs:
+  train_job:
+    type: command
+    compute: azureml:cpu-cluster
+    component: file:./train.yml
+    inputs:
+      training_data:
+        path: ${{parent.inputs.training_input}}
+        mode: ro_mount
+      max_epochs: ${{parent.inputs.training_max_epochs}}
+      learning_rate: ${{parent.inputs.training_learning_rate}}
+      learning_rate_schedule: ${{parent.inputs.learning_rate_schedule}}
+    outputs:
+      model_output:
+        path: ${{parent.outputs.trained_model}}
+        mode: upload

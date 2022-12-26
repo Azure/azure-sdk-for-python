@@ -3,14 +3,16 @@
 # ---------------------------------------------------------
 
 
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock, MagicMock
-from azure.ai.ml.constants import LocalEndpointConstants
+
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._local_endpoints.docker_client import DockerClient
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
-from azure.ai.ml._local_endpoints.errors import MultipleLocalDeploymentsFoundError
-from pathlib import Path
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
+from azure.ai.ml.exceptions import MultipleLocalDeploymentsFoundError
 
 
 @pytest.fixture

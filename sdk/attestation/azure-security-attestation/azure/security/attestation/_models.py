@@ -871,7 +871,7 @@ class AttestationToken(object):
         """Return a secured JWT expressing the body, secured with the specified signing key.
         :param Any body: The body of the token to be serialized.
         :keyword key: Signing key used to sign the token.
-        :kwtype key: cryptography.hazmat.primatives.asymmetric.ec or cryptography.hazmat.primatives.asymmetric.rsa
+        :kwtype key: cryptography.hazmat.primitives.asymmetric.ec or cryptography.hazmat.primitives.asymmetric.rsa
         :keyword certificate: Certificate to be transmitted to attestation service
             used to validate the token.
         :kwtype certificate: Certificate

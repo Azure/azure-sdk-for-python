@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 version: "2" 
 services:
 
@@ -6,7 +8,7 @@ services:
     image: openzipkin/zipkin:latest
     ports:
       - "9411:9411"
-
+  # spell-checker:ignore OTELCOL
   otel-collector: 
     image: otel/opentelemetry-collector:latest 
     command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"] 

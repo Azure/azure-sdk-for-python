@@ -1,10 +1,10 @@
-from azure.ai.ml.operations import OnlineDeploymentOperations
+from unittest.mock import Mock, patch
 
-from unittest.mock import patch, Mock
 import pytest
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.operations import OnlineDeploymentOperations
 
 
 @pytest.fixture
@@ -34,6 +34,7 @@ def mock_endpoint_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
     def test_mock_endpoint_operation(mock_endpoint_operations):
         assert mock_endpoint_operations is not None

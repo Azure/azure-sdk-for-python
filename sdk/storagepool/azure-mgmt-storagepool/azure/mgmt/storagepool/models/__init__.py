@@ -6,130 +6,96 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Acl
-    from ._models_py3 import Disk
-    from ._models_py3 import DiskPool
-    from ._models_py3 import DiskPoolCreate
-    from ._models_py3 import DiskPoolListResult
-    from ._models_py3 import DiskPoolUpdate
-    from ._models_py3 import DiskPoolZoneInfo
-    from ._models_py3 import DiskPoolZoneListResult
-    from ._models_py3 import EndpointDependency
-    from ._models_py3 import EndpointDetail
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import IscsiLun
-    from ._models_py3 import IscsiTarget
-    from ._models_py3 import IscsiTargetCreate
-    from ._models_py3 import IscsiTargetList
-    from ._models_py3 import IscsiTargetUpdate
-    from ._models_py3 import OutboundEnvironmentEndpoint
-    from ._models_py3 import OutboundEnvironmentEndpointList
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceSkuCapability
-    from ._models_py3 import ResourceSkuInfo
-    from ._models_py3 import ResourceSkuListResult
-    from ._models_py3 import ResourceSkuLocationInfo
-    from ._models_py3 import ResourceSkuRestrictionInfo
-    from ._models_py3 import ResourceSkuRestrictions
-    from ._models_py3 import ResourceSkuZoneDetails
-    from ._models_py3 import Sku
-    from ._models_py3 import StoragePoolOperationDisplay
-    from ._models_py3 import StoragePoolOperationListResult
-    from ._models_py3 import StoragePoolRPOperation
-    from ._models_py3 import SystemMetadata
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Acl  # type: ignore
-    from ._models import Disk  # type: ignore
-    from ._models import DiskPool  # type: ignore
-    from ._models import DiskPoolCreate  # type: ignore
-    from ._models import DiskPoolListResult  # type: ignore
-    from ._models import DiskPoolUpdate  # type: ignore
-    from ._models import DiskPoolZoneInfo  # type: ignore
-    from ._models import DiskPoolZoneListResult  # type: ignore
-    from ._models import EndpointDependency  # type: ignore
-    from ._models import EndpointDetail  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import IscsiLun  # type: ignore
-    from ._models import IscsiTarget  # type: ignore
-    from ._models import IscsiTargetCreate  # type: ignore
-    from ._models import IscsiTargetList  # type: ignore
-    from ._models import IscsiTargetUpdate  # type: ignore
-    from ._models import OutboundEnvironmentEndpoint  # type: ignore
-    from ._models import OutboundEnvironmentEndpointList  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceSkuCapability  # type: ignore
-    from ._models import ResourceSkuInfo  # type: ignore
-    from ._models import ResourceSkuListResult  # type: ignore
-    from ._models import ResourceSkuLocationInfo  # type: ignore
-    from ._models import ResourceSkuRestrictionInfo  # type: ignore
-    from ._models import ResourceSkuRestrictions  # type: ignore
-    from ._models import ResourceSkuZoneDetails  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import StoragePoolOperationDisplay  # type: ignore
-    from ._models import StoragePoolOperationListResult  # type: ignore
-    from ._models import StoragePoolRPOperation  # type: ignore
-    from ._models import SystemMetadata  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Acl
+from ._models_py3 import Disk
+from ._models_py3 import DiskPool
+from ._models_py3 import DiskPoolCreate
+from ._models_py3 import DiskPoolListResult
+from ._models_py3 import DiskPoolUpdate
+from ._models_py3 import DiskPoolZoneInfo
+from ._models_py3 import DiskPoolZoneListResult
+from ._models_py3 import EndpointDependency
+from ._models_py3 import EndpointDetail
+from ._models_py3 import Error
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorResponse
+from ._models_py3 import IscsiLun
+from ._models_py3 import IscsiTarget
+from ._models_py3 import IscsiTargetCreate
+from ._models_py3 import IscsiTargetList
+from ._models_py3 import IscsiTargetUpdate
+from ._models_py3 import OutboundEnvironmentEndpoint
+from ._models_py3 import OutboundEnvironmentEndpointList
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import ResourceSkuCapability
+from ._models_py3 import ResourceSkuInfo
+from ._models_py3 import ResourceSkuListResult
+from ._models_py3 import ResourceSkuLocationInfo
+from ._models_py3 import ResourceSkuRestrictionInfo
+from ._models_py3 import ResourceSkuRestrictions
+from ._models_py3 import ResourceSkuZoneDetails
+from ._models_py3 import Sku
+from ._models_py3 import StoragePoolOperationDisplay
+from ._models_py3 import StoragePoolOperationListResult
+from ._models_py3 import StoragePoolRPOperation
+from ._models_py3 import SystemMetadata
+from ._models_py3 import TrackedResource
 
-from ._storage_pool_management_enums import (
-    CreatedByType,
-    DiskPoolTier,
-    IscsiTargetAclMode,
-    OperationalStatus,
-    ProvisioningStates,
-    ResourceSkuRestrictionsReasonCode,
-    ResourceSkuRestrictionsType,
-)
+from ._storage_pool_management_enums import CreatedByType
+from ._storage_pool_management_enums import DiskPoolTier
+from ._storage_pool_management_enums import IscsiTargetAclMode
+from ._storage_pool_management_enums import OperationalStatus
+from ._storage_pool_management_enums import ProvisioningStates
+from ._storage_pool_management_enums import ResourceSkuRestrictionsReasonCode
+from ._storage_pool_management_enums import ResourceSkuRestrictionsType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Acl',
-    'Disk',
-    'DiskPool',
-    'DiskPoolCreate',
-    'DiskPoolListResult',
-    'DiskPoolUpdate',
-    'DiskPoolZoneInfo',
-    'DiskPoolZoneListResult',
-    'EndpointDependency',
-    'EndpointDetail',
-    'Error',
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'IscsiLun',
-    'IscsiTarget',
-    'IscsiTargetCreate',
-    'IscsiTargetList',
-    'IscsiTargetUpdate',
-    'OutboundEnvironmentEndpoint',
-    'OutboundEnvironmentEndpointList',
-    'ProxyResource',
-    'Resource',
-    'ResourceSkuCapability',
-    'ResourceSkuInfo',
-    'ResourceSkuListResult',
-    'ResourceSkuLocationInfo',
-    'ResourceSkuRestrictionInfo',
-    'ResourceSkuRestrictions',
-    'ResourceSkuZoneDetails',
-    'Sku',
-    'StoragePoolOperationDisplay',
-    'StoragePoolOperationListResult',
-    'StoragePoolRPOperation',
-    'SystemMetadata',
-    'TrackedResource',
-    'CreatedByType',
-    'DiskPoolTier',
-    'IscsiTargetAclMode',
-    'OperationalStatus',
-    'ProvisioningStates',
-    'ResourceSkuRestrictionsReasonCode',
-    'ResourceSkuRestrictionsType',
+    "Acl",
+    "Disk",
+    "DiskPool",
+    "DiskPoolCreate",
+    "DiskPoolListResult",
+    "DiskPoolUpdate",
+    "DiskPoolZoneInfo",
+    "DiskPoolZoneListResult",
+    "EndpointDependency",
+    "EndpointDetail",
+    "Error",
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "IscsiLun",
+    "IscsiTarget",
+    "IscsiTargetCreate",
+    "IscsiTargetList",
+    "IscsiTargetUpdate",
+    "OutboundEnvironmentEndpoint",
+    "OutboundEnvironmentEndpointList",
+    "ProxyResource",
+    "Resource",
+    "ResourceSkuCapability",
+    "ResourceSkuInfo",
+    "ResourceSkuListResult",
+    "ResourceSkuLocationInfo",
+    "ResourceSkuRestrictionInfo",
+    "ResourceSkuRestrictions",
+    "ResourceSkuZoneDetails",
+    "Sku",
+    "StoragePoolOperationDisplay",
+    "StoragePoolOperationListResult",
+    "StoragePoolRPOperation",
+    "SystemMetadata",
+    "TrackedResource",
+    "CreatedByType",
+    "DiskPoolTier",
+    "IscsiTargetAclMode",
+    "OperationalStatus",
+    "ProvisioningStates",
+    "ResourceSkuRestrictionsReasonCode",
+    "ResourceSkuRestrictionsType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -2,15 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union, TYPE_CHECKING
+from typing import Any, Union, Optional
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
+from .._base_client import TextAnalyticsApiVersion
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
-from .._policies import TextAnalyticsResponseHookPolicy
+from .._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from .._user_agent import USER_AGENT
 from .._version import DEFAULT_API_VERSION
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 def _authentication_policy(credential):
@@ -33,7 +33,9 @@ class AsyncTextAnalyticsClientBase:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        *,
+        api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -44,6 +46,9 @@ class AsyncTextAnalyticsClientBase:
                 "x-envoy-upstream-service-time",
                 "Strict-Transport-Security",
                 "x-content-type-options",
+                "warn-code",
+                "warn-agent",
+                "warn-text",
             }
         )
         http_logging_policy.allowed_query_params.update(
@@ -64,14 +69,18 @@ class AsyncTextAnalyticsClientBase:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
+        if hasattr(self._api_version, "value"):
+            self._api_version = self._api_version.value  # type: ignore
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
+            api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),
             http_logging_policy=kwargs.pop("http_logging_policy", http_logging_policy),
+            per_retry_policies=kwargs.get("per_retry_policies", QuotaExceededPolicy()),
             **kwargs
         )
 

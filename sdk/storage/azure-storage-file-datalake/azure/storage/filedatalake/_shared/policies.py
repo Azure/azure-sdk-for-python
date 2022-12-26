@@ -82,7 +82,7 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """
     status = response.http_response.status_code
     if 300 <= status < 500:
-        # An exception occured, but in most cases it was expected. Examples could
+        # An exception occurred, but in most cases it was expected. Examples could
         # include a 309 Conflict or 412 Precondition Failed.
         if status == 404 and mode == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
@@ -336,6 +336,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
+        # Since HTTP does not differentiate between no content and empty content,
+        # we have to perform a None check.
+        data = data or b""
         md5 = hashlib.md5() # nosec
         if isinstance(data, bytes):
             md5.update(data)

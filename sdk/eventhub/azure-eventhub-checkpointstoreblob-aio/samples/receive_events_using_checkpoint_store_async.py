@@ -21,7 +21,6 @@ async def main(client):
         await client.receive(on_event)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
     checkpoint_store = BlobCheckpointStore.from_connection_string(
         STORAGE_CONNECTION_STR,
         container_name=BLOB_CONTAINER_NAME,
@@ -32,7 +31,4 @@ if __name__ == '__main__':
         eventhub_name=EVENTHUB_NAME,
         checkpoint_store=checkpoint_store
     )
-    try:
-        loop.run_until_complete(main(client))
-    finally:
-        loop.stop()
+    asyncio.run(main(client))

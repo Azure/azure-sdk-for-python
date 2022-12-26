@@ -4,7 +4,7 @@ from azure.core.utils import parse_connection_string
 from devtools_testutils import AzureMgmtTestCase
 
 class CoreConnectionStringParserTests(AzureMgmtTestCase):
-
+    # cSpell:disable
     def test_parsing_with_case_sensitive_keys_for_sensitive_conn_str(self, **kwargs):
         conn_str = 'Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         parse_result = parse_connection_string(conn_str, True)
@@ -128,3 +128,4 @@ class CoreConnectionStringParserTests(AzureMgmtTestCase):
         parse_result = parse_connection_string(conn_str, False)
         values = parse_result.values()
         assert len(values) == 3
+    # cSpell:enable

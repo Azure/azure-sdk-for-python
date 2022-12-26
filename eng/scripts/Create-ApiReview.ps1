@@ -117,6 +117,13 @@ function ProcessPackage($PackageName)
                 }
                 elseif ($version.IsPrerelease)
                 {
+                    # Check if package name is approved. Preview version cannot be released without package name approval
+                    if ($respCode -eq '202' -and $pkgInfo.ReleaseStatus -and $pkgInfo.ReleaseStatus -ne "Unreleased")
+                    {
+                        Write-Error "Package '$PackageName' is not yet approved on APIView for preview release. Package approval for beta relase must be completed by an API approver if it was never released as a stable version."
+                        Write-Error "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on package name approval."
+                        exit 1
+                    }
                     # Ignore API review status for prerelease version
                     Write-Host "Package version is not GA. Ignoring API view approval status"
                 }

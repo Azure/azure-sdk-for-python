@@ -1,83 +1,81 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import logging
-from marshmallow import INCLUDE
 
-from azure.ai.ml.constants import JobType, NodeType
-from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
+# pylint: disable=unused-argument,no-self-use,no-member
+
+import logging
+
+from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load
+
+from azure.ai.ml._schema._utils.data_binding_expression import _add_data_binding_to_field
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    ComputeField,
+    NestedField,
+    RegistryStr,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.pipeline import PipelineJobSettingsSchema
-from azure.ai.ml._schema.pipeline.automl_node import AutoMLNodeSchema
-from azure.ai.ml._schema.pipeline.component_job import (
-    CommandSchema,
-    SweepSchema,
-    ParallelSchema,
-    _resolve_inputs_outputs,
+from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
+from azure.ai.ml._schema.pipeline.pipeline_component import (
+    PipelineComponentFileRefField,
+    PipelineJobsField,
+    _post_load_pipeline_jobs,
 )
-from marshmallow import fields, post_load, pre_dump
-from azure.ai.ml._schema.core.fields import ComputeField, PipelineNodeNameStr, TypeSensitiveUnionField
-from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
-from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
-from azure.ai.ml._schema.schedule.schedule import CronScheduleSchema, RecurrenceScheduleSchema
-
+from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 module_logger = logging.getLogger(__name__)
 
 
-class NodeNameStr(PipelineNodeNameStr):
-    def _get_field_name(self) -> str:
-        return "Pipeline node"
-
-
 class PipelineJobSchema(BaseJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
-    jobs = fields.Dict(
-        keys=NodeNameStr(),
-        values=TypeSensitiveUnionField(
-            {
-                NodeType.COMMAND: [NestedField(CommandSchema, unknown=INCLUDE), NestedField(PipelineCommandJobSchema)],
-                NodeType.SWEEP: [NestedField(SweepSchema, unknown=INCLUDE)],
-                NodeType.PARALLEL: [
-                    # ParallelSchema support parallel pipeline yml with "component"
-                    NestedField(ParallelSchema, unknown=INCLUDE),
-                    NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
-                ],
-                NodeType.AUTOML: [AutoMLNodeSchema(unknown=INCLUDE)],
-            }
-        ),
-    )
     compute = ComputeField()
     settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
     inputs = InputsField()
     outputs = OutputsField()
-    schedule = UnionField([NestedField(CronScheduleSchema()), NestedField(RecurrenceScheduleSchema())])
+    jobs = PipelineJobsField()
+    component = UnionField(
+        [
+            # for registry type assets
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+            # component file reference
+            PipelineComponentFileRefField(),
+        ],
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Support databinding in inputs as we support macro like ${{name}}
+        _add_data_binding_to_field(self.load_fields["inputs"], [], [])
+
+    @pre_dump()
+    def backup_jobs_and_remove_component(self, job, **kwargs):
+        # pylint: disable=protected-access
+        job_copy = _resolve_inputs_outputs(job)
+        if not isinstance(job_copy.component, str):
+            # If component is pipeline component object,
+            # copy jobs to job and remove component.
+            if not job_copy._jobs:
+                job_copy._jobs = job_copy.component.jobs
+            job_copy.component = None
+        return job_copy
+
+    @pre_load()
+    def check_exclusive_fields(self, data: dict, **kwargs) -> dict:
+        error_msg = "'jobs' and 'component' are mutually exclusive fields in pipeline job."
+        # When loading from yaml, data["component"] must be a local path (str)
+        # Otherwise, data["component"] can be a PipelineComponent so data["jobs"] must exist
+        if isinstance(data.get("component"), str) and data.get("jobs"):
+            raise ValidationError(error_msg)
+        return data
 
     @post_load
     def make(self, data: dict, **kwargs) -> dict:
-        from azure.ai.ml.entities import CommandJob, ParallelJob
-        from azure.ai.ml.entities._builders import parse_inputs_outputs
-        from azure.ai.ml.constants import ComponentSource
-
-        # parse inputs/outputs
-        data = parse_inputs_outputs(data)
-        # convert CommandJob to CommandComponent here
-
-        jobs = data.get("jobs", {})
-        for key, job_instance in jobs.items():
-            if isinstance(job_instance, (CommandJob, ParallelJob)):
-                # Translate command component/job to command component
-                job_instance = job_instance._to_node(
-                    context=self.context,
-                    _source=ComponentSource.BUILDER,
-                    pipeline_job_dict=data,
-                )
-                jobs[key] = job_instance
-            # update job instance name to key
-            job_instance.name = key
-        return data
-
-    @pre_dump
-    def resolve_inputs_outputs(self, job, **kwargs):
-        return _resolve_inputs_outputs(job)
+        return _post_load_pipeline_jobs(self.context, data)

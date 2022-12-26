@@ -3,23 +3,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import GlobalConversationAccountPreparer
-from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
+class TestOrchestrationAppQnaResponseAsync(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    async def test_orchestration_app_qna_response(self, endpoint, key, orch_project_name, orch_deployment_name):
+    @pytest.mark.asyncio
+    async def test_orchestration_app_qna_response(self, recorded_test, conversation_creds):
 
         # analyze query
-        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
         async with client:
             query = "How are you?"
             result = await client.analyze_conversation(
@@ -36,8 +36,8 @@ class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
                         "isLoggingEnabled": False
                     },
                     "parameters": {
-                        "projectName": orch_project_name,
-                        "deploymentName": orch_deployment_name,
+                        "projectName": conversation_creds["orch_project_name"],
+                        "deploymentName": conversation_creds["orch_deployment_name"],
                         "verbose": True
                     }
                 }
@@ -48,15 +48,15 @@ class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
             assert not result is None
             assert result["kind"] == "ConversationResult"
             assert result["result"]["query"] == query
-            
+
             # assert - prediction type
             assert result["result"]["prediction"]["projectKind"] == "Orchestration"
-            
+
             # assert - top matching project
             assert result["result"]["prediction"]["topIntent"] == top_project
             top_intent_object = result["result"]["prediction"]["intents"][top_project]
             assert top_intent_object["targetProjectKind"] == "QuestionAnswering"
-            
+
             # assert intent and entities
             qna_result = top_intent_object["result"]
             answer = qna_result["answers"][0]["answer"]

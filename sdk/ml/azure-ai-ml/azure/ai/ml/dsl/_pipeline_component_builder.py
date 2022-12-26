@@ -1,27 +1,37 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import sys
-from typing import Callable, Union
+
+# pylint: disable=protected-access
+import copy
+import typing
 from collections import OrderedDict
-from contextlib import contextmanager
-from inspect import signature, Parameter
+from inspect import Parameter, signature
+from typing import Callable, Union
 
-from azure.ai.ml.constants import ComponentSource
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._job.pipeline._io import PipelineOutputBase, PipelineOutput
+from azure.ai.ml._utils._func_utils import persistent_locals
+from azure.ai.ml._utils.utils import (
+    get_all_enum_values_iter,
+    is_valid_node_name,
+    parse_args_description_from_docstring,
+)
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml.entities._component._pipeline_component import _PipelineComponent
+from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml._utils.utils import is_valid_node_name, parse_args_description_from_docstring
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
+from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
-# Currently we only support single layer pipeline, we may increase this when we supports multiple layer pipeline(
-# nested pipeline, aka sub graph).
-# But we still need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
+# We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
+from azure.ai.ml.exceptions import UserErrorException
 
-_BUILDER_STACK_MAX_DEPTH = 2
+_BUILDER_STACK_MAX_DEPTH = 100
 
 
 class _PipelineComponentBuilderStack:
@@ -45,12 +55,13 @@ class _PipelineComponentBuilderStack:
         # TODO: validate cycle
         self.items.append(item)
         if self.size() >= _BUILDER_STACK_MAX_DEPTH:
-            current_pipelines = [p.name for p in self.items]
+            current_pipeline = self.items[0].name
             # clear current pipeline stack
             self.items = []
-            msg = "Currently only single layer pipeline is supported. Currently got: {}"
+            msg = "Pipeline {} depth exceeds limitation. Max depth: {}"
             raise UserErrorException(
-                message=msg.format(current_pipelines), no_personal_data_message=msg.format("[current_pipeline]")
+                message=msg.format(current_pipeline, _BUILDER_STACK_MAX_DEPTH),
+                no_personal_data_message=msg.format("[current_pipeline]", _BUILDER_STACK_MAX_DEPTH),
             )
 
     def is_empty(self):
@@ -84,7 +95,7 @@ def get_func_variable_tracer(_locals_data, func_code):
     :type func_code: CodeType
     """
 
-    def tracer(frame, event, arg):
+    def tracer(frame, event, arg):  # pylint: disable=unused-argument
         if frame.f_code == func_code and event == "return":
             # Copy the locals of user's dsl function when it returns.
             _locals_data.update(frame.f_locals.copy())
@@ -92,19 +103,9 @@ def get_func_variable_tracer(_locals_data, func_code):
     return tracer
 
 
-@contextmanager
-def replace_sys_profiler(profiler):
-    """A context manager which replaces sys profiler to given profiler."""
-    original_profiler = sys.getprofile()
-    sys.setprofile(profiler)
-    try:
-        yield
-    finally:
-        sys.setprofile(original_profiler)
-
-
 class PipelineComponentBuilder:
     # map from python built-in type to component type
+    # pylint: disable=too-many-instance-attributes
     DEFAULT_DATA_TYPE_MAPPING = {
         "float": "number",
         "int": "integer",
@@ -119,9 +120,10 @@ class PipelineComponentBuilder:
         version=None,
         display_name=None,
         description=None,
-        compute=None,
         default_datastore=None,
         tags=None,
+        source_path=None,
+        non_pipeline_inputs=None,
     ):
         self.func = func
         name = name if name else func.__name__
@@ -130,45 +132,24 @@ class PipelineComponentBuilder:
         self._args_description = parse_args_description_from_docstring(func.__doc__)
         if name is None:
             name = func.__name__
-        if version is None:
-            version = "1"
         # List of nodes, order by it's creation order in pipeline.
         self.nodes = []
+        self.non_pipeline_parameter_names = non_pipeline_inputs or []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
-        self.inputs = {}
-        for p in signature(func).parameters.values():
-            if p.default is Parameter.empty or p.default is None:
-                self.inputs[p.name] = {"type": "unknown", "default": None}
-            else:
-                default_type = type(p.default).__name__
-                self.inputs[p.name] = {
-                    "type": self.DEFAULT_DATA_TYPE_MAPPING.get(default_type, default_type),
-                    "default": p.default,
-                }
-            # add arg description
-            if p.name in self._args_description:
-                self.inputs[p.name]["description"] = self._args_description[p.name]
-        # A dict of outputs name to OutputDefinition.
-        self.outputs = {}
-        self.pipeline_component = _PipelineComponent(
-            name=name,
-            version=version,
-            display_name=display_name,
-            description=description,
-            inputs=self.inputs,
-            outputs=self.outputs,
-            components={},
-            _source=ComponentSource.DSL,
-        )
-        self._name = self.pipeline_component.name
-        self.compute = compute
+        self.inputs = self._build_inputs(func)
+        self._name = name
+        self.version = version
+        self.display_name = display_name
+        self.description = description
         self.default_datastore = default_datastore
         self.tags = tags
+        self.source_path = source_path
 
     @property
     def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
+        """Name of pipeline builder, it's name will be same as the pipeline
+        definition it builds."""
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
@@ -179,28 +160,101 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, kwargs) -> _PipelineComponent:
-        # We use this stack to store the dsl pipeline definition hierarchy
-        _definition_builder_stack.push(self)
+    def build(
+        self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None
+    ) -> PipelineComponent:
+        """
+        Build a pipeline component from current pipeline builder.
+        :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
+        :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
+        """
+        if user_provided_kwargs is None:
+            user_provided_kwargs = {}
+        # Clear nodes as we may call build multiple times.
+        self.nodes = []
+
+        kwargs = _build_pipeline_parameter(
+            func=self.func,
+            user_provided_kwargs=user_provided_kwargs,
+            # TODO: support result() for pipeline input inside parameter group
+            group_default_kwargs=self._get_group_parameter_defaults(),
+            non_pipeline_inputs=non_pipeline_inputs,
+        )
+        kwargs.update(non_pipeline_inputs_dict or {})
 
         # Use a dict to store all variables in self.func
-        _locals = {}
-        func_variable_profiler = get_func_variable_tracer(_locals, self.func.__code__)
-        try:
-            with replace_sys_profiler(func_variable_profiler):
-                outputs = self.func(**kwargs)
-        finally:
-            _definition_builder_stack.pop()
+        outputs, _locals = self._get_outputs_and_locals(kwargs)
 
         if outputs is None:
             outputs = {}
 
-        self._update_outputs(outputs)
-        self._update_nodes_variable_names(_locals)
-        return self.pipeline_component
+        jobs = self._update_nodes_variable_names(_locals)
+        pipeline_component = PipelineComponent(
+            name=self.name,
+            version=self.version,
+            display_name=self.display_name,
+            description=self.description,
+            inputs=self.inputs,
+            jobs=jobs,
+            tags=self.tags,
+            source_path=self.source_path,
+            _source=ComponentSource.DSL,
+        )
+        # TODO: Refine here. The output can not be built first then pass into pipeline component creation,
+        # exception will be raised in component.build_validate_io().
+        pipeline_component._outputs = self._build_pipeline_outputs(outputs)
+        return pipeline_component
 
-    def _update_outputs(self, outputs):
-        """Validate if dsl.pipeline returns valid outputs and set output binding.
+    def _get_outputs_and_locals(
+        self, _all_kwargs: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[typing.Dict, typing.Dict]:
+        """Get outputs and locals from self.func.
+        Locals will be used to update node variable names.
+
+        :param _all_kwargs: All kwargs to call self.func.
+        :type _all_kwargs: typing.Dict[str, typing.Any]
+        :return: A tuple of outputs and locals.
+        :rtype: typing.Tuple[typing.Dict, typing.Dict]
+        """
+        # We use this stack to store the dsl pipeline definition hierarchy
+        _definition_builder_stack.push(self)
+
+        try:
+            persistent_func = persistent_locals(self.func)
+            outputs = persistent_func(**_all_kwargs)
+            return outputs, persistent_func.locals
+        finally:
+            _definition_builder_stack.pop()
+
+    def _validate_group_annotation(self, name: str, val: GroupInput):
+        for k, v in val.values.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(k, v)
+            elif isinstance(v, Output):
+                # TODO(2097468): automatically change it to Input when used in input annotation
+                raise UserErrorException("Output annotation cannot be used in @pipeline.")
+            elif isinstance(v, Input):
+                if v.type not in IOConstants.PRIMITIVE_STR_2_TYPE:
+                    # TODO(2097478): support port type groups
+                    raise UserErrorException(f"Only primitive types can be used as input of group, got {v.type}")
+            else:
+                raise UserErrorException(f"Unsupported annotation type {type(v)} for group field {name}.{k}")
+
+    def _build_inputs(self, func):
+        inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
+        for k, v in inputs.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(name=k, val=v)
+            # add arg description
+            if k in self._args_description:
+                v["description"] = self._args_description[k]
+        return inputs
+
+    def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]):
+        """Validate if dsl.pipeline returns valid outputs and set output
+        binding. Create PipelineOutput as pipeline's output definition based on
+        node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
@@ -214,19 +268,62 @@ class PipelineComponentBuilder:
             raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
         output_dict = {}
         for key, value in outputs.items():
-            if not isinstance(key, str) or not isinstance(value, PipelineOutputBase) or value._owner is None:
+            if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
+            if value._meta is not None:
+                meta = value._meta
+            else:
+                meta = Output(
+                    type=value.type,
+                    path=value.path,
+                    mode=value.mode,
+                    description=value.description,
+                    is_control=value.is_control,
+                )
 
+            # hack: map component output type to valid pipeline output type
+            def _map_type(_meta):
+                if type(_meta).__name__ != "InternalOutput":
+                    return _meta.type
+                if _meta.type in list(get_all_enum_values_iter(AssetTypes)):
+                    return _meta.type
+                if _meta.type in ["AnyFile"]:
+                    return AssetTypes.URI_FILE
+                return AssetTypes.URI_FOLDER
+
+            # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             pipeline_output = PipelineOutput(
-                name=key, data=None, meta=None, owner="pipeline", description=self._args_description.get(key, None)
+                name=key,
+                data=None,
+                meta=Output(
+                    type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+                ),
+                owner="pipeline",
+                description=self._args_description.get(key, None),
             )
-            # set bound component's output to data binding
-            value._owner.outputs[value._name]._data = pipeline_output
+            value._owner.outputs[value._name]._data = PipelineOutput(
+                name=key,
+                data=value._data,
+                meta=None,
+                owner="pipeline",
+                description=self._args_description.get(key, None),
+            )
             output_dict[key] = pipeline_output
-        self.pipeline_component._outputs = output_dict
+        return output_dict
+
+    def _get_group_parameter_defaults(self):
+        group_defaults = {}
+        for key, val in self.inputs.items():
+            if not isinstance(val, GroupInput):
+                continue
+            # Copy and insert top-level parameter name into group names for all items
+            group_defaults[key] = copy.deepcopy(val.default)
+            group_defaults[key].insert_group_name_for_items(key)
+        return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
-        """Update nodes list to ordered dict with variable name key and component object value.
+        """Update nodes list to ordered dict with variable name key and
+        component object value.
 
         Variable naming priority:
              1. Specified by using xxx.name.
@@ -248,14 +345,15 @@ class PipelineComponentBuilder:
                  e.g.
                  my_node = module_func()     # final node name is "my_node"
                  module_func_1()             # final node name is its component name
-
         """
 
         def _get_name_or_component_name(node: Union[BaseNode, AutoMLJob]):
+            # TODO(1979547): refactor this
             if isinstance(node, AutoMLJob):
                 return node.name or _sanitize_python_variable_name(node.__class__.__name__)
-            else:
-                return node.name or node._get_component_name()
+            if isinstance(node, ControlFlowNode):
+                return _sanitize_python_variable_name(node.__class__.__name__)
+            return node.name or node._get_component_name()
 
         valid_component_ids = set(item._instance_id for item in self.nodes)
         id_name_dict = {}
@@ -265,11 +363,13 @@ class PipelineComponentBuilder:
         result = OrderedDict()
 
         for k, v in func_variables.items():
-            if not isinstance(v, (BaseNode, AutoMLJob)):
+            # TODO(1979547): refactor this
+            if not isinstance(v, (BaseNode, AutoMLJob, PipelineJob, ControlFlowNode)):
                 continue
-            if getattr(v, "_instance_id", None) not in valid_component_ids:
+            instance_id = getattr(v, "_instance_id", None)
+            if instance_id not in valid_component_ids:
                 continue
-            name = v.name or k
+            name = getattr(v, "name", None) or k
             if name is not None:
                 name = name.lower()
 
@@ -281,7 +381,7 @@ class PipelineComponentBuilder:
                 )
 
             # Raise error when setting a name that already exists, likely conflict with a variable name
-            if name in local_names:
+            if name in local_names and instance_id not in id_name_dict:
                 raise UserErrorException(
                     f"Duplicate node name found in pipeline: {self.name!r}, "
                     f"node name: {name!r}. Duplicate check is case-insensitive."
@@ -312,4 +412,83 @@ class PipelineComponentBuilder:
             final_name = id_name_dict[_id]
             node.name = final_name
             result[final_name] = node
-        self.pipeline_component._components = result
+        return result
+
+    def _update_inputs(self, pipeline_inputs):
+        """Update the pipeline inputs by the dict."""
+        for input_name, value in pipeline_inputs.items():
+            if input_name not in self.inputs:
+                if isinstance(value, PipelineInput):
+                    value = value._data
+                if isinstance(value, Input):
+                    anno = copy.copy(value)
+                else:
+                    anno = _get_annotation_by_value(value)
+                anno.name = input_name
+                anno.description = self._args_description.get(input_name)
+                self.inputs[input_name] = anno
+
+
+def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
+    # Pass group defaults into kwargs to support group.item can be used even if no default on function.
+    # example:
+    # @group
+    # class Group:
+    #   key = 'val'
+    #
+    # @pipeline
+    # def pipeline_func(param: Group):
+    #   component_func(input=param.key)  <--- param.key should be val.
+
+    # transform kwargs
+    transformed_kwargs, non_pipeline_inputs = {}, non_pipeline_inputs or []
+    if group_default_kwargs:
+        transformed_kwargs.update(
+            {
+                key: _wrap_pipeline_parameter(key, default_value=value, actual_value=value)
+                for key, value in group_default_kwargs.items()
+                if key not in non_pipeline_inputs
+            }
+        )
+
+    def all_params(parameters):
+        for value in parameters.values():
+            yield value
+
+    if func is None:
+        return transformed_kwargs
+
+    parameters = all_params(signature(func).parameters)
+    # transform default values
+    for left_args in parameters:
+        if (
+            left_args.name not in transformed_kwargs.keys()
+            and left_args.kind != Parameter.VAR_KEYWORD
+            and left_args.name not in non_pipeline_inputs
+        ):
+            default_value = left_args.default if left_args.default is not Parameter.empty else None
+            actual_value = user_provided_kwargs.get(left_args.name)
+            transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
+                key=left_args.name, default_value=default_value, actual_value=actual_value
+            )
+    # Add variable kwargs to transformed_kwargs.
+    for key, value in user_provided_kwargs.items():
+        if key not in transformed_kwargs:
+            transformed_kwargs[key] = _wrap_pipeline_parameter(key=key, default_value=None, actual_value=value)
+    return transformed_kwargs
+
+
+def _wrap_pipeline_parameter(key, default_value, actual_value, group_names=None):
+    # Append parameter path in group
+    group_names = [*group_names] if group_names else []
+    if isinstance(default_value, _GroupAttrDict):
+        group_names.append(key)
+        return _GroupAttrDict(
+            {
+                k: _wrap_pipeline_parameter(k, default_value=v, actual_value=v, group_names=group_names)
+                for k, v in default_value.items()
+            }
+        )
+    # Note: this PipelineInput object is built to mark input as a data binding.
+    # It only exists in dsl.pipeline function execution time and won't store in pipeline job or pipeline component.
+    return PipelineInput(name=key, meta=None, default_data=default_value, data=actual_value, group_names=group_names)

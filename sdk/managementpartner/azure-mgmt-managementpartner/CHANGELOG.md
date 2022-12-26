@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0b1 (2022-11-01)
+
+### Features Added
+
+  - Model Error has a new parameter code
+  - Model Error has a new parameter message
+
 ## 1.0.0 (2021-05-21)
 
 - GA release

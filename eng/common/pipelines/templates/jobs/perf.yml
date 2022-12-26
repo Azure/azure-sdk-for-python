@@ -1,13 +1,37 @@
 parameters:
+- name: JobName
+  type: string
+  default: 'Perf'
+- name: LinuxPool
+  type: string
+  default: 'azsdk-pool-mms-ubuntu-2004-perf'
+- name: LinuxVmImage
+  type: string
+  default: 'MMSUbuntu20.04'
+- name: WindowsPool
+  type: string
+  default: 'azsdk-pool-mms-win-2019-perf'
+- name: WindowsVmImage
+  type: string
+  default: 'MMS2019'
+- name: Language
+  type: string
+  default: ''
+- name: LanguageRepoName
+  type: string
+  default: $(Build.Repository.Name)
+- name: LanguageRepoCommitish
+  type: string
+  default: $(Build.SourceVersion)
+- name: ToolsRepoCommitish
+  type: string
+  default: 'main'
 - name: Variables
   type: object
   default: []
 - name: OperatingSystems
   type: string
   default: 'Linux'
-- name: Language
-  type: string
-  default: ''
 - name: InstallLanguageSteps
   type: stepList
   default: []
@@ -29,6 +53,9 @@ parameters:
 - name: Iterations
   type: number
   default: '5'
+- name: Profile
+  type: boolean
+  default: false
 - name: AdditionalArguments
   type: string
   default: ''
@@ -36,41 +63,48 @@ parameters:
   type: object
   default: {}
 
-resources:
-  repositories:
-  - repository: azure-sdk-tools
-    type: github
-    endpoint: Azure
-    name: Azure/azure-sdk-tools
-    ref: main
-
-variables:
-- ${{ parameters.Variables }}
-
 jobs:
-- job: Perf
+- job: ${{ parameters.JobName }}
   timeoutInMinutes: 360
   strategy:
     matrix:
       ${{ if contains(parameters.OperatingSystems, 'Linux') }}:
         Linux:
-          Pool: 'azsdk-pool-mms-ubuntu-2004-perf'
-          OsVmImage: 'MMSUbuntu20.04'
+          Pool: ${{ parameters.LinuxPool }}
+          OsVmImage: ${{ parameters.LinuxVmImage }}
           MatrixName: 'Linux'
       ${{ if contains(parameters.OperatingSystems, 'Windows') }}:
         Windows:
-          Pool: 'azsdk-pool-mms-win-2019-perf'
-          OsVmImage: 'MMS2019'
+          Pool: ${{ parameters.WindowsPool }}
+          OsVmImage: ${{ parameters.WindowsVmImage }}
           MatrixName: 'Windows'
+  variables:
+  - ${{ parameters.Variables }}
+  - name: Profile
+    ${{ if parameters.Profile }}:
+      value: '--profile'
+    ${{ else }}:
+      value: ''
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
   steps:
-  - checkout: self
-    path: s
 
-  - checkout: azure-sdk-tools
-    path: s/azure-sdk-tools
+  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+    parameters:
+      Paths:
+      - '/*'
+      - '!sdk/**/test-recordings/*'
+      - '!sdk/**/recordings/*'
+      - '!sdk/**/SessionRecords/*'
+      - '!sdk/**/session-records/*'
+      Repositories:
+      - Name: ${{ parameters.LanguageRepoName }}
+        Commitish: ${{ parameters.LanguageRepoCommitish }}
+        WorkingDirectory: $(System.DefaultWorkingDirectory)
+      - Name: Azure/azure-sdk-tools
+        Commitish: ${{ parameters.ToolsRepoCommitish }}
+        WorkingDirectory: $(System.DefaultWorkingDirectory)/azure-sdk-tools
 
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
@@ -99,6 +133,7 @@ jobs:
       --tests "${{ parameters.Tests }}"
       --arguments "${{ parameters.Arguments }}"
       --iterations ${{ parameters.Iterations }}
+      $(Profile)
       ${{ parameters.AdditionalArguments }}
     workingDirectory: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation
     env:
@@ -133,8 +168,14 @@ jobs:
   - task: PublishPipelineArtifact@1
     inputs:
       targetPath: azure-sdk-tools/tools/perf-automation/Azure.Sdk.Tools.PerfAutomation/results
-      artifactName: results-$(MatrixName)
+      artifactName: results-${{ parameters.Language }}-$(MatrixName)
     condition: always()
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(System.DefaultWorkingDirectory)/${{ parameters.Language }}-profile.zip
+      artifactName: ${{ parameters.Language }}-profile.zip
+    condition: ${{ parameters.Profile }}
 
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:

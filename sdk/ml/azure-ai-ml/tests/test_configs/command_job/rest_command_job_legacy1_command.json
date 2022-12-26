@@ -30,12 +30,12 @@
         "environmentId": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
         "inputs": {
             "filePath": {
-                "jobInputType": "UriFile",
+                "jobInputType": "uri_file",
                 "uri": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/data/f4179156-dbef-41b4-91a0-40d26a3ef5be/versions/1",
                 "mode": "ReadOnlyMount"
             },
             "dirPath": {
-                "jobInputType": "UriFolder",
+                "jobInputType": "uri_folder",
                 "uri": "/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/rihorn-cli/providers/Microsoft.MachineLearningServices/workspaces/rihorn/data/86bf5aa8-8d5e-40ab-afe8-3f753d4b4e01/versions/1",
                 "mode": "ReadWriteMount"
             }

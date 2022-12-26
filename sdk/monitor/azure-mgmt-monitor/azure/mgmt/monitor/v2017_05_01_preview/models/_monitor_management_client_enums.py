@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the primary aggregation type value defining how to use the values for display.
-    """
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the primary aggregation type value defining how to use the values for display."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -22,21 +20,23 @@ class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class CategoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the diagnostic settings category.
-    """
+
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the diagnostic settings category."""
 
     METRICS = "Metrics"
     LOGS = "Logs"
 
-class ResultType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     DATA = "Data"
     METADATA = "Metadata"
 
-class Unit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of the metric.
-    """
+
+class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

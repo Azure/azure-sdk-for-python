@@ -20,6 +20,9 @@ from ._models_py3 import CalculatePriceResponse
 from ._models_py3 import CalculatePriceResponseProperties
 from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
 from ._models_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
+from ._models_py3 import CalculateRefundRequest
+from ._models_py3 import CalculateRefundRequestProperties
+from ._models_py3 import CalculateRefundResponse
 from ._models_py3 import Catalog
 from ._models_py3 import CatalogMsrp
 from ._models_py3 import ChangeDirectoryRequest
@@ -60,6 +63,14 @@ from ._models_py3 import QuotaRequestOneResourceSubmitResponse
 from ._models_py3 import QuotaRequestProperties
 from ._models_py3 import QuotaRequestSubmitResponse
 from ._models_py3 import QuotaRequestSubmitResponse201
+from ._models_py3 import RefundBillingInformation
+from ._models_py3 import RefundPolicyError
+from ._models_py3 import RefundPolicyResult
+from ._models_py3 import RefundPolicyResultProperty
+from ._models_py3 import RefundRequest
+from ._models_py3 import RefundRequestProperties
+from ._models_py3 import RefundResponse
+from ._models_py3 import RefundResponseProperties
 from ._models_py3 import RenewPropertiesResponse
 from ._models_py3 import RenewPropertiesResponseBillingCurrencyTotal
 from ._models_py3 import RenewPropertiesResponsePricingCurrencyTotal
@@ -93,133 +104,146 @@ from ._models_py3 import SubRequest
 from ._models_py3 import SubscriptionScopeProperties
 from ._models_py3 import SystemData
 
-
-from ._azure_reservation_api_enums import (
-    AppliedScopeType,
-    CalculateExchangeOperationResultStatus,
-    CreatedByType,
-    DisplayProvisioningState,
-    ErrorResponseCode,
-    ExchangeOperationResultStatus,
-    InstanceFlexibility,
-    Location,
-    OperationStatus,
-    PaymentStatus,
-    ProvisioningState,
-    QuotaRequestState,
-    ReservationBillingPlan,
-    ReservationStatusCode,
-    ReservationTerm,
-    ReservedResourceType,
-    ResourceType,
-    UserFriendlyAppliedScopeType,
-    UserFriendlyRenewState,
-)
+from ._azure_reservation_api_enums import AppliedScopeType
+from ._azure_reservation_api_enums import CalculateExchangeOperationResultStatus
+from ._azure_reservation_api_enums import CreatedByType
+from ._azure_reservation_api_enums import DisplayProvisioningState
+from ._azure_reservation_api_enums import ErrorResponseCode
+from ._azure_reservation_api_enums import ExchangeOperationResultStatus
+from ._azure_reservation_api_enums import InstanceFlexibility
+from ._azure_reservation_api_enums import Location
+from ._azure_reservation_api_enums import OperationStatus
+from ._azure_reservation_api_enums import PaymentStatus
+from ._azure_reservation_api_enums import ProvisioningState
+from ._azure_reservation_api_enums import QuotaRequestState
+from ._azure_reservation_api_enums import ReservationBillingPlan
+from ._azure_reservation_api_enums import ReservationStatusCode
+from ._azure_reservation_api_enums import ReservationTerm
+from ._azure_reservation_api_enums import ReservedResourceType
+from ._azure_reservation_api_enums import ResourceType
+from ._azure_reservation_api_enums import UserFriendlyAppliedScopeType
+from ._azure_reservation_api_enums import UserFriendlyRenewState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AppliedReservationList',
-    'AppliedReservations',
-    'AvailableScopeProperties',
-    'AvailableScopeRequest',
-    'AvailableScopeRequestProperties',
-    'BillingInformation',
-    'CalculateExchangeOperationResultResponse',
-    'CalculateExchangeRequest',
-    'CalculateExchangeRequestProperties',
-    'CalculateExchangeResponseProperties',
-    'CalculatePriceResponse',
-    'CalculatePriceResponseProperties',
-    'CalculatePriceResponsePropertiesBillingCurrencyTotal',
-    'CalculatePriceResponsePropertiesPricingCurrencyTotal',
-    'Catalog',
-    'CatalogMsrp',
-    'ChangeDirectoryRequest',
-    'ChangeDirectoryResponse',
-    'ChangeDirectoryResult',
-    'CreateGenericQuotaRequestParameters',
-    'CurrentQuotaLimit',
-    'CurrentQuotaLimitBase',
-    'Error',
-    'ErrorDetails',
-    'ErrorResponse',
-    'ExceptionResponse',
-    'ExchangeOperationResultResponse',
-    'ExchangePolicyError',
-    'ExchangePolicyErrors',
-    'ExchangeRequest',
-    'ExchangeRequestProperties',
-    'ExchangeResponseProperties',
-    'ExtendedErrorInfo',
-    'ExtendedStatusInfo',
-    'MergeRequest',
-    'OperationDisplay',
-    'OperationList',
-    'OperationResponse',
-    'OperationResultError',
-    'Patch',
-    'PatchPropertiesRenewProperties',
-    'PaymentDetail',
-    'Price',
-    'PurchaseRequest',
-    'PurchaseRequestPropertiesReservedResourceProperties',
-    'QuotaLimits',
-    'QuotaLimitsResponse',
-    'QuotaProperties',
-    'QuotaRequestDetails',
-    'QuotaRequestDetailsList',
-    'QuotaRequestOneResourceSubmitResponse',
-    'QuotaRequestProperties',
-    'QuotaRequestSubmitResponse',
-    'QuotaRequestSubmitResponse201',
-    'RenewPropertiesResponse',
-    'RenewPropertiesResponseBillingCurrencyTotal',
-    'RenewPropertiesResponsePricingCurrencyTotal',
-    'ReservationList',
-    'ReservationMergeProperties',
-    'ReservationOrderBillingPlanInformation',
-    'ReservationOrderList',
-    'ReservationOrderResponse',
-    'ReservationResponse',
-    'ReservationSplitProperties',
-    'ReservationSummary',
-    'ReservationToExchange',
-    'ReservationToPurchaseCalculateExchange',
-    'ReservationToPurchaseExchange',
-    'ReservationToReturn',
-    'ReservationToReturnForExchange',
-    'ReservationUtilizationAggregates',
-    'ReservationsListResult',
-    'ReservationsProperties',
-    'ReservationsPropertiesUtilization',
-    'ResourceName',
-    'ScopeProperties',
-    'ServiceError',
-    'ServiceErrorDetail',
-    'SkuCapability',
-    'SkuName',
-    'SkuProperty',
-    'SkuRestriction',
-    'SplitRequest',
-    'SubRequest',
-    'SubscriptionScopeProperties',
-    'SystemData',
-    'AppliedScopeType',
-    'CalculateExchangeOperationResultStatus',
-    'CreatedByType',
-    'DisplayProvisioningState',
-    'ErrorResponseCode',
-    'ExchangeOperationResultStatus',
-    'InstanceFlexibility',
-    'Location',
-    'OperationStatus',
-    'PaymentStatus',
-    'ProvisioningState',
-    'QuotaRequestState',
-    'ReservationBillingPlan',
-    'ReservationStatusCode',
-    'ReservationTerm',
-    'ReservedResourceType',
-    'ResourceType',
-    'UserFriendlyAppliedScopeType',
-    'UserFriendlyRenewState',
+    "AppliedReservationList",
+    "AppliedReservations",
+    "AvailableScopeProperties",
+    "AvailableScopeRequest",
+    "AvailableScopeRequestProperties",
+    "BillingInformation",
+    "CalculateExchangeOperationResultResponse",
+    "CalculateExchangeRequest",
+    "CalculateExchangeRequestProperties",
+    "CalculateExchangeResponseProperties",
+    "CalculatePriceResponse",
+    "CalculatePriceResponseProperties",
+    "CalculatePriceResponsePropertiesBillingCurrencyTotal",
+    "CalculatePriceResponsePropertiesPricingCurrencyTotal",
+    "CalculateRefundRequest",
+    "CalculateRefundRequestProperties",
+    "CalculateRefundResponse",
+    "Catalog",
+    "CatalogMsrp",
+    "ChangeDirectoryRequest",
+    "ChangeDirectoryResponse",
+    "ChangeDirectoryResult",
+    "CreateGenericQuotaRequestParameters",
+    "CurrentQuotaLimit",
+    "CurrentQuotaLimitBase",
+    "Error",
+    "ErrorDetails",
+    "ErrorResponse",
+    "ExceptionResponse",
+    "ExchangeOperationResultResponse",
+    "ExchangePolicyError",
+    "ExchangePolicyErrors",
+    "ExchangeRequest",
+    "ExchangeRequestProperties",
+    "ExchangeResponseProperties",
+    "ExtendedErrorInfo",
+    "ExtendedStatusInfo",
+    "MergeRequest",
+    "OperationDisplay",
+    "OperationList",
+    "OperationResponse",
+    "OperationResultError",
+    "Patch",
+    "PatchPropertiesRenewProperties",
+    "PaymentDetail",
+    "Price",
+    "PurchaseRequest",
+    "PurchaseRequestPropertiesReservedResourceProperties",
+    "QuotaLimits",
+    "QuotaLimitsResponse",
+    "QuotaProperties",
+    "QuotaRequestDetails",
+    "QuotaRequestDetailsList",
+    "QuotaRequestOneResourceSubmitResponse",
+    "QuotaRequestProperties",
+    "QuotaRequestSubmitResponse",
+    "QuotaRequestSubmitResponse201",
+    "RefundBillingInformation",
+    "RefundPolicyError",
+    "RefundPolicyResult",
+    "RefundPolicyResultProperty",
+    "RefundRequest",
+    "RefundRequestProperties",
+    "RefundResponse",
+    "RefundResponseProperties",
+    "RenewPropertiesResponse",
+    "RenewPropertiesResponseBillingCurrencyTotal",
+    "RenewPropertiesResponsePricingCurrencyTotal",
+    "ReservationList",
+    "ReservationMergeProperties",
+    "ReservationOrderBillingPlanInformation",
+    "ReservationOrderList",
+    "ReservationOrderResponse",
+    "ReservationResponse",
+    "ReservationSplitProperties",
+    "ReservationSummary",
+    "ReservationToExchange",
+    "ReservationToPurchaseCalculateExchange",
+    "ReservationToPurchaseExchange",
+    "ReservationToReturn",
+    "ReservationToReturnForExchange",
+    "ReservationUtilizationAggregates",
+    "ReservationsListResult",
+    "ReservationsProperties",
+    "ReservationsPropertiesUtilization",
+    "ResourceName",
+    "ScopeProperties",
+    "ServiceError",
+    "ServiceErrorDetail",
+    "SkuCapability",
+    "SkuName",
+    "SkuProperty",
+    "SkuRestriction",
+    "SplitRequest",
+    "SubRequest",
+    "SubscriptionScopeProperties",
+    "SystemData",
+    "AppliedScopeType",
+    "CalculateExchangeOperationResultStatus",
+    "CreatedByType",
+    "DisplayProvisioningState",
+    "ErrorResponseCode",
+    "ExchangeOperationResultStatus",
+    "InstanceFlexibility",
+    "Location",
+    "OperationStatus",
+    "PaymentStatus",
+    "ProvisioningState",
+    "QuotaRequestState",
+    "ReservationBillingPlan",
+    "ReservationStatusCode",
+    "ReservationTerm",
+    "ReservedResourceType",
+    "ResourceType",
+    "UserFriendlyAppliedScopeType",
+    "UserFriendlyRenewState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

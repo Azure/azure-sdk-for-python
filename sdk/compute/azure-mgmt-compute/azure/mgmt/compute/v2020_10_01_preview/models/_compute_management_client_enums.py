@@ -25,9 +25,9 @@ class CloudServiceUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANUAL = "Manual"
     SIMULTANEOUS = "Simultaneous"
 
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"

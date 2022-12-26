@@ -17,22 +17,23 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormR
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestInvoice(FormRecognizerTest):
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_invoice_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
+    def test_invoice_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             poller = client.begin_recognize_invoices(my_file)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -91,6 +92,7 @@ class TestInvoice(FormRecognizerTest):
                 my_file
             )
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -131,6 +133,7 @@ class TestInvoice(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -175,6 +178,7 @@ class TestInvoice(FormRecognizerTest):
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -199,6 +203,7 @@ class TestInvoice(FormRecognizerTest):
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -227,6 +232,7 @@ class TestInvoice(FormRecognizerTest):
         assert remittance_address.value, '2345 Dogwood Lane Birch ==  Kansas 98123'
         assert remittance_address.value_data.page_number ==  1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -280,6 +286,7 @@ class TestInvoice(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["UnitPrice"].value ==  1.0
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_invoice_continuation_token(self, **kwargs):
@@ -305,6 +312,7 @@ class TestInvoice(FormRecognizerTest):
             client.begin_recognize_invoices(invoice)
         assert "Method 'begin_recognize_invoices' is only available for API version V2_1 and up" in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -326,6 +334,7 @@ class TestInvoice(FormRecognizerTest):
             client.begin_recognize_invoices(invoice, locale="not a locale")
         assert "locale" in e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

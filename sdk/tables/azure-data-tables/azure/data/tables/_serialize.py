@@ -123,10 +123,10 @@ def _to_entity_int32(value):
 
 def _to_entity_int64(value):
     if sys.version_info < (3,):
-        ivalue = int(value)
+        int_value = int(value)
     else:
-        ivalue = int(value)
-    if ivalue >= 2 ** 63 or ivalue < -(2 ** 63):
+        int_value = int(value)
+    if int_value >= 2 ** 63 or int_value < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
 
@@ -165,6 +165,8 @@ except NameError:
         }
     )
 
+# cspell:ignore Odatatype
+
 # Conversion from Edm type to a function which returns a tuple of the
 # type string and content string. These conversions are only used when the
 # full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
@@ -198,8 +200,8 @@ def _add_entity_properties(source):
        "IsActive":true,
        "NumberOfOrders@odata.type":"Edm.Int64",
        "NumberOfOrders":"255",
-       "PartitionKey":"mypartitionkey",
-       "RowKey":"myrowkey"
+       "PartitionKey":"my_partition_key",
+       "RowKey":"my_row_key"
     }
     """
 
@@ -214,23 +216,23 @@ def _add_entity_properties(source):
 
         if isinstance(value, Enum):
             try:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
+                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
             except NameError:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
-            mtype, value = conv(value)
+                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, tuple):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
-            mtype, value = conv(value[0])
+            convert = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = convert(value[0])
         else:
-            conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None and value is not None:
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+            if convert is None and value is not None:
                 raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
             if value is None:
-                conv = _to_entity_none
+                convert = _to_entity_none
 
-            mtype, value = conv(value)
+            mtype, value = convert(value)
 
         # form the property node
         if value is not None:
@@ -260,6 +262,7 @@ def serialize_iso(attr):
             raise OverflowError("Hit max or min date")
 
         date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
+            # cspell:disable-next-line
             utc.tm_year, utc.tm_mon, utc.tm_mday, utc.tm_hour, utc.tm_min, utc.tm_sec
         )
         return date + "Z"

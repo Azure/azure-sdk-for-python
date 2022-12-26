@@ -40,3 +40,23 @@ class NonSeekableStream(IOBase):
 
     def tell(self):
         return self.wrapped_stream.tell()
+
+
+class AsyncStream:
+    def __init__(self, data: bytes):
+        self._data = data
+        self._offset = 0
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+    async def read(self, size: int = -1) -> bytes:
+        if size == -1:
+            return self._data
+
+        start = self._offset
+        end = self._offset + size
+        data = self._data[start:end]
+        self._offset += len(data)
+
+        return data

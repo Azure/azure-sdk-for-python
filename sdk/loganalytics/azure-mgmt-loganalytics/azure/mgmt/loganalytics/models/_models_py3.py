@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AssociatedWorkspace(msrest.serialization.Model):
+class AssociatedWorkspace(_serialization.Model):
     """The list of Log Analytics workspaces associated with the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -33,83 +40,75 @@ class AssociatedWorkspace(msrest.serialization.Model):
     """
 
     _validation = {
-        'workspace_id': {'readonly': True},
-        'workspace_name': {'readonly': True},
-        'resource_id': {'readonly': True},
-        'associate_date': {'readonly': True},
+        "workspace_id": {"readonly": True},
+        "workspace_name": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "associate_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'associate_date': {'key': 'associateDate', 'type': 'str'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "associate_date": {"key": "associateDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AssociatedWorkspace, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.workspace_id = None
         self.workspace_name = None
         self.resource_id = None
         self.associate_date = None
 
 
-class AvailableServiceTier(msrest.serialization.Model):
+class AvailableServiceTier(_serialization.Model):
     """Service Tier details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar service_tier: The name of the Service Tier. Known values are: "Free", "Standard",
-     "Premium", "PerNode", "PerGB2018", "Standalone", "CapacityReservation".
+     "Premium", "PerNode", "PerGB2018", "Standalone", and "CapacityReservation".
     :vartype service_tier: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
     :ivar enabled: True if the Service Tier is enabled for the workspace.
     :vartype enabled: bool
     :ivar minimum_retention: The minimum retention for the Service Tier, in days.
-    :vartype minimum_retention: long
+    :vartype minimum_retention: int
     :ivar maximum_retention: The maximum retention for the Service Tier, in days.
-    :vartype maximum_retention: long
+    :vartype maximum_retention: int
     :ivar default_retention: The default retention for the Service Tier, in days.
-    :vartype default_retention: long
+    :vartype default_retention: int
     :ivar capacity_reservation_level: The capacity reservation level in GB per day. Returned for
      the Capacity Reservation Service Tier.
-    :vartype capacity_reservation_level: long
+    :vartype capacity_reservation_level: int
     :ivar last_sku_update: Time when the sku was last updated for the workspace. Returned for the
      Capacity Reservation Service Tier.
     :vartype last_sku_update: str
     """
 
     _validation = {
-        'service_tier': {'readonly': True},
-        'enabled': {'readonly': True},
-        'minimum_retention': {'readonly': True},
-        'maximum_retention': {'readonly': True},
-        'default_retention': {'readonly': True},
-        'capacity_reservation_level': {'readonly': True},
-        'last_sku_update': {'readonly': True},
+        "service_tier": {"readonly": True},
+        "enabled": {"readonly": True},
+        "minimum_retention": {"readonly": True},
+        "maximum_retention": {"readonly": True},
+        "default_retention": {"readonly": True},
+        "capacity_reservation_level": {"readonly": True},
+        "last_sku_update": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_tier': {'key': 'serviceTier', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'minimum_retention': {'key': 'minimumRetention', 'type': 'long'},
-        'maximum_retention': {'key': 'maximumRetention', 'type': 'long'},
-        'default_retention': {'key': 'defaultRetention', 'type': 'long'},
-        'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'long'},
-        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
+        "service_tier": {"key": "serviceTier", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "minimum_retention": {"key": "minimumRetention", "type": "int"},
+        "maximum_retention": {"key": "maximumRetention", "type": "int"},
+        "default_retention": {"key": "defaultRetention", "type": "int"},
+        "capacity_reservation_level": {"key": "capacityReservationLevel", "type": "int"},
+        "last_sku_update": {"key": "lastSkuUpdate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AvailableServiceTier, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.service_tier = None
         self.enabled = None
         self.minimum_retention = None
@@ -119,7 +118,7 @@ class AvailableServiceTier(msrest.serialization.Model):
         self.last_sku_update = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -135,24 +134,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -176,30 +171,26 @@ class AzureEntityResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureEntityResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.etag = None
 
 
-class AzureResourceProperties(msrest.serialization.Model):
+class AzureResourceProperties(_serialization.Model):
     """An Azure resource QueryPack-Query object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -215,33 +206,29 @@ class AzureResourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.system_data = None
 
 
-class CapacityReservationProperties(msrest.serialization.Model):
+class CapacityReservationProperties(_serialization.Model):
     """The Capacity Reservation properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -249,26 +236,22 @@ class CapacityReservationProperties(msrest.serialization.Model):
     :ivar last_sku_update: The last time Sku was updated.
     :vartype last_sku_update: str
     :ivar min_capacity: Minimum CapacityReservation value in GB.
-    :vartype min_capacity: long
+    :vartype min_capacity: int
     """
 
     _validation = {
-        'last_sku_update': {'readonly': True},
-        'min_capacity': {'readonly': True},
+        "last_sku_update": {"readonly": True},
+        "min_capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
-        'min_capacity': {'key': 'minCapacity', 'type': 'long'},
+        "last_sku_update": {"key": "lastSkuUpdate", "type": "str"},
+        "min_capacity": {"key": "minCapacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapacityReservationProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.last_sku_update = None
         self.min_capacity = None
 
@@ -288,46 +271,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Cluster(TrackedResource):
+class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The top level Log Analytics cluster resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -342,9 +319,9 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.loganalytics.models.Identity
@@ -353,7 +330,7 @@ class Cluster(TrackedResource):
     :ivar cluster_id: The ID associated with the cluster.
     :vartype cluster_id: str
     :ivar provisioning_state: The provisioning state of the cluster. Known values are: "Creating",
-     "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
+     "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.ClusterEntityStatus
     :ivar is_double_encryption_enabled: Configures whether cluster will use double encryption. This
      Property can not be modified after cluster creation. Default value is 'true'.
@@ -363,7 +340,7 @@ class Cluster(TrackedResource):
      This Property can not be modified after cluster creation. Default value is 'true' if region
      supports Availability Zones.
     :vartype is_availability_zones_enabled: bool
-    :ivar billing_type: The cluster's billing type. Known values are: "Cluster", "Workspaces".
+    :ivar billing_type: The cluster's billing type. Known values are: "Cluster" and "Workspaces".
     :vartype billing_type: str or ~azure.mgmt.loganalytics.models.BillingType
     :ivar key_vault_properties: The associated key properties.
     :vartype key_vault_properties: ~azure.mgmt.loganalytics.models.KeyVaultProperties
@@ -379,34 +356,37 @@ class Cluster(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'cluster_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'last_modified_date': {'readonly': True},
-        'created_date': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "cluster_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "last_modified_date": {"readonly": True},
+        "created_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'sku': {'key': 'sku', 'type': 'ClusterSku'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'is_double_encryption_enabled': {'key': 'properties.isDoubleEncryptionEnabled', 'type': 'bool'},
-        'is_availability_zones_enabled': {'key': 'properties.isAvailabilityZonesEnabled', 'type': 'bool'},
-        'billing_type': {'key': 'properties.billingType', 'type': 'str'},
-        'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'last_modified_date': {'key': 'properties.lastModifiedDate', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
-        'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[AssociatedWorkspace]'},
-        'capacity_reservation_properties': {'key': 'properties.capacityReservationProperties', 'type': 'CapacityReservationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "sku": {"key": "sku", "type": "ClusterSku"},
+        "cluster_id": {"key": "properties.clusterId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "is_double_encryption_enabled": {"key": "properties.isDoubleEncryptionEnabled", "type": "bool"},
+        "is_availability_zones_enabled": {"key": "properties.isAvailabilityZonesEnabled", "type": "bool"},
+        "billing_type": {"key": "properties.billingType", "type": "str"},
+        "key_vault_properties": {"key": "properties.keyVaultProperties", "type": "KeyVaultProperties"},
+        "last_modified_date": {"key": "properties.lastModifiedDate", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "str"},
+        "associated_workspaces": {"key": "properties.associatedWorkspaces", "type": "[AssociatedWorkspace]"},
+        "capacity_reservation_properties": {
+            "key": "properties.capacityReservationProperties",
+            "type": "CapacityReservationProperties",
+        },
     }
 
     def __init__(
@@ -425,9 +405,9 @@ class Cluster(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.loganalytics.models.Identity
@@ -441,7 +421,8 @@ class Cluster(TrackedResource):
          Zones. This Property can not be modified after cluster creation. Default value is 'true' if
          region supports Availability Zones.
         :paramtype is_availability_zones_enabled: bool
-        :keyword billing_type: The cluster's billing type. Known values are: "Cluster", "Workspaces".
+        :keyword billing_type: The cluster's billing type. Known values are: "Cluster" and
+         "Workspaces".
         :paramtype billing_type: str or ~azure.mgmt.loganalytics.models.BillingType
         :keyword key_vault_properties: The associated key properties.
         :paramtype key_vault_properties: ~azure.mgmt.loganalytics.models.KeyVaultProperties
@@ -452,7 +433,7 @@ class Cluster(TrackedResource):
         :paramtype capacity_reservation_properties:
          ~azure.mgmt.loganalytics.models.CapacityReservationProperties
         """
-        super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
         self.cluster_id = None
@@ -467,7 +448,7 @@ class Cluster(TrackedResource):
         self.capacity_reservation_properties = capacity_reservation_properties
 
 
-class ClusterListResult(msrest.serialization.Model):
+class ClusterListResult(_serialization.Model):
     """The list clusters operation response.
 
     :ivar next_link: The link used to get the next page of recommendations.
@@ -477,49 +458,43 @@ class ClusterListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Cluster]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Cluster]"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["_models.Cluster"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cluster"]] = None, **kwargs):
         """
         :keyword next_link: The link used to get the next page of recommendations.
         :paramtype next_link: str
         :keyword value: A list of Log Analytics clusters.
         :paramtype value: list[~azure.mgmt.loganalytics.models.Cluster]
         """
-        super(ClusterListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class ClusterPatch(msrest.serialization.Model):
+class ClusterPatch(_serialization.Model):
     """The top level Log Analytics cluster resource container.
 
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.loganalytics.models.Identity
     :ivar sku: The sku properties.
     :vartype sku: ~azure.mgmt.loganalytics.models.ClusterSku
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar key_vault_properties: The associated key properties.
     :vartype key_vault_properties: ~azure.mgmt.loganalytics.models.KeyVaultProperties
-    :ivar billing_type: The cluster's billing type. Known values are: "Cluster", "Workspaces".
+    :ivar billing_type: The cluster's billing type. Known values are: "Cluster" and "Workspaces".
     :vartype billing_type: str or ~azure.mgmt.loganalytics.models.BillingType
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'sku': {'key': 'sku', 'type': 'ClusterSku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'billing_type': {'key': 'properties.billingType', 'type': 'str'},
+        "identity": {"key": "identity", "type": "Identity"},
+        "sku": {"key": "sku", "type": "ClusterSku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "key_vault_properties": {"key": "properties.keyVaultProperties", "type": "KeyVaultProperties"},
+        "billing_type": {"key": "properties.billingType", "type": "str"},
     }
 
     def __init__(
@@ -537,14 +512,15 @@ class ClusterPatch(msrest.serialization.Model):
         :paramtype identity: ~azure.mgmt.loganalytics.models.Identity
         :keyword sku: The sku properties.
         :paramtype sku: ~azure.mgmt.loganalytics.models.ClusterSku
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword key_vault_properties: The associated key properties.
         :paramtype key_vault_properties: ~azure.mgmt.loganalytics.models.KeyVaultProperties
-        :keyword billing_type: The cluster's billing type. Known values are: "Cluster", "Workspaces".
+        :keyword billing_type: The cluster's billing type. Known values are: "Cluster" and
+         "Workspaces".
         :paramtype billing_type: str or ~azure.mgmt.loganalytics.models.BillingType
         """
-        super(ClusterPatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.sku = sku
         self.tags = tags
@@ -552,18 +528,18 @@ class ClusterPatch(msrest.serialization.Model):
         self.billing_type = billing_type
 
 
-class ClusterSku(msrest.serialization.Model):
+class ClusterSku(_serialization.Model):
     """The cluster sku definition.
 
-    :ivar capacity: The capacity value. Known values are: 500, 1000, 2000, 5000.
+    :ivar capacity: The capacity value. Known values are: 500, 1000, 2000, and 5000.
     :vartype capacity: int or ~azure.mgmt.loganalytics.models.Capacity
-    :ivar name: The name of the SKU. Known values are: "CapacityReservation".
+    :ivar name: The name of the SKU. "CapacityReservation"
     :vartype name: str or ~azure.mgmt.loganalytics.models.ClusterSkuNameEnum
     """
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'str'},
+        "capacity": {"key": "capacity", "type": "int"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -574,17 +550,17 @@ class ClusterSku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword capacity: The capacity value. Known values are: 500, 1000, 2000, 5000.
+        :keyword capacity: The capacity value. Known values are: 500, 1000, 2000, and 5000.
         :paramtype capacity: int or ~azure.mgmt.loganalytics.models.Capacity
-        :keyword name: The name of the SKU. Known values are: "CapacityReservation".
+        :keyword name: The name of the SKU. "CapacityReservation"
         :paramtype name: str or ~azure.mgmt.loganalytics.models.ClusterSkuNameEnum
         """
-        super(ClusterSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.capacity = capacity
         self.name = name
 
 
-class Column(msrest.serialization.Model):
+class Column(_serialization.Model):
     """Table column.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -592,10 +568,10 @@ class Column(msrest.serialization.Model):
     :ivar name: Column name.
     :vartype name: str
     :ivar type: Column data type. Known values are: "string", "int", "long", "real", "boolean",
-     "dateTime", "guid", "dynamic".
+     "dateTime", "guid", and "dynamic".
     :vartype type: str or ~azure.mgmt.loganalytics.models.ColumnTypeEnum
     :ivar data_type_hint: Column data type logical hint. Known values are: "uri", "guid",
-     "armPath", "ip".
+     "armPath", and "ip".
     :vartype data_type_hint: str or ~azure.mgmt.loganalytics.models.ColumnDataTypeHintEnum
     :ivar display_name: Column display name.
     :vartype display_name: str
@@ -608,18 +584,18 @@ class Column(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_default_display': {'readonly': True},
-        'is_hidden': {'readonly': True},
+        "is_default_display": {"readonly": True},
+        "is_hidden": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data_type_hint': {'key': 'dataTypeHint', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_default_display': {'key': 'isDefaultDisplay', 'type': 'bool'},
-        'is_hidden': {'key': 'isHidden', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data_type_hint": {"key": "dataTypeHint", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "is_default_display": {"key": "isDefaultDisplay", "type": "bool"},
+        "is_hidden": {"key": "isHidden", "type": "bool"},
     }
 
     def __init__(
@@ -636,17 +612,17 @@ class Column(msrest.serialization.Model):
         :keyword name: Column name.
         :paramtype name: str
         :keyword type: Column data type. Known values are: "string", "int", "long", "real", "boolean",
-         "dateTime", "guid", "dynamic".
+         "dateTime", "guid", and "dynamic".
         :paramtype type: str or ~azure.mgmt.loganalytics.models.ColumnTypeEnum
         :keyword data_type_hint: Column data type logical hint. Known values are: "uri", "guid",
-         "armPath", "ip".
+         "armPath", and "ip".
         :paramtype data_type_hint: str or ~azure.mgmt.loganalytics.models.ColumnDataTypeHintEnum
         :keyword display_name: Column display name.
         :paramtype display_name: str
         :keyword description: Column description.
         :paramtype description: str
         """
-        super(Column, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.data_type_hint = data_type_hint
@@ -656,40 +632,34 @@ class Column(msrest.serialization.Model):
         self.is_hidden = None
 
 
-class CoreSummary(msrest.serialization.Model):
+class CoreSummary(_serialization.Model):
     """The core summary of a search.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar status: The status of a core summary.
     :vartype status: str
-    :ivar number_of_documents: Required. The number of documents of a core summary.
-    :vartype number_of_documents: long
+    :ivar number_of_documents: The number of documents of a core summary. Required.
+    :vartype number_of_documents: int
     """
 
     _validation = {
-        'number_of_documents': {'required': True},
+        "number_of_documents": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'number_of_documents': {'key': 'numberOfDocuments', 'type': 'long'},
+        "status": {"key": "status", "type": "str"},
+        "number_of_documents": {"key": "numberOfDocuments", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        number_of_documents: int,
-        status: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, number_of_documents: int, status: Optional[str] = None, **kwargs):
         """
         :keyword status: The status of a core summary.
         :paramtype status: str
-        :keyword number_of_documents: Required. The number of documents of a core summary.
-        :paramtype number_of_documents: long
+        :keyword number_of_documents: The number of documents of a core summary. Required.
+        :paramtype number_of_documents: int
         """
-        super(CoreSummary, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.number_of_documents = number_of_documents
 
@@ -710,27 +680,23 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class DataExport(ProxyResource):
+class DataExport(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The top level data export resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -757,7 +723,7 @@ class DataExport(ProxyResource):
      the destination resource in Azure.
     :vartype resource_id: str
     :ivar type_properties_destination_type: The type of the destination resource. Known values are:
-     "StorageAccount", "EventHub".
+     "StorageAccount" and "EventHub".
     :vartype type_properties_destination_type: str or ~azure.mgmt.loganalytics.models.Type
     :ivar event_hub_name: Optional. Allows to define an Event Hub name. Not applicable when
      destination is Storage Account.
@@ -765,24 +731,24 @@ class DataExport(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'type_properties_destination_type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "type_properties_destination_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data_export_id': {'key': 'properties.dataExportId', 'type': 'str'},
-        'table_names': {'key': 'properties.tableNames', 'type': '[str]'},
-        'enable': {'key': 'properties.enable', 'type': 'bool'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
-        'last_modified_date': {'key': 'properties.lastModifiedDate', 'type': 'str'},
-        'resource_id': {'key': 'properties.destination.resourceId', 'type': 'str'},
-        'type_properties_destination_type': {'key': 'properties.destination.type', 'type': 'str'},
-        'event_hub_name': {'key': 'properties.destination.metaData.eventHubName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data_export_id": {"key": "properties.dataExportId", "type": "str"},
+        "table_names": {"key": "properties.tableNames", "type": "[str]"},
+        "enable": {"key": "properties.enable", "type": "bool"},
+        "created_date": {"key": "properties.createdDate", "type": "str"},
+        "last_modified_date": {"key": "properties.lastModifiedDate", "type": "str"},
+        "resource_id": {"key": "properties.destination.resourceId", "type": "str"},
+        "type_properties_destination_type": {"key": "properties.destination.type", "type": "str"},
+        "event_hub_name": {"key": "properties.destination.metaData.eventHubName", "type": "str"},
     }
 
     def __init__(
@@ -815,7 +781,7 @@ class DataExport(ProxyResource):
          destination is Storage Account.
         :paramtype event_hub_name: str
         """
-        super(DataExport, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_export_id = data_export_id
         self.table_names = table_names
         self.enable = enable
@@ -826,7 +792,7 @@ class DataExport(ProxyResource):
         self.event_hub_name = event_hub_name
 
 
-class DataExportListResult(msrest.serialization.Model):
+class DataExportListResult(_serialization.Model):
     """Result of the request to list data exports.
 
     :ivar value: List of data export instances within a workspace..
@@ -834,20 +800,15 @@ class DataExportListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataExport]'},
+        "value": {"key": "value", "type": "[DataExport]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.DataExport"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.DataExport"]] = None, **kwargs):
         """
         :keyword value: List of data export instances within a workspace..
         :paramtype value: list[~azure.mgmt.loganalytics.models.DataExport]
         """
-        super(DataExportListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -866,12 +827,12 @@ class DataSource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar properties: Required. The data source properties in raw json format, each kind of data
-     source have it's own schema.
-    :vartype properties: any
+    :ivar properties: The data source properties in raw json format, each kind of data source have
+     it's own schema. Required.
+    :vartype properties: JSON
     :ivar etag: The ETag of the data source.
     :vartype etag: str
-    :ivar kind: Required. The kind of the DataSource. Known values are: "WindowsEvent",
+    :ivar kind: The kind of the DataSource. Required. Known values are: "WindowsEvent",
      "WindowsPerformanceCounter", "IISLogs", "LinuxSyslog", "LinuxSyslogCollection",
      "LinuxPerformanceObject", "LinuxPerformanceCollection", "CustomLog", "CustomLogCollection",
      "AzureAuditLog", "AzureActivityLog", "GenericDataSource", "ChangeTrackingCustomPath",
@@ -880,47 +841,47 @@ class DataSource(ProxyResource):
      "LinuxChangeTrackingPath", "ChangeTrackingContentLocation", "WindowsTelemetry", "Office365",
      "SecurityWindowsBaselineConfiguration", "SecurityCenterSecurityWindowsBaselineConfiguration",
      "SecurityEventCollectionConfiguration", "SecurityInsightsSecurityEventCollectionConfiguration",
-     "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights",
+     "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights", and
      "SqlDataClassification".
     :vartype kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"required": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: Any,
+        properties: JSON,
         kind: Union[str, "_models.DataSourceKind"],
         etag: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
-        :keyword properties: Required. The data source properties in raw json format, each kind of data
-         source have it's own schema.
-        :paramtype properties: any
+        :keyword properties: The data source properties in raw json format, each kind of data source
+         have it's own schema. Required.
+        :paramtype properties: JSON
         :keyword etag: The ETag of the data source.
         :paramtype etag: str
-        :keyword kind: Required. The kind of the DataSource. Known values are: "WindowsEvent",
+        :keyword kind: The kind of the DataSource. Required. Known values are: "WindowsEvent",
          "WindowsPerformanceCounter", "IISLogs", "LinuxSyslog", "LinuxSyslogCollection",
          "LinuxPerformanceObject", "LinuxPerformanceCollection", "CustomLog", "CustomLogCollection",
          "AzureAuditLog", "AzureActivityLog", "GenericDataSource", "ChangeTrackingCustomPath",
@@ -929,20 +890,20 @@ class DataSource(ProxyResource):
          "LinuxChangeTrackingPath", "ChangeTrackingContentLocation", "WindowsTelemetry", "Office365",
          "SecurityWindowsBaselineConfiguration", "SecurityCenterSecurityWindowsBaselineConfiguration",
          "SecurityEventCollectionConfiguration", "SecurityInsightsSecurityEventCollectionConfiguration",
-         "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights",
+         "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights", and
          "SqlDataClassification".
         :paramtype kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(DataSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.etag = etag
         self.kind = kind
         self.tags = tags
 
 
-class DataSourceFilter(msrest.serialization.Model):
+class DataSourceFilter(_serialization.Model):
     """DataSource filter. Right now, only filter by kind is supported.
 
     :ivar kind: The kind of the DataSource. Known values are: "WindowsEvent",
@@ -954,21 +915,16 @@ class DataSourceFilter(msrest.serialization.Model):
      "LinuxChangeTrackingPath", "ChangeTrackingContentLocation", "WindowsTelemetry", "Office365",
      "SecurityWindowsBaselineConfiguration", "SecurityCenterSecurityWindowsBaselineConfiguration",
      "SecurityEventCollectionConfiguration", "SecurityInsightsSecurityEventCollectionConfiguration",
-     "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights",
+     "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights", and
      "SqlDataClassification".
     :vartype kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[Union[str, "_models.DataSourceKind"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kind: Optional[Union[str, "_models.DataSourceKind"]] = None, **kwargs):
         """
         :keyword kind: The kind of the DataSource. Known values are: "WindowsEvent",
          "WindowsPerformanceCounter", "IISLogs", "LinuxSyslog", "LinuxSyslogCollection",
@@ -979,15 +935,15 @@ class DataSourceFilter(msrest.serialization.Model):
          "LinuxChangeTrackingPath", "ChangeTrackingContentLocation", "WindowsTelemetry", "Office365",
          "SecurityWindowsBaselineConfiguration", "SecurityCenterSecurityWindowsBaselineConfiguration",
          "SecurityEventCollectionConfiguration", "SecurityInsightsSecurityEventCollectionConfiguration",
-         "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights",
+         "ImportComputerGroup", "NetworkMonitoring", "Itsm", "DnsAnalytics", "ApplicationInsights", and
          "SqlDataClassification".
         :paramtype kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
         """
-        super(DataSourceFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kind = kind
 
 
-class DataSourceListResult(msrest.serialization.Model):
+class DataSourceListResult(_serialization.Model):
     """The list data source by workspace operation response.
 
     :ivar value: A list of datasources.
@@ -997,16 +953,12 @@ class DataSourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataSource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DataSource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.DataSource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.DataSource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of datasources.
@@ -1014,12 +966,12 @@ class DataSourceListResult(msrest.serialization.Model):
         :keyword next_link: The link (url) to the next page of datasources.
         :paramtype next_link: str
         """
-        super(DataSourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1027,31 +979,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1069,28 +1017,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1098,7 +1042,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -1106,24 +1050,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.loganalytics.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1134,8 +1073,8 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Required. Type of managed service identity. Known values are: "user",
-     "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+    :ivar type: Type of managed service identity. Required. Known values are: "user",
+     "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.loganalytics.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
@@ -1145,16 +1084,16 @@ class Identity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserIdentityProperties}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserIdentityProperties}"},
     }
 
     def __init__(
@@ -1165,8 +1104,8 @@ class Identity(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. Type of managed service identity. Known values are: "user",
-         "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+        :keyword type: Type of managed service identity. Required. Known values are: "user",
+         "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.loganalytics.models.IdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
@@ -1174,14 +1113,14 @@ class Identity(msrest.serialization.Model):
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.loganalytics.models.UserIdentityProperties]
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class IntelligencePack(msrest.serialization.Model):
+class IntelligencePack(_serialization.Model):
     """Intelligence Pack containing a string name and boolean indicating if it's enabled.
 
     :ivar name: The name of the intelligence pack.
@@ -1193,9 +1132,9 @@ class IntelligencePack(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
     def __init__(
@@ -1214,13 +1153,13 @@ class IntelligencePack(msrest.serialization.Model):
         :keyword display_name: The display name of the intelligence pack.
         :paramtype display_name: str
         """
-        super(IntelligencePack, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
         self.display_name = display_name
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """The key vault properties.
 
     :ivar key_vault_uri: The Key Vault uri which holds they key associated with the Log Analytics
@@ -1235,10 +1174,10 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
-        'key_rsa_size': {'key': 'keyRsaSize', 'type': 'int'},
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
+        "key_rsa_size": {"key": "keyRsaSize", "type": "int"},
     }
 
     def __init__(
@@ -1261,7 +1200,7 @@ class KeyVaultProperties(msrest.serialization.Model):
         :keyword key_rsa_size: Selected key minimum required size.
         :paramtype key_rsa_size: int
         """
-        super(KeyVaultProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_vault_uri = key_vault_uri
         self.key_name = key_name
         self.key_version = key_version
@@ -1281,7 +1220,7 @@ class LinkedService(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar resource_id: The resource id of the resource that will be linked to the workspace. This
      should be used for linking resources which require read access.
@@ -1290,24 +1229,24 @@ class LinkedService(ProxyResource):
      workspace. This should be used for linking resources which require write access.
     :vartype write_access_resource_id: str
     :ivar provisioning_state: The provisioning state of the linked service. Known values are:
-     "Succeeded", "Deleting", "ProvisioningAccount", "Updating".
+     "Succeeded", "Deleting", "ProvisioningAccount", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.LinkedServiceEntityStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
-        'write_access_resource_id': {'key': 'properties.writeAccessResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "resource_id": {"key": "properties.resourceId", "type": "str"},
+        "write_access_resource_id": {"key": "properties.writeAccessResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1320,7 +1259,7 @@ class LinkedService(ProxyResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword resource_id: The resource id of the resource that will be linked to the workspace.
          This should be used for linking resources which require read access.
@@ -1329,17 +1268,17 @@ class LinkedService(ProxyResource):
          workspace. This should be used for linking resources which require write access.
         :paramtype write_access_resource_id: str
         :keyword provisioning_state: The provisioning state of the linked service. Known values are:
-         "Succeeded", "Deleting", "ProvisioningAccount", "Updating".
+         "Succeeded", "Deleting", "ProvisioningAccount", and "Updating".
         :paramtype provisioning_state: str or ~azure.mgmt.loganalytics.models.LinkedServiceEntityStatus
         """
-        super(LinkedService, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.resource_id = resource_id
         self.write_access_resource_id = write_access_resource_id
         self.provisioning_state = provisioning_state
 
 
-class LinkedServiceListResult(msrest.serialization.Model):
+class LinkedServiceListResult(_serialization.Model):
     """The list linked service operation response.
 
     :ivar value: The list of linked service instances.
@@ -1347,24 +1286,19 @@ class LinkedServiceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LinkedService]'},
+        "value": {"key": "value", "type": "[LinkedService]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.LinkedService"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.LinkedService"]] = None, **kwargs):
         """
         :keyword value: The list of linked service instances.
         :paramtype value: list[~azure.mgmt.loganalytics.models.LinkedService]
         """
-        super(LinkedServiceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class LinkedStorageAccountsListResult(msrest.serialization.Model):
+class LinkedStorageAccountsListResult(_serialization.Model):
     """The list linked storage accounts service operation response.
 
     :ivar value: A list of linked storage accounts instances.
@@ -1372,20 +1306,15 @@ class LinkedStorageAccountsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LinkedStorageAccountsResource]'},
+        "value": {"key": "value", "type": "[LinkedStorageAccountsResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.LinkedStorageAccountsResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.LinkedStorageAccountsResource"]] = None, **kwargs):
         """
         :keyword value: A list of linked storage accounts instances.
         :paramtype value: list[~azure.mgmt.loganalytics.models.LinkedStorageAccountsResource]
         """
-        super(LinkedStorageAccountsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -1403,43 +1332,38 @@ class LinkedStorageAccountsResource(ProxyResource):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar data_source_type: Linked storage accounts type. Known values are: "CustomLogs",
-     "AzureWatson", "Query", "Ingestion", "Alerts".
+     "AzureWatson", "Query", "Ingestion", and "Alerts".
     :vartype data_source_type: str or ~azure.mgmt.loganalytics.models.DataSourceType
     :ivar storage_account_ids: Linked storage accounts resources ids.
     :vartype storage_account_ids: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'data_source_type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "data_source_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'data_source_type': {'key': 'properties.dataSourceType', 'type': 'str'},
-        'storage_account_ids': {'key': 'properties.storageAccountIds', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "data_source_type": {"key": "properties.dataSourceType", "type": "str"},
+        "storage_account_ids": {"key": "properties.storageAccountIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        storage_account_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, storage_account_ids: Optional[List[str]] = None, **kwargs):
         """
         :keyword storage_account_ids: Linked storage accounts resources ids.
         :paramtype storage_account_ids: list[str]
         """
-        super(LinkedStorageAccountsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_source_type = None
         self.storage_account_ids = storage_account_ids
 
 
-class QueryPacksResource(msrest.serialization.Model):
+class QueryPacksResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1452,41 +1376,35 @@ class QueryPacksResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(QueryPacksResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1507,9 +1425,9 @@ class LogAnalyticsQueryPack(QueryPacksResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar query_pack_id: The unique ID of your application. This field cannot be changed.
     :vartype query_pack_id: str
@@ -1524,54 +1442,48 @@ class LogAnalyticsQueryPack(QueryPacksResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'query_pack_id': {'readonly': True},
-        'time_created': {'readonly': True},
-        'time_modified': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "query_pack_id": {"readonly": True},
+        "time_created": {"readonly": True},
+        "time_modified": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'query_pack_id': {'key': 'properties.queryPackId', 'type': 'str'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "query_pack_id": {"key": "properties.queryPackId", "type": "str"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "time_modified": {"key": "properties.timeModified", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(LogAnalyticsQueryPack, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.query_pack_id = None
         self.time_created = None
         self.time_modified = None
         self.provisioning_state = None
 
 
-class LogAnalyticsQueryPackListResult(msrest.serialization.Model):
+class LogAnalyticsQueryPackListResult(_serialization.Model):
     """Describes the list of Log Analytics QueryPack resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of Log Analytics QueryPack definitions.
+    :ivar value: List of Log Analytics QueryPack definitions. Required.
     :vartype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack]
     :ivar next_link: The URI to get the next set of Log Analytics QueryPack definitions if too many
      QueryPacks where returned in the result set.
@@ -1579,34 +1491,28 @@ class LogAnalyticsQueryPackListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogAnalyticsQueryPack]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LogAnalyticsQueryPack]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.LogAnalyticsQueryPack"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.LogAnalyticsQueryPack"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. List of Log Analytics QueryPack definitions.
+        :keyword value: List of Log Analytics QueryPack definitions. Required.
         :paramtype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPack]
         :keyword next_link: The URI to get the next set of Log Analytics QueryPack definitions if too
          many QueryPacks where returned in the result set.
         :paramtype next_link: str
         """
-        super(LogAnalyticsQueryPackListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LogAnalyticsQueryPackQuery(AzureResourceProperties):
+class LogAnalyticsQueryPackQuery(AzureResourceProperties):  # pylint: disable=too-many-instance-attributes
     """A Log Analytics QueryPack-Query definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1635,38 +1541,38 @@ class LogAnalyticsQueryPackQuery(AzureResourceProperties):
     :vartype body: str
     :ivar related: The related metadata items for the function.
     :vartype related: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryPropertiesRelated
-    :ivar tags: A set of tags. Tags associated with the query.
+    :ivar tags: Tags associated with the query.
     :vartype tags: dict[str, list[str]]
     :ivar properties: Additional properties that can be set for the query.
-    :vartype properties: any
+    :vartype properties: JSON
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'id_properties_id': {'readonly': True},
-        'time_created': {'readonly': True},
-        'time_modified': {'readonly': True},
-        'author': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "id_properties_id": {"readonly": True},
+        "time_created": {"readonly": True},
+        "time_modified": {"readonly": True},
+        "author": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'id_properties_id': {'key': 'properties.id', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'iso-8601'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'body': {'key': 'properties.body', 'type': 'str'},
-        'related': {'key': 'properties.related', 'type': 'LogAnalyticsQueryPackQueryPropertiesRelated'},
-        'tags': {'key': 'properties.tags', 'type': '{[str]}'},
-        'properties': {'key': 'properties.properties', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "id_properties_id": {"key": "properties.id", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
+        "time_modified": {"key": "properties.timeModified", "type": "iso-8601"},
+        "author": {"key": "properties.author", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "body": {"key": "properties.body", "type": "str"},
+        "related": {"key": "properties.related", "type": "LogAnalyticsQueryPackQueryPropertiesRelated"},
+        "tags": {"key": "properties.tags", "type": "{[str]}"},
+        "properties": {"key": "properties.properties", "type": "object"},
     }
 
     def __init__(
@@ -1677,7 +1583,7 @@ class LogAnalyticsQueryPackQuery(AzureResourceProperties):
         body: Optional[str] = None,
         related: Optional["_models.LogAnalyticsQueryPackQueryPropertiesRelated"] = None,
         tags: Optional[Dict[str, List[str]]] = None,
-        properties: Optional[Any] = None,
+        properties: Optional[JSON] = None,
         **kwargs
     ):
         """
@@ -1689,12 +1595,12 @@ class LogAnalyticsQueryPackQuery(AzureResourceProperties):
         :paramtype body: str
         :keyword related: The related metadata items for the function.
         :paramtype related: ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQueryPropertiesRelated
-        :keyword tags: A set of tags. Tags associated with the query.
+        :keyword tags: Tags associated with the query.
         :paramtype tags: dict[str, list[str]]
         :keyword properties: Additional properties that can be set for the query.
-        :paramtype properties: any
+        :paramtype properties: JSON
         """
-        super(LogAnalyticsQueryPackQuery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id_properties_id = None
         self.display_name = display_name
         self.time_created = None
@@ -1707,12 +1613,12 @@ class LogAnalyticsQueryPackQuery(AzureResourceProperties):
         self.properties = properties
 
 
-class LogAnalyticsQueryPackQueryListResult(msrest.serialization.Model):
+class LogAnalyticsQueryPackQueryListResult(_serialization.Model):
     """Describes the list of Log Analytics QueryPack-Query resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of Log Analytics QueryPack Query definitions.
+    :ivar value: List of Log Analytics QueryPack Query definitions. Required.
     :vartype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery]
     :ivar next_link: The URI to get the next set of Log Analytics QueryPack definitions if too many
      QueryPack-Queries where returned in the result set.
@@ -1720,34 +1626,28 @@ class LogAnalyticsQueryPackQueryListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogAnalyticsQueryPackQuery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LogAnalyticsQueryPackQuery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["_models.LogAnalyticsQueryPackQuery"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["_models.LogAnalyticsQueryPackQuery"], next_link: Optional[str] = None, **kwargs):
         """
-        :keyword value: Required. List of Log Analytics QueryPack Query definitions.
+        :keyword value: List of Log Analytics QueryPack Query definitions. Required.
         :paramtype value: list[~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuery]
         :keyword next_link: The URI to get the next set of Log Analytics QueryPack definitions if too
          many QueryPack-Queries where returned in the result set.
         :paramtype next_link: str
         """
-        super(LogAnalyticsQueryPackQueryListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LogAnalyticsQueryPackQueryPropertiesRelated(msrest.serialization.Model):
+class LogAnalyticsQueryPackQueryPropertiesRelated(_serialization.Model):
     """The related metadata items for the function.
 
     :ivar categories: The related categories for the function.
@@ -1759,9 +1659,9 @@ class LogAnalyticsQueryPackQueryPropertiesRelated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'categories': {'key': 'categories', 'type': '[str]'},
-        'resource_types': {'key': 'resourceTypes', 'type': '[str]'},
-        'solutions': {'key': 'solutions', 'type': '[str]'},
+        "categories": {"key": "categories", "type": "[str]"},
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+        "solutions": {"key": "solutions", "type": "[str]"},
     }
 
     def __init__(
@@ -1780,25 +1680,25 @@ class LogAnalyticsQueryPackQueryPropertiesRelated(msrest.serialization.Model):
         :keyword solutions: The related Log Analytics solutions for the function.
         :paramtype solutions: list[str]
         """
-        super(LogAnalyticsQueryPackQueryPropertiesRelated, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.categories = categories
         self.resource_types = resource_types
         self.solutions = solutions
 
 
-class LogAnalyticsQueryPackQuerySearchProperties(msrest.serialization.Model):
+class LogAnalyticsQueryPackQuerySearchProperties(_serialization.Model):
     """Properties that define an Log Analytics QueryPack-Query search properties.
 
     :ivar related: The related metadata items for the function.
     :vartype related:
      ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchPropertiesRelated
-    :ivar tags: A set of tags. Tags associated with the query.
+    :ivar tags: Tags associated with the query.
     :vartype tags: dict[str, list[str]]
     """
 
     _attribute_map = {
-        'related': {'key': 'related', 'type': 'LogAnalyticsQueryPackQuerySearchPropertiesRelated'},
-        'tags': {'key': 'tags', 'type': '{[str]}'},
+        "related": {"key": "related", "type": "LogAnalyticsQueryPackQuerySearchPropertiesRelated"},
+        "tags": {"key": "tags", "type": "{[str]}"},
     }
 
     def __init__(
@@ -1812,15 +1712,15 @@ class LogAnalyticsQueryPackQuerySearchProperties(msrest.serialization.Model):
         :keyword related: The related metadata items for the function.
         :paramtype related:
          ~azure.mgmt.loganalytics.models.LogAnalyticsQueryPackQuerySearchPropertiesRelated
-        :keyword tags: A set of tags. Tags associated with the query.
+        :keyword tags: Tags associated with the query.
         :paramtype tags: dict[str, list[str]]
         """
-        super(LogAnalyticsQueryPackQuerySearchProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.related = related
         self.tags = tags
 
 
-class LogAnalyticsQueryPackQuerySearchPropertiesRelated(msrest.serialization.Model):
+class LogAnalyticsQueryPackQuerySearchPropertiesRelated(_serialization.Model):
     """The related metadata items for the function.
 
     :ivar categories: The related categories for the function.
@@ -1832,9 +1732,9 @@ class LogAnalyticsQueryPackQuerySearchPropertiesRelated(msrest.serialization.Mod
     """
 
     _attribute_map = {
-        'categories': {'key': 'categories', 'type': '[str]'},
-        'resource_types': {'key': 'resourceTypes', 'type': '[str]'},
-        'solutions': {'key': 'solutions', 'type': '[str]'},
+        "categories": {"key": "categories", "type": "[str]"},
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+        "solutions": {"key": "solutions", "type": "[str]"},
     }
 
     def __init__(
@@ -1853,13 +1753,13 @@ class LogAnalyticsQueryPackQuerySearchPropertiesRelated(msrest.serialization.Mod
         :keyword solutions: The related Log Analytics solutions for the function.
         :paramtype solutions: list[str]
         """
-        super(LogAnalyticsQueryPackQuerySearchPropertiesRelated, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.categories = categories
         self.resource_types = resource_types
         self.solutions = solutions
 
 
-class ManagementGroup(msrest.serialization.Model):
+class ManagementGroup(_serialization.Model):
     """A management group that is connected to a workspace.
 
     :ivar server_count: The number of servers connected to the management group.
@@ -1881,14 +1781,14 @@ class ManagementGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'server_count': {'key': 'properties.serverCount', 'type': 'int'},
-        'is_gateway': {'key': 'properties.isGateway', 'type': 'bool'},
-        'name': {'key': 'properties.name', 'type': 'str'},
-        'id': {'key': 'properties.id', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'data_received': {'key': 'properties.dataReceived', 'type': 'iso-8601'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
+        "server_count": {"key": "properties.serverCount", "type": "int"},
+        "is_gateway": {"key": "properties.isGateway", "type": "bool"},
+        "name": {"key": "properties.name", "type": "str"},
+        "id": {"key": "properties.id", "type": "str"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "data_received": {"key": "properties.dataReceived", "type": "iso-8601"},
+        "version": {"key": "properties.version", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "str"},
     }
 
     def __init__(
@@ -1897,7 +1797,7 @@ class ManagementGroup(msrest.serialization.Model):
         server_count: Optional[int] = None,
         is_gateway: Optional[bool] = None,
         name: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         created: Optional[datetime.datetime] = None,
         data_received: Optional[datetime.datetime] = None,
         version: Optional[str] = None,
@@ -1922,7 +1822,7 @@ class ManagementGroup(msrest.serialization.Model):
         :keyword sku: The SKU of System Center that is managing the management group.
         :paramtype sku: str
         """
-        super(ManagementGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.server_count = server_count
         self.is_gateway = is_gateway
         self.name = name
@@ -1933,7 +1833,7 @@ class ManagementGroup(msrest.serialization.Model):
         self.sku = sku
 
 
-class MetricName(msrest.serialization.Model):
+class MetricName(_serialization.Model):
     """The name of a metric.
 
     :ivar value: The system name of the metric.
@@ -1943,29 +1843,23 @@ class MetricName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: The system name of the metric.
         :paramtype value: str
         :keyword localized_value: The localized name of the metric.
         :paramtype localized_value: str
         """
-        super(MetricName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Supported operation of OperationalInsights resource provider.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -1975,29 +1869,23 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: Display metadata associated with the operation.
         :paramtype display: ~azure.mgmt.loganalytics.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     :ivar provider: Service provider: Microsoft OperationsManagement.
@@ -2011,10 +1899,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2036,14 +1924,14 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: Description of operation.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list solution operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2056,31 +1944,26 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Operation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
         """
         :keyword value: List of solution operations supported by the OperationsManagement resource
          provider.
         :paramtype value: list[~azure.mgmt.loganalytics.models.Operation]
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class OperationStatus(msrest.serialization.Model):
+class OperationStatus(_serialization.Model):
     """The status of operation.
 
     :ivar id: The operation Id.
@@ -2098,18 +1981,18 @@ class OperationStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
@@ -2131,7 +2014,7 @@ class OperationStatus(msrest.serialization.Model):
         :keyword error: The error detail of the operation if any.
         :paramtype error: ~azure.mgmt.loganalytics.models.ErrorResponse
         """
-        super(OperationStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.start_time = start_time
@@ -2140,7 +2023,7 @@ class OperationStatus(msrest.serialization.Model):
         self.error = error
 
 
-class PrivateLinkScopedResource(msrest.serialization.Model):
+class PrivateLinkScopedResource(_serialization.Model):
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -2150,30 +2033,26 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'scope_id': {'key': 'scopeId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "scope_id": {"key": "scopeId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        scope_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, scope_id: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: The full resource Id of the private link scope resource.
         :paramtype resource_id: str
         :keyword scope_id: The private link scope unique Identifier.
         :paramtype scope_id: str
         """
-        super(PrivateLinkScopedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
 
 
-class RestoredLogs(msrest.serialization.Model):
+class RestoredLogs(_serialization.Model):
     """Restore parameters.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar start_restore_time: The timestamp to start the restore from (UTC).
     :vartype start_restore_time: ~datetime.datetime
@@ -2181,12 +2060,19 @@ class RestoredLogs(msrest.serialization.Model):
     :vartype end_restore_time: ~datetime.datetime
     :ivar source_table: The table to restore data from.
     :vartype source_table: str
+    :ivar azure_async_operation_id: Search results table async operation id.
+    :vartype azure_async_operation_id: str
     """
 
+    _validation = {
+        "azure_async_operation_id": {"readonly": True},
+    }
+
     _attribute_map = {
-        'start_restore_time': {'key': 'startRestoreTime', 'type': 'iso-8601'},
-        'end_restore_time': {'key': 'endRestoreTime', 'type': 'iso-8601'},
-        'source_table': {'key': 'sourceTable', 'type': 'str'},
+        "start_restore_time": {"key": "startRestoreTime", "type": "iso-8601"},
+        "end_restore_time": {"key": "endRestoreTime", "type": "iso-8601"},
+        "source_table": {"key": "sourceTable", "type": "str"},
+        "azure_async_operation_id": {"key": "azureAsyncOperationId", "type": "str"},
     }
 
     def __init__(
@@ -2205,13 +2091,14 @@ class RestoredLogs(msrest.serialization.Model):
         :keyword source_table: The table to restore data from.
         :paramtype source_table: str
         """
-        super(RestoredLogs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_restore_time = start_restore_time
         self.end_restore_time = end_restore_time
         self.source_table = source_table
+        self.azure_async_operation_id = None
 
 
-class ResultStatistics(msrest.serialization.Model):
+class ResultStatistics(_serialization.Model):
     """Search job execution statistics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2220,30 +2107,31 @@ class ResultStatistics(msrest.serialization.Model):
     :vartype progress: float
     :ivar ingested_records: The number of rows that were returned by the search job.
     :vartype ingested_records: int
+    :ivar scanned_gb: Search job: Amount of scanned data.
+    :vartype scanned_gb: float
     """
 
     _validation = {
-        'progress': {'readonly': True, 'multiple': 0.01},
-        'ingested_records': {'readonly': True},
+        "progress": {"readonly": True, "multiple": 0.01},
+        "ingested_records": {"readonly": True},
+        "scanned_gb": {"readonly": True, "multiple": 0.01},
     }
 
     _attribute_map = {
-        'progress': {'key': 'progress', 'type': 'float'},
-        'ingested_records': {'key': 'ingestedRecords', 'type': 'int'},
+        "progress": {"key": "progress", "type": "float"},
+        "ingested_records": {"key": "ingestedRecords", "type": "int"},
+        "scanned_gb": {"key": "scannedGb", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResultStatistics, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.progress = None
         self.ingested_records = None
+        self.scanned_gb = None
 
 
-class SavedSearch(ProxyResource):
+class SavedSearch(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Value object for saved search results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2261,12 +2149,12 @@ class SavedSearch(ProxyResource):
     :ivar etag: The ETag of the saved search. To override an existing saved search, use "*" or
      specify the current Etag.
     :vartype etag: str
-    :ivar category: Required. The category of the saved search. This helps the user to find a saved
-     search faster.
+    :ivar category: The category of the saved search. This helps the user to find a saved search
+     faster. Required.
     :vartype category: str
-    :ivar display_name: Required. Saved search display name.
+    :ivar display_name: Saved search display name. Required.
     :vartype display_name: str
-    :ivar query: Required. The query expression for the saved search.
+    :ivar query: The query expression for the saved search. Required.
     :vartype query: str
     :ivar function_alias: The function alias if query serves as a function.
     :vartype function_alias: str
@@ -2277,32 +2165,32 @@ class SavedSearch(ProxyResource):
     :vartype function_parameters: str
     :ivar version: The version number of the query language. The current version is 2 and is the
      default.
-    :vartype version: long
-    :ivar tags: A set of tags. The tags attached to the saved search.
+    :vartype version: int
+    :ivar tags: The tags attached to the saved search.
     :vartype tags: list[~azure.mgmt.loganalytics.models.Tag]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'category': {'required': True},
-        'display_name': {'required': True},
-        'query': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "category": {"required": True},
+        "display_name": {"required": True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'query': {'key': 'properties.query', 'type': 'str'},
-        'function_alias': {'key': 'properties.functionAlias', 'type': 'str'},
-        'function_parameters': {'key': 'properties.functionParameters', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'long'},
-        'tags': {'key': 'properties.tags', 'type': '[Tag]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "query": {"key": "properties.query", "type": "str"},
+        "function_alias": {"key": "properties.functionAlias", "type": "str"},
+        "function_parameters": {"key": "properties.functionParameters", "type": "str"},
+        "version": {"key": "properties.version", "type": "int"},
+        "tags": {"key": "properties.tags", "type": "[Tag]"},
     }
 
     def __init__(
@@ -2322,12 +2210,12 @@ class SavedSearch(ProxyResource):
         :keyword etag: The ETag of the saved search. To override an existing saved search, use "*" or
          specify the current Etag.
         :paramtype etag: str
-        :keyword category: Required. The category of the saved search. This helps the user to find a
-         saved search faster.
+        :keyword category: The category of the saved search. This helps the user to find a saved search
+         faster. Required.
         :paramtype category: str
-        :keyword display_name: Required. Saved search display name.
+        :keyword display_name: Saved search display name. Required.
         :paramtype display_name: str
-        :keyword query: Required. The query expression for the saved search.
+        :keyword query: The query expression for the saved search. Required.
         :paramtype query: str
         :keyword function_alias: The function alias if query serves as a function.
         :paramtype function_alias: str
@@ -2338,11 +2226,11 @@ class SavedSearch(ProxyResource):
         :paramtype function_parameters: str
         :keyword version: The version number of the query language. The current version is 2 and is the
          default.
-        :paramtype version: long
-        :keyword tags: A set of tags. The tags attached to the saved search.
+        :paramtype version: int
+        :keyword tags: The tags attached to the saved search.
         :paramtype tags: list[~azure.mgmt.loganalytics.models.Tag]
         """
-        super(SavedSearch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.etag = etag
         self.category = category
         self.display_name = display_name
@@ -2353,7 +2241,7 @@ class SavedSearch(ProxyResource):
         self.tags = tags
 
 
-class SavedSearchesListResult(msrest.serialization.Model):
+class SavedSearchesListResult(_serialization.Model):
     """The saved search list operation response.
 
     :ivar value: The array of result values.
@@ -2361,24 +2249,19 @@ class SavedSearchesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SavedSearch]'},
+        "value": {"key": "value", "type": "[SavedSearch]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SavedSearch"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.SavedSearch"]] = None, **kwargs):
         """
         :keyword value: The array of result values.
         :paramtype value: list[~azure.mgmt.loganalytics.models.SavedSearch]
         """
-        super(SavedSearchesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Schema(msrest.serialization.Model):
+class Schema(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Table's schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2397,49 +2280,41 @@ class Schema(msrest.serialization.Model):
     :vartype categories: list[str]
     :ivar labels: Table labels.
     :vartype labels: list[str]
-    :ivar source: Table's creator. Known values are: "microsoft", "customer".
+    :ivar source: Table's creator. Known values are: "microsoft" and "customer".
     :vartype source: str or ~azure.mgmt.loganalytics.models.SourceEnum
     :ivar table_type: Table's creator. Known values are: "Microsoft", "CustomLog", "RestoredLogs",
-     "SearchResults".
+     and "SearchResults".
     :vartype table_type: str or ~azure.mgmt.loganalytics.models.TableTypeEnum
     :ivar table_sub_type: The subtype describes what APIs can be used to interact with the table,
-     and what features are available against it. Known values are: "Any", "Classic",
+     and what features are available against it. Known values are: "Any", "Classic", and
      "DataCollectionRuleBased".
     :vartype table_sub_type: str or ~azure.mgmt.loganalytics.models.TableSubTypeEnum
     :ivar solutions: List of solutions the table is affiliated with.
     :vartype solutions: list[str]
-    :ivar search_results: Parameters of the search job that initiated this table.
-    :vartype search_results: ~azure.mgmt.loganalytics.models.SearchResults
-    :ivar restored_logs: Parameters of the restore operation that initiated this table.
-    :vartype restored_logs: ~azure.mgmt.loganalytics.models.RestoredLogs
     """
 
     _validation = {
-        'standard_columns': {'readonly': True},
-        'categories': {'readonly': True},
-        'labels': {'readonly': True},
-        'source': {'readonly': True},
-        'table_type': {'readonly': True},
-        'table_sub_type': {'readonly': True},
-        'solutions': {'readonly': True},
-        'search_results': {'readonly': True},
-        'restored_logs': {'readonly': True},
+        "standard_columns": {"readonly": True},
+        "categories": {"readonly": True},
+        "labels": {"readonly": True},
+        "source": {"readonly": True},
+        "table_type": {"readonly": True},
+        "table_sub_type": {"readonly": True},
+        "solutions": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'columns': {'key': 'columns', 'type': '[Column]'},
-        'standard_columns': {'key': 'standardColumns', 'type': '[Column]'},
-        'categories': {'key': 'categories', 'type': '[str]'},
-        'labels': {'key': 'labels', 'type': '[str]'},
-        'source': {'key': 'source', 'type': 'str'},
-        'table_type': {'key': 'tableType', 'type': 'str'},
-        'table_sub_type': {'key': 'tableSubType', 'type': 'str'},
-        'solutions': {'key': 'solutions', 'type': '[str]'},
-        'search_results': {'key': 'searchResults', 'type': 'SearchResults'},
-        'restored_logs': {'key': 'restoredLogs', 'type': 'RestoredLogs'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "columns": {"key": "columns", "type": "[Column]"},
+        "standard_columns": {"key": "standardColumns", "type": "[Column]"},
+        "categories": {"key": "categories", "type": "[str]"},
+        "labels": {"key": "labels", "type": "[str]"},
+        "source": {"key": "source", "type": "str"},
+        "table_type": {"key": "tableType", "type": "str"},
+        "table_sub_type": {"key": "tableSubType", "type": "str"},
+        "solutions": {"key": "solutions", "type": "[str]"},
     }
 
     def __init__(
@@ -2461,7 +2336,7 @@ class Schema(msrest.serialization.Model):
         :keyword columns: A list of table custom columns.
         :paramtype columns: list[~azure.mgmt.loganalytics.models.Column]
         """
-        super(Schema, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.description = description
@@ -2473,11 +2348,9 @@ class Schema(msrest.serialization.Model):
         self.table_type = None
         self.table_sub_type = None
         self.solutions = None
-        self.search_results = None
-        self.restored_logs = None
 
 
-class SearchGetSchemaResponse(msrest.serialization.Model):
+class SearchGetSchemaResponse(_serialization.Model):
     """The get schema operation response.
 
     :ivar metadata: The metadata from search results.
@@ -2487,8 +2360,8 @@ class SearchGetSchemaResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metadata': {'key': 'metadata', 'type': 'SearchMetadata'},
-        'value': {'key': 'value', 'type': '[SearchSchemaValue]'},
+        "metadata": {"key": "metadata", "type": "SearchMetadata"},
+        "value": {"key": "value", "type": "[SearchSchemaValue]"},
     }
 
     def __init__(
@@ -2504,12 +2377,12 @@ class SearchGetSchemaResponse(msrest.serialization.Model):
         :keyword value: The array of result values.
         :paramtype value: list[~azure.mgmt.loganalytics.models.SearchSchemaValue]
         """
-        super(SearchGetSchemaResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metadata = metadata
         self.value = value
 
 
-class SearchMetadata(msrest.serialization.Model):
+class SearchMetadata(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Metadata for search results.
 
     :ivar search_id: The request id of the search.
@@ -2517,9 +2390,9 @@ class SearchMetadata(msrest.serialization.Model):
     :ivar result_type: The search result type.
     :vartype result_type: str
     :ivar total: The total number of search results.
-    :vartype total: long
+    :vartype total: int
     :ivar top: The number of top search results.
-    :vartype top: long
+    :vartype top: int
     :ivar id: The id of the search results request.
     :vartype id: str
     :ivar core_summaries: The core summaries.
@@ -2535,37 +2408,37 @@ class SearchMetadata(msrest.serialization.Model):
     :ivar sort: How the results are sorted.
     :vartype sort: list[~azure.mgmt.loganalytics.models.SearchSort]
     :ivar request_time: The request time.
-    :vartype request_time: long
+    :vartype request_time: int
     :ivar aggregated_value_field: The aggregated value field.
     :vartype aggregated_value_field: str
     :ivar aggregated_grouping_fields: The aggregated grouping fields.
     :vartype aggregated_grouping_fields: str
     :ivar sum: The sum of all aggregates returned in the result set.
-    :vartype sum: long
+    :vartype sum: int
     :ivar max: The max of all aggregates returned in the result set.
-    :vartype max: long
+    :vartype max: int
     :ivar schema: The schema.
     :vartype schema: ~azure.mgmt.loganalytics.models.SearchMetadataSchema
     """
 
     _attribute_map = {
-        'search_id': {'key': 'requestId', 'type': 'str'},
-        'result_type': {'key': 'resultType', 'type': 'str'},
-        'total': {'key': 'total', 'type': 'long'},
-        'top': {'key': 'top', 'type': 'long'},
-        'id': {'key': 'id', 'type': 'str'},
-        'core_summaries': {'key': 'coreSummaries', 'type': '[CoreSummary]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'sort': {'key': 'sort', 'type': '[SearchSort]'},
-        'request_time': {'key': 'requestTime', 'type': 'long'},
-        'aggregated_value_field': {'key': 'aggregatedValueField', 'type': 'str'},
-        'aggregated_grouping_fields': {'key': 'aggregatedGroupingFields', 'type': 'str'},
-        'sum': {'key': 'sum', 'type': 'long'},
-        'max': {'key': 'max', 'type': 'long'},
-        'schema': {'key': 'schema', 'type': 'SearchMetadataSchema'},
+        "search_id": {"key": "requestId", "type": "str"},
+        "result_type": {"key": "resultType", "type": "str"},
+        "total": {"key": "total", "type": "int"},
+        "top": {"key": "top", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "core_summaries": {"key": "coreSummaries", "type": "[CoreSummary]"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_updated": {"key": "lastUpdated", "type": "iso-8601"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "sort": {"key": "sort", "type": "[SearchSort]"},
+        "request_time": {"key": "requestTime", "type": "int"},
+        "aggregated_value_field": {"key": "aggregatedValueField", "type": "str"},
+        "aggregated_grouping_fields": {"key": "aggregatedGroupingFields", "type": "str"},
+        "sum": {"key": "sum", "type": "int"},
+        "max": {"key": "max", "type": "int"},
+        "schema": {"key": "schema", "type": "SearchMetadataSchema"},
     }
 
     def __init__(
@@ -2575,7 +2448,7 @@ class SearchMetadata(msrest.serialization.Model):
         result_type: Optional[str] = None,
         total: Optional[int] = None,
         top: Optional[int] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         core_summaries: Optional[List["_models.CoreSummary"]] = None,
         status: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
@@ -2586,7 +2459,7 @@ class SearchMetadata(msrest.serialization.Model):
         aggregated_value_field: Optional[str] = None,
         aggregated_grouping_fields: Optional[str] = None,
         sum: Optional[int] = None,
-        max: Optional[int] = None,
+        max: Optional[int] = None,  # pylint: disable=redefined-builtin
         schema: Optional["_models.SearchMetadataSchema"] = None,
         **kwargs
     ):
@@ -2596,9 +2469,9 @@ class SearchMetadata(msrest.serialization.Model):
         :keyword result_type: The search result type.
         :paramtype result_type: str
         :keyword total: The total number of search results.
-        :paramtype total: long
+        :paramtype total: int
         :keyword top: The number of top search results.
-        :paramtype top: long
+        :paramtype top: int
         :keyword id: The id of the search results request.
         :paramtype id: str
         :keyword core_summaries: The core summaries.
@@ -2614,19 +2487,19 @@ class SearchMetadata(msrest.serialization.Model):
         :keyword sort: How the results are sorted.
         :paramtype sort: list[~azure.mgmt.loganalytics.models.SearchSort]
         :keyword request_time: The request time.
-        :paramtype request_time: long
+        :paramtype request_time: int
         :keyword aggregated_value_field: The aggregated value field.
         :paramtype aggregated_value_field: str
         :keyword aggregated_grouping_fields: The aggregated grouping fields.
         :paramtype aggregated_grouping_fields: str
         :keyword sum: The sum of all aggregates returned in the result set.
-        :paramtype sum: long
+        :paramtype sum: int
         :keyword max: The max of all aggregates returned in the result set.
-        :paramtype max: long
+        :paramtype max: int
         :keyword schema: The schema.
         :paramtype schema: ~azure.mgmt.loganalytics.models.SearchMetadataSchema
         """
-        super(SearchMetadata, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.search_id = search_id
         self.result_type = result_type
         self.total = total
@@ -2646,7 +2519,7 @@ class SearchMetadata(msrest.serialization.Model):
         self.schema = schema
 
 
-class SearchMetadataSchema(msrest.serialization.Model):
+class SearchMetadataSchema(_serialization.Model):
     """Schema metadata for search.
 
     :ivar name: The name of the metadata schema.
@@ -2656,29 +2529,23 @@ class SearchMetadataSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        version: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, version: Optional[int] = None, **kwargs):
         """
         :keyword name: The name of the metadata schema.
         :paramtype name: str
         :keyword version: The version of the metadata schema.
         :paramtype version: int
         """
-        super(SearchMetadataSchema, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.version = version
 
 
-class SearchResults(msrest.serialization.Model):
+class SearchResults(_serialization.Model):
     """Parameters of the search job that initiated this table.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2695,19 +2562,23 @@ class SearchResults(msrest.serialization.Model):
     :vartype end_search_time: ~datetime.datetime
     :ivar source_table: The table used in the search job.
     :vartype source_table: str
+    :ivar azure_async_operation_id: Search results table async operation id.
+    :vartype azure_async_operation_id: str
     """
 
     _validation = {
-        'source_table': {'readonly': True},
+        "source_table": {"readonly": True},
+        "azure_async_operation_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'start_search_time': {'key': 'startSearchTime', 'type': 'iso-8601'},
-        'end_search_time': {'key': 'endSearchTime', 'type': 'iso-8601'},
-        'source_table': {'key': 'sourceTable', 'type': 'str'},
+        "query": {"key": "query", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "limit": {"key": "limit", "type": "int"},
+        "start_search_time": {"key": "startSearchTime", "type": "iso-8601"},
+        "end_search_time": {"key": "endSearchTime", "type": "iso-8601"},
+        "source_table": {"key": "sourceTable", "type": "str"},
+        "azure_async_operation_id": {"key": "azureAsyncOperationId", "type": "str"},
     }
 
     def __init__(
@@ -2732,16 +2603,17 @@ class SearchResults(msrest.serialization.Model):
         :keyword end_search_time: The timestamp to end the search by (UTC).
         :paramtype end_search_time: ~datetime.datetime
         """
-        super(SearchResults, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.query = query
         self.description = description
         self.limit = limit
         self.start_search_time = start_search_time
         self.end_search_time = end_search_time
         self.source_table = None
+        self.azure_async_operation_id = None
 
 
-class SearchSchemaValue(msrest.serialization.Model):
+class SearchSchemaValue(_serialization.Model):
     """Value object for schema results.
 
     All required parameters must be populated in order to send to Azure.
@@ -2752,30 +2624,30 @@ class SearchSchemaValue(msrest.serialization.Model):
     :vartype display_name: str
     :ivar type: The type.
     :vartype type: str
-    :ivar indexed: Required. The boolean that indicates the field is searchable as free text.
+    :ivar indexed: The boolean that indicates the field is searchable as free text. Required.
     :vartype indexed: bool
-    :ivar stored: Required. The boolean that indicates whether or not the field is stored.
+    :ivar stored: The boolean that indicates whether or not the field is stored. Required.
     :vartype stored: bool
-    :ivar facet: Required. The boolean that indicates whether or not the field is a facet.
+    :ivar facet: The boolean that indicates whether or not the field is a facet. Required.
     :vartype facet: bool
     :ivar owner_type: The array of workflows containing the field.
     :vartype owner_type: list[str]
     """
 
     _validation = {
-        'indexed': {'required': True},
-        'stored': {'required': True},
-        'facet': {'required': True},
+        "indexed": {"required": True},
+        "stored": {"required": True},
+        "facet": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'indexed': {'key': 'indexed', 'type': 'bool'},
-        'stored': {'key': 'stored', 'type': 'bool'},
-        'facet': {'key': 'facet', 'type': 'bool'},
-        'owner_type': {'key': 'ownerType', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "indexed": {"key": "indexed", "type": "bool"},
+        "stored": {"key": "stored", "type": "bool"},
+        "facet": {"key": "facet", "type": "bool"},
+        "owner_type": {"key": "ownerType", "type": "[str]"},
     }
 
     def __init__(
@@ -2797,16 +2669,16 @@ class SearchSchemaValue(msrest.serialization.Model):
         :paramtype display_name: str
         :keyword type: The type.
         :paramtype type: str
-        :keyword indexed: Required. The boolean that indicates the field is searchable as free text.
+        :keyword indexed: The boolean that indicates the field is searchable as free text. Required.
         :paramtype indexed: bool
-        :keyword stored: Required. The boolean that indicates whether or not the field is stored.
+        :keyword stored: The boolean that indicates whether or not the field is stored. Required.
         :paramtype stored: bool
-        :keyword facet: Required. The boolean that indicates whether or not the field is a facet.
+        :keyword facet: The boolean that indicates whether or not the field is a facet. Required.
         :paramtype facet: bool
         :keyword owner_type: The array of workflows containing the field.
         :paramtype owner_type: list[str]
         """
-        super(SearchSchemaValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.type = type
@@ -2816,39 +2688,35 @@ class SearchSchemaValue(msrest.serialization.Model):
         self.owner_type = owner_type
 
 
-class SearchSort(msrest.serialization.Model):
+class SearchSort(_serialization.Model):
     """The sort parameters for search.
 
     :ivar name: The name of the field the search query is sorted on.
     :vartype name: str
-    :ivar order: The sort order of the search. Known values are: "asc", "desc".
+    :ivar order: The sort order of the search. Known values are: "asc" and "desc".
     :vartype order: str or ~azure.mgmt.loganalytics.models.SearchSortEnum
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "order": {"key": "order", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        order: Optional[Union[str, "_models.SearchSortEnum"]] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, order: Optional[Union[str, "_models.SearchSortEnum"]] = None, **kwargs
     ):
         """
         :keyword name: The name of the field the search query is sorted on.
         :paramtype name: str
-        :keyword order: The sort order of the search. Known values are: "asc", "desc".
+        :keyword order: The sort order of the search. Known values are: "asc" and "desc".
         :paramtype order: str or ~azure.mgmt.loganalytics.models.SearchSortEnum
         """
-        super(SearchSort, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.order = order
 
 
-class SharedKeys(msrest.serialization.Model):
+class SharedKeys(_serialization.Model):
     """The shared keys for a workspace.
 
     :ivar primary_shared_key: The primary shared key of a workspace.
@@ -2858,16 +2726,12 @@ class SharedKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_shared_key': {'key': 'primarySharedKey', 'type': 'str'},
-        'secondary_shared_key': {'key': 'secondarySharedKey', 'type': 'str'},
+        "primary_shared_key": {"key": "primarySharedKey", "type": "str"},
+        "secondary_shared_key": {"key": "secondarySharedKey", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        primary_shared_key: Optional[str] = None,
-        secondary_shared_key: Optional[str] = None,
-        **kwargs
+        self, *, primary_shared_key: Optional[str] = None, secondary_shared_key: Optional[str] = None, **kwargs
     ):
         """
         :keyword primary_shared_key: The primary shared key of a workspace.
@@ -2875,46 +2739,40 @@ class SharedKeys(msrest.serialization.Model):
         :keyword secondary_shared_key: The secondary shared key of a workspace.
         :paramtype secondary_shared_key: str
         """
-        super(SharedKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary_shared_key = primary_shared_key
         self.secondary_shared_key = secondary_shared_key
 
 
-class StorageAccount(msrest.serialization.Model):
+class StorageAccount(_serialization.Model):
     """Describes a storage account connection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The Azure Resource Manager ID of the storage account resource.
+    :ivar id: The Azure Resource Manager ID of the storage account resource. Required.
     :vartype id: str
-    :ivar key: Required. The storage account key.
+    :ivar key: The storage account key. Required.
     :vartype key: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'key': {'required': True},
+        "id": {"required": True},
+        "key": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        key: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, key: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. The Azure Resource Manager ID of the storage account resource.
+        :keyword id: The Azure Resource Manager ID of the storage account resource. Required.
         :paramtype id: str
-        :keyword key: Required. The storage account key.
+        :keyword key: The storage account key. Required.
         :paramtype key: str
         """
-        super(StorageAccount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.key = key
 
@@ -2934,7 +2792,7 @@ class StorageInsight(ProxyResource):
     :vartype type: str
     :ivar e_tag: The ETag of the storage insight.
     :vartype e_tag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar containers: The names of the blob containers that the workspace should read.
     :vartype containers: list[str]
@@ -2947,22 +2805,22 @@ class StorageInsight(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'containers': {'key': 'properties.containers', 'type': '[str]'},
-        'tables': {'key': 'properties.tables', 'type': '[str]'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccount'},
-        'status': {'key': 'properties.status', 'type': 'StorageInsightStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "containers": {"key": "properties.containers", "type": "[str]"},
+        "tables": {"key": "properties.tables", "type": "[str]"},
+        "storage_account": {"key": "properties.storageAccount", "type": "StorageAccount"},
+        "status": {"key": "properties.status", "type": "StorageInsightStatus"},
     }
 
     def __init__(
@@ -2978,7 +2836,7 @@ class StorageInsight(ProxyResource):
         """
         :keyword e_tag: The ETag of the storage insight.
         :paramtype e_tag: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword containers: The names of the blob containers that the workspace should read.
         :paramtype containers: list[str]
@@ -2987,7 +2845,7 @@ class StorageInsight(ProxyResource):
         :keyword storage_account: The storage account connection details.
         :paramtype storage_account: ~azure.mgmt.loganalytics.models.StorageAccount
         """
-        super(StorageInsight, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.e_tag = e_tag
         self.tags = tags
         self.containers = containers
@@ -2996,7 +2854,7 @@ class StorageInsight(ProxyResource):
         self.status = None
 
 
-class StorageInsightListResult(msrest.serialization.Model):
+class StorageInsightListResult(_serialization.Model):
     """The list storage insights operation response.
 
     :ivar value: A list of storage insight items.
@@ -3006,16 +2864,12 @@ class StorageInsightListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StorageInsight]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StorageInsight]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.StorageInsight"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.StorageInsight"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of storage insight items.
@@ -3023,77 +2877,74 @@ class StorageInsightListResult(msrest.serialization.Model):
         :keyword odata_next_link: The link (url) to the next page of results.
         :paramtype odata_next_link: str
         """
-        super(StorageInsightListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class StorageInsightStatus(msrest.serialization.Model):
+class StorageInsightStatus(_serialization.Model):
     """The status of the storage insight.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar state: Required. The state of the storage insight connection to the workspace. Known
-     values are: "OK", "ERROR".
+    :ivar state: The state of the storage insight connection to the workspace. Required. Known
+     values are: "OK" and "ERROR".
     :vartype state: str or ~azure.mgmt.loganalytics.models.StorageInsightState
     :ivar description: Description of the state of the storage insight.
     :vartype description: str
     """
 
     _validation = {
-        'state': {'required': True},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        state: Union[str, "_models.StorageInsightState"],
-        description: Optional[str] = None,
-        **kwargs
+        self, *, state: Union[str, "_models.StorageInsightState"], description: Optional[str] = None, **kwargs
     ):
         """
-        :keyword state: Required. The state of the storage insight connection to the workspace. Known
-         values are: "OK", "ERROR".
+        :keyword state: The state of the storage insight connection to the workspace. Required. Known
+         values are: "OK" and "ERROR".
         :paramtype state: str or ~azure.mgmt.loganalytics.models.StorageInsightState
         :keyword description: Description of the state of the storage insight.
         :paramtype description: str
         """
-        super(StorageInsightStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.state = state
         self.description = description
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Read only system data.
 
     :ivar created_by: An identifier for the identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+     "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", and "None".
     :vartype created_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: An identifier for the identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+     are: "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", and
+     "None".
     :vartype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3111,7 +2962,7 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: An identifier for the identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", "None".
+         "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned", and "None".
         :paramtype created_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
@@ -3119,12 +2970,12 @@ class SystemData(msrest.serialization.Model):
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "user", "application", "managedIdentity", "key", "SystemAssigned", "UserAssigned",
-         "None".
+         and "None".
         :paramtype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.IdentityType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3133,32 +2984,32 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class SystemDataAutoGenerated(msrest.serialization.Model):
+class SystemDataAutoGenerated(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.loganalytics.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3176,19 +3027,19 @@ class SystemDataAutoGenerated(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.loganalytics.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.loganalytics.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemDataAutoGenerated, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3197,7 +3048,7 @@ class SystemDataAutoGenerated(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Table(ProxyResource):
+class Table(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Workspace data table definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3228,7 +3079,7 @@ class Table(ProxyResource):
     :ivar result_statistics: Search job execution statistics.
     :vartype result_statistics: ~azure.mgmt.loganalytics.models.ResultStatistics
     :ivar plan: Instruct the system how to handle and charge the logs ingested to this table. Known
-     values are: "Basic", "Analytics".
+     values are: "Basic" and "Analytics".
     :vartype plan: str or ~azure.mgmt.loganalytics.models.TablePlanEnum
     :ivar last_plan_modified_date: The timestamp that table plan was last modified (UTC).
     :vartype last_plan_modified_date: str
@@ -3236,37 +3087,48 @@ class Table(ProxyResource):
     :vartype schema: ~azure.mgmt.loganalytics.models.Schema
     :ivar provisioning_state: Table's current provisioning state. If set to 'updating', indicates a
      resource lock due to ongoing operation, forbidding any update to the table until the ongoing
-     operation is concluded. Known values are: "Updating", "InProgress", "Succeeded".
+     operation is concluded. Known values are: "Updating", "InProgress", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.ProvisioningStateEnum
+    :ivar retention_in_days_as_default: True - Value originates from workspace retention in days,
+     False - Customer specific.
+    :vartype retention_in_days_as_default: bool
+    :ivar total_retention_in_days_as_default: True - Value originates from retention in days, False
+     - Customer specific.
+    :vartype total_retention_in_days_as_default: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'retention_in_days': {'maximum': 730, 'minimum': 4},
-        'total_retention_in_days': {'maximum': 2555, 'minimum': 4},
-        'archive_retention_in_days': {'readonly': True},
-        'last_plan_modified_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "retention_in_days": {"maximum": 730, "minimum": 4},
+        "total_retention_in_days": {"maximum": 2555, "minimum": 4},
+        "archive_retention_in_days": {"readonly": True},
+        "result_statistics": {"readonly": True},
+        "last_plan_modified_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "retention_in_days_as_default": {"readonly": True},
+        "total_retention_in_days_as_default": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemDataAutoGenerated'},
-        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
-        'total_retention_in_days': {'key': 'properties.totalRetentionInDays', 'type': 'int'},
-        'archive_retention_in_days': {'key': 'properties.archiveRetentionInDays', 'type': 'int'},
-        'search_results': {'key': 'properties.searchResults', 'type': 'SearchResults'},
-        'restored_logs': {'key': 'properties.restoredLogs', 'type': 'RestoredLogs'},
-        'result_statistics': {'key': 'properties.resultStatistics', 'type': 'ResultStatistics'},
-        'plan': {'key': 'properties.plan', 'type': 'str'},
-        'last_plan_modified_date': {'key': 'properties.lastPlanModifiedDate', 'type': 'str'},
-        'schema': {'key': 'properties.schema', 'type': 'Schema'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemDataAutoGenerated"},
+        "retention_in_days": {"key": "properties.retentionInDays", "type": "int"},
+        "total_retention_in_days": {"key": "properties.totalRetentionInDays", "type": "int"},
+        "archive_retention_in_days": {"key": "properties.archiveRetentionInDays", "type": "int"},
+        "search_results": {"key": "properties.searchResults", "type": "SearchResults"},
+        "restored_logs": {"key": "properties.restoredLogs", "type": "RestoredLogs"},
+        "result_statistics": {"key": "properties.resultStatistics", "type": "ResultStatistics"},
+        "plan": {"key": "properties.plan", "type": "str"},
+        "last_plan_modified_date": {"key": "properties.lastPlanModifiedDate", "type": "str"},
+        "schema": {"key": "properties.schema", "type": "Schema"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "retention_in_days_as_default": {"key": "properties.retentionInDaysAsDefault", "type": "bool"},
+        "total_retention_in_days_as_default": {"key": "properties.totalRetentionInDaysAsDefault", "type": "bool"},
     }
 
     def __init__(
@@ -3276,7 +3138,6 @@ class Table(ProxyResource):
         total_retention_in_days: Optional[int] = None,
         search_results: Optional["_models.SearchResults"] = None,
         restored_logs: Optional["_models.RestoredLogs"] = None,
-        result_statistics: Optional["_models.ResultStatistics"] = None,
         plan: Optional[Union[str, "_models.TablePlanEnum"]] = None,
         schema: Optional["_models.Schema"] = None,
         **kwargs
@@ -3292,29 +3153,29 @@ class Table(ProxyResource):
         :paramtype search_results: ~azure.mgmt.loganalytics.models.SearchResults
         :keyword restored_logs: Parameters of the restore operation that initiated this table.
         :paramtype restored_logs: ~azure.mgmt.loganalytics.models.RestoredLogs
-        :keyword result_statistics: Search job execution statistics.
-        :paramtype result_statistics: ~azure.mgmt.loganalytics.models.ResultStatistics
         :keyword plan: Instruct the system how to handle and charge the logs ingested to this table.
-         Known values are: "Basic", "Analytics".
+         Known values are: "Basic" and "Analytics".
         :paramtype plan: str or ~azure.mgmt.loganalytics.models.TablePlanEnum
         :keyword schema: Table schema.
         :paramtype schema: ~azure.mgmt.loganalytics.models.Schema
         """
-        super(Table, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.retention_in_days = retention_in_days
         self.total_retention_in_days = total_retention_in_days
         self.archive_retention_in_days = None
         self.search_results = search_results
         self.restored_logs = restored_logs
-        self.result_statistics = result_statistics
+        self.result_statistics = None
         self.plan = plan
         self.last_plan_modified_date = None
         self.schema = schema
         self.provisioning_state = None
+        self.retention_in_days_as_default = None
+        self.total_retention_in_days_as_default = None
 
 
-class TablesListResult(msrest.serialization.Model):
+class TablesListResult(_serialization.Model):
     """The list tables operation response.
 
     :ivar value: A list of data tables.
@@ -3322,88 +3183,72 @@ class TablesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Table]'},
+        "value": {"key": "value", "type": "[Table]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Table"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Table"]] = None, **kwargs):
         """
         :keyword value: A list of data tables.
         :paramtype value: list[~azure.mgmt.loganalytics.models.Table]
         """
-        super(TablesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Tag(msrest.serialization.Model):
+class Tag(_serialization.Model):
     """A tag of a saved search.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The tag name.
+    :ivar name: The tag name. Required.
     :vartype name: str
-    :ivar value: Required. The tag value.
+    :ivar value: The tag value. Required.
     :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, **kwargs):
         """
-        :keyword name: Required. The tag name.
+        :keyword name: The tag name. Required.
         :paramtype name: str
-        :keyword value: Required. The tag value.
+        :keyword value: The tag value. Required.
         :paramtype value: str
         """
-        super(Tag, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class TagsResource(msrest.serialization.Model):
+class TagsResource(_serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags on a QueryPack instance.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class UsageMetric(msrest.serialization.Model):
+class UsageMetric(_serialization.Model):
     """A metric describing the usage of a resource.
 
     :ivar name: The name of the metric.
@@ -3421,12 +3266,12 @@ class UsageMetric(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'MetricName'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'float'},
-        'limit': {'key': 'limit', 'type': 'float'},
-        'next_reset_time': {'key': 'nextResetTime', 'type': 'iso-8601'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
+        "name": {"key": "name", "type": "MetricName"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "float"},
+        "limit": {"key": "limit", "type": "float"},
+        "next_reset_time": {"key": "nextResetTime", "type": "iso-8601"},
+        "quota_period": {"key": "quotaPeriod", "type": "str"},
     }
 
     def __init__(
@@ -3455,7 +3300,7 @@ class UsageMetric(msrest.serialization.Model):
          resets.
         :paramtype quota_period: str
         """
-        super(UsageMetric, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.unit = unit
         self.current_value = current_value
@@ -3464,7 +3309,7 @@ class UsageMetric(msrest.serialization.Model):
         self.quota_period = quota_period
 
 
-class UserIdentityProperties(msrest.serialization.Model):
+class UserIdentityProperties(_serialization.Model):
     """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3476,27 +3321,23 @@ class UserIdentityProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserIdentityProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class Workspace(TrackedResource):
+class Workspace(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The top level Workspace resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3511,16 +3352,19 @@ class Workspace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.loganalytics.models.Identity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.loganalytics.models.SystemDataAutoGenerated
-    :ivar e_tag: The ETag of the workspace.
-    :vartype e_tag: str
+    :ivar etag: The etag of the workspace.
+    :vartype etag: str
     :ivar provisioning_state: The provisioning state of the workspace. Known values are:
-     "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
+     "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", and
+     "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
     :ivar customer_id: This is a read-only property. Represents the ID associated with the
      workspace.
@@ -3537,11 +3381,11 @@ class Workspace(TrackedResource):
     :ivar modified_date: Workspace modification date.
     :vartype modified_date: str
     :ivar public_network_access_for_ingestion: The network access type for accessing Log Analytics
-     ingestion. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+     ingestion. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
     :ivar public_network_access_for_query: The network access type for accessing Log Analytics
-     query. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+     query. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
     :ivar force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
@@ -3559,39 +3403,46 @@ class Workspace(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'customer_id': {'readonly': True},
-        'created_date': {'readonly': True},
-        'modified_date': {'readonly': True},
-        'private_link_scoped_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "customer_id": {"readonly": True},
+        "created_date": {"readonly": True},
+        "modified_date": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemDataAutoGenerated'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
-        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
-        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
-        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
-        'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
-        'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
-        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
-        'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'features': {'key': 'properties.features', 'type': 'WorkspaceFeatures'},
-        'default_data_collection_rule_resource_id': {'key': 'properties.defaultDataCollectionRuleResourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemDataAutoGenerated"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "customer_id": {"key": "properties.customerId", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "WorkspaceSku"},
+        "retention_in_days": {"key": "properties.retentionInDays", "type": "int"},
+        "workspace_capping": {"key": "properties.workspaceCapping", "type": "WorkspaceCapping"},
+        "created_date": {"key": "properties.createdDate", "type": "str"},
+        "modified_date": {"key": "properties.modifiedDate", "type": "str"},
+        "public_network_access_for_ingestion": {"key": "properties.publicNetworkAccessForIngestion", "type": "str"},
+        "public_network_access_for_query": {"key": "properties.publicNetworkAccessForQuery", "type": "str"},
+        "force_cmk_for_query": {"key": "properties.forceCmkForQuery", "type": "bool"},
+        "private_link_scoped_resources": {
+            "key": "properties.privateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "features": {"key": "properties.features", "type": "WorkspaceFeatures"},
+        "default_data_collection_rule_resource_id": {
+            "key": "properties.defaultDataCollectionRuleResourceId",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -3599,24 +3450,27 @@ class Workspace(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        e_tag: Optional[str] = None,
+        identity: Optional["_models.Identity"] = None,
+        etag: Optional[str] = None,
         sku: Optional["_models.WorkspaceSku"] = None,
         retention_in_days: Optional[int] = None,
         workspace_capping: Optional["_models.WorkspaceCapping"] = None,
-        public_network_access_for_ingestion: Optional[Union[str, "_models.PublicNetworkAccessType"]] = "Enabled",
-        public_network_access_for_query: Optional[Union[str, "_models.PublicNetworkAccessType"]] = "Enabled",
+        public_network_access_for_ingestion: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        public_network_access_for_query: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
         force_cmk_for_query: Optional[bool] = None,
         features: Optional["_models.WorkspaceFeatures"] = None,
         default_data_collection_rule_resource_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword e_tag: The ETag of the workspace.
-        :paramtype e_tag: str
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.loganalytics.models.Identity
+        :keyword etag: The etag of the workspace.
+        :paramtype etag: str
         :keyword sku: The SKU of the workspace.
         :paramtype sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
         :keyword retention_in_days: The workspace data retention in days. Allowed values are per
@@ -3625,11 +3479,11 @@ class Workspace(TrackedResource):
         :keyword workspace_capping: The daily volume cap for ingestion.
         :paramtype workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
         :keyword public_network_access_for_ingestion: The network access type for accessing Log
-         Analytics ingestion. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+         Analytics ingestion. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_ingestion: str or
          ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
         :keyword public_network_access_for_query: The network access type for accessing Log Analytics
-         query. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+         query. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_query: str or
          ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
         :keyword force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
@@ -3642,9 +3496,10 @@ class Workspace(TrackedResource):
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dcrName}.
         :paramtype default_data_collection_rule_resource_id: str
         """
-        super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.system_data = None
-        self.e_tag = e_tag
+        self.etag = etag
         self.provisioning_state = None
         self.customer_id = None
         self.sku = sku
@@ -3660,7 +3515,7 @@ class Workspace(TrackedResource):
         self.default_data_collection_rule_resource_id = default_data_collection_rule_resource_id
 
 
-class WorkspaceCapping(msrest.serialization.Model):
+class WorkspaceCapping(_serialization.Model):
     """The daily volume cap for ingestion.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3670,39 +3525,34 @@ class WorkspaceCapping(msrest.serialization.Model):
     :ivar quota_next_reset_time: The time when the quota will be rest.
     :vartype quota_next_reset_time: str
     :ivar data_ingestion_status: The status of data ingestion for this workspace. Known values are:
-     "RespectQuota", "ForceOn", "ForceOff", "OverQuota", "SubscriptionSuspended",
+     "RespectQuota", "ForceOn", "ForceOff", "OverQuota", "SubscriptionSuspended", and
      "ApproachingQuota".
     :vartype data_ingestion_status: str or ~azure.mgmt.loganalytics.models.DataIngestionStatus
     """
 
     _validation = {
-        'quota_next_reset_time': {'readonly': True},
-        'data_ingestion_status': {'readonly': True},
+        "quota_next_reset_time": {"readonly": True},
+        "data_ingestion_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'daily_quota_gb': {'key': 'dailyQuotaGb', 'type': 'float'},
-        'quota_next_reset_time': {'key': 'quotaNextResetTime', 'type': 'str'},
-        'data_ingestion_status': {'key': 'dataIngestionStatus', 'type': 'str'},
+        "daily_quota_gb": {"key": "dailyQuotaGb", "type": "float"},
+        "quota_next_reset_time": {"key": "quotaNextResetTime", "type": "str"},
+        "data_ingestion_status": {"key": "dataIngestionStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        daily_quota_gb: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, daily_quota_gb: Optional[float] = None, **kwargs):
         """
         :keyword daily_quota_gb: The workspace daily quota for ingestion.
         :paramtype daily_quota_gb: float
         """
-        super(WorkspaceCapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.daily_quota_gb = daily_quota_gb
         self.quota_next_reset_time = None
         self.data_ingestion_status = None
 
 
-class WorkspaceFeatures(msrest.serialization.Model):
+class WorkspaceFeatures(_serialization.Model):
     """Workspace features.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
@@ -3723,12 +3573,15 @@ class WorkspaceFeatures(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'enable_data_export': {'key': 'enableDataExport', 'type': 'bool'},
-        'immediate_purge_data_on30_days': {'key': 'immediatePurgeDataOn30Days', 'type': 'bool'},
-        'enable_log_access_using_only_resource_permissions': {'key': 'enableLogAccessUsingOnlyResourcePermissions', 'type': 'bool'},
-        'cluster_resource_id': {'key': 'clusterResourceId', 'type': 'str'},
-        'disable_local_auth': {'key': 'disableLocalAuth', 'type': 'bool'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "enable_data_export": {"key": "enableDataExport", "type": "bool"},
+        "immediate_purge_data_on30_days": {"key": "immediatePurgeDataOn30Days", "type": "bool"},
+        "enable_log_access_using_only_resource_permissions": {
+            "key": "enableLogAccessUsingOnlyResourcePermissions",
+            "type": "bool",
+        },
+        "cluster_resource_id": {"key": "clusterResourceId", "type": "str"},
+        "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
     }
 
     def __init__(
@@ -3759,7 +3612,7 @@ class WorkspaceFeatures(msrest.serialization.Model):
         :keyword disable_local_auth: Disable Non-AAD based Auth.
         :paramtype disable_local_auth: bool
         """
-        super(WorkspaceFeatures, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.enable_data_export = enable_data_export
         self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
@@ -3768,7 +3621,7 @@ class WorkspaceFeatures(msrest.serialization.Model):
         self.disable_local_auth = disable_local_auth
 
 
-class WorkspaceListManagementGroupsResult(msrest.serialization.Model):
+class WorkspaceListManagementGroupsResult(_serialization.Model):
     """The list workspace management groups operation response.
 
     :ivar value: Gets or sets a list of management groups attached to the workspace.
@@ -3776,24 +3629,19 @@ class WorkspaceListManagementGroupsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagementGroup]'},
+        "value": {"key": "value", "type": "[ManagementGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagementGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ManagementGroup"]] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of management groups attached to the workspace.
         :paramtype value: list[~azure.mgmt.loganalytics.models.ManagementGroup]
         """
-        super(WorkspaceListManagementGroupsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class WorkspaceListResult(msrest.serialization.Model):
+class WorkspaceListResult(_serialization.Model):
     """The list workspaces operation response.
 
     :ivar value: A list of workspaces.
@@ -3801,24 +3649,19 @@ class WorkspaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workspace]'},
+        "value": {"key": "value", "type": "[Workspace]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Workspace"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Workspace"]] = None, **kwargs):
         """
         :keyword value: A list of workspaces.
         :paramtype value: list[~azure.mgmt.loganalytics.models.Workspace]
         """
-        super(WorkspaceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class WorkspaceListUsagesResult(msrest.serialization.Model):
+class WorkspaceListUsagesResult(_serialization.Model):
     """The list workspace usages operation response.
 
     :ivar value: Gets or sets a list of usage metrics for a workspace.
@@ -3826,24 +3669,19 @@ class WorkspaceListUsagesResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UsageMetric]'},
+        "value": {"key": "value", "type": "[UsageMetric]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.UsageMetric"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.UsageMetric"]] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of usage metrics for a workspace.
         :paramtype value: list[~azure.mgmt.loganalytics.models.UsageMetric]
         """
-        super(WorkspaceListUsagesResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class WorkspacePatch(AzureEntityResource):
+class WorkspacePatch(AzureEntityResource):  # pylint: disable=too-many-instance-attributes
     """The top level Workspace resource container.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3858,10 +3696,13 @@ class WorkspacePatch(AzureEntityResource):
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags. Optional.
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.loganalytics.models.Identity
+    :ivar tags: Resource tags. Optional.
     :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the workspace. Known values are:
-     "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
+     "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", and
+     "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
     :ivar customer_id: This is a read-only property. Represents the ID associated with the
      workspace.
@@ -3878,11 +3719,11 @@ class WorkspacePatch(AzureEntityResource):
     :ivar modified_date: Workspace modification date.
     :vartype modified_date: str
     :ivar public_network_access_for_ingestion: The network access type for accessing Log Analytics
-     ingestion. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+     ingestion. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
     :ivar public_network_access_for_query: The network access type for accessing Log Analytics
-     query. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+     query. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_query: str or
      ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
     :ivar force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
@@ -3900,54 +3741,64 @@ class WorkspacePatch(AzureEntityResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'customer_id': {'readonly': True},
-        'created_date': {'readonly': True},
-        'modified_date': {'readonly': True},
-        'private_link_scoped_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "customer_id": {"readonly": True},
+        "created_date": {"readonly": True},
+        "modified_date": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'WorkspaceSku'},
-        'retention_in_days': {'key': 'properties.retentionInDays', 'type': 'int'},
-        'workspace_capping': {'key': 'properties.workspaceCapping', 'type': 'WorkspaceCapping'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'str'},
-        'modified_date': {'key': 'properties.modifiedDate', 'type': 'str'},
-        'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
-        'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
-        'force_cmk_for_query': {'key': 'properties.forceCmkForQuery', 'type': 'bool'},
-        'private_link_scoped_resources': {'key': 'properties.privateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'features': {'key': 'properties.features', 'type': 'WorkspaceFeatures'},
-        'default_data_collection_rule_resource_id': {'key': 'properties.defaultDataCollectionRuleResourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "customer_id": {"key": "properties.customerId", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "WorkspaceSku"},
+        "retention_in_days": {"key": "properties.retentionInDays", "type": "int"},
+        "workspace_capping": {"key": "properties.workspaceCapping", "type": "WorkspaceCapping"},
+        "created_date": {"key": "properties.createdDate", "type": "str"},
+        "modified_date": {"key": "properties.modifiedDate", "type": "str"},
+        "public_network_access_for_ingestion": {"key": "properties.publicNetworkAccessForIngestion", "type": "str"},
+        "public_network_access_for_query": {"key": "properties.publicNetworkAccessForQuery", "type": "str"},
+        "force_cmk_for_query": {"key": "properties.forceCmkForQuery", "type": "bool"},
+        "private_link_scoped_resources": {
+            "key": "properties.privateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "features": {"key": "properties.features", "type": "WorkspaceFeatures"},
+        "default_data_collection_rule_resource_id": {
+            "key": "properties.defaultDataCollectionRuleResourceId",
+            "type": "str",
+        },
     }
 
     def __init__(
         self,
         *,
+        identity: Optional["_models.Identity"] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.WorkspaceSku"] = None,
         retention_in_days: Optional[int] = None,
         workspace_capping: Optional["_models.WorkspaceCapping"] = None,
-        public_network_access_for_ingestion: Optional[Union[str, "_models.PublicNetworkAccessType"]] = "Enabled",
-        public_network_access_for_query: Optional[Union[str, "_models.PublicNetworkAccessType"]] = "Enabled",
+        public_network_access_for_ingestion: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        public_network_access_for_query: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
         force_cmk_for_query: Optional[bool] = None,
         features: Optional["_models.WorkspaceFeatures"] = None,
         default_data_collection_rule_resource_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags. Optional.
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.loganalytics.models.Identity
+        :keyword tags: Resource tags. Optional.
         :paramtype tags: dict[str, str]
         :keyword sku: The SKU of the workspace.
         :paramtype sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
@@ -3957,11 +3808,11 @@ class WorkspacePatch(AzureEntityResource):
         :keyword workspace_capping: The daily volume cap for ingestion.
         :paramtype workspace_capping: ~azure.mgmt.loganalytics.models.WorkspaceCapping
         :keyword public_network_access_for_ingestion: The network access type for accessing Log
-         Analytics ingestion. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+         Analytics ingestion. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_ingestion: str or
          ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
         :keyword public_network_access_for_query: The network access type for accessing Log Analytics
-         query. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+         query. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_query: str or
          ~azure.mgmt.loganalytics.models.PublicNetworkAccessType
         :keyword force_cmk_for_query: Indicates whether customer managed storage is mandatory for query
@@ -3974,7 +3825,8 @@ class WorkspacePatch(AzureEntityResource):
          /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/dataCollectionRules/{dcrName}.
         :paramtype default_data_collection_rule_resource_id: str
         """
-        super(WorkspacePatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.identity = identity
         self.tags = tags
         self.provisioning_state = None
         self.customer_id = None
@@ -3991,48 +3843,42 @@ class WorkspacePatch(AzureEntityResource):
         self.default_data_collection_rule_resource_id = default_data_collection_rule_resource_id
 
 
-class WorkspacePurgeBody(msrest.serialization.Model):
+class WorkspacePurgeBody(_serialization.Model):
     """Describes the body of a purge request for an App Insights Workspace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar table: Required. Table from which to purge data.
+    :ivar table: Table from which to purge data. Required.
     :vartype table: str
-    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
-     resulting data.
+    :ivar filters: The set of columns and filters (queries) to run over them to purge the resulting
+     data. Required.
     :vartype filters: list[~azure.mgmt.loganalytics.models.WorkspacePurgeBodyFilters]
     """
 
     _validation = {
-        'table': {'required': True},
-        'filters': {'required': True},
+        "table": {"required": True},
+        "filters": {"required": True},
     }
 
     _attribute_map = {
-        'table': {'key': 'table', 'type': 'str'},
-        'filters': {'key': 'filters', 'type': '[WorkspacePurgeBodyFilters]'},
+        "table": {"key": "table", "type": "str"},
+        "filters": {"key": "filters", "type": "[WorkspacePurgeBodyFilters]"},
     }
 
-    def __init__(
-        self,
-        *,
-        table: str,
-        filters: List["_models.WorkspacePurgeBodyFilters"],
-        **kwargs
-    ):
+    def __init__(self, *, table: str, filters: List["_models.WorkspacePurgeBodyFilters"], **kwargs):
         """
-        :keyword table: Required. Table from which to purge data.
+        :keyword table: Table from which to purge data. Required.
         :paramtype table: str
-        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
-         the resulting data.
+        :keyword filters: The set of columns and filters (queries) to run over them to purge the
+         resulting data. Required.
         :paramtype filters: list[~azure.mgmt.loganalytics.models.WorkspacePurgeBodyFilters]
         """
-        super(WorkspacePurgeBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.table = table
         self.filters = filters
 
 
-class WorkspacePurgeBodyFilters(msrest.serialization.Model):
+class WorkspacePurgeBodyFilters(_serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -4050,10 +3896,10 @@ class WorkspacePurgeBodyFilters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'column': {'key': 'column', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
-        'key': {'key': 'key', 'type': 'str'},
+        "column": {"key": "column", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+        "key": {"key": "key", "type": "str"},
     }
 
     def __init__(
@@ -4079,91 +3925,81 @@ class WorkspacePurgeBodyFilters(msrest.serialization.Model):
          custom dimension.
         :paramtype key: str
         """
-        super(WorkspacePurgeBodyFilters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.column = column
         self.operator = operator
         self.value = value
         self.key = key
 
 
-class WorkspacePurgeResponse(msrest.serialization.Model):
+class WorkspacePurgeResponse(_serialization.Model):
     """Response containing operationId for a specific purge action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_id: Required. Id to use when querying for status for a particular purge
-     operation.
+    :ivar operation_id: Id to use when querying for status for a particular purge operation.
+     Required.
     :vartype operation_id: str
     """
 
     _validation = {
-        'operation_id': {'required': True},
+        "operation_id": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
+        "operation_id": {"key": "operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        operation_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, operation_id: str, **kwargs):
         """
-        :keyword operation_id: Required. Id to use when querying for status for a particular purge
-         operation.
+        :keyword operation_id: Id to use when querying for status for a particular purge operation.
+         Required.
         :paramtype operation_id: str
         """
-        super(WorkspacePurgeResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_id = operation_id
 
 
-class WorkspacePurgeStatusResponse(msrest.serialization.Model):
+class WorkspacePurgeStatusResponse(_serialization.Model):
     """Response containing status for a specific purge operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Status of the operation represented by the requested Id. Known values
-     are: "pending", "completed".
+    :ivar status: Status of the operation represented by the requested Id. Required. Known values
+     are: "pending" and "completed".
     :vartype status: str or ~azure.mgmt.loganalytics.models.PurgeState
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.PurgeState"],
-        **kwargs
-    ):
+    def __init__(self, *, status: Union[str, "_models.PurgeState"], **kwargs):
         """
-        :keyword status: Required. Status of the operation represented by the requested Id. Known
-         values are: "pending", "completed".
+        :keyword status: Status of the operation represented by the requested Id. Required. Known
+         values are: "pending" and "completed".
         :paramtype status: str or ~azure.mgmt.loganalytics.models.PurgeState
         """
-        super(WorkspacePurgeStatusResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
 
 
-class WorkspaceSku(msrest.serialization.Model):
+class WorkspaceSku(_serialization.Model):
     """The SKU (tier) of a workspace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Known values are: "Free", "Standard", "Premium",
-     "PerNode", "PerGB2018", "Standalone", "CapacityReservation", "LACluster".
+    :ivar name: The name of the SKU. Required. Known values are: "Free", "Standard", "Premium",
+     "PerNode", "PerGB2018", "Standalone", "CapacityReservation", and "LACluster".
     :vartype name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
     :ivar capacity_reservation_level: The capacity reservation level in GB for this workspace, when
-     CapacityReservation sku is selected. Known values are: 100, 200, 300, 400, 500, 1000, 2000,
+     CapacityReservation sku is selected. Known values are: 100, 200, 300, 400, 500, 1000, 2000, and
      5000.
     :vartype capacity_reservation_level: int or
      ~azure.mgmt.loganalytics.models.CapacityReservationLevel
@@ -4172,14 +4008,14 @@ class WorkspaceSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'last_sku_update': {'readonly': True},
+        "name": {"required": True},
+        "last_sku_update": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'capacity_reservation_level': {'key': 'capacityReservationLevel', 'type': 'int'},
-        'last_sku_update': {'key': 'lastSkuUpdate', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "capacity_reservation_level": {"key": "capacityReservationLevel", "type": "int"},
+        "last_sku_update": {"key": "lastSkuUpdate", "type": "str"},
     }
 
     def __init__(
@@ -4190,16 +4026,16 @@ class WorkspaceSku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU. Known values are: "Free", "Standard", "Premium",
-         "PerNode", "PerGB2018", "Standalone", "CapacityReservation", "LACluster".
+        :keyword name: The name of the SKU. Required. Known values are: "Free", "Standard", "Premium",
+         "PerNode", "PerGB2018", "Standalone", "CapacityReservation", and "LACluster".
         :paramtype name: str or ~azure.mgmt.loganalytics.models.WorkspaceSkuNameEnum
         :keyword capacity_reservation_level: The capacity reservation level in GB for this workspace,
          when CapacityReservation sku is selected. Known values are: 100, 200, 300, 400, 500, 1000,
-         2000, 5000.
+         2000, and 5000.
         :paramtype capacity_reservation_level: int or
          ~azure.mgmt.loganalytics.models.CapacityReservationLevel
         """
-        super(WorkspaceSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.capacity_reservation_level = capacity_reservation_level
         self.last_sku_update = None

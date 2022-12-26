@@ -6,52 +6,40 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Display
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ErrorResponseError
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationList
-    from ._models_py3 import ProviderInstance
-    from ._models_py3 import ProviderInstanceListResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SapMonitor
-    from ._models_py3 import SapMonitorListResult
-    from ._models_py3 import Tags
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Display  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ErrorResponseError  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import ProviderInstance  # type: ignore
-    from ._models import ProviderInstanceListResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SapMonitor  # type: ignore
-    from ._models import SapMonitorListResult  # type: ignore
-    from ._models import Tags  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import Display
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ErrorResponseError
+from ._models_py3 import Operation
+from ._models_py3 import OperationList
+from ._models_py3 import ProviderInstance
+from ._models_py3 import ProviderInstanceListResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SapMonitor
+from ._models_py3 import SapMonitorListResult
+from ._models_py3 import Tags
+from ._models_py3 import TrackedResource
 
-from ._hana_management_client_enums import (
-    HanaProvisioningStatesEnum,
-)
+from ._hana_management_client_enums import HanaProvisioningStatesEnum
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Display',
-    'ErrorResponse',
-    'ErrorResponseError',
-    'Operation',
-    'OperationList',
-    'ProviderInstance',
-    'ProviderInstanceListResult',
-    'ProxyResource',
-    'Resource',
-    'SapMonitor',
-    'SapMonitorListResult',
-    'Tags',
-    'TrackedResource',
-    'HanaProvisioningStatesEnum',
+    "Display",
+    "ErrorResponse",
+    "ErrorResponseError",
+    "Operation",
+    "OperationList",
+    "ProviderInstance",
+    "ProviderInstanceListResult",
+    "ProxyResource",
+    "Resource",
+    "SapMonitor",
+    "SapMonitorListResult",
+    "Tags",
+    "TrackedResource",
+    "HanaProvisioningStatesEnum",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

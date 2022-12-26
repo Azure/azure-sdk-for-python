@@ -4,12 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import uuid
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
-from azure.digitaltwins.core import DigitalTwinsClient
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -18,6 +13,9 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError
 )
+from azure.digitaltwins.core import DigitalTwinsClient
+from devtools_testutils import AzureRecordedTestCase
+
 
 BUILDING_MODEL_ID = "dtmi:samples:RelationshipTestBuilding;1"
 FLOOR_MODEL_ID = "dtmi:samples:RelationshipTestFloor;1"
@@ -27,7 +25,7 @@ FLOOR_DIGITAL_TWIN = "DTRelationshipTestsFloorTwin"
 ROOM_DIGITAL_TWIN = "DTRelationshipTestsRoomTwin"
 
 
-class DigitalTwinsRelationshipTests(AzureTestCase):
+class TestDigitalTwinsRelationship(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient)
@@ -47,27 +45,27 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 except:
                     pass
             models = [m.id for m in client.list_models()]
-    
+
     def _clean_up_relationships(self, client):
         for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
-            try: 
+            try:
                 for relationship in client.list_relationships(dt_id):
                     client.delete_relationship(
                         dt_id,
                         relationship['$relationshipId']
                     )
-            except:
+            except ResourceNotFoundError:
                 pass
 
     def _clean_up_twins(self, client):
         for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
             try:
                  client.delete_digital_twin(dt_id)
-            except:
+            except ResourceNotFoundError:
                 pass
 
     def _set_up_models(self, client, *models):
-        
+
         self._clean_up_models(client)
         self._clean_up_relationships(client)
         self._clean_up_twins(client)
@@ -158,10 +156,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         }
         client.upsert_digital_twin(ROOM_DIGITAL_TWIN, room_digital_twin)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_basic_relationship(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_basic_relationship(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         relationship =   {
             "$relationshipId": "FloorContainsRoom",
@@ -176,10 +172,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         assert created_relationship['$relationshipId'] == "FloorContainsRoom"
         assert created_relationship['$etag']
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_invalid_relationship(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_invalid_relationship(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         relationship =   {
             "$relationshipId": "FloorContainsRoom",
@@ -218,7 +212,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             FLOOR_DIGITAL_TWIN,
             "FloorContainsRoom",
             relationship)
-        assert upserted['$sourceId'] == 'DTRelationshipTestsFloorTwin'
+        assert upserted['$sourceId'] == FLOOR_DIGITAL_TWIN
         relationship =   {
             "$relationshipName": "contains",
             "$targetId": ROOM_DIGITAL_TWIN
@@ -227,7 +221,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             FLOOR_DIGITAL_TWIN,
             "FloorContainsRoom",
             relationship)
-        assert upserted['$sourceId'] == 'DTRelationshipTestsFloorTwin'
+        assert upserted['$sourceId'] == FLOOR_DIGITAL_TWIN
         assert upserted['$relationshipId'] == 'FloorContainsRoom'
         relationship =   {
             "$relationshipId": "foo",
@@ -254,10 +248,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 "FloorContainsRoom",
                 {})
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_relationship_conditionally_if_missing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_relationship_conditionally_if_missing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
 
         relationship =   {
@@ -279,10 +271,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 match_condition=MatchConditions.IfMissing)
 
     @pytest.mark.skip("Conditional etag does not appear to be supported")
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_relationship_conditionally_if_modified(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_relationship_conditionally_if_modified(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
 
         relationship =   {
@@ -310,10 +300,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             etag='W/"7e67a355-f19c-4c19-8a10-2d69b2d2253f"')
         assert updated['$relationshipId'] == "FloorContainsRoom"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_upsert_relationship(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_upsert_relationship(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -337,9 +325,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         assert upserted_relationship['$relationshipId'] == "BuildingHasFloor"
         assert upserted_relationship['isAccessRestricted'] == True
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_upsert_relationship_invalid_conditions(self, resource_group, location, digitaltwin):
+    def test_upsert_relationship_invalid_conditions(self, digitaltwin):
         relationship =   {
             "$relationshipId": "BuildingHasFloor",
             "$sourceId": BUILDING_DIGITAL_TWIN,
@@ -347,7 +333,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             "$targetId": FLOOR_DIGITAL_TWIN,
             "isAccessRestricted": False
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ValueError):
             client.upsert_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -362,7 +348,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 "BuildingHasFloor",
                 relationship,
                 match_condition=MatchConditions.IfModified)
-        
+
         with pytest.raises(ValueError):
             client.upsert_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -378,10 +364,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 relationship,
                 match_condition=MatchConditions.IfPresent)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_relationship(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_get_relationship(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -398,19 +382,15 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         relationship = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert created_relationship == relationship
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_relationship_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_get_relationship_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasRoof")
         with pytest.raises(ResourceNotFoundError):
             client.get_relationship("NotABuilding", "BuildingHasFloor")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_relationship(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_relationship(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -429,19 +409,15 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_relationship_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_relationship_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.delete_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasRoof")
         with pytest.raises(ResourceNotFoundError):
             client.delete_relationship("NotABuilding", "BuildingHasFloor")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_relationship_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_relationship_conditionally_if_not_modified(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -471,10 +447,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_relationship_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_relationship_conditionally_if_present(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -496,10 +470,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_relationship_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_relationship_invalid_conditions(self, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ValueError):
             client.delete_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -512,7 +484,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 BUILDING_DIGITAL_TWIN,
                 "BuildingHasFloor",
                 match_condition=MatchConditions.IfNotModified)
-        
+
         with pytest.raises(ValueError):
             client.delete_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -526,10 +498,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 "BuildingHasFloor",
                 match_condition=MatchConditions.IfMissing)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_replace(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_replace(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -556,10 +526,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert updated['isAccessRestricted'] == True
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_remove(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_remove(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -585,10 +553,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert 'isAccessRestricted' not in updated
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_add(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_add(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -615,10 +581,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert updated['isAccessRestricted'] == True
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_multiple(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_multiple(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -648,10 +612,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert 'isAccessRestricted' not in updated
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_invalid_patch(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_invalid_patch(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -682,7 +644,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         ]
         with pytest.raises(HttpResponseError):
             client.update_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor", patch)
-        
+
         patch = {
             "isAccessRestricted": True
         }
@@ -692,14 +654,12 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         patch = [{}]
         with pytest.raises(HttpResponseError):
             client.update_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor", patch)
-        
+
         patch = []
         client.update_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor", patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_conditionally_if_not_modified(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -735,10 +695,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert updated['isAccessRestricted'] == True
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_digitaltwin_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_digitaltwin_conditionally_if_present(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -766,10 +724,8 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
         updated = client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasFloor")
         assert updated['isAccessRestricted'] == True
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_update_relationship_invalid_conditions(self, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         patch = [
             {
                 "op": "replace",
@@ -791,7 +747,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 "BuildingHasFloor",
                 patch,
                 match_condition=MatchConditions.IfNotModified)
-        
+
         with pytest.raises(ValueError):
             client.update_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -807,9 +763,7 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 patch,
                 match_condition=MatchConditions.IfMissing)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_update_relationship_not_existing(self, resource_group, location, digitaltwin):
+    def test_update_relationship_not_existing(self, recorded_test, digitaltwin):
         patch = [
             {
                 "op": "replace",
@@ -817,16 +771,14 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
                 "value": 42
             }
         ]
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.update_relationship(BUILDING_DIGITAL_TWIN, "foo", patch)
         with pytest.raises(ResourceNotFoundError):
             client.update_relationship("foo", "BuildingHasFloor", patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_relationships(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_relationships(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -839,15 +791,13 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             BUILDING_DIGITAL_TWIN,
             "BuildingHasFloor",
             new_relationship)
-        
+
         all_relationships = list(client.list_relationships(BUILDING_DIGITAL_TWIN))
         assert relationship in all_relationships
         assert all_relationships[0]['$relationshipId'] == "BuildingHasFloor"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_relationship_by_id(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_relationship_by_id(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -860,14 +810,12 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             BUILDING_DIGITAL_TWIN,
             "BuildingHasFloor",
             new_relationship)
-        
+
         all_relationships = list(client.list_relationships(BUILDING_DIGITAL_TWIN, relationship_id="BuildingHasFloor"))
         assert len(all_relationships) == 0
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_incoming_relationships(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_incoming_relationships(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -880,6 +828,6 @@ class DigitalTwinsRelationshipTests(AzureTestCase):
             BUILDING_DIGITAL_TWIN,
             "BuildingHasFloor",
             new_relationship)
-        
+
         all_relationships = list(client.list_incoming_relationships(BUILDING_DIGITAL_TWIN))
         assert relationship not in all_relationships

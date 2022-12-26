@@ -274,7 +274,7 @@ class AzureTestCase(ReplayableTest):
         return client
 
     def create_basic_client(self, client_class, **kwargs):
-        """ DO NOT USE ME ANYMORE."""
+        """DO NOT USE ME ANYMORE."""
         logger = logging.getLogger()
         logger.warning(
             "'create_basic_client' will be deprecated in the future. It is recommended that you use \
@@ -349,9 +349,9 @@ class AzureTestCase(ReplayableTest):
 
     def _register_encodings(self, token, fake_token):
         self.scrubber.register_name_pair(token, fake_token)
-        url_safe_token = token.replace("/", u"%2F")
+        url_safe_token = token.replace("/", "%2F")
         self.scrubber.register_name_pair(url_safe_token, fake_token)
-        async_token = token.replace(u"%3A", ":")
+        async_token = token.replace("%3A", ":")
         self.scrubber.register_name_pair(async_token, fake_token)
 
     def _create_fake_token(self, token, fake_value):

@@ -7,12 +7,12 @@ display_name: TF_mnist
 version: 1
 
 inputs:
-  epochs: 
+  epochs:
     type: number
     default: 1
 
 outputs:
-  trained_model_output: 
+  trained_model_output:
     type: uri_folder
 
 compute: azureml:gpu-cluster
@@ -22,7 +22,7 @@ code: ./src
 environment: azureml:AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:15
 
 command: >-
-  python train.py 
+  python train.py
   --epochs ${{inputs.epochs}}
   --model-dir ${{outputs.trained_model_output}}
 

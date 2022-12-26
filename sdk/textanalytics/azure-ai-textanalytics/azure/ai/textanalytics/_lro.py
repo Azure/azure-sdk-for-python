@@ -6,11 +6,12 @@
 import base64
 import functools
 import json
+import datetime
 from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
-from azure.core.polling import PollingMethod
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -18,7 +19,6 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_05_01.models import JobState
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -26,56 +26,107 @@ _SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"]
 
 
 PollingReturnType = TypeVar("PollingReturnType")
+PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class TextAnalysisLROPoller(Protocol[PollingReturnType]):
+class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
     """Implements a protocol which returned poller objects are consistent with.
     """
 
     @property
     def details(self) -> Mapping[str, Any]:
-        ...
+        """Long-running operation metadata.
 
-    def polling_method(self) -> PollingMethod[PollingReturnType]:  # pylint: disable=no-self-use
+        :return: A mapping of details about the long-running operation.
+        :rtype: Mapping[str, Any]
+        """
         ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
+        """Return a continuation token that allows to restart the poller later.
+
+        :returns: An opaque continuation token
+        :rtype: str
+        """
         ...
 
     def status(self) -> str:  # pylint: disable=no-self-use
+        """Returns the current status string.
+
+        :returns: The current status string
+        :rtype: str
+        """
         ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    # pylint: disable=no-self-use, unused-argument
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType_co:
+        """Return the result of the long running operation, or
+        the result available after the specified timeout.
+
+        :returns: The deserialized resource of the long running operation,
+         if one is available.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
         ...
 
     def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
+        """Wait on the long running operation for a specified length
+        of time. You can check if this call as ended with timeout with the
+        "done()" method.
+
+        :param float timeout: Period of time to wait for the long running
+         operation to complete (in seconds).
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
         ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use
+        """Check status of the long running operation.
+
+        :returns: 'True' if the process has completed, else 'False'.
+        :rtype: bool
+        """
         ...
 
     def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+        """Add callback function to be run once the long running operation
+        has completed - regardless of the status of the operation.
+
+        :param callable func: Callback function that takes at least one
+         argument, a completed LongRunningOperation.
+        """
         ...
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
+        """Remove a callback from the long running operation.
+
+        :param callable func: The function to be removed from the callbacks.
+        :raises ValueError: if the long running operation has already completed.
+        """
         ...
 
     def cancel(self) -> None:  # pylint: disable=no-self-use
+        """Cancel the operation currently being polled.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
+        """
         ...
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
     def __init__(
-        self, operation_location_header="operation-location", show_stats=False
-    ):
+        self, operation_location_header: str ="operation-location", show_stats: Optional[bool] = False
+    ) -> None:
         super().__init__(
             operation_location_header=operation_location_header
         )
         self._show_stats = show_stats
         self._query_params = {"showStats": show_stats}
 
-    def get_polling_url(self):
+    def get_polling_url(self) -> str:
         if not self._show_stats:
             return super().get_polling_url()
 
@@ -90,7 +141,7 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
 
 
 class TextAnalyticsLROPollingMethod(LROBasePolling):
-    def finished(self):
+    def finished(self) -> bool:
         """Is this polling finished?
 
         :rtype: bool
@@ -98,13 +149,13 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         return TextAnalyticsLROPollingMethod._finished(self.status())
 
     @staticmethod
-    def _finished(status):
+    def _finished(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
 
     @staticmethod
-    def _failed(status):
+    def _failed(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FAILED
@@ -137,6 +188,8 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         :raises: BadResponse if response invalid.
         """
 
+        if not self.finished():
+            self.update_status()
         while not self.finished():
             self._delay()
             self.update_status()
@@ -160,7 +213,7 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
 
 
 class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
         self._text_analytics_client = kwargs.pop("text_analytics_client")
@@ -168,28 +221,29 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
-    def created_on(self):
+    def created_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.created_date_time
 
     @property
-    def expires_on(self):
+    def expires_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.expiration_date_time
 
     @property
-    def last_modified_on(self):
+    def last_modified_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.last_update_date_time
 
     @property
-    def id(self):
+    def id(self) -> str:
         if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
@@ -200,13 +254,12 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         ].split("/jobs/")[1].split("?")[0]
 
     @property
-    def display_name(self):
+    def display_name(self) -> Optional[str]:
         if not self._current_body:
             return None
         return self._current_body.display_name
 
-    def get_continuation_token(self):
-        # type: () -> str
+    def get_continuation_token(self) -> str:
         import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["show_stats"] = self._show_stats
@@ -237,7 +290,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             "last_modified_on": self.polling_method().last_modified_on,
         }
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         attrs = [
             "created_on",
             "expires_on",
@@ -281,6 +334,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self, **kwargs: Any) -> LROPoller[None]:  # type: ignore
         """Cancel the operation currently being polled.
 
@@ -323,67 +377,68 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
 
 
 class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
         super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
-    def created_on(self):
+    def created_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.created_date_time
 
     @property
-    def expires_on(self):
+    def expires_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.expiration_date_time
 
     @property
-    def display_name(self):
+    def display_name(self) -> Optional[str]:
         if not self._current_body:
             return None
         return self._current_body.display_name
 
     @property
-    def actions_failed_count(self):
+    def actions_failed_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("failed", None)
 
     @property
-    def actions_in_progress_count(self):
+    def actions_in_progress_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("inProgress", None)
 
     @property
-    def actions_succeeded_count(self):
+    def actions_succeeded_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("completed", None)
 
     @property
-    def last_modified_on(self):
+    def last_modified_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.last_update_date_time
 
     @property
-    def total_actions_count(self):
+    def total_actions_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("total", None)
 
     @property
-    def id(self):
+    def id(self) -> str:
         if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
@@ -393,8 +448,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
             "Operation-Location"
         ].split("/jobs/")[1].split("?")[0]
 
-    def get_continuation_token(self):
-        # type: () -> str
+    def get_continuation_token(self) -> str:
         import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["task_id_order"] = self._task_id_order
@@ -430,7 +484,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             "total_actions_count": self.polling_method().total_actions_count,
         }
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         attrs = [
             "created_on",
             "expires_on",
@@ -478,6 +532,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             polling_method
         )
 
+    @distributed_trace
     def cancel(self) -> None:
         """Cancel the operation currently being polled.
 

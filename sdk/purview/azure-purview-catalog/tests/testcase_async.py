@@ -4,11 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 from azure.purview.catalog import PurviewCatalogClient
 from azure.purview.catalog.aio import PurviewCatalogClient as AsyncPurviewCatalogClient
 
-class PurviewCatalogTestAsync(AzureTestCase):
+class PurviewCatalogTestAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint):
         credential = self.get_credential(PurviewCatalogClient, is_async=True)

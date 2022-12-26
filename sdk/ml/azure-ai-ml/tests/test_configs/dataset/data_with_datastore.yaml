@@ -1,0 +1,6 @@
+name: testFileData
+version: 1
+description: "this is a test dataset"
+path: ../python/simple_train.py
+type: uri_file
+datastore: workspaceartifactstore

@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the resource. This is a read-only property and any attempt to set
     this value will be ignored.
     """
@@ -38,7 +22,9 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class RecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RecordType."""
 
     A = "A"
     AAAA = "AAAA"
@@ -49,7 +35,8 @@ class RecordType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SRV = "SRV"
     TXT = "TXT"
 
-class VirtualNetworkLinkState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class VirtualNetworkLinkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the virtual network link to the Private DNS zone. Possible values are
     'InProgress' and 'Done'. This is a read-only property and any attempt to set this value will be
     ignored.

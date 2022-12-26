@@ -7,28 +7,26 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the status of the resource at the time the operation was called.
-    """
+
+class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the resource at the time the operation was called."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
@@ -37,36 +35,37 @@ class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
 
-class DeploymentScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Deployment scale type.
-    """
+
+class DeploymentScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment scale type."""
 
     STANDARD = "Standard"
     MANUAL = "Manual"
 
-class HostingModel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Account hosting model.
-    """
+
+class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Account hosting model."""
 
     WEB = "Web"
     CONNECTED_CONTAINER = "ConnectedContainer"
     DISCONNECTED_CONTAINER = "DisconnectedContainer"
 
-class KeyName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """key name to generate (Key1|Key2)
-    """
+
+class KeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """key name to generate (Key1|Key2)."""
 
     KEY1 = "Key1"
     KEY2 = "Key2"
 
-class KeySource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enumerates the possible value of keySource for Encryption
-    """
+
+class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumerates the possible value of keySource for Encryption."""
 
     MICROSOFT_COGNITIVE_SERVICES = "Microsoft.CognitiveServices"
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
 
-class NetworkRuleAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only
     used after the bypass property has been evaluated.
     """
@@ -74,35 +73,36 @@ class NetworkRuleAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALLOW = "Allow"
     DENY = "Deny"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the status of the cognitive services account at the time the operation was called.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the cognitive services account at the time the operation was called."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
@@ -112,46 +112,47 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     RESOLVING_DNS = "ResolvingDNS"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether or not public endpoint access is allowed for this account.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether or not public endpoint access is allowed for this account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class QuotaUsageStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Cognitive Services account quota usage status.
-    """
+
+class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cognitive Services account quota usage status."""
 
     INCLUDED = "Included"
     BLOCKED = "Blocked"
     IN_OVERAGE = "InOverage"
     UNKNOWN = "Unknown"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The identity type.
-    """
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for restriction.
-    """
+
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for restriction."""
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of restrictions.
-    """
+
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of restrictions."""
 
     LOCATION = "Location"
     ZONE = "Zone"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -162,9 +163,9 @@ class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PREMIUM = "Premium"
     ENTERPRISE = "Enterprise"
 
-class UnitType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of the metric.
-    """
+
+class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

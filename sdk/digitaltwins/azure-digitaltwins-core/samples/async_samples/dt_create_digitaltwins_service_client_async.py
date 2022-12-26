@@ -35,5 +35,4 @@ async def create_digitaltwins_service_client():
     print(service_client)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_digitaltwins_service_client())
+    asyncio.run(create_digitaltwins_service_client())

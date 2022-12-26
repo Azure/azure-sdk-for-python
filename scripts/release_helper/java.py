@@ -1,7 +1,5 @@
 from common import IssueProcess, Common
-from utils import AUTO_PARSE_LABEL, get_origin_link_and_tag
 from typing import Any, List
-import os
 
 # assignee dict which will be assigned to handle issues
 _JAVA_OWNER = {'azure-sdk'}

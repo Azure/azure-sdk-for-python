@@ -14,11 +14,9 @@ inputs:
   job_in_folder:
     path: ../../data
     type: uri_folder
-    mode: ro_mount
   job_in_file:
     path: ../../data/sample1.csv
     type: uri_file
-    mode: ro_mount
   target_compute: "cpu-cluster"
   output_file_name: "sample1.csv"
 

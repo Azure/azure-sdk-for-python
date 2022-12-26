@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
 import urllib3 # type: ignore

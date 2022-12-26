@@ -21,6 +21,7 @@ class ContainerServiceOrchestratorTypes(str, Enum, metaclass=CaseInsensitiveEnum
     DOCKER_CE = "DockerCE"
     CUSTOM = "Custom"
 
+
 class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
@@ -29,9 +30,9 @@ class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEn
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
+
 class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Size of agent VMs.
-    """
+    """Size of agent VMs."""
 
     STANDARD_A1 = "Standard_A1"
     STANDARD_A10 = "Standard_A10"
@@ -208,6 +209,7 @@ class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
+
 class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
@@ -217,9 +219,9 @@ class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREE = 3
     FIVE = 5
 
+
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
-    """
+    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"

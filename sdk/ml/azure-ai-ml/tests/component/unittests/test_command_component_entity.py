@@ -1,35 +1,42 @@
+import os
+import shutil
+import sys
+from io import StringIO
+from pathlib import Path
+from unittest.mock import patch
+
 import pydash
 import pytest
-from unittest.mock import patch
-from io import StringIO
+from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml import command, MpiDistribution, Input, Output, load_component
-from azure.ai.ml._restclient.v2022_05_01.models import TensorFlow
+from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities import (
-    Component,
-    CommandComponent,
-    ResourceConfiguration,
-    CommandJobLimits,
-)
-from azure.ai.ml.sweep import Choice
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
+from azure.ai.ml.sweep import Choice
+
+from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
+@pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        command_component = load_component(
-            path=component_yaml,
-        )
-        assert command_component.code == "./helloworld_components_with_env"
+
+        def simple_component_validation(command_component):
+            assert command_component.code == "./helloworld_components_with_env"
+
+        command_component = verify_entity_load_and_dump(load_component, simple_component_validation, component_yaml)[0]
         component_yaml = "./tests/test_configs/components/basic_component_code_arm_id.yml"
         command_component = load_component(
-            path=component_yaml,
+            source=component_yaml,
         )
         expected_code = (
             "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/"
@@ -47,7 +54,6 @@ class TestCommandComponentEntity:
         assert command_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
         yaml_dict["version"] = str(yaml_dict["version"])
-        yaml_dict["inputs"] = {}
         component_dict = command_component._to_dict()
         component_dict.pop("is_deterministic")
         assert yaml_dict == component_dict
@@ -70,14 +76,55 @@ class TestCommandComponentEntity:
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
         )
         component_dict = component._to_rest_object().as_dict()
-        component_dict = pydash.omit(component_dict, "properties.component_spec.$schema")
+        omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
+        component_dict = pydash.omit(component_dict, *omits)
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
-        yaml_component_dict = pydash.omit(yaml_component_dict, "properties.component_spec.$schema")
+        yaml_component_dict = pydash.omit(yaml_component_dict, *omits)
 
         assert component_dict == yaml_component_dict
+
+    def test_command_component_entity_with_io_class(self):
+        component = CommandComponent(
+            name="sample_command_component_entity_with_io_class",
+            display_name="Preprocess data for training",
+            description="reads raw price data, normalize and split the data",
+            inputs={
+                "data_0": Input(type="uri_folder", mode="ro_mount"),
+                "data_1": Input(type="uri_file", optional=True),
+                "param_float0": Input(type="number", default=1.1, min=0, max=5),
+                "param_float1": Input(type="number"),
+                "param_integer": Input(type="integer", default=2, min=-1, max=4, optional=True),
+                "param_string": Input(type="string", default="default_str"),
+                "param_boolean": Input(type="boolean", default=False),
+            },
+            outputs={
+                "train_data_x": Output(type="uri_file"),
+                "test_data_x": Output(type="uri_folder"),
+            },
+            # TODO: reorganize code to minimize the code context
+            code=".",
+            command="""echo Hello World""",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+        )
+        component_dict = component._to_rest_object().as_dict()
+        inputs = component_dict["properties"]["component_spec"]["inputs"]
+        outputs = component_dict["properties"]["component_spec"]["outputs"]
+        source = component_dict["properties"]["component_spec"]["_source"]
+
+        assert inputs == {
+            "data_0": {"mode": "ro_mount", "type": "uri_folder"},
+            "data_1": {"type": "uri_file", "optional": True},
+            "param_float0": {"type": "number", "default": "1.1", "max": "5.0", "min": "0.0"},
+            "param_float1": {"type": "number"},
+            "param_integer": {"type": "integer", "optional": True, "default": "2", "max": "4", "min": "-1"},
+            "param_string": {"type": "string", "default": "default_str"},
+            "param_boolean": {"type": "boolean", "default": "False"},
+        }
+        assert outputs == {"train_data_x": {"type": "uri_file"}, "test_data_x": {"type": "uri_folder"}}
+        assert source == "CLASS"
 
     def test_command_component_instance_count(self):
         component = CommandComponent(
@@ -93,7 +140,7 @@ class TestCommandComponentEntity:
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            distribution=TensorFlow(
+            distribution=TensorFlowDistribution(
                 parameter_server_count=1,
                 worker_count=2,
                 # No affect because TensorFlow object does not allow extra fields
@@ -104,7 +151,7 @@ class TestCommandComponentEntity:
         component_dict = component._to_rest_object().as_dict()
 
         yaml_path = "./tests/test_configs/components/helloworld_component_tensorflow.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
 
         component_dict = pydash.omit(
@@ -112,12 +159,14 @@ class TestCommandComponentEntity:
             "properties.component_spec.$schema",
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
+            "properties.component_spec._source",
         )
         yaml_component_dict = pydash.omit(
             yaml_component_dict,
             "properties.component_spec.$schema",
             "properties.component_spec.distribution.added_property",
             "properties.component_spec.resources.properties",
+            "properties.component_spec._source",
         )
         assert component_dict == yaml_component_dict
 
@@ -135,26 +184,47 @@ class TestCommandComponentEntity:
         )
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    def test_command_component_code_with_current_folder(self):
+        old_cwd = os.getcwd()
+        os.chdir("./tests/test_configs/components")
+        try:
+            yaml_path = "./basic_component_code_current_folder.yml"
+            component = load_component(yaml_path)
+            with component._resolve_local_code() as code:
+                Path(code.path).resolve().name == "components"
+        finally:
+            os.chdir(old_cwd)
+
+    def test_command_component_code_git_path(self):
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
+        yaml_path = "./tests/test_configs/components/component_git_path.yml"
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(yaml_path)
+
+        def mock_get_arm_id_and_fill_back(asset: Code, azureml_type: str) -> None:
+            assert isinstance(asset, Code)
+            assert azureml_type == AzureMLResourceType.CODE
+            assert asset.path == yaml_dict["code"]
+
+        _try_resolve_code_for_component(component, mock_get_arm_id_and_fill_back)
+
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
-            "inputs": {},
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
+            "type": "command",
+            "_source": "YAML.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(source=yaml_path)
         assert isinstance(yaml_component_version, CommandComponent)
 
         yaml_component = yaml_component_version()
@@ -177,29 +247,22 @@ class TestCommandComponentEntity:
     def test_command_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
-                "component_in_number": {"job_input_type": "Literal", "value": "10"},
-                "component_in_path": {"job_input_type": "Literal", "value": "${{parent.inputs.pipeline_input}}"},
+                "component_in_number": {"job_input_type": "literal", "value": "10"},
+                "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
+            "type": "command",
+            "_source": "YAML.COMPONENT",
         }
 
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(source=yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(component_in_number=10, component_in_path=pipeline_input)
 
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
-        print(rest_yaml_component)
+
         assert expected_rest_component == rest_yaml_component
 
     def test_command_component_help_function(self):
@@ -221,8 +284,8 @@ class TestCommandComponentEntity:
             # we're using a curated environment
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
         )
-        basic_component = load_component(path="./tests/test_configs/components/basic_component_code_local_path.yml")
-        sweep_component = load_component(path="./tests/test_configs/components/helloworld_component_for_sweep.yml")
+        basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
 
         with patch("sys.stdout", new=StringIO()) as std_out:
             help(download_unzip_component._func)
@@ -259,7 +322,7 @@ class TestCommandComponentEntity:
             distribution=MpiDistribution(process_count_per_instance=4),
             environment_variables=dict(foo="bar"),
             # Customers can still do this:
-            resources=ResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
             limits=CommandJobLimits(timeout=300),
             inputs={
                 "float": 0.01,
@@ -275,15 +338,18 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\ncommand: python train.py --input-data ${{inputs.input_data}} --lr ${{inputs.learning_rate}}\n"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
-        component_to_sweep: CommandComponent = load_component(path=yaml_file)
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
         cmd_node1: Command = component_to_sweep(
             component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
         )
@@ -300,3 +366,156 @@ class TestCommandComponentEntity:
                 "name: microsoftsamples_command_component_basic\n  version: 0.0.1\n  display_name: CommandComponentBasi"
                 in std_out.getvalue()
             )
+
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
+            }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [sweep_job1.early_termination.evaluation_interval,
+                sweep_job1.early_termination.delay_evaluation,
+                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
+
+    def test_invalid_component_inputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
+        component = load_component(yaml_path)
+        with pytest.raises(ValidationException) as e:
+            component._validate(raise_error=True)
+        assert "Invalid component input names 'COMPONENT_IN_NUMBER' and 'component_in_number'" in str(e.value)
+        component = load_component(
+            yaml_path,
+            params_override=[
+                {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
+            ],
+        )
+        validation_result = component._validate()
+        assert validation_result.passed
+
+        # user can still overwrite input name to illegal
+        component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
+        validation_result = component._validate()
+        assert not validation_result.passed
+        assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_primitive_output(self):
+        expected_rest_component = {
+            "command": "echo Hello World",
+            "description": "This is the basic command component",
+            "display_name": "CommandComponentBasic",
+            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "is_deterministic": True,
+            "name": "sample_command_component_basic",
+            "outputs": {
+                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
+                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
+            },
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "command",
+            "version": "1",
+        }
+        omits = ["$schema", "_source", "code"]
+
+        # from YAML
+        yaml_path = "./tests/test_configs/components/helloworld_component_primitive_outputs.yml"
+        component1 = load_component(yaml_path)
+        actual_component_dict1 = pydash.omit(
+            component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+        )
+
+        assert actual_component_dict1 == expected_rest_component
+
+        # from CLASS
+        component2 = CommandComponent(
+            name="sample_command_component_basic",
+            display_name="CommandComponentBasic",
+            description="This is the basic command component",
+            version="1",
+            tags={"tag": "tagvalue", "owner": "sdkteam"},
+            outputs={
+                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
+                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
+                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
+            },
+            command="echo Hello World",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            code="./helloworld_components_with_env",
+        )
+        actual_component_dict2 = pydash.omit(
+            component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+        )
+        assert actual_component_dict2 == expected_rest_component
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_invalid_component_outputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
+        component = load_component(yaml_path)
+        with pytest.raises(ValidationException) as e:
+            component._validate(raise_error=True)
+        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
+        params_override = [
+            {
+                "outputs": {
+                    "component_out_string": {
+                        "description": "A string",
+                        "type": "string",
+                        "is_control": True,
+                        "early_available": True,
+                    }
+                }
+            },
+        ]
+        component = load_component(yaml_path, params_override=params_override)
+        validation_result = component._validate()
+        assert validation_result.passed
+
+    def test_component_code_asset_ignoring_pycache(self) -> None:
+        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component = load_component(component_yaml)
+        # create some files/folders expected to ignore
+        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
+        try:
+            if not pycache.is_dir():
+                pycache.mkdir()
+            expected_exclude = pycache / "a.pyc"
+            expected_exclude.touch()
+            # resolve and test for ignore_file's is_file_excluded
+            with component._resolve_local_code() as code:
+                excluded = []
+                for root, _, files in os.walk(code.path):
+                    for name in files:
+                        path = os.path.join(root, name)
+                        if code._ignore_file.is_file_excluded(path):
+                            excluded.append(path)
+                assert excluded == [str(expected_exclude.absolute())]
+        finally:
+            if pycache.is_dir():
+                shutil.rmtree(pycache)

@@ -3,28 +3,26 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Union
+from pathlib import Path
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    TYPE,
-    JobType,
-)
+from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job import Job
-from azure.ai.ml.entities._util import load_from_dict
 from ..job_io_mixin import JobIOMixin
 from .parameterized_parallel import ParameterizedParallel
-from azure.ai.ml._ml_exceptions import ErrorTarget, ErrorCategory, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
 class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
-    """Parallel job
+    """Parallel job.
 
     :param name: Name of the job.
     :type name: str
@@ -56,6 +54,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
     :type mini_batch_size: str
+    :param partition_keys: The partition keys.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the job.
@@ -67,8 +67,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def __init__(
         self,
         *,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.PARALLEL
@@ -79,7 +79,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.outputs = outputs
 
     def _to_dict(self):
-        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     def _to_rest_object(self):
         pass
@@ -93,22 +93,23 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def _load_from_rest(cls, obj: JobBaseData):
         pass
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
         :param kwargs: Extra arguments.
         :return: Translated parallel component.
         """
-        from azure.ai.ml.entities import ParallelComponent
+        from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
+        context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         # Create anonymous parallel component with default version as 1
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            is_anonymous=True,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             task=self.task,
             retry_settings=self.retry_settings,
@@ -116,12 +117,12 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             max_concurrency_per_instance=self.max_concurrency_per_instance,
             error_threshold=self.error_threshold,
             mini_batch_error_threshold=self.mini_batch_error_threshold,
-            inputs=self._to_component_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            outputs=self._to_component_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
+            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             resources=self.resources if self.resources else None,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.
@@ -132,21 +133,23 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         component = self._to_component(context, **kwargs)
 
-        return Parallel(
+        return Parallel(  # pylint: disable=abstract-class-instantiated
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
             inputs=self.inputs,
             outputs=self.outputs,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
-            task=self.task,
+            # task will be inherited from component & base_path will be set correctly.
             retry_settings=self.retry_settings,
             logging_level=self.logging_level,
             max_concurrency_per_instance=self.max_concurrency_per_instance,
             error_threshold=self.error_threshold,
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:
@@ -157,6 +160,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.compute is None:
             msg = "compute is required"
@@ -165,6 +169,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.task is None:
             msg = "task is required"
@@ -173,4 +178,5 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )

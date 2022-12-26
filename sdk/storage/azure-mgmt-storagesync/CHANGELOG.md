@@ -1,5 +1,39 @@
 # Release History
 
+## 2.0.0b1 (2022-10-31)
+
+### Features Added
+
+  - Added operation CloudEndpointsOperations.afs_share_metadata_certificate_public_keys
+  - Added operation group MicrosoftStorageSyncOperationsMixin
+  - Model CloudEndpoint has a new parameter change_enumeration_status
+  - Model CloudEndpoint has a new parameter system_data
+  - Model CloudEndpointCreateParameters has a new parameter system_data
+  - Model OperationResourceMetricSpecification has a new parameter supported_aggregation_types
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model RegisteredServer has a new parameter system_data
+  - Model RegisteredServerCreateParameters has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ServerEndpoint has a new parameter initial_upload_policy
+  - Model ServerEndpoint has a new parameter system_data
+  - Model ServerEndpointBackgroundDataDownloadActivity has a new parameter started_timestamp
+  - Model ServerEndpointCloudTieringStatus has a new parameter low_disk_mode
+  - Model ServerEndpointCreateParameters has a new parameter initial_upload_policy
+  - Model ServerEndpointCreateParameters has a new parameter system_data
+  - Model ServerEndpointSyncActivityStatus has a new parameter session_minutes_remaining
+  - Model StorageSyncApiError has a new parameter innererror
+  - Model StorageSyncService has a new parameter system_data
+  - Model SyncGroup has a new parameter system_data
+  - Model SyncGroupCreateParameters has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+  - Model Workflow has a new parameter system_data
+
+### Breaking Changes
+
+  - Model StorageSyncApiError no longer has parameter inner_error
+
 ## 1.0.0 (2021-04-07)
 
  - GA release
