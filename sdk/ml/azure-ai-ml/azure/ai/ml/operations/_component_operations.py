@@ -26,7 +26,6 @@ from azure.ai.ml._scope_dependent_operations import (
 #     monitor_with_activity,
 #     monitor_with_telemetry_mixin,
 # )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -43,7 +42,6 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, ValidationResult
-from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from .._utils._cache_utils import CachedNodeResolver
 
@@ -750,21 +748,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    if hasattr(component, "code"):
-        if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
-            # arm id can be passed directly
-            pass
-        elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
-            # Code object & registry id need to be resolved into arm id
-            # note that:
-            # 1. Code & CodeOperation are not public for now
-            # 2. AnonymousCodeSchema is not supported in Component for now
-            # So isinstance(component.code, Code) will always be true, or an exception will be raised
-            # in validation stage.
-            component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
-        elif isinstance(component.code, str) and component.code.startswith("git+"):
-            # git also need to be resolved into arm id
-            component.code = get_arm_id_and_fill_back(Code(path=component.code), azureml_type=AzureMLResourceType.CODE)
-        else:
-            with component._resolve_local_code() as code:
-                component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    with component._resolve_local_code() as code:
+        if code is None:
+            return
+        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

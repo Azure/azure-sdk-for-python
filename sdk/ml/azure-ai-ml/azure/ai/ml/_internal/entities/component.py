@@ -20,6 +20,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
 from ..._utils._arm_id_utils import parse_name_label
+from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
 from .._schema.component import InternalComponentSchema
 from ._additional_includes import _AdditionalIncludes
@@ -223,11 +224,22 @@ class InternalComponent(Component):
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
-        # Note that if self.code is already a Code object, this function won't be called
-        # in create_or_update => _try_resolve_code_for_component, which is also
-        # forbidden by schema CodeFields for now.
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
+        # an internal component always has a default local code of its base path
+        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            raise ValueError("Code is a private class and can't be set to component.code directly.")
 
         self._additional_includes.resolve()
 
