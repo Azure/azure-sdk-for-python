@@ -616,6 +616,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-authorization msrest>=0.7.1
 #override azure-mgmt-peering msrest>=0.7.1
+#override azure-mgmt-connectedvmware typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-authorization azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-iothub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-devtestlabs msrest>=0.7.1
@@ -746,8 +747,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-managedservices azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-automanage msrest>=0.7.1
 #override azure-mgmt-automanage azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-connectedvmware msrest>=0.6.21
-#override azure-mgmt-connectedvmware azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-connectedvmware msrest>=0.7.1
+#override azure-mgmt-connectedvmware azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-testbase azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-testbase msrest>=0.7.1
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
