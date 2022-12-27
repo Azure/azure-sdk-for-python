@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0b5 (2022-12-27)
+
+### Features Added
+
+  - Added operation group SqlVirtualMachineTroubleshootOperations
+  - Model ServerConfigurationsManagementSettings has a new parameter azure_ad_authentication_settings
+  - Model SqlVirtualMachine has a new parameter troubleshooting_status
+
 ## 1.0.0b4 (2022-09-26)
 
 ### Features Added
