@@ -732,6 +732,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-devcenter msrest>=0.7.1
 #override azure-mgmt-hybridkubernetes msrest>=0.7.1
 #override azure-mgmt-devcenter azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-dnsresolver typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-fluidrelay msrest>=0.7.1
 #override azure-mgmt-datashare azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-elastic typing-extensions>=4.3.0; python_version<'3.8.0'
