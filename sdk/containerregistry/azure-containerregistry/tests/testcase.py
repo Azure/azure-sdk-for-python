@@ -6,6 +6,7 @@
 import logging
 import os
 import pytest
+import time
 
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
@@ -17,16 +18,15 @@ from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSe
 
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, is_live_and_not_recording
 
-REDACTED = "REDACTED"
 logger = logging.getLogger()
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    def __init__(self) -> None:
-        super().__init__()
+    @classmethod
+    def setup_class(cls):
         # Sleep to avoid resource deployment delay in live pipelines.
         if is_live_and_not_recording:
-            self.sleep(10)
+            time.sleep(10)
     
     def import_image(self, endpoint, repository, tags):
         # repository must be a docker hub repository
