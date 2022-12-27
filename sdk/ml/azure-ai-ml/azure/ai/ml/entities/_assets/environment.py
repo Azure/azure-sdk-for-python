@@ -205,6 +205,8 @@ class Environment(Asset):
             environment_version.inference_config = self.inference_config
         if self.description:
             environment_version.description = self.description
+        if self.properties:
+            environment_version.properties = self.properties
 
         environment_version_resource = EnvironmentVersionData(properties=environment_version)
 
@@ -229,6 +231,7 @@ class Environment(Asset):
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
+            properties=rest_env_version.properties,
         )
 
         if rest_env_version.conda_file:
