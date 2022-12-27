@@ -205,7 +205,7 @@ class SequenceAckMessage:
         self,
         sequence_id: int,
     ) -> None:
-        sequence_id.kind: Literal["sequenceAck"] = "sequenceAck"
+        self.kind: Literal["sequenceAck"] = "sequenceAck"
         self.sequence_id = sequence_id
 
 
@@ -229,7 +229,7 @@ class ConnectedMessage:
     def __init__(self, connection_id: int, user_id: str, reconnection_token: str) -> None:
         self.kind: Literal["connected"]
         self.connection_id = connection_id
-        self.user_id - user_id
+        self.user_id = user_id
         self.reconnection_token = reconnection_token
 
 
@@ -345,38 +345,38 @@ class WebPubSubClientProtocol:
         message = json.loads(input)
         if message["type"] == "system":
             if message["event"] == "connected":
-                result = ConnectedMessage(
+                return ConnectedMessage(
                     connection_id=message["connectionId"],
                     user_id=message["userId"],
                     reconnection_token=message["reconnectionToken"],
                 )
             elif message["event"] == "disconnected":
-                result = DisconnectedMessage(message=message["message"])
+                return DisconnectedMessage(message=message["message"])
             else:
                 raise Exception()
         elif message["type"] == "message":
             if message["from"] == "group":
-                data = parse_payload(message["data"], message["data_type"])
-                result = GroupDataMessage(
-                    data_type=message["data_type"],
+                data = parse_payload(message["data"], message["dataType"])
+                return GroupDataMessage(
+                    data_type=message["dataType"],
                     data=data,
+                    group=message["group"],
                     from_user_id=message["fromUserId"],
                     sequence_id=message["sequenceId"],
                 )
             elif message["type"] == "server":
-                data = parse_payload(message["data"], message["data_type"])
-                result = ServerDataMessage(data=data, **message)
+                data = parse_payload(message["data"], message["dataType"])
+                return ServerDataMessage(data=data, **message)
             else:
                 raise Exception()
         elif message["type"] == "ack":
-            result = AckMessage(
+            return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
                 error=message.get("error"),
             )
         else:
             raise Exception()
-        return result
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
@@ -528,7 +528,7 @@ class RetryPolicy:
         if retry_attempt > self.retry_options.max_retries:
             return None
         else:
-            if self.retry_options.mode != "Fixed":
+            if self.retry_options.mode == "Fixed":
                 return self.retry_options.retry_delay_in_ms
             else:
                 return self.calculate_exponential_delay(retry_attempt)

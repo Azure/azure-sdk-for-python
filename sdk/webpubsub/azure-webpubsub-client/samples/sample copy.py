@@ -25,16 +25,12 @@ url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", 
 print(url)
 
 client = WebPubSubClient(client_access_url=url, options=WebPubSubClientOptions(auto_reconnect=False))
+client.on("connected", on_connected)
+client.on("group-message", on_group_message)
 client.start()
 client.join_group("test")
 count = 0
 while True:
     count = count + 1
-    client.send_to_group(
-        group_name="test",
-        content=str(count),
-        data_type="text",
-        options=SendToGroupOptions(no_echo=False, fire_and_forget=True),
-    )
     print(count)
     time.sleep(5)

@@ -46,7 +46,7 @@ class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISCONNECTED = "disconnected"
     STOPPED = "stopped"
     SERVER_MESSAGE = "server-message"
-    GROUP_MESSAGE = "gourp-message"
+    GROUP_MESSAGE = "group-message"
     REJOIN_GROUP_FAILED = "rejoin-group-failed"
 
 
