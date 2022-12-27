@@ -39,20 +39,19 @@ class SetImagePropertiesAsync(object):
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(endpoint, credential, audience=audience)
-
-        # Set permissions on the v1 image's "latest" tag
-        await client.update_manifest_properties(
-            "library/hello-world",
-            "latest",
-            can_write=False,
-            can_delete=False
-        )
-        # After this update, if someone were to push an update to "myacr.azurecr.io\hello-world:v1", it would fail.
-        # It's worth noting that if this image also had another tag, such as "latest", and that tag did not have
-        # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
-        # if someone were to push an update to "myacr.azurecr.io\hello-world:latest"
-        # (which references the same image), it would succeed.
+        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
+            # Set permissions on the v1 image's "latest" tag
+            await client.update_manifest_properties(
+                "library/hello-world",
+                "latest",
+                can_write=False,
+                can_delete=False
+            )
+            # After this update, if someone were to push an update to "myacr.azurecr.io\hello-world:v1", it would fail.
+            # It's worth noting that if this image also had another tag, such as "latest", and that tag did not have
+            # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
+            # if someone were to push an update to "myacr.azurecr.io\hello-world:latest"
+            # (which references the same image), it would succeed.
 
 
 async def main():
