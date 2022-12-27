@@ -204,7 +204,7 @@ class MLClient(object):
         if registry_name:
             properties.update({"registry_name": registry_name})
 
-        app_insights_handler_kwargs: Dict[str, str] = {}
+        app_insights_handler_kwargs: Dict[Any, Any] = {}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -704,7 +704,7 @@ class MLClient(object):
         )
 
     @classmethod
-    def _get_workspace_info(cls, found_path: str) -> Tuple[str, str, str]:
+    def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
         with open(found_path, "r") as config_file:
             config = json.load(config_file)
 
