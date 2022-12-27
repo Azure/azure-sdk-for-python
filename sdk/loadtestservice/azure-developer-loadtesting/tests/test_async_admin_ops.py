@@ -17,10 +17,11 @@ from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
 DISPLAY_NAME = "TestingResourcePyTest"
+NON_EXISTING_RESOURCE = "nonexistingresource"
 class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
 
     async def setup_create_load_test(self, endpoint):
-        self.setup_load_test_id = uuid.uuid4()
+        self.setup_load_test_id = "pytest_setup_load_test_id"
         client = self.create_administration_client(endpoint)
 
         await client.create_or_update_test(
@@ -117,7 +118,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         assert result is None
 
         with pytest.raises(ResourceNotFoundError):
-            await client.delete_test(uuid.uuid4())
+            await client.delete_test(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
@@ -130,7 +131,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            await client.get_test(uuid.uuid4())
+            await client.get_test(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
@@ -184,7 +185,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            await client.list_test_files(uuid.uuid4())
+            await client.list_test_files(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
@@ -211,7 +212,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
 
         with pytest.raises(ResourceNotFoundError):
             await client.create_or_update_app_components(
-                uuid.uuid4(),
+                NON_EXISTING_RESOURCE,
                 {
                     "components": {
                         loadtesting_resource_id: {
@@ -236,7 +237,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            await client.get_app_components(uuid.uuid4())
+            await client.get_app_components(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async

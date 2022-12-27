@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:30:59 GMT",
+        "Date": "Tue, 27 Dec 2022 04:29:05 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -34,7 +34,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/471c3610-3b1d-4178-8ce5-626a310f863a?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id?api-version=2022-11-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -59,18 +59,17 @@
         "keyvaultReferenceIdentityType": "SystemAssigned",
         "keyvaultReferenceIdentityId": null
       },
-      "StatusCode": 201,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "423",
+        "Content-Length": "317",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:01 GMT",
-        "Location": "https://https://myservice.azure.com/tests/471c3610-3b1d-4178-8ce5-626a310f863a?api-version=2022-11-01",
-        "mise-correlation-id": "26ae8f57-71c3-4fdb-9198-c5d1ecad649c",
+        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
+        "mise-correlation-id": "2d03aa59-9b03-4fb2-a00d-72180fcc4e30",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6389e681-b281-4174-8d94-437d1622e9b4"
+        "x-ms-correlation-request-id": "5c395ade-3da2-4cc3-9f30-b50474888ffc"
       },
       "ResponseBody": {
         "passFailCriteria": {
@@ -84,12 +83,10 @@
         "inputArtifacts": {
           "additionalFileInfo": []
         },
-        "testId": "471c3610-3b1d-4178-8ce5-626a310f863a",
+        "testId": "pytest_setup_load_test_id",
         "description": "",
         "displayName": "TestingResourcePyTest",
-        "keyvaultReferenceIdentityType": "SystemAssigned",
-        "createdDateTime": "2022-12-26T13:31:01.168Z",
-        "lastModifiedDateTime": "2022-12-26T13:31:01.168Z"
+        "keyvaultReferenceIdentityType": "SystemAssigned"
       }
     },
     {
@@ -108,14 +105,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:00 GMT",
+        "Date": "Tue, 27 Dec 2022 04:29:06 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -126,7 +123,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/471c3610-3b1d-4178-8ce5-626a310f863a/app-components?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/app-components?api-version=2022-11-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -149,14 +146,14 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "666",
+        "Content-Length": "653",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:02 GMT",
-        "Location": "https://https://myservice.azure.com/tests/471c3610-3b1d-4178-8ce5-626a310f863a/app-components?api-version=2022-11-01",
-        "mise-correlation-id": "659df2b4-377f-4676-8eb0-16fefd4758ae",
+        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
+        "Location": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/app-components?api-version=2022-11-01",
+        "mise-correlation-id": "4631c677-6f2d-40c9-939a-09f336ec2d80",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d8449baa-4cd1-4204-b74c-79bd35e726df"
+        "x-ms-correlation-request-id": "67366c7c-895d-4120-a789-7f1626d3612f"
       },
       "ResponseBody": {
         "components": {
@@ -169,9 +166,9 @@
             "kind": "web"
           }
         },
-        "testId": "471c3610-3b1d-4178-8ce5-626a310f863a",
-        "createdDateTime": "2022-12-26T13:31:02.003Z",
-        "lastModifiedDateTime": "2022-12-26T13:31:02.003Z"
+        "testId": "pytest_setup_load_test_id",
+        "createdDateTime": "2022-12-27T04:29:07.67Z",
+        "lastModifiedDateTime": "2022-12-27T04:29:07.67Z"
       }
     },
     {
@@ -190,14 +187,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:01 GMT",
+        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -208,7 +205,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/471c3610-3b1d-4178-8ce5-626a310f863a/app-components?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/app-components?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -220,13 +217,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "666",
+        "Content-Length": "653",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:02 GMT",
-        "mise-correlation-id": "92885508-c0af-4f24-8a56-81583df57244",
+        "Date": "Tue, 27 Dec 2022 04:29:08 GMT",
+        "mise-correlation-id": "44f98385-5343-4c7b-a4a1-b53553553d4d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f0fe26a4-472d-4a69-b22c-c9b55e802b30"
+        "x-ms-correlation-request-id": "75914777-6276-4b29-bb8e-3d557eaaf0aa"
       },
       "ResponseBody": {
         "components": {
@@ -239,13 +236,13 @@
             "kind": "web"
           }
         },
-        "testId": "471c3610-3b1d-4178-8ce5-626a310f863a",
-        "createdDateTime": "2022-12-26T13:31:02.003Z",
-        "lastModifiedDateTime": "2022-12-26T13:31:02.003Z"
+        "testId": "pytest_setup_load_test_id",
+        "createdDateTime": "2022-12-27T04:29:07.67Z",
+        "lastModifiedDateTime": "2022-12-27T04:29:07.67Z"
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/d14db1d9-67a7-4374-b0b5-133bb84bf212/app-components?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/nonexistingresource/app-components?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -257,18 +254,18 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "118",
+        "Content-Length": "101",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:03 GMT",
-        "mise-correlation-id": "2cdb5661-ee96-4afb-be0a-7bbbb9e36a48",
+        "Date": "Tue, 27 Dec 2022 04:29:08 GMT",
+        "mise-correlation-id": "92c0c730-6bfd-4d04-85f8-856bb7fe2b16",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f9969c96-8026-4e08-99d7-c3cc851786ad"
+        "x-ms-correlation-request-id": "7af92860-f6c1-498b-b1c9-ca8c8fb91631"
       },
       "ResponseBody": {
         "error": {
           "code": "TestNotFound",
-          "message": "Test not found with given name \u0022d14db1d9-67a7-4374-b0b5-133bb84bf212\u0022."
+          "message": "Test not found with given name \u0022nonexistingresource\u0022."
         }
       }
     }

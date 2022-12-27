@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import os
-import uuid
 from pathlib import Path
 
 import pytest
@@ -15,10 +14,11 @@ from testcase import LoadtestingPowerShellPreparer, LoadtestingTest
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, set_custom_default_matcher
 
 DISPLAY_NAME = "TestingResourcePyTest"
+NON_EXISTING_RESOURCE = "nonexistingresource"
 class TestLoadTestAdministrationClient(LoadtestingTest):
 
     def setup_create_load_test(self, endpoint):
-        self.setup_load_test_id = uuid.uuid4()
+        self.setup_load_test_id = "pytest_setup_load_test_id"
         client = self.create_administration_client(endpoint)
 
         client.create_or_update_test(
@@ -115,7 +115,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         assert result is None
 
         with pytest.raises(ResourceNotFoundError):
-            client.delete_test(uuid.uuid4())
+            client.delete_test(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
@@ -128,7 +128,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_test(uuid.uuid4())
+            client.get_test(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
@@ -182,7 +182,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            client.list_test_files(uuid.uuid4())
+            client.list_test_files(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
@@ -209,7 +209,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
 
         with pytest.raises(ResourceNotFoundError):
             client.create_or_update_app_components(
-                uuid.uuid4(),
+                NON_EXISTING_RESOURCE,
                 {
                     "components": {
                         loadtesting_resource_id: {
@@ -234,7 +234,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
-            client.get_app_components(uuid.uuid4())
+            client.get_app_components(NON_EXISTING_RESOURCE)
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
@@ -285,6 +285,3 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.get_server_metrics_config(loadtesting_test_id)
         assert result is not None
-
-        with pytest.raises(ResourceNotFoundError):
-            client.get_server_metrics_config(uuid.uuid4())

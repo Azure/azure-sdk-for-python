@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:30:57 GMT",
+        "Date": "Tue, 27 Dec 2022 04:29:04 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -59,11 +59,11 @@
         "Connection": "keep-alive",
         "Content-Length": "633",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:30:58 GMT",
-        "mise-correlation-id": "1c3590e8-5138-42f5-ab54-b5d2788fe275",
+        "Date": "Tue, 27 Dec 2022 04:29:05 GMT",
+        "mise-correlation-id": "1714e542-b7fb-44b3-9ed6-84f2ff4d6b98",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b01dca3c-aaba-4e25-966f-8171a5149462"
+        "x-ms-correlation-request-id": "d48b06fe-f4f7-41cd-8c9a-bf09d078608a"
       },
       "ResponseBody": {
         "components": {
@@ -82,7 +82,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/cbef64cf-7fea-4040-9d06-52be36fcb39b/app-components?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/nonexistingresource/app-components?api-version=2022-11-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -105,18 +105,18 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "118",
+        "Content-Length": "101",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:31:00 GMT",
-        "mise-correlation-id": "a048cd37-0c28-4013-a288-889d8e6a5dc9",
+        "Date": "Tue, 27 Dec 2022 04:29:05 GMT",
+        "mise-correlation-id": "ac7e7795-8510-4dfc-9119-dae26e8e2e7b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6255f5b4-d233-4ec6-8029-ec93e3d98056"
+        "x-ms-correlation-request-id": "fe7a2a9b-e931-4420-a0a4-931ad17bce6e"
       },
       "ResponseBody": {
         "error": {
           "code": "TestNotFound",
-          "message": "Test not found with given name \u0022cbef64cf-7fea-4040-9d06-52be36fcb39b\u0022."
+          "message": "Test not found with given name \u0022nonexistingresource\u0022."
         }
       }
     }

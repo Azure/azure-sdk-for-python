@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:46:17 GMT",
+        "Date": "Tue, 27 Dec 2022 04:28:57 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -34,7 +34,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/48041782-fb97-4b05-885d-78d47fae7d20?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id?api-version=2022-11-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -59,18 +59,17 @@
         "keyvaultReferenceIdentityType": "SystemAssigned",
         "keyvaultReferenceIdentityId": null
       },
-      "StatusCode": 201,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "421",
+        "Content-Length": "317",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:46:19 GMT",
-        "Location": "https://https://myservice.azure.com/tests/48041782-fb97-4b05-885d-78d47fae7d20?api-version=2022-11-01",
-        "mise-correlation-id": "949d716c-65d5-44ce-b80f-2de22a6c8829",
+        "Date": "Tue, 27 Dec 2022 04:28:57 GMT",
+        "mise-correlation-id": "a7db21d0-7438-42f0-8434-e01b3b18cd83",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "eddaa057-8263-43fe-9dac-be123e5e073a"
+        "x-ms-correlation-request-id": "7ca26a71-4411-4798-ada1-42f5f34ae6f9"
       },
       "ResponseBody": {
         "passFailCriteria": {
@@ -84,12 +83,10 @@
         "inputArtifacts": {
           "additionalFileInfo": []
         },
-        "testId": "48041782-fb97-4b05-885d-78d47fae7d20",
+        "testId": "pytest_setup_load_test_id",
         "description": "",
         "displayName": "TestingResourcePyTest",
-        "keyvaultReferenceIdentityType": "SystemAssigned",
-        "createdDateTime": "2022-12-26T13:46:19.94Z",
-        "lastModifiedDateTime": "2022-12-26T13:46:19.94Z"
+        "keyvaultReferenceIdentityType": "SystemAssigned"
       }
     }
   ],

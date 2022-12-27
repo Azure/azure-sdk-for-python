@@ -16,7 +16,7 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:06 GMT",
+        "Date": "Tue, 27 Dec 2022 04:28:57 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -34,7 +34,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id?api-version=2022-11-01",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -59,18 +59,17 @@
         "keyvaultReferenceIdentityType": "SystemAssigned",
         "keyvaultReferenceIdentityId": null
       },
-      "StatusCode": 201,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "423",
+        "Content-Length": "317",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:14 GMT",
-        "Location": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5?api-version=2022-11-01",
-        "mise-correlation-id": "312c0ebc-b624-4fc3-944c-aa276bc44b69",
+        "Date": "Tue, 27 Dec 2022 04:28:58 GMT",
+        "mise-correlation-id": "4a32710d-4bd0-4ec4-a4b1-8ec78513e724",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4330219f-adb4-4790-b6ce-fd7f91332dd2"
+        "x-ms-correlation-request-id": "494c6b64-790a-4561-b26f-b1927988cbee"
       },
       "ResponseBody": {
         "passFailCriteria": {
@@ -84,12 +83,10 @@
         "inputArtifacts": {
           "additionalFileInfo": []
         },
-        "testId": "6769250c-53bd-4741-a7fa-e4401f1055f5",
+        "testId": "pytest_setup_load_test_id",
         "description": "",
         "displayName": "TestingResourcePyTest",
-        "keyvaultReferenceIdentityType": "SystemAssigned",
-        "createdDateTime": "2022-12-26T13:52:14.067Z",
-        "lastModifiedDateTime": "2022-12-26T13:52:14.067Z"
+        "keyvaultReferenceIdentityType": "SystemAssigned"
       }
     },
     {
@@ -108,14 +105,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:13 GMT",
+        "Date": "Tue, 27 Dec 2022 04:28:58 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -126,7 +123,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5/files/sample.jmx?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -140,20 +137,20 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "148",
+        "Content-Length": "147",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:16 GMT",
-        "Location": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5/files/sample.jmx?api-version=2022-11-01",
-        "mise-correlation-id": "5140d978-3f0f-4de4-b790-d6fbd8b755c6",
+        "Date": "Tue, 27 Dec 2022 04:29:00 GMT",
+        "Location": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+        "mise-correlation-id": "d0a70187-467c-4a26-8060-c30250b701dd",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f44950b2-4bd0-404a-bfbe-6e3e6757c9c6"
+        "x-ms-correlation-request-id": "3941b28b-7ae1-492d-8555-d8b095f0720e"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-26T14:02:16.6365189",
+        "expireDateTime": "2022-12-27T04:39:00.010975",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -173,7 +170,7 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:16 GMT",
+        "Date": "Tue, 27 Dec 2022 04:28:59 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -191,7 +188,7 @@
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5/files/sample.jmx?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -205,22 +202,22 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:22 GMT",
-        "mise-correlation-id": "903b39df-de4b-4964-bcfd-2c704f42b8d7",
+        "Date": "Tue, 27 Dec 2022 04:29:00 GMT",
+        "mise-correlation-id": "48917241-4f89-4006-8363-c7774769ac13",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "06f95d39-bb40-4d5c-9df0-87c5661924b3"
+        "x-ms-correlation-request-id": "c3fdd182-dab2-4836-8af0-ee9c98034050"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-26T14:02:22.5359285",
+        "expireDateTime": "2022-12-27T04:39:00.6797909",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
     {
-      "RequestUri": "https://https://myservice.azure.com/tests/6769250c-53bd-4741-a7fa-e4401f1055f5/files/nonexistent.jmx?api-version=2022-11-01",
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/nonexistent.jmx?api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -234,11 +231,11 @@
         "Connection": "keep-alive",
         "Content-Length": "142",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 13:52:24 GMT",
-        "mise-correlation-id": "09f7861f-3cc5-45f4-a609-b5a026fbdeb3",
+        "Date": "Tue, 27 Dec 2022 04:29:01 GMT",
+        "mise-correlation-id": "6c5d2e6d-d98a-4b3f-9a52-c1e22af24fce",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "86a5a84a-1919-429b-9dac-ccfb6b874482"
+        "x-ms-correlation-request-id": "ee8c9950-79a8-4e4c-953d-7e607ad7457b"
       },
       "ResponseBody": {
         "error": {
