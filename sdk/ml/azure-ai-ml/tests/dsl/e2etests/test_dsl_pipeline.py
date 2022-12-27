@@ -1047,8 +1047,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         _component_operations.module_logger = logging.getLogger("Operation")
 
         # Assert binding on compute not changed after resolve dependencies
-        client.components._resolve_arm_id_for_pipeline_component_jobs(
-            component.jobs, resolver=client.components._orchestrators.get_asset_arm_id
+        client.components._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=client.components._orchestrators.get_asset_arm_id,
+            resolve_inputs=False
         )
         assert component.jobs["node2"].compute == "${{parent.inputs.node_compute}}"
 
@@ -1500,6 +1502,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(10, 15, job_input)
         job = client.jobs.create_or_update(pipeline)
         assert job.settings.force_rerun is None
+
+        # 1 interesting case: in client.jobs.create_or_update, component_func1 and/or component_func2
+        # will be renamed to azureml_anonymous in resolution, and the component name will be used as
+        # node name when we use them in the 2nd pipeline job.
+        # After we enabled in-memory cache, only component_func1 will be resolved, and name of component_func2
+        # will keep as randstr("component_name"). Here we manually rename to avoid recording change.
+        component_func2.name = "azureml_anonymous"
 
         @dsl.pipeline(
             name=randstr("pipeline_name"),
