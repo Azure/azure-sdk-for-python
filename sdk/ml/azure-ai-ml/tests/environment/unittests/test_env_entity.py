@@ -42,7 +42,11 @@ class TestEnvironmentEntity:
             image=env.image,
         )
         rest_object = env._to_rest_object()
+        # Set id to match the one that would be returned by the service, otherwise _from_rest_object will fail
+        rest_object.id = f"azureml://registries/test/environments/{env.name}/versions/{env.version}"
         env_from_rest_object = Environment._from_rest_object(rest_object)
+        # Exclude id from comparisons below
+        env_from_rest_object._id = None
 
         assert env == env_from_rest_object
         assert env.properties == env_from_rest_object.properties
