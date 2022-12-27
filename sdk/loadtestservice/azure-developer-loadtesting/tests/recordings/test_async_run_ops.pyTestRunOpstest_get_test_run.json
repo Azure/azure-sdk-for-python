@@ -1,0 +1,187 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "189",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcnt-prod.loadtesting.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 27 Dec 2022 08:56:39 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/test-runs/000?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "2516",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 27 Dec 2022 08:56:40 GMT",
+        "mise-correlation-id": "b5e17a23-9229-49ee-aa16-b7066543955f",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "05484af6-aa2d-459e-9df8-9a49a84d1c31"
+      },
+      "ResponseBody": {
+        "passFailCriteria": {
+          "passFailMetrics": {}
+        },
+        "testRunStatistics": {
+          "GET": {
+            "transaction": "GET",
+            "sampleCount": 16705.0,
+            "errorCount": 0.0,
+            "errorPct": 0.0,
+            "meanResTime": 37.80856031128405,
+            "medianResTime": 37.0,
+            "maxResTime": 187.0,
+            "minResTime": 31.0,
+            "pct1ResTime": 42.0,
+            "pct2ResTime": 44.0,
+            "pct3ResTime": 52.0,
+            "throughput": 41.15,
+            "receivedKBytesPerSec": 0.0,
+            "sentKBytesPerSec": 0.0
+          },
+          "Total": {
+            "transaction": "Total",
+            "sampleCount": 16705.0,
+            "errorCount": 0.0,
+            "errorPct": 0.0,
+            "meanResTime": 37.80856031128405,
+            "medianResTime": 37.0,
+            "maxResTime": 187.0,
+            "minResTime": 31.0,
+            "pct1ResTime": 42.0,
+            "pct2ResTime": 44.0,
+            "pct3ResTime": 52.0,
+            "throughput": 41.15,
+            "receivedKBytesPerSec": 0.0,
+            "sentKBytesPerSec": 0.0
+          }
+        },
+        "loadTestConfiguration": {
+          "engineInstances": 1,
+          "splitAllCSVs": false,
+          "quickStartTest": false
+        },
+        "testArtifacts": {
+          "inputArtifacts": {
+            "configFileInfo": {
+              "url": "url",
+              "fileName": "config.yaml",
+              "fileType": "ADDITIONAL_ARTIFACTS",
+              "expireDateTime": "2022-12-27T09:56:40.5196775",
+              "validationStatus": "VALIDATION_NOT_REQUIRED"
+            },
+            "testScriptFileInfo": {
+              "url": "url",
+              "fileName": "sample.jmx",
+              "fileType": "JMX_FILE",
+              "expireDateTime": "2022-12-27T09:56:40.5187495",
+              "validationStatus": "VALIDATION_SUCCESS"
+            },
+            "inputArtifactsZipFileInfo": {
+              "url": "url",
+              "fileName": "inputartifacts.zip",
+              "fileType": "ADDITIONAL_ARTIFACTS",
+              "expireDateTime": "2022-12-27T09:56:40.5199545",
+              "validationStatus": "VALIDATION_NOT_REQUIRED"
+            },
+            "additionalFileInfo": []
+          },
+          "outputArtifacts": {
+            "resultFileInfo": {
+              "url": "url",
+              "fileName": "csv.zip",
+              "fileType": "ADDITIONAL_ARTIFACTS",
+              "expireDateTime": "2022-12-27T09:56:40.5202273",
+              "validationStatus": "VALIDATION_NOT_REQUIRED"
+            },
+            "logsFileInfo": {
+              "url": "url",
+              "fileName": "logs.zip",
+              "fileType": "ADDITIONAL_ARTIFACTS",
+              "expireDateTime": "2022-12-27T09:56:40.5204958",
+              "validationStatus": "VALIDATION_NOT_REQUIRED"
+            }
+          }
+        },
+        "testResult": "NOT_APPLICABLE",
+        "virtualUsers": 10,
+        "testRunId": "000",
+        "displayName": "My New Load Test Run from PyTest",
+        "testId": "000",
+        "status": "DONE",
+        "startDateTime": "2022-12-27T07:19:28Z",
+        "endDateTime": "2022-12-27T07:26:15Z",
+        "executedDateTime": "2022-12-27T07:18:48.975Z",
+        "portalUrl": "https://portal.azure.com/?feature.canmodifyextensions=true\u0026feature.canmodifystamps=true\u0026Microsoft_Azure_CloudNativeTesting=canary#blade/Microsoft_Azure_CloudNativeTesting/NewReport//resourceId/%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fnivedit-jain%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2fnivedittestresource/testId/000/testRunId/000",
+        "duration": 407000,
+        "createdDateTime": "2022-12-27T07:18:49.342Z",
+        "lastModifiedDateTime": "2022-12-27T07:18:49.342Z"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/test-runs/nonexistingresource?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "108",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 27 Dec 2022 08:56:41 GMT",
+        "mise-correlation-id": "b948512d-b7c9-405f-b9da-b15731412020",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "93d28245-4886-455f-9650-189b74614cf3"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "TestRunNotFound",
+          "message": "Test run not found with given name \u0022nonexistingresource\u0022."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

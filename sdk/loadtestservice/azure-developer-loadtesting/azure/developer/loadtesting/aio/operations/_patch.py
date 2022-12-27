@@ -130,7 +130,6 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         create_or_update_test_run_operation = await self.create_or_update_test_run(
             test_run_id,
             body,
-            poll_for_test_run_status=poll_for_test_run_status,
             old_test_run_id=old_test_run_id,
             **kwargs
         )
