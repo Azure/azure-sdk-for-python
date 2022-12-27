@@ -1645,7 +1645,7 @@ class TestDSLPipeline:
                         },
                         # add mode in rest if binding output set mode
                         "outputs": {
-                            "trained_model": {
+                            "output": {
                                 "value": "${{parent.outputs.pipeline_trained_model}}",
                                 "type": "literal",
                                 "mode": "Upload",
