@@ -14,6 +14,7 @@ from .._pyamqp import (
     constants,
     AMQPClient,
     ReceiveClient,
+    __version__,
 )
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
@@ -25,6 +26,7 @@ from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
     CUSTOM_CONDITION_BACKOFF,
+    PYAMQP_LIBRARY,
 )
 
 from ..exceptions import (
@@ -51,6 +53,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     )  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
+    TRANSPORT_VERSION = __version__
+    TRANSPORT_NAME = PYAMQP_LIBRARY
 
     # define symbols
     PRODUCT_SYMBOL = "product"

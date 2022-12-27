@@ -24,6 +24,7 @@ try:
         compat,
         errors,
         Connection,
+        __version__,
     )
     from uamqp.message import (
         MessageHeader,
@@ -38,6 +39,7 @@ from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
+    UAMQP_LIBRARY,
 )
 
 from ..exceptions import (
@@ -91,6 +93,8 @@ if uamqp_installed:
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             )
+        TRANSPORT_VERSION = __version__
+        TRANSPORT_NAME = UAMQP_LIBRARY
 
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")
