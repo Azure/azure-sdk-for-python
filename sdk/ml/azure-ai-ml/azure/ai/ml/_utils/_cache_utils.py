@@ -27,7 +27,6 @@ class CachedNodeResolver(object):
     """
     _ANONYMOUS_HASH_PREFIX = "anonymous_component:"
     _YAML_SOURCE_PREFIX = "yaml_source:"
-    _ORIGIN_PREFIX = "origin:"
 
     def __init__(self, resolver):
         self._resolver = resolver
@@ -50,7 +49,7 @@ class CachedNodeResolver(object):
         # there is no harm to add a source path to the hash even if the component doesn't have code
         # Note that here we assume that the content of code folder won't change during the submission
         if component._source_path:  # pylint: disable=protected-access
-            object_hash = hashlib.sha224()
+            object_hash = hashlib.sha256()
             object_hash.update(component._get_anonymous_hash().encode("utf-8"))  # pylint: disable=protected-access
             object_hash.update(component._source_path.encode("utf-8"))  # pylint: disable=protected-access
             return cls._YAML_SOURCE_PREFIX + object_hash.hexdigest()
@@ -87,6 +86,8 @@ class CachedNodeResolver(object):
         """Resolve all components to resolve and save the results in cache.
         """
         # TODO: apply local cache controlled by an environment variable here
+        # Note that we should recalculate the hash based on code for local cache, as
+        # we can't assume that the code folder won't change among dependency resolution
         # TODO: do concurrent resolution controlled by an environment variable here
         # given deduplication has already been done, we can safely assume that there is no
         # conflict in concurrent local cache access
