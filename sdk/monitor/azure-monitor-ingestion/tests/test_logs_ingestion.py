@@ -50,10 +50,10 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
-        def on_error(**kwargs):
+        def on_error(error, logs):
             on_error.called = True
-            assert isinstance(kwargs.get("error"), HttpResponseError)
-            assert kwargs.get("logs") == body
+            assert isinstance(error, HttpResponseError)
+            assert logs == body
 
         on_error.called = False
 

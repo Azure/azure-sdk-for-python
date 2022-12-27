@@ -29,7 +29,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         rule_id: str,
         stream_name: str,
         logs: Union[List[JSON], IO],
-        on_error: Optional[Callable[..., None]] = None,
+        on_error: Optional[Callable[[Exception, List[JSON]], None]] = None,
         **kwargs: Any
     ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
@@ -42,11 +42,11 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :type stream_name: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
-        :param on_error: The callback function that is called when a chunk of logs fail to upload.
-            This function should expect two keyword arguments: `error` and `logs`.
-            These arguments correspond to the error encountered and the list of logs that failed to upload.
-            If no function is provided, then the first exception encountered will be raised.
-        :type on_error: Optional[Callable[..., None]]
+        :param on_error: The callback function that is called when a chunk of logs fails to upload.
+            This function should expect two arguments that correspond to the error encountered and
+            the list of logs that failed to upload. If no function is provided, then the first exception
+            encountered will be raised.
+        :type on_error: Optional[Callable[[Exception, List[JSON]], None]]
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -58,7 +58,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
                 )
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
-                    on_error(error=err, logs=log_chunk)
+                    on_error(err, log_chunk)
                 else:
                     _LOGGER.error( "Failed to upload chunk containing %d log entries", len(log_chunk))
                     raise err

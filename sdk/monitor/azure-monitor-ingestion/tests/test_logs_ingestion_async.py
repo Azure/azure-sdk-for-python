@@ -53,10 +53,10 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
             LogsIngestionClient, self.get_credential(LogsIngestionClient, is_async=True), endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
-        async def on_error(**kwargs):
+        async def on_error(error, logs):
             on_error.called = True
-            assert isinstance(kwargs.get("error"), HttpResponseError)
-            assert kwargs.get("logs") == body
+            assert isinstance(error, HttpResponseError)
+            assert logs == body
 
         on_error.called = False
 

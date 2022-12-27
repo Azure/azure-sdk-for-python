@@ -26,20 +26,23 @@ async def send_logs():
     credential = DefaultAzureCredential()
 
     failed_logs = []
-    async def on_error(**kwargs):
-        print("Log chunk failed to upload with error: ", kwargs.get("error"))
-        failed_logs.extend(kwargs.get("logs", []))
 
-    async def on_error_pass(**kwargs):
-        return
+    # Sample callback that stores the logs that failed to upload.
+    async def on_error(error, logs):
+        print("Log chunk failed to upload with error: ", error)
+        failed_logs.extend(logs)
+
+    # Sample callback that just ignores the error.
+    async def on_error_pass(*_):
+        pass
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
     async with client:
       await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
 
       # Retry once with any failed logs, and this time ignore any errors.
-      print("Retrying logs that failed to upload...")
       if failed_logs:
+        print("Retrying logs that failed to upload...")
         await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=failed_logs, on_error=on_error_pass)
     await credential.close()
 
