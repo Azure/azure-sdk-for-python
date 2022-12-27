@@ -16,6 +16,7 @@ from typing import List, Optional
 import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
+from strictyaml.ruamel.scanner import ScannerError
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
@@ -581,8 +582,10 @@ class _YamlLocationResolver:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
-            except strictyaml.exceptions.StrictYAMLError as e:
-                return "can't resolve location:\n{}".format(e).split("\n"), None
+            except (ScannerError, strictyaml.exceptions.StrictYAMLError) as e:
+                msg = "Can't load source file %s as a strict yaml:\n%s" % (source_path, str(e))
+                module_logger.debug(msg)
+                return None, None
 
         while attrs:
             attr = attrs[-1]
