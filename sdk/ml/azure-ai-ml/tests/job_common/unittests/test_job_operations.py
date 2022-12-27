@@ -3,14 +3,18 @@ import os
 from typing import Callable
 from unittest.mock import Mock, patch
 
+import jwt
 import pytest
 import vcr
 import yaml
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml.exceptions import ValidationException
+from azure.core.credentials import AccessToken
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2021_10_01 import models
+from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command
@@ -74,23 +78,23 @@ def mock_environment_operation(
 def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
     mock_machinelearning_client: Mock,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
 
 @pytest.fixture
 def mock_runs_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> RunOperations:
     yield RunOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
     )
 
 
@@ -175,6 +179,27 @@ class TestJobOperations:
         mock_job_operation._operation_2022_10_preview.create_or_update.assert_called_once()
         mock_job_operation._credential.get_token.assert_called_once_with("https://ml.azure.com/.default")
 
+    @patch.object(Job, "_from_rest_object")
+    def test_user_identity_get_aml_token(self, mock_method, mock_job_operation: JobOperations) -> None:
+        mock_method.return_value = Command(component=None)
+        job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
+
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
+
+        with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
+            mock_get_token.return_value = AccessToken(
+                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234)
+            mock_job_operation.create_or_update(job=job)
+            mock_job_operation._operation_2022_10_preview.create_or_update.assert_called_once()
+            mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
+
+        with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
+            mock_get_token.return_value = AccessToken(
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
+            with pytest.raises(ValidationException):
+                mock_job_operation.create_or_update(job=job)
+
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
@@ -209,7 +234,7 @@ class TestJobOperations:
     def test_parse_corrupt_job_data(self, mocker: MockFixture, corrupt_job_data: str) -> None:
         with open(corrupt_job_data, "r") as f:
             resource = json.load(f)
-        resource = models.JobBaseData.deserialize(resource)
+        resource = models.JobBase.deserialize(resource)
         with pytest.raises(Exception, match="Unknown search space type"):
             # Convert from REST object
             Job._from_rest_object(resource)

@@ -509,6 +509,18 @@ class TestDSLPipeline:
             "microsoftsamplescommandcomponentbasic_nopaths_test_2",
         ]
 
+        @dsl.pipeline(name="pipeline_with_user_defined_nodes_3")
+        def pipeline_with_user_defined_nodes_3():
+            node1 = component_func1()
+            node1.name = "my_node"
+            node2 = node1
+
+        pipeline = pipeline_with_user_defined_nodes_3()
+        variable_names = list(pipeline.component.jobs.keys())
+        pipeline_job_names = list(pipeline.jobs.keys())
+        assert variable_names == pipeline_job_names
+        assert variable_names == ["my_node"]
+
         @dsl.pipeline(name="pipeline_with_duplicate_user_defined_nodes_1")
         def pipeline_with_duplicate_user_defined_nodes_1():
             node1 = component_func1()

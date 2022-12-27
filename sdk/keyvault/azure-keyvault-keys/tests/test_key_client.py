@@ -12,6 +12,7 @@ import time
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
     ApiVersion,
     JsonWebKey,
@@ -23,6 +24,7 @@ from azure.keyvault.keys import (
     KeyType
 )
 from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
@@ -34,6 +36,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
+only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 only_vault_7_3 = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3])
 only_7_3 = get_decorator(api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(logging_enable=True)
@@ -755,6 +758,22 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == key.id
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
+
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_send_request(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = self._create_rsa_key(client, key_name)
+
+        # fetch the key we just created
+        request = HttpRequest(
+            method="GET",
+            url=f"keys/{key_name}/{key.properties.version}",
+            headers={"Accept": "application/json"},
+        )
+        response = client.send_request(request)
+        assert response.json()["key"]["kid"] == key.id
 
 
 def test_positive_bytes_count_required():

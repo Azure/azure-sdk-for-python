@@ -61,52 +61,27 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub, uamqp_transpo
     batch_cnt = 0
     single_cnt = 0
     found_partition_keys = {}
-    reconnect_receivers = []
     for index, partition in enumerate(receivers):
         retry_total = 0
         while retry_total < 3:
             timeout = (5 + retry_total) * timeout_factor
-            try:
-                received = partition.receive_message_batch(timeout=timeout)
-                for message in received:
-                    try:
-                        event_data = EventData._from_message(message)
-                        if event_data.properties and event_data.properties[b'is_single']:
-                            single_cnt += 1
-                        else:
-                            batch_cnt += 1
-                        existing = found_partition_keys[event_data.partition_key]
-                        assert existing == index
-                    except KeyError:
-                        found_partition_keys[event_data.partition_key] = index
-                if received:
-                    break
-                retry_total += 1
-            except AMQPConnectionError:
-                for r in reconnect_receivers:
-                    r.close()
-                uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-                source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-                    live_eventhub['hostname'],
-                    live_eventhub['event_hub'],
-                    live_eventhub['consumer_group'],
-                    index)
-                if uamqp_transport:
-                    sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
-                        uri, live_eventhub['key_name'], live_eventhub['access_key'])
-                    partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
-                else:
-                    sas_auth = SASTokenAuth(
-                        uri, uri, live_eventhub['key_name'], live_eventhub['access_key'])
-                    partition = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500)
-                partition.open()
-                reconnect_receivers.append(partition)
-                retry_total += 1
-        if retry_total == 3:
+            received = partition.receive_message_batch(timeout=timeout)
+            for message in received:
+                try:
+                    event_data = EventData._from_message(message)
+                    if event_data.properties and event_data.properties[b'is_single']:
+                        single_cnt += 1
+                    else:
+                        batch_cnt += 1
+                    existing = found_partition_keys[event_data.partition_key]
+                    assert existing == index
+                except KeyError:
+                    found_partition_keys[event_data.partition_key] = index
+            if received:
+                break
+            retry_total += 1
+        if retry_total >= 3:
             raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
-
-    for r in reconnect_receivers:
-        r.close()
 
     assert single_cnt == 60
     assert batch_cnt == 60
