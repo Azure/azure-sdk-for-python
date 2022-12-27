@@ -620,7 +620,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                         pass
 
 
-def test_set_api_version():
+async def test_set_api_version():
     containerregistry_endpoint="https://fake_url.azurecr.io"
     
     with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
