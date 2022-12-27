@@ -93,8 +93,7 @@ if uamqp_installed:
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             )
-        TRANSPORT_VERSION = __version__
-        TRANSPORT_NAME = UAMQP_LIBRARY
+        TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")

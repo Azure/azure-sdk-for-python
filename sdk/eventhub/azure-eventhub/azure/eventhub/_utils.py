@@ -106,7 +106,7 @@ def create_properties(
     platform_str = platform.platform()
     properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_NAME}/{amqp_transport.TRANSPORT_VERSION} {framework} ({platform_str})"
+    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_IDENTIFIER} {framework} ({platform_str})" # pylint: disable=line-too-long
     if user_agent:
         final_user_agent = f"{user_agent} {final_user_agent}"
 

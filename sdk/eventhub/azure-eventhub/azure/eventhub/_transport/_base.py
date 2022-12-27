@@ -21,8 +21,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple
-    TRANSPORT_VERSION: str
-    TRANSPORT_NAME: str
+    TRANSPORT_IDENTIFIER: str
 
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]

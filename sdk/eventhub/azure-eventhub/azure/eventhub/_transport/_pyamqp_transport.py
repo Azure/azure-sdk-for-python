@@ -53,8 +53,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     )  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
-    TRANSPORT_VERSION = __version__
-    TRANSPORT_NAME = PYAMQP_LIBRARY
+    TRANSPORT_IDENTIFIER = f"{PYAMQP_LIBRARY}/{__version__}"
 
     # define symbols
     PRODUCT_SYMBOL = "product"
