@@ -844,8 +844,9 @@ class JobOperations(_ScopeDependentOperations):
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
             self._resolve_pipeline_job_inputs(job, job._base_path)
-            if job.jobs:
-                self._component_operations._resolve_inputs_for_pipeline_component_jobs(job.jobs, job.base_path)
+            # inputs in sub-pipelines has been resolved in
+            # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
+            # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, Spark):
@@ -1169,16 +1170,17 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         # Process each component job
-        if pipeline_job.jobs:
-            try:
-                self._component_operations._resolve_arm_id_for_pipeline_component_jobs(pipeline_job.jobs, resolver)
-            except ComponentException as e:
-                raise JobException(
-                    message=e.message,
-                    target=ErrorTarget.JOB,
-                    no_personal_data_message=e.no_personal_data_message,
-                    error_category=e.error_category,
-                )
+        try:
+            self._component_operations._resolve_dependencies_for_pipeline_component_jobs(
+                pipeline_job.component, resolver
+            )
+        except ComponentException as e:
+            raise JobException(
+                message=e.message,
+                target=ErrorTarget.JOB,
+                no_personal_data_message=e.no_personal_data_message,
+                error_category=e.error_category,
+            )
 
         # Create a pipeline component for pipeline job if user specified component in job yaml.
         if (
