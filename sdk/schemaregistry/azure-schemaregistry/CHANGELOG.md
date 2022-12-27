@@ -5,7 +5,7 @@
 ### Features Added
 
 - `V2022_10` has been added to `ApiVersion` and set as the default api version.
-  - `Json` and `Custom` have been added supported formats in `SchemaFormat`.
+  - `Json` and `Custom` have been added to supported formats in `SchemaFormat`.
 
 ### Bugs Fixed
 
