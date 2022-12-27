@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union
+from typing import Union
 from uuid import uuid4
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.sms._generated.models import (
