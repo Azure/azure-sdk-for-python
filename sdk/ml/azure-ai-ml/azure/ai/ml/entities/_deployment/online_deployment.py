@@ -87,7 +87,7 @@ class OnlineDeployment(Deployment):
     :type instance_count: int
     :param instance_type: Azure compute sku.
     :type instance_type: str
-    :param model_mount_path: The path to mount the model in custom container..
+    :param model_mount_path: The path to mount the model in custom container.
     :type model_mount_path: str
     :param code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present.
     :type code_path: typing.Union[str, os.PathLike]

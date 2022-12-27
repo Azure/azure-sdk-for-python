@@ -26,6 +26,19 @@ class Resource(abc.ABC):
 
     :param ABC: Helper class that provides a standard way to create an ABC using inheritance.
     :type ABC: abc.ABC
+    :param name: Name of the resource.
+    :type name: str
+    :param description: Description of the resource, defaults to None
+    :type description: typing.Optional[str]
+    :param tags: Tags can be added, removed, and updated., defaults to None
+    :type tags: typing.Optional[typing.Dict]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict]
+    :keyword print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
+        False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+        notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
+    :paramtype print_as_yaml: bool
+
     """
 
     def __init__(
@@ -113,14 +126,13 @@ class Resource(abc.ABC):
         """
         Dump the object content into a file.
 
-
         :param dest: The destination to receive this object's data.
             Must be either a path to a local file, or an already-open file stream.
             If dest is a file path, a new file will be created,
             and an exception is raised if the file exists.
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
-        :type dest: typing.Union[str, typing.PathLike, typing.IO[typing.AnyStr]]
+        :type dest: typing.Union[str, os.PathLike, typing.IO[typing.AnyStr]]
         """
 
     @classmethod
