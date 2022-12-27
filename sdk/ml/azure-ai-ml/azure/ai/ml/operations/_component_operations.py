@@ -7,7 +7,7 @@
 import time
 import types
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Optional, Union
+from typing import Callable, Dict, Iterable, Optional, Union, List, Any
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -45,10 +45,13 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from .._utils._cache_utils import CachedNodeResolver
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
+from ..entities._builders import BaseNode
 from ..entities._builders.condition_node import ConditionNode
+from ..entities._builders.control_flow_node import LoopNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
@@ -347,8 +350,12 @@ class ComponentOperations(_ScopeDependentOperations):
             component = self.get(name=component.name, version=component.version)
         else:
             component = Component._from_rest_object(result)
-        if isinstance(component, PipelineComponent):
-            self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.resolve_azureml_id)
+
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=self._orchestrators.resolve_azureml_id,
+            resolve_inputs=False,
+        )
         return component
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
@@ -466,10 +473,21 @@ class ComponentOperations(_ScopeDependentOperations):
                     component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
 
-        self._resolve_arm_id_and_inputs(component)
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=get_arm_id_and_fill_back,
+        )
 
-    def _resolve_inputs_for_pipeline_component_jobs(self, jobs, base_path):
-        from azure.ai.ml.entities._builders import BaseNode, Pipeline
+    def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
+        """Resolve inputs for jobs in a pipeline component.
+
+        :param jobs: A dict of nodes in a pipeline component.
+        :type jobs: Dict[str, Any]
+        :param base_path: The base path used to resolve inputs. Usually it's
+        the base path of the pipeline component.
+        :type base_path: str
+        """
+        from azure.ai.ml.entities._builders import Pipeline
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
         for _, job_instance in jobs.items():
@@ -489,75 +507,172 @@ class ComponentOperations(_ScopeDependentOperations):
             elif isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
-    def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
-
-        from azure.ai.ml.entities._builders import BaseNode
-        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+    @classmethod
+    def _resolve_binding_on_supported_fields_for_node(cls, node):
+        """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
-        def preprocess_job(node):
-            """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
-            # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute", "compute_name"]
-            for field_name in supported_fields:
-                val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
-                if isinstance(val, PipelineInput):
-                    # Put binding string to field
-                    setattr(node, field_name, val._data_binding())
+        # compute binding to pipeline input is supported on node.
+        supported_fields = ["compute", "compute_name"]
+        for field_name in supported_fields:
+            val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
+            if isinstance(val, PipelineInput):
+                # Put binding string to field
+                setattr(node, field_name, val._data_binding())
 
-        def resolve_base_node(name, node: BaseNode):
-            """Resolve node name, compute and component for base node."""
-            # Set display name as node name
-            if (
-                isinstance(node.component, Component)
-                and node.component._is_anonymous
-                and not node.component.display_name
-            ):
-                node.component.display_name = name
-            if isinstance(node.component, PipelineComponent):
-                # Resolve nested arm id for pipeline component
-                self._resolve_arm_id_and_inputs(node.component)
-            else:
-                # Resolve compute for other type
-                # Keep data binding expression as they are
-                if not is_data_binding_expression(node.compute):
-                    # Get compute for each job
-                    node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
-                if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
-                    node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
-            # Get the component id for each job's component
-            # Note: do not use node.component as Sweep don't have that
-            node._component = resolver(
-                node._component,
-                azureml_type=AzureMLResourceType.COMPONENT,
-            )
+    @classmethod
+    def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
+        """Set default display name for anonymous component in a node.
+        If node._component is an anonymous component and without display name, set the default display name.
+        """
+        if not isinstance(node, BaseNode):
+            return
+        component = node._component
+        if isinstance(component, PipelineComponent):
+            return
+        # Set display name as node name
+        # TODO: the same anonymous component with different node name will have different anonymous hash
+        # as their display name will be different.
+        if (
+                isinstance(component, Component)
+                # check if component is anonymous and not created based on its id. We can't directly check
+                # node._component._is_anonymous as it will be set to True on component creation,
+                # which is later than this check
+                and not component.id
+                and not component.display_name
+        ):
+            component.display_name = default_name
 
-        for key, job_instance in jobs.items():
-            preprocess_job(job_instance)
+    @classmethod
+    def _resolve_compute_for_node(cls, node: BaseNode, resolver):
+        """Resolve compute for base node."""
+        if not isinstance(node._component, PipelineComponent):
+            # Resolve compute for other type
+            # Keep data binding expression as they are
+            if not is_data_binding_expression(node.compute):
+                # Get compute for each job
+                node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+            if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
+                node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
+
+    @classmethod
+    def _divide_nodes_to_resolve_into_layers(
+        cls,
+        component: PipelineComponent,
+        extra_operations: List[Callable]
+    ):
+        """Traverse the pipeline component and divide nodes to resolve into layers.
+        For example, for below pipeline component, assuming that all nodes need to be resolved:
+          A
+         /|\
+        B C D
+        | |
+        E F
+        return value will be:
+        [
+          [("B", B), ("C", C), ("D", D)],
+          [("E", E), ("F", F)],
+        ]
+
+        :param component: The pipeline component to resolve.
+        :type component: PipelineComponent
+        :param extra_operations: Extra operations to apply on nodes during the traversing.
+        :type extra_operations: List[Callable]
+        :return: A list of layers of nodes to resolve.
+        :rtype: List[List[Tuple[str, BaseNode]]]
+        """
+        # add an empty layer to mark the end of the first layer
+        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+
+        while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
+            key, job_instance = layers[cur_layer][cur_layer_head]
+            cur_layer_head += 1
+
+            cls._resolve_binding_on_supported_fields_for_node(job_instance)
             if isinstance(job_instance, LoopNode):
                 job_instance = job_instance.body
-            if isinstance(job_instance, AutoMLJob):
-                self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
-            elif isinstance(job_instance, BaseNode):
-                resolve_base_node(key, job_instance)
-            elif isinstance(job_instance, ConditionNode):
-                pass
-            else:
-                msg = f"Non supported job type in Pipeline: {type(job_instance)}"
-                raise ComponentException(
-                    message=msg,
-                    target=ErrorTarget.COMPONENT,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
 
-    def _resolve_arm_id_and_inputs(self, component):
+            for extra_operation in extra_operations:
+                extra_operation(job_instance, key)
+
+            if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
+                if cur_layer + 1 == len(layers):
+                    layers.append([])
+                layers[cur_layer+1].extend(job_instance.component.jobs.items())
+
+            if cur_layer_head == len(layers[cur_layer]):
+                cur_layer += 1
+                cur_layer_head = 0
+
+        # if there is no subgraph, pop the empty layer inserted at the beginning
+        if len(layers[-1]) == 0:
+            layers.pop()
+
+        return layers
+
+    def _resolve_dependencies_for_pipeline_component_jobs(
+        self,
+        component: Union[Component, str],
+        resolver: Callable,
+        *,
+        resolve_inputs: bool = True
+    ):
+        """Resolve dependencies for pipeline component jobs.
+        Will directly return if component is not a pipeline component.
+
+        :param component: The pipeline component to resolve.
+        :type component: Union[Component, str]
+        :param resolver: The resolver to resolve the dependencies.
+        :type resolver: Callable
+        :param resolve_inputs: Whether to resolve inputs.
+        :type resolve_inputs: bool
+        """
         if not isinstance(component, PipelineComponent) or not component.jobs:
             return
-        self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
-        self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.get_asset_arm_id)
+
+        from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+
+        if resolve_inputs:
+            self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
+
+        layers = self._divide_nodes_to_resolve_into_layers(
+            component,
+            extra_operations=[
+                self._set_default_display_name_for_anonymous_component_in_node,
+            ]
+        )
+
+        # cache anonymous component only for now
+        # request level in-memory cache can be a better solution for other type of assets as they are
+        # relatively simple and of small number of distinct instances
+        component_cache = CachedNodeResolver(resolver=resolver)
+
+        # Deeper layer nodes will be resolved first so that all dependencies have already been resolved when
+        # trying to resolve nodes in upper layer.
+        for layer in reversed(layers):
+            for _, job_instance in layer:
+                if isinstance(job_instance, LoopNode):
+                    job_instance = job_instance.body
+
+                if isinstance(job_instance, AutoMLJob):
+                    # only compute is resolved here
+                    self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
+                elif isinstance(job_instance, BaseNode):
+                    self._resolve_compute_for_node(job_instance, resolver=resolver)
+                    component_cache.register_node_to_resolve(job_instance)
+                elif isinstance(job_instance, ConditionNode):
+                    pass
+                else:
+                    msg = f"Non supported job type in Pipeline: {type(job_instance)}"
+                    raise ComponentException(
+                        message=msg,
+                        target=ErrorTarget.COMPONENT,
+                        no_personal_data_message=msg,
+                        error_category=ErrorCategory.USER_ERROR,
+                    )
+
+            component_cache.resolve_nodes()
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:

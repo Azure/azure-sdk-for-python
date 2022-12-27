@@ -533,6 +533,10 @@ def mock_component_hash(mocker: MockFixture):
 
     if is_live():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
+        mocker.patch(
+            "azure.ai.ml.entities._component.pipeline_component.hash_dict",
+            side_effect=generate_compononent_hash
+        )
 
 
 @pytest.fixture
