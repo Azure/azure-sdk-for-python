@@ -212,6 +212,10 @@ def _add_entity_properties(source):
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in to_send.items():
+        if "@odata.type" in name or name + "@odata.type" in to_send:
+            properties[name] = value
+            continue
+
         mtype = ""
 
         if isinstance(value, Enum):
