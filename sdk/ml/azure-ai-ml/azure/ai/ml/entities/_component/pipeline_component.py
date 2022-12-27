@@ -172,7 +172,7 @@ class PipelineComponent(Component):
         parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
             full_node_name = f"{parent_node_name}{node_name}.jobs."
-            if node.type == NodeType.PIPELINE:
+            if node.type == NodeType.PIPELINE and isinstance(node._component, PipelineComponent):
                 validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=full_node_name))
                 continue
             if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
