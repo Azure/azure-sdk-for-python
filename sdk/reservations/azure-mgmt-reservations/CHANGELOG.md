@@ -1,5 +1,12 @@
 # Release History
 
+## 2.2.0b1 (2022-12-27)
+
+### Features Added
+
+  - Model ReservationsProperties has a new parameter applied_scope_properties
+  - Model ReservationsProperties has a new parameter swap_properties
+
 ## 2.1.0 (2022-09-19)
 
 ### Features Added
