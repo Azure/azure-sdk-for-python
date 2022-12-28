@@ -23,7 +23,8 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
-    CommonYamlFields, AzureMLResourceType,
+    CommonYamlFields,
+    AzureMLResourceType,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
