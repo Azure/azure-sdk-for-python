@@ -59,6 +59,7 @@ from .._transport import (
     set_cloexec,
     AMQP_PORT,
     TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL
 )
 from ..error import AuthenticationException, ErrorCondition
 
@@ -476,6 +477,7 @@ class WebSocketTransportAsync(
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self._read_timeout = READ_TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
         self.ws = None
@@ -526,7 +528,7 @@ class WebSocketTransportAsync(
 
                 self.ws = await self.session.ws_connect(
                     url=url,
-                    timeout=self._connect_timeout,
+                    timeout=self._read_timeout,
                     protocols=[AMQP_WS_SUBPROTOCOL],
                     autoclose=False,
                     proxy=http_proxy_host,
