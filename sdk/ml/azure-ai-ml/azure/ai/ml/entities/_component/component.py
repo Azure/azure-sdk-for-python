@@ -114,6 +114,13 @@ class Component(
         self._source = (
             self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
+        # use ANONYMOUS_COMPONENT_NAME instead of guid
+        is_anonymous = kwargs.pop("is_anonymous", False)
+        if not name and version is None:
+            name = ANONYMOUS_COMPONENT_NAME
+            version = "1"
+            is_anonymous = True
+
         super().__init__(
             name=name,
             version=version,
@@ -122,16 +129,12 @@ class Component(
             tags=tags,
             properties=properties,
             creation_context=creation_context,
-            is_anonymous=kwargs.pop("is_anonymous", False),
+            is_anonymous=is_anonymous,
             base_path=kwargs.pop("base_path", None),
             source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
-
-        # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
-        if hasattr(self, "_is_anonymous"):
-            self._set_is_anonymous(self._is_anonymous)
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -409,25 +412,6 @@ class Component(
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
 
-    def _set_is_anonymous(self, is_anonymous: bool):
-        """Mark this component as anonymous and overwrite component name to
-        ANONYMOUS_COMPONENT_NAME."""
-        if is_anonymous is True:
-            self._is_anonymous = True
-            self.name = ANONYMOUS_COMPONENT_NAME
-        else:
-            self._is_anonymous = False
-
-    def _update_anonymous_hash(self):
-        """For anonymous component, we use code hash + yaml hash as component
-        version so the same anonymous component(same interface and same code)
-        won't be created again.
-
-        Should be called before _to_rest_object.
-        """
-        if self._is_anonymous:
-            self.version = self._get_anonymous_hash()
-
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
@@ -487,7 +471,10 @@ class Component(
             tags=self.tags,
         )
         result = ComponentVersionData(properties=properties)
-        result.name = self.name
+        if self._is_anonymous:
+            result.name = ANONYMOUS_COMPONENT_NAME
+        else:
+            result.name = self.name
         return result
 
     def _to_dict(self) -> Dict:
