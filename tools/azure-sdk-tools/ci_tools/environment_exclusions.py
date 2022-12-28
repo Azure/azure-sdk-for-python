@@ -280,7 +280,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-ai-personalizer",
     "azure-agrifood-farming",
     "azure-ai-anomalydetector",
-    "azure-appconfiguration",
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
