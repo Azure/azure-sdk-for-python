@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.securityinsight import 
+from azure.mgmt.securityinsight import SecurityInsights
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = (credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = SecurityInsights(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
