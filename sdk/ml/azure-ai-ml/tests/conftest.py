@@ -486,6 +486,43 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
+def normalized_arm_id_in_object(items):
+    """Replace the arm id in the object with a normalized value."""
+    regex = re.compile(
+        r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
+        r"Microsoft\.MachineLearningServices/workspaces/([^/]+)/"
+    )
+    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
+                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+
+    if isinstance(items, dict):
+        for key, value in items.items():
+            if isinstance(value, str):
+                items[key] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+    elif isinstance(items, list):
+        for i, value in enumerate(items):
+            if isinstance(value, str):
+                items[i] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+
+
+def normalized_hash_dict(items: dict, keys_to_omit=None):
+    """Normalize items with sanitized value and return hash."""
+    normalized_arm_id_in_object(items)
+    return hash_dict(items, keys_to_omit)
+
+
+def generate_component_hash(*args, **kwargs):
+    """Normalize component dict with sanitized value and return hash."""
+    dict_hash = hash_dict(*args, **kwargs)
+    normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    return dict_hash
+
+
 @pytest.fixture
 def mock_component_hash(mocker: MockFixture):
     """Mock the component hash function.
@@ -500,42 +537,12 @@ def mock_component_hash(mocker: MockFixture):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
-    regex = re.compile(
-        r"/subscriptions/[\-0-9a-z]+/resourceGroups/[\-0-9a-z]+/providers/"
-        r"Microsoft\.MachineLearningServices/workspaces/[_\-0-9a-z]+/"
-    )
-    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
-                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
-
-    def normalized_arm_id_in_object(items):
-        if isinstance(items, dict):
-            for key, value in items.items():
-                if isinstance(value, str):
-                    items[key] = regex.sub(replacement, value)
-                else:
-                    normalized_arm_id_in_object(value)
-        elif isinstance(items, list):
-            for i, value in enumerate(items):
-                if isinstance(value, str):
-                    items[i] = regex.sub(replacement, value)
-                else:
-                    normalized_arm_id_in_object(value)
-
-    def normalized_hash_dict(items: dict, keys_to_omit=None):
-        normalized_arm_id_in_object(items)
-        return hash_dict(items, keys_to_omit)
-
-    def generate_compononent_hash(*args, **kwargs):
-        dict_hash = hash_dict(*args, **kwargs)
-        normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
-        return dict_hash
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
-            side_effect=generate_compononent_hash
+            side_effect=generate_component_hash
         )
 
 
