@@ -364,11 +364,11 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param description: Description of the resource, defaults to None
     :type description: typing.Optional[str]
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: typing.Optional[typing.Union[str, &quot;Model&quot;]]
+    :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
     :param code_configuration: Code Configuration, defaults to None
     :type code_configuration: typing.Optional[CodeConfiguration]
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: typing.Optional[typing.Union[str, Environment]]
+    :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
     :param app_insights_enabled: Is appinsights enabled, defaults to False
     :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale, defaults to None
@@ -439,11 +439,11 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         :param description: Description of the resource, defaults to None
         :type description: typing.Optional[str]
         :param model: Model entity for the endpoint deployment, defaults to None
-        :type model: typing.Optional[typing.Union[str, &quot;Model&quot;]]
+        :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
         :param code_configuration: Code Configuration, defaults to None
         :type code_configuration: typing.Optional[CodeConfiguration]
         :param environment: Environment entity for the endpoint deployment, defaults to None
-        :type environment: typing.Optional[typing.Union[str, Environment]]
+        :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
         :param app_insights_enabled: Is appinsights enabled, defaults to False
         :type app_insights_enabled: bool
         :param scale_settings: How the online deployment will scale, defaults to None
@@ -604,11 +604,11 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :param description: Description of the resource, defaults to None
     :type description: typing.Optional[str]
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: typing.Optional[typing.Union[str, &quot;Model&quot;]]
+    :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
     :param code_configuration: Code Configuration, defaults to None
     :type code_configuration: typing.Optional[CodeConfiguration]
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: typing.Optional[typing.Union[str, &quot;Environment&quot;]]
+    :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
     :param app_insights_enabled: Is appinsights enabled, defaults to False
     :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale, defaults to None
@@ -673,11 +673,11 @@ class ManagedOnlineDeployment(OnlineDeployment):
         :param description: Description of the resource, defaults to None
         :type description: typing.Optional[str]
         :param model: Model entity for the endpoint deployment, defaults to None
-        :type model: typing.Optional[typing.Union[str, &quot;Model&quot;]]
+        :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
         :param code_configuration: Code Configuration, defaults to None
         :type code_configuration: typing.Optional[CodeConfiguration]
         :param environment: Environment entity for the endpoint deployment, defaults to None
-        :type environment: typing.Optional[typing.Union[str, &quot;Environment&quot;]]
+        :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
         :param app_insights_enabled: Is appinsights enabled, defaults to False
         :type app_insights_enabled: bool
         :param scale_settings: How the online deployment will scale, defaults to None

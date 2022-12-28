@@ -102,7 +102,7 @@ class MLClient(object):
     :type registry_name: typing.Optional[str]
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
-    :type show_progress: bool
+    :type show_progress: typing.Optional[bool]
     :keyword str cloud: The cloud name to use, defaults to AzureCloud.
 
     .. admonition:: Example:

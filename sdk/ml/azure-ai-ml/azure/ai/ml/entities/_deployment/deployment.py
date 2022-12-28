@@ -79,7 +79,6 @@ class Deployment(Resource, RestTranslatableMixin):
 
         Constructor of Endpoint Deployment base class.
 
-
         :param name: Name of the deployment resource, defaults to None
         :type name: typing.Optional[str]
         :param endpoint_name: Name of the Endpoint resource, defaults to None

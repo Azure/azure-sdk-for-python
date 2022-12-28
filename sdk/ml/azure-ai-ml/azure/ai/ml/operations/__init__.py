@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+"""Contains supported operations for Azure Machine Learning SDKv2.
+Operations are classes contain logic to interact with backend services, usually operations call auto generated with simple prep or error handling logic.
+"""
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
