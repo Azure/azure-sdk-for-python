@@ -59,7 +59,7 @@ class TestComputeEntity:
             self._test_loaded_compute,
             "tests/test_configs/compute/compute-aml.yaml",
         )[0]
-        assert compute.location == "westus"
+        assert compute.location == "eastus"
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
