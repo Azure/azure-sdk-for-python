@@ -64,8 +64,7 @@ _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
-def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], Literal["2019-02-02"]) -> Literal["2019-02-02"]
+def get_api_version(kwargs: Dict[str, Any], default: Literal["2019-02-02"]) -> Literal["2019-02-02"]:
     api_version = kwargs.pop("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
@@ -80,11 +79,10 @@ def get_api_version(kwargs, default):
 class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        account_url,  # type: Any
-        credential=None,  # type: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        account_url: Any,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] = None,
+        **kwargs: Any
+    ) -> None:
         try:
             if not account_url.lower().startswith("http"):
                 account_url = "https://" + account_url
@@ -211,12 +209,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, endpoint: str, **kwargs: Any) -> None: # pylint: disable=missing-client-constructor-parameter-credential
         credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(
@@ -250,8 +243,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
             HttpLoggingPolicy(**kwargs),
         ]
 
-    def _configure_credential(self, credential):
-        # type: (Any) -> None
+    def _configure_credential(self, credential: Any) -> None:
         if hasattr(credential, "get_token"):
             self._credential_policy = BearerTokenChallengePolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
@@ -265,8 +257,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(self, table_name, *reqs, **kwargs):
-        # type: (str, List[HttpRequest], Any) -> List[Mapping[str, Any]]
+    def _batch_send(self, table_name: str, *reqs: List[HttpRequest], **kwargs: Any) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -319,8 +310,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
             raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
         """

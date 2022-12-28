@@ -22,13 +22,12 @@ if TYPE_CHECKING:
 
 
 def generate_account_sas(
-    credential,  # type: AzureNamedKeyCredential
-    resource_types,  # type: ResourceTypes
-    permission,  # type: Union[str, AccountSasPermissions]
-    expiry,  # type: Union[datetime, str]
-    **kwargs  # type: Any
-):
-    # type: (...) -> str
+    credential: AzureNamedKeyCredential,
+    resource_types: ResourceTypes,
+    permission: Union[str, AccountSasPermissions],
+    expiry: Union[datetime, str],
+    **kwargs: Any
+) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
@@ -88,8 +87,7 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(credential, table_name, **kwargs):
-    # type: (AzureNamedKeyCredential, str, **Any) -> str
+def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs: Any) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.

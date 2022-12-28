@@ -54,13 +54,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self,
-        endpoint,  # type: str
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, endpoint: str, table_name: str, **kwargs: Any) -> None: # pylint: disable=missing-client-constructor-parameter-credential
         """Create TableClient from a Credential.
 
         :param str endpoint: A URL to an Azure Tables account.
@@ -87,13 +81,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str,  # type: str
-        table_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableClient
+    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> 'TableClient':
         """Create TableClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -116,8 +104,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
-    def from_table_url(cls, table_url, **kwargs):
-        # type: (str, Any) -> TableClient
+    def from_table_url(cls, table_url: str, **kwargs: Any) -> 'TableClient':
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
@@ -161,10 +148,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace
-    def get_table_access_policy(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Optional[TableAccessPolicy]]
+    def get_table_access_policy(self, **kwargs: Any) -> Dict[str, Optional[TableAccessPolicy]]:
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
@@ -196,11 +180,8 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
 
     @distributed_trace
     def set_table_access_policy(
-        self,
-        signed_identifiers,  # type: Dict[str, Optional[TableAccessPolicy]]
-        **kwargs
-    ):
-        # type: (...) -> None
+        self, signed_identifiers: Dict[str, Optional[TableAccessPolicy]], **kwargs: Any
+    ) -> None:
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
         :param signed_identifiers: Access policies to set for the table
@@ -231,10 +212,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 raise
 
     @distributed_trace
-    def create_table(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> TableItem
+    def create_table(self, **kwargs: Any) -> TableItem:
         """Creates a new table under the current account.
 
         :return: A TableItem representing the created table.
@@ -262,10 +240,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
-    def delete_table(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete_table(self, **kwargs: Any) -> None:
         """Deletes the table under the current account. No error will be raised
         if the table does not exist
 
@@ -294,18 +269,15 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 raise
 
     @overload
-    def delete_entity(self, partition_key, row_key, **kwargs):
-        # type: (str, str, Any) -> None
+    def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
         pass
 
     @overload
-    def delete_entity(self, entity, **kwargs):
-        # type: (Union[TableEntity, Mapping[str, Any]], Any) -> None
+    def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
         pass
 
     @distributed_trace
-    def delete_entity(self, *args, **kwargs):
-        # type: (Union[TableEntity, str], Any) -> None
+    def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
@@ -371,12 +343,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace
-    def create_entity(
-        self,
-        entity,  # type: EntityType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+    def create_entity(self, entity: EntityType, **kwargs: Any) -> Dict[str,str]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -414,13 +381,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
-    def update_entity(
-        self,
-        entity,  # type: EntityType
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str,str]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
@@ -489,10 +450,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
-    def list_entities(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[TableEntity]
+    def list_entities(self, **kwargs: Any) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities returned per service request.
@@ -526,12 +484,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         )
 
     @distributed_trace
-    def query_entities(  # pylint: disable=line-too-long
-        self,
-        query_filter,
-        **kwargs
-    ):
-        # type: (str, Dict[str, Any]) -> ItemPaged[TableEntity]
+    def query_entities(self, query_filter: str, **kwargs: Dict[str, Any]) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities. For more information
@@ -574,13 +527,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         )
 
     @distributed_trace
-    def get_entity(
-        self,
-        partition_key,  # type: str
-        row_key,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> TableEntity
+    def get_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> TableEntity:
         """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
@@ -618,13 +565,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _convert_to_entity(entity)
 
     @distributed_trace
-    def upsert_entity(
-        self,
-        entity,  # type: EntityType
-        mode=UpdateMode.MERGE,  # type: UpdateMode
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str,str]
+    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str,str]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
@@ -680,11 +621,8 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     def submit_transaction(
-        self,
-        operations,  # type: Iterable[TransactionOperationType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Mapping[str, Any]]
+        self, operations: Iterable[TransactionOperationType], **kwargs: Any
+    ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.

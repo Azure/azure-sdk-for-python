@@ -146,10 +146,10 @@ class TableServiceClient(AsyncTablesBaseClient):
     async def set_service_properties(
         self,
         *,
-        analytics_logging: Optional['TableAnalyticsLogging'] = None,
-        hour_metrics: Optional['TableMetrics'] = None,
-        minute_metrics: Optional['TableMetrics'] = None,
-        cors: Optional[List['TableCorsRule']] = None,
+        analytics_logging: Optional[TableAnalyticsLogging] = None,
+        hour_metrics: Optional[TableMetrics] = None,
+        minute_metrics: Optional[TableMetrics] = None,
+        cors: Optional[List[TableCorsRule]] = None,
         **kwargs
     ) -> None:
         """Sets properties for an account's Table service endpoint,

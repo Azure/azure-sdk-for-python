@@ -33,17 +33,17 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: AsyncTokenCredential,
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs: "Any"
+        **kwargs: Any
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.

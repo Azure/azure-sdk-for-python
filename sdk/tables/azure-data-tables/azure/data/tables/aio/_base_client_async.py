@@ -50,7 +50,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
         self,
         endpoint: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs: Any
     ) -> None:
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
@@ -75,8 +75,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
         """
         await self._client.close()
 
-    def _configure_credential(self, credential):
-        # type: (Any) -> None
+    def _configure_credential(self, credential: Any) -> None:
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenChallengePolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
@@ -107,7 +106,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(self, table_name: str, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
+    async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]

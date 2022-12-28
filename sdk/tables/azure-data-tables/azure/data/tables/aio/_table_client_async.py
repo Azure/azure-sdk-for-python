@@ -56,7 +56,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         endpoint: str,
         table_name: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.

@@ -114,8 +114,8 @@ class TableBatchOperations(object):
         entity: EntityType,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        response_preference: Optional[Union[str, "models.ResponseFormat"]] = "return-no-content",
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None,  # pylint: disable=redefined-builtin
+        response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """
@@ -281,7 +281,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
         """Update entity in a table.
@@ -383,7 +383,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
         **kwargs
     ) -> None:
         """Merge entity in a table.
@@ -535,7 +535,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
     ) -> None:
         """Deletes the specified entity in a table.
 

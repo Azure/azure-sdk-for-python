@@ -150,8 +150,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request):
-    # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         self.sign_request(request)
 
     def sign_request(self, request):
@@ -190,11 +189,11 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: TokenCredential,
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs: "Any"
+        **kwargs: Any
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes

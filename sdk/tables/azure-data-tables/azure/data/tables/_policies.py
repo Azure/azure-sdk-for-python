@@ -26,8 +26,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
 
 
-def set_next_host_location(settings, request):
-    # type: (Dict[str, Any], PipelineRequest) -> None
+def set_next_host_location(settings: Dict[str, Any], request: PipelineRequest) -> None:
     """
     A function which sets the next host location on the request, if applicable.
     """
@@ -49,8 +48,7 @@ def set_next_host_location(settings, request):
 
 class StorageHeadersPolicy(HeadersPolicy):
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         super(StorageHeadersPolicy, self).on_request(request)
 
         # Add required date headers
@@ -64,8 +62,7 @@ class StorageHosts(SansIOHTTPPolicy):
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         request.context.options["hosts"] = self.hosts
         parsed_url = urlparse(request.http_request.url)
 
@@ -235,7 +232,6 @@ class TablesRetryPolicy(RetryPolicy):
 class CosmosPatchTransformPolicy(SansIOHTTPPolicy):
     """Policy to transform PATCH requests into POST requests with the "X-HTTP-Method":"MERGE" header set."""
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         if request.http_request.method == "PATCH":
             _transform_patch_to_cosmos_post(request.http_request)
