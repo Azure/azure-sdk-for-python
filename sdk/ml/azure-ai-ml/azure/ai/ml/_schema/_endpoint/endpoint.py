@@ -11,7 +11,7 @@ from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.identity import IdentitySchema
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._endpoint import OnlineEndpointConfigurations
+from azure.ai.ml.constants._endpoint import EndpointConfigurations
 
 module_logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class EndpointSchema(PathAwareSchema):
     id = fields.Str()
     name = fields.Str(
             required=True,
-            validate=validate.Regexp(OnlineEndpointConfigurations.NAME_REGEX_PATTERN)
+            validate=validate.Regexp(EndpointConfigurations.NAME_REGEX_PATTERN)
         )
     description = fields.Str(metadata={"description": "Description of the inference endpoint."})
     tags = fields.Dict()
