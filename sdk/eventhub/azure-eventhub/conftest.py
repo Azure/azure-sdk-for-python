@@ -220,12 +220,14 @@ def connstr_receivers(live_eventhub, uamqp_transport):
             sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
                 uri, live_eventhub['key_name'], live_eventhub['access_key'])
             receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
+            receiver.open()
+            receiver.receive_message_batch(timeout=1000)
         else:
             sas_auth = SASTokenAuth(
                 uri, uri, live_eventhub['key_name'], live_eventhub['access_key']
             )
             receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500)
-        receiver.open()
+            receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
     for r in receivers:
