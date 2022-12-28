@@ -15,7 +15,7 @@ import threading
 import base64
 
 from . import _model_base
-from ._model_base import rest_discriminator, rest_field, AzureJSONEncoder
+from ._model_base import rest_field, AzureJSONEncoder
 from ._enums import WebPubSubDataType, UpstreamMessageType
 
 if sys.version_info >= (3, 9):
@@ -29,7 +29,7 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class JoinGroupMessage(_model_base.Model):
+class JoinGroupMessage():
     def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
         self.kind: Literal["joinGroup"] = "joinGroup"
         self.group = group
@@ -226,7 +226,7 @@ class OnConnectedArgs(_model_base.Model):
 
 
 class ConnectedMessage:
-    def __init__(self, connection_id: int, user_id: str, reconnection_token: str) -> None:
+    def __init__(self, connection_id: str, user_id: str, reconnection_token: str) -> None:
         self.kind: Literal["connected"]
         self.connection_id = connection_id
         self.user_id = user_id
@@ -323,7 +323,7 @@ def parse_payload(data: Any, data_type: WebPubSubDataType) -> Any:
         return data
     if data_type == "json":
         return data
-    if data_type == "binary" or data_type == "protobuf":
+    if data_type in ("binary", "protobuf"):
         if isinstance(data, (bytes, bytearray)):
             return data
         return bytes(base64.b64decode(data))
@@ -332,17 +332,19 @@ def parse_payload(data: Any, data_type: WebPubSubDataType) -> Any:
 
 class WebPubSubClientProtocol:
     def __init__(self) -> None:
-        self.is_reliable_sub_protocol = None
-        self.name = None
+        self.is_reliable_sub_protocol = False
+        self.name = ""
 
     @staticmethod
-    def parse_messages(input: str) -> WebPubSubMessage:
-        if input is None:
+    def parse_messages(
+        raw_message: str,
+    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage]:
+        if raw_message is None:
             raise Exception("No input")
-        if not isinstance(input, str):
+        if not isinstance(raw_message, str):
             raise Exception("Invalid input for JSON hub protocol. Expected a string.")
 
-        message = json.loads(input)
+        message = json.loads(raw_message)
         if message["type"] == "system":
             if message["event"] == "connected":
                 return ConnectedMessage(
@@ -350,11 +352,10 @@ class WebPubSubClientProtocol:
                     user_id=message["userId"],
                     reconnection_token=message["reconnectionToken"],
                 )
-            elif message["event"] == "disconnected":
+            if message["event"] == "disconnected":
                 return DisconnectedMessage(message=message["message"])
-            else:
-                raise Exception()
-        elif message["type"] == "message":
+            raise Exception()
+        if message["type"] == "message":
             if message["from"] == "group":
                 data = parse_payload(message["data"], message["dataType"])
                 return GroupDataMessage(
@@ -364,19 +365,17 @@ class WebPubSubClientProtocol:
                     from_user_id=message["fromUserId"],
                     sequence_id=message["sequenceId"],
                 )
-            elif message["type"] == "server":
+            if message["type"] == "server":
                 data = parse_payload(message["data"], message["dataType"])
                 return ServerDataMessage(data=data, **message)
-            else:
-                raise Exception()
-        elif message["type"] == "ack":
+            raise Exception()
+        if message["type"] == "ack":
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
                 error=message.get("error"),
             )
-        else:
-            raise Exception()
+        raise Exception()
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
@@ -424,10 +423,10 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
 class WebPubSubRetryOptions:
     def __init__(
         self,
-        max_retries: Optional[int] = None,
-        retry_delay_in_ms: Optional[int] = None,
-        max_retry_delay_in_ms: Optional[int] = None,
-        mode: Optional[Literal["Exponential", "Fixed"]] = None,
+        max_retries: int = sys.maxsize,
+        retry_delay_in_ms: int = 1000,
+        max_retry_delay_in_ms: int = 30000,
+        mode: Literal["Exponential", "Fixed"] = "Fixed",
     ) -> None:
         self.max_retries = max_retries
         self.retry_delay_in_ms = retry_delay_in_ms
@@ -458,9 +457,9 @@ class SendMessageErrorOptions:
 
 class SendMessageError(Exception):
     def __init__(
-        self, message: str, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None, *args: object
+        self, message: str, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None
     ) -> None:
-        super().__init__(message, *args)
+        super().__init__(message)
         self.name = "SendMessageError"
         self.ack_id = ack_id
         self.error_detail = error_detail
@@ -521,23 +520,22 @@ class RetryPolicy:
     def __init__(self, retry_options: WebPubSubRetryOptions) -> None:
         self.retry_options = retry_options
         self.max_retries_to_get_max_delay = math.ceil(
-            math.log2(self.retry_options.max_retry_delay_in_ms or 1) - math.log2(self.retry_options.retry_delay_in_ms or 1) + 1
+            math.log2(self.retry_options.max_retry_delay_in_ms or 1)
+            - math.log2(self.retry_options.retry_delay_in_ms or 1)
+            + 1
         )
 
     def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
         if retry_attempt > self.retry_options.max_retries:
             return None
-        else:
-            if self.retry_options.mode == "Fixed":
-                return self.retry_options.retry_delay_in_ms
-            else:
-                return self.calculate_exponential_delay(retry_attempt)
+        if self.retry_options.mode == "Fixed":
+            return self.retry_options.retry_delay_in_ms
+        return self.calculate_exponential_delay(retry_attempt)
 
     def calculate_exponential_delay(self, attempt: int) -> int:
         if attempt >= self.max_retries_to_get_max_delay:
             return self.retry_options.max_retry_delay_in_ms
-        else:
-            return (1 << (attempt - 1)) * self.retry_options.retry_delay_in_ms
+        return (1 << (attempt - 1)) * self.retry_options.retry_delay_in_ms
 
 
 class WebPubSubGroup:
