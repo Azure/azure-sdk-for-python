@@ -12,7 +12,8 @@ from azure.ai.ml.dsl._mldesigner import(
 )
 from azure.ai.ml.entities._builders.base_node import BaseNode
 from azure.ai.ml.entities._inputs_outputs import GroupInput
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput, NodeInput
+
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -57,3 +58,5 @@ class TestMldesignerImports:
         assert BaseNode.__name__ == "BaseNode"
         assert GroupInput.__name__ == "GroupInput"
         assert PipelineInput.__name__ == "PipelineInput"
+        assert NodeInput.__name__ == "NodeInput"
+        assert NodeOutput.__name__ == "NodeOutput"
