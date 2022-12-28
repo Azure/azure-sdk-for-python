@@ -24,7 +24,7 @@ service_client = WebPubSubServiceClient.from_connection_string(
 url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])["url"]
 print(url)
 
-client = WebPubSubClient(client_access_url=url, options=WebPubSubClientOptions(auto_reconnect=False))
+client = WebPubSubClient(credential=url, options=WebPubSubClientOptions(auto_reconnect=False))
 client.on("connected", on_connected)
 client.on("group-message", on_group_message)
 client.start()

@@ -227,7 +227,7 @@ class OnConnectedArgs(_model_base.Model):
 
 class ConnectedMessage:
     def __init__(self, connection_id: str, user_id: str, reconnection_token: str) -> None:
-        self.kind: Literal["connected"]
+        self.kind: Literal["connected"] = "connected"
         self.connection_id = connection_id
         self.user_id = user_id
         self.reconnection_token = reconnection_token

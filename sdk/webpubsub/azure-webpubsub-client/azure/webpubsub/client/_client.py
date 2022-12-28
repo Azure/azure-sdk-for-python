@@ -110,7 +110,7 @@ class WebPubSubClient:
     ) -> None:
         if isinstance(credential, WebPubSubClientCredential):
             self._credential = credential
-        elif isinstance(isinstance, str):
+        elif isinstance(credential, str):
             self._credential = WebPubSubClientCredential(credential)
         else:
             raise TypeError("type of credential must be str or WebPubSubClientCredential")
