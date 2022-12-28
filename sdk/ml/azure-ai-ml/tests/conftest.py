@@ -3,6 +3,7 @@ import json
 import os
 import random
 import re
+import shutil
 import time
 import uuid
 from datetime import datetime
@@ -537,6 +538,30 @@ def mock_component_hash(mocker: MockFixture):
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
             side_effect=generate_compononent_hash
         )
+
+    if is_live():
+        # Disable on-disk cache when doing live recording as recorded requests may be impacted by
+        # the order to run tests. If we have enabled on-disk cache, tests run later will use the
+        # cached result from tests run earlier, so we won't found enough recordings when running
+        # tests in a different order.
+        if not is_live_and_not_recording():
+            mocker.patch(
+                "azure.ai.ml._utils._cache_utils.is_on_disk_cache_enabled",
+                return_value=False
+            )
+        # when in live mode and not doing recording, we should enable on-disk cache directly
+        # to test if it works as expected
+    else:
+        # in playback mode, on-disk cache can't be shared among different tests, as we can't guarantee
+        # that there is no hash function change on server-side among different recordings.
+        # For example, suppose that anonymous component A is used in both test1 & test2.
+        # In the beginning, its version is `hash_a` in both recordings; Then there is a server-side
+        # change on hash component and we re-record test1, its version becomes `hash_b` in recording for test1,
+        # but it's still `hash_a` in recording for test2.
+        # So we need to clear on-disk cache for each test.
+        # Note: please disable on-disk cache manually if you want to run tests concurrently.
+        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+        shutil.rmtree(CachedNodeResolver._get_on_disk_cache_base_dir(), ignore_errors=True)
 
 
 @pytest.fixture

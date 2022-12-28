@@ -3,11 +3,15 @@
 # ---------------------------------------------------------
 import hashlib
 import logging
+import os.path
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import partial
+from pathlib import Path
 from typing import List, Dict, Optional
 
+from azure.ai.ml._utils._asset_utils import get_object_hash
+from azure.ai.ml._utils.utils import is_on_disk_cache_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
@@ -15,14 +19,15 @@ from azure.ai.ml.entities._builders import BaseNode
 
 logger = logging.getLogger(__name__)
 
-_ANONYMOUS_HASH_PREFIX = "anonymous_component:"
-_YAML_SOURCE_PREFIX = "yaml_source:"
+_ANONYMOUS_HASH_PREFIX = "anonymous-component-"
+_YAML_SOURCE_PREFIX = "yaml-source-"
 
 
 @dataclass
 class _CacheContent:
     component_ref: Component
-    in_memory_hash: Optional[str]
+    in_memory_hash: str
+    on_disk_hash: Optional[str] = None
     arm_id: Optional[str] = None
 
 
@@ -46,7 +51,8 @@ class CachedNodeResolver(object):
 
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
-        """Get a hash for a component."""
+        """Get a hash for a component, assuming there is no change in code folder among hash calculations.
+        """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
             raise ValueError(f"Component {component} is not a Component object.")
@@ -65,6 +71,49 @@ class CachedNodeResolver(object):
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
         return _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()  # pylint: disable=protected-access
+
+    @staticmethod
+    def _get_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
+        """Get a hash for a component."""
+        if not isinstance(component, Component):
+            # this shouldn't happen; handle it in case invalid call is made outside this class
+            raise ValueError(f"Component {component} is not a Component object.")
+
+        # TODO: calculate hash without resolving additional includes (copy code to temp folder)
+        # note that it's still thread-safe with current implementation, as only read operations are
+        # done on the original code folder
+        with component._resolve_local_code() as code:  # pylint: disable=protected-access
+            if code is None or code._is_remote:  # pylint: disable=protected-access
+                return in_memory_hash
+
+            object_hash = hashlib.sha256()
+            object_hash.update(in_memory_hash.encode("utf-8"))
+            if hasattr(code, "_upload_hash"):
+                content_hash = code._upload_hash  # pylint: disable=protected-access
+            else:
+                path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
+                content_hash = get_object_hash(path, code._ignore_file)  # pylint: disable=protected-access
+            object_hash.update(content_hash.encode("utf-8"))
+            return object_hash.hexdigest()
+
+    @staticmethod
+    def _get_on_disk_cache_base_dir() -> Path:
+        """Get the base path for on disk cache."""
+        from azure.ai.ml._version import VERSION
+        return Path.home().joinpath(".azureml", "azure-ai-ml", VERSION, "cache", "components")
+
+    @staticmethod
+    def _get_on_disk_cache_path(on_disk_hash: str) -> Path:
+        """Get the on disk cache path for a component."""
+        return CachedNodeResolver._get_on_disk_cache_base_dir().joinpath(on_disk_hash)
+
+    @staticmethod
+    def _load_from_on_disk_cache(on_disk_hash: str) -> Optional[str]:
+        """Load component arm id from on disk cache."""
+        on_disk_cache_path = CachedNodeResolver._get_on_disk_cache_path(on_disk_hash)
+        if on_disk_cache_path.is_file():
+            return on_disk_cache_path.read_text().strip()
+        return None
 
     @staticmethod
     def _resolve_cache_contents(cache_content_to_resolve: List[_CacheContent], resolver):
@@ -115,10 +164,36 @@ class CachedNodeResolver(object):
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return
         unresolved cache contents.
         """
-        # TODO: apply local cache controlled by an environment variable here
+        if not is_on_disk_cache_enabled():
+            return cache_contents_to_resolve[:]
+
         # Note that we should recalculate the hash based on code for local cache, as
         # we can't assume that the code folder won't change among dependency resolution
-        return cache_contents_to_resolve[:]
+        for cache_content in cache_contents_to_resolve:
+            cache_content.on_disk_hash = cls._get_on_disk_hash_for_component(
+                cache_content.component_ref,
+                cache_content.in_memory_hash
+            )
+
+        left_cache_contents_to_resolve = []
+        # need to dedup disk hash first if concurrent resolution is enabled
+        for cache_content in cache_contents_to_resolve:
+            cache_content.arm_id = cls._load_from_on_disk_cache(cache_content.on_disk_hash)
+            if not cache_content.arm_id:
+                left_cache_contents_to_resolve.append(cache_content)
+
+        return left_cache_contents_to_resolve
+
+    @classmethod
+    def _save_cache_contents_to_disk(cls, cache_contents_to_resolve: List[_CacheContent]):
+        """Save cache contents to disk."""
+        if not is_on_disk_cache_enabled():
+            return
+
+        for cache_content in cache_contents_to_resolve:
+            on_disk_cache_path = cls._get_on_disk_cache_path(cache_content.on_disk_hash)
+            on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
+            on_disk_cache_path.write_text(cache_content.arm_id)
 
     def _fill_back_component_to_nodes(self, dict_of_nodes_to_resolve: Dict[str, List[BaseNode]]):
         """Fill back resolved component to nodes."""
@@ -148,6 +223,8 @@ class CachedNodeResolver(object):
         cache_contents_to_resolve = self._resolve_cache_contents_from_disk(cache_contents_to_resolve)
 
         self._resolve_cache_contents(cache_contents_to_resolve, resolver=self._resolver)
+
+        self._save_cache_contents_to_disk(cache_contents_to_resolve)
 
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
