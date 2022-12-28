@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import Any, Dict, List
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-# from azure.core import CaseInsensitiveEnumMeta
-# from six import with_metaclass
-
+from ._generated.models import TableQueryResponse
 from ._generated.models import TableServiceStats as GenTableServiceStats
+from ._generated.models import TableServiceProperties as GenTableServiceProperties
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -24,10 +23,6 @@ from ._deserialize import (
 )
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
-
-if TYPE_CHECKING:
-    from ._generated.models import TableQueryResponse
-    from ._generated.models import TableServiceProperties as GenTableServiceProperties
 
 
 class TableAccessPolicy(GenAccessPolicy):
