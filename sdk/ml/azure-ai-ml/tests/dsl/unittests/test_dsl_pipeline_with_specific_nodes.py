@@ -2,23 +2,13 @@ from pathlib import Path
 
 import pydash
 import pytest
-from test_utilities.utils import omit_with_wildcard
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml.automl import classification, regression
-from azure.ai.ml.constants._common import (
-    AssetTypes,
-    InputOutputModes,
-)
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.entities import (
-    CommandComponent,
-    CommandJob,
-    Data,
-    ParallelTask,
-    PipelineJob,
-    SparkJob,
-)
+from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
 from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
@@ -432,8 +422,8 @@ class TestDSLPipelineWithSpecificNodes:
                                    'resources': {'instance_count': 2},
                                    'type': 'command'}},
                 'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
-                            'pipeline_output2': {'job_output_type': 'uri_folder'},
-                            'pipeline_output3': {'job_output_type': 'uri_folder'}},
+                            'pipeline_output2': {'job_output_type': 'mlflow_model'},
+                            'pipeline_output3': {'job_output_type': 'mlflow_model'}},
                 'properties': {},
                 'settings': {},
                 'tags': {}
@@ -595,7 +585,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'outputs': {'output1': {'type': 'literal',
                                                            'value': '${{parent.outputs.pipeline_output3}}'}},
                                    'type': 'spark'}},
-                'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
+                'outputs': {'pipeline_output1': {'job_output_type': 'uri_file'},
                             'pipeline_output2': {'job_output_type': 'uri_folder'},
                             'pipeline_output3': {'job_output_type': 'uri_folder'}},
                 'properties': {},
@@ -764,7 +754,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'outputs': {'output1': {'type': 'literal',
                                                            'value': '${{parent.outputs.pipeline_output3}}'}},
                                    'type': 'spark'}},
-                'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
+                'outputs': {'pipeline_output1': {'job_output_type': 'uri_file'},
                             'pipeline_output2': {'job_output_type': 'uri_folder'},
                             'pipeline_output3': {'job_output_type': 'uri_folder'}},
                 'properties': {},
@@ -1003,24 +993,32 @@ class TestDSLPipelineWithSpecificNodes:
                                              'uri': '/a/path/on/ds'}},
                 'is_archived': False,
                 'job_type': 'Pipeline',
-                'jobs': {'parallel_node': {'_source': 'CLASS',
-                                           'input_data': '${{inputs.job_data_path}}',
-                                           'inputs': {'job_data_path': {'job_input_type': 'literal',
-                                                                        'value': '${{parent.inputs.job_data_path}}'}},
-                                           'max_concurrency_per_instance': 1,
-                                           'mini_batch_error_threshold': 1,
-                                           'mini_batch_size': 5,
-                                           'name': 'parallel_node',
-                                           'outputs': {'job_output_path': {'type': 'literal',
-                                                                           'value': '${{parent.outputs.pipeline_job_out}}'}},
-                                           'resources': {'instance_count': 2},
-                                           'task': {'code': './tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/',
-                                                    'entry_script': 'score.py',
-                                                    'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5',
-                                                    'program_arguments': '--job_output_path '
-                                                                         '${{outputs.job_output_path}}',
-                                                    'type': 'run_function'},
-                                           'type': 'parallel'}},
+                'jobs': {
+                    'parallel_node': {
+                        '_source': 'CLASS',
+                        'input_data': '${{inputs.job_data_path}}',
+                        'inputs': {'job_data_path': {'job_input_type': 'literal',
+                                                    'value': '${{parent.inputs.job_data_path}}'}},
+                        'max_concurrency_per_instance': 1,
+                        'mini_batch_error_threshold': 1,
+                        'mini_batch_size': 5,
+                        'name': 'parallel_node',
+                        'outputs': {'job_output_path': {'type': 'literal',
+                                                       'value': '${{parent.outputs.pipeline_job_out}}'}},
+                        'resources': {'instance_count': 2},
+                        'task': {
+                            'code': parse_local_path(
+                                './tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/'
+                            ),
+                            'entry_script': 'score.py',
+                            'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5',
+                            'program_arguments': '--job_output_path '
+                                                 '${{outputs.job_output_path}}',
+                            'type': 'run_function'
+                        },
+                        'type': 'parallel'
+                    }
+                },
                 'outputs': {'pipeline_job_out': {'job_output_type': 'uri_folder'}},
                 'properties': {},
                 'settings': {'_source': 'DSL'},
@@ -1111,7 +1109,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'outputs': {'job_output_path': {'type': 'literal',
                                                                    'value': '${{parent.outputs.pipeline_output1}}'}},
                                    'resources': {'instance_count': 2},
-                                   'task': {'code': './tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/',
+                                   'task': {'code': parse_local_path('./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/'),
                                             'entry_script': 'score.py',
                                             'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5',
                                             'program_arguments': '--job_output_path '
@@ -1134,7 +1132,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'outputs': {'job_output_path': {'type': 'literal',
                                                                    'value': '${{parent.outputs.pipeline_output2}}'}},
                                    'resources': {'instance_count': 2},
-                                   'task': {'code': './tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/',
+                                   'task': {'code': parse_local_path('./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/'),
                                             'entry_script': 'score.py',
                                             'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5',
                                             'program_arguments': '--job_output_path '
@@ -1230,8 +1228,8 @@ class TestDSLPipelineWithSpecificNodes:
                                                                       'value': '${{parent.outputs.pipeline_output2}}'}},
                                    'resources': {'instance_count': 2},
                                    'type': 'command'}},
-                'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
-                            'pipeline_output2': {'job_output_type': 'uri_folder'}},
+                'outputs': {'pipeline_output1': {'job_output_type': 'mlflow_model'},
+                            'pipeline_output2': {'job_output_type': 'mlflow_model'}},
                 'properties': {},
                 'settings': {'_source': 'DSL'},
                 'tags': {}
@@ -1289,7 +1287,7 @@ class TestDSLPipelineWithSpecificNodes:
                                             'mini_batch_size': 1,
                                             'name': 'batch_inference_node1',
                                             'resources': {'instance_count': 2},
-                                            'task': {'code': './src',
+                                            'task': {'code': parse_local_path('./src', batch_inference1.base_path),
                                                      'entry_script': 'score.py',
                                                      'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1',
                                                      'program_arguments': '--job_output_path '
@@ -1308,7 +1306,7 @@ class TestDSLPipelineWithSpecificNodes:
                                             'outputs': {'job_output_path': {'type': 'literal',
                                                                             'value': '${{parent.outputs.job_out_data}}'}},
                                             'resources': {'instance_count': 2},
-                                            'task': {'code': './src',
+                                            'task': {'code': parse_local_path('./src', batch_inference2.base_path),
                                                      'entry_script': 'score.py',
                                                      'environment': 'azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1',
                                                      'program_arguments': '--job_output_path '

@@ -30,7 +30,7 @@ class Command(InternalBaseNode):
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
         self._environment = kwargs.pop("environment", None)
-        self.environment_variables = kwargs.pop("environment_variables", None)
+        self._environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
         self._init = False
 
@@ -53,6 +53,16 @@ class Command(InternalBaseNode):
     def environment(self, value: str):
         """Set the environment definition for the command."""
         self._environment = value
+
+    @property
+    def environment_variables(self) -> Dict[str, str]:
+        """Get the environment variables for the command."""
+        return self._environment_variables
+
+    @environment_variables.setter
+    def environment_variables(self, value: Dict[str, str]):
+        """Set the environment variables for the command."""
+        self._environment_variables = value
 
     @property
     def limits(self) -> CommandJobLimits:

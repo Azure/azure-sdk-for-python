@@ -1,5 +1,11 @@
 # Azure Monitor Query client library for Python (conda)
 
+## 2022.12.01
+
+### Packages included
+
+- azure-monitor-query-1.0.3
+
 ## 2022.09.01
 
 ### Packages included

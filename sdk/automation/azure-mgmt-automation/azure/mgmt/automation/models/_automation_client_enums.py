@@ -11,87 +11,90 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AgentRegistrationKeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the agent registration key name - primary or secondary.
-    """
+    """Gets or sets the agent registration key name - primary or secondary."""
 
     PRIMARY = "primary"
     SECONDARY = "secondary"
 
+
 class AutomationAccountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets status of account.
-    """
+    """Gets status of account."""
 
     OK = "Ok"
     UNAVAILABLE = "Unavailable"
     SUSPENDED = "Suspended"
 
+
 class AutomationKeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Automation key name.
-    """
+    """Automation key name."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
+
 class AutomationKeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Automation key permissions.
-    """
+    """Automation key permissions."""
 
     READ = "Read"
     FULL = "Full"
 
+
 class ContentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the content source type.
-    """
+    """Gets or sets the content source type."""
 
     EMBEDDED_CONTENT = "embeddedContent"
     URI = "uri"
 
+
 class CountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CountType."""
 
     STATUS = "status"
     NODECONFIGURATION = "nodeconfiguration"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class DscConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the state of the configuration.
-    """
+    """Gets or sets the state of the configuration."""
 
     NEW = "New"
     EDIT = "Edit"
     PUBLISHED = "Published"
 
+
 class EncryptionKeySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Encryption Key Source
-    """
+    """Encryption Key Source."""
 
     MICROSOFT_AUTOMATION = "Microsoft.Automation"
     MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
 
+
 class GraphRunbookType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Runbook Type
-    """
+    """Runbook Type."""
 
     GRAPH_POWER_SHELL = "GraphPowerShell"
     GRAPH_POWER_SHELL_WORKFLOW = "GraphPowerShellWorkflow"
 
+
 class GroupTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the HybridWorkerGroup.
-    """
+    """Type of the HybridWorkerGroup."""
 
     USER = "User"
     SYSTEM = "System"
 
-class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    CONTINUE_ENUM = "Continue"
+class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HttpStatusCode."""
+
+    CONTINUE = "Continue"
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
     OK = "OK"
     CREATED = "Created"
@@ -139,18 +142,18 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
 
+
 class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the resource.
-    """
+    """The provisioning state of the resource."""
 
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
     SUSPENDED = "Suspended"
     PROCESSING = "Processing"
 
+
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the status of the job.
-    """
+    """Gets or sets the status of the job."""
 
     NEW = "New"
     ACTIVATING = "Activating"
@@ -166,9 +169,9 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESUMING = "Resuming"
     REMOVING = "Removing"
 
+
 class JobStreamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the stream type.
-    """
+    """Gets or sets the stream type."""
 
     PROGRESS = "Progress"
     OUTPUT = "Output"
@@ -178,18 +181,18 @@ class JobStreamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERBOSE = "Verbose"
     ANY = "Any"
 
+
 class LinuxUpdateClasses(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Update classifications included in the software update configuration.
-    """
+    """Update classifications included in the software update configuration."""
 
     UNCLASSIFIED = "Unclassified"
     CRITICAL = "Critical"
     SECURITY = "Security"
     OTHER = "Other"
 
+
 class ModuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the provisioning state of the module.
-    """
+    """Gets or sets the provisioning state of the module."""
 
     CREATED = "Created"
     CREATING = "Creating"
@@ -208,41 +211,41 @@ class ModuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "Cancelled"
     UPDATING = "Updating"
 
+
 class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Target operating system for the software update configuration.
-    """
+    """Target operating system for the software update configuration."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the job.
-    """
+    """The provisioning state of the job."""
 
     COMPLETED = "Completed"
     FAILED = "Failed"
     RUNNING = "Running"
 
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type.
-    """
+    """The identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
+
 class RunbookState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the state of the runbook.
-    """
+    """Gets or sets the state of the runbook."""
 
     NEW = "New"
     EDIT = "Edit"
     PUBLISHED = "Published"
 
+
 class RunbookTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the type of the runbook.
-    """
+    """Gets or sets the type of the runbook."""
 
     SCRIPT = "Script"
     GRAPH = "Graph"
@@ -252,6 +255,7 @@ class RunbookTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GRAPH_POWER_SHELL = "GraphPowerShell"
     PYTHON2 = "Python2"
     PYTHON3 = "Python3"
+
 
 class ScheduleDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Day of the occurrence. Must be one of monday, tuesday, wednesday, thursday, friday, saturday,
@@ -266,9 +270,9 @@ class ScheduleDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
+
 class ScheduleFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the frequency of the schedule.
-    """
+    """Gets or sets the frequency of the schedule."""
 
     ONE_TIME = "OneTime"
     DAY = "Day"
@@ -278,52 +282,53 @@ class ScheduleFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The minimum allowed interval for Minute schedules is 15 minutes.
     MINUTE = "Minute"
 
+
 class SkuNameEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the SKU name of the account.
-    """
+    """Gets or sets the SKU name of the account."""
 
     FREE = "Free"
     BASIC = "Basic"
 
+
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The source type. Must be one of VsoGit, VsoTfvc, GitHub.
-    """
+    """The source type. Must be one of VsoGit, VsoTfvc, GitHub."""
 
     VSO_GIT = "VsoGit"
     VSO_TFVC = "VsoTfvc"
     GIT_HUB = "GitHub"
 
+
 class StreamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the sync job stream.
-    """
+    """The type of the sync job stream."""
 
     ERROR = "Error"
     OUTPUT = "Output"
 
+
 class SyncType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sync type.
-    """
+    """The sync type."""
 
     PARTIAL_SYNC = "PartialSync"
     FULL_SYNC = "FullSync"
 
+
 class TagOperators(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Filter VMs by Any or All specified tags.
-    """
+    """Filter VMs by Any or All specified tags."""
 
     ALL = "All"
     ANY = "Any"
 
+
 class TokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The token type. Must be either PersonalAccessToken or Oauth.
-    """
+    """The token type. Must be either PersonalAccessToken or Oauth."""
 
     PERSONAL_ACCESS_TOKEN = "PersonalAccessToken"
     OAUTH = "Oauth"
 
+
 class WindowsUpdateClasses(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Update classification included in the software update configuration. A comma separated string
-    with required values
+    with required values.
     """
 
     UNCLASSIFIED = "Unclassified"
@@ -336,9 +341,9 @@ class WindowsUpdateClasses(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TOOLS = "Tools"
     UPDATES = "Updates"
 
+
 class WorkerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the HybridWorker.
-    """
+    """Type of the HybridWorker."""
 
     HYBRID_V1 = "HybridV1"
     HYBRID_V2 = "HybridV2"

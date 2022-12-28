@@ -113,3 +113,4 @@ setup(
     assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
+    assert result.folder == package_root

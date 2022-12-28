@@ -10,20 +10,28 @@ import os
 from enum import Enum
 from os import PathLike
 from typing import Dict, List, Optional, Union
+
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
+from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
 from azure.ai.ml.entities._job.command_job import CommandJob
@@ -53,12 +61,6 @@ from azure.ai.ml.entities._job.sweep.search_space import (
 )
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration,
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
@@ -129,26 +131,30 @@ class Command(BaseNode):
         self,
         *,
         component: Union[str, CommandComponent],
-        compute: str = None,
-        inputs: Dict[
-            str,
-            Union[
-                Input,
+        compute: Optional[str] = None,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-            ],
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output]] = None,
-        limits: CommandJobLimits = None,
-        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
-        distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union[Environment, str] = None,
-        environment_variables: Dict = None,
-        resources: JobResourceConfiguration = None,
-        services: Dict[str, JobService] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        limits: Optional[CommandJobLimits] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
+        distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        environment: Optional[Union[Environment, str]] = None,
+        environment_variables: Optional[Dict] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -241,6 +247,33 @@ class Command(BaseNode):
         self._resources = value
 
     @property
+    def identity(
+        self,
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+        """
+        Configuration of the hyperparameter identity.
+        """
+        return self._identity
+
+    @identity.setter
+    def identity(
+        self,
+        value: Union[
+            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
+        ],
+    ):
+        if isinstance(value, dict):
+            identity_schema = UnionField(
+                [
+                    NestedField(ManagedIdentitySchema, unknown=INCLUDE),
+                    NestedField(AMLTokenIdentitySchema, unknown=INCLUDE),
+                    NestedField(UserIdentitySchema, unknown=INCLUDE),
+                ]
+            )
+            value = identity_schema._deserialize(value=value, attr=None, data=None)
+        self._identity = value
+
+    @property
     def services(self) -> Dict:
         return self._services
 
@@ -299,11 +332,11 @@ class Command(BaseNode):
     def set_resources(
         self,
         *,
-        instance_type: Union[str, List[str]] = None,
-        instance_count: int = None,
-        properties: Dict = None,
-        docker_args: str = None,
-        shm_size: str = None,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Command."""
@@ -338,17 +371,23 @@ class Command(BaseNode):
         primary_metric: str,
         goal: str,
         sampling_algorithm: str = "random",
-        compute: str = None,
-        max_concurrent_trials: int = None,
-        max_total_trials: int = None,
-        timeout: int = None,
-        trial_timeout: int = None,
-        early_termination_policy: Union[EarlyTerminationPolicy, str] = None,
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        compute: Optional[str] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_total_trials: Optional[int] = None,
+        timeout: Optional[int] = None,
+        trial_timeout: Optional[int] = None,
+        early_termination_policy: Optional[Union[EarlyTerminationPolicy, str]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
         ] = None,
-        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial

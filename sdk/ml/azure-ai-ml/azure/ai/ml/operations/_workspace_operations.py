@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import time
-from typing import Dict, Iterable, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     WorkspaceUpdateParameters,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
@@ -25,7 +26,10 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
+from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -34,10 +38,6 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._version import VERSION
-from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -61,7 +61,7 @@ class WorkspaceOperations:
         operation_scope: OperationScope,
         service_client: ServiceClient102022Preview,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         # ops_logger.update_info(kwargs)
@@ -96,7 +96,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get(self, name: str = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
         :param name: Name of the workspace.
@@ -112,7 +112,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get_keys(self, name: str = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 
         :param name: Name of the workspace.
@@ -126,7 +126,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: str = None) -> LROPoller:
+    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be
@@ -248,8 +248,11 @@ class WorkspaceOperations:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
-            if existing_workspace and existing_workspace.identity and \
-                existing_workspace.identity.user_assigned_identities:
+            if (
+                existing_workspace
+                and existing_workspace.identity
+                and existing_workspace.identity.user_assigned_identities
+            ):
                 if rest_user_assigned_identities is None:
                     rest_user_assigned_identities = {}
                 for uai in existing_workspace.identity.user_assigned_identities:
@@ -312,8 +315,8 @@ class WorkspaceOperations:
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
         if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
-            customer_managed_key_uri=workspace.customer_managed_key.key_uri
-            update_param.encryption=EncryptionUpdateProperties(
+            customer_managed_key_uri = workspace.customer_managed_key.key_uri
+            update_param.encryption = EncryptionUpdateProperties(
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
                     key_identifier=customer_managed_key_uri,
                 )
@@ -518,7 +521,8 @@ class WorkspaceOperations:
         else:
             # pylint: disable=protected-access
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+            )._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:

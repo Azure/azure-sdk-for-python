@@ -121,6 +121,8 @@ class EventHubProducerClient(
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword bool uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
 
     .. admonition:: Example:
 
@@ -247,7 +249,8 @@ class EventHubProducerClient(
                 self._max_message_size_on_link,
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
-                executor=self._executor
+                executor=self._executor,
+                amqp_transport=self._amqp_transport,
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -266,13 +269,13 @@ class EventHubProducerClient(
             to_send_batch = self.create_batch(
                 partition_id=partition_id, partition_key=partition_key
             )
-            to_send_batch._load_events( # pylint:disable=protected-access
+            to_send_batch._load_events(  # pylint:disable=protected-access
                 event_data_batch
             )
 
         return (
             to_send_batch,
-            to_send_batch._partition_id,    # pylint:disable=protected-access
+            to_send_batch._partition_id,  # pylint:disable=protected-access
             partition_key,
         )
 
@@ -307,6 +310,7 @@ class EventHubProducerClient(
     def _get_partitions(self):
         # type: () -> None
         if not self._partition_ids:
+            _LOGGER.debug("Populating partition IDs so producers can be started.")
             self._partition_ids = self.get_partition_ids()  # type: ignore
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
@@ -668,7 +672,12 @@ class EventHubProducerClient(
                 )
                 if self._on_success:
                     self._on_success(batch._internal_events, pid)
-            except (KeyError, AttributeError, EventHubError):
+            except (KeyError, AttributeError, EventHubError) as e:
+                _LOGGER.debug(
+                    "Producer for partition ID %s not available: %s. Rebuilding new producer.",
+                    partition_id,
+                    e,
+                )
                 self._start_producer(partition_id, send_timeout)
                 cast(EventHubProducer, self._producers[partition_id]).send(
                     batch, partition_key=pkey, timeout=send_timeout
@@ -727,7 +736,8 @@ class EventHubProducerClient(
         event_data_batch = EventDataBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
-            partition_key=partition_key
+            partition_key=partition_key,
+            amqp_transport=self._amqp_transport,
         )
 
         return event_data_batch
