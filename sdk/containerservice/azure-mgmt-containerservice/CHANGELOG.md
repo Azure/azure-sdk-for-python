@@ -1,5 +1,11 @@
 # Release History
 
+## 21.1.0 (2022-12-28)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter node_resource_group_profile
+
 ## 21.0.0 (2022-12-15)
 
 ### Features Added
