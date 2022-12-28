@@ -137,9 +137,11 @@ class MLClient(object):
         :type subscription_id: typing.Optional[str]
         :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
         :type resource_group_name: typing.Optional[str]
-        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only, defaults to None
+        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
+                defaults to None
         :type workspace_name: typing.Optional[str]
-        :param registry_name: Registry to use in the client, optional for non registry dependent operations only, defaults to None
+        :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
+                defaults to None
         :type registry_name: typing.Optional[str]
         :raises ValueError: Will raise ValueError when both workspace_name and registry_name are used for ml_client
         :raises ~azure.ai.ml.ValidationException: Raises client-side validation
@@ -428,7 +430,6 @@ class MLClient(object):
         file_name=None,
         **kwargs,
     ) -> "MLClient":
-
         """Return a workspace object from an existing Azure Machine Learning Workspace.
 
         Reads workspace configuration from a file. Throws an exception if the config file can't be found.
@@ -680,8 +681,7 @@ class MLClient(object):
 
     @property
     def workspace_name(self) -> Optional[str]:
-        """The workspace where workspace dependent operations will be executed
-        in.
+        """The workspace where workspace dependent operations will be executed in.
 
         :return: Default workspace name
         :rtype: str
