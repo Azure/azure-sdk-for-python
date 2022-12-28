@@ -28,18 +28,20 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 logger = logging.getLogger(__name__)
 
 
-class ValidationCheckPoller(PollingMethod):
 
-    def __init__(self, interval=5) -> None:
+class LoadTestingPollingMethod(PollingMethod):
+    """Base class for custom sync polling methods."""
+
+    def __int__(self, interval, terminal_statuses) -> None:
         self._resource = None
         self._command = None
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
+        self._termination_statuses = terminal_statuses
 
     def _update_status(self) -> None:
-        self._status = self._resource["validationStatus"]
+        raise NotImplementedError("This method needs to be implemented")
 
     def _update_resource(self) -> None:
         self._resource = self._command()
@@ -48,6 +50,16 @@ class ValidationCheckPoller(PollingMethod):
         self._command = client
         self._initial_response = initial_response
         self._resource = initial_response
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        return self._status in self._termination_statuses
+
+
+    def resource(self) -> JSON:
+        return self._resource
 
     def run(self) -> None:
         try:
@@ -62,75 +74,38 @@ class ValidationCheckPoller(PollingMethod):
             logger.error(e)
             raise e
 
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        if self._status in self._termination_statuses:
-            return True
-        return False
-
-    def resource(self) -> JSON:
-        return self._resource
+class ValidationCheckPoller(LoadTestingPollingMethod):
+    """polling method for long-running validation check operation."""
+    def __init__(self, interval=5) -> None:
+        super(ValidationCheckPoller, self).__init__(interval,
+                                            ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"])
 
 
-class TestRunStatusPoller(PollingMethod):
+    def _update_status(self) -> None:
+        self._status = self._resource["validationStatus"]
+
+
+class TestRunStatusPoller(LoadTestingPollingMethod):
 
     def __init__(self, interval=5) -> None:
-        self._resource = None
-        self._command = None
-        self._initial_response = None
-        self._polling_interval = interval
-        self._status = None
-        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+        super(TestRunStatusPoller, self).__init__(interval, ["DONE", "FAILED", "CANCELLED"])
 
     def _update_status(self) -> None:
         self._status = self._resource["status"]
 
-    def _update_resource(self) -> None:
-        self._resource = self._command()
+class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
+    """Base class for custom async polling methods."""
 
-    def initialize(self, client, initial_response, deserialization_callback) -> None:
-        self._command = client
-        self._initial_response = initial_response
-        self._resource = initial_response
-
-    def run(self) -> None:
-        try:
-            while not self.finished():
-                self._update_resource()
-                self._update_status()
-
-                if not self.finished():
-                    time.sleep(self._polling_interval)
-
-        except Exception as e:
-            logger.error(e)
-            raise e
-
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        if self._status in self._termination_statuses:
-            return True
-        return False
-
-    def resource(self) -> JSON:
-        return self._resource
-
-class AsyncValidationCheckPoller(AsyncPollingMethod):
-
-    def __init__(self, interval=5) -> None:
+    def __int__(self, interval, terminal_statuses) -> None:
         self._resource = None
         self._command = None
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
+        self._termination_statuses = terminal_statuses
 
     def _update_status(self) -> None:
-        self._status = self._resource["validationStatus"]
+        raise NotImplementedError("This method needs to be implemented")
 
     async def _update_resource(self) -> None:
         self._resource = await self._command()
@@ -139,6 +114,16 @@ class AsyncValidationCheckPoller(AsyncPollingMethod):
         self._command = client
         self._initial_response = initial_response
         self._resource = initial_response
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        return self._status in self._termination_statuses
+
+
+    def resource(self) -> JSON:
+        return self._resource
 
     async def run(self) -> None:
         try:
@@ -153,59 +138,22 @@ class AsyncValidationCheckPoller(AsyncPollingMethod):
             logger.error(e)
             raise e
 
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        return self._status in self._termination_statuses
-
-    def resource(self) -> JSON:
-        return self._resource
-
-class AsyncTestRunStatusPoller(PollingMethod):
+class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
 
     def __init__(self, interval=5) -> None:
-        self._resource = None
-        self._command = None
-        self._initial_response = None
-        self._polling_interval = interval
-        self._status = None
-        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+        super(AsyncValidationCheckPoller, self).__init__(interval,
+                                            ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"])
 
     def _update_status(self) -> None:
+        self._status = self._resource["validationStatus"]
+
+
+class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
+
+    def __init__(self, interval=5) -> None:
+        super(AsyncTestRunStatusPoller, self).__init__(interval, ["DONE", "FAILED", "CANCELLED"])
+    def _update_status(self) -> None:
         self._status = self._resource["status"]
-
-    async def _update_resource(self) -> None:
-        self._resource = await self._command()
-
-    def initialize(self, client, initial_response, deserialization_callback) -> None:
-        self._command = client
-        self._initial_response = initial_response
-        self._resource = initial_response
-
-    async def run(self) -> None:
-        try:
-            while not self.finished():
-                await self._update_resource()
-                self._update_status()
-
-                if not self.finished():
-                    time.sleep(self._polling_interval)
-
-        except Exception as e:
-            logger.error(e)
-            raise e
-
-    def status(self) -> str:
-        return self._status
-
-    def finished(self) -> bool:
-        return self._status in self._termination_statuses
-
-
-    def resource(self) -> JSON:
-        return self._resource
-
 
 class LoadTestingLROPoller(LROPoller):
     """LoadTesting Poller for long-running operations.
