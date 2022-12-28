@@ -193,7 +193,10 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             for item in res:
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and item:
-                        operator.aggregate(item["item"])
+                        try:
+                            operator.aggregate(item["item"])
+                        except KeyError:
+                            pass
                     elif isinstance(item, numbers.Number):
                         operator.aggregate(item)
         if self._results is None:

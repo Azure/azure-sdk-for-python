@@ -1,15 +1,15 @@
-import pytest
 from typing import Callable
-from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+import pytest
+from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml._schema.pipeline import pipeline_job
+from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 from .test_pipeline_job import assert_job_cancel
@@ -113,6 +113,17 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'body': '${{parent.jobs.parallel_body}}',
             'items': '{"branch1": {"component_in_number": 1}, "branch2": '
                      '{"component_in_number": 2}}',
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)
+
+    def test_output_binding_foreach_node(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_binding.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
             'type': 'parallel_for'
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)

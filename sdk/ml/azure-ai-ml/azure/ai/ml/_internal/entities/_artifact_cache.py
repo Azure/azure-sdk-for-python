@@ -3,19 +3,18 @@
 # ---------------------------------------------------------
 import copy
 import hashlib
+import logging
 import os
 import re
 import shutil
-import logging
 import subprocess
 import tempfile
 import zipfile
-from threading import Lock
 from io import BytesIO
 from pathlib import Path
+from threading import Lock
 
 import requests
-
 
 _logger = logging.getLogger(__name__)
 
@@ -105,8 +104,7 @@ class ArtifactCache:
         if process.returncode != 0:
             # When organization and project cannot be retrieved from the origin url.
             raise RuntimeError(
-                f"Get the git origin url failed, you must be in a local Git directory, "
-                f"error message: {errs}"
+                f"Get the git origin url failed, you must be in a local Git directory, " f"error message: {errs}"
             )
         origin_url = outs.strip()
 
@@ -132,6 +130,11 @@ class ArtifactCache:
             f'you must be in a local Git directory that has a "remote" referencing a '
             f"Azure DevOps or Azure DevOps Server repository."
         )
+
+    @classmethod
+    def _get_checksum_path(cls, path):
+        artifact_path = Path(path)
+        return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     def _redirect_artifacts_tool_path(self, organization):
         """To avoid the transient issue when download artifacts,
@@ -169,16 +172,12 @@ class ArtifactCache:
                 response = requests.get(artifacts_tool_uri)
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
                     zip_file.extractall(artifacts_tool_path)
-                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(
-                    artifacts_tool_path.resolve()
-                )
+                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
                 self._artifacts_tool_path = artifacts_tool_path
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)
 
-    def _download_artifacts(
-        self, download_cmd, organization, name, version, feed, max_retries=3
-    ):
+    def _download_artifacts(self, download_cmd, organization, name, version, feed, max_retries=3):
         """Download artifacts with retry."""
         retries = 0
         while retries <= max_retries:
@@ -216,22 +215,16 @@ class ArtifactCache:
         path = Path(artifact_package_path)
         if not path.exists():
             return False
-        checksum_path = path.parent / f"{path.name}_{self.POSTFIX_CHECKSUM}"
+        checksum_path = self._get_checksum_path(artifact_package_path)
         if checksum_path.exists():
             with open(checksum_path, "r") as f:
                 checksum = f.read()
-                file_list = [
-                    os.path.join(root, f)
-                    for root, _, files in os.walk(path)
-                    for f in files
-                ]
+                file_list = [os.path.join(root, f) for root, _, files in os.walk(path) for f in files]
                 artifact_hash = self.hash_files_content(file_list)
                 return checksum == artifact_hash
         return False
 
-    def get(
-        self, feed, name, version, scope, organization=None, project=None, resolve=True
-    ):
+    def get(self, feed, name, version, scope, organization=None, project=None, resolve=True):
         """
         Get the catch path of artifact package. Package path like this
         azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
@@ -264,6 +257,9 @@ class ArtifactCache:
             # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
             return artifact_package_path.absolute().resolve()
         if resolve:
+            check_sum_path = self._get_checksum_path(artifact_package_path)
+            if Path(check_sum_path).exists():
+                os.unlink(check_sum_path)
             if artifact_package_path.exists():
                 # Remove invalid artifact package to avoid affecting download artifact.
                 temp_folder = tempfile.mktemp()  # nosec B306
@@ -313,22 +309,14 @@ class ArtifactCache:
         # Avoid deadlock when setting stdout/stderr to PIPE.
         _, errs = process.communicate()
         if process.returncode != 0:
-            artifacts_tool_not_find_error_pattern = (
-                "No such file or directory: .*artifacttool"
-            )
+            artifacts_tool_not_find_error_pattern = "No such file or directory: .*artifacttool"
             if re.findall(artifacts_tool_not_find_error_pattern, errs):
                 # When download artifacts tool failed retry download artifacts command
-                _logger.warning(
-                    "Download package %s:%s from the feed %s failed: %s", name, version, feed, errs
-                )
+                _logger.warning("Download package %s:%s from the feed %s failed: %s", name, version, feed, errs)
                 download_cmd = download_cmd + "--debug"
-                self._download_artifacts(
-                    download_cmd, organization, name, version, feed
-                )
+                self._download_artifacts(download_cmd, organization, name, version, feed)
             else:
-                raise RuntimeError(
-                    f"Download package {name}:{version} from the feed {feed} failed: {errs}"
-                )
+                raise RuntimeError(f"Download package {name}:{version} from the feed {feed} failed: {errs}")
         try:
             # Copy artifact package from temp folder to the cache path.
             if not all([organization, project]):
@@ -344,16 +332,10 @@ class ArtifactCache:
                 / version
             )
             artifact_package_path.parent.mkdir(exist_ok=True, parents=True)
-            file_list = [
-                os.path.join(root, f)
-                for root, _, files in os.walk(tempdir)
-                for f in files
-            ]
+            file_list = [os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files]
             artifact_hash = self.hash_files_content(file_list)
             os.rename(tempdir, artifact_package_path)
-            temp_checksum_file = os.path.join(
-                tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}"
-            )
+            temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
             with open(temp_checksum_file, "w") as f:
                 f.write(artifact_hash)
             os.rename(

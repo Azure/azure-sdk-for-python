@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.event_hub_schema import EventHubSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -23,7 +23,11 @@ class EventHub:
 
     # pylint: disable=unused-argument,no-self-use
     def __init__(
-        self, namespace: str = None, oversize_data_config: OversizeDataConfig = None, client_id: str = None, **kwargs
+        self,
+        namespace: Optional[str] = None,
+        oversize_data_config: Optional[OversizeDataConfig] = None,
+        client_id: Optional[str] = None,
+        **kwargs
     ):
         self.namespace = (namespace,)
         self.oversize_data_config = oversize_data_config

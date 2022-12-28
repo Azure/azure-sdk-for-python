@@ -82,7 +82,11 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         else:
             raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
-        super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
+        super(OnBehalfOfCredential, self).__init__(
+            client_id=client_id,
+            client_credential=credential,
+            tenant_id=tenant_id,
+            **kwargs)
         self._auth_record = None  # type: Optional[AuthenticationRecord]
 
     @wrap_exceptions

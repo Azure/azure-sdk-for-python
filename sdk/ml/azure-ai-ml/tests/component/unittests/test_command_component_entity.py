@@ -11,7 +11,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -338,10 +338,13 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -363,6 +366,28 @@ class TestCommandComponentEntity:
                 "name: microsoftsamples_command_component_basic\n  version: 0.0.1\n  display_name: CommandComponentBasi"
                 in std_out.getvalue()
             )
+
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
+            }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [sweep_job1.early_termination.evaluation_interval,
+                sweep_job1.early_termination.delay_evaluation,
+                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"

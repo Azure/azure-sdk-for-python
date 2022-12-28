@@ -6,10 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._connector_operations import ConnectorOperations
 from ._linker_operations import LinkerOperations
+from ._linkers_operations import LinkersOperations
 from ._operations import Operations
+from ._configuration_names_operations import ConfigurationNamesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'LinkerOperations',
-    'Operations',
+    "ConnectorOperations",
+    "LinkerOperations",
+    "LinkersOperations",
+    "Operations",
+    "ConfigurationNamesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

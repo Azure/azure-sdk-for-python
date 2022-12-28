@@ -50,7 +50,7 @@ def _get_mfe_url_override() -> Optional[str]:
     return os.getenv(DEVELOPER_URL_MFE_ENV_VAR)
 
 
-def _is_https_url(url: str) -> bool:
+def _is_https_url(url: str) -> Union[bool, str]:
     if url:
         return url.lower().startswith("https")
     return False
@@ -113,7 +113,7 @@ def float_to_str(f):
     with decimal.localcontext() as ctx:
         ctx.prec = 20  # Support up to 20 significant figures.
         float_as_dec = ctx.create_decimal(repr(f))
-        return format(float_as_dec, 'f')
+        return format(float_as_dec, "f")
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
@@ -151,7 +151,7 @@ def get_retry_policy(num_retry=3) -> RetryPolicy:
 def download_text_from_url(
     source_uri: str,
     requests_pipeline: HttpPipeline,
-    timeout: Union[float, Tuple[float, float]] = None,
+    timeout: Optional[Union[float, Tuple[float, float]]] = None,
 ) -> str:
     """Downloads the content from an URL
 
@@ -189,6 +189,7 @@ def load_file(file_path: str) -> str:
     :rtype: str
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -217,6 +218,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :rtype: Dict
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -249,6 +251,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :rtype: Dict
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -346,9 +349,9 @@ def dump_yaml_to_file(
         Details will be provided in the error message.
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
-
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
     if dest is None:
@@ -445,6 +448,7 @@ def is_url(value: Union[PathLike, str]) -> bool:
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
     from azure.ai.ml.exceptions import ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -479,6 +483,7 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
     from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -507,7 +512,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Any = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -601,13 +606,13 @@ def hash_dict(items: dict, keys_to_omit=None):
     items = pydash.omit(items, keys_to_omit)
     # serialize dict with order so same dict will have same content
     serialized_component_interface = json.dumps(items, sort_keys=True)
-    object_hash = hashlib.md5() # nosec
+    object_hash = hashlib.md5()  # nosec
     object_hash.update(serialized_component_interface.encode("utf-8"))
     return str(UUID(object_hash.hexdigest()))
 
 
 def convert_identity_dict(
-    identity: ManagedServiceIdentity = None,
+    identity: Optional[ManagedServiceIdentity] = None,
 ) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
@@ -770,6 +775,11 @@ def is_internal_components_enabled():
 
 
 def try_enable_internal_components(*, force=False):
+    """Try to enable internal components for the current process.
+    This is the only function outside _internal that references _internal
+
+    :param force: Force enable internal components even if enabled before.
+    """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
@@ -872,7 +882,8 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
 class DockerProxy:
     def __getattribute__(self, name: str) -> Any:
         try:
-            import docker # pylint: disable=import-error
+            import docker  # pylint: disable=import-error
+
             return getattr(docker, name)
         except ModuleNotFoundError:
             raise Exception(
@@ -891,6 +902,7 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: 
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 

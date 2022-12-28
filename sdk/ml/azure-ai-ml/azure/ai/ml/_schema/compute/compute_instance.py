@@ -72,3 +72,8 @@ class ComputeInstanceSchema(ComputeSchema):
     os_image_metadata = ExperimentalField(
         NestedField(OsImageMetadataSchema, dump_only=True)
     )
+    enable_node_public_ip = fields.Bool(
+        metadata={
+            "description": "Enable or disable node public IP address provisioning."
+        }
+    )
