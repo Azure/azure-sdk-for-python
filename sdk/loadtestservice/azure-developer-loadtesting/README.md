@@ -62,6 +62,8 @@ from azure.identity import DefaultAzureCredential
 client = LoadTestRunClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+`<endpoint>` refers to the data-plane endpoint/URL of the resource.
+
 ## Key concepts
 
 The following components make up the Azure Load Testing service. The Azure Load Test client library for python allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library

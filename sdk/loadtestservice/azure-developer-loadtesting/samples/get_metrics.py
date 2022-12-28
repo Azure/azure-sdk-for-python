@@ -43,11 +43,11 @@ TEST_RUN_ID = "my-sdk-load-test-run-id"
 
 test_run_response = client.get_test_run(TEST_RUN_ID)
 
-# get metrics for a test run
+# get a list of metric namespaces for a given test run
 metric_namespaces = client.list_metric_namespaces(TEST_RUN_ID)
 print(metric_namespaces)
 
-# get metrics for a test run
+# get a list of metric definitions for a given test run and metric namespace
 metric_definitions = client.list_metric_definitions(TEST_RUN_ID, metric_namespace=metric_namespaces["value"][0]["name"])
 print(metric_definitions)
 
