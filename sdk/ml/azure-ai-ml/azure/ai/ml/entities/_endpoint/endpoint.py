@@ -20,22 +20,22 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     :type auth_mode: str
     :param location: The location of the endpoint, defaults to None
     :type location: str
-    :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: typing.Dict[str, int]
     :param name: Name of the resource.
     :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: typing.Dict[str, str]
+    :type tags: typing.Optional[typing.Dict[str, str]]
     :param properties: The asset property dictionary.
-    :type properties: typing.Dict[str, str]
-    :param scoring_uri: str, Endpoint URI, readonly
-    :type scoring_uri: str
-    :param openapi_uri: str, Endpoint Open API URI, readonly
-    :type openapi_uri: str
-    :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str
+    :type properties: typing.Optional[typing.Dict[str, str]]
     :param description: Description of the resource.
-    :type description: str
+    :type description: typing.Optional[str]
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword scoring_uri: str, Endpoint URI, readonly
+    :type scoring_uri: typing.Optional[str]
+    :keyword openapi_uri: str, Endpoint Open API URI, readonly
+    :type openapi_uri: typing.Optional[str]
+    :keyword provisioning_state: str, provisioning state, readonly
+    :type provisioning_state: typing.Optional[str]
     """
 
     def __init__(
@@ -48,6 +48,32 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         **kwargs,
     ):
+        """
+        Endpoint base class.
+
+        Constructor for Endpoint base class.
+
+        :param auth_mode: The authentication mode, defaults to None
+        :type auth_mode: str
+        :param location: The location of the endpoint, defaults to None
+        :type location: str
+        :param name: Name of the resource.
+        :type name: str
+        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :type tags: typing.Optional[typing.Dict[str, str]]
+        :param properties: The asset property dictionary.
+        :type properties: typing.Optional[typing.Dict[str, str]]
+        :param description: Description of the resource.
+        :type description: typing.Optional[str]
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword scoring_uri: str, Endpoint URI, readonly
+        :type scoring_uri: typing.Optional[str]
+        :keyword openapi_uri: str, Endpoint Open API URI, readonly
+        :type openapi_uri: typing.Optional[str]
+        :keyword provisioning_state: str, provisioning state, readonly
+        :type provisioning_state: typing.Optional[str]
+        """
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         if name:
             name = name.lower()

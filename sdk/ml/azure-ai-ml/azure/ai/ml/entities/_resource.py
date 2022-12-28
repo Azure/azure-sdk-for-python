@@ -23,9 +23,8 @@ class Resource(abc.ABC):
     Base class for entity classes, can't be instantiated directly.
 
     Resource abstract object that serves as a base for creating resources.
+    Helper class that provides a standard way to create an abc.ABC using inheritance.
 
-    :param ABC: Helper class that provides a standard way to create an ABC using inheritance.
-    :type ABC: abc.ABC
     :param name: Name of the resource.
     :type name: str
     :param description: Description of the resource, defaults to None

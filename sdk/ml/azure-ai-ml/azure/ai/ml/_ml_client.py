@@ -90,20 +90,20 @@ class MLClient(object):
 
     :param credential: Credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Azure subscription ID, optional for registry assets only.
-    :type subscription_id: Optional[str]
-    :param resource_group_name: Azure resource group, optional for registry assets only.
-    :type resource_group_name: str
-    :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only.
-            Defaults to None
-    :type workspace_name: str
-    :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
-            Defaults to None
-    :type registry_name: str
+    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None
+    :type subscription_id: typing.Optional[str]
+    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
+    :type resource_group_name: typing.Optional[str]
+    :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
+            defaults to None
+    :type workspace_name: typing.Optional[str]
+    :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
+            defaults to None
+    :type registry_name: typing.Optional[str]
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
-            setting this to False if not using this SDK in an interactive setup. Defaults to True.
+            setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: bool
-    :keyword str cloud: The cloud name to use. Defaults to AzureCloud.
+    :keyword str cloud: The cloud name to use, defaults to AzureCloud.
 
     .. admonition:: Example:
 
@@ -611,7 +611,7 @@ class MLClient(object):
     def batch_deployments(self) -> BatchDeploymentOperations:
         """A collection of batch deployment related operations.
 
-        :return: Batch Deployment operations
+        :return: Batch Deployment operations.
         :rtype: BatchDeploymentOperations
         """
         return self._batch_deployments
@@ -620,7 +620,7 @@ class MLClient(object):
     def datastores(self) -> DatastoreOperations:
         """A collection of datastore related operations.
 
-        :return: Datastore operations
+        :return: Datastore operations.
         :rtype: DatastoreOperations
         """
         return self._datastores
@@ -629,7 +629,7 @@ class MLClient(object):
     def environments(self) -> EnvironmentOperations:
         """A collection of environment related operations.
 
-        :return: Environment operations
+        :return: Environment operations.
         :rtype: EnvironmentOperations
         """
         return self._environments
@@ -638,7 +638,7 @@ class MLClient(object):
     def data(self) -> DataOperations:
         """A collection of data related operations.
 
-        :return: Data operations
+        :return: Data operations.
         :rtype: DataOperations
         """
         return self._data
@@ -647,16 +647,16 @@ class MLClient(object):
     def components(self) -> ComponentOperations:
         """A collection of component related operations.
 
-        :return: Component operations
+        :return: Component operations.
         :rtype: ComponentOperations
         """
         return self._components
 
     @property
     def schedules(self) -> ScheduleOperations:
-        """A collection of schedule related operations
+        """A collection of schedule related operations.
 
-        :return: Schedule operations
+        :return: Schedule operations.
         :rtype: ScheduleOperations
         """
         return self._schedules
@@ -683,7 +683,7 @@ class MLClient(object):
     def workspace_name(self) -> Optional[str]:
         """The workspace where workspace dependent operations will be executed in.
 
-        :return: Default workspace name
+        :return: Default workspace name.
         :rtype: str
         """
         return self._operation_scope.workspace_name
@@ -691,7 +691,7 @@ class MLClient(object):
     def _get_new_client(self, workspace_name: str, **kwargs) -> "MLClient":
         """Returns a new MLClient object with the specified arguments.
 
-        :param workspace_name: AzureML workspace of the new MLClient
+        :param workspace_name: AzureML workspace of the new MLClient.
         :type workspace_name: str
         """
 
@@ -763,7 +763,7 @@ class MLClient(object):
         :type entity: typing.Union[~azure.ai.ml.entities.Job,
             ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component,
             ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceModelReference]
-        :return: The created or updated resource
+        :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model,
             ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
         """
@@ -788,7 +788,7 @@ class MLClient(object):
             ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
             ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,
             ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
-        :return: The resource after create/update operation
+        :return: The resource after create/update operation.
         :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace,
             ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
             ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,

@@ -39,29 +39,32 @@ module_logger = logging.getLogger(__name__)
 class OnlineEndpoint(Endpoint):
     """Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, typing.Any]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str
+    :param name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :type auth_mode: typing.Optional[str]
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str
-    :param location: defaults to None
-    :type location: str
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: typing.Dict[str, int]
-    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
-    :type mirror_traffic: typing.Dict[str, int]
-    :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints,
-        defaults to None.
-    :type kind: str
+    :type description: typing.Optional[str]
+    :param location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :param identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
+    :param scoring_uri: Scoring URI, defaults to None
+    :type scoring_uri: typing.Optional[str]
+    :param openapi_uri: OpenAPI URI, defaults to None
+    :type openapi_uri: typing.Optional[str]
+    :param provisioning_state: Provisioning state of an endpoint, defaults to None
+    :type provisioning_state: typing.Optional[str]
+    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :type kind: typing.Optional[str]
     """
 
     def __init__(
@@ -82,6 +85,38 @@ class OnlineEndpoint(Endpoint):
         kind: Optional[str] = None,
         **kwargs,
     ):
+        """
+        Online endpoint entity.
+
+        Constructor for an Online endpoint entity.
+
+        :param name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :param tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :param properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: typing.Optional[str]
+        :param description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :param location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :param identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :param scoring_uri: Scoring URI, defaults to None
+        :type scoring_uri: typing.Optional[str]
+        :param openapi_uri: OpenAPI URI, defaults to None
+        :type openapi_uri: typing.Optional[str]
+        :param provisioning_state: Provisioning state of an endpoint, defaults to None
+        :type provisioning_state: typing.Optional[str]
+        :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+        :type kind: typing.Optional[str]
+        """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
         super(OnlineEndpoint, self).__init__(
@@ -264,26 +299,28 @@ class OnlineEndpoint(Endpoint):
 class KubernetesOnlineEndpoint(OnlineEndpoint):
     """K8s Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
-    :type auth_mode: str
+    :param name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :type auth_mode: typing.Optional[str]
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str
-    :param location: defaults to None
-    :type location: str
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: typing.Dict[str, int]
-    :param compute: Compute cluster id.
-    :type compute: str
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str
+    :type description: typing.Optional[str]
+    :param location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :param compute: Compute cluster id, defaults to None
+    :type compute: typing.Optional[str]
+    :param identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
+    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :type kind: typing.Optional[str]
     """
 
     def __init__(
@@ -302,6 +339,34 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         kind: Optional[str] = None,
         **kwargs,
     ):
+        """
+        K8s Online endpoint entity.
+
+        Constructor for K8s Online endpoint entity.
+
+        :param name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :param properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: typing.Optional[str]
+        :param description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :param location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :param compute: Compute cluster id, defaults to None
+        :type compute: typing.Optional[str]
+        :param identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+        :type kind: typing.Optional[str]
+        """
         super(KubernetesOnlineEndpoint, self).__init__(
             name=name,
             properties=properties,
@@ -357,27 +422,29 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 class ManagedOnlineEndpoint(OnlineEndpoint):
     """Managed Online endpoint entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param auth_mode: Possible values include: "aml_token", "key", defaults to "key"
+    :param name: Name of the resource, defaults to None
+    :type name: typing.Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
     :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str
-    :param location: defaults to None
-    :type location: str
-    :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: typing.Dict[str, int]
-    :param identity: defaults to SystemAssigned
-    :type identity: IdentityConfiguration
+    :type description: typing.Optional[str]
+    :param location: Location of the resource, defaults to None
+    :type location: typing.Optional[str]
+    :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+    :param identity: Identity Configuration, defaults to SystemAssigned
+    :type identity: typing.Optional[IdentityConfiguration]
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str
-    :param public_network_access: Whether to allow public endpoint connectivity
+    :type kind: typing.Optional[str]
+    :param public_network_access: Whether to allow public endpoint connectivity, defaults to None
         Allowed values are: "enabled", "disabled"
-    :type public_network_access: str
+    :type public_network_access: typing.Optional[str]
     """
 
     def __init__(
@@ -393,9 +460,38 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         mirror_traffic: Optional[Dict[str, int]] = None,
         identity: Optional[IdentityConfiguration] = None,
         kind: Optional[str] = None,
-        public_network_access=None,
+        public_network_access: Optional[str] = None,
         **kwargs,
     ):
+        """
+        Managed Online endpoint entity.
+
+        Constructor for Managed Online endpoint entity.
+
+        :param name: Name of the resource, defaults to None
+        :type name: typing.Optional[str]
+        :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :param properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :param auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :type auth_mode: str
+        :param description: Description of the inference endpoint, defaults to None
+        :type description: typing.Optional[str]
+        :param location: Location of the resource, defaults to None
+        :type location: typing.Optional[str]
+        :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :type mirror_traffic: typing.Optional[typing.Dict[str, int]]
+        :param identity: Identity Configuration, defaults to SystemAssigned
+        :type identity: typing.Optional[IdentityConfiguration]
+        :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+        :type kind: typing.Optional[str]
+        :param public_network_access: Whether to allow public endpoint connectivity, defaults to None
+            Allowed values are: "enabled", "disabled"
+        :type public_network_access: typing.Optional[str]
+        """
         self.public_network_access = public_network_access
 
         super(ManagedOnlineEndpoint, self).__init__(
