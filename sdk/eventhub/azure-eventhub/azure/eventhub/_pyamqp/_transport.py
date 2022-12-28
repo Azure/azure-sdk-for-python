@@ -802,4 +802,3 @@ class WebSocketTransport(_AbstractTransport):
             raise socket.timeout('Websocket send timed out (%s)' % e)
         except (WebSocketConnectionClosedException, SSLError) as e:
             raise ConnectionError('Websocket disconnected: %r' % e)
-            
