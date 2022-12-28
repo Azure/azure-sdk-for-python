@@ -106,7 +106,7 @@ class SampleTablesQuery(object):
 
                 print("Sample for querying entities' values:")
                 print("Entities with 25 < Value < 50")
-                parameters = {u"lower": 25, u"upper": 50}
+                parameters = {u"lower": 25, u"upper": 50} # type: ignore
                 name_filter = u"Value gt @lower and Value lt @upper"
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=[u"Value"], parameters=parameters
