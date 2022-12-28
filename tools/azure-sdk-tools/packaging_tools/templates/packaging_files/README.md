@@ -28,7 +28,7 @@ By default, [Azure Active Directory](https://aka.ms/awps/aad) token authenticati
 
 - `AZURE_CLIENT_ID` for Azure client ID.
 - `AZURE_TENANT_ID` for Azure tenant ID.
-- `AZURE_CLIENT_SECRET` for client secret.
+- `AZURE_CLIENT_SECRET` for Azure client secret.
 {% if not no_sub %}
 In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 {% endif %}
