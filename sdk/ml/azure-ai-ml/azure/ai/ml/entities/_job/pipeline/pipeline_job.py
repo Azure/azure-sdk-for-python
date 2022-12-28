@@ -144,7 +144,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component = component
+        self.component: Union[PipelineComponent, str] = component
         if "type" not in kwargs.keys():
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
@@ -403,9 +403,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             )
             # check has not supported nodes
             for _, node in self.jobs.items():
-                if isinstance(node, PipelineJob):
-                    msg = error_msg.format("Pipeline job in pipeline")
-                    raise UserErrorException(message=msg, no_personal_data_message=msg)
                 # TODO: Remove in PuP
                 if isinstance(node, (ImportJob, Import)):
                     msg = error_msg.format("Import job in pipeline")

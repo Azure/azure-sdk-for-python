@@ -671,3 +671,8 @@ class TestDSLPipelineJobValidate:
             "Not a valid integer.",
             error_messages["errors"],
         )
+
+    def test_arm_id_pipeline_node_compute(self) -> None:
+        job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_with_registered_pipeline_component.yml")
+        validation_result = job._validate_compute_is_set()
+        assert validation_result.passed

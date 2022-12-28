@@ -10,7 +10,6 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
@@ -429,15 +428,10 @@ class OperationOrchestrator(object):
             and id_.workspace_name == self._operation_scope.workspace_name
         )
 
-    def _validate_datastore_name(self, datastore_uri: Optional[Union[UriReference, str, PathLike]]) -> None:
+    def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
         if datastore_uri:
             try:
-                if isinstance(datastore_uri, UriReference):
-                    if datastore_uri.file:
-                        datastore_uri = datastore_uri.file
-                    else:
-                        datastore_uri = datastore_uri.folder
-                elif isinstance(datastore_uri, str):
+                if isinstance(datastore_uri, str):
                     if datastore_uri.startswith(FILE_PREFIX):
                         datastore_uri = datastore_uri[len(FILE_PREFIX) :]
                     elif datastore_uri.startswith(FOLDER_PREFIX):
