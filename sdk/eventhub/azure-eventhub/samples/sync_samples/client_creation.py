@@ -17,20 +17,20 @@ from azure.eventhub import (
 )
 
 
-CONNECTION_STRING = os.environ['EVENT_HUB_CONN_STR']
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
-CONSUMER_GROUP = "$Default"
+CONNECTION_STRING: str = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+SAS_POLICY: str = os.environ['EVENT_HUB_SAS_POLICY']
+SAS_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
+CONSUMER_GROUP: str = "$Default"
 
 
-def create_producer_client():
+def create_producer_client() -> None:
     print('Examples showing how to create producer client.')
 
     # Create producer client from connection string.
 
-    producer_client = EventHubProducerClient.from_connection_string(
+    producer_client: EventHubProducerClient = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STRING  # connection string contains EventHub name.
     )
 
@@ -65,7 +65,7 @@ def create_consumer_client():
 
     # Create consumer client from connection string.
 
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STRING,  # connection string contains EventHub name.
         consumer_group=CONSUMER_GROUP
     )

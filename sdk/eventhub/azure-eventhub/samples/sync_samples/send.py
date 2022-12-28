@@ -11,25 +11,29 @@ Examples to show sending events with different options to an Event Hub partition
 
 import time
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch
+    from typing import List
 
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR:str = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME:str = os.environ['EVENT_HUB_NAME']
 
 
-def send_event_data_batch(producer):
+def send_event_data_batch(producer: EventHubProducerClient) -> None:
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
-    event_data_batch = producer.create_batch()
+    event_data_batch: EventDataBatch = producer.create_batch()
     event_data_batch.add(EventData('Single message'))
     producer.send_batch(event_data_batch)
 
 
-def send_event_data_batch_with_limited_size(producer):
+def send_event_data_batch_with_limited_size(producer: EventHubProducerClient) -> None:
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
-    event_data_batch_with_limited_size = producer.create_batch(max_size_in_bytes=1000)
+    event_data_batch_with_limited_size: EventDataBatch = producer.create_batch(max_size_in_bytes=1000)
 
     while True:
         try:
@@ -42,38 +46,38 @@ def send_event_data_batch_with_limited_size(producer):
     producer.send_batch(event_data_batch_with_limited_size)
 
 
-def send_event_data_batch_with_partition_key(producer):
+def send_event_data_batch_with_partition_key(producer: EventHubProducerClient) -> None:
     # Specifying partition_key.
-    event_data_batch_with_partition_key = producer.create_batch(partition_key='pkey')
+    event_data_batch_with_partition_key: EventDataBatch = producer.create_batch(partition_key='pkey')
     event_data_batch_with_partition_key.add(EventData('Message will be sent to a partition determined by the partition key'))
 
     producer.send_batch(event_data_batch_with_partition_key)
 
 
-def send_event_data_batch_with_partition_id(producer):
+def send_event_data_batch_with_partition_id(producer: EventHubProducerClient) -> None:
     # Specifying partition_id.
-    event_data_batch_with_partition_id = producer.create_batch(partition_id='0')
+    event_data_batch_with_partition_id: EventDataBatch = producer.create_batch(partition_id='0')
     event_data_batch_with_partition_id.add(EventData('Message will be sent to target-id partition'))
 
     producer.send_batch(event_data_batch_with_partition_id)
 
 
-def send_event_data_batch_with_properties(producer):
-    event_data_batch = producer.create_batch()
-    event_data = EventData('Message with properties')
+def send_event_data_batch_with_properties(producer: EventHubProducerClient) -> None:
+    event_data_batch: EventDataBatch = producer.create_batch()
+    event_data: EventData = EventData('Message with properties')
     event_data.properties = {'prop_key': 'prop_value'}
     event_data_batch.add(event_data)
     producer.send_batch(event_data_batch)
 
 
-def send_event_data_list(producer):
+def send_event_data_list(producer: EventHubProducerClient) -> None:
     # If you know beforehand that the list of events you have will not exceed the
     # size limits, you can use the `send_batch()` api directly without creating an EventDataBatch
 
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
 
-    event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
+    event_data_list: List[EventData] = [EventData('Event Data {}'.format(i)) for i in range(10)]
     try:
         producer.send_batch(event_data_list)
     except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
@@ -82,12 +86,12 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-producer = EventHubProducerClient.from_connection_string(
+producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
 
-start_time = time.time()
+start_time: float = time.time()
 with producer:
     send_event_data_batch(producer)
     send_event_data_batch_with_limited_size(producer)

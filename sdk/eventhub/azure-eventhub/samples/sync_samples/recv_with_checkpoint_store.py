@@ -12,26 +12,31 @@ If no partition id is specified, the checkpoint_store are used for load-balance 
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+
+if TYPE_CHECKING:
+    from typing import Optional
+    from azure.eventhub import PartitionContext, EventData
 
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # Avoid time-consuming operations.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}.")
     partition_context.update_checkpoint(event)
 
 
 if __name__ == '__main__':
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    checkpoint_store: BlobCheckpointStore = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME) # type: ignore
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,

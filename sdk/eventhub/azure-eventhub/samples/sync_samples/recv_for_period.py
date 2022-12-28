@@ -11,21 +11,25 @@ An example to show receiving events from an Event Hub for a period of time.
 import os
 import threading
 import time
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
+if TYPE_CHECKING:
+    from typing import Optional
+    from azure.eventhub import PartitionContext, EventData
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-RECEIVE_DURATION = 15
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+RECEIVE_DURATION: int = 15
 
 
-def on_event(partition_context, event):
+def on_event(partition_context : PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}.")
 
 
-def on_partition_initialize(partition_context):
+def on_partition_initialize(partition_context: PartitionContext) -> None:
     # Put your code here.
-    print("Partition: {} has been initialized.".format(partition_context.partition_id))
+    print(f"Partition: {partition_context.partition_id} has been initialized.")
 
 
 def on_partition_close(partition_context, reason):

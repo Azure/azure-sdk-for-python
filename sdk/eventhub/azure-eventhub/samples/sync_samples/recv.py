@@ -9,24 +9,28 @@
 An example to show receiving events from an Event Hub.
 """
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
+if TYPE_CHECKING:
+    from typing import Optional
+    from azure.eventhub import PartitionContext, EventData, CloseReason
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR:str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
     print("Received event from partition: {}.".format(partition_context.partition_id))
 
 
-def on_partition_initialize(partition_context):
+def on_partition_initialize(partition_context: PartitionContext) -> None:
     # Put your code here.
     print("Partition: {} has been initialized.".format(partition_context.partition_id))
 
 
-def on_partition_close(partition_context, reason):
+def on_partition_close(partition_context: PartitionContext, reason: CloseReason) -> None:
     # Put your code here.
     print("Partition: {} has been closed, reason for closing: {}.".format(
         partition_context.partition_id,
@@ -34,7 +38,7 @@ def on_partition_close(partition_context, reason):
     ))
 
 
-def on_error(partition_context, error):
+def on_error(partition_context: PartitionContext, error: Exception) -> None:
     # Put your code here. partition_context can be None in the on_error callback.
     if partition_context:
         print("An exception: {} occurred during receiving from Partition: {}.".format(
@@ -46,7 +50,7 @@ def on_error(partition_context, error):
 
 
 if __name__ == '__main__':
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,

@@ -14,27 +14,32 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 
 import os
 import logging
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+if TYPE_CHECKING:
+    from logging import Logger
+    from typing import Optional, List
+    from azure.eventhub import PartitionContext, EventData
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+log: Logger = logging.getLogger(__name__)
 
 
-def on_event_batch(partition_context, event_batch):
-    log.info("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
+def on_event_batch(partition_context: PartitionContext, event_batch: List[EventData]) -> None:
+    log.info(f"Partition {partition_context.partition_id}, Received count: {len(event_batch)}")
     # put your code here
     partition_context.update_checkpoint()
 
 
-def receive_batch():
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    client = EventHubConsumerClient.from_connection_string(
+def receive_batch() -> None:
+    checkpoint_store: BlobCheckpointStore = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
+    client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,

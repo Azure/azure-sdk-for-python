@@ -15,22 +15,22 @@ from azure.core.credentials import AzureNamedKeyCredential
 from azure.eventhub import EventHubProducerClient, EventData
 
 # Target namespace and hub must also be specified.
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
 
-EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_SAS_POLICY']
-EVENTHUB_KEY = os.environ['EVENT_HUB_SAS_KEY']
+EVENTHUB_POLICY_NAME: str = os.environ['EVENT_HUB_SAS_POLICY']
+EVENTHUB_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
 
-credential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
+credential: AzureNamedKeyCredential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
 
-producer_client = EventHubProducerClient(
+producer_client: EventHubProducerClient = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
     credential=credential,
     logging_enable=True
 )
 
-start_time = time.time()
+start_time: float = time.time()
 with producer_client:
     event_data_batch = producer_client.create_batch()
     event_data_batch.add(EventData('Single message'))

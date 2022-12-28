@@ -9,12 +9,16 @@
 An example to show sending and receiving events behind a proxy.
 """
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
+if TYPE_CHECKING:
+    from typing import Any, Dict, Optional
+    from azure.eventhub import PartitionContext, EventDataBatch
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME:str = os.environ['EVENT_HUB_NAME']
 
-HTTP_PROXY = {
+HTTP_PROXY: Dict[str, Any] = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     'username': 'admin',  # username used for proxy authentication if needed.
@@ -22,19 +26,19 @@ HTTP_PROXY = {
 }
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print("received event from partition: {}.".format(partition_context.partition_id))
+    print(f"received event from partition: {partition_context.partition_id}.")
     print(event)
 
 
-consumer_client = EventHubConsumerClient.from_connection_string(
+consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR, consumer_group='$Default', eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
-producer_client = EventHubProducerClient.from_connection_string(
+producer_client: EventHubProducerClient = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 
 with producer_client:
-    event_data_batch = producer_client.create_batch(max_size_in_bytes=10000)
+    event_data_batch: EventDataBatch = producer_client.create_batch(max_size_in_bytes=10000)
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))

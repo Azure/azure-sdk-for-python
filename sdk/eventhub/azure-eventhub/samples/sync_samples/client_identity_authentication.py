@@ -36,14 +36,17 @@ both to demonstrate the ease of adjusting authentication, and to surface another
 """
 
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventData, EventHubProducerClient
 from azure.identity import EnvironmentCredential
+if TYPE_CHECKING:
+  from azure.eventhub import EventDataBatch
 
 
-fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-eventhub_name = os.environ['EVENT_HUB_NAME']
+fully_qualified_namespace: str = os.environ['EVENT_HUB_HOSTNAME']
+eventhub_name: str = os.environ['EVENT_HUB_NAME']
 
-credential = EnvironmentCredential()
+credential: EnvironmentCredential = EnvironmentCredential()
 
 # Note: One has other options to specify the credential.  For instance, DefaultAzureCredential.
 # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
@@ -53,12 +56,12 @@ credential = EnvironmentCredential()
 #
 # credential = DefaultAzureCredential()
 
-producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
+producer: EventHubProducerClient = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
                                   eventhub_name=eventhub_name,
                                   credential=credential)
 
 with producer:
-    event_data_batch = producer.create_batch()
+    event_data_batch: EventDataBatch = producer.create_batch()
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))

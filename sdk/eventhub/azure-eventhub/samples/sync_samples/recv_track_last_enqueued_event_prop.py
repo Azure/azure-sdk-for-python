@@ -10,27 +10,29 @@ An example to show receiving events from an Event Hub partition with EventHubCon
 the last enqueued event properties of specific partition.
 """
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+if TYPE_CHECKING:
+    from typing import Optional
+    from azure.eventhub import PartitionContext, EventData
+
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
 
 
-def on_event(partition_context, event):
-    print("Received event from partition {}.".format(partition_context.partition_id))
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
+    print(f"Received event from partition {partition_context.partition_id}.")
     
     # Put your code here. to do some operations on the event.
     # Avoid time-consuming operations.
     print(event)
 
-    print("Last enqueued event properties from partition: {} is: {}.".format(
-        partition_context.partition_id,
-        partition_context.last_enqueued_event_properties)
-    )
+    print(f"Last enqueued event properties from partition: {partition_context.partition_id} is: {partition_context.last_enqueued_event_properties}.")
 
 
 if __name__ == '__main__':
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,

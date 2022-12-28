@@ -14,24 +14,29 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 """
 import os
 from collections import defaultdict
+from typing import TYPE_CHECKING
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+
+if TYPE_CHECKING:
+    from typing import Optional, Any, DefaultDict
+    from azure.eventhub import EventData, PartitionContext
 
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
+CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
-partition_recv_cnt_since_last_checkpoint = defaultdict(int)
-checkpoint_event_cnt = 20
+partition_recv_cnt_since_last_checkpoint: DefaultDict[str, int] = defaultdict(int)
+checkpoint_event_cnt: int = 20
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # Avoid time-consuming operations.
-    p_id = partition_context.partition_id
-    print("Received event from partition: {}".format(p_id))
+    p_id: str = partition_context.partition_id
+    print(f"Received event from partition: {p_id}")
     partition_recv_cnt_since_last_checkpoint[p_id] += 1
     if partition_recv_cnt_since_last_checkpoint[p_id] >= checkpoint_event_cnt:
         partition_context.update_checkpoint(event)
@@ -39,8 +44,8 @@ def on_event(partition_context, event):
 
 
 if __name__ == '__main__':
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    checkpoint_store: BlobCheckpointStore = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,
