@@ -44,6 +44,8 @@ MGMT_PARTITION_OPERATION = b"com.microsoft:partition"
 MGMT_STATUS_CODE = b"status-code"
 MGMT_STATUS_DESC = b"status-description"
 USER_AGENT_PREFIX = "azsdk-python-eventhubs"
+UAMQP_LIBRARY = "uamqp"
+PYAMQP_LIBRARY = "pyamqp"
 
 NO_RETRY_ERRORS = [
     b"com.microsoft:argument-out-of-range",
