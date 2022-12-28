@@ -157,9 +157,7 @@ class AsyncValidationCheckPoller(AsyncPollingMethod):
         return self._status
 
     def finished(self) -> bool:
-        if self._status in self._termination_statuses:
-            return True
-        return False
+        return self._status in self._termination_statuses
 
     def resource(self) -> JSON:
         return self._resource
@@ -202,16 +200,15 @@ class AsyncTestRunStatusPoller(PollingMethod):
         return self._status
 
     def finished(self) -> bool:
-        if self._status in self._termination_statuses:
-            return True
-        return False
+        return self._status in self._termination_statuses
+
 
     def resource(self) -> JSON:
         return self._resource
 
 
 class LoadTestingLROPoller(LROPoller):
-    """LoadTesting Poller for long running operations.
+    """LoadTesting Poller for long-running operations.
 
     :param client: A pipeline service client
     :type client: ~azure.core.PipelineClient
@@ -238,7 +235,7 @@ class LoadTestingLROPoller(LROPoller):
 
 
 class AsyncLoadTestingLROPoller(AsyncLROPoller):
-    """Async poller for long running operations.
+    """Async poller for long-running operations.
 
     :param client: A pipeline service client
     :type client: ~azure.core.PipelineClient
