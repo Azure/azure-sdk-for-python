@@ -40,11 +40,6 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestControlFlowPipeline):
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        # TODO(2143838): reopen this when component hash issue fixed
-        reason="Component hash is different between recording and playback."
-    )
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
 

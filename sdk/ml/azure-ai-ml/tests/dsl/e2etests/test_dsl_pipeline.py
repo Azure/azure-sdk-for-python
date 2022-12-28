@@ -2390,11 +2390,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
         assert default_services["Tracking"]["job_service_type"] == "Tracking"
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        # TODO(2143838): reopen this when component hash issue fixed
-        reason="Component hash is different between recording and playback."
-    )
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
         @group
@@ -2429,11 +2424,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
         assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        # TODO(2143838): reopen this when component hash issue fixed
-        reason="Component hash is different between recording and playback."
-    )
     def test_group_outputs_mode_overwrite(self, client):
         # test group outputs mode overwrite
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
