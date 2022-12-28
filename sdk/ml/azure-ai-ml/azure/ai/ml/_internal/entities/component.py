@@ -117,6 +117,7 @@ class InternalComponent(Component):
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
+        self._origin_name, self._origin_version = None, None
 
         self.successful_return_code = successful_return_code
         self.code = code
@@ -189,8 +190,18 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
+    def _set_is_anonymous(self, is_anonymous: bool):
+        if is_anonymous:
+            self._origin_name, self._origin_version = self.name, self.version
+        super()._set_is_anonymous(is_anonymous)
+
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
+
+        if self._origin_name:
+            component["name"] = self._origin_name
+        if self._origin_version:
+            component["version"] = self._origin_version
 
         properties = ComponentVersionDetails(
             component_spec=component,
