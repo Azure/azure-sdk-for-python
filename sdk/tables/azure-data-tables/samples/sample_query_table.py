@@ -114,7 +114,7 @@ class SampleTablesQuery(object):
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
             except HttpResponseError as e:
-                pass
+                raise
         # [END query_entities]
 
     def clean_up(self):
