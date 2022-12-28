@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import copy
 import codecs
-import cgi
+import email.message
 from json import dumps
 from typing import (
     Optional,
@@ -138,8 +138,7 @@ def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[C
         "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
     )
 
-def set_json_body(json):
-    # type: (Any) -> Tuple[Dict[str, str], Any]
+def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
     headers = {"Content-Type": "application/json"}
     if hasattr(json, "read"):
         content_headers, body = set_content_body(json)
@@ -149,8 +148,7 @@ def set_json_body(json):
         headers.update({"Content-Length": str(len(body))})
     return headers, body
 
-def lookup_encoding(encoding):
-    # type: (str) -> bool
+def lookup_encoding(encoding: str) -> bool:
     # including check for whether encoding is known taken from httpx
     try:
         codecs.lookup(encoding)
@@ -158,14 +156,15 @@ def lookup_encoding(encoding):
     except LookupError:
         return False
 
-def get_charset_encoding(response):
-    # type: (...) -> Optional[str]
+def get_charset_encoding(response) -> Optional[str]:
     content_type = response.headers.get("Content-Type")
 
     if not content_type:
         return None
-    _, params = cgi.parse_header(content_type)
-    encoding = params.get('charset') # -> utf-8
+    # https://peps.python.org/pep-0594/#cgi
+    m = email.message.Message()
+    m['content-type'] = content_type
+    encoding = m.get_param('charset') # -> utf-8
     if encoding is None or not lookup_encoding(encoding):
         return None
     return encoding
