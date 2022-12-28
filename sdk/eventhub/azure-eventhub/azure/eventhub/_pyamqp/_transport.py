@@ -720,7 +720,7 @@ class WebSocketTransport(_AbstractTransport):
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self._connect_timeout,
+                timeout=self.read_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
