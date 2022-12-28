@@ -48,7 +48,7 @@ from azure.identity import DefaultAzureCredential
 
 def create_client():
     # [START create_sr_client_sync]
-    SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"]
+    SCHEMAREGISTRY_FQN = os.environ["SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"]
     token_credential = DefaultAzureCredential()
     schema_registry_client = SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
@@ -72,9 +72,9 @@ def register_schema(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    DEFINTION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+    DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
     schema_properties = schema_registry_client.register_schema(
-        GROUP_NAME, NAME, DEFINTION, FORMAT
+        GROUP_NAME, NAME, DEFINITION, FORMAT
     )
     schema_id = schema_properties.id
     # [END register_schema_sync]
