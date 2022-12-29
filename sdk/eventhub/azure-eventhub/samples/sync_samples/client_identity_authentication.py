@@ -56,7 +56,7 @@ credential = EnvironmentCredential()
 #
 # credential = DefaultAzureCredential()
 
-producer: EventHubProducerClient = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
+producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
                                   eventhub_name=eventhub_name,
                                   credential=credential)
 
