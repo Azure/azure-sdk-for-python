@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload, cast
+from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast
 
 try:
     from urllib.parse import urlparse, unquote
@@ -14,26 +14,24 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core import MatchConditions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._deserialize import _convert_to_entity, _trim_service_metadata
+from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
 from ._generated.models import SignedIdentifier, TableProperties
-from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
-from ._base_client import parse_connection_str, TablesBaseClient
-from ._serialize import serialize_iso, _parameter_filter_substitution
-from ._deserialize import deserialize_iso, _return_headers_and_deserialized
+from ._serialize import(
+    serialize_iso, _parameter_filter_substitution, _get_match_headers, _add_entity_properties, _prepare_key
+)
+from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
-
-class TableClient(TablesBaseClient):  # pylint: disable=client-accepts-api-version-keyword
+class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -41,8 +39,13 @@ class TableClient(TablesBaseClient):  # pylint: disable=client-accepts-api-versi
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, table_name: str, **kwargs: Any
+    def __init__(
+        self,
+        endpoint: str,
+        table_name: str,
+        *,
+        credential: Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential] = None,
+        **kwargs: Any
     ) -> None:
         """Create TableClient from a Credential.
 
@@ -61,7 +64,7 @@ class TableClient(TablesBaseClient):  # pylint: disable=client-accepts-api-versi
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name = table_name
-        super(TableClient, self).__init__(endpoint, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

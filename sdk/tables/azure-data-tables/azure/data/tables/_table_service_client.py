@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -23,9 +23,6 @@ from ._models import LocationMode
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
-
-if TYPE_CHECKING:
-    from ._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(TablesBaseClient):

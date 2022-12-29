@@ -46,7 +46,7 @@ def get_enum_value(value):
         return value
 
 
-def _from_entity_binary(value: str) -> EntityProperty:
+def _from_entity_binary(value: str) -> bytes:
     return _decode_base64_to_bytes(value)
 
 
