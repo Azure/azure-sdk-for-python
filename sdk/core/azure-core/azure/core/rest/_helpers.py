@@ -38,7 +38,8 @@ from typing import (
     Dict,
     Iterable,
     MutableMapping,
-    AsyncIterable
+    AsyncIterable,
+    cast
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -164,13 +165,12 @@ def get_charset_encoding(response) -> Optional[str]:
     # https://peps.python.org/pep-0594/#cgi
     m = email.message.Message()
     m['content-type'] = content_type
-    encoding = m.get_param('charset') # -> utf-8
+    encoding = cast(str, m.get_param('charset')) # -> utf-8
     if encoding is None or not lookup_encoding(encoding):
         return None
     return encoding
 
-def decode_to_text(encoding, content):
-    # type: (Optional[str], bytes) -> str
+def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     if not content:
         return ""
     if encoding == "utf-8":
