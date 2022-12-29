@@ -4,22 +4,13 @@
 # ------------------------------------
 import json
 from typing import Any, Union
-from azure.appconfiguration import(
-    ConfigurationSetting,
-    SecretReferenceConfigurationSetting,
-    FeatureFlagConfigurationSetting,
-)
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
-
-try:
-    from json.decoder import JSONDecodeError
-except ImportError:
-    JSONDecodeError = None  # type: ignore
+from json import JSONDecodeError
 
 
 PolymorphicConfigurationSetting = Union[
-    ConfigurationSetting, SecretReferenceConfigurationSetting, FeatureFlagConfigurationSetting
+    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
 ]
 
 
@@ -151,7 +142,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "feature_id": {"key": "feaure_id", "type": "str"},
+        "feature_id": {"key": "feature_id", "type": "str"},
         "label": {"key": "label", "type": "str"},
         "content_type": {"key": "_feature_flag_content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
