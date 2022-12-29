@@ -21,9 +21,6 @@
 ### Other Changes
 - Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
 
-### Bugs Fixed
-- Fixed print on Command objects when job id is empty
-
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
