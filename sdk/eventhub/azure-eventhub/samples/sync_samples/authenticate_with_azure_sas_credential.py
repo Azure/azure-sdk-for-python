@@ -35,18 +35,18 @@ def generate_sas_token(uri: str, sas_name: str, sas_value: str, token_ttl: int) 
 
 
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
-FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 # The following part creates a SAS token. A SAS token is typically given to you after being created.
-SAS_POLICY: str = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
+SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
 
-uri: str = f"sb://{FULLY_QUALIFIED_NAMESPACE}/{EVENTHUB_NAME}"
-token_ttl: int = 3000  # seconds
-sas_token:str = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
+uri = f"sb://{FULLY_QUALIFIED_NAMESPACE}/{EVENTHUB_NAME}"
+token_ttl = 3000  # seconds
+sas_token: str = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
 
-credential:AzureSasCredential = AzureSasCredential(sas_token)
+credential = AzureSasCredential(sas_token)
 
 producer_client: EventHubProducerClient = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
@@ -55,7 +55,7 @@ producer_client: EventHubProducerClient = EventHubProducerClient(
     logging_enable=True
 )
 
-start_time: float = time.time()
+start_time = time.time()
 with producer_client:
     event_data_batch: EventDataBatch = producer_client.create_batch()
     event_data_batch.add(EventData('Single message'))

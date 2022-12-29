@@ -10,23 +10,22 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 """
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Any, Optional
     from azure.eventhub import EventDataBatch, PartitionContext, EventData
 
 
-CONNECTION_STR: str = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 def send_data_message(producer: EventHubProducerClient) -> None:
-    data_body: List[bytes] = [b'aa', b'bb', b'cc']
-    application_properties: Dict[str, str] = {"body_type": "data"}
-    delivery_annotations: Dict[str, str] = {"delivery_annotation_key": "value"}
-    data_message: AmqpAnnotatedMessage = AmqpAnnotatedMessage(
+    data_body = [b'aa', b'bb', b'cc']
+    application_properties = {"body_type": "data"}
+    delivery_annotations = {"delivery_annotation_key": "value"}
+    data_message = AmqpAnnotatedMessage(
         data_body=data_body,
         delivery_annotations=delivery_annotations,
         application_properties=application_properties
@@ -38,11 +37,11 @@ def send_data_message(producer: EventHubProducerClient) -> None:
 
 
 def send_sequence_message(producer: EventHubProducerClient) -> None:
-    sequence_body: List[Any] = [b'message', 123.456, True]
-    footer:Dict[str, str] = {'footer_key': 'footer_value'}
-    properties: Dict[str, str] = {"subject": "sequence"}
-    application_properties: Dict[str, str] = {"body_type": "sequence"}
-    sequence_message: AmqpAnnotatedMessage = AmqpAnnotatedMessage(
+    sequence_body = [b'message', 123.456, True]
+    footer = {'footer_key': 'footer_value'}
+    properties = {"subject": "sequence"}
+    application_properties = {"body_type": "sequence"}
+    sequence_message = AmqpAnnotatedMessage(
         sequence_body=sequence_body,
         footer=footer,
         properties=properties,
@@ -53,11 +52,11 @@ def send_sequence_message(producer: EventHubProducerClient) -> None:
 
 
 def send_value_message(producer: EventHubProducerClient) -> None:
-    value_body: Dict[bytes, Any] = {b"key": [-123, b'data', False]}
-    header: Dict[str, int] = {"priority": 10}
-    annotations: Dict[str, str] = {"annotation_key": "value"}
-    application_properties: Dict[str, str] = {"body_type": "value"}
-    value_message: AmqpAnnotatedMessage = AmqpAnnotatedMessage(
+    value_body = {b"key": [-123, b'data', False]}
+    header = {"priority": 10}
+    annotations = {"annotation_key": "value"}
+    application_properties = {"body_type": "value"}
+    value_message = AmqpAnnotatedMessage(
         value_body=value_body,
         header=header,
         annotations=annotations,
@@ -96,7 +95,7 @@ def receive_and_parse_message(consumer: EventHubConsumerClient) -> None:
             print('Stopped receiving.')
 
 
-producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+producer = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
@@ -106,7 +105,7 @@ with producer:
     send_value_message(producer)
 
 
-consumer: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
+consumer = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     consumer_group='$Default',
     eventhub_name=EVENTHUB_NAME,

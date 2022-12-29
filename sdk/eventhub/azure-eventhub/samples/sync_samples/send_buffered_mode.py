@@ -11,15 +11,14 @@ Examples to show sending events in buffered mode to an Event Hub.
 
 import time
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventHubProducerClient, EventData
 
 if TYPE_CHECKING:
-    from typing import Optional
     from azure.eventhub import EventDataBatch
 
-CONNECTION_STR: str = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 def on_success(events, pid: Optional[str]) -> None:
@@ -32,7 +31,7 @@ def on_error(events, pid: Optional[str], error: Exception) -> None:
     print(events, pid, error)
 
 
-producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+producer = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME,
     buffered_mode=True,
@@ -40,18 +39,18 @@ producer: EventHubProducerClient = EventHubProducerClient.from_connection_string
     on_error=on_error
 )
 
-start_time: float = time.time()
+start_time = time.time()
 
 # exiting the context manager will automatically call flush
 with producer:
     # single events will be batched automatically
     for i in range(10):
         # the method returning indicates the event has been enqueued to the buffer
-        producer.send_event(EventData('Single data {}'.format(i)))
+        producer.send_event(EventData(f'Single data {i}'))
 
     batch: EventDataBatch = producer.create_batch()
     for i in range(10):
-        batch.add(EventData('Single data in batch {}'.format(i)))
+        batch.add(EventData(f'Single data in batch {i}'))
     # alternatively, you can enqueue an EventDataBatch object to the buffer
     producer.send_batch(batch)
 

@@ -43,10 +43,10 @@ if TYPE_CHECKING:
   from azure.eventhub import EventDataBatch
 
 
-fully_qualified_namespace: str = os.environ['EVENT_HUB_HOSTNAME']
-eventhub_name: str = os.environ['EVENT_HUB_NAME']
+fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
+eventhub_name = os.environ['EVENT_HUB_NAME']
 
-credential: EnvironmentCredential = EnvironmentCredential()
+credential = EnvironmentCredential()
 
 # Note: One has other options to specify the credential.  For instance, DefaultAzureCredential.
 # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity

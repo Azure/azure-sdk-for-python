@@ -19,18 +19,17 @@ Examples to show basic use case of python azure-eventhub SDK, including:
 import time
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, List
 from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 
 if TYPE_CHECKING:
-    from typing import Optional, List
     from azure.eventhub import EventData, EventDataBatch, PartitionContext
 
 def example_create_eventhub_producer_client() -> EventHubProducerClient:
     # [START create_eventhub_producer_client_from_conn_str_sync]
-    event_hub_connection_str: str = os.environ['EVENT_HUB_CONN_STR']
-    eventhub_name: str = os.environ['EVENT_HUB_NAME']
-    producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    eventhub_name = os.environ['EVENT_HUB_NAME']
+    producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
@@ -38,12 +37,12 @@ def example_create_eventhub_producer_client() -> EventHubProducerClient:
 
     # [START create_eventhub_producer_client_sync]
 
-    fully_qualified_namespace: str = os.environ['EVENT_HUB_HOSTNAME']
+    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
-    shared_access_policy: str = os.environ['EVENT_HUB_SAS_POLICY']
-    shared_access_key: str = os.environ['EVENT_HUB_SAS_KEY']
+    shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
+    shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
-    credential: EventHubSharedKeyCredential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
+    credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
     producer = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
@@ -53,11 +52,11 @@ def example_create_eventhub_producer_client() -> EventHubProducerClient:
     return producer
 
 
-def example_create_eventhub_consumer_client():
+def example_create_eventhub_consumer_client() -> EventHubConsumerClient:
     # [START create_eventhub_consumer_client_from_conn_str_sync] 
-    event_hub_connection_str: str = os.environ['EVENT_HUB_CONN_STR']
-    eventhub_name: str = os.environ['EVENT_HUB_NAME']
-    consumer: EventHubProducerClient = EventHubConsumerClient.from_connection_string(
+    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    eventhub_name = os.environ['EVENT_HUB_NAME']
+    consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group='$Default',
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
@@ -66,13 +65,13 @@ def example_create_eventhub_consumer_client():
 
     # [START create_eventhub_consumer_client_sync]
     
-    fully_qualified_namespace: str = os.environ['EVENT_HUB_HOSTNAME']
-    eventhub_name: str = os.environ['EVENT_HUB_NAME']
-    shared_access_policy: str = os.environ['EVENT_HUB_SAS_POLICY']
-    shared_access_key: str = os.environ['EVENT_HUB_SAS_KEY']
+    fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
+    eventhub_name = os.environ['EVENT_HUB_NAME']
+    shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
+    shared_access_key = os.environ['EVENT_HUB_SAS_KEY']
 
-    credential: EventHubSharedKeyCredential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
-    consumer: EventHubConsumerClient = EventHubConsumerClient(
+    credential = EventHubSharedKeyCredential(shared_access_policy, shared_access_key)
+    consumer = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         consumer_group='$Default',
@@ -89,7 +88,7 @@ def example_eventhub_sync_send_and_receive() -> None:
 
         # [START create_event_data]
 
-        event_data: EventData = EventData("String data")
+        event_data = EventData("String data")
         event_data = EventData(b"Bytes data")
 
         # [END create_event_data]
@@ -148,12 +147,12 @@ def example_eventhub_sync_send_and_receive() -> None:
         pass
 
 
-def example_eventhub_producer_send_and_close():
+def example_eventhub_producer_send_and_close() -> None:
     # [START eventhub_producer_client_close_sync]
-    event_hub_connection_str: str = os.environ['EVENT_HUB_CONN_STR']
-    eventhub_name: str = os.environ['EVENT_HUB_NAME']
+    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    eventhub_name = os.environ['EVENT_HUB_NAME']
 
-    producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+    producer = EventHubProducerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
@@ -175,14 +174,14 @@ def example_eventhub_producer_send_and_close():
     # [END eventhub_producer_client_close_sync]
 
 
-def example_eventhub_consumer_receive_and_close():
+def example_eventhub_consumer_receive_and_close() -> None:
     # [START eventhub_consumer_client_close_sync]
     import threading
 
-    event_hub_connection_str: str = os.environ['EVENT_HUB_CONN_STR']
-    eventhub_name: str = os.environ['EVENT_HUB_NAME']
+    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    eventhub_name = os.environ['EVENT_HUB_NAME']
 
-    consumer: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
+    consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group="$Default",
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.

@@ -11,15 +11,14 @@ Examples to show sending events with different options to an Event Hub partition
 
 import time
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
 if TYPE_CHECKING:
     from azure.eventhub import EventDataBatch
-    from typing import List
 
-CONNECTION_STR:str = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME:str = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
 def send_event_data_batch(producer: EventHubProducerClient) -> None:
@@ -77,7 +76,7 @@ def send_event_data_list(producer: EventHubProducerClient) -> None:
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
 
-    event_data_list: List[EventData] = [EventData('Event Data {}'.format(i)) for i in range(10)]
+    event_data_list: Sequence[EventData] = [EventData('Event Data {}'.format(i)) for i in range(10)]
     try:
         producer.send_batch(event_data_list)
     except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
@@ -100,4 +99,4 @@ with producer:
     send_event_data_batch_with_properties(producer)
     send_event_data_list(producer)
 
-print("Send messages in {} seconds.".format(time.time() - start_time))
+print(f"Send messages in {time.time() - start_time} seconds.")

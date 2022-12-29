@@ -15,26 +15,25 @@ from typing import TYPE_CHECKING
 from azure.eventhub import EventHubProducerClient, EventData
 
 if TYPE_CHECKING:
-    from typing import Optional
     from azure.eventhub import EventDataBatch
 
-CONNECTION_STR: str = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
-start_time: float = time.time()
+start_time = time.time()
 
-producer: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+producer = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
-to_send_message_cnt: int = 500
-bytes_per_message: int = 256
+to_send_message_cnt = 500
+bytes_per_message = 256
 
 with producer:
     event_data_batch: EventDataBatch = producer.create_batch()
     for i in range(to_send_message_cnt):
-        event_data: EventData = EventData('D' * bytes_per_message)
+        event_data = EventData('D' * bytes_per_message)
         try:
             event_data_batch.add(event_data)
         except ValueError:

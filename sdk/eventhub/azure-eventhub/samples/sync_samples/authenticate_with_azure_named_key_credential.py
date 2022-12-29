@@ -15,11 +15,11 @@ from azure.core.credentials import AzureNamedKeyCredential
 from azure.eventhub import EventHubProducerClient, EventData
 
 # Target namespace and hub must also be specified.
-FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-EVENTHUB_POLICY_NAME: str = os.environ['EVENT_HUB_SAS_POLICY']
-EVENTHUB_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
+EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_SAS_POLICY']
+EVENTHUB_KEY = os.environ['EVENT_HUB_SAS_KEY']
 
 credential: AzureNamedKeyCredential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
 
@@ -30,10 +30,10 @@ producer_client: EventHubProducerClient = EventHubProducerClient(
     logging_enable=True
 )
 
-start_time: float = time.time()
+start_time = time.time()
 with producer_client:
     event_data_batch = producer_client.create_batch()
     event_data_batch.add(EventData('Single message'))
     producer_client.send_batch(event_data_batch)
 
-print("Send messages in {} seconds.".format(time.time() - start_time))
+print(f"Send messages in {time.time() - start_time} seconds.")

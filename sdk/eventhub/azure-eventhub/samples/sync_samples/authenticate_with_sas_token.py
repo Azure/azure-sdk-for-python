@@ -15,10 +15,13 @@ import hmac
 import hashlib
 import base64
 from urllib.parse import quote as url_parse_quote
+from typing import TYPE_CHECKING
 
 
 from azure.core.credentials import AccessToken
 from azure.eventhub import EventHubProducerClient, EventData
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch
 
 
 def generate_sas_token(uri: str, sas_name: str, sas_value: str, token_ttl: int) -> str:
@@ -50,16 +53,16 @@ class CustomizedSASCredential(object):
 
 
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
-FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
-SAS_POLICY: str = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
+SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
 
-uri: str = f"sb://{FULLY_QUALIFIED_NAMESPACE}/{EVENTHUB_NAME}"
-token_ttl: int = 3000  # seconds
-sas_token: str = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
+uri = f"sb://{FULLY_QUALIFIED_NAMESPACE}/{EVENTHUB_NAME}"
+token_ttl = 3000  # seconds
+sas_token = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
 # end of creating a SAS token
 
 producer_client: EventHubProducerClient = EventHubProducerClient(
@@ -69,9 +72,9 @@ producer_client: EventHubProducerClient = EventHubProducerClient(
     logging_enable=True
 )
 
-start_time: float = time.time()
+start_time = time.time()
 with producer_client:
-    event_data_batch = producer_client.create_batch()
+    event_data_batch: EventDataBatch = producer_client.create_batch()
     event_data_batch.add(EventData('Single message'))
     producer_client.send_batch(event_data_batch)
 

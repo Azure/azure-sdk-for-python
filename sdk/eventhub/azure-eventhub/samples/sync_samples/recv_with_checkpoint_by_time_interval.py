@@ -14,30 +14,29 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 """
 import os
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional
     from azure.eventhub import PartitionContext, EventData
 
 
-CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 partition_last_checkpoint_time: Dict[str, float] = dict()
-checkpoint_time_interval:int = 15
+checkpoint_time_interval = 15
 
 
 def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # Avoid time-consuming operations.
-    p_id: str = partition_context.partition_id
+    p_id = partition_context.partition_id
     print(f"Received event from partition: {p_id}")
-    now_time: float = time.time()
+    now_time = time.time()
     p_id = partition_context.partition_id
     last_checkpoint_time: Optional[float] = partition_last_checkpoint_time.get(p_id)
     if last_checkpoint_time is None or (now_time - last_checkpoint_time) >= checkpoint_time_interval:
@@ -46,8 +45,8 @@ def on_event(partition_context: PartitionContext, event: Optional[EventData]) ->
 
 
 if __name__ == '__main__':
-    checkpoint_store: BlobCheckpointStore = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
+    consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,

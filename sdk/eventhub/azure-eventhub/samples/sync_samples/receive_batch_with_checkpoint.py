@@ -14,12 +14,10 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 
 import os
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
 if TYPE_CHECKING:
-    from logging import Logger
-    from typing import Optional, List
     from azure.eventhub import PartitionContext, EventData
 
 CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
@@ -28,18 +26,18 @@ STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 logging.basicConfig(level=logging.INFO)
-log: Logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def on_event_batch(partition_context: PartitionContext, event_batch: List[EventData]) -> None:
-    log.info(f"Partition {partition_context.partition_id}, Received count: {len(event_batch)}")
+    log.info("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
     # put your code here
     partition_context.update_checkpoint()
 
 
 def receive_batch() -> None:
-    checkpoint_store: BlobCheckpointStore = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
-    client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
+    client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,

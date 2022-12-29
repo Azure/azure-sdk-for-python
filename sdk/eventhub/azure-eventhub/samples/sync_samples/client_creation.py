@@ -17,12 +17,12 @@ from azure.eventhub import (
 )
 
 
-CONNECTION_STRING: str = os.environ['EVENT_HUB_CONN_STR']
-FULLY_QUALIFIED_NAMESPACE: str = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
-SAS_POLICY: str = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY: str = os.environ['EVENT_HUB_SAS_KEY']
-CONSUMER_GROUP: str = "$Default"
+CONNECTION_STRING = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+CONSUMER_GROUP = "$Default"
 
 
 def create_producer_client() -> None:
