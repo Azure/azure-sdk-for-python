@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated_models import UpdateSettingsRequest
 from ._internal import KeyVaultClientBase
 from ._models import KeyVaultSetting
+
 
 class KeyVaultSettingsClient(KeyVaultClientBase):
     """Provides methods to update, get, and list settings for an Azure Key Vault.
@@ -27,7 +30,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
+    def get_setting(self, name: str, **kwargs: Any) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
         :param str name: The name of the account setting.
@@ -40,7 +43,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
-    def list_settings(self, **kwargs) -> ItemPaged[KeyVaultSetting]:
+    def list_settings(self, **kwargs: Any) -> ItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
         :returns: A paged object containing the account's settings.
@@ -60,7 +63,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
+    def update_setting(self, name: str, value: str, **kwargs: Any) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 
         :param str name: The name of the account setting to update.

@@ -50,8 +50,10 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param str definition_id: ID of the role's definition
         :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
             principal can be a user, service principal, or security group.
+
         :keyword name: a name for the role assignment. Must be a UUID.
         :paramtype name: str or uuid.UUID
+
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         name = kwargs.pop("name", None) or uuid4()
@@ -81,6 +83,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role assignment's name.
         :type name: str or uuid.UUID
+
         :returns: None
         """
         try:
@@ -101,6 +104,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role assignment's name.
         :type name: str or uuid.UUID
+
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = await self._client.role_assignments.get(
@@ -117,6 +121,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param scope: scope of the role assignments. :class:`KeyVaultRoleScope` defines common broad
             scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
+
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
@@ -137,6 +142,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param scope: scope of the role definition. :class:`KeyVaultRoleScope` defines common broad scopes.
             Specify a narrower scope as a string. Managed HSM only supports '/', or KeyVaultRoleScope.GLOBAL.
         :type scope: str or KeyVaultRoleScope
+
         :keyword name: the role definition's name, a UUID. When this argument has a value, the client will create a new
             role definition with this name or update an existing role definition, if one exists with the given name.
             When this argument has no value, a new role definition will be created with a generated name.
@@ -150,6 +156,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :paramtype permissions: Iterable[KeyVaultPermission]
         :keyword assignable_scopes: the scopes for which the role definition can be assigned.
         :paramtype assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
+
         :returns: The created or updated role definition
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
@@ -191,6 +198,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role definition's name.
         :type name: str or uuid.UUID
+
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = await self._client.role_definitions.get(
@@ -209,6 +217,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :type scope: str or KeyVaultRoleScope
         :param name: the role definition's name.
         :type name: str or uuid.UUID
+
         :returns: None
         """
         try:
@@ -227,6 +236,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         :param scope: scope of the role definitions. :class:`KeyVaultRoleScope` defines common broad
             scopes. Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
+
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(

@@ -44,7 +44,9 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
             https://<account>.blob.core.windows.net/backup
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
+
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
 
@@ -99,8 +101,10 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
+
         :rtype: ~azure.core.polling.AsyncLROPoller
 
         Examples:

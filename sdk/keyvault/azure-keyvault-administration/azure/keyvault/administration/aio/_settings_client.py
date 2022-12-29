@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
+
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated_models import UpdateSettingsRequest
 from .._internal import AsyncKeyVaultClientBase
 from .._models import KeyVaultSetting
+
 
 class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     """Provides methods to update, get, and list settings for an Azure Key Vault.
@@ -27,7 +30,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
+    async def get_setting(self, name: str, **kwargs: Any) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
         :param str name: The name of the account setting.
@@ -40,7 +43,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace_async
-    async def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
+    async def list_settings(self, **kwargs: Any) -> AsyncItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
         :returns: A :class:`~azure.keyvault.administration.GetSettingsResult` object containing the account's settings.
@@ -60,7 +63,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
+    async def update_setting(self, name: str, value: str, **kwargs: Any) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 
         :param str name: The name of the account setting to update.
