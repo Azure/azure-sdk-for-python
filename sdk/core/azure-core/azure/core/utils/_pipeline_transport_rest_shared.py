@@ -98,8 +98,7 @@ def _format_parameters_helper(http_request, params):
     query = "?" + "&".join(query_params)
     http_request.url = http_request.url + query
 
-def _pad_attr_name(attr, backcompat_attrs):
-    # type: (str, List[str]) -> str
+def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     """Pad hidden attributes so users can access them.
 
     Currently, for our backcompat attributes, we define them
@@ -111,8 +110,7 @@ def _pad_attr_name(attr, backcompat_attrs):
     """
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
-def _prepare_multipart_body_helper(http_request, content_index=0):
-    # type: (HTTPRequestType, int) -> int
+def _prepare_multipart_body_helper(http_request: HTTPRequestType, content_index: int=0) -> int:
     """Helper for prepare_multipart_body.
 
     Will prepare the body of this request according to the multipart information.
@@ -130,8 +128,8 @@ def _prepare_multipart_body_helper(http_request, content_index=0):
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests = http_request.multipart_mixed_info[0]  # type: List[HTTPRequestType]
-    boundary = http_request.multipart_mixed_info[2]  # type: Optional[str]
+    requests: List[HTTPRequestType] = http_request.multipart_mixed_info[0]
+    boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
     main_message = Message()
@@ -202,13 +200,12 @@ def _serialize_request(http_request):
     return serializer.buffer
 
 def _decode_parts_helper(
-    response,  # type: PipelineTransportHttpResponseBase
-    message,  # type: Message
-    http_response_type,  # type: Type[PipelineTransportHttpResponseBase]
-    requests,  # type: List[PipelineTransportHttpRequest]
-    deserialize_response  # type: Callable
-):
-    # type: (...) -> List[PipelineTransportHttpResponse]
+    response: PipelineTransportHttpResponseBase,
+    message: Message,
+    http_response_type: Type[PipelineTransportHttpResponseBase],
+    requests: List[PipelineTransportHttpRequest],
+    deserialize_response: Callable
+) -> List[PipelineTransportHttpResponse]:
     """Helper for _decode_parts.
 
     Rebuild an HTTP response from pure string.
@@ -251,12 +248,11 @@ def _get_raw_parts_helper(response, http_response_type):
         + b"\r\n\r\n"
         + body_as_bytes
     )
-    message = message_parser(http_body)  # type: Message
+    message: Message = message_parser(http_body)
     requests = response.request.multipart_mixed_info[0]
     return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
 
-def _parts_helper(response):
-    # type: (PipelineTransportHttpResponse) -> Iterator[PipelineTransportHttpResponse]
+def _parts_helper(response: PipelineTransportHttpResponse) -> Iterator[PipelineTransportHttpResponse]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
     :rtype: iterator[HttpResponse]
@@ -269,7 +265,7 @@ def _parts_helper(response):
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
     if response.request.multipart_mixed_info:
-        policies = response.request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        policies: List[SansIOHTTPPolicy] = response.request.multipart_mixed_info[1]
 
         # Apply on_response concurrently to all requests
         import concurrent.futures
@@ -293,8 +289,7 @@ def _parts_helper(response):
 
     return responses
 
-def _format_data_helper(data):
-    # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
+def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -314,9 +309,8 @@ def _format_data_helper(data):
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
 
-def _aiohttp_body_helper(response):
+def _aiohttp_body_helper(response: PipelineTransportAioHttpTransportResponse) -> bytes:
     # pylint: disable=protected-access
-    # type: (PipelineTransportAioHttpTransportResponse) -> bytes
     """Helper for body method of Aiohttp responses.
 
     Since aiohttp body methods need decompression work synchronously,

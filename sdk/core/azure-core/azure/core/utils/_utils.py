@@ -8,7 +8,7 @@ import datetime
 from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, Union
 from datetime import timezone
 
-TZ_UTC = timezone.utc  # type: ignore
+TZ_UTC = timezone.utc
 
 class _FixedOffset(datetime.tzinfo):
     """Fixed offset in minutes east from UTC.

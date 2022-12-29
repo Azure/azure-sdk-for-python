@@ -16,7 +16,7 @@ from .serialization import NULL
 __all__ = ["CloudEvent"]
 
 
-class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
+class CloudEvent:  # pylint:disable=too-many-instance-attributes
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
 
@@ -72,21 +72,20 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     :vartype extensions: Dict
     """
 
-    def __init__(self, source, type, **kwargs):  # pylint: disable=redefined-builtin
-        # type: (str, str, **Any) -> None
-        self.source = source  # type: str
-        self.type = type  # type: str
-        self.specversion = kwargs.pop("specversion", "1.0")  # type: Optional[str]
-        self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: Optional[str]
-        self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: Optional[datetime]
+    def __init__(self, source: str, type: str, **kwargs) -> None:  # pylint: disable=redefined-builtin
+        self.source: str = source
+        self.type: str = type
+        self.specversion: Optional[str] = kwargs.pop("specversion", "1.0")
+        self.id: Optional[str] = kwargs.pop("id", str(uuid.uuid4()))
+        self.time: Optional[datetime] = kwargs.pop("time", datetime.now(TZ_UTC))
 
-        self.datacontenttype = kwargs.pop("datacontenttype", None)  # type: Optional[str]
-        self.dataschema = kwargs.pop("dataschema", None)  # type: Optional[str]
-        self.subject = kwargs.pop("subject", None)  # type: Optional[str]
-        self.data = kwargs.pop("data", None)  # type: Optional[object]
+        self.datacontenttype: Optional[str] = kwargs.pop("datacontenttype", None)
+        self.dataschema: Optional[str] = kwargs.pop("dataschema", None)
+        self.subject: Optional[str] = kwargs.pop("subject", None)
+        self.data: Optional[object] = kwargs.pop("data", None)
 
         try:
-            self.extensions = kwargs.pop("extensions")  # type: Optional[Dict]
+            self.extensions: Optional[Dict] = kwargs.pop("extensions")
             for key in self.extensions.keys():  # type:ignore # extensions won't be None here
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
@@ -108,15 +107,14 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         )[:1024]
 
     @classmethod
-    def from_dict(cls, event):
-        # type: (Dict) -> CloudEvent
+    def from_dict(cls, event: dict) -> CloudEvent:
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
         :type event: dict
         :rtype: CloudEvent
         """
-        kwargs = {}  # type: Dict[Any, Any]
+        kwargs: dict[Any, Any] = {}
         reserved_attr = [
             "data",
             "data_base64",
@@ -177,8 +175,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         return event_obj
 
     @classmethod
-    def from_json(cls, event):
-        # type: (Any) -> CloudEvent
+    def from_json(cls, event: Any) -> CloudEvent:
         """
         Returns the deserialized CloudEvent object when a json payload is provided.
         :param event: The json string that should be converted into a CloudEvent. This can also be

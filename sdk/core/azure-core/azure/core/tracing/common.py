@@ -46,8 +46,7 @@ __all__ = [
 ]
 
 
-def get_function_and_class_name(func, *args):
-    # type: (Callable, List[Any]) -> str
+def get_function_and_class_name(func: Callable, *args) -> str:
     """
     Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
     is `self`. If there are no arguments then it only returns the function name.
@@ -64,8 +63,7 @@ def get_function_and_class_name(func, *args):
         return func.__name__
 
 @contextmanager
-def change_context(span):
-    # type: (Optional[AbstractSpan]) -> Generator
+def change_context(span: Optional[AbstractSpan]) -> Generator:
     """Execute this block inside the given context and restore it afterwards.
 
     This does not start and ends the span, but just make sure all code is executed within
@@ -77,7 +75,7 @@ def change_context(span):
     :type span: AbstractSpan
     :rtype: contextmanager
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None or span is None:
         yield
     else:
@@ -95,15 +93,14 @@ def change_context(span):
                 span_impl_type.set_current_span(original_span)
 
 
-def with_current_context(func):
-    # type: (Callable) -> Any
+def with_current_context(func: Callable) -> Any:
     """Passes the current spans to the new context the function will be run in.
 
     :param func: The function that will be run in the new context
     :return: The func wrapped with correct context
     :rtype: callable
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None:
         return func
 

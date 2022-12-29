@@ -30,7 +30,7 @@ import logging
 from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
-import urllib3 # type: ignore
+import urllib3
 
 import requests
 
@@ -87,7 +87,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    @overload  # type: ignore
+    @overload
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
@@ -101,7 +101,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    @overload  # type: ignore
+    @overload
     async def send(self, request: "RestHttpRequest", **kwargs: Any) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -243,9 +243,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             raise
 
 
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs) # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)

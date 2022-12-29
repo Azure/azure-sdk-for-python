@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 
-class Configuration(object):
+class Configuration:
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
@@ -88,7 +88,7 @@ class Configuration(object):
         self.polling_interval = kwargs.get("polling_interval", 30)
 
 
-class ConnectionConfiguration(object):
+class ConnectionConfiguration:
     """HTTP transport connection configuration settings.
 
     Common properties that can be configured on all transports. Found in the

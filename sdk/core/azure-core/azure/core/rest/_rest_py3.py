@@ -105,7 +105,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if params:
             _format_parameters_helper(self, params)
         self._files = None
-        self._data = None  # type: Any
+        self._data: Any = None
 
         default_headers = self._set_body(
             content=content,
@@ -132,7 +132,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
     ) -> MutableMapping[str, str]:
         """Sets the body of the request, and returns the default headers
         """
-        default_headers = {}  # type: MutableMapping[str, str]
+        default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data

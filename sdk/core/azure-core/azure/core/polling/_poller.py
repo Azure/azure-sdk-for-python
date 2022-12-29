@@ -41,28 +41,22 @@ _LOGGER = logging.getLogger(__name__)
 class PollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method.
     """
-    def initialize(self, client, initial_response, deserialization_callback):
-        # type: (Any, Any, Any) -> None
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    def run(self):
-        # type: () -> None
+    def run(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self):
-        # type: () -> bool
+    def finished(self) -> bool:
         raise NotImplementedError("This method needs to be implemented")
 
-    def resource(self):
-        # type: () -> PollingReturnType
+    def resource(self) -> PollingReturnType:
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_continuation_token(self):
-        # type() -> str
+    def get_continuation_token(self) -> str:
         raise TypeError(
             "Polling method '{}' doesn't support get_continuation_token".format(
                 self.__class__.__name__
@@ -70,8 +64,7 @@ class PollingMethod(Generic[PollingReturnType]):
         )
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> Tuple[Any, Any, Callable]
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         raise TypeError(
             "Polling method '{}' doesn't support from_continuation_token".format(
                 cls.__name__
@@ -86,44 +79,37 @@ class NoPolling(PollingMethod):
         self._initial_response = None
         self._deserialization_callback = None
 
-    def initialize(self, _, initial_response, deserialization_callback):
-        # type: (Any, Any, Callable) -> None
+    def initialize(self, _: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
-    def run(self):
-        # type: () -> None
+    def run(self) -> None:
         """Empty run, no polling.
         """
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         """Return the current status as a string.
 
         :rtype: str
         """
         return "succeeded"
 
-    def finished(self):
-        # type: () -> bool
+    def finished(self) -> bool:
         """Is this polling finished?
 
         :rtype: bool
         """
         return True
 
-    def resource(self):
-        # type: () -> Any
+    def resource(self) -> Any:
         return self._deserialization_callback(self._initial_response)
 
-    def get_continuation_token(self):
-        # type() -> str
+    def get_continuation_token(self) -> str:
         import pickle
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> Tuple
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple:
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
@@ -147,9 +133,8 @@ class LROPoller(Generic[PollingReturnType]):
     :type polling_method: ~azure.core.polling.PollingMethod
     """
 
-    def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
-        self._callbacks = []  # type: List[Callable]
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Callable, polling_method: PollingMethod[PollingReturnType]) -> None:
+        self._callbacks: List[Callable] = []
         self._polling_method = polling_method
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
@@ -203,14 +188,12 @@ class LROPoller(Generic[PollingReturnType]):
                 call(self._polling_method)
             callbacks, self._callbacks = self._callbacks, []
 
-    def polling_method(self):
-        # type: () -> PollingMethod[PollingReturnType]
+    def polling_method(self) -> PollingMethod[PollingReturnType]:
         """Return the polling method associated to this poller.
         """
         return self._polling_method
 
-    def continuation_token(self):
-        # type: () -> str
+    def continuation_token(self) -> str:
         """Return a continuation token that allows to restart the poller later.
 
         :returns: An opaque continuation token
@@ -219,15 +202,13 @@ class LROPoller(Generic[PollingReturnType]):
         return self._polling_method.get_continuation_token()
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):
-        # type: (PollingMethod[PollingReturnType], str, Any) -> LROPoller[PollingReturnType]
+    def from_continuation_token(cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs) -> LROPoller[PollingReturnType]:
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         """Returns the current status string.
 
         :returns: The current status string
@@ -235,8 +216,7 @@ class LROPoller(Generic[PollingReturnType]):
         """
         return self._polling_method.status()
 
-    def result(self, timeout=None):
-        # type: (Optional[int]) -> PollingReturnType
+    def result(self, timeout: Optional[float]=None) -> PollingReturnType:
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
@@ -248,8 +228,7 @@ class LROPoller(Generic[PollingReturnType]):
         return self._polling_method.resource()
 
     @distributed_trace
-    def wait(self, timeout=None):
-        # type: (Optional[float]) -> None
+    def wait(self, timeout: Optional[float]=None) -> None:
         """Wait on the long running operation for a specified length
         of time. You can check if this call as ended with timeout with the
         "done()" method.
@@ -268,8 +247,7 @@ class LROPoller(Generic[PollingReturnType]):
         except TypeError: # Was None
             pass
 
-    def done(self):
-        # type: () -> bool
+    def done(self) -> bool:
         """Check status of the long running operation.
 
         :returns: 'True' if the process has completed, else 'False'.
@@ -277,8 +255,7 @@ class LROPoller(Generic[PollingReturnType]):
         """
         return self._thread is None or not self._thread.is_alive()
 
-    def add_done_callback(self, func):
-        # type: (Callable) -> None
+    def add_done_callback(self, func: Callable) -> None:
         """Add callback function to be run once the long running operation
         has completed - regardless of the status of the operation.
 
@@ -291,8 +268,7 @@ class LROPoller(Generic[PollingReturnType]):
         # Let's add them still, for consistency (if you wish to access to it for some reasons)
         self._callbacks.append(func)
 
-    def remove_done_callback(self, func):
-        # type: (Callable) -> None
+    def remove_done_callback(self, func: Callable) -> None:
         """Remove a callback from the long running operation.
 
         :param callable func: The function to be removed from the callbacks.

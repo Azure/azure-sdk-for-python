@@ -61,11 +61,10 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(self):
-        self.next = None # type: Union[HTTPPolicy, HttpTransport]
+        self.next: Union[HTTPPolicy, HttpTransport] = None
 
     @abc.abstractmethod
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
@@ -89,16 +88,14 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> Union[None, Awaitable[None]]
+    def on_request(self, request: PipelineRequest) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> Union[None, Awaitable[None]]
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -108,8 +105,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     # pylint: disable=no-self-use
-    def on_exception(self, request):  # pylint: disable=unused-argument
-        # type: (PipelineRequest) -> None
+    def on_exception(self, request: PipelineRequest) -> None:  # pylint: disable=unused-argument
         """Is executed if an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -141,8 +137,7 @@ class RequestHistory(object):
     :param dict context: The pipeline context.
     """
 
-    def __init__(self, http_request, http_response=None, error=None, context=None):
-        # type: (HTTPRequestType, Optional[HTTPResponseType], Exception, Optional[Dict[str, Any]]) -> None
+    def __init__(self, http_request: HTTPRequestType, http_response: Optional[HTTPResponseType]=None, error: Exception=None, context: Optional[Dict[str, Any]]=None) -> None:
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response
         self.error = error

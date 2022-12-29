@@ -46,9 +46,9 @@ ResponseType = TypeVar("ResponseType")
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
         self,
-        get_next,  # type: Callable[[Optional[str]], ResponseType]
-        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
-        continuation_token=None,  # type: Optional[str]
+        get_next: Callable[[Optional[str]], ResponseType],
+        extract_data: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]],
+        continuation_token: Optional[str]=None,
     ):
         """Return an iterator of pages.
 
@@ -61,15 +61,14 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._response = None  # type: Optional[ResponseType]
-        self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._response: Optional[ResponseType] = None
+        self._current_page: Optional[Iterable[ReturnType]] = None
 
     def __iter__(self):
         """Return 'self'."""
         return self
 
-    def __next__(self):
-        # type: () -> Iterator[ReturnType]
+    def __next__(self) -> Iterator[ReturnType]:
         if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
         try:
@@ -84,8 +83,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self.continuation_token, self._current_page = self._extract_data(self._response)
 
         return iter(self._current_page)
-
-    next = __next__  # Python 2 compatibility.
 
 
 class ItemPaged(Iterator[ReturnType]):
@@ -126,5 +123,3 @@ class ItemPaged(Iterator[ReturnType]):
         if self._page_iterator is None:
             self._page_iterator = itertools.chain.from_iterable(self.by_page())
         return next(self._page_iterator)
-
-    next = __next__  # Python 2 compatibility.

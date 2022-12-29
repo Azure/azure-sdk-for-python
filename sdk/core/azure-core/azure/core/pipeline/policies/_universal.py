@@ -75,8 +75,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a headers policy.
     """
-    def __init__(self, base_headers=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Dict[str, str], Any) -> None
+    def __init__(self, base_headers: Dict[str, str]=None, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self._headers = base_headers or {}
         self._headers.update(kwargs.pop('headers', {}))
 
@@ -85,7 +84,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """The current headers collection."""
         return self._headers
 
-    def add_header(self, key, value):
+    def add_header(self, key: str, value: str) -> None:
         """Add a header to the configuration to be applied to all requests.
 
         :param str key: The header.
@@ -93,8 +92,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """
         self._headers[key] = value
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Updates with the given headers before sending the request to the next policy.
 
         :param request: The PipelineRequest object
@@ -128,19 +126,17 @@ class RequestIdPolicy(SansIOHTTPPolicy):
             :caption: Configuring a request id policy.
     """
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (dict) -> None
         self._request_id = kwargs.pop('request_id', _Unset)
         self._auto_request_id = kwargs.pop('auto_request_id', True)
 
-    def set_request_id(self, value):
+    def set_request_id(self, value: str):
         """Add the request id to the configuration to be applied to all requests.
 
         :param str value: The request id value.
         """
         self._request_id = value
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Updates with the given request id before sending the request to the next policy.
 
         :param request: The PipelineRequest object
@@ -188,8 +184,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
-    def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Optional[str], **Any) -> None
+    def __init__(self, base_user_agent: Optional[str]=None, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
         application_id = kwargs.pop('user_agent', None)
@@ -208,8 +203,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
             self._user_agent = "{} {}".format(application_id, self._user_agent)
 
     @property
-    def user_agent(self):
-        # type: () -> str
+    def user_agent(self) -> str:
         """The current user agent value."""
         if self.use_env:
             add_user_agent_header = os.environ.get(self._ENV_ADDITIONAL_USER_AGENT, None)
@@ -217,15 +211,13 @@ class UserAgentPolicy(SansIOHTTPPolicy):
                 return "{} {}".format(self._user_agent, add_user_agent_header)
         return self._user_agent
 
-    def add_user_agent(self, value):
-        # type: (str) -> None
+    def add_user_agent(self, value: str) -> None:
         """Add value to current user agent with a space.
         :param str value: value to add to user agent.
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Modifies the User-Agent header before the request is sent.
 
         :param request: The PipelineRequest object
@@ -265,8 +257,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request):  # pylint: disable=too-many-return-statements
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=too-many-return-statements
         """Logs HTTP request to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -309,8 +300,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         """Logs HTTP response to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -416,8 +406,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
         ]
         return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
-    def on_request(self, request):  # pylint: disable=too-many-return-statements
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=too-many-return-statements
         """Logs HTTP method, url and headers.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -489,8 +478,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         http_response = response.http_response
 
         try:
@@ -528,16 +516,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
-    def __init__(self, response_encoding=None, **kwargs):  # pylint: disable=unused-argument
-        # type: (Optional[str], Any) -> None
+    def __init__(self, response_encoding: Optional[str]=None, **kwargs) -> None:  # pylint: disable=unused-argument
         self._response_encoding = response_encoding
 
     @classmethod
     def deserialize_from_text(
-        cls,  # type: Type[ContentDecodePolicyType]
-        data,  # type: Optional[Union[AnyStr, IO]]
-        mime_type=None,  # Optional[str]
-        response=None  # Optional[Union[HttpResponse, AsyncHttpResponse]]
+        cls: Type[ContentDecodePolicyType],
+        data: Optional[Union[AnyStr, IO]],
+        mime_type: Optional[str]=None,
+        response: Optional[Union[HttpResponse, AsyncHttpResponse]]=None
     ):
         """Decode response data according to content-type.
 
@@ -600,9 +587,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_http_generics(
-        cls,  # type: Type[ContentDecodePolicyType]
-        response,  # Union[HttpResponse, AsyncHttpResponse]
-        encoding=None,  # Optional[str]
+        cls: Type[ContentDecodePolicyType],
+        response: Union[HttpResponse, AsyncHttpResponse],
+        encoding: Optional[str]=None,
     ):
         """Deserialize from HTTP response.
 
@@ -638,18 +625,16 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 response.read()
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         options = request.context.options
         response_encoding = options.pop("response_encoding", self._response_encoding)
         if response_encoding:
             request.context["response_encoding"] = response_encoding
 
     def on_response(self,
-        request, # type: PipelineRequest[HTTPRequestType]
-        response  # type: PipelineResponse[HTTPRequestType, Union[HttpResponse, AsyncHttpResponse]]
-    ):
-        # type: (...) -> None
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, Union[HttpResponse, AsyncHttpResponse]]
+    ) -> None:
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
@@ -699,8 +684,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
     def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         ctxt = request.context.options
         if self.proxies and "proxies" not in ctxt:
             ctxt["proxies"] = self.proxies

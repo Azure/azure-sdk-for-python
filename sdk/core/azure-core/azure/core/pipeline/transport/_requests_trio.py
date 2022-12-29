@@ -121,16 +121,16 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise
 
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
+class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
         """Generator for streaming response data.
         """
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
-class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
+class TrioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 
@@ -152,7 +152,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
-    @overload  # type: ignore
+    @overload
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
@@ -166,7 +166,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    @overload  # type: ignore
+    @overload
     async def send(self, request: "RestHttpRequest", **kwargs: Any) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
         """Send an `azure.core.rest` request using this HTTP sender.
 
