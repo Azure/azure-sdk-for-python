@@ -45,7 +45,8 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
+    Type,
+    AnyStr
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -155,10 +156,10 @@ class HttpRequest(object):
     :param dict[str,str] headers: HTTP headers
     :param files: Files list.
     :param data: Body to be sent.
-    :type data: bytes or str.
+    :type data: bytes
     """
 
-    def __init__(self, method: str, url: str, headers:Mapping[str, str]=None, files: Any=None, data: Any=None) -> None:
+    def __init__(self, method: str, url: str, headers:Mapping[str, str]=None, files: Any=None, data: bytes=None) -> None:
         self.method = method
         self.url = url
         self.headers = case_insensitive_dict(headers)
@@ -193,10 +194,10 @@ class HttpRequest(object):
         return {}
 
     @property
-    def body(self) -> bytes:
+    def body(self) -> Optional[bytes]:
         """Alias to data.
 
-        :rtype: bytes
+        :rtype: bytes or str
         """
         return self.data
 
@@ -353,7 +354,7 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
-class _HttpResponseBase(object):
+class _HttpResponseBase:
     """Represent a HTTP response.
 
     No body is defined here on purpose, since async pipeline
@@ -406,7 +407,7 @@ class _HttpResponseBase(object):
         """Raises an HttpResponseError if the response has an error status code.
         If response is good, does nothing.
         """
-        if self.status_code >= 400:
+        if not self.status_code or self.status_code >= 400:
             raise HttpResponseError(response=self)
 
     def __repr__(self):
@@ -571,7 +572,7 @@ class PipelineClientBase(object):
         params: Optional[Dict[str, str]]=None,
         headers: Optional[Dict[str, str]]=None,
         content: Any=None,
-        form_content:: Optional[Dict[str, Any]]=None,
+        form_content: Optional[Dict[str, Any]]=None,
     ) -> HttpRequest:
         """Create a GET request object.
 

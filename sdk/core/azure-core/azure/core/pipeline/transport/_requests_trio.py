@@ -121,10 +121,10 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise
 
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
+class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
@@ -152,7 +152,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
-    @overload
+    @overload   # type: ignore
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 

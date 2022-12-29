@@ -87,7 +87,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    @overload
+    @overload  # type: ignore
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
@@ -243,9 +243,9 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             raise
 
 
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)

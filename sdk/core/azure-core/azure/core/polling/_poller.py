@@ -27,7 +27,7 @@ import base64
 import logging
 import threading
 import uuid
-from typing import TypeVar, Generic, Any, Callable, List, Optional
+from typing import TypeVar, Generic, Any, Callable, List, Optional, Tuple
 from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
@@ -109,7 +109,7 @@ class NoPolling(PollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple:
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:

@@ -141,7 +141,6 @@ class AzureNamedKeyCredential:
         return self._credential
 
     def update(self, name: str, key: str) -> None:
-        # type: (str, str) -> None
         """Update the named key credential.
 
         Both name and key must be provided in order to update the named key credential.

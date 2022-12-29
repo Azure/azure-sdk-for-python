@@ -612,17 +612,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         # Rely on transport implementation to give me "text()" decoded correctly
         if hasattr(response, "read"):
-            try:
-                # since users can call deserialize_from_http_generics by themselves
-                # we want to make sure our new responses are read before we try to
-                # deserialize. Only read sync responses since we're in a sync function
-                if not inspect.iscoroutinefunction(response.read):
-                    response.read()
-            except AttributeError:
-                # raises an AttributeError in 2.7 bc inspect.iscoroutinefunction was added in 3.5
-                # Entering here means it's 2.7 and that the response has a read method, so we read
-                # bc it will be sync.
-                response.read()
+            # since users can call deserialize_from_http_generics by themselves
+            # we want to make sure our new responses are read before we try to
+            # deserialize. Only read sync responses since we're in a sync function
+            #
+            # Technically HttpResponse do not contain a "read()", but we don't know what
+            # people have been able to pass here, so keep this code for safety,
+            # even if it's likely dead code
+            if not inspect.iscoroutinefunction(response.read):  # type: ignore
+                response.read()  # type: ignore
         return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
     def on_request(self, request: PipelineRequest) -> None:

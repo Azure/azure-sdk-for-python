@@ -27,7 +27,7 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Union
+from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -467,7 +467,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
 
     @classmethod
-    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple:
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         try:
             client = kwargs["client"]
         except KeyError:
