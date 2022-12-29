@@ -6,6 +6,7 @@
 
 import time
 import types
+from functools import partial
 from inspect import Parameter, signature
 from typing import Callable, Dict, Iterable, Optional, Union, List, Any
 
@@ -520,6 +521,46 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+        """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
+
+        This is a hack operation.
+
+        parallel_node.task.code won't be resolved directly for now, but it will be resolved if
+        parallel_node.task is a reference to parallel_node.component.task. Then when filling back
+        parallel_node.component.task.code, parallel_node.task.code will be changed as well.
+
+        However, if we enable in-memory/on-disk cache for component resolution, such change
+        won't happen, so we resolve node level task code manually here.
+
+        Note that we will always use resolved node.component.code to fill back node.task.code
+        given code overwrite on parallel node won't take effect for now. This is to make behaviors
+        consistent across os and python versions.
+
+        The ideal solution should be done after PRS team decides how to handle parallel.task.code
+        """
+        from azure.ai.ml.entities import Parallel, ParallelComponent
+        if not isinstance(node, Parallel):
+            return
+        component = node._component  # pylint: disable=protected-access
+        if not isinstance(component, ParallelComponent):
+            return
+        if not node.task:
+            return
+        # Note: please do not use id(node.task) == id(component.task) as
+        # the judgement behavior different in ci on different os & python versions.
+        if node.task.code:
+            _try_resolve_code_for_component(
+                component,
+                get_arm_id_and_fill_back=resolver,
+            )
+            node.task.code = component.code
+        if node.task.environment:
+            node.task.environment = resolver(
+                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+            )
+
+    @classmethod
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
@@ -638,13 +679,20 @@ class ComponentOperations(_ScopeDependentOperations):
             component,
             extra_operations=[
                 self._set_default_display_name_for_anonymous_component_in_node,
+                partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
             ]
         )
 
         # cache anonymous component only for now
         # request level in-memory cache can be a better solution for other type of assets as they are
         # relatively simple and of small number of distinct instances
-        component_cache = CachedNodeResolver(resolver=resolver)
+        component_cache = CachedNodeResolver(
+            resolver=resolver,
+            subscription_id=self._subscription_id,
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            registry_name=self._registry_name,
+        )
 
         # Deeper layer nodes will be resolved first so that all dependencies have already been resolved when
         # trying to resolve nodes in upper layer.

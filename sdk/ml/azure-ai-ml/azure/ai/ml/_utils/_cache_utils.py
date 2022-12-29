@@ -5,6 +5,7 @@ import hashlib
 import logging
 import os.path
 import tempfile
+import threading
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -40,7 +41,7 @@ class CachedNodeResolver(object):
     """Class to resolve component in nodes with cached component resolution results.
 
     This class is thread-safe if:
-    1) self._resolve_nodes is not called concurrently in the same main thread
+    1) self._resolve_nodes is not called concurrently. We guarantee this with a lock in self.resolve_nodes.
     2) self._resolve_component is only called concurrently on independent components
         a) we have used an in-memory component hash to deduplicate components to resolve first;
         b) nodes are registered & resolved layer by layer, so all child components are already resolved
@@ -49,10 +50,28 @@ class CachedNodeResolver(object):
           calling self._resolve_component.
     """
 
-    def __init__(self, resolver):
+    def __init__(
+        self,
+        resolver,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        registry_name: str,
+    ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
+
+        self._subscription_id = subscription_id
+        self._resource_group_name = resource_group_name
+        self._workspace_name = workspace_name
+
+        object_hash = hashlib.sha256()
+        for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
+            object_hash.update(str(s).encode("utf-8"))
+        self._workspace_hash = object_hash.hexdigest()
+
+        self._lock = threading.Lock()
 
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
@@ -93,47 +112,49 @@ class CachedNodeResolver(object):
             if code is None or code._is_remote:  # pylint: disable=protected-access
                 return in_memory_hash
 
-            object_hash = hashlib.sha256()
-            object_hash.update(in_memory_hash.encode("utf-8"))
             if hasattr(code, "_upload_hash"):
                 content_hash = code._upload_hash  # pylint: disable=protected-access
             else:
                 path = code.path if os.path.isabs(code.path) else os.path.join(code.base_path, code.path)
-                content_hash = get_object_hash(path, code._ignore_file)  # pylint: disable=protected-access
+                if os.path.exists(path):
+                    content_hash = get_object_hash(path)
+                else:
+                    # this will be gated by schema validation, so it shouldn't happen except for mock tests
+                    return in_memory_hash
+
+            object_hash = hashlib.sha256()
+            object_hash.update(in_memory_hash.encode("utf-8"))
+
             object_hash.update(content_hash.encode("utf-8"))
             return _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
 
     @staticmethod
-    def _get_on_disk_cache_base_dir() -> Path:
+    def get_on_disk_cache_base_dir() -> Path:
         """Get the base path for on disk cache."""
         from azure.ai.ml._version import VERSION
         return Path(tempfile.gettempdir()).joinpath(".azureml", "azure-ai-ml", VERSION, "cache", "components")
 
-    @staticmethod
-    def _get_on_disk_cache_path(on_disk_hash: str) -> Path:
+    def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
         """Get the on disk cache path for a component."""
-        return CachedNodeResolver._get_on_disk_cache_base_dir().joinpath(on_disk_hash)
+        return self.get_on_disk_cache_base_dir().joinpath(self._workspace_hash, on_disk_hash)
 
-    @staticmethod
-    def _load_from_on_disk_cache(on_disk_hash: str) -> Optional[str]:
+    def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache."""
-        on_disk_cache_path = CachedNodeResolver._get_on_disk_cache_path(on_disk_hash)
+        on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file():
             return on_disk_cache_path.read_text().strip()
         return None
 
-    @staticmethod
-    def _save_to_on_disk_cache(on_disk_hash: str, arm_id: str) -> None:
+    def _save_to_on_disk_cache(self, on_disk_hash: str, arm_id: str) -> None:
         """Save component arm id to on disk cache."""
         # this shouldn't happen in real case, but in case of current mock tests and potential future changes
         if not isinstance(arm_id, str):
             return
-        on_disk_cache_path = CachedNodeResolver._get_on_disk_cache_path(on_disk_hash)
+        on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         on_disk_cache_path.write_text(arm_id)
 
-    @staticmethod
-    def _resolve_cache_contents(cache_contents_to_resolve: List[_CacheContent], resolver):
+    def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
         """Resolve all components to resolve and save the results in cache.
         """
         _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
@@ -149,7 +170,7 @@ class CachedNodeResolver(object):
                 azureml_type=AzureMLResourceType.COMPONENT
             )
             if is_on_disk_cache_enabled():
-                CachedNodeResolver._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
+                self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
 
     def _prepare_items_to_resolve(self):
         """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve.
@@ -176,9 +197,8 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.clear()
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
-    @classmethod
     def _resolve_cache_contents_from_disk(
-        cls,
+        self,
         cache_contents_to_resolve: List[_CacheContent]
     ) -> List[_CacheContent]:
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return
@@ -187,7 +207,7 @@ class CachedNodeResolver(object):
         # Note that we should recalculate the hash based on code for local cache, as
         # we can't assume that the code folder won't change among dependency resolution
         for cache_content in cache_contents_to_resolve:
-            cache_content.on_disk_hash = cls._get_on_disk_hash_for_component(
+            cache_content.on_disk_hash = self._get_on_disk_hash_for_component(
                 cache_content.component_ref,
                 cache_content.in_memory_hash
             )
@@ -195,7 +215,7 @@ class CachedNodeResolver(object):
         left_cache_contents_to_resolve = []
         # need to deduplicate disk hash first if concurrent resolution is enabled
         for cache_content in cache_contents_to_resolve:
-            cache_content.arm_id = cls._load_from_on_disk_cache(cache_content.on_disk_hash)
+            cache_content.arm_id = self._load_from_on_disk_cache(cache_content.on_disk_hash)
             if not cache_content.arm_id:
                 left_cache_contents_to_resolve.append(cache_content)
 
@@ -206,18 +226,6 @@ class CachedNodeResolver(object):
         for component_hash, nodes in dict_of_nodes_to_resolve.items():
             cache_content = self._cache[component_hash]
             for node in nodes:
-                # hack: parallel.task.code won't be resolved for now, but parallel.task can be a reference
-                # to parallel._component.task, then it will change to an arm id after resolving parallel._component
-                # However, if we have avoided duplicate resolution with in-memory cache, such change won't happen,
-                # so we need to do it manually here
-                # The ideal solution should be done after PRS team decides how to handle parallel.task.code
-                from azure.ai.ml.entities import ParallelComponent, Parallel
-                resolved_component = cache_content.component_ref
-                if isinstance(node, Parallel) and isinstance(resolved_component, ParallelComponent):
-                    origin_component: ParallelComponent = node._component  # pylint: disable=protected-access
-                    if id(node.task) == id(origin_component.task):
-                        node.task.code = resolved_component.task.code
-
                 node._component = cache_content.arm_id  # pylint: disable=protected-access
 
     def _resolve_nodes(self):
@@ -259,4 +267,7 @@ class CachedNodeResolver(object):
         if not self._nodes_to_resolve:
             return
 
+        # all nodes will be skipped on register_node_to_resolve when resolving subgraph
+        self._lock.acquire()
         self._resolve_nodes()
+        self._lock.release()

@@ -559,9 +559,8 @@ def mock_component_hash(mocker: MockFixture):
         # change on hash component and we re-record test1, its version becomes `hash_b` in recording for test1,
         # but it's still `hash_a` in recording for test2.
         # So we need to clear on-disk cache for each test.
-        # Note: please disable on-disk cache manually if you want to run tests concurrently.
         from azure.ai.ml._utils._cache_utils import CachedNodeResolver
-        shutil.rmtree(CachedNodeResolver._get_on_disk_cache_base_dir(), ignore_errors=True)
+        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
 
 
 @pytest.fixture

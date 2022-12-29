@@ -772,7 +772,8 @@ def is_private_preview_enabled():
 
 
 def is_on_disk_cache_enabled():
-    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True] \
+        and is_private_preview_enabled()
 
 
 def is_internal_components_enabled():
