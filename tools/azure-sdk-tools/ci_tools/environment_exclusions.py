@@ -125,6 +125,7 @@ MYPY_OPT_OUT = [
 PYRIGHT_OPT_OUT = [
     "azure-agrifood-farming",
     "azure-ai-anomalydetector",
+    "azure-appconfiguration",
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
