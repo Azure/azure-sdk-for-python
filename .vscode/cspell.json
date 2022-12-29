@@ -881,8 +881,7 @@
         "posixpath",
         "SEPS",
         "wargs",
-        "pycache",
-        "ruamel"
+        "pycache"
       ]
     },
     {

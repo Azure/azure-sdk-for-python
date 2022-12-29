@@ -71,7 +71,10 @@ function Get-python-PackageLevelReadme($packageMetadata) {
 function Get-python-DocsMsTocData($packageMetadata, $docRepoLocation) {
   $packageLevelReadmeName = GetPackageLevelReadme -packageMetadata $packageMetadata
 
-  $packageTocHeader = GetDocsTocDisplayName $packageMetadata
+  $packageTocHeader = $packageMetadata.Package
+  if ($packageMetadata.DisplayName) {
+    $packageTocHeader = $packageMetadata.DisplayName
+  }
   $output = [PSCustomObject]@{
     PackageLevelReadmeHref = "~/docs-ref-services/{moniker}/$packageLevelReadmeName-readme.md"
     PackageTocHeader       = $packageTocHeader

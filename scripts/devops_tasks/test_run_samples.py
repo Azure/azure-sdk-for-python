@@ -79,9 +79,6 @@ TIMEOUT_SAMPLES = {
 
 # Add your library + sample file if you do not want a particular sample to be run
 IGNORED_SAMPLES = {
-    "azure-ai-ml": [
-        "ml_samples_authentication_sovereign_cloud.py"
-    ],
     "azure-eventgrid": [
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
