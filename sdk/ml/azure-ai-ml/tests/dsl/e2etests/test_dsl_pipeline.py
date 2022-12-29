@@ -25,7 +25,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
@@ -791,6 +791,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # TODO: optional_param_with_default should also exists
         assert len(pipeline_job.jobs["default_optional_component_1"].inputs) == 2
 
+    @pytest.mark.skipif(
+        not is_live(),
+        reason="TODO 2144070: recording is not stable for this test before the fix after we enable on-disk cache",
+    )
     def test_pipeline_with_none_parameter_has_default_optional_false(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -1471,14 +1475,14 @@ class TestDSLPipeline(AzureRecordedTestCase):
             hello_world_component_mpi.distribution.process_count_per_instance = 2
 
         pipeline: PipelineJob = pipeline_distribution_components(10, job_input)
-        assert mpi_func._is_anonymous is False
         assert pipeline.settings.continue_on_step_failure is False
         created_job: PipelineJob = client.jobs.create_or_update(
             pipeline, experiment_name=experiment_name, continue_on_step_failure=True
         )
         # continue_on_step_failure can't be set in create_or_update
         assert created_job.settings.continue_on_step_failure is False
-        assert mpi_func._is_anonymous is True
+        assert created_job.jobs["hello_world_component_mpi"].component.startswith(ANONYMOUS_COMPONENT_NAME)
+        assert created_job.jobs["helloworld_component"].component == 'microsoftsamples_command_component_basic:0.0.1'
         assert hello_world_func._is_anonymous is False
         assert origin_id == hello_world_func.id
 
