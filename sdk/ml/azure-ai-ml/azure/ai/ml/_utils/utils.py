@@ -898,7 +898,7 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
+def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
