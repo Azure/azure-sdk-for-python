@@ -21,9 +21,9 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_SAS_POLICY']
 EVENTHUB_KEY = os.environ['EVENT_HUB_SAS_KEY']
 
-credential: AzureNamedKeyCredential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
+credential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
 
-producer_client: EventHubProducerClient = EventHubProducerClient(
+producer_client = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
     credential=credential,
