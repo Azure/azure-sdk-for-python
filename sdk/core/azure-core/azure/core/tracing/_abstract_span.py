@@ -230,7 +230,7 @@ class HttpSpanMixin(_MIXIN_BASE):
             self.add_attribute(self._HTTP_STATUS_CODE, 504)
 
 
-class Link(object):
+class Link:
     """
     This is a wrapper class to link the context to the current tracer.
     :param headers: A dictionary of the request header as key value pairs.

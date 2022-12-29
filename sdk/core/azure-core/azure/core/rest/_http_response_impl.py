@@ -51,7 +51,7 @@ from ..utils._pipeline_transport_rest_shared import (
 )
 
 
-class _HttpResponseBackcompatMixinBase(object):
+class _HttpResponseBackcompatMixinBase:
     """Base Backcompat mixin for responses.
 
     This mixin is used by both sync and async HttpResponse

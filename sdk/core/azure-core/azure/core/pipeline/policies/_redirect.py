@@ -37,7 +37,7 @@ from ._base import HTTPPolicy, RequestHistory
 _LOGGER = logging.getLogger(__name__)
 
 
-class RedirectPolicyBase(object):
+class RedirectPolicyBase:
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 

@@ -54,7 +54,7 @@ class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Fixed = "fixed"
 
 
-class RetryPolicyBase(object):
+class RetryPolicyBase:
     # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120

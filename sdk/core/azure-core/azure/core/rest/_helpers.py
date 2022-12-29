@@ -187,7 +187,7 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
 
 
-class HttpRequestBackcompatMixin(object):
+class HttpRequestBackcompatMixin:
     def __getattr__(self, attr):
         backcompat_attrs = [
             "files",

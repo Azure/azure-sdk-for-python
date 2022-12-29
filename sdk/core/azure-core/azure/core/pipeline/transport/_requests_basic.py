@@ -139,7 +139,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.text
 
 
-class StreamDownloadGenerator(object):
+class StreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object

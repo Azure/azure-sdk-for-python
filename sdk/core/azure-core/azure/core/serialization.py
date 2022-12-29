@@ -15,7 +15,7 @@ __all__ = ["NULL", "AzureJSONEncoder"]
 TZ_UTC = timezone.utc
 
 
-class _Null(object):
+class _Null:
     """To create a Falsy object"""
 
     def __bool__(self):

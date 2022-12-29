@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 
 # pylint:disable=too-few-public-methods
-class _BearerTokenCredentialPolicyBase(object):
+class _BearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
 
     :param credential: The credential.

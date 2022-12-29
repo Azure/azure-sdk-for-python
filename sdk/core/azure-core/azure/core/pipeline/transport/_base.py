@@ -141,7 +141,7 @@ class HttpTransport(
         time.sleep(duration)
 
 
-class HttpRequest(object):
+class HttpRequest:
     """Represents a HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
@@ -496,7 +496,7 @@ def _deserialize_response(
     return http_response_type(http_request, response)
 
 
-class PipelineClientBase(object):
+class PipelineClientBase:
     """Base class for pipeline clients.
 
     :param str base_url: URL for the request.

@@ -128,7 +128,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         return
 
 
-class RequestHistory(object):
+class RequestHistory:
     """A container for an attempted request and the applicable response.
 
     This is used to document requests/responses that resulted in redirected/retried requests.

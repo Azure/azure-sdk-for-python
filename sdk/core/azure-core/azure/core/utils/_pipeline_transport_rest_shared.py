@@ -52,7 +52,7 @@ if TYPE_CHECKING:
 binary_type = str
 
 
-class BytesIOSocket(object):
+class BytesIOSocket:
     """Mocking the "makefile" of socket for HTTPResponse.
     This can be used to create a http.client.HTTPResponse object
     based on bytes and not a real socket.

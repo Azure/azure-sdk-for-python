@@ -114,7 +114,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
             request.http_request.headers.update(additional_headers)
 
 
-class _Unset(object):
+class _Unset:
     pass
 
 
