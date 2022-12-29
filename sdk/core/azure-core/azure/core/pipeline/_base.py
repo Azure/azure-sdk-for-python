@@ -121,7 +121,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             :caption: Builds the pipeline for synchronous transport.
     """
 
-    def __init__(self, transport: HttpTransportType, policies: PoliciesType=None) -> None:
+    def __init__(
+        self, transport: HttpTransportType, policies: PoliciesType = None
+    ) -> None:
         self._impl_policies: List[HTTPPolicy] = []
         self._transport = transport
 
@@ -148,7 +150,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info   # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:
             return
 

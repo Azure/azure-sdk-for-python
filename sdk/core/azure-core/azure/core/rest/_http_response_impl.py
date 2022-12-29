@@ -30,11 +30,16 @@ from ._helpers import (
     get_charset_encoding,
     decode_to_text,
 )
-from ..exceptions import HttpResponseError, ResponseNotReadError, StreamConsumedError, StreamClosedError
+from ..exceptions import (
+    HttpResponseError,
+    ResponseNotReadError,
+    StreamConsumedError,
+    StreamClosedError,
+)
 from ._rest_py3 import (
     _HttpResponseBase,
     HttpResponse as _HttpResponse,
-    HttpRequest as _HttpRequest
+    HttpRequest as _HttpRequest,
 )
 from ..utils._utils import case_insensitive_dict
 from ..utils._pipeline_transport_rest_shared import (
@@ -44,6 +49,7 @@ from ..utils._pipeline_transport_rest_shared import (
     _get_raw_parts_helper,
     _parts_helper,
 )
+
 
 class _HttpResponseBackcompatMixinBase(object):
     """Base Backcompat mixin for responses.
@@ -89,6 +95,7 @@ class _HttpResponseBackcompatMixinBase(object):
 
         Rebuild an HTTP response from pure string.
         """
+
         def _deserialize_response(
             http_response_as_bytes, http_request, http_response_type
         ):
@@ -102,7 +109,7 @@ class _HttpResponseBackcompatMixinBase(object):
             message,
             http_response_type or RestHttpClientTransportResponse,
             requests,
-            _deserialize_response
+            _deserialize_response,
         )
 
     def _get_raw_parts(self, http_response_type=None):
@@ -125,6 +132,7 @@ class _HttpResponseBackcompatMixinBase(object):
         """
         return self._stream_download_generator(pipeline, self, **kwargs)
 
+
 class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
     """Backcompat mixin for sync HttpResponses"""
 
@@ -142,7 +150,9 @@ class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         return _parts_helper(self)
 
 
-class _HttpResponseBaseImpl(_HttpResponseBase, _HttpResponseBackcompatMixinBase):  # pylint: disable=too-many-instance-attributes
+class _HttpResponseBaseImpl(
+    _HttpResponseBase, _HttpResponseBackcompatMixinBase
+):  # pylint: disable=too-many-instance-attributes
     """Base Implementation class for azure.core.rest.HttpRespone and azure.core.rest.AsyncHttpResponse
 
     Since the rest responses are abstract base classes, we need to implement them for each of our transport
@@ -170,7 +180,9 @@ class _HttpResponseBaseImpl(_HttpResponseBase, _HttpResponseBackcompatMixinBase)
         self._reason: str = kwargs.pop("reason")
         self._content_type: str = kwargs.pop("content_type")
         self._headers: MutableMapping[str, str] = kwargs.pop("headers")
-        self._stream_download_generator: Callable = kwargs.pop("stream_download_generator")
+        self._stream_download_generator: Callable = kwargs.pop(
+            "stream_download_generator"
+        )
         self._is_closed = False
         self._is_stream_consumed = False
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
@@ -260,7 +272,7 @@ class _HttpResponseBaseImpl(_HttpResponseBase, _HttpResponseBackcompatMixinBase)
         self._text = None  # clear text cache
         self._json = None  # clear json cache as well
 
-    def text(self, encoding: Optional[str]=None) -> str:
+    def text(self, encoding: Optional[str] = None) -> str:
         """Returns the response body as a string
 
         :param optional[str] encoding: The encoding you want to decode the text with. Can
@@ -318,7 +330,10 @@ class _HttpResponseBaseImpl(_HttpResponseBase, _HttpResponseBackcompatMixinBase)
             self.status_code, self.reason, content_type_str
         )
 
-class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcompatMixin):
+
+class HttpResponseImpl(
+    _HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcompatMixin
+):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.HttpResponse is an abstract base class, we need to
@@ -395,15 +410,19 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
             yield part
         self.close()
 
-class _RestHttpClientTransportResponseBackcompatBaseMixin(_HttpResponseBackcompatMixinBase):
 
+class _RestHttpClientTransportResponseBackcompatBaseMixin(
+    _HttpResponseBackcompatMixinBase
+):
     def body(self):
         if self._content is None:
             self._content = self.internal_response.read()
         return self.content
 
-class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClientTransportResponseBackcompatBaseMixin):
 
+class _RestHttpClientTransportResponseBase(
+    _HttpResponseBaseImpl, _RestHttpClientTransportResponseBackcompatBaseMixin
+):
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
         headers = case_insensitive_dict(internal_response.getheaders())
@@ -417,9 +436,11 @@ class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClien
             **kwargs
         )
 
-class RestHttpClientTransportResponse(_RestHttpClientTransportResponseBase, HttpResponseImpl):
-    """Create a Rest HTTPResponse from an http.client response.
-    """
+
+class RestHttpClientTransportResponse(
+    _RestHttpClientTransportResponseBase, HttpResponseImpl
+):
+    """Create a Rest HTTPResponse from an http.client response."""
 
     def iter_bytes(self, **kwargs):
         raise TypeError("We do not support iter_bytes for this transport response")

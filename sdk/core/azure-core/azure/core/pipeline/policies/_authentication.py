@@ -11,7 +11,12 @@ from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
+    from azure.core.credentials import (
+        AccessToken,
+        TokenCredential,
+        AzureKeyCredential,
+        AzureSasCredential,
+    )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -24,7 +29,9 @@ class _BearerTokenCredentialPolicyBase(object):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential: TokenCredential, *scopes: str, **kwargs) -> None:  # pylint:disable=unused-argument
+    def __init__(
+        self, credential: TokenCredential, *scopes: str, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
@@ -82,7 +89,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request: PipelineRequest, *scopes: str, **kwargs) -> None:
+    def authorize_request(
+        self, request: PipelineRequest, *scopes: str, **kwargs
+    ) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -122,7 +131,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
+    def on_challenge(
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -163,7 +174,10 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential: AzureKeyCredential, name: str, **kwargs) -> None:  # pylint: disable=unused-argument
+
+    def __init__(
+        self, credential: AzureKeyCredential, name: str, **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:
@@ -183,7 +197,10 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureSasCredential
     :raises: ValueError or TypeError
     """
-    def __init__(self, credential: AzureSasCredential, **kwargs) -> None:  # pylint: disable=unused-argument
+
+    def __init__(
+        self, credential: AzureSasCredential, **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

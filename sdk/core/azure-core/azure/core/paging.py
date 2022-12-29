@@ -48,7 +48,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self,
         get_next: Callable[[Optional[str]], ResponseType],
         extract_data: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]],
-        continuation_token: Optional[str]=None,
+        continuation_token: Optional[str] = None,
     ):
         """Return an iterator of pages.
 
@@ -99,7 +99,9 @@ class ItemPaged(Iterator[ReturnType]):
             "page_iterator_class", PageIterator
         )
 
-    def by_page(self, continuation_token: Optional[str] = None) -> Iterator[Iterator[ReturnType]]:
+    def by_page(
+        self, continuation_token: Optional[str] = None
+    ) -> Iterator[Iterator[ReturnType]]:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -113,7 +115,9 @@ class ItemPaged(Iterator[ReturnType]):
         )
 
     def __repr__(self):
-        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
+        return "<iterator object azure.core.paging.ItemPaged at {}>".format(
+            hex(id(self))
+        )
 
     def __iter__(self):
         """Return 'self'."""

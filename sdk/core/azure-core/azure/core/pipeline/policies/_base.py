@@ -38,7 +38,7 @@ from typing import (
 )  # pylint: disable=unused-import
 
 try:
-    from typing import Awaitable   # pylint: disable=unused-import
+    from typing import Awaitable  # pylint: disable=unused-import
 except ImportError:
     pass
 
@@ -49,6 +49,7 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
@@ -95,7 +96,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> Union[None, Awaitable[None]]:
+    def on_response(
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -105,7 +108,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     # pylint: disable=no-self-use
-    def on_exception(self, request: PipelineRequest) -> None:  # pylint: disable=unused-argument
+    def on_exception(
+        self, request: PipelineRequest
+    ) -> None:  # pylint: disable=unused-argument
         """Is executed if an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -137,7 +142,13 @@ class RequestHistory(object):
     :param dict context: The pipeline context.
     """
 
-    def __init__(self, http_request: HTTPRequestType, http_response: Optional[HTTPResponseType]=None, error: Exception=None, context: Optional[Dict[str, Any]]=None) -> None:
+    def __init__(
+        self,
+        http_request: HTTPRequestType,
+        http_response: Optional[HTTPResponseType] = None,
+        error: Exception = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> None:
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response
         self.error = error

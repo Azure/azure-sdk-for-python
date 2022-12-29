@@ -29,7 +29,8 @@ from typing import (
     Any,
     AsyncIterable,
     AsyncIterator,
-    Iterable, Iterator,
+    Iterable,
+    Iterator,
     Optional,
     Union,
     MutableMapping,
@@ -51,6 +52,7 @@ from ._helpers import (
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ################################## CLASSES ######################################
+
 
 class HttpRequest(HttpRequestBackcompatMixin):
     """An HTTP request.
@@ -130,8 +132,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         files: Optional[FilesType] = None,
         json: Any = None,
     ) -> MutableMapping[str, str]:
-        """Sets the body of the request, and returns the default headers
-        """
+        """Sets the body of the request, and returns the default headers"""
         default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -145,7 +146,9 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
+            default_headers, self._data = set_urlencoded_body(
+                data, has_files=bool(files)
+            )
         return default_headers
 
     @property
@@ -158,9 +161,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         return self._data or self._files
 
     def __repr__(self) -> str:
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None) -> "HttpRequest":
         try:
@@ -176,9 +177,9 @@ class HttpRequest(HttpRequestBackcompatMixin):
         except (ValueError, TypeError):
             return copy.copy(self)
 
+
 class _HttpResponseBase(abc.ABC):
-    """Base abstract base class for HttpResponses.
-    """
+    """Base abstract base class for HttpResponses."""
 
     @property
     @abc.abstractmethod
@@ -312,6 +313,7 @@ class _HttpResponseBase(abc.ABC):
         """
         ...
 
+
 class HttpResponse(_HttpResponseBase):
     """Abstract base class for HTTP responses.
 
@@ -373,6 +375,7 @@ class HttpResponse(_HttpResponseBase):
         return "<HttpResponse: {} {}{}>".format(
             self.status_code, self.reason, content_type_str
         )
+
 
 class AsyncHttpResponse(_HttpResponseBase):
     """Abstract base class for Async HTTP responses.

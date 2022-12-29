@@ -38,21 +38,21 @@ if TYPE_CHECKING:
     # importing both the py3 RestHttpRequest and the fallback RestHttpRequest
     from azure.core.rest._rest_py3 import HttpRequest as RestHttpRequestPy3
     from azure.core.pipeline.transport import (
-        HttpRequest as PipelineTransportHttpRequest
+        HttpRequest as PipelineTransportHttpRequest,
     )
-    HTTPRequestType = Union[
-        RestHttpRequestPy3, PipelineTransportHttpRequest
-    ]
+
+    HTTPRequestType = Union[RestHttpRequestPy3, PipelineTransportHttpRequest]
     from ..pipeline.policies import SansIOHTTPPolicy
     from azure.core.pipeline.transport import (
         HttpResponse as PipelineTransportHttpResponse,
         AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
     )
     from azure.core.pipeline.transport._base import (
-        _HttpResponseBase as PipelineTransportHttpResponseBase
+        _HttpResponseBase as PipelineTransportHttpResponseBase,
     )
 
 binary_type = str
+
 
 class BytesIOSocket(object):
     """Mocking the "makefile" of socket for HTTPResponse.
@@ -65,6 +65,7 @@ class BytesIOSocket(object):
 
     def makefile(self, *_):
         return BytesIO(self.bytes_data)
+
 
 def _format_parameters_helper(http_request, params):
     """Helper for format_parameters.
@@ -98,6 +99,7 @@ def _format_parameters_helper(http_request, params):
     query = "?" + "&".join(query_params)
     http_request.url = http_request.url + query
 
+
 def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     """Pad hidden attributes so users can access them.
 
@@ -110,7 +112,10 @@ def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     """
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
-def _prepare_multipart_body_helper(http_request: HTTPRequestType, content_index: int=0) -> int:
+
+def _prepare_multipart_body_helper(
+    http_request: HTTPRequestType, content_index: int = 0
+) -> int:
     """Helper for prepare_multipart_body.
 
     Will prepare the body of this request according to the multipart information.
@@ -141,10 +146,10 @@ def _prepare_multipart_body_helper(http_request: HTTPRequestType, content_index:
         part_message = Message()
         if req.multipart_mixed_info:
             content_index = req.prepare_multipart_body(content_index=content_index)
-            part_message.add_header("Content-Type", req.headers['Content-Type'])
+            part_message.add_header("Content-Type", req.headers["Content-Type"])
             payload = req.serialize()
             # We need to remove the ~HTTP/1.1 prefix along with the added content-length
-            payload = payload[payload.index(b'--'):]
+            payload = payload[payload.index(b"--") :]
         else:
             part_message.add_header("Content-Type", "application/http")
             part_message.add_header("Content-Transfer-Encoding", "binary")
@@ -163,9 +168,9 @@ def _prepare_multipart_body_helper(http_request: HTTPRequestType, content_index:
     )
     return content_index
 
+
 class _HTTPSerializer(HTTPConnection, object):
-    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
-    """
+    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings."""
 
     def __init__(self, *args, **kwargs):
         self.buffer = b""
@@ -179,6 +184,7 @@ class _HTTPSerializer(HTTPConnection, object):
 
     def send(self, data):
         self.buffer += data
+
 
 def _serialize_request(http_request):
     # type: (HTTPRequestType) -> bytes
@@ -199,12 +205,13 @@ def _serialize_request(http_request):
     )
     return serializer.buffer
 
+
 def _decode_parts_helper(
     response: PipelineTransportHttpResponseBase,
     message: Message,
     http_response_type: Type[PipelineTransportHttpResponseBase],
     requests: List[PipelineTransportHttpRequest],
-    deserialize_response: Callable
+    deserialize_response: Callable,
 ) -> List[PipelineTransportHttpResponse]:
     """Helper for _decode_parts.
 
@@ -224,13 +231,16 @@ def _decode_parts_helper(
         elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
             # The message batch contains one or more change sets
             changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-            changeset_responses = response._decode_parts(raw_response, http_response_type, changeset_requests)  # pylint: disable=protected-access
+            changeset_responses = response._decode_parts(
+                raw_response, http_response_type, changeset_requests
+            )  # pylint: disable=protected-access
             responses.extend(changeset_responses)
         else:
             raise ValueError(
                 "Multipart doesn't support part other than application/http for now"
             )
     return responses
+
 
 def _get_raw_parts_helper(response, http_response_type):
     """Helper for _get_raw_parts
@@ -250,18 +260,23 @@ def _get_raw_parts_helper(response, http_response_type):
     )
     message: Message = message_parser(http_body)
     requests = response.request.multipart_mixed_info[0]
-    return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
+    return response._decode_parts(
+        message, http_response_type, requests
+    )  # pylint: disable=protected-access
 
-def _parts_helper(response: PipelineTransportHttpResponse) -> Iterator[PipelineTransportHttpResponse]:
+
+def _parts_helper(
+    response: PipelineTransportHttpResponse,
+) -> Iterator[PipelineTransportHttpResponse]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
     :rtype: iterator[HttpResponse]
     :raises ValueError: If the content is not multipart/mixed
     """
-    if not response.content_type or not response.content_type.startswith("multipart/mixed"):
-        raise ValueError(
-            "You can't get parts if the response is not multipart/mixed"
-        )
+    if not response.content_type or not response.content_type.startswith(
+        "multipart/mixed"
+    ):
+        raise ValueError("You can't get parts if the response is not multipart/mixed")
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
     if response.request.multipart_mixed_info:
@@ -289,7 +304,10 @@ def _parts_helper(response: PipelineTransportHttpResponse) -> Iterator[PipelineT
 
     return responses
 
-def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+
+def _format_data_helper(
+    data: Union[str, IO]
+) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -309,6 +327,7 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
         return (data_name, data, "application/octet-stream")
     return (None, cast(str, data))
 
+
 def _aiohttp_body_helper(response: PipelineTransportAioHttpTransportResponse) -> bytes:
     # pylint: disable=protected-access
     """Helper for body method of Aiohttp responses.
@@ -320,17 +339,20 @@ def _aiohttp_body_helper(response: PipelineTransportAioHttpTransportResponse) ->
     :rtype: bytes
     """
     if response._content is None:
-        raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
+        raise ValueError(
+            "Body is not available. Call async method load_body, or do your call with stream=False."
+        )
     if not response._decompress:
         return response._content
     if response._decompressed_content:
         return response._content
-    enc = response.headers.get('Content-Encoding')
+    enc = response.headers.get("Content-Encoding")
     if not enc:
         return response._content
     enc = enc.lower()
     if enc in ("gzip", "deflate"):
         import zlib
+
         zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
         decompressor = zlib.decompressobj(wbits=zlib_mode)
         response._content = decompressor.decompress(response._content)

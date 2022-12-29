@@ -46,7 +46,7 @@ from typing import (
     Tuple,
     Iterator,
     Type,
-    AnyStr
+    AnyStr,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -79,6 +79,7 @@ PipelineType = TypeVar("PipelineType")
 _LOGGER = logging.getLogger(__name__)
 
 binary_type = str
+
 
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
@@ -118,11 +119,11 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
     return parsed.geturl()
 
+
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
 ):
-    """An http sender ABC.
-    """
+    """An http sender ABC."""
 
     @abc.abstractmethod
     def send(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
@@ -159,7 +160,14 @@ class HttpRequest(object):
     :type data: bytes
     """
 
-    def __init__(self, method: str, url: str, headers:Mapping[str, str]=None, files: Any=None, data: bytes=None) -> None:
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        headers: Mapping[str, str] = None,
+        files: Any = None,
+        data: bytes = None,
+    ) -> None:
         self.method = method
         self.url = url
         self.headers = case_insensitive_dict(headers)
@@ -168,9 +176,7 @@ class HttpRequest(object):
         self.multipart_mixed_info: Optional[Tuple] = None
 
     def __repr__(self):
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None):
         try:
@@ -206,7 +212,9 @@ class HttpRequest(object):
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+    def _format_data(
+        data: Union[str, IO]
+    ) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -330,10 +338,10 @@ class HttpRequest(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
-            kwargs
+            kwargs,
         )
 
-    def prepare_multipart_body(self, content_index: int=0) -> int:
+    def prepare_multipart_body(self, content_index: int = 0) -> int:
         """Will prepare the body of this request according to the multipart information.
 
         This call assumes the on_request policies have been applied already in their
@@ -354,6 +362,7 @@ class HttpRequest(object):
         """
         return _serialize_request(self)
 
+
 class _HttpResponseBase:
     """Represent a HTTP response.
 
@@ -367,7 +376,12 @@ class _HttpResponseBase:
     :param int block_size: Defaults to 4096 bytes.
     """
 
-    def __init__(self, request: HttpRequest, internal_response: Any, block_size: Optional[int]=None) -> None:
+    def __init__(
+        self,
+        request: HttpRequest,
+        internal_response: Any,
+        block_size: Optional[int] = None,
+    ) -> None:
         self.request = request
         self.internal_response = internal_response
         self.status_code: Optional[int] = None
@@ -377,11 +391,10 @@ class _HttpResponseBase:
         self.block_size: int = block_size or 4096  # Default to same as Requests
 
     def body(self) -> bytes:
-        """Return the whole body as bytes in memory.
-        """
+        """Return the whole body as bytes in memory."""
         raise NotImplementedError()
 
-    def text(self, encoding: Optional[str]=None) -> str:
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
@@ -391,17 +404,28 @@ class _HttpResponseBase:
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
-    def _decode_parts(self, message: Message, http_response_type: Type[_HttpResponseBase], requests: List[HttpRequest]) -> List[HttpResponse]:
+    def _decode_parts(
+        self,
+        message: Message,
+        http_response_type: Type[_HttpResponseBase],
+        requests: List[HttpRequest],
+    ) -> List[HttpResponse]:
         """Rebuild an HTTP response from pure string."""
-        return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
+        return _decode_parts_helper(
+            self, message, http_response_type, requests, _deserialize_response
+        )
 
-    def _get_raw_parts(self, http_response_type: Optional[Type[_HttpResponseBase]]=None) -> Iterator[HttpResponse]:
+    def _get_raw_parts(
+        self, http_response_type: Optional[Type[_HttpResponseBase]] = None
+    ) -> Iterator[HttpResponse]:
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
         """
-        return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
+        return _get_raw_parts_helper(
+            self, http_response_type or HttpClientTransportResponse
+        )
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -569,10 +593,10 @@ class PipelineClientBase(object):
     def get(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a GET request object.
 
@@ -593,11 +617,11 @@ class PipelineClientBase(object):
     def put(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
-        stream_content: Any=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
     ) -> HttpRequest:
         """Create a PUT request object.
 
@@ -617,11 +641,11 @@ class PipelineClientBase(object):
     def post(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
-        stream_content: Any=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
     ) -> HttpRequest:
         """Create a POST request object.
 
@@ -641,11 +665,11 @@ class PipelineClientBase(object):
     def head(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
-        stream_content: Any=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
     ) -> HttpRequest:
         """Create a HEAD request object.
 
@@ -665,11 +689,11 @@ class PipelineClientBase(object):
     def patch(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
-        stream_content: Any=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
     ) -> HttpRequest:
         """Create a PATCH request object.
 
@@ -689,10 +713,10 @@ class PipelineClientBase(object):
     def delete(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a DELETE request object.
 
@@ -712,10 +736,10 @@ class PipelineClientBase(object):
     def merge(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
-        content: Any=None,
-        form_content: Optional[Dict[str, Any]]=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a MERGE request object.
 
@@ -735,8 +759,8 @@ class PipelineClientBase(object):
     def options(
         self,
         url: str,
-        params: Optional[Dict[str, str]]=None,
-        headers: Optional[Dict[str, str]]=None,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> HttpRequest:
         """Create a OPTIONS request object.
