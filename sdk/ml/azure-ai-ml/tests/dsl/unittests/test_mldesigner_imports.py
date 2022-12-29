@@ -53,6 +53,10 @@ class TestMldesignerImports:
         assert hasattr(input_obj, "_get_python_builtin_type_str")
         assert hasattr(input_obj, "_get_param_with_standard_annotation")
 
+        node_input_obj = NodeInput(name="sdk", meta=input_obj)
+        assert hasattr(node_input_obj, "_meta")
+        assert hasattr(node_input_obj, "_data")
+
     def test_class_names(self):
         """These class are undirectly used in mldesigner by their class names"""
         assert BaseNode.__name__ == "BaseNode"
