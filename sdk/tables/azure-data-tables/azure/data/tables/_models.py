@@ -406,8 +406,8 @@ class TableSasPermissions(object):
         )[1024:]
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs: Dict[str, Any]) -> 'AccountSasPermissions':
-        """Create AccountSasPermissions from a string.
+    def from_string(cls, permission: str, **kwargs: Dict[str, Any]) -> 'TableSasPermissions':
+        """Create TableSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
         include the first letter of the word in the string. E.g. for read and write
