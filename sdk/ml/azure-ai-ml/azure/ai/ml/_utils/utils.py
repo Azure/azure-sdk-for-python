@@ -35,6 +35,7 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -768,6 +769,11 @@ def get_all_data_binding_expressions(
 
 def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
+
+
+def is_on_disk_cache_enabled():
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True] \
+        and is_private_preview_enabled()
 
 
 def is_internal_components_enabled():
