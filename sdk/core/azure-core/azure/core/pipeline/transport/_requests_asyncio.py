@@ -100,9 +100,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         await asyncio.sleep(duration)
 
     @overload  # type: ignore
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: HttpRequest, **kwargs: Any
-    ) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
+    ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -116,9 +116,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     @overload
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: "RestHttpRequest", **kwargs: Any
-    ) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
+    ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
         :param request: The HttpRequest

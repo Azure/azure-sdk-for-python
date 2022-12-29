@@ -8,7 +8,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Sequence,
-    Dict,
     Optional,
     Union,
     Callable,
@@ -33,7 +32,7 @@ if TYPE_CHECKING:
         Sequence[int],
         Sequence[float],
     ]
-    Attributes = Optional[Dict[str, AttributeValue]]
+    Attributes = Optional[dict[str, AttributeValue]]
 
 try:
     from typing_extensions import Protocol
@@ -53,15 +52,15 @@ class SpanKind(Enum):
 class AbstractSpan(Protocol):
     """Wraps a span from a distributed tracing implementation."""
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self, span: Optional[Any] = None, name: Optional[str] = None, **kwargs
-    ) -> None:  # pylint: disable=super-init-not-called
+    ) -> None:
         """
         If a span is given wraps the span. Else a new span is created.
         The optional argument name is given to the new span.
         """
 
-    def span(self, name: str = "child_span", **kwargs) -> AbstractSpan:
+    def span(self, name: str = "child_span", **kwargs) -> "AbstractSpan":
         """
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
@@ -90,7 +89,7 @@ class AbstractSpan(Protocol):
     def finish(self) -> None:
         """Set the end time for a span."""
 
-    def to_header(self) -> Dict[str, str]:
+    def to_header(self) -> dict[str, str]:
         """
         Returns a dictionary with the header labels and values.
         """
@@ -106,7 +105,7 @@ class AbstractSpan(Protocol):
         """
 
     def set_http_attributes(
-        self, request: HttpRequest, response: Optional[HttpResponseType] = None
+        self, request: "HttpRequest", response: Optional[HttpResponseType] = None
     ) -> None:
         """
         Add correct attributes for a http client span.
@@ -141,7 +140,7 @@ class AbstractSpan(Protocol):
 
     @classmethod
     def link_from_headers(
-        cls, headers: Dict[str, str], attributes: Attributes = None
+        cls, headers: dict[str, str], attributes: Attributes = None
     ) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
@@ -208,7 +207,7 @@ class HttpSpanMixin(_MIXIN_BASE):
     _HTTP_STATUS_CODE = "http.status_code"
 
     def set_http_attributes(
-        self, request: HttpRequest, response: Optional[HttpResponseType] = None
+        self, request: "HttpRequest", response: Optional[HttpResponseType] = None
     ) -> None:
         """
         Add correct attributes for a http client span.
@@ -240,6 +239,6 @@ class Link(object):
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: Attributes = None):
+    def __init__(self, headers: dict[str, str], attributes: Attributes = None):
         self.headers = headers
         self.attributes = attributes

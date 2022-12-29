@@ -15,8 +15,6 @@ from typing import (
     TYPE_CHECKING,
     cast,
     IO,
-    Dict,
-    List,
     Union,
     Tuple,
     Optional,
@@ -100,7 +98,7 @@ def _format_parameters_helper(http_request, params):
     http_request.url = http_request.url + query
 
 
-def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
+def _pad_attr_name(attr: str, backcompat_attrs: list[str]) -> str:
     """Pad hidden attributes so users can access them.
 
     Currently, for our backcompat attributes, we define them
@@ -133,7 +131,7 @@ def _prepare_multipart_body_helper(
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests: List[HTTPRequestType] = http_request.multipart_mixed_info[0]
+    requests: list[HTTPRequestType] = http_request.multipart_mixed_info[0]
     boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
@@ -186,8 +184,7 @@ class _HTTPSerializer(HTTPConnection, object):
         self.buffer += data
 
 
-def _serialize_request(http_request):
-    # type: (HTTPRequestType) -> bytes
+def _serialize_request(http_request: HTTPRequestType) -> bytes:
     """Helper for serialize.
 
     Serialize a request using the application/http spec/
@@ -207,12 +204,12 @@ def _serialize_request(http_request):
 
 
 def _decode_parts_helper(
-    response: PipelineTransportHttpResponseBase,
+    response: "PipelineTransportHttpResponseBase",
     message: Message,
-    http_response_type: Type[PipelineTransportHttpResponseBase],
-    requests: List[PipelineTransportHttpRequest],
+    http_response_type: Type["PipelineTransportHttpResponseBase"],
+    requests: list["PipelineTransportHttpRequest"],
     deserialize_response: Callable,
-) -> List[PipelineTransportHttpResponse]:
+) -> list["PipelineTransportHttpResponse"]:
     """Helper for _decode_parts.
 
     Rebuild an HTTP response from pure string.
@@ -231,9 +228,11 @@ def _decode_parts_helper(
         elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
             # The message batch contains one or more change sets
             changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-            changeset_responses = response._decode_parts(
-                raw_response, http_response_type, changeset_requests
-            )  # pylint: disable=protected-access
+            changeset_responses = (
+                response._decode_parts(  # pylint: disable=protected-access
+                    raw_response, http_response_type, changeset_requests
+                )
+            )
             responses.extend(changeset_responses)
         else:
             raise ValueError(
@@ -260,14 +259,14 @@ def _get_raw_parts_helper(response, http_response_type):
     )
     message: Message = message_parser(http_body)
     requests = response.request.multipart_mixed_info[0]
-    return response._decode_parts(
+    return response._decode_parts(  # pylint: disable=protected-access
         message, http_response_type, requests
-    )  # pylint: disable=protected-access
+    )
 
 
 def _parts_helper(
-    response: PipelineTransportHttpResponse,
-) -> Iterator[PipelineTransportHttpResponse]:
+    response: "PipelineTransportHttpResponse",
+) -> Iterator["PipelineTransportHttpResponse"]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
     :rtype: iterator[HttpResponse]
@@ -280,7 +279,7 @@ def _parts_helper(
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
     if response.request.multipart_mixed_info:
-        policies: List[SansIOHTTPPolicy] = response.request.multipart_mixed_info[1]
+        policies: list["SansIOHTTPPolicy"] = response.request.multipart_mixed_info[1]
 
         # Apply on_response concurrently to all requests
         import concurrent.futures
@@ -328,7 +327,9 @@ def _format_data_helper(
     return (None, cast(str, data))
 
 
-def _aiohttp_body_helper(response: PipelineTransportAioHttpTransportResponse) -> bytes:
+def _aiohttp_body_helper(
+    response: "PipelineTransportAioHttpTransportResponse",
+) -> bytes:
     # pylint: disable=protected-access
     """Helper for body method of Aiohttp responses.
 

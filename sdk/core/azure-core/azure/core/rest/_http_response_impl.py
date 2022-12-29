@@ -352,7 +352,7 @@ class HttpResponseImpl(
     :keyword Callable stream_download_generator: The stream download generator that we use to stream the response.
     """
 
-    def __enter__(self) -> HttpResponseImpl:
+    def __enter__(self) -> "HttpResponseImpl":
         return self
 
     def close(self) -> None:

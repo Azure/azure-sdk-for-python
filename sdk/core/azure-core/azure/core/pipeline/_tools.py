@@ -51,7 +51,7 @@ def is_rest(obj) -> bool:
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
 
-def handle_non_stream_rest_response(response: RestHttpResponse) -> None:
+def handle_non_stream_rest_response(response: "RestHttpResponse") -> None:
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.

@@ -31,7 +31,7 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Dict, Callable, cast, Any, Union, TYPE_CHECKING
+from typing import Type, Optional, Callable, cast, Union, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
 if TYPE_CHECKING:
@@ -122,9 +122,9 @@ def convert_logging(value: Union[str, int]) -> int:
 def get_opencensus_span() -> Optional[Type[AbstractSpan]]:
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_span import (
+        from azure.core.tracing.ext.opencensus_span import (  # pylint:disable=redefined-outer-name
             OpenCensusSpan,
-        )  # pylint:disable=redefined-outer-name
+        )
 
         return OpenCensusSpan
     except ImportError:
@@ -137,7 +137,7 @@ def get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpa
     return get_opencensus_span()
 
 
-_tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
+_tracing_implementation_dict: dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
     "opencensus": get_opencensus_span
 }
 
@@ -165,7 +165,6 @@ def convert_tracing_impl(
         value = cast(Type[AbstractSpan], value)
         return value
 
-    value = cast(str, value)  # mypy clarity
     value = value.lower()
     get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
     wrapper_class: Union[None, _Unset, Type[AbstractSpan]] = get_wrapper_class()

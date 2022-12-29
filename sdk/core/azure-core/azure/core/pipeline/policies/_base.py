@@ -29,20 +29,19 @@ import copy
 import logging
 
 from typing import (
+    TYPE_CHECKING,
     Generic,
     TypeVar,
     Union,
     Any,
-    Dict,
     Optional,
+    Awaitable,
 )  # pylint: disable=unused-import
 
-try:
-    from typing import Awaitable  # pylint: disable=unused-import
-except ImportError:
-    pass
-
 from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
+
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport import HttpTransport
 
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -62,10 +61,10 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(self):
-        self.next: Union[HTTPPolicy, HttpTransport] = None
+        self.next: Union[HTTPPolicy, "HttpTransport"] = None
 
     @abc.abstractmethod
-    def send(self, request: PipelineRequest) -> PipelineResponse:
+    def send(self, request: "PipelineRequest") -> "PipelineResponse":
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
@@ -89,7 +88,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: PipelineRequest) -> Union[None, Awaitable[None]]:
+    def on_request(self, request: "PipelineRequest") -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -109,8 +108,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
     # pylint: disable=no-self-use
     def on_exception(
-        self, request: PipelineRequest
-    ) -> None:  # pylint: disable=unused-argument
+        self, request: PipelineRequest  # pylint: disable=unused-argument
+    ) -> None:
         """Is executed if an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.
@@ -147,7 +146,7 @@ class RequestHistory(object):
         http_request: HTTPRequestType,
         http_response: Optional[HTTPResponseType] = None,
         error: Exception = None,
-        context: Optional[Dict[str, Any]] = None,
+        context: Optional[dict[str, Any]] = None,
     ) -> None:
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response

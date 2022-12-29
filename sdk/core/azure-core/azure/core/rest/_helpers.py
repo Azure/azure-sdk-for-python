@@ -35,7 +35,6 @@ from typing import (
     Tuple,
     IO,
     Any,
-    Dict,
     Iterable,
     MutableMapping,
     AsyncIterable,
@@ -144,7 +143,7 @@ def set_content_body(
     )
 
 
-def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
+def set_json_body(json: Any) -> Tuple[dict[str, str], Any]:
     headers = {"Content-Type": "application/json"}
     if hasattr(json, "read"):
         content_headers, body = set_content_body(json)
@@ -367,6 +366,6 @@ class HttpRequestBackcompatMixin(object):
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = copy.deepcopy(
-            self._multipart_mixed_info, memo
-        )  # pylint: disable=protected-access
+        request._multipart_mixed_info = (  # pylint: disable=protected-access
+            copy.deepcopy(self._multipart_mixed_info, memo)
+        )

@@ -7,7 +7,6 @@
 import datetime
 from typing import (
     Any,
-    Dict,
     Iterable,
     Iterator,
     Mapping,
@@ -109,7 +108,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None,
         **kwargs: Any
     ) -> None:
-        self._store: Dict[str, Any] = {}
+        self._store: dict[str, Any] = {}
         if data is None:
             data = {}
 

@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, List, Union, Any, Dict
+from typing import Generic, TypeVar, Union, Any
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -40,7 +40,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 HttpTransportType = TypeVar("HttpTransportType")
 
 _LOGGER = logging.getLogger(__name__)
-PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
+PoliciesType = list[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy):
@@ -124,7 +124,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __init__(
         self, transport: HttpTransportType, policies: PoliciesType = None
     ) -> None:
-        self._impl_policies: List[HTTPPolicy] = []
+        self._impl_policies: list[HTTPPolicy] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -137,7 +137,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         if self._impl_policies:
             self._impl_policies[-1].next = _TransportRunner(self._transport)
 
-    def __enter__(self) -> Pipeline:
+    def __enter__(self) -> "Pipeline":
         self._transport.__enter__()  # type: ignore
         return self
 
@@ -154,9 +154,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         if not multipart_mixed_info:
             return
 
-        requests: List[HTTPRequestType] = multipart_mixed_info[0]
-        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
-        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
+        requests: list[HTTPRequestType] = multipart_mixed_info[0]
+        policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        pipeline_options: dict[str, Any] = multipart_mixed_info[3]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures

@@ -36,18 +36,12 @@ import types
 import re
 import uuid
 from typing import (
-    Mapping,
     IO,
     TypeVar,
     TYPE_CHECKING,
     Type,
     cast,
-    List,
-    Callable,
-    Iterator,  # pylint: disable=unused-import
-    Any,
     Union,
-    Dict,
     Optional,
     AnyStr,
 )
@@ -90,7 +84,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(
-        self, base_headers: Dict[str, str] = None, **kwargs
+        self, base_headers: dict[str, str] = None, **kwargs
     ) -> None:  # pylint: disable=super-init-not-called
         self._headers = base_headers or {}
         self._headers.update(kwargs.pop("headers", {}))
@@ -447,9 +441,9 @@ class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
             else HttpLoggingPolicy.REDACTED_PLACEHOLDER
         )
 
-    def on_request(
+    def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest
-    ) -> None:  # pylint: disable=too-many-return-statements
+    ) -> None:
         """Logs HTTP method, url and headers.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -566,8 +560,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     CONTEXT_NAME = "deserialized_data"
 
     def __init__(
-        self, response_encoding: Optional[str] = None, **kwargs
-    ) -> None:  # pylint: disable=unused-argument
+        self,
+        response_encoding: Optional[str] = None,
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         self._response_encoding = response_encoding
 
     @classmethod
@@ -575,7 +571,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         cls: Type[ContentDecodePolicyType],
         data: Optional[Union[AnyStr, IO]],
         mime_type: Optional[str] = None,
-        response: Optional[Union[HttpResponse, AsyncHttpResponse]] = None,
+        response: Optional[Union["HttpResponse", "AsyncHttpResponse"]] = None,
     ):
         """Decode response data according to content-type.
 
@@ -646,7 +642,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     @classmethod
     def deserialize_from_http_generics(
         cls: Type[ContentDecodePolicyType],
-        response: Union[HttpResponse, AsyncHttpResponse],
+        response: Union["HttpResponse", "AsyncHttpResponse"],
         encoding: Optional[str] = None,
     ):
         """Deserialize from HTTP response.
@@ -693,7 +689,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         self,
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[
-            HTTPRequestType, Union[HttpResponse, AsyncHttpResponse]
+            HTTPRequestType, Union["HttpResponse", "AsyncHttpResponse"]
         ],
     ) -> None:
         """Extract data from the body of a REST response object.

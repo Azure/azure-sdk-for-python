@@ -7,7 +7,7 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
-from typing import cast, Union, Any, Optional, Dict
+from typing import cast, Union, Any, Optional
 from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
@@ -44,7 +44,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     :keyword extensions: Optional. A CloudEvent MAY include any number of additional context attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
-    :type extensions: Optional[Dict]
+    :type extensions: Optional[dict]
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
      be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name.
     :vartype source: str
@@ -69,12 +69,12 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     :ivar extensions: A CloudEvent MAY include any number of additional context attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
-    :vartype extensions: Dict
+    :vartype extensions: dict
     """
 
     def __init__(
-        self, source: str, type: str, **kwargs
-    ) -> None:  # pylint: disable=redefined-builtin
+        self, source: str, type: str, **kwargs  # pylint: disable=redefined-builtin
+    ) -> None:
         self.source: str = source
         self.type: str = type
         self.specversion: Optional[str] = kwargs.pop("specversion", "1.0")
@@ -86,24 +86,19 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         self.subject: Optional[str] = kwargs.pop("subject", None)
         self.data: Optional[object] = kwargs.pop("data", None)
 
-        try:
-            self.extensions: Optional[Dict] = kwargs.pop("extensions")
-            for (
-                key
-            ) in self.extensions.keys():  # type:ignore # extensions won't be None here
+        self.extensions: Optional[dict] = kwargs.pop("extensions", None)
+        if self.extensions:
+            for key in self.extensions.keys():
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
                         "Extension attributes should be lower cased and alphanumeric."
                     )
-        except KeyError:
-            self.extensions = None
 
         if kwargs:
             remaining = ", ".join(kwargs.keys())
             raise ValueError(
-                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions.".format(
-                    remaining
-                )
+                f"Unexpected keyword arguments {remaining}. "
+                + "Any extension attributes must be passed explicitly using extensions."
             )
 
     def __repr__(self):
@@ -112,7 +107,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         )[:1024]
 
     @classmethod
-    def from_dict(cls, event: dict) -> CloudEvent:
+    def from_dict(cls, event: dict) -> "CloudEvent":
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
@@ -162,7 +157,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
                 type=event["type"],
                 specversion=event.get("specversion"),
                 time=_convert_to_isoformat(event.get("time")),
-                **kwargs
+                **kwargs,
             )
         except KeyError:
             # https://github.com/cloudevents/spec Cloud event spec requires source, type,
@@ -192,7 +187,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         return event_obj
 
     @classmethod
-    def from_json(cls, event: Any) -> CloudEvent:
+    def from_json(cls, event: Any) -> "CloudEvent":
         """
         Returns the deserialized CloudEvent object when a json payload is provided.
         :param event: The json string that should be converted into a CloudEvent. This can also be

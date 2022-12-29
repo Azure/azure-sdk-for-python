@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
+from typing import Callable, Any, Optional, Union, Type, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -173,14 +173,14 @@ class ODataV4Format:
         self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
 
         # details is recursive of this very format
-        self.details: List[ODataV4Format] = []
+        self.details: list[ODataV4Format] = []
         for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        self.innererror: Dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
+        self.innererror: dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
 
     @property
     def error(self):
@@ -305,13 +305,11 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model: Optional[msrest.serialization.Model] = kwargs.pop("model", None)
+        model: Optional[Any] = kwargs.pop("model", None)
         if model is not None:  # autorest v5
             self.model = model
         else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
-            self.model: Optional[msrest.serialization.Model] = getattr(
-                self, "error", None
-            )
+            self.model: Optional[Any] = getattr(self, "error", None)
         self.error: Optional[ODataV4Format] = self._parse_odata_body(
             error_format, response
         )
@@ -331,7 +329,7 @@ class HttpResponseError(AzureError):
 
     @staticmethod
     def _parse_odata_body(
-        error_format: Type[ODataV4Format], response: _HttpResponseBase
+        error_format: Type[ODataV4Format], response: "_HttpResponseBase"
     ) -> Optional[ODataV4Format]:
         try:
             odata_json = json.loads(response.text())
@@ -412,11 +410,9 @@ class ODataV4Error(HttpResponseError):
 
     _ERROR_FORMAT = ODataV4Format
 
-    def __init__(self, response, **kwargs):
-        # type: (_HttpResponseBase, Any) -> None
-
+    def __init__(self, response: "_HttpResponseBase", **kwargs):
         # Ensure field are declared, whatever can happen afterwards
-        self.odata_json: Optional[Dict[str, Any]] = None
+        self.odata_json: Optional[dict[str, Any]] = None
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
@@ -427,8 +423,8 @@ class ODataV4Error(HttpResponseError):
         self.code: Optional[str] = None
         self.message: Optional[str] = kwargs.get("message", odata_message)
         self.target: Optional[str] = None
-        self.details: Optional[List[Any]] = []
-        self.innererror: Optional[Dict[str, Any]] = {}
+        self.details: Optional[list[Any]] = []
+        self.innererror: Optional[dict[str, Any]] = {}
 
         if self.message and "message" not in kwargs:
             kwargs["message"] = self.message

@@ -27,7 +27,7 @@ import base64
 import logging
 import threading
 import uuid
-from typing import TypeVar, Generic, Any, Callable, List, Optional, Tuple
+from typing import TypeVar, Generic, Any, Callable, Optional, Tuple
 from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
@@ -151,7 +151,7 @@ class LROPoller(Generic[PollingReturnType]):
         deserialization_callback: Callable,
         polling_method: PollingMethod[PollingReturnType],
     ) -> None:
-        self._callbacks: List[Callable] = []
+        self._callbacks: list[Callable] = []
         self._polling_method = polling_method
 
         # This implicit test avoids bringing in an explicit dependency on Model directly

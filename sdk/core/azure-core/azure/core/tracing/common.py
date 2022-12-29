@@ -25,19 +25,11 @@
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
 from contextlib import contextmanager
+from typing import Any, Optional, Callable, Type, Generator
 import warnings
 
 from ._abstract_span import AbstractSpan
 from ..settings import settings
-
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable, List, Type, Generator
 
 
 __all__ = [

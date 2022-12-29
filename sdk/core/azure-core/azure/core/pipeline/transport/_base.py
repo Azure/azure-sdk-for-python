@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import abc
+from collections.abc import MutableMapping
 from email.message import Message
 import json
 import logging
@@ -33,20 +34,16 @@ from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (
-    TYPE_CHECKING,
     Generic,
     TypeVar,
     IO,
-    List,
     Union,
     Any,
     Mapping,
-    Dict,
     Optional,
     Tuple,
     Iterator,
     Type,
-    AnyStr,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -68,9 +65,6 @@ from ...utils._pipeline_transport_rest_shared import (
     _parts_helper,
 )
 
-
-if TYPE_CHECKING:
-    from collections.abc import MutableMapping
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -408,8 +402,8 @@ class _HttpResponseBase:
         self,
         message: Message,
         http_response_type: Type[_HttpResponseBase],
-        requests: List[HttpRequest],
-    ) -> List[HttpResponse]:
+        requests: list[HttpRequest],
+    ) -> list[HttpResponse]:
         """Rebuild an HTTP response from pure string."""
         return _decode_parts_helper(
             self, message, http_response_type, requests, _deserialize_response
@@ -515,10 +509,10 @@ class PipelineClientBase(object):
         self,
         method: str,
         url: str,
-        params: Optional[Dict[str, str]],
-        headers: Optional[Dict[str, str]],
+        params: Optional[dict[str, str]],
+        headers: Optional[dict[str, str]],
         content: Any,
-        form_content: Optional[Dict[str, Any]],
+        form_content: Optional[dict[str, Any]],
         stream_content: Any,
     ) -> HttpRequest:
         """Create HttpRequest object.
@@ -593,10 +587,10 @@ class PipelineClientBase(object):
     def get(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a GET request object.
 
@@ -617,10 +611,10 @@ class PipelineClientBase(object):
     def put(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
         stream_content: Any = None,
     ) -> HttpRequest:
         """Create a PUT request object.
@@ -641,10 +635,10 @@ class PipelineClientBase(object):
     def post(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
         stream_content: Any = None,
     ) -> HttpRequest:
         """Create a POST request object.
@@ -665,10 +659,10 @@ class PipelineClientBase(object):
     def head(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
         stream_content: Any = None,
     ) -> HttpRequest:
         """Create a HEAD request object.
@@ -689,10 +683,10 @@ class PipelineClientBase(object):
     def patch(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
         stream_content: Any = None,
     ) -> HttpRequest:
         """Create a PATCH request object.
@@ -713,10 +707,10 @@ class PipelineClientBase(object):
     def delete(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a DELETE request object.
 
@@ -736,10 +730,10 @@ class PipelineClientBase(object):
     def merge(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         content: Any = None,
-        form_content: Optional[Dict[str, Any]] = None,
+        form_content: Optional[dict[str, Any]] = None,
     ) -> HttpRequest:
         """Create a MERGE request object.
 
@@ -759,8 +753,8 @@ class PipelineClientBase(object):
     def options(
         self,
         url: str,
-        params: Optional[Dict[str, str]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: Optional[dict[str, str]] = None,
+        headers: Optional[dict[str, str]] = None,
         **kwargs
     ) -> HttpRequest:
         """Create a OPTIONS request object.

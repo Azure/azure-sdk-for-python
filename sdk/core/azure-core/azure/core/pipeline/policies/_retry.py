@@ -31,16 +31,6 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from typing import (
-    TYPE_CHECKING,
-    List,
-    Callable,
-    Iterator,
-    Any,
-    Union,
-    Dict,
-    Optional,
-)  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,

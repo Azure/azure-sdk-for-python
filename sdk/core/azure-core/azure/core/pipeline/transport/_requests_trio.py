@@ -175,9 +175,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         await trio.sleep(duration)
 
     @overload  # type: ignore
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: HttpRequest, **kwargs: Any
-    ) -> AsyncHttpResponse:  # pylint:disable=invalid-overridden-method
+    ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -191,9 +191,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     @overload
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request: "RestHttpRequest", **kwargs: Any
-    ) -> "RestAsyncHttpResponse":  # pylint:disable=invalid-overridden-method
+    ) -> "RestAsyncHttpResponse":
         """Send an `azure.core.rest` request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -223,7 +223,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None  # type: Optional[AzureErrorUnion]
+        error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:

@@ -358,7 +358,7 @@ class StatusCheckPolling(LongRunningOperation):
         """
         return "Succeeded"
 
-    def get_status(self, pipeline_respons: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: PipelineResponseType) -> str:
         return "Succeeded"
 
     def get_final_get_url(
@@ -491,8 +491,8 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         # Restore the transport in the context
         initial_response.context.transport = (
-            client._pipeline._transport
-        )  # pylint: disable=protected-access
+            client._pipeline._transport  # pylint: disable=protected-access
+        )
         return client, initial_response, deserialization_callback
 
     def run(self):

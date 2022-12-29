@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
+from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
 import urllib3
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
@@ -245,7 +245,7 @@ class RequestsTransport(HttpTransport):
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
-    def __enter__(self) -> RequestsTransport:
+    def __enter__(self) -> "RequestsTransport":
         self.open()
         return self
 
@@ -289,7 +289,7 @@ class RequestsTransport(HttpTransport):
         """
 
     @overload
-    def send(self, request: RestHttpRequest, **kwargs) -> RestHttpResponse:
+    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.

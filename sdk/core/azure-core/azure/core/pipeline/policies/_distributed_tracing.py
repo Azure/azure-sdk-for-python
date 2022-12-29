@@ -58,7 +58,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def _default_network_span_namer(http_request: HttpRequest) -> str:
+def _default_network_span_namer(http_request: "HttpRequest") -> str:
     """Extract the path to be used as network span name.
 
     :param http_request: The HTTP request
@@ -91,7 +91,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         )
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
@@ -115,7 +115,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def end_span(
         self,
-        request: PipelineRequest,
+        request: "PipelineRequest",
         response: Optional[HttpResponseType] = None,
         exc_info: Optional[Tuple] = None,
     ) -> None:
@@ -123,8 +123,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         if self.TRACING_CONTEXT not in request.context:
             return
 
-        span: AbstractSpan = request.context[self.TRACING_CONTEXT]
-        http_request: HttpRequest = request.http_request
+        span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
+        http_request: "HttpRequest" = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)
@@ -139,8 +139,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             else:
                 span.finish()
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
+    def on_response(
+        self, request: "PipelineRequest", response: "PipelineResponse"
+    ) -> None:
         self.end_span(request, response=response.http_response)
 
-    def on_exception(self, request: PipelineRequest) -> None:
+    def on_exception(self, request: "PipelineRequest") -> None:
         self.end_span(request, exc_info=sys.exc_info())

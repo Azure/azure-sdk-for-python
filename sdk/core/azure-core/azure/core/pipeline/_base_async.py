@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, List, Generic, TypeVar, Dict
+from typing import Any, Union, Generic, TypeVar
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -32,12 +32,12 @@ from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-ImplPoliciesType = List[
+ImplPoliciesType = list[
     AsyncHTTPPolicy[  # pylint: disable=unsubscriptable-object
         HTTPRequestType, AsyncHTTPResponseType
     ]
 ]
-AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+AsyncPoliciesType = list[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -154,9 +154,9 @@ class AsyncPipeline(
         if not multipart_mixed_info:
             return
 
-        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
-        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
+        requests: list[HTTPRequestType] = multipart_mixed_info[0]
+        policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        pipeline_options: dict[str, Any] = multipart_mixed_info[3]
 
         async def prepare_requests(req):
             if req.multipart_mixed_info:
