@@ -6,6 +6,7 @@
 
 import time
 import types
+from functools import partial
 from inspect import Parameter, signature
 from typing import Callable, Dict, Iterable, Optional, Union, List, Any
 
@@ -26,7 +27,6 @@ from azure.ai.ml._scope_dependent_operations import (
 #     monitor_with_activity,
 #     monitor_with_telemetry_mixin,
 # )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -43,7 +43,6 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, ValidationResult
-from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from .._utils._cache_utils import CachedNodeResolver
 
@@ -437,6 +436,27 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return Component._from_rest_object(result)
 
+    @classmethod
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+        if isinstance(component, BaseNode):
+            component = component._component  # pylint: disable=protected-access
+
+        if isinstance(component, str):
+            return
+        if hasattr(component, "environment"):
+            # for internal component, environment may be a dict or InternalEnvironment object
+            # in these two scenarios, we don't need to resolve the environment;
+            # Note for not directly importing InternalEnvironment and check with `isinstance`:
+            #   import from azure.ai.ml._internal will enable internal component feature for all users,
+            #   therefore, use type().__name__ to avoid import and execute type check
+            if (
+                not isinstance(component.environment, dict)
+                and not type(component.environment).__name__ == "InternalEnvironment"
+            ):
+                component.environment = resolver(
+                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+                )
+
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         if isinstance(component, AutoMLComponent):
             # no extra dependency for automl component
@@ -459,19 +479,11 @@ class ComponentOperations(_ScopeDependentOperations):
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
         # resolve component's environment
-        if hasattr(component, "environment"):
-            # for internal component, environment may be a dict or InternalEnvironment object
-            # in these two scenarios, we don't need to resolve the environment;
-            # Note for not directly importing InternalEnvironment and check with `isinstance`:
-            #   import from azure.ai.ml._internal will enable internal component feature for all users,
-            #   therefore, use type().__name__ to avoid import and execute type check
-            if (
-                not isinstance(component.environment, dict)
-                and not type(component.environment).__name__ == "InternalEnvironment"
-            ):
-                component.environment = get_arm_id_and_fill_back(
-                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+        self._try_resolve_environment_for_component(
+            component=component,
+            resolver=get_arm_id_and_fill_back,
+            _="",
+        )
 
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -522,6 +534,45 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: Callable):
+        """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
+
+        This is a hack operation.
+
+        parallel_node.task.code won't be resolved directly for now, but it will be resolved if
+        parallel_node.task is a reference to parallel_node.component.task. Then when filling back
+        parallel_node.component.task.code, parallel_node.task.code will be changed as well.
+
+        However, if we enable in-memory/on-disk cache for component resolution, such change
+        won't happen, so we resolve node level task code manually here.
+
+        Note that we will always use resolved node.component.code to fill back node.task.code
+        given code overwrite on parallel node won't take effect for now. This is to make behaviors
+        consistent across os and python versions.
+
+        The ideal solution should be done after PRS team decides how to handle parallel.task.code
+        """
+        from azure.ai.ml.entities import Parallel, ParallelComponent
+        if not isinstance(node, Parallel):
+            return
+        component = node._component  # pylint: disable=protected-access
+        if not isinstance(component, ParallelComponent):
+            return
+        if not node.task:
+            return
+
+        if node.task.code:
+            _try_resolve_code_for_component(
+                component,
+                get_arm_id_and_fill_back=resolver,
+            )
+            node.task.code = component.code
+        if node.task.environment:
+            node.task.environment = resolver(
+                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+            )
+
+    @classmethod
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
@@ -545,8 +596,10 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _resolve_compute_for_node(cls, node: BaseNode, resolver):
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
         """Resolve compute for base node."""
+        if not isinstance(node, BaseNode):
+            return
         if not isinstance(node._component, PipelineComponent):
             # Resolve compute for other type
             # Keep data binding expression as they are
@@ -636,20 +689,31 @@ class ComponentOperations(_ScopeDependentOperations):
         if resolve_inputs:
             self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
 
+        # This is a preparation for concurrent resolution. Nodes will be resolved later layer by layer
+        # from bottom to top, as hash calculation of a parent node will be impacted by resolution
+        # of its child nodes.
         layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
                 self._set_default_display_name_for_anonymous_component_in_node,
+                partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
+                partial(self._try_resolve_environment_for_component, resolver=resolver),
+                partial(self._try_resolve_compute_for_node, resolver=resolver),
+                # should we resolve code here after we do extra operations concurrently?
             ]
         )
 
         # cache anonymous component only for now
         # request level in-memory cache can be a better solution for other type of assets as they are
         # relatively simple and of small number of distinct instances
-        component_cache = CachedNodeResolver(resolver=resolver)
+        component_cache = CachedNodeResolver(
+            resolver=resolver,
+            subscription_id=self._subscription_id,
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            registry_name=self._registry_name,
+        )
 
-        # Deeper layer nodes will be resolved first so that all dependencies have already been resolved when
-        # trying to resolve nodes in upper layer.
         for layer in reversed(layers):
             for _, job_instance in layer:
                 if isinstance(job_instance, LoopNode):
@@ -659,8 +723,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
                 elif isinstance(job_instance, BaseNode):
-                    self._resolve_compute_for_node(job_instance, resolver=resolver)
-                    component_cache.register_node_to_resolve(job_instance)
+                    component_cache.register_node_for_lazy_resolution(job_instance)
                 elif isinstance(job_instance, ConditionNode):
                     pass
                 else:
@@ -750,21 +813,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
 
 
 def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_back: Callable) -> None:
-    if hasattr(component, "code"):
-        if is_ARM_id_for_resource(component.code, AzureMLResourceType.CODE):
-            # arm id can be passed directly
-            pass
-        elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
-            # Code object & registry id need to be resolved into arm id
-            # note that:
-            # 1. Code & CodeOperation are not public for now
-            # 2. AnonymousCodeSchema is not supported in Component for now
-            # So isinstance(component.code, Code) will always be true, or an exception will be raised
-            # in validation stage.
-            component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
-        elif isinstance(component.code, str) and component.code.startswith("git+"):
-            # git also need to be resolved into arm id
-            component.code = get_arm_id_and_fill_back(Code(path=component.code), azureml_type=AzureMLResourceType.CODE)
-        else:
-            with component._resolve_local_code() as code:
-                component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
+    with component._resolve_local_code() as code:
+        if code is None:
+            return
+        component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
