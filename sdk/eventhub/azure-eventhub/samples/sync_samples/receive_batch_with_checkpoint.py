@@ -20,10 +20,10 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # 
 if TYPE_CHECKING:
     from azure.eventhub import PartitionContext, EventData
 
-CONNECTION_STR: str = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME: str = os.environ['EVENT_HUB_NAME']
-STORAGE_CONNECTION_STR: str = os.environ["AZURE_STORAGE_CONN_STR"]
-BLOB_CONTAINER_NAME: str = "your-blob-container-name"  # Please make sure the blob container resource exists.
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
+BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
