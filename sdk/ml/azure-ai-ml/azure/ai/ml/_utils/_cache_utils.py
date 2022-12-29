@@ -52,8 +52,8 @@ class CachedNodeResolver(object):
         a) we have used an in-memory component hash to deduplicate components to resolve first;
         b) dependent components have been resolved before as nodes are registered & resolved
           layer by layer;
-        d) dependent code will never be an instance, so it won't cause cache hit issue.
-        c) resolution of potential shared dependencies other than code and components are thread-safe
+        c) dependent code will never be an instance, so it won't cause cache hit issue.
+        d) resolution of potential shared dependencies other than code and components are thread-safe
           as they do not involve further dependency resolution. However, it's still a good practice to
           resolve them before calling self.register_node_for_lazy_resolution as it will impact cache hit rate.
           For example, if:
@@ -172,6 +172,7 @@ class CachedNodeResolver(object):
 
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache."""
+        # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file():
             return on_disk_cache_path.read_text().strip()
@@ -304,5 +305,8 @@ class CachedNodeResolver(object):
         # This will happen only on concurrent external calls; In 1 external call, all nodes in
         # subgraph will be skipped on register_node_for_lazy_resolution when resolving subgraph
         _node_resolution_lock.acquire()
-        self._resolve_nodes()
-        _node_resolution_lock.release()
+        try:
+            self._resolve_nodes()
+        finally:
+            # release lock even if exception happens
+            _node_resolution_lock.release()

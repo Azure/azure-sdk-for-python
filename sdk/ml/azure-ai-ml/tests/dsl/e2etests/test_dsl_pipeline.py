@@ -1475,6 +1475,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             hello_world_component_mpi.distribution.process_count_per_instance = 2
 
         pipeline: PipelineJob = pipeline_distribution_components(10, job_input)
+        assert mpi_func._is_anonymous is False
         assert pipeline.settings.continue_on_step_failure is False
         created_job: PipelineJob = client.jobs.create_or_update(
             pipeline, experiment_name=experiment_name, continue_on_step_failure=True

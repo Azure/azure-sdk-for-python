@@ -560,8 +560,7 @@ class ComponentOperations(_ScopeDependentOperations):
             return
         if not node.task:
             return
-        # Note: please do not use id(node.task) == id(component.task) as
-        # the judgement behavior different in ci on different os & python versions.
+
         if node.task.code:
             _try_resolve_code_for_component(
                 component,
@@ -698,7 +697,7 @@ class ComponentOperations(_ScopeDependentOperations):
             extra_operations=[
                 self._set_default_display_name_for_anonymous_component_in_node,
                 partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
-                # partial(self._try_resolve_environment_for_component, resolver=resolver),
+                partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
                 # should we resolve code here after we do extra operations concurrently?
             ]
