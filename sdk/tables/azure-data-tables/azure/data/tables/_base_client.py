@@ -4,8 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from typing import Dict, Optional, Any, List, Mapping, Union, Literal
+import sys
+
+from typing import Dict, Optional, Any, List, Mapping, Union
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
 from uuid import uuid4
+
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
