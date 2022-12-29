@@ -51,7 +51,7 @@ if __name__ == '__main__':
         eventhub_name=EVENTHUB_NAME,
     )
 
-    print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
+    print(f'Consumer will keep receiving for {RECEIVE_DURATION} seconds, start time is {time.time()}.')
 
     try:
         thread = threading.Thread(
