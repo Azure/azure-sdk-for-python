@@ -48,7 +48,7 @@ sas_token: str = generate_sas_token(uri, SAS_POLICY, SAS_KEY, token_ttl)
 
 credential = AzureSasCredential(sas_token)
 
-producer_client: EventHubProducerClient = EventHubProducerClient(
+producer_client = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
     credential=credential,
