@@ -93,10 +93,6 @@ class CachedNodeResolver(object):
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._subscription_id = subscription_id
-        self._resource_group_name = resource_group_name
-        self._workspace_name = workspace_name
-
         object_hash = hashlib.sha256()
         for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
             object_hash.update(str(s).encode("utf-8"))
