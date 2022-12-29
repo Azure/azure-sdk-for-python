@@ -372,11 +372,11 @@ class TableSasPermissions(object):
         :keyword bool delete:
             Delete entities.
         """
-        _str = kwargs.pop('_str', "") or ""
-        self.read = kwargs.pop("read", False) or ("r" in _str)
-        self.add = kwargs.pop("add", False) or ("a" in _str)
-        self.update = kwargs.pop("update", False) or ("u" in _str)
-        self.delete = kwargs.pop("delete", False) or ("d" in _str)
+        self._str = kwargs.pop('_str', "") or ""
+        self.read = kwargs.pop("read", False) or ("r" in self._str)
+        self.add = kwargs.pop("add", False) or ("a" in self._str)
+        self.update = kwargs.pop("update", False) or ("u" in self._str)
+        self.delete = kwargs.pop("delete", False) or ("d" in self._str)
 
     def __or__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
         """
@@ -416,8 +416,8 @@ class TableSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An AccountSasPermissions object
-        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
+        :return: An TableSasPermissions object
+        :rtype: :class:`~azure.data.tables.TableSasPermissions`
         """
         p_read = "r" in permission
         p_add = "a" in permission
