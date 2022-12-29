@@ -9,7 +9,6 @@ from uuid import UUID
 from datetime import datetime
 from math import isnan
 from enum import Enum
-import sys
 
 import six
 from azure.core import MatchConditions
@@ -122,10 +121,7 @@ def _to_entity_int32(value):
 
 
 def _to_entity_int64(value):
-    if sys.version_info < (3,):
-        int_value = int(value)
-    else:
-        int_value = int(value)
+    int_value = int(value)
     if int_value >= 2 ** 63 or int_value < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
