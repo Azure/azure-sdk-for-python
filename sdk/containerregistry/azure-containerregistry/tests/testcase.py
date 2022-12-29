@@ -25,7 +25,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         # Sleep to avoid resource deployment delay in live pipelines.
-        if is_live_and_not_recording:
+        if is_live_and_not_recording():
             time.sleep(10)
     
     def import_image(self, endpoint, repository, tags):
