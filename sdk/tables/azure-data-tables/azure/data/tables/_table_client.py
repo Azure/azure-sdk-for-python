@@ -41,9 +41,9 @@ class TableClient(TablesBaseClient):  # pylint: disable=client-accepts-api-versi
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self, endpoint: str, table_name: str, **kwargs: Any
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    ) -> None:
         """Create TableClient from a Credential.
 
         :param str endpoint: A URL to an Azure Tables account.

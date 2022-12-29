@@ -76,7 +76,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url: Any,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs: Any
     ) -> None:
         try:

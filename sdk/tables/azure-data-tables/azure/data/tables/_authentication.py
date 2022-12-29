@@ -191,7 +191,7 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
-    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from datetime import datetime
 from typing import Union, Any
+from azure.core.credentials import AzureNamedKeyCredential
 
 from ._models import AccountSasPermissions, ResourceTypes
 from ._common_conversion import _sign_string
@@ -15,8 +16,6 @@ from ._shared_access_signature import (
     SharedAccessSignature,
     QueryStringConstants,
 )
-
-from azure.core.credentials import AzureNamedKeyCredential
 
 
 def generate_account_sas(
