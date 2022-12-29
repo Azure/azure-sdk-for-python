@@ -3,6 +3,7 @@ import json
 import os
 import random
 import re
+import shutil
 import time
 import uuid
 from datetime import datetime
@@ -544,6 +545,30 @@ def mock_component_hash(mocker: MockFixture):
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
             side_effect=generate_component_hash
         )
+
+    if is_live_and_not_recording():
+        return
+
+    if not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_TESTS", False) in ["True", "true", True]:
+        # On-disk cache can't be shared among different tests in playback mode or when recording.
+        # When doing recording:
+        # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+        #    the cached result from tests run earlier, so we won't found enough recordings when
+        #    running tests in reversed order.
+        # In playback mode:
+        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+        #   with the same on-disk hash.
+        # 2) Server-side may return different version for the same anonymous component in different workspace,
+        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+        #   and test2 in workspace B, the version in recordings can be different.
+        # So we need to clear on-disk cache for each test.
+
+        # If you want to run tests concurrently, you can either:
+        # 1) Disable on-disk cache or
+        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_TESTS to True and acknowledge that you may meet
+        #   the issues mentioned above.
+        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
 
 
 @pytest.fixture
