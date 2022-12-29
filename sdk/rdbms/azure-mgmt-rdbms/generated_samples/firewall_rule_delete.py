@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import MySQLManagementClient
+from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
 
 """
 # PREREQUISITES
@@ -24,19 +24,19 @@ from azure.mgmt.rdbms import MySQLManagementClient
 
 
 def main():
-    client = MySQLManagementClient(
+    client = MicrosoftPostgreSQLHyperscale(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.firewall_rules.begin_delete(
         resource_group_name="TestGroup",
-        server_name="testserver",
+        server_group_name="pgtestsvc4",
         firewall_rule_name="rule1",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/stable/2017-12-01/examples/FirewallRuleDelete.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/FirewallRuleDelete.json
 if __name__ == "__main__":
     main()

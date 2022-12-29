@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python firewall_rule_get.py
+    python role_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,15 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.firewall_rules.get(
+    response = client.roles.begin_create(
         resource_group_name="TestGroup",
         server_group_name="pgtestsvc4",
-        firewall_rule_name="rule1",
-    )
+        role_name="role1",
+        parameters={"properties": {"password": "secret"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/FirewallRuleGet.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/RoleCreate.json
 if __name__ == "__main__":
     main()

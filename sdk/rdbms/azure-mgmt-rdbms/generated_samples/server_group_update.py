@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python firewall_rule_create.py
+    python server_group_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,41 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.firewall_rules.begin_create_or_update(
+    response = client.server_groups.begin_update(
         resource_group_name="TestGroup",
-        server_group_name="pgtestsvc4",
-        firewall_rule_name="rule1",
-        parameters={"properties": {"endIpAddress": "255.255.255.255", "startIpAddress": "0.0.0.0"}},
+        server_group_name="hsctestsg",
+        parameters={
+            "properties": {
+                "administratorLoginPassword": "secret",
+                "backupRetentionDays": 30,
+                "postgresqlVersion": "12",
+                "serverRoleGroups": [
+                    {
+                        "enableHa": False,
+                        "name": "",
+                        "role": "Coordinator",
+                        "serverCount": 1,
+                        "serverEdition": "GeneralPurpose",
+                        "storageQuotaInMb": 1048576,
+                        "vCores": 8,
+                    },
+                    {
+                        "enableHa": True,
+                        "name": "",
+                        "role": "Worker",
+                        "serverCount": 4,
+                        "serverEdition": "MemoryOptimized",
+                        "storageQuotaInMb": 524288,
+                        "vCores": 4,
+                    },
+                ],
+            },
+            "tags": {"ElasticServer": "2"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/FirewallRuleCreate.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/ServerGroupUpdate.json
 if __name__ == "__main__":
     main()

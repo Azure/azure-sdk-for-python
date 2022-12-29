@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python firewall_rule_get.py
+    python server_group_scale_compute.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,17 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.firewall_rules.get(
+    response = client.server_groups.begin_update(
         resource_group_name="TestGroup",
-        server_group_name="pgtestsvc4",
-        firewall_rule_name="rule1",
-    )
+        server_group_name="hsctestsg",
+        parameters={
+            "location": "westus",
+            "properties": {"serverRoleGroups": [{"name": "", "role": "Coordinator", "vCores": 16}]},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/FirewallRuleGet.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/ServerGroupScaleCompute.json
 if __name__ == "__main__":
     main()

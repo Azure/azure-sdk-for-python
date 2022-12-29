@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import MySQLManagementClient
+from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
 
 """
 # PREREQUISITES
@@ -24,18 +24,17 @@ from azure.mgmt.rdbms import MySQLManagementClient
 
 
 def main():
-    client = MySQLManagementClient(
+    client = MicrosoftPostgreSQLHyperscale(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.check_name_availability.execute(
-        location_name="SouthEastAsia",
-        name_availability_request={"name": "name1", "type": "Microsoft.DBforMySQL/flexibleServers"},
+    response = client.server_groups.check_name_availability(
+        name_availability_request={"name": "name1", "type": "Microsoft.DBforPostgreSQL/serverGroupsv2"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/preview/2021-12-01-preview/examples/CheckNameAvailability.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/CheckNameAvailability.json
 if __name__ == "__main__":
     main()

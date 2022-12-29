@@ -1,5 +1,47 @@
 # Release History
 
+## 10.2.0b6 (2022-12-29)
+
+### Features Added
+
+  - Added operation ConfigurationsOperations.list_by_server_group
+  - Added operation FirewallRulesOperations.list_by_server_group
+  - Added operation ServersOperations.list_by_server_group
+  - Added operation group RolesOperations
+  - Added operation group ServerGroupsOperations
+
+### Breaking Changes
+
+  - Client name is changed from `PostgreSQLManagementClient` to `MicrosoftPostgreSQLHyperscale`
+  - Model FirewallRuleListResult no longer has parameter next_link
+  - Model NameAvailability no longer has parameter reason
+  - Model ProxyResource no longer has parameter system_data
+  - Model Resource no longer has parameter system_data
+  - Model TrackedResource no longer has parameter system_data
+  - Operation ConfigurationsOperations.begin_update has a new required parameter server_group_name
+  - Operation ConfigurationsOperations.begin_update no longer has parameter server_name
+  - Operation ConfigurationsOperations.get has a new required parameter server_group_name
+  - Operation ConfigurationsOperations.get no longer has parameter server_name
+  - Operation ConfigurationsOperations.list_by_server has a new required parameter server_group_name
+  - Operation FirewallRulesOperations.begin_create_or_update has a new required parameter server_group_name
+  - Operation FirewallRulesOperations.begin_create_or_update no longer has parameter server_name
+  - Operation FirewallRulesOperations.begin_delete has a new required parameter server_group_name
+  - Operation FirewallRulesOperations.begin_delete no longer has parameter server_name
+  - Operation FirewallRulesOperations.get has a new required parameter server_group_name
+  - Operation FirewallRulesOperations.get no longer has parameter server_name
+  - Operation ServersOperations.get has a new required parameter server_group_name
+  - Parameter type of model NameAvailabilityRequest is now required
+  - Removed operation ConfigurationsOperations.begin_put
+  - Removed operation FirewallRulesOperations.list_by_server
+  - Removed operation ServersOperations.begin_create
+  - Removed operation ServersOperations.begin_delete
+  - Removed operation ServersOperations.begin_restart
+  - Removed operation ServersOperations.begin_start
+  - Removed operation ServersOperations.begin_stop
+  - Removed operation ServersOperations.begin_update
+  - Removed operation ServersOperations.list
+  - Removed operation ServersOperations.list_by_resource_group
+
 ## 10.2.0b5 (2022-11-14)
 
 ### Features Added

@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import MicrosoftPostgreSQLHyperscale
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python firewall_rule_get.py
+    python server_list_by_server_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.firewall_rules.get(
+    response = client.servers.list_by_server_group(
         resource_group_name="TestGroup",
-        server_group_name="pgtestsvc4",
-        firewall_rule_name="rule1",
+        server_group_name="hsctestsg1",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/FirewallRuleGet.json
+# x-ms-original-file: specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/preview/2020-10-05-privatepreview/examples/ServerListByServerGroup.json
 if __name__ == "__main__":
     main()
