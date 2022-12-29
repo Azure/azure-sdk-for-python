@@ -436,6 +436,27 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return Component._from_rest_object(result)
 
+    @classmethod
+    def _try_resolve_environment_for_component(cls, component, _: str, resolver: Callable):
+        if isinstance(component, BaseNode):
+            component = component._component  # pylint: disable=protected-access
+
+        if isinstance(component, str):
+            return
+        if hasattr(component, "environment"):
+            # for internal component, environment may be a dict or InternalEnvironment object
+            # in these two scenarios, we don't need to resolve the environment;
+            # Note for not directly importing InternalEnvironment and check with `isinstance`:
+            #   import from azure.ai.ml._internal will enable internal component feature for all users,
+            #   therefore, use type().__name__ to avoid import and execute type check
+            if (
+                not isinstance(component.environment, dict)
+                and not type(component.environment).__name__ == "InternalEnvironment"
+            ):
+                component.environment = resolver(
+                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
+                )
+
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         if isinstance(component, AutoMLComponent):
             # no extra dependency for automl component
@@ -458,19 +479,11 @@ class ComponentOperations(_ScopeDependentOperations):
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
         # resolve component's environment
-        if hasattr(component, "environment"):
-            # for internal component, environment may be a dict or InternalEnvironment object
-            # in these two scenarios, we don't need to resolve the environment;
-            # Note for not directly importing InternalEnvironment and check with `isinstance`:
-            #   import from azure.ai.ml._internal will enable internal component feature for all users,
-            #   therefore, use type().__name__ to avoid import and execute type check
-            if (
-                not isinstance(component.environment, dict)
-                and not type(component.environment).__name__ == "InternalEnvironment"
-            ):
-                component.environment = get_arm_id_and_fill_back(
-                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+        self._try_resolve_environment_for_component(
+            component=component,
+            resolver=get_arm_id_and_fill_back,
+            _="",
+        )
 
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
@@ -584,8 +597,10 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _resolve_compute_for_node(cls, node: BaseNode, resolver):
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver):
         """Resolve compute for base node."""
+        if not isinstance(node, BaseNode):
+            return
         if not isinstance(node._component, PipelineComponent):
             # Resolve compute for other type
             # Keep data binding expression as they are
@@ -675,11 +690,17 @@ class ComponentOperations(_ScopeDependentOperations):
         if resolve_inputs:
             self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
 
+        # This is a preparation for concurrent resolution. Nodes will be resolved later layer by layer
+        # from bottom to top, as hash calculation of a parent node will be impacted by resolution
+        # of its child nodes.
         layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
                 self._set_default_display_name_for_anonymous_component_in_node,
                 partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
+                # partial(self._try_resolve_environment_for_component, resolver=resolver),
+                partial(self._try_resolve_compute_for_node, resolver=resolver),
+                # should we resolve code here after we do extra operations concurrently?
             ]
         )
 
@@ -694,8 +715,6 @@ class ComponentOperations(_ScopeDependentOperations):
             registry_name=self._registry_name,
         )
 
-        # Deeper layer nodes will be resolved first so that all dependencies have already been resolved when
-        # trying to resolve nodes in upper layer.
         for layer in reversed(layers):
             for _, job_instance in layer:
                 if isinstance(job_instance, LoopNode):
@@ -705,8 +724,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     # only compute is resolved here
                     self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
                 elif isinstance(job_instance, BaseNode):
-                    self._resolve_compute_for_node(job_instance, resolver=resolver)
-                    component_cache.register_node_to_resolve(job_instance)
+                    component_cache.register_node_for_lazy_resolution(job_instance)
                 elif isinstance(job_instance, ConditionNode):
                     pass
                 else:

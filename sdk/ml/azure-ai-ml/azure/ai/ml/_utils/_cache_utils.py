@@ -24,6 +24,8 @@ _ANONYMOUS_HASH_PREFIX = "anonymous-component-"
 _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
 
+_node_resolution_lock = threading.Lock()
+
 
 @dataclass
 class _CacheContent:
@@ -42,16 +44,41 @@ class CachedNodeResolver(object):
 
     This class is thread-safe if:
     1) self._resolve_nodes is not called concurrently. We guarantee this with a lock in self.resolve_nodes.
-        a) self._resolve_nodes is not called in subgraph creation as all nodes will be skipped on
-          calling register_node_to_resolve.
+        a) self._resolve_nodes won't be called recursively as all nodes will be skipped on
+          calling self.register_node_for_lazy_resolution.
         b) it can't be called concurrently as node resolution involves filling back and will change the
           state of nodes, e.g., hash of its inner component.
     2) self._resolve_component is only called concurrently on independent components
         a) we have used an in-memory component hash to deduplicate components to resolve first;
-        b) nodes are registered & resolved layer by layer, so all child components are already resolved
-          when we register a pipeline node;
-        c) potential shared dependencies like compute and data have been resolved before
-          calling self._resolve_component.
+        b) dependent components have been resolved before as nodes are registered & resolved
+          layer by layer;
+        d) dependent code will never be an instance, so it won't cause cache hit issue.
+        c) resolution of potential shared dependencies other than code and components are thread-safe
+          as they do not involve further dependency resolution. However, it's still a good practice to
+          resolve them before calling self.register_node_for_lazy_resolution as it will impact cache hit rate.
+          For example, if:
+          node1.component, node2.component = Component(environment=env1, ...), Component(environment=env1, ...)
+          root
+           |        \
+          subgraph  node2
+            |
+          node1
+          when registering node1, its component will be:
+          {
+              "name": "component1",
+              "environment": {
+                  ...
+              }
+              ...
+          }
+          Its in-memory hash will be `hash_a` on registration.
+          Then when registering node2, the component will be:
+          {
+              "name": "component1",
+              "environment": "/subscriptions/.../environments/...",
+              ...
+          }
+          Its in-memory hash will be `hash_b`, which will be a cache miss.
     """
 
     def __init__(
@@ -75,11 +102,11 @@ class CachedNodeResolver(object):
             object_hash.update(str(s).encode("utf-8"))
         self._workspace_hash = object_hash.hexdigest()
 
-        self._lock = threading.Lock()
-
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
-        """Get a hash for a component, assuming there is no change in code folder among hash calculations.
+        """Get a hash for a component.
+        This function assumes that there is no change in code folder among hash calculations,
+        which is true during resolution of 1 root pipeline component/job.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -102,8 +129,9 @@ class CachedNodeResolver(object):
 
     @staticmethod
     def _get_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
-        """Get a hash for a component. Will calculate the hash based on the component's code folder if
-        the component has code, otherwise will use the in-memory hash.
+        """Get a hash for a component.
+        This function will calculate the hash based on the component's code folder if the component has code,
+        so it's unique even if code folder is changed.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -245,13 +273,13 @@ class CachedNodeResolver(object):
 
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
-    def register_node_to_resolve(self, node: BaseNode):
+    def register_node_for_lazy_resolution(self, node: BaseNode):
         """Register a node with its component to resolve.
         """
         component = node._component  # pylint: disable=protected-access
 
-        # directly resolve node if the resolution involves no remote call
-        # so that no node will be registered when create_or_update a subgraph
+        # directly resolve node and skip registration if the resolution involves no remote call
+        # so that all node will be skipped when resolving a subgraph recursively
         if isinstance(component, str):
             node._component = self._resolver(  # pylint: disable=protected-access
                 component,
@@ -271,7 +299,10 @@ class CachedNodeResolver(object):
         if not self._nodes_to_resolve:
             return
 
-        # all nodes will be skipped on register_node_to_resolve when resolving subgraph
-        self._lock.acquire()
+        # Lock here as node resolution involves filling back and will change the
+        # state of nodes, e.g. hash of its inner component.
+        # This will happen only on concurrent external calls; In 1 external call, all nodes in
+        # subgraph will be skipped on register_node_for_lazy_resolution when resolving subgraph
+        _node_resolution_lock.acquire()
         self._resolve_nodes()
-        self._lock.release()
+        _node_resolution_lock.release()

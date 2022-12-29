@@ -239,7 +239,8 @@ class InternalComponent(Component):
 
         # This is forbidden by schema CodeFields for now so won't happen.
         if isinstance(self.code, Code):
-            raise ValueError("Code is a private class and can't be set to component.code directly.")
+            yield code
+            return
 
         self._additional_includes.resolve()
 
