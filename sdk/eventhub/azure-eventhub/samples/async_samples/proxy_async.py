@@ -10,13 +10,16 @@ An example to show async sending and receiving events behind a proxy.
 """
 import os
 import asyncio
+from typing import TYPE_CHECKING, Any, Dict, Optional
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 from azure.eventhub import EventData
+if TYPE_CHECKING:
+    from azure.eventhub.aio._eventprocessor.partition_context import PartitionContext
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-HTTP_PROXY = {
+HTTP_PROXY: Dict[str, Any] = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     'username': 'admin',  # username used for proxy authentication if needed.
@@ -24,13 +27,13 @@ HTTP_PROXY = {
 }
 
 
-async def on_event(partition_context, event):
+async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print("received event from partition: {}.".format(partition_context.partition_id))
+    print(f"received event from partition: {partition_context.partition_id}.")
     print(event)
 
 
-async def main():
+async def main() -> None:
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',

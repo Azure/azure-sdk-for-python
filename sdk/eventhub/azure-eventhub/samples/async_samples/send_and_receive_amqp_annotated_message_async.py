@@ -11,14 +11,19 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 
 import os
 import asyncio
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
+
+if TYPE_CHECKING:
+    from azure.eventhub.aio._eventprocessor.partition_context import PartitionContext
+    from azure.eventhub import EventDataBatch, EventData
 
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-async def send_data_message(producer):
+async def send_data_message(producer: EventHubProducerClient) -> None:
     data_body = [b'aa', b'bb', b'cc']
     application_properties = {"body_type": "data"}
     delivery_annotations = {"delivery_annotation_key": "value"}
@@ -27,13 +32,13 @@ async def send_data_message(producer):
         delivery_annotations=delivery_annotations,
         application_properties=application_properties
     )
-    batch = await producer.create_batch()
+    batch: EventDataBatch = await producer.create_batch()
     batch.add(data_message)
     await producer.send_batch(batch)
     print("Message of data body sent.")
 
 
-async def send_sequence_message(producer):
+async def send_sequence_message(producer: EventHubProducerClient) -> None:
     sequence_body = [b'message', 123.456, True]
     footer = {'footer_key': 'footer_value'}
     properties = {"subject": "sequence"}
@@ -48,7 +53,7 @@ async def send_sequence_message(producer):
     print("Message of sequence body sent.")
 
 
-async def send_value_message(producer):
+async def send_value_message(producer: EventHubProducerClient) -> None:
     value_body = {b"key": [-123, b'data', False]}
     header = {"priority": 10}
     annotations = {"annotation_key": "value"}
@@ -63,11 +68,11 @@ async def send_value_message(producer):
     print("Message of value body sent.")
 
 
-async def on_event(partition_context, event):
+async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
-    print("Received event from partition: {}".format(partition_context.partition_id))
-    raw_amqp_message = event.raw_amqp_message
+    print(f"Received event from partition: {partition_context.partition_id}")
+    raw_amqp_message = event.raw_amqp_message # type: ignore
     if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
         print("Message of data body received. Body is:")
         for data_section in raw_amqp_message.body:
@@ -81,7 +86,7 @@ async def on_event(partition_context, event):
         print(raw_amqp_message.body)
 
 
-async def receive_and_parse_message(consumer):
+async def receive_and_parse_message(consumer: EventHubConsumerClient) -> None:
     async with consumer:
         try:
             await consumer.receive(
@@ -92,7 +97,7 @@ async def receive_and_parse_message(consumer):
             print('Stopped receiving.')
 
 
-async def main():
+async def main() -> None:
     # Send AmqpAnnotatedMessage
     producer = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,

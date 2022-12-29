@@ -12,27 +12,30 @@ Examples to show sending events with different options to an Event Hub asynchron
 import time
 import asyncio
 import os
+from typing import TYPE_CHECKING, Sequence
 
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub import EventData
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
-async def send_event_data_batch(producer):
+async def send_event_data_batch(producer: EventHubProducerClient) -> None:
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
-    event_data_batch = await producer.create_batch()
+    event_data_batch: EventDataBatch = await producer.create_batch()
     event_data_batch.add(EventData('Single message'))
     await producer.send_batch(event_data_batch)
 
 
-async def send_event_data_batch_with_limited_size(producer):
+async def send_event_data_batch_with_limited_size(producer: EventHubProducerClient) -> None:
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
-    event_data_batch_with_limited_size = await producer.create_batch(max_size_in_bytes=1000)
+    event_data_batch_with_limited_size: EventDataBatch = await producer.create_batch(max_size_in_bytes=1000)
 
     while True:
         try:
@@ -45,38 +48,38 @@ async def send_event_data_batch_with_limited_size(producer):
     await producer.send_batch(event_data_batch_with_limited_size)
 
 
-async def send_event_data_batch_with_partition_key(producer):
+async def send_event_data_batch_with_partition_key(producer: EventHubProducerClient) -> None:
     # Specifying partition_key
-    event_data_batch_with_partition_key = await producer.create_batch(partition_key='pkey')
+    event_data_batch_with_partition_key: EventDataBatch = await producer.create_batch(partition_key='pkey')
     event_data_batch_with_partition_key.add(EventData('Message will be sent to a partition determined by the partition key'))
 
     await producer.send_batch(event_data_batch_with_partition_key)
 
 
-async def send_event_data_batch_with_partition_id(producer):
+async def send_event_data_batch_with_partition_id(producer: EventHubProducerClient) -> None:
     # Specifying partition_id.
-    event_data_batch_with_partition_id = await producer.create_batch(partition_id='0')
+    event_data_batch_with_partition_id: EventDataBatch = await producer.create_batch(partition_id='0')
     event_data_batch_with_partition_id.add(EventData('Message will be sent to target-id partition'))
 
     await producer.send_batch(event_data_batch_with_partition_id)
 
 
-async def send_event_data_batch_with_properties(producer):
-    event_data_batch = await producer.create_batch()
+async def send_event_data_batch_with_properties(producer: EventHubProducerClient) -> None:
+    event_data_batch: EventDataBatch = await producer.create_batch()
     event_data = EventData('Message with properties')
     event_data.properties = {'prop_key': 'prop_value'}
     event_data_batch.add(event_data)
     await producer.send_batch(event_data_batch)
 
 
-async def send_event_data_list(producer):
+async def send_event_data_list(producer: EventHubProducerClient)-> None:
     # If you know beforehand that the list of events you have will not exceed the
     # size limits, you can use the `send_batch()` api directly without creating an EventDataBatch
 
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
 
-    event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
+    event_data_list: Sequence[EventData] = [EventData('Event Data {}'.format(i)) for i in range(10)]
     try:
         await producer.send_batch(event_data_list)
     except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
@@ -85,7 +88,7 @@ async def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-async def run():
+async def run() -> None:
 
     producer = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,

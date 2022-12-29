@@ -33,17 +33,21 @@ Please refer to azure.identity library for detailed information.
 """
 
 import os
+from typing import TYPE_CHECKING
 import asyncio
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import EnvironmentCredential
+
+if TYPE_CHECKING:
+  from azure.eventhub import EventDataBatch
 
 
 fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
 
-async def run():
+async def run() -> None:
     credential = EnvironmentCredential()
     async with credential:
         producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
@@ -51,7 +55,7 @@ async def run():
                                           credential=credential)
 
         async with producer:
-            event_data_batch = await producer.create_batch()
+            event_data_batch: EventDataBatch = await producer.create_batch()
             while True:
                 try:
                     event_data_batch.add(EventData('Message inside EventBatchData'))

@@ -15,8 +15,12 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 import asyncio
 import os
 import logging
+from typing import TYPE_CHECKING, List
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore  # type: ignore
+if TYPE_CHECKING:
+    from azure.eventhub.aio import PartitionContext
+    from azure.eventhub import EventData
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -27,18 +31,18 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
-async def batch_process_events(events):
+async def batch_process_events(events: List[EventData]) -> None:
     # put your code here
     await asyncio.sleep(2)  # simulate something I/O bound
 
 
-async def on_event_batch(partition_context, event_batch):
+async def on_event_batch(partition_context: PartitionContext, event_batch: List[EventData]) -> None:
     log.info("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
     await batch_process_events(event_batch)
     await partition_context.update_checkpoint()
 
 
-async def receive_batch():
+async def receive_batch() -> None:
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,

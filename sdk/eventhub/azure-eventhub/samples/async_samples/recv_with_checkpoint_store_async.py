@@ -14,8 +14,13 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 
 import asyncio
 import os
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub.aio import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore  # type: ignore
+
+if TYPE_CHECKING:
+    from azure.eventhub.aio._eventprocessor.partition_context import PartitionContext
+    from azure.eventhub import EventData
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -23,13 +28,13 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
-async def on_event(partition_context, event):
+async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}.")
     await partition_context.update_checkpoint(event)
 
 
-async def receive(client):
+async def receive(client: EventHubConsumerClient) -> None:
     """
     Without specifying partition_id, the receive will try to receive events from all partitions and if provided with
     a checkpoint store, the client will load-balance partition assignment with other EventHubConsumerClient instances
@@ -43,7 +48,7 @@ async def receive(client):
     # await client.receive(on_event=on_event, partition_id='0'))
 
 
-async def main():
+async def main() -> None:
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,
