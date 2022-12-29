@@ -551,14 +551,17 @@ def mock_component_hash(mocker: MockFixture):
             )
         # when in live mode and not doing recording, we should enable on-disk cache directly
         # to test if it works as expected
-    else:
-        # in playback mode, on-disk cache can't be shared among different tests, as we can't guarantee
-        # that there is no hash function change on server-side among different recordings.
-        # For example, suppose that anonymous component A is used in both test1 & test2.
-        # In the beginning, its version is `hash_a` in both recordings; Then there is a server-side
-        # change on hash component and we re-record test1, its version becomes `hash_b` in recording for test1,
-        # but it's still `hash_a` in recording for test2.
-        # So we need to clear on-disk cache for each test.
+    elif not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_PLAYBACK_TESTS", False) in ["True", "true", True]:
+        # in playback mode, on-disk cache can't be shared among different tests.
+        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+        #   with the same on-disk hash.
+        # 2) Server-side may return different version for the same anonymous component in different workspace,
+        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+        #   and test2 in workspace B, the version in recordings can be different.
+        # So we need to clear on-disk cache for each test. If you want to run tests concurrently, you can either:
+        # 1) Disable on-disk cache or
+        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_PLAYBACK_TESTS to True and acknowledge that you may see failures caused
+        #   by the 2 issues mentioned above.
         from azure.ai.ml._utils._cache_utils import CachedNodeResolver
         shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
 

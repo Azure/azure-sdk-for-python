@@ -42,6 +42,10 @@ class CachedNodeResolver(object):
 
     This class is thread-safe if:
     1) self._resolve_nodes is not called concurrently. We guarantee this with a lock in self.resolve_nodes.
+        a) self._resolve_nodes is not called in subgraph creation as all nodes will be skipped on
+          calling register_node_to_resolve.
+        b) it can't be called concurrently as node resolution involves filling back and will change the
+          state of nodes, e.g., hash of its inner component.
     2) self._resolve_component is only called concurrently on independent components
         a) we have used an in-memory component hash to deduplicate components to resolve first;
         b) nodes are registered & resolved layer by layer, so all child components are already resolved
