@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, Optional, Union, TYPE_CHECKING
+from typing import Dict, Any, Optional, Union
 
 from azure.core import MatchConditions
 
@@ -15,12 +15,10 @@ from .._serialize import (
     _get_match_headers,
     _add_entity_properties,
 )
+from .._generated import models
 from .._generated.aio import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._generated._serialization import Serializer, Deserializer
-
-if TYPE_CHECKING:
-    from .._generated import models
 
 
 class TableBatchOperations(object):

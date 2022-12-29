@@ -4,12 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import (
-    Optional,
-    Dict,
-    List,
-    TYPE_CHECKING
-)
+from typing import Optional, Dict, List
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -21,14 +16,11 @@ from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error, _reprocess_error
-from .._models import TableItem, LocationMode
+from .._models import TableItem, LocationMode, TableCorsRule, TableMetrics, TableAnalyticsLogging
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
-
-if TYPE_CHECKING:
-    from .._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):

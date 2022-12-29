@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import time
-from typing import Any, TYPE_CHECKING, Dict
+from typing import Any, Dict
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import urlparse
@@ -17,13 +17,11 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     RetryPolicy,
 )
+from azure.core.pipeline import PipelineRequest
 from azure.core.exceptions import AzureError, ServiceRequestError, ClientAuthenticationError
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import LocationMode
-
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
 
 
 def set_next_host_location(settings: Dict[str, Any], request: PipelineRequest) -> None:

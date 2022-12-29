@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, TYPE_CHECKING
+from datetime import datetime
+from typing import Union, Any
 
-from ._models import AccountSasPermissions
+from ._models import AccountSasPermissions, ResourceTypes
 from ._common_conversion import _sign_string
 from ._error import _validate_not_none
 from ._constants import X_MS_VERSION
@@ -15,10 +16,7 @@ from ._shared_access_signature import (
     QueryStringConstants,
 )
 
-if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.credentials import AzureNamedKeyCredential
-    from ._models import ResourceTypes
+from azure.core.credentials import AzureNamedKeyCredential
 
 
 def generate_account_sas(

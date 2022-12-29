@@ -3,17 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any
 
-from typing import TYPE_CHECKING
-
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from .._authentication import _HttpChallenge
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineResponse, PipelineRequest  # pylint: disable=ungrouped-imports
 
 
 class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):

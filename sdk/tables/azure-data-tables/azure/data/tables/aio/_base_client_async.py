@@ -4,10 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Mapping, Optional, Union, TYPE_CHECKING
+from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncRedirectPolicy,
@@ -39,9 +40,6 @@ from .._error import (
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword

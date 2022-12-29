@@ -4,14 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 
 try:
@@ -24,18 +26,8 @@ try:
 except ImportError:
     pass
 
-from ._common_conversion import (
-    _sign_string,
-)
-
-from ._error import (
-    _wrap_exception,
-)
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineResponse, PipelineRequest  # pylint: disable=ungrouped-imports
+from ._common_conversion import _sign_string
+from ._error import _wrap_exception
 
 
 class AzureSigningError(ClientAuthenticationError):

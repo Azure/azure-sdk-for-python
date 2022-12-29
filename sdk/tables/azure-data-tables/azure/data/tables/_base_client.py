@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from typing import Dict, Optional, Any, List, Mapping, Union, TYPE_CHECKING
+from typing import Dict, Optional, Any, List, Mapping, Union, Literal
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -12,7 +12,7 @@ except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
     HttpTransport,
@@ -54,10 +54,6 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from typing import Literal
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line

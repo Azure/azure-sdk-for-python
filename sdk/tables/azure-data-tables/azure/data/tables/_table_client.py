@@ -6,6 +6,7 @@
 
 import functools
 from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload, cast
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -19,34 +20,20 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
-from ._error import (
-    _decode_error,
-    _process_table_error,
-    _reprocess_error,
-    _reraise_error,
-    _validate_tablename_error
-)
-from ._generated.models import (
-    SignedIdentifier,
-    TableProperties
-)
+from ._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
+from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._serialize import serialize_iso, _parameter_filter_substitution
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
-from ._models import (
-    TableEntityPropertiesPaged,
-    UpdateMode,
-    TableAccessPolicy,
-    TableItem
-)
+from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
-class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(TablesBaseClient):  # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -54,7 +41,9 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(self, endpoint: str, table_name: str, **kwargs: Any) -> None: # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
+        self, endpoint: str, table_name: str, **kwargs: Any
+    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         """Create TableClient from a Credential.
 
         :param str endpoint: A URL to an Azure Tables account.
@@ -81,7 +70,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> 'TableClient':
+    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
         """Create TableClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -98,13 +87,11 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 :dedent: 8
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
-        endpoint, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, keyword_args=kwargs
-        )
+        endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
-    def from_table_url(cls, table_url: str, **kwargs: Any) -> 'TableClient':
+    def from_table_url(cls, table_url: str, **kwargs: Any) -> "TableClient":
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
@@ -142,9 +129,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         if table_name.lower().startswith("tables('"):
             table_name = table_name[8:-2]
         if not table_name:
-            raise ValueError(
-                "Invalid URL. Please provide a URL with a valid table name"
-            )
+            raise ValueError("Invalid URL. Please provide a URL with a valid table name")
         return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace
@@ -172,7 +157,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 output[identifier.id] = TableAccessPolicy(
                     start=deserialize_iso(identifier.access_policy.start),
                     expiry=deserialize_iso(identifier.access_policy.expiry),
-                    permission=identifier.access_policy.permission
+                    permission=identifier.access_policy.permission,
                 )
             else:
                 output[identifier.id] = None
@@ -195,9 +180,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             payload = None
             if value:
                 payload = TableAccessPolicy(
-                    start=serialize_iso(value.start),
-                    expiry=serialize_iso(value.expiry),
-                    permission=value.permission
+                    start=serialize_iso(value.start), expiry=serialize_iso(value.expiry), permission=value.permission
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
@@ -304,13 +287,13 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 :caption: Deleting an entity of a Table
         """
         try:
-            entity = kwargs.pop('entity', None)
+            entity = kwargs.pop("entity", None)
             if not entity:
                 entity = args[0]
-            partition_key = entity['PartitionKey']
-            row_key = entity['RowKey']
+            partition_key = entity["PartitionKey"]
+            row_key = entity["RowKey"]
         except (TypeError, IndexError):
-            partition_key = kwargs.pop('partition_key', None)
+            partition_key = kwargs.pop("partition_key", None)
             if not partition_key:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
@@ -343,7 +326,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace
-    def create_entity(self, entity: EntityType, **kwargs: Any) -> Dict[str,str]:
+    def create_entity(self, entity: EntityType, **kwargs: Any) -> Dict[str, str]:
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
@@ -381,7 +364,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
-    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str,str]:
+    def update_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str, str]:
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
@@ -485,6 +468,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
 
     @distributed_trace
     def query_entities(self, query_filter: str, **kwargs: Dict[str, Any]) -> ItemPaged[TableEntity]:
+        # pylint: disable=line-too-long
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities. For more information
@@ -508,9 +492,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 :caption: Query entities held within a table
         """
         parameters = kwargs.pop("parameters", None)
-        query_filter = _parameter_filter_substitution(
-            parameters, query_filter  # type: ignore
-        )
+        query_filter = _parameter_filter_substitution(parameters, query_filter)  # type: ignore
         top = kwargs.pop("results_per_page", None)
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
@@ -565,7 +547,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return _convert_to_entity(entity)
 
     @distributed_trace
-    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str,str]:
+    def upsert_entity(self, entity: EntityType, mode: UpdateMode = UpdateMode.MERGE, **kwargs: Any) -> Dict[str, str]:
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.

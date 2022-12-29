@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    TYPE_CHECKING,
     Union,
     Any,
     Dict,
@@ -15,18 +14,15 @@ from typing import (
 )
 
 from azure.core import MatchConditions
+from azure.core.pipeline.transport import HttpRequest
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._entity import TableEntity
-
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest
-    from ._generated import models, AzureTable
-    from ._generated._configuration import AzureTableConfiguration
-    from ._generated._serialization import Serializer
-    from ._generated._serialization import Deserializer
+from ._generated import models, AzureTable
+from ._generated._configuration import AzureTableConfiguration
+from ._generated._serialization import Serializer, Deserializer
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]

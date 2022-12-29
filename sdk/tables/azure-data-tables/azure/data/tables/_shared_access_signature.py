@@ -3,21 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import date
-from typing import Optional, Union, TYPE_CHECKING
+from datetime import date, datetime
+from typing import Optional, Union
 
 from ._deserialize import url_quote
-
-
+from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 from ._common_conversion import (
     _sign_string,
     _to_str,
 )
 from ._constants import DEFAULT_X_MS_VERSION
-
-if TYPE_CHECKING:
-    from datetime import datetime  # pylint: disable=ungrouped-imports
-    from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 
 
 def _to_utc_datetime(value):
