@@ -7,7 +7,6 @@
 - Added property to enable/disable public ip addresses to Compute Instances and AML Computes.
 
 ### Bugs Fixed
-- Fixed print on Command objects when job id is empty
 - Fixed issue with date-time format for utc_time_created field when creating models.
 - Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
 - Fixed issue where AmlComputes could only be created in a workspace's default region.
