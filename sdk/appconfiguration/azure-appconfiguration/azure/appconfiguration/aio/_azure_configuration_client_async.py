@@ -269,7 +269,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
         .. code-block:: python
 
-            # in async fuction
+            # in async function
             config_setting = ConfigurationSetting(
                 key="MyKey",
                 label="MyLabel",

@@ -4,6 +4,11 @@
 # ------------------------------------
 import json
 from typing import Any, Union
+from azure.appconfiguration import(
+    ConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+)
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
 
@@ -14,7 +19,7 @@ except ImportError:
 
 
 PolymorphicConfigurationSetting = Union[
-    "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
+    ConfigurationSetting, SecretReferenceConfigurationSetting, FeatureFlagConfigurationSetting
 ]
 
 
@@ -55,8 +60,7 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
@@ -68,8 +72,7 @@ class ConfigurationSetting(Model):
         self.tags = kwargs.get("tags", {})
 
     @classmethod
-    def _from_generated(cls, key_value):
-        # type: (KeyValue) -> PolymorphicConfigurationSetting
+    def _from_generated(cls, key_value: KeyValue) -> PolymorphicConfigurationSetting:
         if key_value is None:
             return key_value
         if key_value.content_type is not None:
@@ -102,8 +105,7 @@ class ConfigurationSetting(Model):
             etag=key_value.etag,
         )
 
-    def _to_generated(self):
-        # type: () -> KeyValue
+    def _to_generated(self) -> KeyValue:
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -116,9 +118,7 @@ class ConfigurationSetting(Model):
         )
 
 
-class FeatureFlagConfigurationSetting(
-    ConfigurationSetting
-):  # pylint: disable=too-many-instance-attributes
+class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=too-many-instance-attributes
     """A feature flag configuration value.
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -165,8 +165,7 @@ class FeatureFlagConfigurationSetting(
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id, **kwargs):  # pylint: disable=dangerous-default-value, super-init-not-called
-        # type: (str, **Any) -> None
+    def __init__(self, feature_id: str, **kwargs: Any) -> None:  # pylint: disable=dangerous-default-value, super-init-not-called
         if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -213,8 +212,7 @@ class FeatureFlagConfigurationSetting(
             self.filters = None
 
     @classmethod
-    def _from_generated(cls, key_value):
-        # type: (KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]
+    def _from_generated(cls, key_value: KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]:
         if key_value is None:
             return key_value
         enabled = None
@@ -240,8 +238,7 @@ class FeatureFlagConfigurationSetting(
             filters=filters
         )
 
-    def _to_generated(self):
-        # type: () -> KeyValue
+    def _to_generated(self) -> KeyValue:
         return KeyValue(
             key=self.key,
             label=self.label,
@@ -294,8 +291,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key, secret_id, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (str, str, **Any) -> None
+    def __init__(self, key: str, secret_id: str, **kwargs: Any) -> None: # pylint: disable=super-init-not-called
         if "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
@@ -331,8 +327,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             self.secret_id = None
 
     @classmethod
-    def _from_generated(cls, key_value):
-        # type: (KeyValue) -> SecretReferenceConfigurationSetting
+    def _from_generated(cls, key_value: KeyValue) -> SecretReferenceConfigurationSetting:
         if key_value is None:
             return key_value
         secret_uri = None
@@ -354,8 +349,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             etag=key_value.etag,
         )
 
-    def _to_generated(self):
-        # type: () -> KeyValue
+    def _to_generated(self) -> KeyValue:
         return KeyValue(
             key=self.key,
             label=self.label,
