@@ -60,7 +60,7 @@ def create_producer_client() -> None:
     print("Calling producer client get eventhub properties:", producer_client.get_eventhub_properties())
 
 
-def create_consumer_client():
+def create_consumer_client() -> None:
     print('Examples showing how to create consumer client.')
 
     # Create consumer client from connection string.
