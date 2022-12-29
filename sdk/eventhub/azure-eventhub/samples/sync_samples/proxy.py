@@ -9,7 +9,7 @@
 An example to show sending and receiving events behind a proxy.
 """
 import os
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
 if TYPE_CHECKING:
     from azure.eventhub import PartitionContext, EventDataBatch
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
-HTTP_PROXY: Dict[str, Any] = {
+HTTP_PROXY = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.
     'proxy_port': 3128,  # proxy port.
     'username': 'admin',  # username used for proxy authentication if needed.
