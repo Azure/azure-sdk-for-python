@@ -32,14 +32,6 @@ logger = logging.getLogger(__name__)
 class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
 
-    def __int__(self, interval, terminal_statuses) -> None:
-        self._resource = None
-        self._command = None
-        self._initial_response = None
-        self._polling_interval = interval
-        self._status = None
-        self._termination_statuses = terminal_statuses
-
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -77,9 +69,12 @@ class LoadTestingPollingMethod(PollingMethod):
 class ValidationCheckPoller(LoadTestingPollingMethod):
     """polling method for long-running validation check operation."""
     def __init__(self, interval=5) -> None:
-        super(ValidationCheckPoller, self).__init__(interval,
-                                            ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"])
-
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
@@ -88,7 +83,12 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
 class TestRunStatusPoller(LoadTestingPollingMethod):
 
     def __init__(self, interval=5) -> None:
-        super(TestRunStatusPoller, self).__init__(interval, ["DONE", "FAILED", "CANCELLED"])
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self) -> None:
         self._status = self._resource["status"]
@@ -96,13 +96,6 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
-    def __int__(self, interval, terminal_statuses) -> None:
-        self._resource = None
-        self._command = None
-        self._initial_response = None
-        self._polling_interval = interval
-        self._status = None
-        self._termination_statuses = terminal_statuses
 
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
@@ -141,8 +134,12 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
 class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
 
     def __init__(self, interval=5) -> None:
-        super(AsyncValidationCheckPoller, self).__init__(interval,
-                                            ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"])
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
@@ -151,7 +148,12 @@ class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
 class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
 
     def __init__(self, interval=5) -> None:
-        super(AsyncTestRunStatusPoller, self).__init__(interval, ["DONE", "FAILED", "CANCELLED"])
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
     def _update_status(self) -> None:
         self._status = self._resource["status"]
 
