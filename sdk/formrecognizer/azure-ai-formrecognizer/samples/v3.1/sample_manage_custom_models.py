@@ -50,8 +50,8 @@ class ManageCustomModelsSample(object):
         custom_models = form_training_client.list_custom_models()
 
         print("We have models with the following IDs:")
-        for model in custom_models:
-            print(model.model_id)
+        for custom_model in custom_models:
+            print(custom_model.model_id)
         # [END list_custom_models]
 
         # let's train a model to use for this sample
