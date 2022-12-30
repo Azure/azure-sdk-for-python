@@ -8,8 +8,6 @@ from types import FunctionType, MethodType, CodeType
 from typing import Any, List, Optional, Union, Tuple, Dict
 import logging
 
-from azure.ai.ml._utils.utils import is_private_preview_enabled
-
 logger = logging.getLogger(__name__)
 
 
@@ -153,7 +151,12 @@ try:
                 return True
             if instr1 is None or instr2 is None:
                 return False
-            return instr1.opcode == instr2.opcode and instr1.arg == instr2.arg
+            if instr1.__class__ != instr2.__class__:
+                return False
+            if isinstance(instr1, Instr):
+                return instr1.opcode == instr2.opcode and instr1.arg == instr2.arg
+            # objects like Label and TryBegin
+            return True
 
         @classmethod
         def is_body_instruction(cls, instr: Instr) -> bool:
@@ -290,6 +293,4 @@ def get_outputs_and_locals(func, _all_kwargs):
     :return: A tuple of outputs and locals.
     :rtype: typing.Tuple[typing.Dict, typing.Dict]
     """
-    if is_private_preview_enabled():
-        return PersistentLocalsFunctionBytecodeBuilder().call(func, _all_kwargs)
-    return PersistentLocalsFunctionProfilerBuilder().call(func, _all_kwargs)
+    return PersistentLocalsFunctionBytecodeBuilder().call(func, _all_kwargs)
