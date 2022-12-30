@@ -168,7 +168,7 @@ def _prepare_multipart_body_helper(
     return content_index
 
 
-class _HTTPSerializer(HTTPConnection, object):
+class _HTTPSerializer(HTTPConnection):
     """Hacking the stdlib HTTPConnection to serialize HTTP request as strings."""
 
     def __init__(self, *args, **kwargs):
@@ -194,6 +194,8 @@ def _serialize_request(http_request: "HTTPRequestType") -> bytes:
      to serialize.
     :rtype: bytes
     """
+    if isinstance(http_request.body, dict):
+        raise ValueError("Cannot serialize an HTTPRequest with dict body.")
     serializer = _HTTPSerializer()
     serializer.request(
         method=http_request.method,

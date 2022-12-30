@@ -68,6 +68,7 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
+DataType = Optional[Union[bytes, Dict[str, str]]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -150,7 +151,7 @@ class HttpRequest:
     :param dict[str,str] headers: HTTP headers
     :param files: Files list.
     :param data: Body to be sent.
-    :type data: bytes
+    :type data: bytes or dict (for form)
     """
 
     def __init__(
@@ -159,7 +160,7 @@ class HttpRequest:
         url: str,
         headers: Mapping[str, str] = None,
         files: Any = None,
-        data: bytes = None,
+        data: DataType = None,
     ) -> None:
         self.method = method
         self.url = url
@@ -193,15 +194,15 @@ class HttpRequest:
         return {}
 
     @property
-    def body(self) -> Optional[bytes]:
+    def body(self) -> DataType:
         """Alias to data.
 
-        :rtype: bytes or str
+        :rtype: bytes or dict
         """
         return self.data
 
     @body.setter
-    def body(self, value: bytes):
+    def body(self, value: DataType):
         self.data = value
 
     @staticmethod
