@@ -31,7 +31,7 @@ outputs:
 #    type: openai_model
 
 command: |
-  python -c " 
+  python -c "
     import pickle
     with open('${{inputs.component_in_custom_model}}/model.pkl', 'rb') as f:
         model = pickle.load(f)

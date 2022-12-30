@@ -7,38 +7,36 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppliedScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Applied Scope.
-    """
+class AppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Applied Scope."""
 
     SINGLE = "Single"
     SHARED = "Shared"
 
-class CalculateExchangeOperationResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the operation.
-    """
+
+class CalculateExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DisplayProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the current display state of the Reservation.
-    """
+
+class DisplayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current display state of the Reservation."""
 
     SUCCEEDED = "Succeeded"
     EXPIRING = "Expiring"
@@ -48,7 +46,9 @@ class DisplayProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     CANCELLED = "Cancelled"
     FAILED = "Failed"
 
-class ErrorResponseCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ErrorResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ErrorResponseCode."""
 
     NOT_SPECIFIED = "NotSpecified"
     INTERNAL_SERVER_ERROR = "InternalServerError"
@@ -106,10 +106,12 @@ class ErrorResponseCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FULFILLMENT_ERROR = "FulfillmentError"
     CALCULATE_PRICE_FAILED = "CalculatePriceFailed"
     APPLIED_SCOPES_SAME_AS_EXISTING = "AppliedScopesSameAsExisting"
+    SELF_SERVICE_REFUND_NOT_SUPPORTED = "SelfServiceRefundNotSupported"
+    REFUND_LIMIT_EXCEEDED = "RefundLimitExceeded"
 
-class ExchangeOperationResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the operation.
-    """
+
+class ExchangeOperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -117,7 +119,8 @@ class ExchangeOperationResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str,
     PENDING_REFUNDS = "PendingRefunds"
     PENDING_PURCHASES = "PendingPurchases"
 
-class InstanceFlexibility(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class InstanceFlexibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Turning this on will apply the reservation discount to other VMs in the same VM size group.
     Only specify for VirtualMachines reserved resource type.
     """
@@ -125,7 +128,8 @@ class InstanceFlexibility(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ON = "On"
     OFF = "Off"
 
-class Location(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Location(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Location in which the Resources needs to be reserved. It cannot be changed after the resource
     has been created.
     """
@@ -155,27 +159,27 @@ class Location(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WESTCENTRALUS = "westcentralus"
     UKWEST = "ukwest"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the individual operation.
-    """
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the individual operation."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELLED = "Cancelled"
     PENDING = "Pending"
 
-class PaymentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes whether the payment is completed, failed, cancelled or scheduled in the future.
-    """
+
+class PaymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes whether the payment is completed, failed, cancelled or scheduled in the future."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     SCHEDULED = "Scheduled"
     CANCELLED = "Cancelled"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the current state of the Reservation.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the current state of the Reservation."""
 
     CREATING = "Creating"
     PENDING_RESOURCE_HOLD = "PendingResourceHold"
@@ -191,9 +195,9 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SPLIT = "Split"
     MERGED = "Merged"
 
-class QuotaRequestState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The quota request status.
-    """
+
+class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The quota request status."""
 
     ACCEPTED = "Accepted"
     INVALID = "Invalid"
@@ -201,14 +205,16 @@ class QuotaRequestState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
 
-class ReservationBillingPlan(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the billing plans.
-    """
+
+class ReservationBillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the billing plans."""
 
     UPFRONT = "Upfront"
     MONTHLY = "Monthly"
 
-class ReservationStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReservationStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReservationStatusCode."""
 
     NONE = "None"
     PENDING = "Pending"
@@ -221,17 +227,17 @@ class ReservationStatusCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EXPIRED = "Expired"
     SUCCEEDED = "Succeeded"
 
-class ReservationTerm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the term of Reservation.
-    """
+
+class ReservationTerm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the term of Reservation."""
 
     P1_Y = "P1Y"
     P3_Y = "P3Y"
     P5_Y = "P5Y"
 
-class ReservedResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the resource that is being reserved.
-    """
+
+class ReservedResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the resource that is being reserved."""
 
     VIRTUAL_MACHINES = "VirtualMachines"
     SQL_DATABASES = "SqlDatabases"
@@ -260,9 +266,9 @@ class ReservedResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SQL_EDGE = "SqlEdge"
     VIRTUAL_MACHINE_SOFTWARE = "VirtualMachineSoftware"
 
-class ResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The resource types.
-    """
+
+class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource types."""
 
     STANDARD = "standard"
     DEDICATED = "dedicated"
@@ -270,9 +276,9 @@ class ResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SHARED = "shared"
     SERVICE_SPECIFIC = "serviceSpecific"
 
-class UserFriendlyAppliedScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The applied scope type
-    """
+
+class UserFriendlyAppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The applied scope type."""
 
     NONE = "None"
     SHARED = "Shared"
@@ -280,9 +286,9 @@ class UserFriendlyAppliedScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, 
     RESOURCE_GROUP = "ResourceGroup"
     MANAGEMENT_GROUP = "ManagementGroup"
 
-class UserFriendlyRenewState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The renew state of the reservation
-    """
+
+class UserFriendlyRenewState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The renew state of the reservation."""
 
     ON = "On"
     OFF = "Off"

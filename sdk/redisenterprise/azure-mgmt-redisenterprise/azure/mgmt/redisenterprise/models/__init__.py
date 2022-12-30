@@ -39,71 +39,73 @@ from ._models_py3 import Resource
 from ._models_py3 import Sku
 from ._models_py3 import TrackedResource
 
-
-from ._redis_enterprise_management_client_enums import (
-    AccessKeyType,
-    ActionType,
-    AofFrequency,
-    ClusteringPolicy,
-    EvictionPolicy,
-    LinkState,
-    Origin,
-    PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
-    Protocol,
-    ProvisioningState,
-    RdbFrequency,
-    ResourceState,
-    SkuName,
-    TlsVersion,
-)
+from ._redis_enterprise_management_client_enums import AccessKeyType
+from ._redis_enterprise_management_client_enums import ActionType
+from ._redis_enterprise_management_client_enums import AofFrequency
+from ._redis_enterprise_management_client_enums import ClusteringPolicy
+from ._redis_enterprise_management_client_enums import EvictionPolicy
+from ._redis_enterprise_management_client_enums import LinkState
+from ._redis_enterprise_management_client_enums import Origin
+from ._redis_enterprise_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._redis_enterprise_management_client_enums import PrivateEndpointServiceConnectionStatus
+from ._redis_enterprise_management_client_enums import Protocol
+from ._redis_enterprise_management_client_enums import ProvisioningState
+from ._redis_enterprise_management_client_enums import RdbFrequency
+from ._redis_enterprise_management_client_enums import ResourceState
+from ._redis_enterprise_management_client_enums import SkuName
+from ._redis_enterprise_management_client_enums import TlsVersion
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccessKeys',
-    'Cluster',
-    'ClusterList',
-    'ClusterUpdate',
-    'Database',
-    'DatabaseList',
-    'DatabasePropertiesGeoReplication',
-    'DatabaseUpdate',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'ExportClusterParameters',
-    'ForceUnlinkParameters',
-    'ImportClusterParameters',
-    'LinkedDatabase',
-    'Module',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'OperationStatus',
-    'Persistence',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
-    'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
-    'PrivateLinkServiceConnectionState',
-    'ProxyResource',
-    'RegenerateKeyParameters',
-    'Resource',
-    'Sku',
-    'TrackedResource',
-    'AccessKeyType',
-    'ActionType',
-    'AofFrequency',
-    'ClusteringPolicy',
-    'EvictionPolicy',
-    'LinkState',
-    'Origin',
-    'PrivateEndpointConnectionProvisioningState',
-    'PrivateEndpointServiceConnectionStatus',
-    'Protocol',
-    'ProvisioningState',
-    'RdbFrequency',
-    'ResourceState',
-    'SkuName',
-    'TlsVersion',
+    "AccessKeys",
+    "Cluster",
+    "ClusterList",
+    "ClusterUpdate",
+    "Database",
+    "DatabaseList",
+    "DatabasePropertiesGeoReplication",
+    "DatabaseUpdate",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ExportClusterParameters",
+    "ForceUnlinkParameters",
+    "ImportClusterParameters",
+    "LinkedDatabase",
+    "Module",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "OperationStatus",
+    "Persistence",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
+    "ProxyResource",
+    "RegenerateKeyParameters",
+    "Resource",
+    "Sku",
+    "TrackedResource",
+    "AccessKeyType",
+    "ActionType",
+    "AofFrequency",
+    "ClusteringPolicy",
+    "EvictionPolicy",
+    "LinkState",
+    "Origin",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
+    "Protocol",
+    "ProvisioningState",
+    "RdbFrequency",
+    "ResourceState",
+    "SkuName",
+    "TlsVersion",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

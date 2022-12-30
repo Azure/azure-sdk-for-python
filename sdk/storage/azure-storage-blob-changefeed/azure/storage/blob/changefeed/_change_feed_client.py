@@ -4,20 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
-from typing import (  # pylint: disable=unused-import
-    Optional, Any, TYPE_CHECKING, Dict
+from typing import (
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING
 )
 
 from azure.core.paging import ItemPaged
 from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
-
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
+
 if TYPE_CHECKING:
-    from datetime import datetime
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
-class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
+class ChangeFeedClient(object):
     """A client to interact with a specific account change feed.
 
     :param str account_url:
@@ -52,19 +53,18 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             :caption: Creating the ChangeFeedClient from a URL to a public blob (no auth needed).
     """
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ChangeFeedClient
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> "ChangeFeedClient":
         """Create ChangeFeedClient from a Connection String.
 
         :param str conn_str:
@@ -95,8 +95,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-    def list_changes(self, **kwargs):
-        # type: (**Any) -> ItemPaged[Dict]
+    def list_changes(self, **kwargs: Any) -> ItemPaged[Dict]:
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.

@@ -7,79 +7,26 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the SKU.
-    """
+class AppSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU."""
 
     ST0 = "ST0"
     ST1 = "ST1"
     ST2 = "ST2"
 
-class AppState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current state of the application.
-    """
+
+class AppState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the application."""
 
     CREATED = "created"
     SUSPENDED = "suspended"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
 
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-class NetworkAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to allow or deny network traffic.
-    """
-
-    ALLOW = "Allow"
-    DENY = "Deny"
-
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
-
-    SUCCEEDED = "Succeeded"
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    FAILED = "Failed"
-
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
-
-    PENDING = "Pending"
-    APPROVED = "Approved"
-    REJECTED = "Rejected"
-
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the application.
-    """
-
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    UPDATING = "Updating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether requests from the public network are allowed.
-    """
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class SystemAssignedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of managed service identity (either system assigned, or none).
-    """
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"

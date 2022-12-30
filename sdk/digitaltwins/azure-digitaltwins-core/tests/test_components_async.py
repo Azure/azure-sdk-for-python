@@ -4,26 +4,23 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import uuid
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
-from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceNotFoundError,
     HttpResponseError,
-    ResourceExistsError,
     ResourceModifiedError
 )
+from azure.digitaltwins.core.aio import DigitalTwinsClient
+from devtools_testutils import AzureRecordedTestCase
+
 
 MODEL_ID = "dtmi:com:samples:DTComponentTestsModel;1"
 COMPONENT_ID = "dtmi:com:samples:DTComponentTestsComponent;1"
 DIGITAL_TWIN_ID = "DTComponentTestsTempTwin"
 
 
-class DigitalTwinsComponentTests(AzureTestCase):
+class TestDigitalTwinsComponentAsync(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient, is_async=True)
@@ -106,20 +103,18 @@ class DigitalTwinsComponentTests(AzureTestCase):
         }
         await client.upsert_digital_twin(DIGITAL_TWIN_ID, temporary_twin)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_component_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_component_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.get_component(DIGITAL_TWIN_ID, "Component3")
-        
+
         with pytest.raises(ResourceNotFoundError):
             await client.get_component("foo", "Component1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_component_simple(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_component_simple(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
 
         component = await client.get_component(DIGITAL_TWIN_ID, "Component1")
@@ -130,10 +125,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         assert twin["Component1"]["ComponentProp1"] == "value1"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_replace(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_replace(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
 
         patch = [
@@ -152,10 +146,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         assert twin["Component1"]["ComponentProp1"] == "value2"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_remove(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_remove(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
 
         patch = [
@@ -173,10 +166,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         assert "ComponentProp1" not in twin["Component1"]
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_add(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_add(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
 
         patch = [
@@ -196,10 +188,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         assert twin["Component1"]["ComponentProp1"] == "5"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_multiple(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_multiple(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         patch = [
             {
@@ -221,10 +212,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         assert "ComponentProp1" not in twin["Component1"]
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_invalid_patch(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_invalid_patch(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         patch = [
             {
@@ -235,7 +225,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
         ]
         with pytest.raises(HttpResponseError):
             await client.update_component(DIGITAL_TWIN_ID, "Component1", patch)
-        
+
         patch = {
             "AverageTemperature": 42
         }
@@ -245,7 +235,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
         patch = [{}]
         with pytest.raises(HttpResponseError):
             await client.update_component(DIGITAL_TWIN_ID, "Component1", patch)
-    
+
         patch = [
             {
                 "op": "add",
@@ -255,7 +245,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
         ]
         with pytest.raises(HttpResponseError):
             await client.update_component(DIGITAL_TWIN_ID, "Component1", patch)
-        
+
         patch = [
             {
                 "op": "replace",
@@ -266,10 +256,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         with pytest.raises(HttpResponseError):
             await client.update_component(DIGITAL_TWIN_ID, "Component1", patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_conditionally_if_not_modified(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         twin = await client.get_digital_twin(DIGITAL_TWIN_ID)
         patch = [
@@ -296,10 +285,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         assert "ComponentProp1" in component
         assert component["ComponentProp1"] == "value2"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_conditionally_if_present(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         patch = [
             {
@@ -317,10 +305,9 @@ class DigitalTwinsComponentTests(AzureTestCase):
         assert "ComponentProp1" in component
         assert component["ComponentProp1"] == "value2"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_update_component_invalid_conditions(self, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         patch = [
             {
                 "op": "replace",
@@ -342,7 +329,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
                 "Component1",
                 patch,
                 match_condition=MatchConditions.IfNotModified)
-        
+
         with pytest.raises(ValueError):
             await client.update_component(
                 DIGITAL_TWIN_ID,
@@ -358,9 +345,8 @@ class DigitalTwinsComponentTests(AzureTestCase):
                 patch,
                 match_condition=MatchConditions.IfMissing)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_component_not_existing(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_component_not_existing(self, recorded_test, digitaltwin):
         patch = [
             {
                 "op": "replace",
@@ -368,19 +354,18 @@ class DigitalTwinsComponentTests(AzureTestCase):
                 "value": "value2"
             }
         ]
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             await client.update_component(DIGITAL_TWIN_ID, "Component2", patch)
-        
+
         with pytest.raises(ResourceNotFoundError):
             await client.update_component("foo", "Component2", patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_component_telemetry(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_component_telemetry(self, recorded_test, digitaltwin):
         # TODO: How to validate this test? It seems to pass regardless
         telemetry = {"ComponentTelemetry1": 5} # ComponentTelemetry1
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         published = await client.publish_component_telemetry(
             DIGITAL_TWIN_ID,
@@ -389,11 +374,10 @@ class DigitalTwinsComponentTests(AzureTestCase):
         )
         assert published is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_component_telemetry_with_message_id(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_component_telemetry_with_message_id(self, recorded_test, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5} # ComponentTelemetry1
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client)
         published = await client.publish_component_telemetry(
             DIGITAL_TWIN_ID,
@@ -403,12 +387,10 @@ class DigitalTwinsComponentTests(AzureTestCase):
         )
         assert published is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_component_telemetry_not_existing(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_component_telemetry_not_existing(self, recorded_test, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5}
-        client = self._get_client(digitaltwin.host_name)
-
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.publish_component_telemetry(
                 "foo",

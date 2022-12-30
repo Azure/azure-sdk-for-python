@@ -20,7 +20,7 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricAnomalyAlertSnoozeCondition,
 )
-from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids, API_KEY
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
@@ -744,7 +744,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
             return variables
 
     @AzureRecordedTestCase.await_prepared_test
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. Error occurs with AAD: "(Forbidden) You do not have sufficient permissions on this Metric"
     @MetricsAdvisorPreparer()
     @recorded_by_proxy_async
     async def test_list_alert_configs(self, client):

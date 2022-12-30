@@ -9,41 +9,48 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ChaosManagementClientConfiguration
-from .operations import CapabilitiesOperations, CapabilityTypesOperations, ExperimentsOperations, Operations, TargetTypesOperations, TargetsOperations
+from .operations import (
+    CapabilitiesOperations,
+    CapabilityTypesOperations,
+    ExperimentsOperations,
+    Operations,
+    TargetTypesOperations,
+    TargetsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class ChaosManagementClient:
+
+class ChaosManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
     :vartype capabilities: azure.mgmt.chaos.aio.operations.CapabilitiesOperations
+    :ivar capability_types: CapabilityTypesOperations operations
+    :vartype capability_types: azure.mgmt.chaos.aio.operations.CapabilityTypesOperations
     :ivar experiments: ExperimentsOperations operations
     :vartype experiments: azure.mgmt.chaos.aio.operations.ExperimentsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.chaos.aio.operations.Operations
-    :ivar targets: TargetsOperations operations
-    :vartype targets: azure.mgmt.chaos.aio.operations.TargetsOperations
     :ivar target_types: TargetTypesOperations operations
     :vartype target_types: azure.mgmt.chaos.aio.operations.TargetTypesOperations
-    :ivar capability_types: CapabilityTypesOperations operations
-    :vartype capability_types: azure.mgmt.chaos.aio.operations.CapabilityTypesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar targets: TargetsOperations operations
+    :vartype targets: azure.mgmt.chaos.aio.operations.TargetsOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: GUID that represents an Azure subscription ID.
+    :param subscription_id: GUID that represents an Azure subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-10-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -55,38 +62,25 @@ class ChaosManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ChaosManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ChaosManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.capabilities = CapabilitiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.experiments = ExperimentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.targets = TargetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.target_types = TargetTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.capability_types = CapabilityTypesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.targets = TargetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -95,7 +89,7 @@ class ChaosManagementClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

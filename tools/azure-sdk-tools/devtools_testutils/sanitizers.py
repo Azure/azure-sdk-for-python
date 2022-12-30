@@ -122,7 +122,7 @@ def set_headerless_matcher() -> None:
 # - Uri
 # - Header
 # - Body
-# 
+#
 # For example, A sanitizer prefixed with Body will only ever operate on the request/response body. The target URI and
 # request/response headers will be left unaffected.
 #
@@ -154,8 +154,8 @@ def add_body_key_sanitizer(**kwargs: "Any") -> None:
 def add_body_regex_sanitizer(**kwargs: "Any") -> None:
     """Registers a sanitizer that offers regex replace within a returned body.
 
-    Specifically, this regex applies to the raw JSON of a body. If you are attempting to simply replace a specific key,
-    add_body_key_sanitizer is probably more suitable.
+    Specifically, this means regex applying to the raw JSON. If you are attempting to simply replace a specific key, the
+    BodyKeySanitizer is probably the way to go.
 
     :keyword str value: The substitution value.
     :keyword str regex: A regex. Can be defined as a simple regex, or if a ``group_for_replace`` is provided, a
@@ -476,6 +476,7 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
     certificates = kwargs.pop("certificates", None)
     tls_certificate = kwargs.pop("tls_certificate", None)
+    tls_certificate_host = kwargs.pop("tls_certificate_host", None)
     request_args = _get_request_args(**kwargs)
 
     if certificates or tls_certificate:
@@ -487,6 +488,9 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
         if tls_certificate:
             transport["TLSValidationCert"] = tls_certificate
+
+        if tls_certificate_host:
+            transport["TSLValidationCertHost"] = tls_certificate_host
 
         request_args["Transport"] = transport
 
@@ -550,11 +554,7 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    response = requests.post(
-        f"{PROXY_URL}/Admin/SetMatcher",
-        headers=headers_to_send,
-        json=parameters
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, json=parameters)
     response.raise_for_status()
 
 
@@ -572,11 +572,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
-        f"{PROXY_URL}/Admin/SetRecordingOptions",
-        headers=headers,
-        json=parameters
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, json=parameters)
     response.raise_for_status()
 
 
@@ -592,10 +588,7 @@ def _send_reset_request(headers: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
-        f"{PROXY_URL}/Admin/Reset",
-        headers=headers
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/Reset", headers=headers)
     response.raise_for_status()
 
     headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
@@ -622,9 +615,12 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
         return
 
     response = requests.post(
-        f"{PROXY_URL}/Admin/AddSanitizer",
-        headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
-        json=parameters
+        "{}/Admin/AddSanitizer".format(PROXY_URL),
+        headers={
+            "x-abstraction-identifier": sanitizer,
+            "Content-Type": "application/json",
+        },
+        json=parameters,
     )
     response.raise_for_status()
 
@@ -644,6 +640,6 @@ def _send_transform_request(transform: str, parameters: dict) -> None:
     response = requests.post(
         f"{PROXY_URL}/Admin/AddTransform",
         headers={"x-abstraction-identifier": transform, "Content-Type": "application/json"},
-        json=parameters
+        json=parameters,
     )
     response.raise_for_status()

@@ -6,8 +6,8 @@
 
 LOCATION = 'westus2'
 REMOTE_LOCATION = 'eastus2'
-TEST_RG = 'sdk-python-tests-rg'
-TEST_REPL_REMOTE_RG = 'sdk-python-tests-rg-R'
+TEST_RG = 'sdk-python-tests-rg-tmp'
+TEST_REPL_REMOTE_RG = 'sdk-python-tests-rg-R-tmp'
 TEST_ACC_1 = 'sdk-py-tests-acc-1'
 TEST_ACC_2 = 'sdk-py-tests-acc-2'
 TEST_POOL_1 = 'sdk-py-tests-pool-1'

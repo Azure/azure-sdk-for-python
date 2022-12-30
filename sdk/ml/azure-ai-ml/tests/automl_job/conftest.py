@@ -1,12 +1,11 @@
-import pytest
+from typing import Tuple
 
-from azure.ai.ml.constants import AssetTypes
+import pytest
+from test_utilities.utils import download_dataset
+
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from ._utiil import download_dataset
-
-from typing import Tuple
-import os
 
 TEST_CONFIG_PATH = "tests/test_configs/automl_job"
 TEST_DATASETS_PATH = TEST_CONFIG_PATH + "/" + "test_datasets"
@@ -43,14 +42,12 @@ IMAGE_OBJECT_DETECTION_VALID_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_ob
 IMAGE_SEGMENTATION_TRAIN_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_instance_segmentation/train"
 IMAGE_SEGMENTATION_VALID_DATASET_PATH = TEST_DATASETS_PATH + "/" + "image_instance_segmentation/valid"
 
-ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
-
 
 @pytest.fixture
 def bankmarketing_dataset() -> Tuple[Input, Input, str]:
     # Classification Dataset
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, BANK_MARKETING_TRAIN_DATASET_PATH))
-    validation_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, BANK_MARKETING_TEST_DATASET_PATH))
+    training_data = Input(type=AssetTypes.MLTABLE, path=BANK_MARKETING_TRAIN_DATASET_PATH)
+    validation_data = Input(type=AssetTypes.MLTABLE, path=BANK_MARKETING_TEST_DATASET_PATH)
     label_column_name = "y"
     return training_data, validation_data, label_column_name
 
@@ -67,7 +64,7 @@ def credit_card_fraud_dataset() -> Tuple[Input, Input, str]:
 @pytest.fixture
 def machinedata_dataset() -> Tuple[Input, str]:
     # Regression Dataset
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, MACHINE_DATA_TRAIN_DATASET_PATH))
+    training_data = Input(type=AssetTypes.MLTABLE, path=MACHINE_DATA_TRAIN_DATASET_PATH)
     label_column_name = "ERP"
     return training_data, label_column_name
 
@@ -75,7 +72,7 @@ def machinedata_dataset() -> Tuple[Input, str]:
 @pytest.fixture
 def beer_forecasting_dataset() -> Tuple[Input, ForecastingSettings, str]:
     # Forecasting Dataset
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, BEER_FORECASTING_TRAIN_DATASET_PATH))
+    training_data = Input(type=AssetTypes.MLTABLE, path=BEER_FORECASTING_TRAIN_DATASET_PATH)
     label_column_name = "BeerProduction"
     time_column_name = "DATE"
     forecast_horizon = 12
@@ -95,9 +92,7 @@ def image_classification_dataset() -> Tuple[str, str]:
     download_dataset(download_url=download_url, data_file=data_file)
 
     # Classification dataset MLTable paths
-    train_path = os.path.join(ROOT_DIR, IMAGE_CLASSIFICATION_TRAIN_DATASET_PATH)
-    val_path = os.path.join(ROOT_DIR, IMAGE_CLASSIFICATION_VALID_DATASET_PATH)
-    return train_path, val_path
+    return IMAGE_CLASSIFICATION_TRAIN_DATASET_PATH, IMAGE_CLASSIFICATION_VALID_DATASET_PATH
 
 
 @pytest.fixture
@@ -110,9 +105,7 @@ def image_classification_multilabel_dataset() -> Tuple[str, str]:
     download_dataset(download_url=download_url, data_file=data_file)
 
     # Multilabel classification dataset MLTable paths
-    train_path = os.path.join(ROOT_DIR, IMAGE_CLASSIFICATION_MULTILABEL_TRAIN_DATASET_PATH)
-    val_path = os.path.join(ROOT_DIR, IMAGE_CLASSIFICATION_MULTILABEL_VALID_DATASET_PATH)
-    return train_path, val_path
+    return IMAGE_CLASSIFICATION_MULTILABEL_TRAIN_DATASET_PATH, IMAGE_CLASSIFICATION_MULTILABEL_VALID_DATASET_PATH
 
 
 @pytest.fixture
@@ -123,9 +116,7 @@ def image_object_detection_dataset() -> Tuple[str, str]:
     download_dataset(download_url=download_url, data_file=data_file)
 
     # Image Object Dataset
-    train_path = os.path.join(ROOT_DIR, IMAGE_OBJECT_DETECTION_TRAIN_DATASET_PATH)
-    val_path = os.path.join(ROOT_DIR, IMAGE_OBJECT_DETECTION_VALID_DATASET_PATH)
-    return train_path, val_path
+    return IMAGE_OBJECT_DETECTION_TRAIN_DATASET_PATH, IMAGE_OBJECT_DETECTION_VALID_DATASET_PATH
 
 
 @pytest.fixture
@@ -136,16 +127,14 @@ def image_segmentation_dataset() -> Tuple[str, str]:
     download_dataset(download_url=download_url, data_file=data_file)
 
     # Image Object Dataset
-    train_path = os.path.join(ROOT_DIR, IMAGE_SEGMENTATION_TRAIN_DATASET_PATH)
-    val_path = os.path.join(ROOT_DIR, IMAGE_SEGMENTATION_VALID_DATASET_PATH)
-    return train_path, val_path
+    return IMAGE_SEGMENTATION_TRAIN_DATASET_PATH, IMAGE_SEGMENTATION_VALID_DATASET_PATH
 
 
 # Text Classification Dataset
 @pytest.fixture
 def newsgroup() -> Tuple[Input, Input, str]:
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, NEWSGROUP_TRAIN_DATASET_PATH))
-    validation_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, NEWSGROUP_TRAIN_DATASET_PATH))
+    training_data = Input(type=AssetTypes.MLTABLE, path=NEWSGROUP_TRAIN_DATASET_PATH)
+    validation_data = Input(type=AssetTypes.MLTABLE, path=NEWSGROUP_VALID_DATASET_PATH)
     target_column_name = "y"
 
     return training_data, validation_data, target_column_name
@@ -154,10 +143,8 @@ def newsgroup() -> Tuple[Input, Input, str]:
 # Text Classification Multilabel Dataset
 @pytest.fixture
 def paper_categorization() -> Tuple[Input, Input, str]:
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, PAPER_CATEGORIZATION_TRAIN_DATASET_PATH))
-    validation_data = Input(
-        type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, PAPER_CATEGORIZATION_VALID_DATASET_PATH)
-    )
+    training_data = Input(type=AssetTypes.MLTABLE, path=PAPER_CATEGORIZATION_TRAIN_DATASET_PATH)
+    validation_data = Input(type=AssetTypes.MLTABLE, path=PAPER_CATEGORIZATION_VALID_DATASET_PATH)
     target_column_name = "terms"
 
     return training_data, validation_data, target_column_name
@@ -166,15 +153,7 @@ def paper_categorization() -> Tuple[Input, Input, str]:
 # Text NER Dataset
 @pytest.fixture
 def conll() -> Tuple[Input, Input]:
-    training_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, CONLL_TRAIN_DATASET_PATH))
-    validation_data = Input(type=AssetTypes.MLTABLE, path=os.path.join(ROOT_DIR, CONLL_VALID_DATASET_PATH))
+    training_data = Input(type=AssetTypes.MLTABLE, path=CONLL_TRAIN_DATASET_PATH)
+    validation_data = Input(type=AssetTypes.MLTABLE, path=CONLL_VALID_DATASET_PATH)
 
     return training_data, validation_data
-
-
-@pytest.fixture(scope="session")
-def check_completed_run(pytestconfig):
-    # For pytests marked with pytest.mark.e2etest, only test up to creating the job
-    if "e2etest" in pytestconfig.getoption("-m"):
-        return False
-    return True

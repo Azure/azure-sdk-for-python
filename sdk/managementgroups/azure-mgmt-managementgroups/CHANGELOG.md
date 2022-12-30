@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0b1 (2022-11-01)
+
+### Features Added
+
+  - Added model EntitySearchType
+  - Added model EntityViewParameterType
+  - Added model ManagementGroupExpandType
+  - Added model ParentGroupBagInfo
+
 ## 1.0.0 (2021-05-21)
 
 **Features**

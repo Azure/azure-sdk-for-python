@@ -1,7 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""A file for custom traceback for removing file path from the trace for compliance need."""
+
+# pylint: disable=protected-access
+
+"""A file for custom traceback for removing file path from the trace for
+compliance need."""
 
 import os
 import sys
@@ -14,8 +18,8 @@ class _CustomStackSummary(traceback.StackSummary):
     def format(self):
         """Format the stack ready for printing.
 
-        Returns a list of strings ready for printing.  Each string in the
-        resulting list corresponds to a single frame from the stack.
+        Returns a list of strings ready for printing.  Each string in
+        the resulting list corresponds to a single frame from the stack.
         Each string ends in a newline; the strings may contain internal
         newlines as well, for those items with source text lines.
         """
@@ -31,7 +35,9 @@ class _CustomStackSummary(traceback.StackSummary):
         return result
 
 
+# pylint: disable=too-many-instance-attributes
 class _CustomTracebackException(traceback.TracebackException):
+    # pylint: disable=super-init-not-called
     def __init__(
         self, exc_type, exc_value, exc_traceback, *, limit=None, lookup_lines=True, capture_locals=False, _seen=None
     ):
@@ -70,7 +76,10 @@ class _CustomTracebackException(traceback.TracebackException):
         self.__suppress_context__ = exc_value.__suppress_context__ if exc_value else False
         # TODO: locals.
         self.stack = _CustomStackSummary.extract(
-            traceback.walk_tb(exc_traceback), limit=limit, lookup_lines=lookup_lines, capture_locals=capture_locals
+            traceback.walk_tb(exc_traceback),
+            limit=limit,
+            lookup_lines=lookup_lines,
+            capture_locals=capture_locals,
         )
         self.exc_type = exc_type
         # Capture now to permit freeing resources: only complication is in the
@@ -89,13 +98,12 @@ class _CustomTracebackException(traceback.TracebackException):
     def format_exception_only(self):
         """Format the exception part of the traceback.
 
-        The return value is a generator of strings, each ending in a newline.
-        Normally, the generator emits a single string; however, for
-        SyntaxError exceptions, it emits several lines that (when
+        The return value is a generator of strings, each ending in a
+        newline. Normally, the generator emits a single string; however,
+        for SyntaxError exceptions, it emits several lines that (when
         printed) display detailed information about where the syntax
-        error occurred.
-        The message indicating which exception occurred is always the last
-        string in the output.
+        error occurred. The message indicating which exception occurred
+        is always the last string in the output.
         """
         if self.exc_type is None:
             yield traceback._format_final_exc_line(None, self._str)
@@ -135,7 +143,7 @@ def format_exc(limit=None, chain=True):
     return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
 
 
-def format_exception(etype, value, tb, limit=None, chain=True):
+def format_exception(etype, value, tb, limit=None, chain=True):  # pylint: disable=unused-argument
     """Format a stack trace and the exception information.
 
     The arguments have the same meaning as the corresponding arguments

@@ -1,11 +1,11 @@
 {
-  "autorest": "3.4.2",
-  "use": [
-    "@autorest/python@5.8.0",
-    "@autorest/modelerfour@4.19.2"
-  ],
-  "commit": "5ee4aa771330a0120416c066386e6d86693978b4",
+  "commit": "e37a57df67daaa82f9c3758fc450bc8655812a08",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest_command": "autorest specification/agfood/resource-manager/readme.md --multiapi --python --python-mode=update --python-sdks-folder=/home/vsts/work/1/s/azure-sdk-for-python/sdk --track2 --use=@autorest/python@5.8.0 --use=@autorest/modelerfour@4.19.2 --version=3.4.2",
-  "readme": "specification/agfood/resource-manager/readme.md"
+  "autorest": "3.9.2",
+  "use": [
+    "@autorest/python@6.2.7",
+    "@autorest/modelerfour@4.24.3"
+  ],
+  "autorest_command": "autorest specification/agrifood/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.2.7 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
+  "readme": "specification/agrifood/resource-manager/readme.md"
 }

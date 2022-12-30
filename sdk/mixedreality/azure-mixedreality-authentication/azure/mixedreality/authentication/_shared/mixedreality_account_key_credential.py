@@ -9,6 +9,7 @@ import time
 
 from azure.core.credentials import AzureKeyCredential, AccessToken
 
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any

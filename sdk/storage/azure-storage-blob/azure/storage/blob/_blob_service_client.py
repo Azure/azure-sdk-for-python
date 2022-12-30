@@ -6,17 +6,18 @@
 
 import functools
 import warnings
-from typing import (  # pylint: disable=unused-import
-    Any, Dict, List, Optional, TypeVar, Union,
+from typing import (
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse
+
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime
@@ -36,6 +37,7 @@ from ._models import ContainerPropertiesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
@@ -50,8 +52,6 @@ if TYPE_CHECKING:
         StaticWebsite,
         FilteredBlob
     )
-
-ClassType = TypeVar("ClassType")
 
 
 class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -119,11 +119,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -148,11 +147,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

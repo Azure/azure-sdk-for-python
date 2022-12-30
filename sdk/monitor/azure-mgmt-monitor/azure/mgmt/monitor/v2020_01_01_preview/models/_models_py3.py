@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,17 +7,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+from ... import _serialization
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -26,29 +22,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ManagementGroupProxyOnlyResource(msrest.serialization.Model):
+class ManagementGroupProxyOnlyResource(_serialization.Model):
     """A proxy only azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -64,29 +54,24 @@ class ManagementGroupProxyOnlyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, **kwargs):
         """
         :keyword location: Location of the resource.
         :paramtype location: str
         """
-        super(ManagementGroupProxyOnlyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -127,22 +112,22 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
-        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
-        'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
-        'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
-        'logs': {'key': 'properties.logs', 'type': '[ManagementGroupLogSettings]'},
-        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
+        "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
+        "event_hub_authorization_rule_id": {"key": "properties.eventHubAuthorizationRuleId", "type": "str"},
+        "event_hub_name": {"key": "properties.eventHubName", "type": "str"},
+        "logs": {"key": "properties.logs", "type": "[ManagementGroupLogSettings]"},
+        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
     }
 
     def __init__(
@@ -179,7 +164,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
          /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
         :paramtype workspace_id: str
         """
-        super(ManagementGroupDiagnosticSettingsResource, self).__init__(location=location, **kwargs)
+        super().__init__(location=location, **kwargs)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
@@ -188,7 +173,7 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         self.workspace_id = workspace_id
 
 
-class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.Model):
+class ManagementGroupDiagnosticSettingsResourceCollection(_serialization.Model):
     """Represents a collection of management group diagnostic settings resources.
 
     :ivar value: The collection of management group diagnostic settings resources.
@@ -197,60 +182,49 @@ class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.M
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagementGroupDiagnosticSettingsResource]'},
+        "value": {"key": "value", "type": "[ManagementGroupDiagnosticSettingsResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ManagementGroupDiagnosticSettingsResource"]] = None, **kwargs):
         """
         :keyword value: The collection of management group diagnostic settings resources.
         :paramtype value:
          list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
         """
-        super(ManagementGroupDiagnosticSettingsResourceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ManagementGroupLogSettings(msrest.serialization.Model):
+class ManagementGroupLogSettings(_serialization.Model):
     """Part of Management Group diagnostic setting. Specifies the settings for a particular log.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Required. Name of a Management Group Diagnostic Log category for a resource
-     type this setting is applied to.
+    :ivar category: Name of a Management Group Diagnostic Log category for a resource type this
+     setting is applied to. Required.
     :vartype category: str
-    :ivar enabled: Required. a value indicating whether this log is enabled.
+    :ivar enabled: a value indicating whether this log is enabled. Required.
     :vartype enabled: bool
     """
 
     _validation = {
-        'category': {'required': True},
-        'enabled': {'required': True},
+        "category": {"required": True},
+        "enabled": {"required": True},
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        "category": {"key": "category", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        category: str,
-        enabled: bool,
-        **kwargs
-    ):
+    def __init__(self, *, category: str, enabled: bool, **kwargs):
         """
-        :keyword category: Required. Name of a Management Group Diagnostic Log category for a resource
-         type this setting is applied to.
+        :keyword category: Name of a Management Group Diagnostic Log category for a resource type this
+         setting is applied to. Required.
         :paramtype category: str
-        :keyword enabled: Required. a value indicating whether this log is enabled.
+        :keyword enabled: a value indicating whether this log is enabled. Required.
         :paramtype enabled: bool
         """
-        super(ManagementGroupLogSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.category = category
         self.enabled = enabled

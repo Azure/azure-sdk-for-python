@@ -1,6 +1,6 @@
 # Release History
 
-## 4.1.1 (Unreleased)
+## 4.3.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,34 @@
 ### Bugs Fixed
 
 ### Other Changes
- - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+
+## 4.3.0b1 (2022-11-15)
+
+### Features Added
+- Added sync and async `KeyVaultSettingsClient`s for getting and updating Managed HSM settings.
+- Added support for service API version `7.4-preview.1`
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Key Vault API version `7.4-preview.1` is now the default
+- Updated minimum `azure-core` version to 1.24.0
+- Dropped `msrest` requirement
+- Dropped `six` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
+
+## 4.2.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
+
+## 4.1.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.1.0 (2022-03-28)
 

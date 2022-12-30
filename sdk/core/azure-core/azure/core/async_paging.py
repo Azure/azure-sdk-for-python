@@ -52,7 +52,7 @@ class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
         """Change an iterable into a fake async iterator.
 
-        Coul be useful to fill the async iterator contract when you get a list.
+        Could be useful to fill the async iterator contract when you get a list.
 
         :param iterable: A sync iterable of T
         """

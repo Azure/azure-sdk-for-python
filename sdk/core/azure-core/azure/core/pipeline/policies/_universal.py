@@ -26,7 +26,6 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import json
 import inspect
 import logging
@@ -38,7 +37,7 @@ import re
 import uuid
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
-from six.moves import urllib
+import urllib
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
@@ -352,15 +351,27 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
+class _HiddenClassProperties(type):
+    # Backward compatible for DEFAULT_HEADERS_WHITELIST
+    # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
-class HttpLoggingPolicy(SansIOHTTPPolicy):
+    @property
+    def DEFAULT_HEADERS_WHITELIST(cls):
+        return cls.DEFAULT_HEADERS_ALLOWLIST
+
+    @DEFAULT_HEADERS_WHITELIST.setter
+    def DEFAULT_HEADERS_WHITELIST(cls, value):
+        cls.DEFAULT_HEADERS_ALLOWLIST = value
+
+class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
     """The Pipeline policy that handles logging of HTTP requests and responses.
     """
 
-    DEFAULT_HEADERS_WHITELIST = set([
+    DEFAULT_HEADERS_ALLOWLIST = set([
         "x-ms-request-id",
         "x-ms-client-request-id",
         "x-ms-return-client-request-id",
+        "x-ms-error-code",
         "traceparent",
         "Accept",
         "Cache-Control",
@@ -391,7 +402,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
@@ -563,12 +574,6 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
         elif "xml" in (mime_type or []):
             try:
-                try:
-                    if isinstance(data, unicode):  # type: ignore
-                        # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                        data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
-                except NameError:
-                    pass
                 return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with

@@ -35,9 +35,8 @@ from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from .._models import (  # pylint: disable=unused-import
-        ContentSettings)
 
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
@@ -82,11 +81,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      """
 
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
+        self, account_url: str,
+        file_system_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(FileSystemClient, self).__init__(
@@ -197,6 +196,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         :param public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword encryption_scope_options:
+            Specifies the default encryption scope to set on the file system and use for
+            all future writes.
+
+            .. versionadded:: 12.9.0
+
+        :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A dictionary of response headers.
@@ -211,8 +217,10 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
                 :dedent: 16
                 :caption: Creating a file system in the datalake service.
         """
+        encryption_scope_options = kwargs.pop('encryption_scope_options', None)
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
+                                                             container_encryption_scope=encryption_scope_options,
                                                              **kwargs)
 
     @distributed_trace_async

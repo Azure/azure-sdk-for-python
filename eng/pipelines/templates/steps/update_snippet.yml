@@ -1,0 +1,19 @@
+parameters:
+  ServiceDirectory: ''
+  ValidateFormatting: false
+  EnvVars: {}
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.9'
+    inputs:
+     versionSpec: '3.9'
+    condition: succeededOrFailed()
+
+  - task: PythonScript@0
+    displayName: 'Update Snippets'
+    inputs:
+      scriptPath: 'tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py'
+      arguments: >-
+        ${{ parameters.ScanPath }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))

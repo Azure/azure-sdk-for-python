@@ -13,6 +13,7 @@ from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -20,6 +21,7 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -48,6 +50,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -74,6 +77,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.name
 
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -102,6 +106,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -148,6 +153,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert e.value.error.code
             assert e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -177,6 +183,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -202,6 +209,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -231,6 +239,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async

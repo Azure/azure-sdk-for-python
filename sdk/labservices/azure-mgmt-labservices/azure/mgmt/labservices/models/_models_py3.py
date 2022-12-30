@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,25 +8,32 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._lab_services_client_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AutoShutdownProfile(msrest.serialization.Model):
+class AutoShutdownProfile(_serialization.Model):
     """Profile for how to handle shutting down virtual machines.
 
-    :ivar shutdown_on_disconnect: Whether shutdown on disconnect is enabled. Possible values
-     include: "Enabled", "Disabled".
+    :ivar shutdown_on_disconnect: Whether shutdown on disconnect is enabled. Known values are:
+     "Enabled" and "Disabled".
     :vartype shutdown_on_disconnect: str or ~azure.mgmt.labservices.models.EnableState
     :ivar shutdown_when_not_connected: Whether a VM will get shutdown when it hasn't been connected
-     to after a period of time. Possible values include: "Enabled", "Disabled".
+     to after a period of time. Known values are: "Enabled" and "Disabled".
     :vartype shutdown_when_not_connected: str or ~azure.mgmt.labservices.models.EnableState
     :ivar shutdown_on_idle: Whether a VM will get shutdown when it has idled for a period of time.
-     Possible values include: "None", "UserAbsence", "LowUsage".
+     Known values are: "None", "UserAbsence", and "LowUsage".
     :vartype shutdown_on_idle: str or ~azure.mgmt.labservices.models.ShutdownOnIdleMode
     :ivar disconnect_delay: The amount of time a VM will stay running after a user disconnects if
      this behavior is enabled.
@@ -39,34 +47,34 @@ class AutoShutdownProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'shutdown_on_disconnect': {'key': 'shutdownOnDisconnect', 'type': 'str'},
-        'shutdown_when_not_connected': {'key': 'shutdownWhenNotConnected', 'type': 'str'},
-        'shutdown_on_idle': {'key': 'shutdownOnIdle', 'type': 'str'},
-        'disconnect_delay': {'key': 'disconnectDelay', 'type': 'duration'},
-        'no_connect_delay': {'key': 'noConnectDelay', 'type': 'duration'},
-        'idle_delay': {'key': 'idleDelay', 'type': 'duration'},
+        "shutdown_on_disconnect": {"key": "shutdownOnDisconnect", "type": "str"},
+        "shutdown_when_not_connected": {"key": "shutdownWhenNotConnected", "type": "str"},
+        "shutdown_on_idle": {"key": "shutdownOnIdle", "type": "str"},
+        "disconnect_delay": {"key": "disconnectDelay", "type": "duration"},
+        "no_connect_delay": {"key": "noConnectDelay", "type": "duration"},
+        "idle_delay": {"key": "idleDelay", "type": "duration"},
     }
 
     def __init__(
         self,
         *,
-        shutdown_on_disconnect: Optional[Union[str, "EnableState"]] = None,
-        shutdown_when_not_connected: Optional[Union[str, "EnableState"]] = None,
-        shutdown_on_idle: Optional[Union[str, "ShutdownOnIdleMode"]] = None,
+        shutdown_on_disconnect: Optional[Union[str, "_models.EnableState"]] = None,
+        shutdown_when_not_connected: Optional[Union[str, "_models.EnableState"]] = None,
+        shutdown_on_idle: Optional[Union[str, "_models.ShutdownOnIdleMode"]] = None,
         disconnect_delay: Optional[datetime.timedelta] = None,
         no_connect_delay: Optional[datetime.timedelta] = None,
         idle_delay: Optional[datetime.timedelta] = None,
         **kwargs
     ):
         """
-        :keyword shutdown_on_disconnect: Whether shutdown on disconnect is enabled. Possible values
-         include: "Enabled", "Disabled".
+        :keyword shutdown_on_disconnect: Whether shutdown on disconnect is enabled. Known values are:
+         "Enabled" and "Disabled".
         :paramtype shutdown_on_disconnect: str or ~azure.mgmt.labservices.models.EnableState
         :keyword shutdown_when_not_connected: Whether a VM will get shutdown when it hasn't been
-         connected to after a period of time. Possible values include: "Enabled", "Disabled".
+         connected to after a period of time. Known values are: "Enabled" and "Disabled".
         :paramtype shutdown_when_not_connected: str or ~azure.mgmt.labservices.models.EnableState
         :keyword shutdown_on_idle: Whether a VM will get shutdown when it has idled for a period of
-         time. Possible values include: "None", "UserAbsence", "LowUsage".
+         time. Known values are: "None", "UserAbsence", and "LowUsage".
         :paramtype shutdown_on_idle: str or ~azure.mgmt.labservices.models.ShutdownOnIdleMode
         :keyword disconnect_delay: The amount of time a VM will stay running after a user disconnects
          if this behavior is enabled.
@@ -78,7 +86,7 @@ class AutoShutdownProfile(msrest.serialization.Model):
          is enabled.
         :paramtype idle_delay: ~datetime.timedelta
         """
-        super(AutoShutdownProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.shutdown_on_disconnect = shutdown_on_disconnect
         self.shutdown_when_not_connected = shutdown_when_not_connected
         self.shutdown_on_idle = shutdown_on_idle
@@ -87,99 +95,93 @@ class AutoShutdownProfile(msrest.serialization.Model):
         self.idle_delay = idle_delay
 
 
-class ConnectionProfile(msrest.serialization.Model):
+class ConnectionProfile(_serialization.Model):
     """Connection profile for how users connect to lab virtual machines.
 
-    :ivar web_ssh_access: The enabled access level for Web Access over SSH. Possible values
-     include: "Public", "Private", "None".
+    :ivar web_ssh_access: The enabled access level for Web Access over SSH. Known values are:
+     "Public", "Private", and "None".
     :vartype web_ssh_access: str or ~azure.mgmt.labservices.models.ConnectionType
-    :ivar web_rdp_access: The enabled access level for Web Access over RDP. Possible values
-     include: "Public", "Private", "None".
+    :ivar web_rdp_access: The enabled access level for Web Access over RDP. Known values are:
+     "Public", "Private", and "None".
     :vartype web_rdp_access: str or ~azure.mgmt.labservices.models.ConnectionType
-    :ivar client_ssh_access: The enabled access level for Client Access over SSH. Possible values
-     include: "Public", "Private", "None".
+    :ivar client_ssh_access: The enabled access level for Client Access over SSH. Known values are:
+     "Public", "Private", and "None".
     :vartype client_ssh_access: str or ~azure.mgmt.labservices.models.ConnectionType
-    :ivar client_rdp_access: The enabled access level for Client Access over RDP. Possible values
-     include: "Public", "Private", "None".
+    :ivar client_rdp_access: The enabled access level for Client Access over RDP. Known values are:
+     "Public", "Private", and "None".
     :vartype client_rdp_access: str or ~azure.mgmt.labservices.models.ConnectionType
     """
 
     _attribute_map = {
-        'web_ssh_access': {'key': 'webSshAccess', 'type': 'str'},
-        'web_rdp_access': {'key': 'webRdpAccess', 'type': 'str'},
-        'client_ssh_access': {'key': 'clientSshAccess', 'type': 'str'},
-        'client_rdp_access': {'key': 'clientRdpAccess', 'type': 'str'},
+        "web_ssh_access": {"key": "webSshAccess", "type": "str"},
+        "web_rdp_access": {"key": "webRdpAccess", "type": "str"},
+        "client_ssh_access": {"key": "clientSshAccess", "type": "str"},
+        "client_rdp_access": {"key": "clientRdpAccess", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        web_ssh_access: Optional[Union[str, "ConnectionType"]] = None,
-        web_rdp_access: Optional[Union[str, "ConnectionType"]] = None,
-        client_ssh_access: Optional[Union[str, "ConnectionType"]] = None,
-        client_rdp_access: Optional[Union[str, "ConnectionType"]] = None,
+        web_ssh_access: Optional[Union[str, "_models.ConnectionType"]] = None,
+        web_rdp_access: Optional[Union[str, "_models.ConnectionType"]] = None,
+        client_ssh_access: Optional[Union[str, "_models.ConnectionType"]] = None,
+        client_rdp_access: Optional[Union[str, "_models.ConnectionType"]] = None,
         **kwargs
     ):
         """
-        :keyword web_ssh_access: The enabled access level for Web Access over SSH. Possible values
-         include: "Public", "Private", "None".
+        :keyword web_ssh_access: The enabled access level for Web Access over SSH. Known values are:
+         "Public", "Private", and "None".
         :paramtype web_ssh_access: str or ~azure.mgmt.labservices.models.ConnectionType
-        :keyword web_rdp_access: The enabled access level for Web Access over RDP. Possible values
-         include: "Public", "Private", "None".
+        :keyword web_rdp_access: The enabled access level for Web Access over RDP. Known values are:
+         "Public", "Private", and "None".
         :paramtype web_rdp_access: str or ~azure.mgmt.labservices.models.ConnectionType
-        :keyword client_ssh_access: The enabled access level for Client Access over SSH. Possible
-         values include: "Public", "Private", "None".
+        :keyword client_ssh_access: The enabled access level for Client Access over SSH. Known values
+         are: "Public", "Private", and "None".
         :paramtype client_ssh_access: str or ~azure.mgmt.labservices.models.ConnectionType
-        :keyword client_rdp_access: The enabled access level for Client Access over RDP. Possible
-         values include: "Public", "Private", "None".
+        :keyword client_rdp_access: The enabled access level for Client Access over RDP. Known values
+         are: "Public", "Private", and "None".
         :paramtype client_rdp_access: str or ~azure.mgmt.labservices.models.ConnectionType
         """
-        super(ConnectionProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.web_ssh_access = web_ssh_access
         self.web_rdp_access = web_rdp_access
         self.client_ssh_access = client_ssh_access
         self.client_rdp_access = client_rdp_access
 
 
-class Credentials(msrest.serialization.Model):
+class Credentials(_serialization.Model):
     """Credentials for a user on a lab VM.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar username: Required. The username to use when signing in to lab VMs.
+    :ivar username: The username to use when signing in to lab VMs. Required.
     :vartype username: str
     :ivar password: The password for the user. This is required for the TemplateVM createOption.
     :vartype password: str
     """
 
     _validation = {
-        'username': {'required': True},
+        "username": {"required": True},
     }
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, username: str, password: Optional[str] = None, **kwargs):
         """
-        :keyword username: Required. The username to use when signing in to lab VMs.
+        :keyword username: The username to use when signing in to lab VMs. Required.
         :paramtype username: str
         :keyword password: The password for the user. This is required for the TemplateVM createOption.
         :paramtype password: str
         """
-        super(Credentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.username = username
         self.password = password
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -187,31 +189,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -229,28 +227,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -258,7 +252,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -266,24 +260,54 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.labservices.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Resource(msrest.serialization.Model):
+class Identity(_serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: The identity type. Default value is "SystemAssigned".
+    :vartype type: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+        """
+        :keyword type: The identity type. Default value is "SystemAssigned".
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+
+
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -299,24 +323,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -338,27 +358,23 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class Image(ProxyResource):
+class Image(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Lab services virtual machine image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -373,10 +389,10 @@ class Image(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the image.
     :vartype system_data: ~azure.mgmt.labservices.models.SystemData
-    :ivar enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+    :ivar enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
-    :ivar provisioning_state: Current provisioning state of the image. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the image. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar display_name: The image display name.
     :vartype display_name: str
@@ -386,12 +402,12 @@ class Image(ProxyResource):
     :vartype icon_url: str
     :ivar author: The image author.
     :vartype author: str
-    :ivar os_type: The OS Type of the image. Possible values include: "Windows", "Linux".
+    :ivar os_type: The OS Type of the image. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.labservices.models.OsType
     :ivar plan: The ID of marketplace plan associated with the image (optional).
     :vartype plan: str
     :ivar terms_status: The status of image terms of use (enabled = accepted, disabled = not
-     accepted). Possible values include: "Enabled", "Disabled".
+     accepted). Known values are: "Enabled" and "Disabled".
     :vartype terms_status: str or ~azure.mgmt.labservices.models.EnableState
     :ivar offer: The ID of an offer associated with the image.
     :vartype offer: str
@@ -405,69 +421,68 @@ class Image(ProxyResource):
     :vartype shared_gallery_id: str
     :ivar available_regions: The available regions of the image in the shared gallery.
     :vartype available_regions: list[str]
-    :ivar os_state: The OS State of the image. Possible values include: "Generalized",
-     "Specialized".
+    :ivar os_state: The OS State of the image. Known values are: "Generalized" and "Specialized".
     :vartype os_state: str or ~azure.mgmt.labservices.models.OsState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'icon_url': {'readonly': True},
-        'author': {'readonly': True},
-        'os_type': {'readonly': True},
-        'plan': {'readonly': True},
-        'terms_status': {'readonly': True},
-        'offer': {'readonly': True},
-        'publisher': {'readonly': True},
-        'sku': {'readonly': True},
-        'version': {'readonly': True},
-        'shared_gallery_id': {'readonly': True, 'max_length': 2000, 'min_length': 3},
-        'os_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "icon_url": {"readonly": True},
+        "author": {"readonly": True},
+        "os_type": {"readonly": True},
+        "plan": {"readonly": True},
+        "terms_status": {"readonly": True},
+        "offer": {"readonly": True},
+        "publisher": {"readonly": True},
+        "sku": {"readonly": True},
+        "version": {"readonly": True},
+        "shared_gallery_id": {"readonly": True, "max_length": 2000, "min_length": 3},
+        "os_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'icon_url': {'key': 'properties.iconUrl', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'plan': {'key': 'properties.plan', 'type': 'str'},
-        'terms_status': {'key': 'properties.termsStatus', 'type': 'str'},
-        'offer': {'key': 'properties.offer', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'shared_gallery_id': {'key': 'properties.sharedGalleryId', 'type': 'str'},
-        'available_regions': {'key': 'properties.availableRegions', 'type': '[str]'},
-        'os_state': {'key': 'properties.osState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "icon_url": {"key": "properties.iconUrl", "type": "str"},
+        "author": {"key": "properties.author", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "plan": {"key": "properties.plan", "type": "str"},
+        "terms_status": {"key": "properties.termsStatus", "type": "str"},
+        "offer": {"key": "properties.offer", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "shared_gallery_id": {"key": "properties.sharedGalleryId", "type": "str"},
+        "available_regions": {"key": "properties.availableRegions", "type": "[str]"},
+        "os_state": {"key": "properties.osState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        enabled_state: Optional[Union[str, "EnableState"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnableState"]] = None,
         available_regions: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+        :keyword enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
         :keyword available_regions: The available regions of the image in the shared gallery.
         :paramtype available_regions: list[str]
         """
-        super(Image, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.enabled_state = enabled_state
         self.provisioning_state = None
@@ -487,40 +502,35 @@ class Image(ProxyResource):
         self.os_state = None
 
 
-class ImageUpdateProperties(msrest.serialization.Model):
+class ImageUpdateProperties(_serialization.Model):
     """Properties of an image resource update.
 
-    :ivar enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+    :ivar enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
     """
 
     _attribute_map = {
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        "enabled_state": {"key": "enabledState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled_state: Optional[Union[str, "EnableState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled_state: Optional[Union[str, "_models.EnableState"]] = None, **kwargs):
         """
-        :keyword enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+        :keyword enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
         """
-        super(ImageUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_state = enabled_state
 
 
-class ImageProperties(ImageUpdateProperties):
+class ImageProperties(ImageUpdateProperties):  # pylint: disable=too-many-instance-attributes
     """Properties of an image resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+    :ivar enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
-    :ivar provisioning_state: Current provisioning state of the image. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the image. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar display_name: The image display name.
     :vartype display_name: str
@@ -530,12 +540,12 @@ class ImageProperties(ImageUpdateProperties):
     :vartype icon_url: str
     :ivar author: The image author.
     :vartype author: str
-    :ivar os_type: The OS Type of the image. Possible values include: "Windows", "Linux".
+    :ivar os_type: The OS Type of the image. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.labservices.models.OsType
     :ivar plan: The ID of marketplace plan associated with the image (optional).
     :vartype plan: str
     :ivar terms_status: The status of image terms of use (enabled = accepted, disabled = not
-     accepted). Possible values include: "Enabled", "Disabled".
+     accepted). Known values are: "Enabled" and "Disabled".
     :vartype terms_status: str or ~azure.mgmt.labservices.models.EnableState
     :ivar offer: The ID of an offer associated with the image.
     :vartype offer: str
@@ -549,61 +559,60 @@ class ImageProperties(ImageUpdateProperties):
     :vartype shared_gallery_id: str
     :ivar available_regions: The available regions of the image in the shared gallery.
     :vartype available_regions: list[str]
-    :ivar os_state: The OS State of the image. Possible values include: "Generalized",
-     "Specialized".
+    :ivar os_state: The OS State of the image. Known values are: "Generalized" and "Specialized".
     :vartype os_state: str or ~azure.mgmt.labservices.models.OsState
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'icon_url': {'readonly': True},
-        'author': {'readonly': True},
-        'os_type': {'readonly': True},
-        'plan': {'readonly': True},
-        'terms_status': {'readonly': True},
-        'offer': {'readonly': True},
-        'publisher': {'readonly': True},
-        'sku': {'readonly': True},
-        'version': {'readonly': True},
-        'shared_gallery_id': {'readonly': True, 'max_length': 2000, 'min_length': 3},
-        'os_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "icon_url": {"readonly": True},
+        "author": {"readonly": True},
+        "os_type": {"readonly": True},
+        "plan": {"readonly": True},
+        "terms_status": {"readonly": True},
+        "offer": {"readonly": True},
+        "publisher": {"readonly": True},
+        "sku": {"readonly": True},
+        "version": {"readonly": True},
+        "shared_gallery_id": {"readonly": True, "max_length": 2000, "min_length": 3},
+        "os_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'icon_url': {'key': 'iconUrl', 'type': 'str'},
-        'author': {'key': 'author', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'str'},
-        'terms_status': {'key': 'termsStatus', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'shared_gallery_id': {'key': 'sharedGalleryId', 'type': 'str'},
-        'available_regions': {'key': 'availableRegions', 'type': '[str]'},
-        'os_state': {'key': 'osState', 'type': 'str'},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "icon_url": {"key": "iconUrl", "type": "str"},
+        "author": {"key": "author", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "plan": {"key": "plan", "type": "str"},
+        "terms_status": {"key": "termsStatus", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "shared_gallery_id": {"key": "sharedGalleryId", "type": "str"},
+        "available_regions": {"key": "availableRegions", "type": "[str]"},
+        "os_state": {"key": "osState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        enabled_state: Optional[Union[str, "EnableState"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnableState"]] = None,
         available_regions: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+        :keyword enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
         :keyword available_regions: The available regions of the image in the shared gallery.
         :paramtype available_regions: list[str]
         """
-        super(ImageProperties, self).__init__(enabled_state=enabled_state, **kwargs)
+        super().__init__(enabled_state=enabled_state, **kwargs)
         self.provisioning_state = None
         self.display_name = None
         self.description = None
@@ -621,7 +630,7 @@ class ImageProperties(ImageUpdateProperties):
         self.os_state = None
 
 
-class ImageReference(msrest.serialization.Model):
+class ImageReference(_serialization.Model):
     """Image reference information. Used in the virtual machine profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -641,23 +650,23 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'max_length': 2000, 'min_length': 3},
-        'exact_version': {'readonly': True},
+        "id": {"max_length": 2000, "min_length": 3},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'exact_version': {'key': 'exactVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         offer: Optional[str] = None,
         publisher: Optional[str] = None,
         sku: Optional[str] = None,
@@ -676,7 +685,7 @@ class ImageReference(msrest.serialization.Model):
         :keyword version: The image version specified on creation.
         :paramtype version: str
         """
-        super(ImageReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.offer = offer
         self.publisher = publisher
@@ -685,32 +694,27 @@ class ImageReference(msrest.serialization.Model):
         self.exact_version = None
 
 
-class ImageUpdate(msrest.serialization.Model):
+class ImageUpdate(_serialization.Model):
     """Lab services virtual machine image for updates.
 
-    :ivar enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+    :ivar enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
     """
 
     _attribute_map = {
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled_state: Optional[Union[str, "EnableState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled_state: Optional[Union[str, "_models.EnableState"]] = None, **kwargs):
         """
-        :keyword enabled_state: Is the image enabled. Possible values include: "Enabled", "Disabled".
+        :keyword enabled_state: Is the image enabled. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.labservices.models.EnableState
         """
-        super(ImageUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_state = enabled_state
 
 
-class InviteBody(msrest.serialization.Model):
+class InviteBody(_serialization.Model):
     """Body for a user invite request.
 
     :ivar text: Custom text for the invite email.
@@ -718,20 +722,15 @@ class InviteBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
+        "text": {"key": "text", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        text: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, text: Optional[str] = None, **kwargs):
         """
         :keyword text: Custom text for the invite email.
         :paramtype text: str
         """
-        super(InviteBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.text = text
 
 
@@ -750,46 +749,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Lab(TrackedResource):
+class Lab(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The lab resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -804,9 +797,9 @@ class Lab(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the lab.
     :vartype system_data: ~azure.mgmt.labservices.models.SystemData
@@ -830,47 +823,47 @@ class Lab(TrackedResource):
     :vartype title: str
     :ivar description: The description of the lab.
     :vartype description: str
-    :ivar provisioning_state: Current provisioning state of the lab. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the lab. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar network_profile: The network profile for the lab, typically applied via a lab plan. This
      profile cannot be modified once a lab has been created.
     :vartype network_profile: ~azure.mgmt.labservices.models.LabNetworkProfile
-    :ivar state: The lab state. Possible values include: "Draft", "Publishing", "Scaling",
-     "Syncing", "Published".
+    :ivar state: The lab state. Known values are: "Draft", "Publishing", "Scaling", "Syncing", and
+     "Published".
     :vartype state: str or ~azure.mgmt.labservices.models.LabState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'lab_plan_id': {'max_length': 2000, 'min_length': 3},
-        'title': {'max_length': 120, 'min_length': 1},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "lab_plan_id": {"max_length": 2000, "min_length": 3},
+        "title": {"max_length": 120, "min_length": 1},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'auto_shutdown_profile': {'key': 'properties.autoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'connection_profile': {'key': 'properties.connectionProfile', 'type': 'ConnectionProfile'},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineProfile'},
-        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
-        'roster_profile': {'key': 'properties.rosterProfile', 'type': 'RosterProfile'},
-        'lab_plan_id': {'key': 'properties.labPlanId', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'LabNetworkProfile'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "auto_shutdown_profile": {"key": "properties.autoShutdownProfile", "type": "AutoShutdownProfile"},
+        "connection_profile": {"key": "properties.connectionProfile", "type": "ConnectionProfile"},
+        "virtual_machine_profile": {"key": "properties.virtualMachineProfile", "type": "VirtualMachineProfile"},
+        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
+        "roster_profile": {"key": "properties.rosterProfile", "type": "RosterProfile"},
+        "lab_plan_id": {"key": "properties.labPlanId", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "network_profile": {"key": "properties.networkProfile", "type": "LabNetworkProfile"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
     def __init__(
@@ -878,21 +871,21 @@ class Lab(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        connection_profile: Optional["ConnectionProfile"] = None,
-        virtual_machine_profile: Optional["VirtualMachineProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        roster_profile: Optional["RosterProfile"] = None,
+        auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        connection_profile: Optional["_models.ConnectionProfile"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        roster_profile: Optional["_models.RosterProfile"] = None,
         lab_plan_id: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        network_profile: Optional["LabNetworkProfile"] = None,
+        network_profile: Optional["_models.LabNetworkProfile"] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword auto_shutdown_profile: The resource auto shutdown configuration for the lab. This
          controls whether actions are taken on resources that are sitting idle.
@@ -918,7 +911,7 @@ class Lab(TrackedResource):
          This profile cannot be modified once a lab has been created.
         :paramtype network_profile: ~azure.mgmt.labservices.models.LabNetworkProfile
         """
-        super(Lab, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.auto_shutdown_profile = auto_shutdown_profile
         self.connection_profile = connection_profile
@@ -933,7 +926,7 @@ class Lab(TrackedResource):
         self.state = None
 
 
-class LabNetworkProfile(msrest.serialization.Model):
+class LabNetworkProfile(_serialization.Model):
     """Profile for how to handle networking for Labs.
 
     :ivar subnet_id: The external subnet resource id.
@@ -945,15 +938,15 @@ class LabNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'subnet_id': {'max_length': 2000, 'min_length': 3},
-        'load_balancer_id': {'max_length': 2000, 'min_length': 3},
-        'public_ip_id': {'max_length': 2000, 'min_length': 3},
+        "subnet_id": {"max_length": 2000, "min_length": 3},
+        "load_balancer_id": {"max_length": 2000, "min_length": 3},
+        "public_ip_id": {"max_length": 2000, "min_length": 3},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'load_balancer_id': {'key': 'loadBalancerId', 'type': 'str'},
-        'public_ip_id': {'key': 'publicIpId', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "load_balancer_id": {"key": "loadBalancerId", "type": "str"},
+        "public_ip_id": {"key": "publicIpId", "type": "str"},
     }
 
     def __init__(
@@ -972,13 +965,13 @@ class LabNetworkProfile(msrest.serialization.Model):
         :keyword public_ip_id: The external public IP resource id.
         :paramtype public_ip_id: str
         """
-        super(LabNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.load_balancer_id = load_balancer_id
         self.public_ip_id = public_ip_id
 
 
-class LabPlan(TrackedResource):
+class LabPlan(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Lab Plans act as a permission container for creating labs via labs.azure.com. Additionally, they can provide a set of default configurations that will apply at the time of creating a lab, but these defaults can still be overwritten.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -993,12 +986,14 @@ class LabPlan(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the lab plan.
     :vartype system_data: ~azure.mgmt.labservices.models.SystemData
+    :ivar identity: Managed Identity Information.
+    :vartype identity: ~azure.mgmt.labservices.models.Identity
     :ivar default_connection_profile: The default lab connection profile. This can be changed on a
      lab resource and only provides a default profile.
     :vartype default_connection_profile: ~azure.mgmt.labservices.models.ConnectionProfile
@@ -1023,37 +1018,41 @@ class LabPlan(TrackedResource):
     :ivar linked_lms_instance: Base Url of the lms instance this lab plan can link lab rosters
      against.
     :vartype linked_lms_instance: str
-    :ivar provisioning_state: Current provisioning state of the lab plan. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the lab plan. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'shared_gallery_id': {'max_length': 2000, 'min_length': 3},
-        'linked_lms_instance': {'max_length': 2000, 'min_length': 3},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "shared_gallery_id": {"max_length": 2000, "min_length": 3},
+        "linked_lms_instance": {"max_length": 2000, "min_length": 3},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'default_connection_profile': {'key': 'properties.defaultConnectionProfile', 'type': 'ConnectionProfile'},
-        'default_auto_shutdown_profile': {'key': 'properties.defaultAutoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'default_network_profile': {'key': 'properties.defaultNetworkProfile', 'type': 'LabPlanNetworkProfile'},
-        'allowed_regions': {'key': 'properties.allowedRegions', 'type': '[str]'},
-        'shared_gallery_id': {'key': 'properties.sharedGalleryId', 'type': 'str'},
-        'support_info': {'key': 'properties.supportInfo', 'type': 'SupportInfo'},
-        'linked_lms_instance': {'key': 'properties.linkedLmsInstance', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "default_connection_profile": {"key": "properties.defaultConnectionProfile", "type": "ConnectionProfile"},
+        "default_auto_shutdown_profile": {
+            "key": "properties.defaultAutoShutdownProfile",
+            "type": "AutoShutdownProfile",
+        },
+        "default_network_profile": {"key": "properties.defaultNetworkProfile", "type": "LabPlanNetworkProfile"},
+        "allowed_regions": {"key": "properties.allowedRegions", "type": "[str]"},
+        "shared_gallery_id": {"key": "properties.sharedGalleryId", "type": "str"},
+        "support_info": {"key": "properties.supportInfo", "type": "SupportInfo"},
+        "linked_lms_instance": {"key": "properties.linkedLmsInstance", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1061,20 +1060,23 @@ class LabPlan(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        default_connection_profile: Optional["ConnectionProfile"] = None,
-        default_auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        default_network_profile: Optional["LabPlanNetworkProfile"] = None,
+        identity: Optional["_models.Identity"] = None,
+        default_connection_profile: Optional["_models.ConnectionProfile"] = None,
+        default_auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        default_network_profile: Optional["_models.LabPlanNetworkProfile"] = None,
         allowed_regions: Optional[List[str]] = None,
         shared_gallery_id: Optional[str] = None,
-        support_info: Optional["SupportInfo"] = None,
+        support_info: Optional["_models.SupportInfo"] = None,
         linked_lms_instance: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: Managed Identity Information.
+        :paramtype identity: ~azure.mgmt.labservices.models.Identity
         :keyword default_connection_profile: The default lab connection profile. This can be changed on
          a lab resource and only provides a default profile.
         :paramtype default_connection_profile: ~azure.mgmt.labservices.models.ConnectionProfile
@@ -1100,8 +1102,9 @@ class LabPlan(TrackedResource):
          against.
         :paramtype linked_lms_instance: str
         """
-        super(LabPlan, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
+        self.identity = identity
         self.default_connection_profile = default_connection_profile
         self.default_auto_shutdown_profile = default_auto_shutdown_profile
         self.default_network_profile = default_network_profile
@@ -1112,7 +1115,7 @@ class LabPlan(TrackedResource):
         self.provisioning_state = None
 
 
-class LabPlanNetworkProfile(msrest.serialization.Model):
+class LabPlanNetworkProfile(_serialization.Model):
     """Profile for how to handle networking for Lab Plans.
 
     :ivar subnet_id: The external subnet resource id.
@@ -1120,28 +1123,23 @@ class LabPlanNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'subnet_id': {'max_length': 2000, 'min_length': 3},
+        "subnet_id": {"max_length": 2000, "min_length": 3},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        subnet_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs):
         """
         :keyword subnet_id: The external subnet resource id.
         :paramtype subnet_id: str
         """
-        super(LabPlanNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
 
 
-class LabPlanUpdateProperties(msrest.serialization.Model):
+class LabPlanUpdateProperties(_serialization.Model):
     """Lab plan resource properties for updates.
 
     :ivar default_connection_profile: The default lab connection profile. This can be changed on a
@@ -1171,29 +1169,29 @@ class LabPlanUpdateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'shared_gallery_id': {'max_length': 2000, 'min_length': 3},
-        'linked_lms_instance': {'max_length': 2000, 'min_length': 3},
+        "shared_gallery_id": {"max_length": 2000, "min_length": 3},
+        "linked_lms_instance": {"max_length": 2000, "min_length": 3},
     }
 
     _attribute_map = {
-        'default_connection_profile': {'key': 'defaultConnectionProfile', 'type': 'ConnectionProfile'},
-        'default_auto_shutdown_profile': {'key': 'defaultAutoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'default_network_profile': {'key': 'defaultNetworkProfile', 'type': 'LabPlanNetworkProfile'},
-        'allowed_regions': {'key': 'allowedRegions', 'type': '[str]'},
-        'shared_gallery_id': {'key': 'sharedGalleryId', 'type': 'str'},
-        'support_info': {'key': 'supportInfo', 'type': 'SupportInfo'},
-        'linked_lms_instance': {'key': 'linkedLmsInstance', 'type': 'str'},
+        "default_connection_profile": {"key": "defaultConnectionProfile", "type": "ConnectionProfile"},
+        "default_auto_shutdown_profile": {"key": "defaultAutoShutdownProfile", "type": "AutoShutdownProfile"},
+        "default_network_profile": {"key": "defaultNetworkProfile", "type": "LabPlanNetworkProfile"},
+        "allowed_regions": {"key": "allowedRegions", "type": "[str]"},
+        "shared_gallery_id": {"key": "sharedGalleryId", "type": "str"},
+        "support_info": {"key": "supportInfo", "type": "SupportInfo"},
+        "linked_lms_instance": {"key": "linkedLmsInstance", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        default_connection_profile: Optional["ConnectionProfile"] = None,
-        default_auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        default_network_profile: Optional["LabPlanNetworkProfile"] = None,
+        default_connection_profile: Optional["_models.ConnectionProfile"] = None,
+        default_auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        default_network_profile: Optional["_models.LabPlanNetworkProfile"] = None,
         allowed_regions: Optional[List[str]] = None,
         shared_gallery_id: Optional[str] = None,
-        support_info: Optional["SupportInfo"] = None,
+        support_info: Optional["_models.SupportInfo"] = None,
         linked_lms_instance: Optional[str] = None,
         **kwargs
     ):
@@ -1223,7 +1221,7 @@ class LabPlanUpdateProperties(msrest.serialization.Model):
          against.
         :paramtype linked_lms_instance: str
         """
-        super(LabPlanUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_connection_profile = default_connection_profile
         self.default_auto_shutdown_profile = default_auto_shutdown_profile
         self.default_network_profile = default_network_profile
@@ -1262,37 +1260,37 @@ class LabPlanProperties(LabPlanUpdateProperties):
     :ivar linked_lms_instance: Base Url of the lms instance this lab plan can link lab rosters
      against.
     :vartype linked_lms_instance: str
-    :ivar provisioning_state: Current provisioning state of the lab plan. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the lab plan. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     """
 
     _validation = {
-        'shared_gallery_id': {'max_length': 2000, 'min_length': 3},
-        'linked_lms_instance': {'max_length': 2000, 'min_length': 3},
-        'provisioning_state': {'readonly': True},
+        "shared_gallery_id": {"max_length": 2000, "min_length": 3},
+        "linked_lms_instance": {"max_length": 2000, "min_length": 3},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'default_connection_profile': {'key': 'defaultConnectionProfile', 'type': 'ConnectionProfile'},
-        'default_auto_shutdown_profile': {'key': 'defaultAutoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'default_network_profile': {'key': 'defaultNetworkProfile', 'type': 'LabPlanNetworkProfile'},
-        'allowed_regions': {'key': 'allowedRegions', 'type': '[str]'},
-        'shared_gallery_id': {'key': 'sharedGalleryId', 'type': 'str'},
-        'support_info': {'key': 'supportInfo', 'type': 'SupportInfo'},
-        'linked_lms_instance': {'key': 'linkedLmsInstance', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "default_connection_profile": {"key": "defaultConnectionProfile", "type": "ConnectionProfile"},
+        "default_auto_shutdown_profile": {"key": "defaultAutoShutdownProfile", "type": "AutoShutdownProfile"},
+        "default_network_profile": {"key": "defaultNetworkProfile", "type": "LabPlanNetworkProfile"},
+        "allowed_regions": {"key": "allowedRegions", "type": "[str]"},
+        "shared_gallery_id": {"key": "sharedGalleryId", "type": "str"},
+        "support_info": {"key": "supportInfo", "type": "SupportInfo"},
+        "linked_lms_instance": {"key": "linkedLmsInstance", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        default_connection_profile: Optional["ConnectionProfile"] = None,
-        default_auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        default_network_profile: Optional["LabPlanNetworkProfile"] = None,
+        default_connection_profile: Optional["_models.ConnectionProfile"] = None,
+        default_auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        default_network_profile: Optional["_models.LabPlanNetworkProfile"] = None,
         allowed_regions: Optional[List[str]] = None,
         shared_gallery_id: Optional[str] = None,
-        support_info: Optional["SupportInfo"] = None,
+        support_info: Optional["_models.SupportInfo"] = None,
         linked_lms_instance: Optional[str] = None,
         **kwargs
     ):
@@ -1322,40 +1320,46 @@ class LabPlanProperties(LabPlanUpdateProperties):
          against.
         :paramtype linked_lms_instance: str
         """
-        super(LabPlanProperties, self).__init__(default_connection_profile=default_connection_profile, default_auto_shutdown_profile=default_auto_shutdown_profile, default_network_profile=default_network_profile, allowed_regions=allowed_regions, shared_gallery_id=shared_gallery_id, support_info=support_info, linked_lms_instance=linked_lms_instance, **kwargs)
+        super().__init__(
+            default_connection_profile=default_connection_profile,
+            default_auto_shutdown_profile=default_auto_shutdown_profile,
+            default_network_profile=default_network_profile,
+            allowed_regions=allowed_regions,
+            shared_gallery_id=shared_gallery_id,
+            support_info=support_info,
+            linked_lms_instance=linked_lms_instance,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
-class TrackedResourceUpdate(msrest.serialization.Model):
+class TrackedResourceUpdate(_serialization.Model):
     """Base tracked resource type for all PATCH updates.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[List[str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: list[str]
         """
-        super(TrackedResourceUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
 class LabPlanUpdate(TrackedResourceUpdate):
     """Contains lab configuration and default settings. This variant is used for PATCH.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
+    :ivar identity: Managed Identity Information.
+    :vartype identity: ~azure.mgmt.labservices.models.Identity
     :ivar default_connection_profile: The default lab connection profile. This can be changed on a
      lab resource and only provides a default profile.
     :vartype default_connection_profile: ~azure.mgmt.labservices.models.ConnectionProfile
@@ -1383,37 +1387,44 @@ class LabPlanUpdate(TrackedResourceUpdate):
     """
 
     _validation = {
-        'shared_gallery_id': {'max_length': 2000, 'min_length': 3},
-        'linked_lms_instance': {'max_length': 2000, 'min_length': 3},
+        "shared_gallery_id": {"max_length": 2000, "min_length": 3},
+        "linked_lms_instance": {"max_length": 2000, "min_length": 3},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'default_connection_profile': {'key': 'properties.defaultConnectionProfile', 'type': 'ConnectionProfile'},
-        'default_auto_shutdown_profile': {'key': 'properties.defaultAutoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'default_network_profile': {'key': 'properties.defaultNetworkProfile', 'type': 'LabPlanNetworkProfile'},
-        'allowed_regions': {'key': 'properties.allowedRegions', 'type': '[str]'},
-        'shared_gallery_id': {'key': 'properties.sharedGalleryId', 'type': 'str'},
-        'support_info': {'key': 'properties.supportInfo', 'type': 'SupportInfo'},
-        'linked_lms_instance': {'key': 'properties.linkedLmsInstance', 'type': 'str'},
+        "tags": {"key": "tags", "type": "[str]"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "default_connection_profile": {"key": "properties.defaultConnectionProfile", "type": "ConnectionProfile"},
+        "default_auto_shutdown_profile": {
+            "key": "properties.defaultAutoShutdownProfile",
+            "type": "AutoShutdownProfile",
+        },
+        "default_network_profile": {"key": "properties.defaultNetworkProfile", "type": "LabPlanNetworkProfile"},
+        "allowed_regions": {"key": "properties.allowedRegions", "type": "[str]"},
+        "shared_gallery_id": {"key": "properties.sharedGalleryId", "type": "str"},
+        "support_info": {"key": "properties.supportInfo", "type": "SupportInfo"},
+        "linked_lms_instance": {"key": "properties.linkedLmsInstance", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[List[str]] = None,
-        default_connection_profile: Optional["ConnectionProfile"] = None,
-        default_auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        default_network_profile: Optional["LabPlanNetworkProfile"] = None,
+        identity: Optional["_models.Identity"] = None,
+        default_connection_profile: Optional["_models.ConnectionProfile"] = None,
+        default_auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        default_network_profile: Optional["_models.LabPlanNetworkProfile"] = None,
         allowed_regions: Optional[List[str]] = None,
         shared_gallery_id: Optional[str] = None,
-        support_info: Optional["SupportInfo"] = None,
+        support_info: Optional["_models.SupportInfo"] = None,
         linked_lms_instance: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: list[str]
+        :keyword identity: Managed Identity Information.
+        :paramtype identity: ~azure.mgmt.labservices.models.Identity
         :keyword default_connection_profile: The default lab connection profile. This can be changed on
          a lab resource and only provides a default profile.
         :paramtype default_connection_profile: ~azure.mgmt.labservices.models.ConnectionProfile
@@ -1439,7 +1450,8 @@ class LabPlanUpdate(TrackedResourceUpdate):
          against.
         :paramtype linked_lms_instance: str
         """
-        super(LabPlanUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
+        self.identity = identity
         self.default_connection_profile = default_connection_profile
         self.default_auto_shutdown_profile = default_auto_shutdown_profile
         self.default_network_profile = default_network_profile
@@ -1449,7 +1461,7 @@ class LabPlanUpdate(TrackedResourceUpdate):
         self.linked_lms_instance = linked_lms_instance
 
 
-class LabUpdateProperties(msrest.serialization.Model):
+class LabUpdateProperties(_serialization.Model):
     """Properties of a lab resource used for updates.
 
     :ivar auto_shutdown_profile: The resource auto shutdown configuration for the lab. This
@@ -1475,29 +1487,29 @@ class LabUpdateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'lab_plan_id': {'max_length': 2000, 'min_length': 3},
-        'title': {'max_length': 120, 'min_length': 1},
+        "lab_plan_id": {"max_length": 2000, "min_length": 3},
+        "title": {"max_length": 120, "min_length": 1},
     }
 
     _attribute_map = {
-        'auto_shutdown_profile': {'key': 'autoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'connection_profile': {'key': 'connectionProfile', 'type': 'ConnectionProfile'},
-        'virtual_machine_profile': {'key': 'virtualMachineProfile', 'type': 'VirtualMachineProfile'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'roster_profile': {'key': 'rosterProfile', 'type': 'RosterProfile'},
-        'lab_plan_id': {'key': 'labPlanId', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "auto_shutdown_profile": {"key": "autoShutdownProfile", "type": "AutoShutdownProfile"},
+        "connection_profile": {"key": "connectionProfile", "type": "ConnectionProfile"},
+        "virtual_machine_profile": {"key": "virtualMachineProfile", "type": "VirtualMachineProfile"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "roster_profile": {"key": "rosterProfile", "type": "RosterProfile"},
+        "lab_plan_id": {"key": "labPlanId", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        connection_profile: Optional["ConnectionProfile"] = None,
-        virtual_machine_profile: Optional["VirtualMachineProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        roster_profile: Optional["RosterProfile"] = None,
+        auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        connection_profile: Optional["_models.ConnectionProfile"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        roster_profile: Optional["_models.RosterProfile"] = None,
         lab_plan_id: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
@@ -1525,7 +1537,7 @@ class LabUpdateProperties(msrest.serialization.Model):
         :keyword description: The description of the lab.
         :paramtype description: str
         """
-        super(LabUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.auto_shutdown_profile = auto_shutdown_profile
         self.connection_profile = connection_profile
         self.virtual_machine_profile = virtual_machine_profile
@@ -1536,7 +1548,7 @@ class LabUpdateProperties(msrest.serialization.Model):
         self.description = description
 
 
-class LabProperties(LabUpdateProperties):
+class LabProperties(LabUpdateProperties):  # pylint: disable=too-many-instance-attributes
     """Properties of a lab resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1561,50 +1573,50 @@ class LabProperties(LabUpdateProperties):
     :vartype title: str
     :ivar description: The description of the lab.
     :vartype description: str
-    :ivar provisioning_state: Current provisioning state of the lab. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the lab. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar network_profile: The network profile for the lab, typically applied via a lab plan. This
      profile cannot be modified once a lab has been created.
     :vartype network_profile: ~azure.mgmt.labservices.models.LabNetworkProfile
-    :ivar state: The lab state. Possible values include: "Draft", "Publishing", "Scaling",
-     "Syncing", "Published".
+    :ivar state: The lab state. Known values are: "Draft", "Publishing", "Scaling", "Syncing", and
+     "Published".
     :vartype state: str or ~azure.mgmt.labservices.models.LabState
     """
 
     _validation = {
-        'lab_plan_id': {'max_length': 2000, 'min_length': 3},
-        'title': {'max_length': 120, 'min_length': 1},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
+        "lab_plan_id": {"max_length": 2000, "min_length": 3},
+        "title": {"max_length": 120, "min_length": 1},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'auto_shutdown_profile': {'key': 'autoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'connection_profile': {'key': 'connectionProfile', 'type': 'ConnectionProfile'},
-        'virtual_machine_profile': {'key': 'virtualMachineProfile', 'type': 'VirtualMachineProfile'},
-        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
-        'roster_profile': {'key': 'rosterProfile', 'type': 'RosterProfile'},
-        'lab_plan_id': {'key': 'labPlanId', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'network_profile': {'key': 'networkProfile', 'type': 'LabNetworkProfile'},
-        'state': {'key': 'state', 'type': 'str'},
+        "auto_shutdown_profile": {"key": "autoShutdownProfile", "type": "AutoShutdownProfile"},
+        "connection_profile": {"key": "connectionProfile", "type": "ConnectionProfile"},
+        "virtual_machine_profile": {"key": "virtualMachineProfile", "type": "VirtualMachineProfile"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "roster_profile": {"key": "rosterProfile", "type": "RosterProfile"},
+        "lab_plan_id": {"key": "labPlanId", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "network_profile": {"key": "networkProfile", "type": "LabNetworkProfile"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        connection_profile: Optional["ConnectionProfile"] = None,
-        virtual_machine_profile: Optional["VirtualMachineProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        roster_profile: Optional["RosterProfile"] = None,
+        auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        connection_profile: Optional["_models.ConnectionProfile"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        roster_profile: Optional["_models.RosterProfile"] = None,
         lab_plan_id: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        network_profile: Optional["LabNetworkProfile"] = None,
+        network_profile: Optional["_models.LabNetworkProfile"] = None,
         **kwargs
     ):
         """
@@ -1632,13 +1644,23 @@ class LabProperties(LabUpdateProperties):
          This profile cannot be modified once a lab has been created.
         :paramtype network_profile: ~azure.mgmt.labservices.models.LabNetworkProfile
         """
-        super(LabProperties, self).__init__(auto_shutdown_profile=auto_shutdown_profile, connection_profile=connection_profile, virtual_machine_profile=virtual_machine_profile, security_profile=security_profile, roster_profile=roster_profile, lab_plan_id=lab_plan_id, title=title, description=description, **kwargs)
+        super().__init__(
+            auto_shutdown_profile=auto_shutdown_profile,
+            connection_profile=connection_profile,
+            virtual_machine_profile=virtual_machine_profile,
+            security_profile=security_profile,
+            roster_profile=roster_profile,
+            lab_plan_id=lab_plan_id,
+            title=title,
+            description=description,
+            **kwargs
+        )
         self.provisioning_state = None
         self.network_profile = network_profile
         self.state = None
 
 
-class LabServicesSku(msrest.serialization.Model):
+class LabServicesSku(_serialization.Model):
     """Azure Lab Services resource SKUs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1647,7 +1669,7 @@ class LabServicesSku(msrest.serialization.Model):
     :vartype resource_type: str
     :ivar name: The name of the SKU.
     :vartype name: str
-    :ivar tier: The tier of the SKU. Possible values include: "Standard", "Premium".
+    :ivar tier: The tier of the SKU. Known values are: "Standard" and "Premium".
     :vartype tier: str or ~azure.mgmt.labservices.models.LabServicesSkuTier
     :ivar size: The SKU size.
     :vartype size: str
@@ -1666,41 +1688,36 @@ class LabServicesSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'name': {'readonly': True},
-        'tier': {'readonly': True},
-        'size': {'readonly': True},
-        'family': {'readonly': True},
-        'capabilities': {'readonly': True},
-        'locations': {'readonly': True},
-        'costs': {'readonly': True},
-        'restrictions': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "name": {"readonly": True},
+        "tier": {"readonly": True},
+        "size": {"readonly": True},
+        "family": {"readonly": True},
+        "capabilities": {"readonly": True},
+        "locations": {"readonly": True},
+        "costs": {"readonly": True},
+        "restrictions": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'LabServicesSkuCapacity'},
-        'capabilities': {'key': 'capabilities', 'type': '[LabServicesSkuCapabilities]'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'costs': {'key': 'costs', 'type': '[LabServicesSkuCost]'},
-        'restrictions': {'key': 'restrictions', 'type': '[LabServicesSkuRestrictions]'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "LabServicesSkuCapacity"},
+        "capabilities": {"key": "capabilities", "type": "[LabServicesSkuCapabilities]"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "costs": {"key": "costs", "type": "[LabServicesSkuCost]"},
+        "restrictions": {"key": "restrictions", "type": "[LabServicesSkuRestrictions]"},
     }
 
-    def __init__(
-        self,
-        *,
-        capacity: Optional["LabServicesSkuCapacity"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, capacity: Optional["_models.LabServicesSkuCapacity"] = None, **kwargs):
         """
         :keyword capacity: The scale out/in options of the SKU.
         :paramtype capacity: ~azure.mgmt.labservices.models.LabServicesSkuCapacity
         """
-        super(LabServicesSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_type = None
         self.name = None
         self.tier = None
@@ -1713,7 +1730,7 @@ class LabServicesSku(msrest.serialization.Model):
         self.restrictions = None
 
 
-class LabServicesSkuCapabilities(msrest.serialization.Model):
+class LabServicesSkuCapabilities(_serialization.Model):
     """The array of capabilities of a lab services SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1725,70 +1742,62 @@ class LabServicesSkuCapabilities(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LabServicesSkuCapabilities, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class LabServicesSkuCapacity(msrest.serialization.Model):
+class LabServicesSkuCapacity(_serialization.Model):
     """The scale out/in options of the SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar default: The default capacity for this resource.
-    :vartype default: long
+    :vartype default: int
     :ivar minimum: The lowest permitted capacity for this resource.
-    :vartype minimum: long
+    :vartype minimum: int
     :ivar maximum: The highest permitted capacity for this resource.
-    :vartype maximum: long
-    :ivar scale_type: The localized name of the resource. Possible values include: "None",
-     "Manual", "Automatic".
+    :vartype maximum: int
+    :ivar scale_type: The localized name of the resource. Known values are: "None", "Manual", and
+     "Automatic".
     :vartype scale_type: str or ~azure.mgmt.labservices.models.ScaleType
     """
 
     _validation = {
-        'default': {'readonly': True},
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "default": {"readonly": True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'default': {'key': 'default', 'type': 'long'},
-        'minimum': {'key': 'minimum', 'type': 'long'},
-        'maximum': {'key': 'maximum', 'type': 'long'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "default": {"key": "default", "type": "int"},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LabServicesSkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.default = None
         self.minimum = None
         self.maximum = None
         self.scale_type = None
 
 
-class LabServicesSkuCost(msrest.serialization.Model):
+class LabServicesSkuCost(_serialization.Model):
     """The array of costs of a lab services SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1802,62 +1811,54 @@ class LabServicesSkuCost(msrest.serialization.Model):
     """
 
     _validation = {
-        'meter_id': {'readonly': True},
-        'quantity': {'readonly': True},
-        'extended_unit': {'readonly': True},
+        "meter_id": {"readonly": True},
+        "quantity": {"readonly": True},
+        "extended_unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'quantity': {'key': 'quantity', 'type': 'float'},
-        'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "quantity": {"key": "quantity", "type": "float"},
+        "extended_unit": {"key": "extendedUnit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LabServicesSkuCost, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
         self.extended_unit = None
 
 
-class LabServicesSkuRestrictions(msrest.serialization.Model):
+class LabServicesSkuRestrictions(_serialization.Model):
     """The restriction details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of restriction. Possible values include: "Location".
+    :ivar type: The type of restriction. "Location"
     :vartype type: str or ~azure.mgmt.labservices.models.RestrictionType
     :ivar values: The values of the restriction.
     :vartype values: list[str]
-    :ivar reason_code: The reason for the restriction. Possible values include: "QuotaId",
+    :ivar reason_code: The reason for the restriction. Known values are: "QuotaId" and
      "NotAvailableForSubscription".
     :vartype reason_code: str or ~azure.mgmt.labservices.models.RestrictionReasonCode
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'values': {'readonly': True},
-        'reason_code': {'readonly': True},
+        "type": {"readonly": True},
+        "values": {"readonly": True},
+        "reason_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LabServicesSkuRestrictions, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.values = None
         self.reason_code = None
@@ -1866,7 +1867,7 @@ class LabServicesSkuRestrictions(msrest.serialization.Model):
 class LabUpdate(TrackedResourceUpdate):
     """The lab resource for updates.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: list[str]
     :ivar auto_shutdown_profile: The resource auto shutdown configuration for the lab. This
      controls whether actions are taken on resources that are sitting idle.
@@ -1891,38 +1892,38 @@ class LabUpdate(TrackedResourceUpdate):
     """
 
     _validation = {
-        'lab_plan_id': {'max_length': 2000, 'min_length': 3},
-        'title': {'max_length': 120, 'min_length': 1},
+        "lab_plan_id": {"max_length": 2000, "min_length": 3},
+        "title": {"max_length": 120, "min_length": 1},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
-        'auto_shutdown_profile': {'key': 'properties.autoShutdownProfile', 'type': 'AutoShutdownProfile'},
-        'connection_profile': {'key': 'properties.connectionProfile', 'type': 'ConnectionProfile'},
-        'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineProfile'},
-        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
-        'roster_profile': {'key': 'properties.rosterProfile', 'type': 'RosterProfile'},
-        'lab_plan_id': {'key': 'properties.labPlanId', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "tags": {"key": "tags", "type": "[str]"},
+        "auto_shutdown_profile": {"key": "properties.autoShutdownProfile", "type": "AutoShutdownProfile"},
+        "connection_profile": {"key": "properties.connectionProfile", "type": "ConnectionProfile"},
+        "virtual_machine_profile": {"key": "properties.virtualMachineProfile", "type": "VirtualMachineProfile"},
+        "security_profile": {"key": "properties.securityProfile", "type": "SecurityProfile"},
+        "roster_profile": {"key": "properties.rosterProfile", "type": "RosterProfile"},
+        "lab_plan_id": {"key": "properties.labPlanId", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[List[str]] = None,
-        auto_shutdown_profile: Optional["AutoShutdownProfile"] = None,
-        connection_profile: Optional["ConnectionProfile"] = None,
-        virtual_machine_profile: Optional["VirtualMachineProfile"] = None,
-        security_profile: Optional["SecurityProfile"] = None,
-        roster_profile: Optional["RosterProfile"] = None,
+        auto_shutdown_profile: Optional["_models.AutoShutdownProfile"] = None,
+        connection_profile: Optional["_models.ConnectionProfile"] = None,
+        virtual_machine_profile: Optional["_models.VirtualMachineProfile"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        roster_profile: Optional["_models.RosterProfile"] = None,
         lab_plan_id: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: list[str]
         :keyword auto_shutdown_profile: The resource auto shutdown configuration for the lab. This
          controls whether actions are taken on resources that are sitting idle.
@@ -1945,7 +1946,7 @@ class LabUpdate(TrackedResourceUpdate):
         :keyword description: The description of the lab.
         :paramtype description: str
         """
-        super(LabUpdate, self).__init__(tags=tags, **kwargs)
+        super().__init__(tags=tags, **kwargs)
         self.auto_shutdown_profile = auto_shutdown_profile
         self.connection_profile = connection_profile
         self.virtual_machine_profile = virtual_machine_profile
@@ -1956,7 +1957,7 @@ class LabUpdate(TrackedResourceUpdate):
         self.description = description
 
 
-class ListUsagesResult(msrest.serialization.Model):
+class ListUsagesResult(_serialization.Model):
     """List of Core Usages.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1968,27 +1969,25 @@ class ListUsagesResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
         """
+        :keyword value: The array page of Usages.
+        :paramtype value: list[~azure.mgmt.labservices.models.Usage]
         """
-        super(ListUsagesResult, self).__init__(**kwargs)
-        self.value = None
+        super().__init__(**kwargs)
+        self.value = value
         self.next_link = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2002,40 +2001,35 @@ class Operation(msrest.serialization.Model):
     :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.labservices.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.labservices.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.labservices.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.labservices.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -2043,7 +2037,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2063,33 +2057,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2101,27 +2091,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """A long running operation result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2133,8 +2119,8 @@ class OperationResult(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar status: Required. The operation status. Possible values include: "NotStarted",
-     "InProgress", "Succeeded", "Failed", "Canceled".
+    :ivar status: The operation status. Required. Known values are: "NotStarted", "InProgress",
+     "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.mgmt.labservices.models.OperationStatus
     :ivar start_time: Start time.
     :vartype start_time: ~datetime.datetime
@@ -2147,34 +2133,34 @@ class OperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'status': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'float'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
-        status: Union[str, "OperationStatus"],
+        status: Union[str, "_models.OperationStatus"],
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         percent_complete: Optional[float] = None,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
-        :keyword status: Required. The operation status. Possible values include: "NotStarted",
-         "InProgress", "Succeeded", "Failed", "Canceled".
+        :keyword status: The operation status. Required. Known values are: "NotStarted", "InProgress",
+         "Succeeded", "Failed", and "Canceled".
         :paramtype status: str or ~azure.mgmt.labservices.models.OperationStatus
         :keyword start_time: Start time.
         :paramtype start_time: ~datetime.datetime
@@ -2185,7 +2171,7 @@ class OperationResult(msrest.serialization.Model):
         :keyword error: The error for a failure if the operation failed.
         :paramtype error: ~azure.mgmt.labservices.models.ErrorDetail
         """
-        super(OperationResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.status = status
@@ -2195,7 +2181,7 @@ class OperationResult(msrest.serialization.Model):
         self.error = error
 
 
-class PagedImages(msrest.serialization.Model):
+class PagedImages(_serialization.Model):
     """Paged list of Lab services virtual machine images.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2207,27 +2193,23 @@ class PagedImages(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Image]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Image]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedImages, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedLabPlans(msrest.serialization.Model):
+class PagedLabPlans(_serialization.Model):
     """Paged list of lab plans.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2239,27 +2221,23 @@ class PagedLabPlans(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LabPlan]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LabPlan]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedLabPlans, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedLabs(msrest.serialization.Model):
+class PagedLabs(_serialization.Model):
     """Paged list of labs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2271,27 +2249,23 @@ class PagedLabs(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Lab]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Lab]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedLabs, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedLabServicesSkus(msrest.serialization.Model):
+class PagedLabServicesSkus(_serialization.Model):
     """Paged list of lab services skus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2303,27 +2277,23 @@ class PagedLabServicesSkus(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LabServicesSku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LabServicesSku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedLabServicesSkus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedSchedules(msrest.serialization.Model):
+class PagedSchedules(_serialization.Model):
     """Paged list of schedules.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2335,27 +2305,23 @@ class PagedSchedules(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Schedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Schedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedSchedules, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedUsers(msrest.serialization.Model):
+class PagedUsers(_serialization.Model):
     """Paged list of users.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2367,27 +2333,23 @@ class PagedUsers(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[User]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[User]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedUsers, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PagedVirtualMachines(msrest.serialization.Model):
+class PagedVirtualMachines(_serialization.Model):
     """Paged list of lab services virtual machines.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2399,32 +2361,28 @@ class PagedVirtualMachines(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PagedVirtualMachines, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RecurrencePattern(msrest.serialization.Model):
+class RecurrencePattern(_serialization.Model):
     """Recurrence pattern of a lab schedule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar frequency: Required. The frequency of the recurrence. Possible values include: "Daily",
+    :ivar frequency: The frequency of the recurrence. Required. Known values are: "Daily" and
      "Weekly".
     :vartype frequency: str or ~azure.mgmt.labservices.models.RecurrenceFrequency
     :ivar week_days: The week days the schedule runs. Used for when the Frequency is set to Weekly.
@@ -2433,35 +2391,35 @@ class RecurrencePattern(msrest.serialization.Model):
      RecurrenceFrequency.Daily will run every 2 days. When no interval is supplied, an interval of 1
      is used.
     :vartype interval: int
-    :ivar expiration_date: Required. When the recurrence will expire. This date is inclusive.
-    :vartype expiration_date: ~datetime.date
+    :ivar expiration_date: When the recurrence will expire. This date is inclusive. Required.
+    :vartype expiration_date: ~datetime.datetime
     """
 
     _validation = {
-        'frequency': {'required': True},
-        'interval': {'maximum': 365, 'minimum': 1},
-        'expiration_date': {'required': True},
+        "frequency": {"required": True},
+        "interval": {"maximum": 365, "minimum": 1},
+        "expiration_date": {"required": True},
     }
 
     _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'week_days': {'key': 'weekDays', 'type': '[str]'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'date'},
+        "frequency": {"key": "frequency", "type": "str"},
+        "week_days": {"key": "weekDays", "type": "[str]"},
+        "interval": {"key": "interval", "type": "int"},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        frequency: Union[str, "RecurrenceFrequency"],
-        expiration_date: datetime.date,
-        week_days: Optional[List[Union[str, "WeekDay"]]] = None,
+        frequency: Union[str, "_models.RecurrenceFrequency"],
+        expiration_date: datetime.datetime,
+        week_days: Optional[List[Union[str, "_models.WeekDay"]]] = None,
         interval: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword frequency: Required. The frequency of the recurrence. Possible values include:
-         "Daily", "Weekly".
+        :keyword frequency: The frequency of the recurrence. Required. Known values are: "Daily" and
+         "Weekly".
         :paramtype frequency: str or ~azure.mgmt.labservices.models.RecurrenceFrequency
         :keyword week_days: The week days the schedule runs. Used for when the Frequency is set to
          Weekly.
@@ -2470,56 +2428,50 @@ class RecurrencePattern(msrest.serialization.Model):
          RecurrenceFrequency.Daily will run every 2 days. When no interval is supplied, an interval of 1
          is used.
         :paramtype interval: int
-        :keyword expiration_date: Required. When the recurrence will expire. This date is inclusive.
-        :paramtype expiration_date: ~datetime.date
+        :keyword expiration_date: When the recurrence will expire. This date is inclusive. Required.
+        :paramtype expiration_date: ~datetime.datetime
         """
-        super(RecurrencePattern, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.frequency = frequency
         self.week_days = week_days
         self.interval = interval
         self.expiration_date = expiration_date
 
 
-class ResetPasswordBody(msrest.serialization.Model):
+class ResetPasswordBody(_serialization.Model):
     """Body of a reset password request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar username: Required. The user whose password is being reset.
+    :ivar username: The user whose password is being reset. Required.
     :vartype username: str
-    :ivar password: Required. The password.
+    :ivar password: The password. Required.
     :vartype password: str
     """
 
     _validation = {
-        'username': {'required': True},
-        'password': {'required': True},
+        "username": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: str,
-        **kwargs
-    ):
+    def __init__(self, *, username: str, password: str, **kwargs):
         """
-        :keyword username: Required. The user whose password is being reset.
+        :keyword username: The user whose password is being reset. Required.
         :paramtype username: str
-        :keyword password: Required. The password.
+        :keyword password: The password. Required.
         :paramtype password: str
         """
-        super(ResetPasswordBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.username = username
         self.password = password
 
 
-class RosterProfile(msrest.serialization.Model):
+class RosterProfile(_serialization.Model):
     """The lab user list management profile.
 
     :ivar active_directory_group_id: The AAD group ID which this lab roster is populated from.
@@ -2537,11 +2489,11 @@ class RosterProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'active_directory_group_id': {'key': 'activeDirectoryGroupId', 'type': 'str'},
-        'lti_context_id': {'key': 'ltiContextId', 'type': 'str'},
-        'lms_instance': {'key': 'lmsInstance', 'type': 'str'},
-        'lti_client_id': {'key': 'ltiClientId', 'type': 'str'},
-        'lti_roster_endpoint': {'key': 'ltiRosterEndpoint', 'type': 'str'},
+        "active_directory_group_id": {"key": "activeDirectoryGroupId", "type": "str"},
+        "lti_context_id": {"key": "ltiContextId", "type": "str"},
+        "lms_instance": {"key": "lmsInstance", "type": "str"},
+        "lti_client_id": {"key": "ltiClientId", "type": "str"},
+        "lti_roster_endpoint": {"key": "ltiRosterEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -2568,7 +2520,7 @@ class RosterProfile(msrest.serialization.Model):
          the class attached to this lab.
         :paramtype lti_roster_endpoint: str
         """
-        super(RosterProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.active_directory_group_id = active_directory_group_id
         self.lti_context_id = lti_context_id
         self.lms_instance = lms_instance
@@ -2576,7 +2528,7 @@ class RosterProfile(msrest.serialization.Model):
         self.lti_roster_endpoint = lti_roster_endpoint
 
 
-class SaveImageBody(msrest.serialization.Model):
+class SaveImageBody(_serialization.Model):
     """Body for the save image POST.
 
     :ivar name: The name for the image we create.
@@ -2586,21 +2538,15 @@ class SaveImageBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'lab_virtual_machine_id': {'max_length': 2000, 'min_length': 3},
+        "lab_virtual_machine_id": {"max_length": 2000, "min_length": 3},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'lab_virtual_machine_id': {'key': 'labVirtualMachineId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "lab_virtual_machine_id": {"key": "labVirtualMachineId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        lab_virtual_machine_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, lab_virtual_machine_id: Optional[str] = None, **kwargs):
         """
         :keyword name: The name for the image we create.
         :paramtype name: str
@@ -2608,7 +2554,7 @@ class SaveImageBody(msrest.serialization.Model):
          from.
         :paramtype lab_virtual_machine_id: str
         """
-        super(SaveImageBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.lab_virtual_machine_id = lab_virtual_machine_id
 
@@ -2640,32 +2586,32 @@ class Schedule(ProxyResource):
     :vartype time_zone_id: str
     :ivar notes: Notes for this schedule.
     :vartype notes: str
-    :ivar provisioning_state: Current provisioning state of the schedule. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the schedule. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'time_zone_id': {'max_length': 50, 'min_length': 0},
-        'notes': {'max_length': 1000, 'min_length': 0},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "time_zone_id": {"max_length": 50},
+        "notes": {"max_length": 1000},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'start_at': {'key': 'properties.startAt', 'type': 'iso-8601'},
-        'stop_at': {'key': 'properties.stopAt', 'type': 'iso-8601'},
-        'recurrence_pattern': {'key': 'properties.recurrencePattern', 'type': 'RecurrencePattern'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "start_at": {"key": "properties.startAt", "type": "iso-8601"},
+        "stop_at": {"key": "properties.stopAt", "type": "iso-8601"},
+        "recurrence_pattern": {"key": "properties.recurrencePattern", "type": "RecurrencePattern"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "notes": {"key": "properties.notes", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2673,7 +2619,7 @@ class Schedule(ProxyResource):
         *,
         start_at: Optional[datetime.datetime] = None,
         stop_at: Optional[datetime.datetime] = None,
-        recurrence_pattern: Optional["RecurrencePattern"] = None,
+        recurrence_pattern: Optional["_models.RecurrencePattern"] = None,
         time_zone_id: Optional[str] = None,
         notes: Optional[str] = None,
         **kwargs
@@ -2692,7 +2638,7 @@ class Schedule(ProxyResource):
         :keyword notes: Notes for this schedule.
         :paramtype notes: str
         """
-        super(Schedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.start_at = start_at
         self.stop_at = stop_at
@@ -2702,7 +2648,7 @@ class Schedule(ProxyResource):
         self.provisioning_state = None
 
 
-class ScheduleUpdateProperties(msrest.serialization.Model):
+class ScheduleUpdateProperties(_serialization.Model):
     """Schedule resource properties used for updates.
 
     :ivar start_at: When lab user virtual machines will be started. Timestamp offsets will be
@@ -2720,16 +2666,16 @@ class ScheduleUpdateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'time_zone_id': {'max_length': 50, 'min_length': 0},
-        'notes': {'max_length': 1000, 'min_length': 0},
+        "time_zone_id": {"max_length": 50},
+        "notes": {"max_length": 1000},
     }
 
     _attribute_map = {
-        'start_at': {'key': 'startAt', 'type': 'iso-8601'},
-        'stop_at': {'key': 'stopAt', 'type': 'iso-8601'},
-        'recurrence_pattern': {'key': 'recurrencePattern', 'type': 'RecurrencePattern'},
-        'time_zone_id': {'key': 'timeZoneId', 'type': 'str'},
-        'notes': {'key': 'notes', 'type': 'str'},
+        "start_at": {"key": "startAt", "type": "iso-8601"},
+        "stop_at": {"key": "stopAt", "type": "iso-8601"},
+        "recurrence_pattern": {"key": "recurrencePattern", "type": "RecurrencePattern"},
+        "time_zone_id": {"key": "timeZoneId", "type": "str"},
+        "notes": {"key": "notes", "type": "str"},
     }
 
     def __init__(
@@ -2737,7 +2683,7 @@ class ScheduleUpdateProperties(msrest.serialization.Model):
         *,
         start_at: Optional[datetime.datetime] = None,
         stop_at: Optional[datetime.datetime] = None,
-        recurrence_pattern: Optional["RecurrencePattern"] = None,
+        recurrence_pattern: Optional["_models.RecurrencePattern"] = None,
         time_zone_id: Optional[str] = None,
         notes: Optional[str] = None,
         **kwargs
@@ -2756,7 +2702,7 @@ class ScheduleUpdateProperties(msrest.serialization.Model):
         :keyword notes: Notes for this schedule.
         :paramtype notes: str
         """
-        super(ScheduleUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_at = start_at
         self.stop_at = stop_at
         self.recurrence_pattern = recurrence_pattern
@@ -2781,24 +2727,24 @@ class ScheduleProperties(ScheduleUpdateProperties):
     :vartype time_zone_id: str
     :ivar notes: Notes for this schedule.
     :vartype notes: str
-    :ivar provisioning_state: Current provisioning state of the schedule. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the schedule. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     """
 
     _validation = {
-        'time_zone_id': {'max_length': 50, 'min_length': 0},
-        'notes': {'max_length': 1000, 'min_length': 0},
-        'provisioning_state': {'readonly': True},
+        "time_zone_id": {"max_length": 50},
+        "notes": {"max_length": 1000},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'start_at': {'key': 'startAt', 'type': 'iso-8601'},
-        'stop_at': {'key': 'stopAt', 'type': 'iso-8601'},
-        'recurrence_pattern': {'key': 'recurrencePattern', 'type': 'RecurrencePattern'},
-        'time_zone_id': {'key': 'timeZoneId', 'type': 'str'},
-        'notes': {'key': 'notes', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "start_at": {"key": "startAt", "type": "iso-8601"},
+        "stop_at": {"key": "stopAt", "type": "iso-8601"},
+        "recurrence_pattern": {"key": "recurrencePattern", "type": "RecurrencePattern"},
+        "time_zone_id": {"key": "timeZoneId", "type": "str"},
+        "notes": {"key": "notes", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -2806,7 +2752,7 @@ class ScheduleProperties(ScheduleUpdateProperties):
         *,
         start_at: Optional[datetime.datetime] = None,
         stop_at: Optional[datetime.datetime] = None,
-        recurrence_pattern: Optional["RecurrencePattern"] = None,
+        recurrence_pattern: Optional["_models.RecurrencePattern"] = None,
         time_zone_id: Optional[str] = None,
         notes: Optional[str] = None,
         **kwargs
@@ -2825,11 +2771,18 @@ class ScheduleProperties(ScheduleUpdateProperties):
         :keyword notes: Notes for this schedule.
         :paramtype notes: str
         """
-        super(ScheduleProperties, self).__init__(start_at=start_at, stop_at=stop_at, recurrence_pattern=recurrence_pattern, time_zone_id=time_zone_id, notes=notes, **kwargs)
+        super().__init__(
+            start_at=start_at,
+            stop_at=stop_at,
+            recurrence_pattern=recurrence_pattern,
+            time_zone_id=time_zone_id,
+            notes=notes,
+            **kwargs
+        )
         self.provisioning_state = None
 
 
-class ScheduleUpdate(msrest.serialization.Model):
+class ScheduleUpdate(_serialization.Model):
     """Schedule for automatically turning virtual machines in a lab on and off at specified times. Used for updates.
 
     :ivar start_at: When lab user virtual machines will be started. Timestamp offsets will be
@@ -2847,16 +2800,16 @@ class ScheduleUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'time_zone_id': {'max_length': 50, 'min_length': 0},
-        'notes': {'max_length': 1000, 'min_length': 0},
+        "time_zone_id": {"max_length": 50},
+        "notes": {"max_length": 1000},
     }
 
     _attribute_map = {
-        'start_at': {'key': 'properties.startAt', 'type': 'iso-8601'},
-        'stop_at': {'key': 'properties.stopAt', 'type': 'iso-8601'},
-        'recurrence_pattern': {'key': 'properties.recurrencePattern', 'type': 'RecurrencePattern'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
+        "start_at": {"key": "properties.startAt", "type": "iso-8601"},
+        "stop_at": {"key": "properties.stopAt", "type": "iso-8601"},
+        "recurrence_pattern": {"key": "properties.recurrencePattern", "type": "RecurrencePattern"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "notes": {"key": "properties.notes", "type": "str"},
     }
 
     def __init__(
@@ -2864,7 +2817,7 @@ class ScheduleUpdate(msrest.serialization.Model):
         *,
         start_at: Optional[datetime.datetime] = None,
         stop_at: Optional[datetime.datetime] = None,
-        recurrence_pattern: Optional["RecurrencePattern"] = None,
+        recurrence_pattern: Optional["_models.RecurrencePattern"] = None,
         time_zone_id: Optional[str] = None,
         notes: Optional[str] = None,
         **kwargs
@@ -2883,7 +2836,7 @@ class ScheduleUpdate(msrest.serialization.Model):
         :keyword notes: Notes for this schedule.
         :paramtype notes: str
         """
-        super(ScheduleUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_at = start_at
         self.stop_at = stop_at
         self.recurrence_pattern = recurrence_pattern
@@ -2891,53 +2844,48 @@ class ScheduleUpdate(msrest.serialization.Model):
         self.notes = notes
 
 
-class SecurityProfile(msrest.serialization.Model):
+class SecurityProfile(_serialization.Model):
     """The lab security profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar registration_code: The registration code for the lab.
     :vartype registration_code: str
-    :ivar open_access: Whether any user or only specified users can register to a lab. Possible
-     values include: "Enabled", "Disabled".
+    :ivar open_access: Whether any user or only specified users can register to a lab. Known values
+     are: "Enabled" and "Disabled".
     :vartype open_access: str or ~azure.mgmt.labservices.models.EnableState
     """
 
     _validation = {
-        'registration_code': {'readonly': True},
+        "registration_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'registration_code': {'key': 'registrationCode', 'type': 'str'},
-        'open_access': {'key': 'openAccess', 'type': 'str'},
+        "registration_code": {"key": "registrationCode", "type": "str"},
+        "open_access": {"key": "openAccess", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        open_access: Optional[Union[str, "EnableState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, open_access: Optional[Union[str, "_models.EnableState"]] = None, **kwargs):
         """
-        :keyword open_access: Whether any user or only specified users can register to a lab. Possible
-         values include: "Enabled", "Disabled".
+        :keyword open_access: Whether any user or only specified users can register to a lab. Known
+         values are: "Enabled" and "Disabled".
         :paramtype open_access: str or ~azure.mgmt.labservices.models.EnableState
         """
-        super(SecurityProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.registration_code = None
         self.open_access = open_access
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+    :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
     :ivar tier: This field is required to be implemented by the Resource Provider if the service
-     has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
-     "Standard", "Premium".
+     has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
     :vartype tier: str or ~azure.mgmt.labservices.models.SkuTier
     :ivar size: The SKU size. When the name field is the combination of tier and some other value,
      this would be the standalone code.
@@ -2951,33 +2899,33 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "SkuTier"]] = None,
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the SKU. Ex - P3. It is typically a letter+number code.
+        :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
         :keyword tier: This field is required to be implemented by the Resource Provider if the service
-         has more than one tier, but is not required on a PUT. Possible values include: "Free", "Basic",
-         "Standard", "Premium".
+         has more than one tier, but is not required on a PUT. Known values are: "Free", "Basic",
+         "Standard", and "Premium".
         :paramtype tier: str or ~azure.mgmt.labservices.models.SkuTier
         :keyword size: The SKU size. When the name field is the combination of tier and some other
          value, this would be the standalone code.
@@ -2989,7 +2937,7 @@ class Sku(msrest.serialization.Model):
          included. If scale out/in is not possible for the resource this may be omitted.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size
@@ -2997,7 +2945,7 @@ class Sku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class SupportInfo(msrest.serialization.Model):
+class SupportInfo(_serialization.Model):
     """Support contact information and instructions.
 
     :ivar url: Support web address.
@@ -3011,16 +2959,16 @@ class SupportInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'url': {'max_length': 2000, 'min_length': 3},
-        'email': {'max_length': 254, 'min_length': 6},
-        'phone': {'max_length': 31, 'min_length': 1},
+        "url": {"max_length": 2000, "min_length": 3},
+        "email": {"max_length": 254, "min_length": 6},
+        "phone": {"max_length": 31, "min_length": 1},
     }
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'email': {'key': 'email', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'instructions': {'key': 'instructions', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "email": {"key": "email", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "instructions": {"key": "instructions", "type": "str"},
     }
 
     def __init__(
@@ -3042,69 +2990,69 @@ class SupportInfo(msrest.serialization.Model):
         :keyword instructions: Support instructions.
         :paramtype instructions: str
         """
-        super(SupportInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.email = email
         self.phone = phone
         self.instructions = instructions
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.labservices.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.labservices.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.labservices.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.labservices.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3113,14 +3061,14 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """The core usage details.
 
     :ivar current_value: The current usage.
-    :vartype current_value: long
+    :vartype current_value: int
     :ivar limit: The limit integer.
-    :vartype limit: long
-    :ivar unit: The unit details. Possible values include: "Count".
+    :vartype limit: int
+    :ivar unit: The unit details. "Count"
     :vartype unit: str or ~azure.mgmt.labservices.models.UsageUnit
     :ivar name: The name.
     :vartype name: ~azure.mgmt.labservices.models.UsageName
@@ -3129,11 +3077,11 @@ class Usage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'UsageName'},
-        'id': {'key': 'id', 'type': 'str'},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "unit": {"key": "unit", "type": "str"},
+        "name": {"key": "name", "type": "UsageName"},
+        "id": {"key": "id", "type": "str"},
     }
 
     def __init__(
@@ -3141,24 +3089,24 @@ class Usage(msrest.serialization.Model):
         *,
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
-        unit: Optional[Union[str, "UsageUnit"]] = None,
-        name: Optional["UsageName"] = None,
-        id: Optional[str] = None,
+        unit: Optional[Union[str, "_models.UsageUnit"]] = None,
+        name: Optional["_models.UsageName"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
         :keyword current_value: The current usage.
-        :paramtype current_value: long
+        :paramtype current_value: int
         :keyword limit: The limit integer.
-        :paramtype limit: long
-        :keyword unit: The unit details. Possible values include: "Count".
+        :paramtype limit: int
+        :keyword unit: The unit details. "Count"
         :paramtype unit: str or ~azure.mgmt.labservices.models.UsageUnit
         :keyword name: The name.
         :paramtype name: ~azure.mgmt.labservices.models.UsageName
         :keyword id: The fully qualified arm resource id.
         :paramtype id: str
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.current_value = current_value
         self.limit = limit
         self.unit = unit
@@ -3166,39 +3114,46 @@ class Usage(msrest.serialization.Model):
         self.id = id
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The Usage Names.
 
     :ivar localized_value: The localized name of the resource.
     :vartype localized_value: str
+    :ivar sku_instances: The instances of the resource.
+    :vartype sku_instances: list[str]
     :ivar value: The name of the resource.
     :vartype value: str
     """
 
     _attribute_map = {
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "sku_instances": {"key": "skuInstances", "type": "[str]"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         localized_value: Optional[str] = None,
+        sku_instances: Optional[List[str]] = None,
         value: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword localized_value: The localized name of the resource.
         :paramtype localized_value: str
+        :keyword sku_instances: The instances of the resource.
+        :paramtype sku_instances: list[str]
         :keyword value: The name of the resource.
         :paramtype value: str
         """
-        super(UsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.localized_value = localized_value
+        self.sku_instances = sku_instances
         self.value = value
 
 
-class User(ProxyResource):
+class User(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """User of a lab that can register for and use virtual machines within the lab.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3218,18 +3173,18 @@ class User(ProxyResource):
     :ivar additional_usage_quota: The amount of usage quota time the user gets in addition to the
      lab usage quota.
     :vartype additional_usage_quota: ~datetime.timedelta
-    :ivar provisioning_state: Current provisioning state of the user resource. Possible values
-     include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the user resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar display_name: Display name of the user, for example user's full name.
     :vartype display_name: str
-    :ivar email: Required. Email address of the user.
+    :ivar email: Email address of the user. Required.
     :vartype email: str
-    :ivar registration_state: State of the user's registration within the lab. Possible values
-     include: "Registered", "NotRegistered".
+    :ivar registration_state: State of the user's registration within the lab. Known values are:
+     "Registered" and "NotRegistered".
     :vartype registration_state: str or ~azure.mgmt.labservices.models.RegistrationState
-    :ivar invitation_state: State of the invitation message for the user. Possible values include:
-     "NotSent", "Sending", "Sent", "Failed".
+    :ivar invitation_state: State of the invitation message for the user. Known values are:
+     "NotSent", "Sending", "Sent", and "Failed".
     :vartype invitation_state: str or ~azure.mgmt.labservices.models.InvitationState
     :ivar invitation_sent: Date and time when the invitation message was sent to the user.
     :vartype invitation_sent: ~datetime.datetime
@@ -3238,49 +3193,43 @@ class User(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'display_name': {'readonly': True},
-        'email': {'required': True, 'max_length': 254, 'min_length': 6},
-        'registration_state': {'readonly': True},
-        'invitation_state': {'readonly': True},
-        'invitation_sent': {'readonly': True},
-        'total_usage': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "display_name": {"readonly": True},
+        "email": {"required": True, "max_length": 254, "min_length": 6},
+        "registration_state": {"readonly": True},
+        "invitation_state": {"readonly": True},
+        "invitation_sent": {"readonly": True},
+        "total_usage": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'additional_usage_quota': {'key': 'properties.additionalUsageQuota', 'type': 'duration'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'email': {'key': 'properties.email', 'type': 'str'},
-        'registration_state': {'key': 'properties.registrationState', 'type': 'str'},
-        'invitation_state': {'key': 'properties.invitationState', 'type': 'str'},
-        'invitation_sent': {'key': 'properties.invitationSent', 'type': 'iso-8601'},
-        'total_usage': {'key': 'properties.totalUsage', 'type': 'duration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "additional_usage_quota": {"key": "properties.additionalUsageQuota", "type": "duration"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "email": {"key": "properties.email", "type": "str"},
+        "registration_state": {"key": "properties.registrationState", "type": "str"},
+        "invitation_state": {"key": "properties.invitationState", "type": "str"},
+        "invitation_sent": {"key": "properties.invitationSent", "type": "iso-8601"},
+        "total_usage": {"key": "properties.totalUsage", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        email: str,
-        additional_usage_quota: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+    def __init__(self, *, email: str, additional_usage_quota: Optional[datetime.timedelta] = None, **kwargs):
         """
         :keyword additional_usage_quota: The amount of usage quota time the user gets in addition to
          the lab usage quota.
         :paramtype additional_usage_quota: ~datetime.timedelta
-        :keyword email: Required. Email address of the user.
+        :keyword email: Email address of the user. Required.
         :paramtype email: str
         """
-        super(User, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.additional_usage_quota = additional_usage_quota
         self.provisioning_state = None
@@ -3292,7 +3241,7 @@ class User(ProxyResource):
         self.total_usage = None
 
 
-class UserUpdateProperties(msrest.serialization.Model):
+class UserUpdateProperties(_serialization.Model):
     """User resource properties used for updates.
 
     :ivar additional_usage_quota: The amount of usage quota time the user gets in addition to the
@@ -3301,21 +3250,16 @@ class UserUpdateProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_usage_quota': {'key': 'additionalUsageQuota', 'type': 'duration'},
+        "additional_usage_quota": {"key": "additionalUsageQuota", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        additional_usage_quota: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+    def __init__(self, *, additional_usage_quota: Optional[datetime.timedelta] = None, **kwargs):
         """
         :keyword additional_usage_quota: The amount of usage quota time the user gets in addition to
          the lab usage quota.
         :paramtype additional_usage_quota: ~datetime.timedelta
         """
-        super(UserUpdateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.additional_usage_quota = additional_usage_quota
 
 
@@ -3329,18 +3273,18 @@ class UserProperties(UserUpdateProperties):
     :ivar additional_usage_quota: The amount of usage quota time the user gets in addition to the
      lab usage quota.
     :vartype additional_usage_quota: ~datetime.timedelta
-    :ivar provisioning_state: Current provisioning state of the user resource. Possible values
-     include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the user resource. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
     :ivar display_name: Display name of the user, for example user's full name.
     :vartype display_name: str
-    :ivar email: Required. Email address of the user.
+    :ivar email: Email address of the user. Required.
     :vartype email: str
-    :ivar registration_state: State of the user's registration within the lab. Possible values
-     include: "Registered", "NotRegistered".
+    :ivar registration_state: State of the user's registration within the lab. Known values are:
+     "Registered" and "NotRegistered".
     :vartype registration_state: str or ~azure.mgmt.labservices.models.RegistrationState
-    :ivar invitation_state: State of the invitation message for the user. Possible values include:
-     "NotSent", "Sending", "Sent", "Failed".
+    :ivar invitation_state: State of the invitation message for the user. Known values are:
+     "NotSent", "Sending", "Sent", and "Failed".
     :vartype invitation_state: str or ~azure.mgmt.labservices.models.InvitationState
     :ivar invitation_sent: Date and time when the invitation message was sent to the user.
     :vartype invitation_sent: ~datetime.datetime
@@ -3349,41 +3293,35 @@ class UserProperties(UserUpdateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'display_name': {'readonly': True},
-        'email': {'required': True, 'max_length': 254, 'min_length': 6},
-        'registration_state': {'readonly': True},
-        'invitation_state': {'readonly': True},
-        'invitation_sent': {'readonly': True},
-        'total_usage': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "display_name": {"readonly": True},
+        "email": {"required": True, "max_length": 254, "min_length": 6},
+        "registration_state": {"readonly": True},
+        "invitation_state": {"readonly": True},
+        "invitation_sent": {"readonly": True},
+        "total_usage": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_usage_quota': {'key': 'additionalUsageQuota', 'type': 'duration'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'email': {'key': 'email', 'type': 'str'},
-        'registration_state': {'key': 'registrationState', 'type': 'str'},
-        'invitation_state': {'key': 'invitationState', 'type': 'str'},
-        'invitation_sent': {'key': 'invitationSent', 'type': 'iso-8601'},
-        'total_usage': {'key': 'totalUsage', 'type': 'duration'},
+        "additional_usage_quota": {"key": "additionalUsageQuota", "type": "duration"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "email": {"key": "email", "type": "str"},
+        "registration_state": {"key": "registrationState", "type": "str"},
+        "invitation_state": {"key": "invitationState", "type": "str"},
+        "invitation_sent": {"key": "invitationSent", "type": "iso-8601"},
+        "total_usage": {"key": "totalUsage", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        email: str,
-        additional_usage_quota: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+    def __init__(self, *, email: str, additional_usage_quota: Optional[datetime.timedelta] = None, **kwargs):
         """
         :keyword additional_usage_quota: The amount of usage quota time the user gets in addition to
          the lab usage quota.
         :paramtype additional_usage_quota: ~datetime.timedelta
-        :keyword email: Required. Email address of the user.
+        :keyword email: Email address of the user. Required.
         :paramtype email: str
         """
-        super(UserProperties, self).__init__(additional_usage_quota=additional_usage_quota, **kwargs)
+        super().__init__(additional_usage_quota=additional_usage_quota, **kwargs)
         self.provisioning_state = None
         self.display_name = None
         self.email = email
@@ -3393,7 +3331,7 @@ class UserProperties(UserUpdateProperties):
         self.total_usage = None
 
 
-class UserUpdate(msrest.serialization.Model):
+class UserUpdate(_serialization.Model):
     """User of a lab that can register for and use virtual machines within the lab. Used for updates.
 
     :ivar additional_usage_quota: The amount of usage quota time the user gets in addition to the
@@ -3402,21 +3340,16 @@ class UserUpdate(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_usage_quota': {'key': 'properties.additionalUsageQuota', 'type': 'duration'},
+        "additional_usage_quota": {"key": "properties.additionalUsageQuota", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        additional_usage_quota: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+    def __init__(self, *, additional_usage_quota: Optional[datetime.timedelta] = None, **kwargs):
         """
         :keyword additional_usage_quota: The amount of usage quota time the user gets in addition to
          the lab usage quota.
         :paramtype additional_usage_quota: ~datetime.timedelta
         """
-        super(UserUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.additional_usage_quota = additional_usage_quota
 
 
@@ -3435,51 +3368,47 @@ class VirtualMachine(ProxyResource):
     :vartype type: str
     :ivar system_data: System data of the Lab virtual machine.
     :vartype system_data: ~azure.mgmt.labservices.models.SystemData
-    :ivar provisioning_state: Current provisioning state of the virtual machine. Possible values
-     include: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Locked".
+    :ivar provisioning_state: Current provisioning state of the virtual machine. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Locked".
     :vartype provisioning_state: str or ~azure.mgmt.labservices.models.ProvisioningState
-    :ivar state: The current state of the virtual machine. Possible values include: "Stopped",
-     "Starting", "Running", "Stopping", "ResettingPassword", "Reimaging", "Redeploying".
+    :ivar state: The current state of the virtual machine. Known values are: "Stopped", "Starting",
+     "Running", "Stopping", "ResettingPassword", "Reimaging", and "Redeploying".
     :vartype state: str or ~azure.mgmt.labservices.models.VirtualMachineState
     :ivar connection_profile: Profile for information about connecting to the virtual machine.
     :vartype connection_profile: ~azure.mgmt.labservices.models.VirtualMachineConnectionProfile
     :ivar claimed_by_user_id: The lab user ID (not the PUID!) of who claimed the virtual machine.
     :vartype claimed_by_user_id: str
-    :ivar vm_type: The type of this VM resource. Possible values include: "User", "Template".
+    :ivar vm_type: The type of this VM resource. Known values are: "User" and "Template".
     :vartype vm_type: str or ~azure.mgmt.labservices.models.VirtualMachineType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'state': {'readonly': True},
-        'connection_profile': {'readonly': True},
-        'claimed_by_user_id': {'readonly': True},
-        'vm_type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "connection_profile": {"readonly": True},
+        "claimed_by_user_id": {"readonly": True},
+        "vm_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'connection_profile': {'key': 'properties.connectionProfile', 'type': 'VirtualMachineConnectionProfile'},
-        'claimed_by_user_id': {'key': 'properties.claimedByUserId', 'type': 'str'},
-        'vm_type': {'key': 'properties.vmType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "connection_profile": {"key": "properties.connectionProfile", "type": "VirtualMachineConnectionProfile"},
+        "claimed_by_user_id": {"key": "properties.claimedByUserId", "type": "str"},
+        "vm_type": {"key": "properties.vmType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachine, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.state = None
@@ -3488,34 +3417,29 @@ class VirtualMachine(ProxyResource):
         self.vm_type = None
 
 
-class VirtualMachineAdditionalCapabilities(msrest.serialization.Model):
+class VirtualMachineAdditionalCapabilities(_serialization.Model):
     """The additional capabilities for a lab VM.
 
-    :ivar install_gpu_drivers: Flag to pre-install dedicated GPU drivers. Possible values include:
-     "Enabled", "Disabled".
+    :ivar install_gpu_drivers: Flag to pre-install dedicated GPU drivers. Known values are:
+     "Enabled" and "Disabled".
     :vartype install_gpu_drivers: str or ~azure.mgmt.labservices.models.EnableState
     """
 
     _attribute_map = {
-        'install_gpu_drivers': {'key': 'installGpuDrivers', 'type': 'str'},
+        "install_gpu_drivers": {"key": "installGpuDrivers", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        install_gpu_drivers: Optional[Union[str, "EnableState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, install_gpu_drivers: Optional[Union[str, "_models.EnableState"]] = None, **kwargs):
         """
-        :keyword install_gpu_drivers: Flag to pre-install dedicated GPU drivers. Possible values
-         include: "Enabled", "Disabled".
+        :keyword install_gpu_drivers: Flag to pre-install dedicated GPU drivers. Known values are:
+         "Enabled" and "Disabled".
         :paramtype install_gpu_drivers: str or ~azure.mgmt.labservices.models.EnableState
         """
-        super(VirtualMachineAdditionalCapabilities, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.install_gpu_drivers = install_gpu_drivers
 
 
-class VirtualMachineConnectionProfile(msrest.serialization.Model):
+class VirtualMachineConnectionProfile(_serialization.Model):
     """The connection information for the virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3542,32 +3466,28 @@ class VirtualMachineConnectionProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'private_ip_address': {'readonly': True},
-        'ssh_authority': {'readonly': True},
-        'ssh_in_browser_url': {'readonly': True, 'max_length': 2000, 'min_length': 3},
-        'rdp_authority': {'readonly': True},
-        'rdp_in_browser_url': {'readonly': True, 'max_length': 2000, 'min_length': 3},
-        'admin_username': {'readonly': True},
-        'non_admin_username': {'readonly': True},
+        "private_ip_address": {"readonly": True},
+        "ssh_authority": {"readonly": True},
+        "ssh_in_browser_url": {"readonly": True, "max_length": 2000, "min_length": 3},
+        "rdp_authority": {"readonly": True},
+        "rdp_in_browser_url": {"readonly": True, "max_length": 2000, "min_length": 3},
+        "admin_username": {"readonly": True},
+        "non_admin_username": {"readonly": True},
     }
 
     _attribute_map = {
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'ssh_authority': {'key': 'sshAuthority', 'type': 'str'},
-        'ssh_in_browser_url': {'key': 'sshInBrowserUrl', 'type': 'str'},
-        'rdp_authority': {'key': 'rdpAuthority', 'type': 'str'},
-        'rdp_in_browser_url': {'key': 'rdpInBrowserUrl', 'type': 'str'},
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'non_admin_username': {'key': 'nonAdminUsername', 'type': 'str'},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
+        "ssh_authority": {"key": "sshAuthority", "type": "str"},
+        "ssh_in_browser_url": {"key": "sshInBrowserUrl", "type": "str"},
+        "rdp_authority": {"key": "rdpAuthority", "type": "str"},
+        "rdp_in_browser_url": {"key": "rdpInBrowserUrl", "type": "str"},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "non_admin_username": {"key": "nonAdminUsername", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VirtualMachineConnectionProfile, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.private_ip_address = None
         self.ssh_authority = None
         self.ssh_in_browser_url = None
@@ -3577,95 +3497,95 @@ class VirtualMachineConnectionProfile(msrest.serialization.Model):
         self.non_admin_username = None
 
 
-class VirtualMachineProfile(msrest.serialization.Model):
+class VirtualMachineProfile(_serialization.Model):
     """The base virtual machine configuration for a lab.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar create_option: Required. Indicates what lab virtual machines are created from. Possible
-     values include: "Image", "TemplateVM".
+    :ivar create_option: Indicates what lab virtual machines are created from. Required. Known
+     values are: "Image" and "TemplateVM".
     :vartype create_option: str or ~azure.mgmt.labservices.models.CreateOption
-    :ivar image_reference: Required. The image configuration for lab virtual machines.
+    :ivar image_reference: The image configuration for lab virtual machines. Required.
     :vartype image_reference: ~azure.mgmt.labservices.models.ImageReference
-    :ivar os_type: The OS type of the image. Possible values include: "Windows", "Linux".
+    :ivar os_type: The OS type of the image. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.labservices.models.OsType
-    :ivar sku: Required. The SKU for the lab. Defines the type of virtual machines used in the lab.
+    :ivar sku: The SKU for the lab. Defines the type of virtual machines used in the lab. Required.
     :vartype sku: ~azure.mgmt.labservices.models.Sku
     :ivar additional_capabilities: Additional VM capabilities.
     :vartype additional_capabilities:
      ~azure.mgmt.labservices.models.VirtualMachineAdditionalCapabilities
-    :ivar usage_quota: Required. The initial quota alloted to each lab user. Must be a time span
-     between 0 and 9999 hours.
+    :ivar usage_quota: The initial quota alloted to each lab user. Must be a time span between 0
+     and 9999 hours. Required.
     :vartype usage_quota: ~datetime.timedelta
     :ivar use_shared_password: Enabling this option will use the same password for all user VMs.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype use_shared_password: str or ~azure.mgmt.labservices.models.EnableState
-    :ivar admin_user: Required. Credentials for the admin user on the VM.
+    :ivar admin_user: Credentials for the admin user on the VM. Required.
     :vartype admin_user: ~azure.mgmt.labservices.models.Credentials
     :ivar non_admin_user: Credentials for the non-admin user on the VM, if one exists.
     :vartype non_admin_user: ~azure.mgmt.labservices.models.Credentials
     """
 
     _validation = {
-        'create_option': {'required': True},
-        'image_reference': {'required': True},
-        'os_type': {'readonly': True},
-        'sku': {'required': True},
-        'usage_quota': {'required': True},
-        'admin_user': {'required': True},
+        "create_option": {"required": True},
+        "image_reference": {"required": True},
+        "os_type": {"readonly": True},
+        "sku": {"required": True},
+        "usage_quota": {"required": True},
+        "admin_user": {"required": True},
     }
 
     _attribute_map = {
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'additional_capabilities': {'key': 'additionalCapabilities', 'type': 'VirtualMachineAdditionalCapabilities'},
-        'usage_quota': {'key': 'usageQuota', 'type': 'duration'},
-        'use_shared_password': {'key': 'useSharedPassword', 'type': 'str'},
-        'admin_user': {'key': 'adminUser', 'type': 'Credentials'},
-        'non_admin_user': {'key': 'nonAdminUser', 'type': 'Credentials'},
+        "create_option": {"key": "createOption", "type": "str"},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_type": {"key": "osType", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "additional_capabilities": {"key": "additionalCapabilities", "type": "VirtualMachineAdditionalCapabilities"},
+        "usage_quota": {"key": "usageQuota", "type": "duration"},
+        "use_shared_password": {"key": "useSharedPassword", "type": "str"},
+        "admin_user": {"key": "adminUser", "type": "Credentials"},
+        "non_admin_user": {"key": "nonAdminUser", "type": "Credentials"},
     }
 
     def __init__(
         self,
         *,
-        create_option: Union[str, "CreateOption"],
-        image_reference: "ImageReference",
-        sku: "Sku",
+        create_option: Union[str, "_models.CreateOption"],
+        image_reference: "_models.ImageReference",
+        sku: "_models.Sku",
         usage_quota: datetime.timedelta,
-        admin_user: "Credentials",
-        additional_capabilities: Optional["VirtualMachineAdditionalCapabilities"] = None,
-        use_shared_password: Optional[Union[str, "EnableState"]] = None,
-        non_admin_user: Optional["Credentials"] = None,
+        admin_user: "_models.Credentials",
+        additional_capabilities: Optional["_models.VirtualMachineAdditionalCapabilities"] = None,
+        use_shared_password: Optional[Union[str, "_models.EnableState"]] = None,
+        non_admin_user: Optional["_models.Credentials"] = None,
         **kwargs
     ):
         """
-        :keyword create_option: Required. Indicates what lab virtual machines are created from.
-         Possible values include: "Image", "TemplateVM".
+        :keyword create_option: Indicates what lab virtual machines are created from. Required. Known
+         values are: "Image" and "TemplateVM".
         :paramtype create_option: str or ~azure.mgmt.labservices.models.CreateOption
-        :keyword image_reference: Required. The image configuration for lab virtual machines.
+        :keyword image_reference: The image configuration for lab virtual machines. Required.
         :paramtype image_reference: ~azure.mgmt.labservices.models.ImageReference
-        :keyword sku: Required. The SKU for the lab. Defines the type of virtual machines used in the
-         lab.
+        :keyword sku: The SKU for the lab. Defines the type of virtual machines used in the lab.
+         Required.
         :paramtype sku: ~azure.mgmt.labservices.models.Sku
         :keyword additional_capabilities: Additional VM capabilities.
         :paramtype additional_capabilities:
          ~azure.mgmt.labservices.models.VirtualMachineAdditionalCapabilities
-        :keyword usage_quota: Required. The initial quota alloted to each lab user. Must be a time span
-         between 0 and 9999 hours.
+        :keyword usage_quota: The initial quota alloted to each lab user. Must be a time span between 0
+         and 9999 hours. Required.
         :paramtype usage_quota: ~datetime.timedelta
         :keyword use_shared_password: Enabling this option will use the same password for all user VMs.
-         Possible values include: "Enabled", "Disabled".
+         Known values are: "Enabled" and "Disabled".
         :paramtype use_shared_password: str or ~azure.mgmt.labservices.models.EnableState
-        :keyword admin_user: Required. Credentials for the admin user on the VM.
+        :keyword admin_user: Credentials for the admin user on the VM. Required.
         :paramtype admin_user: ~azure.mgmt.labservices.models.Credentials
         :keyword non_admin_user: Credentials for the non-admin user on the VM, if one exists.
         :paramtype non_admin_user: ~azure.mgmt.labservices.models.Credentials
         """
-        super(VirtualMachineProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.create_option = create_option
         self.image_reference = image_reference
         self.os_type = None

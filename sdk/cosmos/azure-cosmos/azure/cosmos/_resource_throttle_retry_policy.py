@@ -32,7 +32,7 @@ class ResourceThrottleRetryPolicy(object):
         self._fixed_retry_interval_in_milliseconds = fixed_retry_interval_in_milliseconds
         self._max_wait_time_in_milliseconds = max_wait_time_in_seconds * 1000
         self.current_retry_attempt_count = 0
-        self.cummulative_wait_time_in_milliseconds = 0
+        self.cumulative_wait_time_in_milliseconds = 0
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -53,8 +53,8 @@ class ResourceThrottleRetryPolicy(object):
                     exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds]
                 )
 
-            if self.cummulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
-                self.cummulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
+            if self.cumulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
+                self.cumulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
                 return True
 
         return False

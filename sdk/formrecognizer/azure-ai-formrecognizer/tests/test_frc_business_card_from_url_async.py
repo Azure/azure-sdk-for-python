@@ -10,6 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -18,6 +19,7 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

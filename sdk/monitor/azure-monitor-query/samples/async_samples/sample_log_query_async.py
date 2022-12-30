@@ -37,7 +37,7 @@ async def logs_query():
         if response.status == LogsQueryStatus.PARTIAL:
             error = response.partial_error
             data = response.partial_data
-            print(error.message)
+            print(error)
         elif response.status == LogsQueryStatus.SUCCESS:
             data = response.tables
         for table in data:
@@ -48,5 +48,4 @@ async def logs_query():
         print (err)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(logs_query())
+    asyncio.run(logs_query())

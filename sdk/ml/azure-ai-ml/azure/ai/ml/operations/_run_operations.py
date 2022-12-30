@@ -2,24 +2,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Iterable
+# pylint: disable=protected-access
+
 import logging
-from azure.ai.ml.constants import NAMED_RESOURCE_ID_FORMAT, AZUREML_RESOURCE_PROVIDER, AzureMLResourceType
-from azure.ai.ml._restclient.runhistory import (
-    AzureMachineLearningWorkspaces as RunHistoryServiceClient,
-)
-from azure.ai.ml.entities._job.job import Job
+from typing import Iterable
+
+from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
+from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, NAMED_RESOURCE_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._job.base_job import _BaseJob
-from azure.ai.ml.entities._job.job_errors import JobParsingError
-from azure.ai.ml._restclient.runhistory.models import RunDetails, GetRunDataResult, GetRunDataRequest, Run
-from azure.ai.ml._scope_dependent_operations import _ScopeDependentOperations, OperationScope
+from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.exceptions import JobParsingError
 
 module_logger = logging.getLogger(__name__)
 
 
 class RunOperations(_ScopeDependentOperations):
-    def __init__(self, operation_scope: OperationScope, service_client: RunHistoryServiceClient):
-        super(RunOperations, self).__init__(operation_scope)
+    def __init__(
+        self,
+        operation_scope: OperationScope,
+        operation_config: OperationConfig,
+        service_client: RunHistoryServiceClient,
+    ):
+        super(RunOperations, self).__init__(operation_scope, operation_config)
         self._operation = service_client.runs
 
     def get_run(self, run_id: str) -> Run:
@@ -48,7 +54,7 @@ class RunOperations(_ScopeDependentOperations):
         )
 
     def _translate_from_rest_object(self, job_object: Run) -> _BaseJob:
-        """Handle errors during list operation"""
+        """Handle errors during list operation."""
         try:
             from_rest_job = Job._from_rest_object(job_object)
             from_rest_job._id = NAMED_RESOURCE_ID_FORMAT.format(

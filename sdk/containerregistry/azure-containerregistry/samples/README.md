@@ -11,7 +11,6 @@ urlFragment: containerregistry-samples
 # Samples for Azure Container Registry
 
 These code samples show common scenario operations with the Azure Container Registry client library. The code samples assume an environment variable `CONTAINERREGISTRY_ENDPOINT` is set, which includes the name of the login server and the `https://` prefix. For more information on using AAD with Azure Container Registry, please see the service's [Authentication Overview](https://docs.microsoft.com/azure/container-registry/container-registry-authentication).
-The async versions of the samples require Python 3.6 or later.
 
 
 |**File Name**|**Description**|
@@ -23,7 +22,7 @@ The async versions of the samples require Python 3.6 or later.
 |[sample_list_tags.py][list_tags] ([sample_list_tags_async.py][list_tags_async]) | List tags on an image with anonymous access |
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 ## Setup

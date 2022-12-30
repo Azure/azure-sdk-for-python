@@ -2,38 +2,34 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineSize
-from azure.ai.ml._schema.compute.vm_size import VmSizeSchema
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from typing import Dict, Union
 from os import PathLike
-from azure.ai.ml.constants import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    CommonYamlFields,
-)
+from typing import IO, AnyStr, Dict, List, Optional, Union
+
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachineSize
+from azure.ai.ml._schema.compute.vm_size import VmSizeSchema
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-class VmSize(Resource, RestTranslatableMixin):
-    """virtual Machine Size"""
+class VmSize(RestTranslatableMixin):
+    """virtual Machine Size."""
 
     def __init__(
         self,
-        name: str = None,
-        family: str = None,
-        v_cp_us: int = None,
-        gpus: int = None,
-        os_vhd_size_mb: int = None,
-        max_resource_volume_mb: int = None,
-        memory_gb: float = None,
-        low_priority_capable: bool = None,
-        premium_io: bool = None,
-        supported_compute_types: List[str] = None,
-        **kwargs,
+        name: Optional[str] = None,
+        family: Optional[str] = None,
+        v_cp_us: Optional[int] = None,
+        gpus: Optional[int] = None,
+        os_vhd_size_mb: Optional[int] = None,
+        max_resource_volume_mb: Optional[int] = None,
+        memory_gb: Optional[float] = None,
+        low_priority_capable: Optional[bool] = None,
+        premium_io: Optional[bool] = None,
+        supported_compute_types: Optional[List[str]] = None,
     ):
-        """Virtual machine size
+        """Virtual machine size.
+
         :param name: The name of the virtual machine size.
         :type name: str
         :param family: The family name of the virtual machine size.
@@ -72,29 +68,36 @@ class VmSize(Resource, RestTranslatableMixin):
         self.supported_compute_types = ",".join(map(str, supported_compute_types)) if supported_compute_types else None
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: VirtualMachineSize) -> "VmSize":
+    def _from_rest_object(cls, obj: VirtualMachineSize) -> "VmSize":
         result = cls()
-        result.__dict__.update(rest_obj.as_dict())
+        result.__dict__.update(obj.as_dict())
         return result
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the virtual machine size content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this virtual machine size's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
         """
 
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return VmSizeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str],
-        params_override: list = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "VmSize":
 

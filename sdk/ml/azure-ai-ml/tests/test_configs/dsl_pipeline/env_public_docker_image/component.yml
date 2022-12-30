@@ -1,0 +1,13 @@
+type: command
+
+name: hello__python__world
+display_name: Hello_Python_World
+version: 1
+
+code: ./src
+
+environment:
+  image: docker.io/python
+
+command: >-
+  python hello.py

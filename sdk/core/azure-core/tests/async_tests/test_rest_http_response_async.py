@@ -160,7 +160,7 @@ async def test_response_no_charset_with_ascii_content(send_request):
 async def test_response_no_charset_with_iso_8859_1_content(send_request):
     """
     We don't support iso-8859-1 by default following conversations
-    about endoding flow
+    about encoding flow
     """
     response = await send_request(
         request=HttpRequest("GET", "/encoding/iso-8859-1"),

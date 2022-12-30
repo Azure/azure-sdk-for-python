@@ -40,54 +40,58 @@ from ._models_py3 import TenantIdDescription
 from ._models_py3 import TenantListResult
 from ._models_py3 import TenantPolicy
 
-
-from ._subscription_client_enums import (
-    AcceptOwnership,
-    CreatedByType,
-    ProvisioningState,
-    SpendingLimit,
-    SubscriptionState,
-    Workload,
-)
+from ._subscription_client_enums import AcceptOwnership
+from ._subscription_client_enums import CreatedByType
+from ._subscription_client_enums import Provisioning
+from ._subscription_client_enums import ProvisioningState
+from ._subscription_client_enums import SpendingLimit
+from ._subscription_client_enums import SubscriptionState
+from ._subscription_client_enums import Workload
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AcceptOwnershipRequest',
-    'AcceptOwnershipRequestProperties',
-    'AcceptOwnershipStatusResponse',
-    'BillingAccountPoliciesResponse',
-    'BillingAccountPoliciesResponseProperties',
-    'CanceledSubscriptionId',
-    'EnabledSubscriptionId',
-    'ErrorResponse',
-    'ErrorResponseBody',
-    'GetTenantPolicyListResponse',
-    'GetTenantPolicyResponse',
-    'Location',
-    'LocationListResult',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PutAliasRequest',
-    'PutAliasRequestAdditionalProperties',
-    'PutAliasRequestProperties',
-    'PutTenantPolicyRequestProperties',
-    'RenamedSubscriptionId',
-    'ServiceTenantResponse',
-    'Subscription',
-    'SubscriptionAliasListResult',
-    'SubscriptionAliasResponse',
-    'SubscriptionAliasResponseProperties',
-    'SubscriptionListResult',
-    'SubscriptionName',
-    'SubscriptionPolicies',
-    'SystemData',
-    'TenantIdDescription',
-    'TenantListResult',
-    'TenantPolicy',
-    'AcceptOwnership',
-    'CreatedByType',
-    'ProvisioningState',
-    'SpendingLimit',
-    'SubscriptionState',
-    'Workload',
+    "AcceptOwnershipRequest",
+    "AcceptOwnershipRequestProperties",
+    "AcceptOwnershipStatusResponse",
+    "BillingAccountPoliciesResponse",
+    "BillingAccountPoliciesResponseProperties",
+    "CanceledSubscriptionId",
+    "EnabledSubscriptionId",
+    "ErrorResponse",
+    "ErrorResponseBody",
+    "GetTenantPolicyListResponse",
+    "GetTenantPolicyResponse",
+    "Location",
+    "LocationListResult",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PutAliasRequest",
+    "PutAliasRequestAdditionalProperties",
+    "PutAliasRequestProperties",
+    "PutTenantPolicyRequestProperties",
+    "RenamedSubscriptionId",
+    "ServiceTenantResponse",
+    "Subscription",
+    "SubscriptionAliasListResult",
+    "SubscriptionAliasResponse",
+    "SubscriptionAliasResponseProperties",
+    "SubscriptionListResult",
+    "SubscriptionName",
+    "SubscriptionPolicies",
+    "SystemData",
+    "TenantIdDescription",
+    "TenantListResult",
+    "TenantPolicy",
+    "AcceptOwnership",
+    "CreatedByType",
+    "Provisioning",
+    "ProvisioningState",
+    "SpendingLimit",
+    "SubscriptionState",
+    "Workload",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

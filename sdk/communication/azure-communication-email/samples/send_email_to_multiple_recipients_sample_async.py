@@ -25,18 +25,12 @@ import sys
 import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.communication.email.aio import EmailClient
-from azure.communication.email import (
-    EmailContent,
-    EmailRecipients,
-    EmailAddress,
-    EmailMessage
-)
 
 sys.path.append("..")
 
 class EmailMultipleRecipientSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
     second_recipient_address = os.getenv("SECOND_RECIPIENT_ADDRESS")
@@ -46,38 +40,34 @@ class EmailMultipleRecipientSampleAsync(object):
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        content = EmailContent(
-            subject="This is the subject",
-            plain_text="This is the body",
-            html= "<html><h1>This is the body</h1></html>",
-        )
-
-        recipients = EmailRecipients(
-            to=[
-                EmailAddress(email=self.recipient_address, display_name="Customer Name"),
-                EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
-            ],
-            cc=[
-                EmailAddress(email=self.recipient_address, display_name="Customer Name"),
-                EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
-            ],
-            bcc=[
-                EmailAddress(email=self.recipient_address, display_name="Customer Name"),
-                EmailAddress(email=self.second_recipient_address, display_name="Customer Name 2"),
-            ]
-        )
-
-        message = EmailMessage(
-            sender=self.sender_address,
-            content=content,
-            recipients=recipients
-        )
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+                "html": "html><h1>This is the body</h1></html>"
+            },
+            "recipients": {
+                "to": [
+                    {"email": self.recipient_address, "displayName": "Customer Name"},
+                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                ],
+                "cc": [
+                    {"email": self.recipient_address, "displayName": "Customer Name"},
+                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                ],
+                "bcc": [
+                    {"email": self.recipient_address, "displayName": "Customer Name"},
+                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                ]
+            },
+            "sender": self.sender_address
+        }
 
         async with email_client:
             try:
                 # sending the email message
                 response = await email_client.send(message)
-                print("Message ID: " + response.message_id)
+                print("Message ID: " + response['messageId'])
             except HttpResponseError as ex:
                 print(ex)
                 pass

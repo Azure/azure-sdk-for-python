@@ -1,0 +1,6 @@
+name: registry_name_rc
+location: WestCentralUS
+replication_locations:
+  - location: WestCentralUS
+    storage_config:
+        replication_count: 3

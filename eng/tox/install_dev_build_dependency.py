@@ -17,8 +17,10 @@ from subprocess import check_call
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
-from common_tasks import process_glob_string, get_installed_packages
-from tox_helper_tasks import get_package_details
+
+from common_tasks import get_installed_packages
+from ci_tools.functions import discover_targeted_packages
+from ci_tools.parsing import ParsedSetup
 
 EXCLUDED_PKGS = [
     "azure-common",
@@ -39,7 +41,7 @@ def get_installed_azure_packages(pkg_name_to_exclude):
     ]
 
     # Get valid list of Azure SDK packages in repo
-    pkgs = process_glob_string("", root_dir)
+    pkgs = discover_targeted_packages("", root_dir)
     valid_azure_packages = [
         path.basename(p) for p in pkgs if "mgmt" not in p and "-nspkg" not in p
     ]
@@ -118,9 +120,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.target_package:
-        # get target package name from target package path
         pkg_dir = path.abspath(args.target_package)
-        pkg_name, _, ver, _, _ = get_package_details(path.join(pkg_dir, "setup.py"))
-        install_dev_build_packages(pkg_name)
+        pkg_details = ParsedSetup.from_path(pkg_dir)
+        install_dev_build_packages(pkg_details.name)
 
 

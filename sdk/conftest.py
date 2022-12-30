@@ -26,7 +26,13 @@
 import os
 import pytest
 
-from devtools_testutils import recorded_test, test_proxy, variable_recorder, add_general_regex_sanitizer
+from devtools_testutils import (
+    add_general_string_sanitizer,
+    environment_variables,
+    recorded_test,
+    test_proxy,
+    variable_recorder,
+)
 
 
 def pytest_configure(config):

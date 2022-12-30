@@ -1,5 +1,37 @@
 # Release History
 
+## 2.0.0b1 (2022-11-08)
+
+### Features Added
+
+  - Added operation NamespacesOperations.create_or_update_network_rule_set
+  - Added operation NamespacesOperations.get_network_rule_set
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Model AuthorizationRule has a new parameter location
+  - Model AuthorizationRule has a new parameter system_data
+  - Model ErrorResponse has a new parameter error
+  - Model HybridConnection has a new parameter location
+  - Model HybridConnection has a new parameter system_data
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model OperationDisplay has a new parameter description
+  - Model RelayNamespace has a new parameter private_endpoint_connections
+  - Model RelayNamespace has a new parameter public_network_access
+  - Model RelayNamespace has a new parameter status
+  - Model RelayNamespace has a new parameter system_data
+  - Model RelayUpdateParameters has a new parameter private_endpoint_connections
+  - Model RelayUpdateParameters has a new parameter public_network_access
+  - Model RelayUpdateParameters has a new parameter status
+  - Model WcfRelay has a new parameter location
+  - Model WcfRelay has a new parameter system_data
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter message
+
 ## 1.1.0 (2021-09-06)
 
 **Features**

@@ -50,6 +50,5 @@ async def authentication_service_client_with_api_key_credential_async():
     # [END create_search_service_with_key_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(authentication_with_api_key_credential_async())
-    loop.run_until_complete(authentication_service_client_with_api_key_credential_async())
+    asyncio.run(authentication_with_api_key_credential_async())
+    asyncio.run(authentication_service_client_with_api_key_credential_async())

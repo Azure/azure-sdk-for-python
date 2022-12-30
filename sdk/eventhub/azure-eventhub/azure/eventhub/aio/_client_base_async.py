@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
+from __future__ import unicode_literals, annotations
 
 import logging
 import asyncio
@@ -10,15 +10,6 @@ import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
 
-import six
-from uamqp import (
-    authentication,
-    constants,
-    errors,
-    compat,
-    Message,
-    AMQPClientAsync,
-)
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
@@ -32,19 +23,37 @@ from .._client_base import (
     _get_backoff_time,
 )
 from .._utils import utc_from_timestamp, parse_sas_credential
-from ..exceptions import ClientClosedError, ConnectError
+from ..exceptions import ClientClosedError
 from .._constants import (
     JWT_TOKEN_SCOPE,
     MGMT_OPERATION,
     MGMT_PARTITION_OPERATION,
     MGMT_STATUS_CODE,
     MGMT_STATUS_DESC,
+    READ_OPERATION,
 )
 from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
-from ._error_async import _handle_exception
+try:
+    from ._transport._uamqp_transport_async import UamqpTransportAsync
+except ImportError:
+    UamqpTransportAsync = None  # type: ignore
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 
 if TYPE_CHECKING:
+    from .._pyamqp.message import Message
+    from .._pyamqp.aio import AMQPClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    try:
+        from uamqp import (
+            authentication as uamqp_authentication,
+            Message as uamqp_Message,
+            AMQPClientAsync as uamqp_AMQPClientAsync,
+        )
+    except ImportError:
+        uamqp_authentication = None
+        uamqp_Message = None
+        uamqp_AMQPClientAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
     CredentialTypes = Union[
@@ -61,8 +70,7 @@ if TYPE_CHECKING:
 
     class AbstractConsumerProducer(Protocol):
         @property
-        def _name(self):
-            # type: () -> str
+        def _name(self) -> str:
             """Name of the consumer or producer"""
 
         @_name.setter
@@ -70,8 +78,7 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _client(self):
-            # type: () -> ClientBaseAsync
+        def _client(self) -> ClientBaseAsync:
             """The instance of EventHubComsumerClient or EventHubProducerClient"""
 
         @_client.setter
@@ -79,13 +86,11 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _handler(self):
-            # type: () -> AMQPClientAsync
+        def _handler(self) -> Union[uamqp_AMQPClientAsync, AMQPClientAsync]:
             """The instance of SendClientAsync or ReceiveClientAsync"""
 
         @property
-        def _internal_kwargs(self):
-            # type: () -> dict
+        def _internal_kwargs(self) -> dict:
             """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
@@ -103,7 +108,7 @@ if TYPE_CHECKING:
         def running(self, value):
             pass
 
-        def _create_handler(self, auth: authentication.JWTTokenAsync) -> None:
+        def _create_handler(self, auth: Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]) -> None:
             pass
 
     _MIXIN_BASE = AbstractConsumerProducer
@@ -166,8 +171,7 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
@@ -211,6 +215,10 @@ class ClientBaseAsync(ClientBase):
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
+        uamqp_transport = kwargs.get("uamqp_transport", False)
+        if uamqp_transport and not UamqpTransportAsync:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
+        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
@@ -221,9 +229,14 @@ class ClientBaseAsync(ClientBase):
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
             credential=self._credential,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
-        self._conn_manager_async = get_connection_manager(**kwargs)
+        kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
+        self._conn_manager_async = get_connection_manager(
+            amqp_transport=self._amqp_transport,
+            **kwargs
+        )
 
     def __enter__(self):
         raise TypeError(
@@ -243,7 +256,7 @@ class ClientBaseAsync(ClientBase):
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self) -> authentication.JWTTokenAsync:
+    async def _create_auth_async(self) -> Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -255,32 +268,19 @@ class ClientBaseAsync(ClientBase):
         except AttributeError:
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
-            auth = authentication.JWTTokenAsync(
-                self._auth_uri,
+            return await self._amqp_transport.create_token_auth_async(
                 self._auth_uri,
                 functools.partial(self._credential.get_token, self._auth_uri),
                 token_type=token_type,
-                timeout=self._config.auth_timeout,
-                http_proxy=self._config.http_proxy,
-                transport_type=self._config.transport_type,
-                custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-                port=self._config.connection_port,
-                verify=self._config.connection_verify,
-                refresh_window=300,
+                config=self._config,
+                update_token=True,
             )
-            await auth.update_token()
-            return auth
-        return authentication.JWTTokenAsync(
-            self._auth_uri,
+        return await self._amqp_transport.create_token_auth_async(
             self._auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
-            timeout=self._config.auth_timeout,
-            http_proxy=self._config.http_proxy,
-            transport_type=self._config.transport_type,
-            custom_endpoint_hostname=self._config.custom_endpoint_hostname,
-            port=self._config.connection_port,
-            verify=self._config.connection_verify,
+            config=self._config,
+            update_token=False,
         )
 
     async def _close_connection_async(self) -> None:
@@ -317,56 +317,50 @@ class ClientBaseAsync(ClientBase):
             )
             raise last_exception
 
-    async def _management_request_async(self, mgmt_msg: Message, op_type: bytes) -> Any:
+    async def _management_request_async(self, mgmt_msg: Union[Message, uamqp_Message], op_type: bytes) -> Any:
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
             mgmt_auth = await self._create_auth_async()
-            mgmt_client = AMQPClientAsync(
-                self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing
+            mgmt_client = self._amqp_transport.create_mgmt_client(
+                self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
                 conn = await self._conn_manager_async.get_connection(
-                    self._address.hostname, mgmt_auth
+                    host=self._address.hostname, auth=mgmt_auth
                 )
-                mgmt_msg.application_properties["security_token"] = mgmt_auth.token
                 await mgmt_client.open_async(connection=conn)
-                response = await mgmt_client.mgmt_request_async(
+                while not await mgmt_client.client_ready_async():
+                    await asyncio.sleep(0.05)
+                mgmt_msg.application_properties[
+                    "security_token"
+                ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
+                status_code, description, response = await self._amqp_transport.mgmt_client_request_async(
+                    mgmt_client,
                     mgmt_msg,
-                    constants.READ_OPERATION,
-                    op_type=op_type,
+                    operation=READ_OPERATION,
+                    operation_type=op_type,
                     status_code_field=MGMT_STATUS_CODE,
                     description_fields=MGMT_STATUS_DESC,
                 )
-                status_code = int(response.application_properties[MGMT_STATUS_CODE])
-                description = response.application_properties.get(
-                    MGMT_STATUS_DESC
-                )  # type: Optional[Union[str, bytes]]
-                if description and isinstance(description, six.binary_type):
+                status_code = int(status_code)
+                if description and isinstance(description, bytes):
                     description = description.decode("utf-8")
                 if status_code < 400:
                     return response
-                if status_code in [401]:
-                    raise errors.AuthenticationException(
-                        "Management authentication failed. Status code: {}, Description: {!r}".format(
-                            status_code, description
-                        )
-                    )
-                if status_code in [404]:
-                    raise ConnectError(
-                        "Management connection failed. Status code: {}, Description: {!r}".format(
-                            status_code, description
-                        )
-                    )
-                raise errors.AMQPConnectionError(
-                    "Management request error. Status code: {}, Description: {!r}".format(
-                        status_code, description
-                    )
-                )
+                raise self._amqp_transport.get_error(status_code, description)
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await _handle_exception(exception, self)
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
+                last_exception = await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
+                    exception, self, is_consumer=True
+                )
                 await self._backoff_async(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -380,12 +374,14 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = Message(application_properties={"name": self.eventhub_name})
+        mgmt_msg = self._amqp_transport.build_message(
+            application_properties={"name": self.eventhub_name}
+        )
         response = await self._management_request_async(
             mgmt_msg, op_type=MGMT_OPERATION
         )
         output = {}
-        eh_info = response.get_data()  # type: Dict[bytes, Any]
+        eh_info: Dict[bytes, Any] = response.value
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
             output["created_at"] = utc_from_timestamp(
@@ -402,7 +398,7 @@ class ClientBaseAsync(ClientBase):
     async def _get_partition_properties_async(
         self, partition_id: str
     ) -> Dict[str, Any]:
-        mgmt_msg = Message(
+        mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
@@ -411,7 +407,7 @@ class ClientBaseAsync(ClientBase):
         response = await self._management_request_async(
             mgmt_msg, op_type=MGMT_PARTITION_OPERATION
         )
-        partition_info = response.get_data()  # type: Dict[bytes, Union[bytes, int]]
+        partition_info = response.value  # type: Dict[bytes, Union[bytes, int]]
         output = {}  # type: Dict[str, Any]
         if partition_info:
             output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
@@ -463,16 +459,16 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 await self._handler.close_async()
             auth = await self._client._create_auth_async()
             self._create_handler(auth)
-            await self._handler.open_async(
-                connection=await self._client._conn_manager_async.get_connection(
-                    self._client._address.hostname, auth
-                )
+            conn = await self._client._conn_manager_async.get_connection(
+                host=self._client._address.hostname, auth=auth
             )
+            await self._handler.open_async(connection=conn)
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05, **self._internal_kwargs)
+            # pylint: disable=protected-access
             self._max_message_size_on_link = (
-                self._handler.message_handler._link.peer_max_message_size
-                or constants.MAX_MESSAGE_LENGTH_BYTES
+                self._client._amqp_transport.get_remote_max_message_size(self._handler)
+                or self._client._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
             self.running = True
 
@@ -486,12 +482,12 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._close_handler_async()
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception: Exception) -> Exception:
-        if not self.running and isinstance(exception, compat.TimeoutException):
-            exception = errors.AuthenticationException("Authorization timeout.")
-            return await _handle_exception(exception, self)
-
-        return await _handle_exception(exception, self)
+    async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
+        # pylint: disable=protected-access
+        exception = self._client._amqp_transport.check_timeout_exception(self, exception)
+        return await self._client._amqp_transport._handle_exception_async(
+            exception, self, is_consumer=is_consumer
+        )
 
     async def _do_retryable_operation(
         self,

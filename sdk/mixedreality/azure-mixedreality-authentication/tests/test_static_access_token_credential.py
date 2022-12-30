@@ -14,8 +14,8 @@ class TestStaticAccessTokenCredential:
         expiration = 0
 
         access_token = AccessToken(token=token, expires_on=expiration)
-        staticAccessToken = StaticAccessTokenCredential(access_token)
+        static_access_token = StaticAccessTokenCredential(access_token)
 
-        actual = staticAccessToken.get_token()
+        actual = static_access_token.get_token()
 
         assert access_token == actual

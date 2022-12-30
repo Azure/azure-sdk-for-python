@@ -1,9 +1,9 @@
-# Getting the tests to run
+# Run SDK tests
 
-This section describes how to create a dev environment, in order to run the SDK tests,
+This document describes how to create a dev environment in order to run SDK tests
 or execute the various commands available in the toolbox.
 
-## Setting up a virtual environment
+## Set up a virtual environment
 
 1.  If you don't already have it, install Python:
 
@@ -33,7 +33,7 @@ or execute the various commands available in the toolbox.
 
 4. Setup your development environment
 
-    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library), [Tox][tox], [Tox monorepo][tox_monorepo] and an editable install of your library:
+    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library), [Tox][tox], [Tox monorepo][tox_monorepo] and an editable install of your library. For example, to install requirements for `azure-ai-formrecognizer`:
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
@@ -46,10 +46,18 @@ or execute the various commands available in the toolbox.
     The recommended place to store your .env file is one directory higher than the `azure-sdk-for-python` location.
     This ensures the secrets will be loaded by the interpreter and most importantly not be committed to Git history.
 
+## Set up the SDK's test-running tool
+
+SDK tests use an in-house tool called the test proxy, which runs in a container and enables recording and playing back HTTP interactions.
+
+Follow the instructions in the [Perform one-time test proxy setup][proxy_setup] section of [tests.md][tests] to set up the test proxy on your machine.
+
 
 <!-- LINKS -->
 [python_website]: https://www.python.org/downloads/
 [python_39]: https://www.microsoft.com/p/python-39/9p7qfqmjrfp7
-[virtual_environment]: https://docs.python.org/3/tutorial/venv.html
+[proxy_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#perform-one-time-test-proxy-setup
+[tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [tox]: https://tox.readthedocs.io/en/latest/
 [tox_monorepo]: https://pypi.org/project/tox-monorepo/
+[virtual_environment]: https://docs.python.org/3/tutorial/venv.html

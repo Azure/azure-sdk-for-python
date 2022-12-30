@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,34 +7,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._microsoft_serial_console_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response from the Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are intended to be consumed
+    :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable for display in a user
+    :vartype code: str
+    :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name of the property in
+    :vartype message: str
+    :ivar target: The target of the particular error. For example, the name of the property in
      error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
+    :vartype target: str
+    :ivar details: A list of additional details about the error.
+    :vartype details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -42,85 +45,96 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
-        super(CloudErrorBody, self).__init__(**kwargs)
+        """
+        :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
+         programmatically.
+        :paramtype code: str
+        :keyword message: A message describing the error, intended to be suitable for display in a user
+         interface.
+        :paramtype message: str
+        :keyword target: The target of the particular error. For example, the name of the property in
+         error.
+        :paramtype target: str
+        :keyword details: A list of additional details about the error.
+        :paramtype details: list[~azure.mgmt.serialconsole.models.CloudErrorBody]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class DisableSerialConsoleResult(msrest.serialization.Model):
+class DisableSerialConsoleResult(_serialization.Model):
     """Returns whether or not Serial Console is disabled.
 
-    :param disabled: Whether or not Serial Console is disabled.
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled.
+    :vartype disabled: bool
     """
 
     _attribute_map = {
-        'disabled': {'key': 'disabled', 'type': 'bool'},
+        "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        disabled: Optional[bool] = None,
-        **kwargs
-    ):
-        super(DisableSerialConsoleResult, self).__init__(**kwargs)
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled.
+        :paramtype disabled: bool
+        """
+        super().__init__(**kwargs)
         self.disabled = disabled
 
 
-class EnableSerialConsoleResult(msrest.serialization.Model):
+class EnableSerialConsoleResult(_serialization.Model):
     """Returns whether or not Serial Console is disabled (enabled).
 
-    :param disabled: Whether or not Serial Console is disabled (enabled).
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled (enabled).
+    :vartype disabled: bool
     """
 
     _attribute_map = {
-        'disabled': {'key': 'disabled', 'type': 'bool'},
+        "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        disabled: Optional[bool] = None,
-        **kwargs
-    ):
-        super(EnableSerialConsoleResult, self).__init__(**kwargs)
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled (enabled).
+        :paramtype disabled: bool
+        """
+        super().__init__(**kwargs)
         self.disabled = disabled
 
 
-class GetSerialConsoleSubscriptionNotFound(msrest.serialization.Model):
+class GetSerialConsoleSubscriptionNotFound(_serialization.Model):
     """Error saying that the provided subscription could not be found.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Subscription not found message.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Subscription not found message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(GetSerialConsoleSubscriptionNotFound, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Subscription not found message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -134,22 +148,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -169,60 +181,57 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class SerialConsoleOperations(msrest.serialization.Model):
+class SerialConsoleOperations(_serialization.Model):
     """Serial Console operations.
 
-    :param value: A list of Serial Console operations.
-    :type value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
+    :ivar value: A list of Serial Console operations.
+    :vartype value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SerialConsoleOperationsValueItem]'},
+        "value": {"key": "value", "type": "[SerialConsoleOperationsValueItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["SerialConsoleOperationsValueItem"]] = None,
-        **kwargs
-    ):
-        super(SerialConsoleOperations, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.SerialConsoleOperationsValueItem"]] = None, **kwargs):
+        """
+        :keyword value: A list of Serial Console operations.
+        :paramtype value: list[~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItem]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class SerialConsoleOperationsValueItem(msrest.serialization.Model):
+class SerialConsoleOperationsValueItem(_serialization.Model):
     """SerialConsoleOperationsValueItem.
 
-    :param name:
-    :type name: str
-    :param is_data_action:
-    :type is_data_action: str
-    :param display:
-    :type display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
+    :ivar name:
+    :vartype name: str
+    :ivar is_data_action:
+    :vartype is_data_action: str
+    :ivar display:
+    :vartype display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'SerialConsoleOperationsValueItemDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "str"},
+        "display": {"key": "display", "type": "SerialConsoleOperationsValueItemDisplay"},
     }
 
     def __init__(
@@ -230,33 +239,41 @@ class SerialConsoleOperationsValueItem(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[str] = None,
-        display: Optional["SerialConsoleOperationsValueItemDisplay"] = None,
+        display: Optional["_models.SerialConsoleOperationsValueItemDisplay"] = None,
         **kwargs
     ):
-        super(SerialConsoleOperationsValueItem, self).__init__(**kwargs)
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword is_data_action:
+        :paramtype is_data_action: str
+        :keyword display:
+        :paramtype display: ~azure.mgmt.serialconsole.models.SerialConsoleOperationsValueItemDisplay
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
 
 
-class SerialConsoleOperationsValueItemDisplay(msrest.serialization.Model):
+class SerialConsoleOperationsValueItemDisplay(_serialization.Model):
     """SerialConsoleOperationsValueItemDisplay.
 
-    :param provider:
-    :type provider: str
-    :param resource:
-    :type resource: str
-    :param operation:
-    :type operation: str
-    :param description:
-    :type description: str
+    :ivar provider:
+    :vartype provider: str
+    :ivar resource:
+    :vartype resource: str
+    :ivar operation:
+    :vartype operation: str
+    :ivar description:
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -268,31 +285,40 @@ class SerialConsoleOperationsValueItemDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(SerialConsoleOperationsValueItemDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider:
+        :paramtype provider: str
+        :keyword resource:
+        :paramtype resource: str
+        :keyword operation:
+        :paramtype operation: str
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class SerialConsoleStatus(msrest.serialization.Model):
+class SerialConsoleStatus(_serialization.Model):
     """Returns whether or not Serial Console is disabled.
 
-    :param disabled: Whether or not Serial Console is disabled.
-    :type disabled: bool
+    :ivar disabled: Whether or not Serial Console is disabled.
+    :vartype disabled: bool
     """
 
     _attribute_map = {
-        'disabled': {'key': 'disabled', 'type': 'bool'},
+        "disabled": {"key": "disabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        disabled: Optional[bool] = None,
-        **kwargs
-    ):
-        super(SerialConsoleStatus, self).__init__(**kwargs)
+    def __init__(self, *, disabled: Optional[bool] = None, **kwargs):
+        """
+        :keyword disabled: Whether or not Serial Console is disabled.
+        :paramtype disabled: bool
+        """
+        super().__init__(**kwargs)
         self.disabled = disabled
 
 
@@ -307,71 +333,69 @@ class SerialPort(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param state: Specifies whether the port is enabled for a serial console connection. Possible
-     values include: "enabled", "disabled".
-    :type state: str or ~azure.mgmt.serialconsole.models.SerialPortState
+    :ivar state: Specifies whether the port is enabled for a serial console connection. Known
+     values are: "enabled" and "disabled".
+    :vartype state: str or ~azure.mgmt.serialconsole.models.SerialPortState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        state: Optional[Union[str, "SerialPortState"]] = None,
-        **kwargs
-    ):
-        super(SerialPort, self).__init__(**kwargs)
+    def __init__(self, *, state: Optional[Union[str, "_models.SerialPortState"]] = None, **kwargs):
+        """
+        :keyword state: Specifies whether the port is enabled for a serial console connection. Known
+         values are: "enabled" and "disabled".
+        :paramtype state: str or ~azure.mgmt.serialconsole.models.SerialPortState
+        """
+        super().__init__(**kwargs)
         self.state = state
 
 
-class SerialPortConnectResult(msrest.serialization.Model):
+class SerialPortConnectResult(_serialization.Model):
     """Returns a connection string to the serial port of the resource.
 
-    :param connection_string: Connection string to the serial port of the resource.
-    :type connection_string: str
+    :ivar connection_string: Connection string to the serial port of the resource.
+    :vartype connection_string: str
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
-        super(SerialPortConnectResult, self).__init__(**kwargs)
+    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
+        """
+        :keyword connection_string: Connection string to the serial port of the resource.
+        :paramtype connection_string: str
+        """
+        super().__init__(**kwargs)
         self.connection_string = connection_string
 
 
-class SerialPortListResult(msrest.serialization.Model):
+class SerialPortListResult(_serialization.Model):
     """The list serial ports operation response.
 
-    :param value: The list of serial ports.
-    :type value: list[~azure.mgmt.serialconsole.models.SerialPort]
+    :ivar value: The list of serial ports.
+    :vartype value: list[~azure.mgmt.serialconsole.models.SerialPort]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SerialPort]'},
+        "value": {"key": "value", "type": "[SerialPort]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["SerialPort"]] = None,
-        **kwargs
-    ):
-        super(SerialPortListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.SerialPort"]] = None, **kwargs):
+        """
+        :keyword value: The list of serial ports.
+        :paramtype value: list[~azure.mgmt.serialconsole.models.SerialPort]
+        """
+        super().__init__(**kwargs)
         self.value = value

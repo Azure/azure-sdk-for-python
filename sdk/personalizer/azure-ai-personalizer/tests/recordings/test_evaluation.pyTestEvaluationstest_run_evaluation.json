@@ -1,0 +1,1347 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/evaluations/b37ba3bd-fc8e-447d-80b2-6e1619a4aa05?api-version=2022-09-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "144",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "name": "python_sdk_test_evaluation",
+        "startTime": "2022-09-20",
+        "endTime": "2022-09-30",
+        "enableOfflineExperimentation": true,
+        "policies": []
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "750d7eb4-529b-4459-8a91-ec425f139054",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 04 Nov 2022 00:25:15 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1116",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/evaluations/b37ba3bd-fc8e-447d-80b2-6e1619a4aa05?api-version=2022-09-01-preview\u0026startTime=2022-09-20T00%3A00%3A00.000Z\u0026endTime=2022-09-30T00%3A00%3A00.000Z",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f1f061ec-d720-464f-bae6-1cfbf73c0077",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "411",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 00:25:15 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "133",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "id": "b37ba3bd-fc8e-447d-80b2-6e1619a4aa05",
+        "name": "python_sdk_test_evaluation",
+        "startTime": "2022-09-20T00:00:00Z",
+        "endTime": "2022-09-30T00:00:00Z",
+        "creationTime": "2022-11-04T00:25:14.2544898Z",
+        "status": "Running",
+        "evaluationType": "Manual",
+        "content": {
+          "startTime": "0001-01-01T00:00:00",
+          "endTime": "0001-01-01T00:00:00",
+          "intervalInMinutes": 0,
+          "value": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/evaluations/b37ba3bd-fc8e-447d-80b2-6e1619a4aa05?api-version=2022-09-01-preview\u0026startTime=2022-09-20T00%3A00%3A00.000Z\u0026endTime=2022-09-30T00%3A00%3A00.000Z",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "310d9fc1-ecdc-42bc-b156-fa4843cd3c14",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "16172",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 00:26:15 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "301",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "id": "b37ba3bd-fc8e-447d-80b2-6e1619a4aa05",
+        "name": "python_sdk_test_evaluation",
+        "startTime": "2022-09-20T00:00:00Z",
+        "endTime": "2022-09-30T00:00:00Z",
+        "creationTime": "2022-11-04T00:25:14.2544898Z",
+        "status": "Succeeded",
+        "evaluationType": "Manual",
+        "optimalPolicy": "online",
+        "content": {
+          "startTime": "2022-09-20T00:00:00Z",
+          "endTime": "2022-09-30T00:00:00Z",
+          "intervalInMinutes": 5,
+          "value": [
+            {
+              "name": "online",
+              "slotId": "",
+              "policySource": "Online",
+              "summary": {
+                "expectedReward": 0.89617485,
+                "confidenceInterval": [
+                  0.8667098,
+                  0.9256399
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9462025,
+                    "confidenceInterval": [
+                      0.9219674,
+                      0.97043765
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.94753087,
+                    "confidenceInterval": [
+                      0.92386085,
+                      0.9712009
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.94207317,
+                    "confidenceInterval": [
+                      0.9175068,
+                      0.9666396
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.936747,
+                    "confidenceInterval": [
+                      0.91138625,
+                      0.9621077
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.93413174,
+                    "confidenceInterval": [
+                      0.90840745,
+                      0.959856
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.93154764,
+                    "confidenceInterval": [
+                      0.90548015,
+                      0.9576151
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.9239766,
+                    "confidenceInterval": [
+                      0.89698875,
+                      0.95096445
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.91907513,
+                    "confidenceInterval": [
+                      0.8915537,
+                      0.94659656
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.9166667,
+                    "confidenceInterval": [
+                      0.8888997,
+                      0.9444336
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.90960455,
+                    "confidenceInterval": [
+                      0.8811765,
+                      0.93803257
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "baseline1",
+              "slotId": "",
+              "policySource": "Baseline",
+              "summary": {
+                "expectedReward": 0.91256833,
+                "confidenceInterval": [
+                  0.78231317,
+                  1.0428234
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9651899,
+                    "confidenceInterval": [
+                      0.8163475,
+                      1.1140323
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.9660494,
+                    "confidenceInterval": [
+                      0.82089114,
+                      1.1112076
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.96036583,
+                    "confidenceInterval": [
+                      0.8167684,
+                      1.1039634
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.95481926,
+                    "confidenceInterval": [
+                      0.8127503,
+                      1.0968883
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.9520958,
+                    "confidenceInterval": [
+                      0.8107793,
+                      1.0934124
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.9494048,
+                    "confidenceInterval": [
+                      0.8088329,
+                      1.0899767
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.94152045,
+                    "confidenceInterval": [
+                      0.80313754,
+                      1.0799034
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.9364162,
+                    "confidenceInterval": [
+                      0.79945594,
+                      1.0733764
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.93390805,
+                    "confidenceInterval": [
+                      0.7976485,
+                      1.0701675
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.92655367,
+                    "confidenceInterval": [
+                      0.7923548,
+                      1.0607525
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "baselineRand",
+              "slotId": "",
+              "policySource": "Random",
+              "summary": {
+                "expectedReward": 0.89617485,
+                "confidenceInterval": [
+                  0.8667098,
+                  0.9256399
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9462025,
+                    "confidenceInterval": [
+                      0.9219674,
+                      0.97043765
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.94753087,
+                    "confidenceInterval": [
+                      0.92386085,
+                      0.9712009
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.94207317,
+                    "confidenceInterval": [
+                      0.9175068,
+                      0.9666396
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.936747,
+                    "confidenceInterval": [
+                      0.91138625,
+                      0.9621077
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.93413174,
+                    "confidenceInterval": [
+                      0.90840745,
+                      0.959856
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.93154764,
+                    "confidenceInterval": [
+                      0.90548015,
+                      0.9576151
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.9239766,
+                    "confidenceInterval": [
+                      0.89698875,
+                      0.95096445
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.91907513,
+                    "confidenceInterval": [
+                      0.8915537,
+                      0.94659656
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.9166667,
+                    "confidenceInterval": [
+                      0.8888997,
+                      0.9444336
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.90960455,
+                    "confidenceInterval": [
+                      0.8811765,
+                      0.93803257
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/evaluations/b37ba3bd-fc8e-447d-80b2-6e1619a4aa05?api-version=2022-09-01-preview\u0026startTime=2022-09-20T00%3A00%3A00.000Z\u0026endTime=2022-09-30T00%3A00%3A00.000Z",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "050df452-97bc-49be-a0f1-00fa79df4451",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "16172",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 00:26:15 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "122",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "id": "b37ba3bd-fc8e-447d-80b2-6e1619a4aa05",
+        "name": "python_sdk_test_evaluation",
+        "startTime": "2022-09-20T00:00:00Z",
+        "endTime": "2022-09-30T00:00:00Z",
+        "creationTime": "2022-11-04T00:25:14.2544898Z",
+        "status": "Succeeded",
+        "evaluationType": "Manual",
+        "optimalPolicy": "online",
+        "content": {
+          "startTime": "2022-09-20T00:00:00Z",
+          "endTime": "2022-09-30T00:00:00Z",
+          "intervalInMinutes": 5,
+          "value": [
+            {
+              "name": "online",
+              "slotId": "",
+              "policySource": "Online",
+              "summary": {
+                "expectedReward": 0.89617485,
+                "confidenceInterval": [
+                  0.8667098,
+                  0.9256399
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9462025,
+                    "confidenceInterval": [
+                      0.9219674,
+                      0.97043765
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.94753087,
+                    "confidenceInterval": [
+                      0.92386085,
+                      0.9712009
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.94207317,
+                    "confidenceInterval": [
+                      0.9175068,
+                      0.9666396
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.936747,
+                    "confidenceInterval": [
+                      0.91138625,
+                      0.9621077
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.93413174,
+                    "confidenceInterval": [
+                      0.90840745,
+                      0.959856
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.93154764,
+                    "confidenceInterval": [
+                      0.90548015,
+                      0.9576151
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.9239766,
+                    "confidenceInterval": [
+                      0.89698875,
+                      0.95096445
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.91907513,
+                    "confidenceInterval": [
+                      0.8915537,
+                      0.94659656
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.9166667,
+                    "confidenceInterval": [
+                      0.8888997,
+                      0.9444336
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.90960455,
+                    "confidenceInterval": [
+                      0.8811765,
+                      0.93803257
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "baseline1",
+              "slotId": "",
+              "policySource": "Baseline",
+              "summary": {
+                "expectedReward": 0.91256833,
+                "confidenceInterval": [
+                  0.78231317,
+                  1.0428234
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9651899,
+                    "confidenceInterval": [
+                      0.8163475,
+                      1.1140323
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.9660494,
+                    "confidenceInterval": [
+                      0.82089114,
+                      1.1112076
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.96036583,
+                    "confidenceInterval": [
+                      0.8167684,
+                      1.1039634
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.95481926,
+                    "confidenceInterval": [
+                      0.8127503,
+                      1.0968883
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.9520958,
+                    "confidenceInterval": [
+                      0.8107793,
+                      1.0934124
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.9494048,
+                    "confidenceInterval": [
+                      0.8088329,
+                      1.0899767
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.94152045,
+                    "confidenceInterval": [
+                      0.80313754,
+                      1.0799034
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.9364162,
+                    "confidenceInterval": [
+                      0.79945594,
+                      1.0733764
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.93390805,
+                    "confidenceInterval": [
+                      0.7976485,
+                      1.0701675
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.92655367,
+                    "confidenceInterval": [
+                      0.7923548,
+                      1.0607525
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "baselineRand",
+              "slotId": "",
+              "policySource": "Random",
+              "summary": {
+                "expectedReward": 0.89617485,
+                "confidenceInterval": [
+                  0.8667098,
+                  0.9256399
+                ]
+              },
+              "timeseries": {
+                "data": [
+                  {
+                    "timeStamp": "2022-09-20T19:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:15:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T19:55:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T20:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T21:25:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:00:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-20T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-21T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-22T23:05:00Z",
+                    "expectedReward": 0.5,
+                    "confidenceInterval": [
+                      0.5,
+                      0.5
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-23T17:35:00Z",
+                    "expectedReward": 0.5625,
+                    "confidenceInterval": [
+                      0.47881812,
+                      0.6461819
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:05:00Z",
+                    "expectedReward": 0.5588235,
+                    "confidenceInterval": [
+                      0.4798885,
+                      0.63775855
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-26T23:10:00Z",
+                    "expectedReward": 0.55263156,
+                    "confidenceInterval": [
+                      0.4817444,
+                      0.62351876
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T17:55:00Z",
+                    "expectedReward": 0.9462025,
+                    "confidenceInterval": [
+                      0.9219674,
+                      0.97043765
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T18:05:00Z",
+                    "expectedReward": 0.94753087,
+                    "confidenceInterval": [
+                      0.92386085,
+                      0.9712009
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T19:55:00Z",
+                    "expectedReward": 0.94207317,
+                    "confidenceInterval": [
+                      0.9175068,
+                      0.9666396
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T20:10:00Z",
+                    "expectedReward": 0.936747,
+                    "confidenceInterval": [
+                      0.91138625,
+                      0.9621077
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:00:00Z",
+                    "expectedReward": 0.93413174,
+                    "confidenceInterval": [
+                      0.90840745,
+                      0.959856
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T22:20:00Z",
+                    "expectedReward": 0.93154764,
+                    "confidenceInterval": [
+                      0.90548015,
+                      0.9576151
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-27T23:05:00Z",
+                    "expectedReward": 0.9239766,
+                    "confidenceInterval": [
+                      0.89698875,
+                      0.95096445
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:05:00Z",
+                    "expectedReward": 0.91907513,
+                    "confidenceInterval": [
+                      0.8915537,
+                      0.94659656
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-28T23:10:00Z",
+                    "expectedReward": 0.9166667,
+                    "confidenceInterval": [
+                      0.8888997,
+                      0.9444336
+                    ]
+                  },
+                  {
+                    "timeStamp": "2022-09-29T23:05:00Z",
+                    "expectedReward": 0.90960455,
+                    "confidenceInterval": [
+                      0.8811765,
+                      0.93803257
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/evaluations/b37ba3bd-fc8e-447d-80b2-6e1619a4aa05?api-version=2022-09-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "576e3edc-e3c5-444b-9dc9-557d59f0c926",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 04 Nov 2022 00:26:16 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "651",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {
+    "test_run_evaluation_id": "b37ba3bd-fc8e-447d-80b2-6e1619a4aa05"
+  }
+}

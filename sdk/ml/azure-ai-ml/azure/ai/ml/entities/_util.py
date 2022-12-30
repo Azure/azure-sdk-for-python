@@ -1,21 +1,36 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
-from collections import OrderedDict
-from typing import Optional, Any, Dict
-from marshmallow.exceptions import ValidationError
-import json
 import hashlib
-from azure.ai.ml.constants import (
-    CommonYamlFields,
-    REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
-    YAMLRefDocLinks,
-    YAMLRefDocSchemaNames,
-    EndpointYamlFields,
+import json
+import os
+import shutil
+from typing import Any, Dict, Iterable, List, Optional, Union
+from unittest import mock
+
+import msrest
+from marshmallow.exceptions import ValidationError
+
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._schema._datastore import (
+    AzureBlobSchema,
+    AzureDataLakeGen1Schema,
+    AzureDataLakeGen2Schema,
+    AzureFileSchema,
 )
+from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
+from azure.ai.ml._schema._deployment.online.online_deployment import (
+    KubernetesOnlineDeploymentSchema,
+    ManagedOnlineDeploymentSchema,
+)
+from azure.ai.ml._schema._endpoint.batch.batch_endpoint import BatchEndpointSchema
+from azure.ai.ml._schema._endpoint.online.online_endpoint import (
+    KubernetesOnlineEndpointSchema,
+    ManagedOnlineEndpointSchema,
+)
+from azure.ai.ml._schema._sweep import SweepJobSchema
 from azure.ai.ml._schema.assets.data import DataSchema
-from azure.ai.ml._schema.assets.dataset import DatasetSchema
 from azure.ai.ml._schema.assets.environment import EnvironmentSchema
 from azure.ai.ml._schema.assets.model import ModelSchema
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
@@ -23,37 +38,26 @@ from azure.ai.ml._schema.component.parallel_component import ParallelComponentSc
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
-from azure.ai.ml._schema._datastore import (
-    AzureDataLakeGen1Schema,
-    AzureBlobSchema,
-    AzureFileSchema,
-    AzureDataLakeGen2Schema,
-)
-from azure.ai.ml._schema._endpoint.batch.batch_endpoint import BatchEndpointSchema
-from azure.ai.ml._schema._endpoint.online.online_endpoint import (
-    KubernetesOnlineEndpointSchema,
-    ManagedOnlineEndpointSchema,
-    OnlineEndpointSchema,
-)
-from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
-from azure.ai.ml._schema._deployment.online.online_deployment import (
-    KubernetesOnlineDeploymentSchema,
-    ManagedOnlineDeploymentSchema,
-    OnlineDeploymentSchema,
-)
+from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
-from azure.ai.ml._schema._sweep import SweepJobSchema
-from azure.ai.ml._schema.job import CommandJobSchema
-from azure.ai.ml._schema.job import ParallelJobSchema
+from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
-
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
+from azure.ai.ml.constants._common import (
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
+    REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
+    CommonYamlFields,
+    YAMLRefDocLinks,
+    YAMLRefDocSchemaNames,
+)
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
     DataSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA),
-    DatasetSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATASET, YAMLRefDocLinks.DATASET),
     EnvironmentSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.ENVIRONMENT, YAMLRefDocLinks.ENVIRONMENT
     ),
@@ -111,6 +115,9 @@ REF_DOC_ERROR_MESSAGE_MAP = {
     PipelineJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.PIPELINE_JOB, YAMLRefDocLinks.PIPELINE_JOB
     ),
+    ScheduleSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
+        YAMLRefDocSchemaNames.SCHEDULE, YAMLRefDocLinks.SCHEDULE
+    ),
     SweepJobSchema: REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(
         YAMLRefDocSchemaNames.SWEEP_JOB, YAMLRefDocLinks.SWEEP_JOB
     ),
@@ -126,7 +133,7 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
-def find_type_in_override(params_override: list = None) -> Optional[str]:
+def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -134,7 +141,7 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
     return None
 
 
-def is_compute_in_override(params_override: list = None) -> bool:
+def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 
@@ -150,20 +157,24 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     ref_doc_link_error_msg = REF_DOC_ERROR_MESSAGE_MAP.get(schema, "")
     if ref_doc_link_error_msg:
         additional_message += f"\n{ref_doc_link_error_msg}"
-    additional_message += """\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning
-To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"""
+    additional_message += (
+        "\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS "
+        "code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
+        "To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"
+    )
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()
+        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 
 
 def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
-    """Validate if attributes of object are set with valid types, raise error if don't.
+    """Validate if attributes of object are set with valid types, raise error
+    if don't.
 
     :param attrs_to_check: Mapping from attributes name to actual value.
     :param attr_type_map: Mapping from attributes name to tuple of expecting type
@@ -179,94 +190,267 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 message=msg.format(expecting_type, attr, type(attr_val)),
                 no_personal_data_message=msg.format(expecting_type, "[attr]", type(attr_val)),
                 target=ErrorTarget.GENERAL,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
 
-class SnakeToPascalDescriptor(object):
+def is_empty_target(obj):
+    """Determines if it's empty target"""
+    return (
+        obj is None
+        # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+        or (isinstance(obj, dict) and len(obj) == 0)
+    )
 
-    """A data descriptor that transforms value from snake_case to CamelCase in setter,
-    CamelCase to snake_case in getter. When the optional private_name is provided, the descriptor
-    will set the private_name in the object's __dict__.
+
+def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
+    """Convert ordered dict to dict. Remove keys with None value.
+
+    This is a workaround for rest request must be in dict instead of
+    ordered dict.
     """
-
-    def __init__(self, private_name=None, *, transformer=camel_to_snake, reverse_transformer=snake_to_pascal):
-        self.private_name = private_name
-        self.transformer = transformer
-        self.reverse_transformer = reverse_transformer
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        value = obj.__dict__.get(key, None)
-        return self.transformer(value) if value else None
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        value = self.reverse_transformer(val)
-        obj.__dict__[key] = value
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
+    # OrderedDict can appear nested in a list
+    if isinstance(target_object, list):
+        new_list = []
+        for item in target_object:
+            item = convert_ordered_dict_to_dict(item)
+            if not is_empty_target(item) or not remove_empty:
+                new_list.append(item)
+        return new_list
+    if isinstance(target_object, dict):
+        new_dict = {}
+        for key, value in target_object.items():
+            value = convert_ordered_dict_to_dict(value)
+            if not is_empty_target(value) or not remove_empty:
+                new_dict[key] = value
+        return new_dict
+    return target_object
 
 
-class LiteralToListDescriptor(object):
+def _general_copy(src, dst):
+    """Wrapped `shutil.copy2` function for possible "Function not implemented"
+    exception raised by it.
 
-    """A data descriptor that transforms singular literal values to lists in the setter. The getter always returns a list
-    When the optional private_name is provided, the descriptor will set the private_name in the object's __dict__.
+    Background: `shutil.copy2` will throw OSError when dealing with Azure File.
+    See https://stackoverflow.com/questions/51616058 for more information.
     """
-
-    def __init__(self, private_name=None):
-        self.private_name = private_name
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        return obj.__dict__.get(key, None)
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        if not isinstance(val, list) and val is not None:
-            val = [val]
-        obj.__dict__[key] = val
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
-
-
-def convert_ordered_dict_to_dict(target_dict):
-    """Convert ordered dict to dict. This is a workaround for rest request must be in dict instead of ordered dict."""
-    if isinstance(target_dict, dict):
-        for key, dict_candidate in target_dict.items():
-            target_dict[key] = convert_ordered_dict_to_dict(dict_candidate)
-    if isinstance(target_dict, OrderedDict):
-        return dict(**target_dict)
+    if hasattr(os, "listxattr"):
+        with mock.patch("shutil._copyxattr", return_value=[]):
+            shutil.copy2(src, dst)
     else:
-        return target_dict
+        shutil.copy2(src, dst)
 
 
-def get_rest_dict(target_obj, clear_empty_value=False):
-    """Convert object to dict and convert OrderedDict to dict."""
+def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
+    """Convert object to dict and convert OrderedDict to dict.
+    Allow data binding expression as value, disregarding of the type defined in rest object.
+    """
+    # pylint: disable=too-many-return-statements
+    from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+
     if target_obj is None:
         return None
-    result = convert_ordered_dict_to_dict(copy.deepcopy(target_obj.__dict__))
-    to_del = ["additional_properties"]
-    if clear_empty_value:
-        to_del.extend(filter(lambda x: result.get(x) is None, result.keys()))
-    for key in to_del:
-        if key in result:
-            del result[key]
-    return result
+    if isinstance(target_obj, dict):
+        result = {}
+        for key, value in target_obj.items():
+            if value is None:
+                continue
+            if key in ["additional_properties"]:
+                continue
+            result[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
+        return result
+    if isinstance(target_obj, list):
+        result = []
+        for item in target_obj:
+            result.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
+        return result
+    if isinstance(target_obj, RestTranslatableMixin):
+        # note that the rest object may be invalid as data binding expression may not fit
+        # rest object structure
+        # pylint: disable=protected-access
+        from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+
+        if isinstance(target_obj, _BaseIdentityConfiguration):
+            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
+        return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
+
+    if isinstance(target_obj, msrest.serialization.Model):
+        # can't use result.as_dict() as data binding expression may not fit rest object structure
+        return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
+
+    if isinstance(target_obj, PipelineInput):
+        return get_rest_dict_for_node_attrs(str(target_obj), clear_empty_value=clear_empty_value)
+
+    if not isinstance(target_obj, (str, int, float, bool)):
+        raise ValueError("Unexpected type {}".format(type(target_obj)))
+
+    return target_obj
+
+
+class _DummyRestModelFromDict(msrest.serialization.Model):
+    """A dummy rest model that can be initialized from dict, return base_dict[attr_name]
+    for getattr(self, attr_name) when attr_name is a public attrs; return None when trying to get
+    a non-existent public attribute.
+    """
+
+    def __init__(self, rest_dict):
+        self._rest_dict = rest_dict or {}
+        super().__init__()
+
+    def __getattribute__(self, item):
+        if not item.startswith("_"):
+            return self._rest_dict.get(item, None)
+        return super().__getattribute__(item)
+
+
+def from_rest_dict_to_dummy_rest_object(rest_dict):
+    """Create a dummy rest object based on a rest dict, which is a primitive dict containing
+    attributes in a rest object.
+    For example, for a rest object class like:
+        class A(msrest.serialization.Model):
+            def __init__(self, a, b):
+                self.a = a
+                self.b = b
+        rest_object = A(1, None)
+        rest_dict = {"a": 1}
+        regenerated_rest_object = from_rest_dict_to_fake_rest_object(rest_dict)
+        assert regenerated_rest_object.a == 1
+        assert regenerated_rest_object.b is None
+    """
+    if rest_dict is None or isinstance(rest_dict, dict):
+        return _DummyRestModelFromDict(rest_dict)
+    raise ValueError("Unexpected type {}".format(type(rest_dict)))
+
+
+def extract_label(input_str: str):
+    if not isinstance(input_str, str):
+        return None, None
+    if "@" in input_str:
+        return input_str.rsplit("@", 1)
+    return input_str, None
+
+
+def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
+    """Resolve pipeline parameters.
+
+    1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
+    2. Remove empty value (optional).
+    """
+
+    if pipeline_parameters is None:
+        return
+    if not isinstance(pipeline_parameters, dict):
+        raise ValidationException(
+            message="pipeline_parameters must in dict {parameter: value} format.",
+            no_personal_data_message="pipeline_parameters must in dict {parameter: value} format.",
+            target=ErrorTarget.PIPELINE,
+        )
+
+    updated_parameters = {}
+    for k, v in pipeline_parameters.items():
+        v = resolve_pipeline_parameter(v)
+        if v is None and remove_empty:
+            continue
+        updated_parameters[k] = v
+    pipeline_parameters = updated_parameters
+    return pipeline_parameters
+
+
+def resolve_pipeline_parameter(data):
+    from azure.ai.ml.entities._builders.base_node import BaseNode
+    from azure.ai.ml.entities._builders.pipeline import Pipeline
+    from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+    from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+
+    if isinstance(data, PipelineExpression):
+        data = data.resolve()
+    if isinstance(data, (BaseNode, Pipeline)):
+        # For the case use a node/pipeline node as the input, we use its only one output as the real input.
+        # Here we set node = node.outputs, then the following logic will get the output object.
+        data = data.outputs
+    if isinstance(data, OutputsAttrDict):
+        # For the case that use the outputs of another component as the input,
+        # we use the only one output as the real input,
+        # if multiple outputs are provided, an exception is raised.
+        output_len = len(data)
+        if output_len != 1:
+            raise ValidationException(
+                message="Setting input failed: Exactly 1 output is required, got %d. (%s)" % (output_len, data),
+                no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
+                target=ErrorTarget.PIPELINE,
+            )
+        data = list(data.values())[0]
+    return data
+
+
+def normalize_job_input_output_type(input_output_value):
+    """
+    We have changed the api starting v2022_06_01_preview version and there are some api interface changes, which will
+    result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
+    az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct api.
+    """
+
+    FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
+        JobInputType02.CUSTOM_MODEL: JobInputType10.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType10.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType10.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType10.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType10.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType10.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType10.URI_FOLDER,
+    }
+    if (
+        hasattr(input_output_value, "job_input_type")
+        and input_output_value.job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_input_type]
+    elif (
+        hasattr(input_output_value, "job_output_type")
+        and input_output_value.job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_output_type]
+    elif isinstance(input_output_value, dict):
+        job_output_type = input_output_value.get("job_output_type", None)
+        job_input_type = input_output_value.get("job_input_type", None)
+        job_type = input_output_value.get("type", None)
+
+        if job_output_type and job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_output_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
+        if job_input_type and job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
+        if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]
+
+
+def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
+    """Get the type of the node or component from the yaml spec.
+    Yaml spec must have a key named "type" and exception will be raised if it's not once of valid_keys.
+
+    If internal components are enabled, related factory and schema will be updated.
+    """
+    _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
+    schema = data.get(CommonYamlFields.SCHEMA, None)
+
+    # we should keep at least 1 place outside _internal to enable internal components
+    # and this is the only place
+    try_enable_internal_components()
+
+    if _type not in valid_keys:
+        if (
+            schema
+            and not is_internal_components_enabled()
+            and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
+        ):
+            msg = (
+                f"Internal components is a private feature in v2, please set environment variable "
+                f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
+            )
+        else:
+            msg = f"Unsupported component type: {_type}."
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.COMPONENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+    return extract_label(_type)[0]

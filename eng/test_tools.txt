@@ -1,8 +1,5 @@
 cryptography<4
 
-# python 3.10 pinned packages
-cffi==1.15.0rc2; python_version >= '3.10'
-
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
 pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'
@@ -30,11 +27,13 @@ packaging==20.4
 Jinja2==2.11.2
 markupsafe==2.0.1; python_version > '2.7'
 markupsafe==1.1.1; python_version == '2.7'
-wrapt==1.12.1
+wrapt==1.12.1; python_version <= '3.10'
+wrapt==1.14.1; python_version >= '3.11'
 
 # Locking pylint and required packages
 pylint==1.8.4; python_version < '3.4'
-pylint==2.9.3; python_version >= '3.6'
+pylint==2.9.3; python_version >= '3.6' and python_version <= '3.10'
+pylint==2.14.5; python_version >= '3.11'
 
 # python-dotenv
 python-dotenv==0.15.0

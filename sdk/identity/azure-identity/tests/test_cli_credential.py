@@ -31,8 +31,8 @@ TEST_ERROR_OUTPUTS = (
 )
 
 
-def raise_called_process_error(return_code, output, cmd="..."):
-    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=output)
+def raise_called_process_error(return_code, output="", cmd="...", stderr=""):
+    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=output, stderr=stderr)
     return mock.Mock(side_effect=error)
 
 
@@ -76,8 +76,8 @@ def test_get_token():
 def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    output = "/bin/sh: 1: az: not found"
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, output)):
+    stderr = "/bin/sh: 1: az: not found"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureCliCredential().get_token("scope")
 
@@ -85,8 +85,8 @@ def test_cli_not_installed_linux():
 def test_cli_not_installed_windows():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    output = "'az' is not recognized as an internal or external command, operable program or batch file."
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+    stderr = "'az' is not recognized as an internal or external command, operable program or batch file."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureCliCredential().get_token("scope")
 
@@ -102,8 +102,8 @@ def test_cannot_execute_shell():
 def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    output = "ERROR: Please run 'az login' to setup account."
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+    stderr = "ERROR: Please run 'az login' to setup account."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
             AzureCliCredential().get_token("scope")
 
@@ -111,9 +111,9 @@ def test_not_logged_in():
 def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
-    output = "something went wrong"
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, output)):
-        with pytest.raises(ClientAuthenticationError, match=output):
+    stderr = "something went wrong"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, stderr=stderr)):
+        with pytest.raises(ClientAuthenticationError, match=stderr):
             AzureCliCredential().get_token("scope")
 
 
@@ -176,12 +176,12 @@ def test_multitenant_authentication_class():
         token = AzureCliCredential().get_token("scope")
         assert token.token == first_token
 
-        token = AzureCliCredential(tenant_id= default_tenant).get_token("scope")
+        token = AzureCliCredential(tenant_id=default_tenant).get_token("scope")
         assert token.token == first_token
 
-        token = AzureCliCredential(tenant_id= second_tenant).get_token("scope")
+        token = AzureCliCredential(tenant_id=second_tenant).get_token("scope")
         assert token.token == second_token
-        
+
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"

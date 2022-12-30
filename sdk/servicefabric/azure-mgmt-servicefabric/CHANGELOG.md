@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b1 (2022-11-08)
+
+### Features Added
+
+  - Added model ClusterVersionsEnvironment
+
 ## 2.0.0 (2021-09-02)
 
 **Features**

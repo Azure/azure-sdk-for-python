@@ -1,24 +1,24 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
+import platform
 import re
 import unittest
-import asyncio
 from io import BytesIO
 from os import urandom
 
 import pytest
-
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake.aio import DataLakeServiceClient
-from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
+
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
@@ -27,7 +27,7 @@ LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 # ------------------------------------------------------------------------------
 
 
-class LargeFileTest(StorageTestCase):
+class TestLargeFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
@@ -57,7 +57,7 @@ class LargeFileTest(StorageTestCase):
             except:
                 pass
 
-        return super(LargeFileTest, self).tearDown()
+        return super(TestLargeFileAsync, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
@@ -67,7 +67,10 @@ class LargeFileTest(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_append_large_stream_without_network(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_append_large_stream_without_network(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
 
@@ -83,14 +86,17 @@ class LargeFileTest(StorageTestCase):
         # Act
         response = await file_client.append_data(data, 0, LARGEST_BLOCK_SIZE)
 
-        self.assertIsNotNone(response)
-        self.assertEqual(self.payload_dropping_policy.append_counter, 1)
-        self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
+        assert response is not None
+        assert self.payload_dropping_policy.append_counter == 1
+        assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
-    @pytest.mark.skip(reason="Pypy3 on Linux failed somehow, skip for now to investigate")
+    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate")
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    async def test_upload_large_stream_without_network_async(self, datalake_storage_account_name, datalake_storage_account_key):
+    async def test_upload_large_stream_without_network(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self.get_resource_name(TEST_DIRECTORY_PREFIX)
 
@@ -107,10 +113,10 @@ class LargeFileTest(StorageTestCase):
         # Act
         response = await file_client.upload_data(data, length, overwrite=True, chunk_size=LARGEST_BLOCK_SIZE)
 
-        self.assertIsNotNone(response)
-        self.assertEqual(self.payload_dropping_policy.append_counter, 2)
-        self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
-        self.assertEqual(self.payload_dropping_policy.append_sizes[1], LARGEST_BLOCK_SIZE)
+        assert response is not None
+        assert self.payload_dropping_policy.append_counter == 2
+        assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
+        assert self.payload_dropping_policy.append_sizes[1] == LARGEST_BLOCK_SIZE
 
 
 class LargeStream(BytesIO):

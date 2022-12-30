@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import AsyncIterator
+from typing import AsyncIterator, IO, Optional
 
 from .._deserialize import from_blob_properties
 
@@ -17,7 +17,7 @@ class StorageStreamDownloader(object):
         The properties of the file being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
+        The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the file.
     """
 
@@ -30,16 +30,28 @@ class StorageStreamDownloader(object):
     def __len__(self):
         return self.size
 
-    def chunks(self):
-        # type: () -> AsyncIterator[bytes]
+    def chunks(self) -> AsyncIterator[bytes]:
         """Iterate over chunks in the download stream.
 
         :rtype: AsyncIterator[bytes]
         """
         return self._downloader.chunks()
 
-    async def readall(self):
-        # type: () -> bytes
+    async def read(self, size: Optional[int] = -1) -> bytes:
+        """
+        Read up to size bytes from the stream and return them. If size
+        is unspecified or is -1, all bytes will be read.
+
+        :param size:
+            The number of bytes to download from the stream. Leave unspecified
+            or set to -1 to download all bytes.
+        :returns:
+            The requested data as bytes. If the return value is empty, there is no more data to read.
+        :rtype: bytes
+        """
+        return await self._downloader.read(size)
+
+    async def readall(self) -> bytes:
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
@@ -47,7 +59,7 @@ class StorageStreamDownloader(object):
         """
         return await self._downloader.readall()
 
-    async def readinto(self, stream):
+    async def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.
 
         :param stream:

@@ -13,8 +13,8 @@ from azure.core.exceptions import ServiceResponseTimeoutError
 from ._utils import is_retryable_status_code, get_authentication_policy
 from .indexes import SearchIndexClient as SearchServiceClient
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
-from ._generated import SearchClient as SearchIndexClient
-from ._generated.models import IndexingResult
+from ._generated import SearchIndexClient
+from ._generated.models import IndexingResult, IndexBatch
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._headers_mixin import HeadersMixin
@@ -50,6 +50,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         is a IndexAction removed from the queue (succeeds or fails). This may be called from main
         thread or a worker thread.
     :keyword str api_version: The Search API version to use for requests.
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -60,6 +63,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
         )
         self._index_documents_batch = IndexDocumentsBatch()
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = SearchIndexClient(
@@ -71,7 +75,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             )  # type: SearchIndexClient
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience)
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -282,9 +286,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        batch = IndexBatch(actions=actions)
         try:
             batch_response = self._client.documents.index(
-                actions=actions, error_map=error_map, **kwargs
+                batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:

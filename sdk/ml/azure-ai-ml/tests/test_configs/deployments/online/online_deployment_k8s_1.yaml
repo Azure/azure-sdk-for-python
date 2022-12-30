@@ -42,4 +42,3 @@ scale_settings:
   max_instances: 3
   polling_interval: 10
   target_utilization_percentage: 70
-

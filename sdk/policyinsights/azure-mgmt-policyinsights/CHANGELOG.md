@@ -1,5 +1,43 @@
 # Release History
 
+## 1.1.0b4 (2022-12-29)
+
+### Features Added
+
+  - Added operation group ComponentPolicyStatesOperations
+  - Model Operation has a new parameter is_data_action
+
+## 1.1.0b3 (2022-10-10)
+
+### Features Added
+
+  - Added operation PolicyRestrictionsOperations.check_at_management_group_scope
+  - Model Attestation has a new parameter assessment_date
+  - Model Attestation has a new parameter metadata
+
+### Breaking Changes
+
+  - Operation PolicyEventsOperations.list_query_results_for_management_group has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_policy_definition has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_policy_set_definition has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_resource has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_resource_group has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_resource_group_level_policy_assignment has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_subscription has a new parameter policy_events_resource
+  - Operation PolicyEventsOperations.list_query_results_for_subscription_level_policy_assignment has a new parameter policy_events_resource
+  - Operation PolicyStatesOperations.summarize_for_management_group has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_policy_definition has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_policy_set_definition has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_resource has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_resource_group has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_resource_group_level_policy_assignment has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_subscription has a new parameter policy_states_summary_resource
+  - Operation PolicyStatesOperations.summarize_for_subscription_level_policy_assignment has a new parameter policy_states_summary_resource
+  - Operation PolicyTrackedResourcesOperations.list_query_results_for_management_group has a new parameter policy_tracked_resources_resource
+  - Operation PolicyTrackedResourcesOperations.list_query_results_for_resource has a new parameter policy_tracked_resources_resource
+  - Operation PolicyTrackedResourcesOperations.list_query_results_for_resource_group has a new parameter policy_tracked_resources_resource
+  - Operation PolicyTrackedResourcesOperations.list_query_results_for_subscription has a new parameter policy_tracked_resources_resource
+
 ## 1.1.0b2 (2021-12-04)
 
 **Features**

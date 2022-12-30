@@ -70,7 +70,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         self._credential_scopes = base_url.strip("/") + "/.default"
 
         self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, **kwargs  # type: ignore
+            base_url, credential_scopes=self._credential_scopes, **kwargs
         )
         self._config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
@@ -86,7 +86,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             )
 
         self._impl = AzureAppConfiguration(
-            credential, base_url, pipeline=pipeline, credential_scopes=self._credential_scopes  # type: ignore
+            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes
         )
 
     @classmethod

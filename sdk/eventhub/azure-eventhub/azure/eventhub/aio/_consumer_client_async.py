@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
 import asyncio
 import logging
 import datetime
@@ -21,13 +22,12 @@ from typing import (
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
 from ._client_base_async import ClientBaseAsync
-from .._constants import ALL_PARTITIONS
+from .._constants import ALL_PARTITIONS, TransportType
 from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
     from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
     from .._common import EventData
@@ -131,6 +131,8 @@ class EventHubConsumerClient(
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword bool uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
 
     .. admonition:: Example:
 
@@ -205,7 +207,7 @@ class EventHubConsumerClient(
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self._address.hostname, self._address.path, consumer_group, partition_id
         )
-        handler = EventHubConsumer(
+        handler = EventHubConsumer( # type: ignore
             self,
             source_url,
             on_event_received=on_event_received,
@@ -215,6 +217,7 @@ class EventHubConsumerClient(
             prefetch=prefetch,
             idle_timeout=self._idle_timeout,
             track_last_enqueued_event_properties=track_last_enqueued_event_properties,
+            amqp_transport=self._amqp_transport,
             **self._internal_kwargs,
         )
         return handler
@@ -231,7 +234,7 @@ class EventHubConsumerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
+        transport_type: TransportType = TransportType.Amqp,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
         **kwargs: Any

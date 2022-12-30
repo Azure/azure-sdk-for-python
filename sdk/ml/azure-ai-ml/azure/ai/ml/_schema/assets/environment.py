@@ -2,28 +2,43 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    OperatingSystemType,
-    Route,
-    InferenceContainerProperties,
-)
-from azure.ai.ml._schema import NestedField, PatchedSchemaMeta, UnionField
-from .asset import AssetSchema, AnonymousAssetSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
-from ..core.fields import ArmStr, StringTransformedEnum, VersionField, RegistryStr
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    InferenceContainerProperties,
+    OperatingSystemType,
+    Route,
+)
+from azure.ai.ml._schema.core.fields import NestedField, UnionField, LocalPathField
 
-from azure.ai.ml.constants import CREATE_ENVIRONMENT_ERROR_MESSAGE, YAMLRefDocLinks, ANONYMOUS_ENV_NAME
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_ENV_NAME,
+    BASE_PATH_CONTEXT_KEY,
+    CREATE_ENVIRONMENT_ERROR_MESSAGE,
+    AzureMLResourceType,
+    YAMLRefDocLinks,
+)
+
+from ..core.fields import ArmStr, RegistryStr, StringTransformedEnum, VersionField
+from .asset import AnonymousAssetSchema, AssetSchema
 
 module_logger = logging.getLogger(__name__)
 
 
 class BuildContextSchema(metaclass=PatchedSchemaMeta):
     dockerfile_path = fields.Str()
-    path = fields.Str()
+    path = UnionField(
+        [
+            LocalPathField(),
+            # build context also support http url
+            fields.URL(),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -60,17 +75,24 @@ class _BaseEnvironmentSchema(AssetSchema):
     )
     build = NestedField(
         BuildContextSchema,
-        metadata={"description": "Docker build context to create the environment. Mutually exclusive with image"},
+        metadata={
+            "description": "Docker build context to create the environment. Mutually exclusive with image"
+        },
     )
     image = fields.Str()
     conda_file = UnionField([fields.Raw(), fields.Str()])
     inference_config = NestedField(InferenceConfigSchema)
     os_type = StringTransformedEnum(
-        allowed_values=[OperatingSystemType.Linux, OperatingSystemType.Windows], required=False
+        allowed_values=[OperatingSystemType.Linux, OperatingSystemType.Windows],
+        required=False,
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    datastore = fields.Str(
+        metadata={
+            "description": "Name of the datastore to upload to.",
+            "arm_type": AzureMLResourceType.DATASTORE,
+        },
+        required=False,
+    )
 
     @pre_load
     def pre_load(self, data, **kwargs):
@@ -79,7 +101,9 @@ class _BaseEnvironmentSchema(AssetSchema):
         # validates that "channels" and "dependencies" are not included in the data creation.
         # These properties should only be on environment conda files not in the environment creation file
         if "channels" in data or "dependencies" in data:
-            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(YAMLRefDocLinks.ENVIRONMENT)
+            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(
+                YAMLRefDocLinks.ENVIRONMENT
+            )
             raise ValidationError(environmentMessage)
         return data
 
@@ -114,10 +138,13 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """
-        trim_dump_only in PathAwareSchema removes all properties which are dump only. By the time we reach this
-        schema name and version properties are removed so no warning is shown. This method overrides trim_dump_only
-        in PathAwareSchema to check for name and version and raise warning if present. And then calls the it
+        """trim_dump_only in PathAwareSchema removes all properties which are
+        dump only.
+
+        By the time we reach this schema name and version properties are
+        removed so no warning is shown. This method overrides
+        trim_dump_only in PathAwareSchema to check for name and version
+        and raise warning if present. And then calls the it
         """
         if isinstance(data, str) or data is None:
             return data
@@ -126,6 +153,7 @@ class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
         # CliV2AnonymousEnvironment is a default name for anonymous environment
         if name is not None and name != ANONYMOUS_ENV_NAME:
             module_logger.warning(
-                f"Warning: the provided asset name '{name}' will not be used for anonymous " f"registration"
+                "Warning: the provided asset name '%s' will not be used for anonymous registration",
+                name,
             )
         return super(AnonymousEnvironmentSchema, self).trim_dump_only(data, **kwargs)

@@ -9,8 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
-
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later.
+- Bumped mininum dependency on `azure-core` to `>=1.24.0`.
+- Changed the default async transport from `AsyncioRequestsTransport` to the one used in current `azure-core` (`AioHttpTransport`). ([#26427](https://github.com/Azure/azure-sdk-for-python/issues/26427))
+- Dropped `msrest` requirement.
+- Added dependency `isodate` with version range `>=0.6.0`.
 
 ## 1.3.0 (2021-11-10)
 
@@ -50,13 +53,13 @@ Added `FeatureFlagConfigurationSetting` type to represent a configuration settin
 
 ### Features
 
-- Improve error message if Connection string secret has incorrect padding    #14140
+- Improve error message if Connection string secret has incorrect padding. ([#14140](https://github.com/Azure/azure-sdk-for-python/issues/14140))
 
 ## 1.1.0 (2020-09-08)
 
 ### Features
 
-- Added match condition support for `set_read_only` method    #13276
+- Added match condition support for `set_read_only` method. ([#13276](https://github.com/Azure/azure-sdk-for-python/issues/13276))
 
 ## 1.0.1 (2020-08-10)
 
@@ -68,27 +71,27 @@ Added `FeatureFlagConfigurationSetting` type to represent a configuration settin
 
 ### Features
 
-- Add AAD auth support    #8924
+- Add AAD auth support. ([#8924](https://github.com/Azure/azure-sdk-for-python/issues/8924))
 
 ### Breaking changes
 
-- List_configuration_settings & list_revisions now take string key/label filter instead of keys/labels list   #9066
+- List_configuration_settings & list_revisions now take string key/label filter instead of keys/labels list. ([#9066](https://github.com/Azure/azure-sdk-for-python/issues/9066))
 
 ## 1.0.0b6 (2019-12-03)
 
 ### Features
 
-- Add sync-token support    #8418
+- Add sync-token support. ([#8418](https://github.com/Azure/azure-sdk-for-python/issues/8418))
 
 ### Breaking changes
 
-- Combine set_read_only & clear_read_only to be set_read_only(True/False)   #8453
+- Combine set_read_only & clear_read_only to be set_read_only(True/False). ([#8453](https://github.com/Azure/azure-sdk-for-python/issues/8453))
 
 ## 1.0.0b5 (2019-10-30)
 
 ### Breaking changes
 
-- etag and match_condition of delete_configuration_setting are now keyword argument only #8161
+- etag and match_condition of delete_configuration_setting are now keyword argument only. ([#8161](https://github.com/Azure/azure-sdk-for-python/issues/8161))
 
 ## 1.0.0b4 (2019-10-07)
 

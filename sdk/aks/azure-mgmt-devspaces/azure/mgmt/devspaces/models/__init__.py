@@ -6,68 +6,52 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ContainerHostMapping
-    from ._models_py3 import Controller
-    from ._models_py3 import ControllerConnectionDetails
-    from ._models_py3 import ControllerConnectionDetailsList
-    from ._models_py3 import ControllerList
-    from ._models_py3 import ControllerUpdateParameters
-    from ._models_py3 import DevSpacesErrorResponse
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import KubernetesConnectionDetails
-    from ._models_py3 import ListConnectionDetailsParameters
-    from ._models_py3 import OrchestratorSpecificConnectionDetails
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceProviderOperationDefinition
-    from ._models_py3 import ResourceProviderOperationDisplay
-    from ._models_py3 import ResourceProviderOperationList
-    from ._models_py3 import Sku
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import ContainerHostMapping  # type: ignore
-    from ._models import Controller  # type: ignore
-    from ._models import ControllerConnectionDetails  # type: ignore
-    from ._models import ControllerConnectionDetailsList  # type: ignore
-    from ._models import ControllerList  # type: ignore
-    from ._models import ControllerUpdateParameters  # type: ignore
-    from ._models import DevSpacesErrorResponse  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import KubernetesConnectionDetails  # type: ignore
-    from ._models import ListConnectionDetailsParameters  # type: ignore
-    from ._models import OrchestratorSpecificConnectionDetails  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceProviderOperationDefinition  # type: ignore
-    from ._models import ResourceProviderOperationDisplay  # type: ignore
-    from ._models import ResourceProviderOperationList  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import ContainerHostMapping
+from ._models_py3 import Controller
+from ._models_py3 import ControllerConnectionDetails
+from ._models_py3 import ControllerConnectionDetailsList
+from ._models_py3 import ControllerList
+from ._models_py3 import ControllerUpdateParameters
+from ._models_py3 import DevSpacesErrorResponse
+from ._models_py3 import ErrorDetails
+from ._models_py3 import KubernetesConnectionDetails
+from ._models_py3 import ListConnectionDetailsParameters
+from ._models_py3 import OrchestratorSpecificConnectionDetails
+from ._models_py3 import Resource
+from ._models_py3 import ResourceProviderOperationDefinition
+from ._models_py3 import ResourceProviderOperationDisplay
+from ._models_py3 import ResourceProviderOperationList
+from ._models_py3 import Sku
+from ._models_py3 import TrackedResource
 
-from ._dev_spaces_management_client_enums import (
-    ProvisioningState,
-    SkuName,
-    SkuTier,
-)
+from ._dev_spaces_management_client_enums import ProvisioningState
+from ._dev_spaces_management_client_enums import SkuName
+from ._dev_spaces_management_client_enums import SkuTier
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ContainerHostMapping',
-    'Controller',
-    'ControllerConnectionDetails',
-    'ControllerConnectionDetailsList',
-    'ControllerList',
-    'ControllerUpdateParameters',
-    'DevSpacesErrorResponse',
-    'ErrorDetails',
-    'KubernetesConnectionDetails',
-    'ListConnectionDetailsParameters',
-    'OrchestratorSpecificConnectionDetails',
-    'Resource',
-    'ResourceProviderOperationDefinition',
-    'ResourceProviderOperationDisplay',
-    'ResourceProviderOperationList',
-    'Sku',
-    'TrackedResource',
-    'ProvisioningState',
-    'SkuName',
-    'SkuTier',
+    "ContainerHostMapping",
+    "Controller",
+    "ControllerConnectionDetails",
+    "ControllerConnectionDetailsList",
+    "ControllerList",
+    "ControllerUpdateParameters",
+    "DevSpacesErrorResponse",
+    "ErrorDetails",
+    "KubernetesConnectionDetails",
+    "ListConnectionDetailsParameters",
+    "OrchestratorSpecificConnectionDetails",
+    "Resource",
+    "ResourceProviderOperationDefinition",
+    "ResourceProviderOperationDisplay",
+    "ResourceProviderOperationList",
+    "Sku",
+    "TrackedResource",
+    "ProvisioningState",
+    "SkuName",
+    "SkuTier",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

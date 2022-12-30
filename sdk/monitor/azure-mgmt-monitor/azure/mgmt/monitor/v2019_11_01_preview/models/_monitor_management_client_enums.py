@@ -11,18 +11,17 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource provisioning state.
-    """
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
 
 class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource provisioning state.
-    """
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -30,22 +29,26 @@ class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensit
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+
 class KnownDataCollectionRuleResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the resource.
-    """
+    """The kind of the resource."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
+
 class KnownDataFlowStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownDataFlowStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
+
 
 class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownExtensionDataSourceStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -53,12 +56,16 @@ class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMe
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
+
 class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownPerfCounterDataSourceStreams."""
 
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
 
+
 class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceFacilityNames."""
 
     AUTH = "auth"
     AUTHPRIV = "authpriv"
@@ -82,7 +89,9 @@ class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnu
     LOCAL7 = "local7"
     ASTERISK = "*"
 
+
 class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceLogLevels."""
 
     DEBUG = "Debug"
     INFO = "Info"
@@ -94,11 +103,15 @@ class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMet
     EMERGENCY = "Emergency"
     ASTERISK = "*"
 
+
 class KnownSyslogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceStreams."""
 
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
 
+
 class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownWindowsEventLogDataSourceStreams."""
 
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
     MICROSOFT_EVENT = "Microsoft-Event"

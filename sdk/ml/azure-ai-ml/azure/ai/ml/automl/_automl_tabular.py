@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""Entrypoints for creating AutoML tasks"""
-from typing import List, Union
+"""Entrypoints for creating AutoML tasks."""
+from typing import List, Optional, Union
 
-from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ForecastingJob,
@@ -20,19 +20,18 @@ def classification(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = True,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
     **kwargs,
 ) -> ClassificationJob:
-    """
-    Function to create a ClassificationJob.
+    """Function to create a ClassificationJob.
 
     A classification job is used to train a model that best predict the class of a data sample.
     Various models are trained using the training data. The model with the best performance on the validation data
@@ -55,11 +54,9 @@ def classification(
     :type primary_metric: str, optional
     :param enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
-            The default is True. For more information, see
+            The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-
-            Defaults to True
     :type enable_model_explainability: bool, optional
     :param weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -164,15 +161,15 @@ def regression(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = True,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
     **kwargs,
 ) -> RegressionJob:
     """Function to create a Regression Job.
@@ -199,11 +196,9 @@ def regression(
     :type primary_metric: str, optional
     :param enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
-            The default is True. For more information, see
+            The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-
-            Defaults to True
     :type enable_model_explainability: bool, optional
     :param weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -270,8 +265,8 @@ def regression(
             This should be between 0.0 and 1.0 non-inclusive.
             If ``test_data_size`` is specified at the same time as ``validation_data_size``,
             then the test data is split from ``training_data`` before the validation data is split.
-            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has 1000 rows,
-            then the test data will have 100 rows, the validation data will contain 90 rows
+            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has
+            1000 rows, then the test data will have 100 rows, the validation data will contain 90 rows
             and the training data will have 810 rows.
 
             For regression based tasks, random sampling is used. For classification
@@ -308,16 +303,16 @@ def forecasting(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = True,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
-    forecasting_settings: ForecastingSettings = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
+    forecasting_settings: Optional[ForecastingSettings] = None,
     **kwargs,
 ) -> ForecastingJob:
     """Function to create a Forecasting job.
@@ -342,11 +337,9 @@ def forecasting(
     :type primary_metric: str, optional
     :param enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all AutoML
             training iterations.
-            The default is True. For more information, see
+            The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-
-            Defaults to True
     :type enable_model_explainability: bool, optional
     :param weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -413,8 +406,8 @@ def forecasting(
             This should be between 0.0 and 1.0 non-inclusive.
             If ``test_data_size`` is specified at the same time as ``validation_data_size``,
             then the test data is split from ``training_data`` before the validation data is split.
-            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data has 1000 rows,
-            then the test data will have 100 rows, the validation data will contain 90 rows
+            For example, if ``validation_data_size=0.1``, ``test_data_size=0.1`` and the original training data
+            has 1000 rows, then the test data will have 100 rows, the validation data will contain 90 rows
             and the training data will have 810 rows.
 
             For regression based tasks, random sampling is used. For classification
@@ -431,7 +424,11 @@ def forecasting(
     :return: A job object that can be submitted to an Azure ML compute for execution.
     :rtype: ForecastingJob
     """
-    forecast_job = ForecastingJob(primary_metric=primary_metric, forecasting_settings=forecasting_settings, **kwargs)
+    forecast_job = ForecastingJob(
+        primary_metric=primary_metric,
+        forecasting_settings=forecasting_settings,
+        **kwargs,
+    )
     forecast_job.set_data(
         training_data=training_data,
         target_column_name=target_column_name,

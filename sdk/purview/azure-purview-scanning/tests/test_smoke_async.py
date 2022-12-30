@@ -6,13 +6,13 @@
 # -------------------------------------------------------------------------
 from testcase import PurviewScanningPowerShellPreparer
 from testcase_async import PurviewScanningTestAsync
-from _util import PurviewScanningRecordingProcessor
+from devtools_testutils.aio import recorded_by_proxy_async
 
-class PurviewScanningSmokeTestAsync(PurviewScanningTestAsync):
+class TestPurviewScanningSmokeAsync(PurviewScanningTestAsync):
 
     @PurviewScanningPowerShellPreparer()
+    @recorded_by_proxy_async
     async def test_basic_smoke_test(self, purviewscanning_endpoint):
-        self.recording_processors.append(PurviewScanningRecordingProcessor())
         client = self.create_async_client(endpoint=purviewscanning_endpoint)
         response = client.data_sources.list_all()
         result = [item async for item in response]

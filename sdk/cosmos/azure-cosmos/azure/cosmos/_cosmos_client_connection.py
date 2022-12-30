@@ -40,7 +40,6 @@ from azure.core.pipeline.policies import (  # type: ignore
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     ProxyPolicy)
 
 from . import _base as base
@@ -59,6 +58,7 @@ from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
+from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
@@ -192,7 +192,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            CosmosHttpLoggingPolicy(**kwargs),
         ]
 
         transport = kwargs.pop("transport", None)
@@ -257,13 +257,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @property
     def WriteEndpoint(self):
-        """Gets the curent write endpoint for a geo-replicated database account.
+        """Gets the current write endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_write_endpoint()
 
     @property
     def ReadEndpoint(self):
-        """Gets the curent read endpoint for a geo-replicated database account.
+        """Gets the current read endpoint for a geo-replicated database account.
         """
         return self._global_endpoint_manager.get_read_endpoint()
 
@@ -999,7 +999,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         resource_key_map = {"Documents": "docs"}
 
-        # For now, change feed only supports Documents and Partition Key Range resouce type
+        # For now, change feed only supports Documents and Partition Key Range resource type
         if resource_type not in resource_key_map:
             raise NotImplementedError(resource_type + " change feed query is not supported.")
 
@@ -2392,7 +2392,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             Specifies partition key range id.
         :param function response_hook:
         :param bool is_query_plan:
-            Specififes if the call is to fetch query plan
+            Specifies if the call is to fetch query plan
 
         :rtype:
             list
@@ -2546,7 +2546,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
-            # If the user has passed in the partitionKey in options use that elase extract it from the document
+            # If the user has passed in the partitionKey in options use that else extract it from the document
             if "partitionKey" not in options:
                 partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
                 options["partitionKey"] = partitionKeyValue

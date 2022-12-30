@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
-    """
+class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Required for storage accounts where kind = BlobStorage. The access tier used for billing."""
 
     HOT = "Hot"
     COOL = "Cool"
 
-class AccountSasParametersSignedPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccountSasParametersSignedPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed permissions for the account SAS. Possible values include: Read (r), Write (w),
     Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
     """
@@ -32,7 +31,8 @@ class AccountSasParametersSignedPermission(with_metaclass(CaseInsensitiveEnumMet
     U = "u"
     P = "p"
 
-class AccountSasParametersSignedResourceTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccountSasParametersSignedResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed resource types that are accessible with the account SAS. Service (s): Access to
     service-level APIs; Container (c): Access to container-level APIs; Object (o): Access to
     object-level APIs for blobs, queue messages, table entities, and files.
@@ -42,7 +42,8 @@ class AccountSasParametersSignedResourceTypes(with_metaclass(CaseInsensitiveEnum
     C = "c"
     O = "o"
 
-class AccountSasParametersSignedServices(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccountSasParametersSignedServices(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the account SAS. Possible values include: Blob (b), Queue
     (q), Table (t), File (f).
     """
@@ -52,7 +53,8 @@ class AccountSasParametersSignedServices(with_metaclass(CaseInsensitiveEnumMeta,
     T = "t"
     F = "f"
 
-class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
     unavailable.
     """
@@ -60,28 +62,35 @@ class AccountStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
 
-class HttpProtocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The protocol permitted for a request made with the account SAS.
-    """
+
+class EncryptionKeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage."""
+
+    MICROSOFT_STORAGE = "Microsoft.Storage"
+
+
+class HttpProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol permitted for a request made with the account SAS."""
 
     HTTPS_HTTP = "https,http"
     HTTPS = "https"
 
-class KeyPermission(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Permissions for the key -- read-only or full permissions.
-    """
+
+class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Permissions for the key -- read-only or full permissions."""
 
     READ = "Read"
     FULL = "Full"
 
-class Kind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Required. Indicates the type of storage account.
-    """
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Required. Indicates the type of storage account."""
 
     STORAGE = "Storage"
     BLOB_STORAGE = "BlobStorage"
 
-class Permissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed permissions for the service SAS. Possible values include: Read (r), Write (w),
     Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
     """
@@ -95,15 +104,16 @@ class Permissions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     U = "u"
     P = "p"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the status of the storage account at the time the operation was called.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the storage account at the time the operation was called."""
 
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
-class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
     returned if NameAvailable is false.
     """
@@ -111,7 +121,8 @@ class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class SignedResource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SignedResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the service SAS. Possible values include: Blob (b),
     Container (c), File (f), Share (s).
     """
@@ -121,7 +132,8 @@ class SignedResource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     F = "f"
     S = "s"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
     older versions, sku name was called accountType.
     """
@@ -132,16 +144,22 @@ class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the sku tier. This is based on the SKU name.
-    """
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the sku tier. This is based on the SKU name."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the unit of measurement.
-    """
+
+class StorageAccountCheckNameAvailabilityParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StorageAccountCheckNameAvailabilityParametersType."""
+
+    MICROSOFT_STORAGE_STORAGE_ACCOUNTS = "Microsoft.Storage/storageAccounts"
+
+
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

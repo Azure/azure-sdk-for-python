@@ -7,12 +7,13 @@ import re
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
-from typing import List, Dict, Any
+from typing import Dict, Any
 from glob import glob
 import yaml
 
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from jinja2 import Environment, FileSystemLoader
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,8 +22,10 @@ _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
+
 def dpg_relative_folder(spec_folder: str) -> str:
     return ("../" * 4) + spec_folder + "/"
+
 
 def get_package_names(sdk_folder):
     files = get_add_diff_file_list(sdk_folder)
@@ -34,7 +37,10 @@ def get_package_names(sdk_folder):
 def init_new_service(package_name, folder_name):
     setup = Path(folder_name, package_name, "setup.py")
     if not setup.exists():
-        check_call(f"python -m packaging_tools --build-conf {package_name} -o {folder_name}", shell=True)
+        check_call(
+            f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+            shell=True,
+        )
         ci = Path(folder_name, "ci.yml")
         if not ci.exists():
             with open("ci_template.yml", "r") as file_in:
@@ -47,26 +53,32 @@ def init_new_service(package_name, folder_name):
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
 
-    readme_file = str(Path(spec_folder, input_readme))
-    global_conf = config["meta"]
-    local_conf = config.get("projects", {}).get(readme_file, {})
-
-    if "resource-manager" in input_readme:
-        cmd = ["autorest", input_readme]
-    else:
-        # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
-        cmd = ["autorest", _DPG_README]
-    cmd += build_autorest_options(global_conf, local_conf)
-
-    # metadata
     metadata = {
-        "autorest": global_conf["autorest_options"]["version"],
-        "use": global_conf["autorest_options"]["use"],
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-        "autorest_command": " ".join(cmd),
-        "readme": input_readme,
     }
+    if "meta" in config:
+        readme_file = str(Path(spec_folder, input_readme))
+        global_conf = config["meta"]
+        local_conf = config.get("projects", {}).get(readme_file, {})
+
+        if "resource-manager" in input_readme:
+            cmd = ["autorest", input_readme]
+        else:
+            # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
+            cmd = ["autorest", _DPG_README]
+        cmd += build_autorest_options(global_conf, local_conf)
+
+        # metadata
+        metadata.update({
+            "autorest": global_conf["autorest_options"]["version"],
+            "use": global_conf["autorest_options"]["use"],
+            "autorest_command": " ".join(cmd),
+            "readme": input_readme,
+        })
+    else:
+        metadata["cadl_src"] = input_readme
+        metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
@@ -102,54 +114,40 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-# find all the files of one folder, including files in subdirectory
-def all_files(path: str, files: List[str]):
-    all_folder = os.listdir(path)
-    for item in all_folder:
-        folder = str(Path(f'{path}/{item}'))
-        if os.path.isdir(folder):
-            all_files(folder, files)
-        else:
-            files.append(folder)
-
-
 def judge_tag_preview(path: str) -> bool:
-    files = []
-    all_files(path, files)
-    default_api_version = ''  # for multi-api
-    api_version = ''  # for single-api
+    files = [i for i in Path(path).glob("**/*.py")]
+    default_api_version = ""  # for multi-api
+    api_version = ""  # for single-api
     for file in files:
-        if '.py' not in file or '.pyc' in file:
-            continue
         try:
-            with open(file, 'r') as file_in:
+            with open(file, "r") as file_in:
                 list_in = file_in.readlines()
         except:
-            _LOGGER.info(f'can not open {file}')
+            _LOGGER.info(f"can not open {file}")
             continue
 
         for line in list_in:
-            if line.find('DEFAULT_API_VERSION = ') > -1:
-                default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-            if default_api_version == '' and line.find('api_version = ') > -1:
-                api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-    if default_api_version != '':
-        _LOGGER.info(f'find default api version:{default_api_version}')
-        return 'preview' in default_api_version
+            if "DEFAULT_API_VERSION = " in line:
+                default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
+            if default_api_version == "" and "api_version" in line:
+                api_version += ", ".join(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", line))  # collect all single api version
+    if default_api_version != "":
+        _LOGGER.info(f"find default api version:{default_api_version}")
+        return "preview" in default_api_version
 
-    _LOGGER.info(f'find single api version:{api_version}')
-    return 'preview' in api_version
+    _LOGGER.info(f"find single api version:{api_version}")
+    return "preview" in api_version
 
 
 def extract_yaml_content(autorest_config: str) -> str:
     num = []
-    content = autorest_config.split('\r\n')
+    content = autorest_config.split("\r\n")
     for i in range(len(content)):
         if "```" in content[i]:
             num.append(i)
     if len(num) != 2:
         raise Exception(f"autorestConfig content is not valid: {autorest_config}")
-    return '\n'.join(content[num[0] + 1: num[1]])
+    return "\n".join(content[num[0] + 1 : num[1]])
 
 
 def add_config_title(content: str) -> str:
@@ -177,15 +175,17 @@ def gen_basic_config(origin_config: Dict[str, Any], spec_folder: str) -> Dict[st
 
 
 def gen_general_namespace(package_name: str) -> str:
-    return package_name.replace('-', '.')
+    return package_name.replace("-", ".")
 
 
 def gen_dpg_config_single_client(origin_config: Dict[str, Any], spec_folder: str) -> str:
     package_name = Path(origin_config["output-folder"]).parts[-1]
     readme_config = gen_basic_config(origin_config, spec_folder)
-    readme_config.update({
-        "namespace": gen_general_namespace(package_name),
-    })
+    readme_config.update(
+        {
+            "namespace": gen_general_namespace(package_name),
+        }
+    )
     readme_content = yaml_block(yaml.safe_dump(readme_config), "### Settings")
     return add_config_title(readme_content)
 
@@ -257,9 +257,9 @@ def gen_dpg_config(autorest_config: str, spec_folder: str) -> str:
 
 
 def lookup_swagger_readme(rest_readme_path: str) -> str:
-    all_swagger_readme = glob(str(Path(f'sdk/*/*/swagger/{_DPG_README}')))
+    all_swagger_readme = glob(str(Path(f"sdk/*/*/swagger/{_DPG_README}")))
     for readme in all_swagger_readme:
-        with open(readme, 'r') as file:
+        with open(readme, "r") as file:
             content = file.read()
             if rest_readme_path in content:
                 _LOGGER.info(f"find swagger readme: {readme}")
@@ -278,7 +278,7 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
         return
 
     # extract global config
-    global_config = read_config('.', CONFIG_FILE_DPG)
+    global_config = read_config(".", CONFIG_FILE_DPG)
 
     # generate code
     current_path = os.getcwd()
@@ -290,28 +290,105 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
 
 
 def format_samples(sdk_code_path) -> None:
-    generate_sample_path = Path(sdk_code_path) / 'generated_samples'
+    generate_sample_path = Path(sdk_code_path) / "generated_samples"
     if not generate_sample_path.exists():
-        _LOGGER.info(f'not find generated_samples')
+        _LOGGER.info(f"not find generated_samples")
         return
 
     try:
         import black
     except Exception as e:
-        check_call('pip install black', shell=True)
+        check_call("pip install black", shell=True)
         import black
 
     _BLACK_MODE = black.Mode()
     _BLACK_MODE.line_length = 120
-    files = generate_sample_path.glob('**/*.py')
+    files = generate_sample_path.glob("**/*.py")
     for path in files:
-        with open(path, 'r') as fr:
+        with open(path, "r") as fr:
             file_content = fr.read()
 
         with suppress(black.NothingChanged):
             file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
-        with open(path, 'w') as fw:
+        with open(path, "w") as fw:
             fw.write(file_content)
 
-    _LOGGER.info(f'format generated_samples successfully')
+    _LOGGER.info(f"format generated_samples successfully")
+
+def get_npm_package_version(package: str) -> Dict[any, any]:
+    temp_file = "python_temp.json"
+    check_call(f"npm list {package} -json > {temp_file}", shell=True)
+    with open(temp_file, "r") as file_in:
+        data = json.load(file_in)
+    if "dependencies" not in data:
+        _LOGGER.info(f"can not find {package}: {data}")
+        return {}
+    
+    return data["dependencies"]
+
+def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
+    ci = Path(folder_path, "ci.yml")
+    service_name = folder_path.name
+    safe_name = package_name.replace("-", "")
+    if not ci.exists():
+        env = Environment(loader=FileSystemLoader(template_path), keep_trailing_newline=True)
+        template = env.get_template('ci.yml')
+        content = template.render(package_name=package_name, service_name=service_name, safe_name=safe_name)
+    else:
+        with open(ci, "r") as file_in:
+            content = file_in.readlines()
+            for line in content:
+                if package_name in line:
+                    return
+            content.append(f'    - name: {package_name}\n')
+            content.append(f'      safeName: {safe_name}\n')
+    with open(ci, "w") as file_out:
+        file_out.writelines(content)
+
+def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
+    # update config file
+    cadl_python = "@azure-tools/cadl-python"
+    autorest_python = "@autorest/python"
+    project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
+    with open(project_yaml_path, "r") as file_in:
+        project_yaml = yaml.safe_load(file_in)
+    if not project_yaml.get("emitters", {}).get(cadl_python):
+        return
+    if not project_yaml["emitters"][cadl_python].get("sdk-folder"):
+        raise Exception("no sdk-folder is defined")
+    output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
+    if not output_path.exists():
+        os.makedirs(output_path)
+
+    project_yaml["emitters"][cadl_python].pop("sdk-folder")
+    with open(project_yaml_path, "w") as file_out:
+        yaml.safe_dump(project_yaml, file_out)
+
+    # npm install tool
+    origin_path = os.getcwd()
+    os.chdir(Path(spec_folder) / cadl_relative_path)
+    check_call("npm install", shell=True)
+
+    # generate code
+    check_call(f"npx cadl compile . --emit {cadl_python} --output-path={str(output_path)}", shell=True)
+    if (output_path / "output.yaml").exists():
+        os.remove(output_path / "output.yaml")
+    if not (output_path / "sdk_packaging.toml").exists():
+        with open(output_path / "sdk_packaging.toml", "w") as file_out:
+            file_out.write("[packaging]\nauto_update = false")
+
+    # get version of codegen used in generation
+    npm_package_verstion = get_npm_package_version(autorest_python)
+
+    # return to original folder
+    os.chdir(origin_path)
+
+    # add ci.yaml
+    generate_ci(
+        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+        folder_path=output_path.parent,
+        package_name=project_yaml["emitters"][cadl_python]["package-name"]
+    )
+
+    return npm_package_verstion

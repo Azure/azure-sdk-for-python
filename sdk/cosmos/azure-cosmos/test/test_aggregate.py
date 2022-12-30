@@ -187,7 +187,7 @@ class AggregationQueryTest(unittest.TestCase):
 
     @classmethod
     def _insert_doc(cls, collection, document_definitions):
-        # type: (Container, Dict[str, Any]) -> [Dict[str, Any]]
+        # type: (Container, Dict[str, Any]) -> Dict[str, Any]
         created_docs = []
         for d in document_definitions:
             created_doc = collection.create_item(body=d)
@@ -196,7 +196,7 @@ class AggregationQueryTest(unittest.TestCase):
         return created_docs
 
     def _execute_query_and_validate_results(self, collection, query, expected):
-        # type: (Container, str, [Dict[str, Any]]) -> None
+        # type: (Container, str, Dict[str, Any]) -> None
 
         # executes the query and validates the results against the expected results
         result_iterable = collection.query_items(

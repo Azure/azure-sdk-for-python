@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -11,9 +11,6 @@ from .get_token_mixin import GetTokenMixin
 
 from . import wrap_exceptions
 from .msal_credentials import MsalCredential
-
-if TYPE_CHECKING:
-    from typing import Any, Optional
 
 
 class ClientCredentialBase(MsalCredential, GetTokenMixin):

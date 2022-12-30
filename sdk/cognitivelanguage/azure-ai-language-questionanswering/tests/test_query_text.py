@@ -3,29 +3,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer
-)
-
 from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering._operations._operations import build_get_answers_from_text_request
+from azure.ai.language.questionanswering._operations._operations import \
+    build_question_answering_get_answers_from_text_request as build_get_answers_from_text_request
 from azure.ai.language.questionanswering.models import (
     AnswersFromTextOptions,
     TextDocument
 )
+from azure.core.credentials import AzureKeyCredential
 
-class QnATests(QuestionAnsweringTest):
+from testcase import QuestionAnsweringTestCase
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_query_text_llc(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+
+class TestQueryText(QuestionAnsweringTestCase):
+
+    def test_query_text_llc(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         json_content = {
             "question": "What is the meaning of life?",
             "records": [
@@ -64,9 +59,8 @@ class QnATests(QuestionAnsweringTest):
             assert answer['answerSpan'].get('offset') is not None
             assert answer['answerSpan'].get('length')
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_query_text(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_query_text(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersFromTextOptions(
             question="What is the meaning of life?",
             text_documents=[
@@ -100,9 +94,8 @@ class QnATests(QuestionAnsweringTest):
             assert answer.short_answer.offset is not None
             assert answer.short_answer.length
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_query_text_with_dictparams(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_query_text_with_dictparams(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
             "records": [
@@ -127,10 +120,8 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_query_text_with_str_records(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_query_text_with_str_records(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = {
             "question": "How long it takes to charge surface?",
             "records": [
@@ -149,9 +140,8 @@ class QnATests(QuestionAnsweringTest):
             assert len(confident_answers) == 2
             assert confident_answers[0].short_answer.text == "two to four hours"
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_query_text_overload(self, qna_account, qna_key):
-        client = QuestionAnsweringClient(qna_account, AzureKeyCredential(qna_key))
+    def test_query_text_overload(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         with client:
             with pytest.raises(TypeError):
@@ -187,7 +177,7 @@ class QnATests(QuestionAnsweringTest):
                 client.get_answers_from_text("positional_one", "positional_two")
             with pytest.raises(TypeError):
                 client.get_answers_from_text("positional_options_bag", options="options bag by name")
-            
+
             params = AnswersFromTextOptions(
                 question="What is the meaning of life?",
                 text_documents=[
@@ -204,12 +194,83 @@ class QnATests(QuestionAnsweringTest):
             )
             with pytest.raises(TypeError):
                 client.get_answers_from_text(options=params)
-            
+
             with pytest.raises(TypeError):
                 client.get_answers_from_text(
                     question="why?",
                     text_documents=["foo", "bar"],
                     options=params)
-            
+
             with pytest.raises(TypeError):
                 client.get_answers_from_text(params, question="Why?")
+
+    def test_query_text_default_lang(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), default_language="es")
+        params = {
+            "question": "How long it takes to charge surface?",
+            "records": [
+                {
+                    "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                            "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                    "id": "1"
+                },
+            ],
+        }
+
+        param_model = AnswersFromTextOptions(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                TextDocument(
+                    text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                            "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                    id="1"
+                ),
+            ],
+        )
+
+        def callback_es(response):
+            import json
+            resp = json.loads(response.http_request.content)
+            assert resp["language"] == "es"
+
+        def callback_en(response):
+            import json
+            resp = json.loads(response.http_request.content)
+            assert resp["language"] == "en"
+
+        # --- dict request ---
+        # check client default language
+        output = client.get_answers_from_text(params, raw_response_hook=callback_es)
+
+        # check that operation-level language overrides client-level default lang
+        params["language"] = "en"
+        output = client.get_answers_from_text(params, raw_response_hook=callback_en)
+
+        # --- model request ---
+        # check client default language
+        output = client.get_answers_from_text(param_model, raw_response_hook=callback_es)
+
+        # check that operation-level language overrides client-level default lang
+        param_model.language = "en"
+        output = client.get_answers_from_text(param_model, raw_response_hook=callback_en)
+
+        # --- kwargs request ---
+        # check client default language
+        output = client.get_answers_from_text(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+            ],
+            raw_response_hook=callback_es
+        )
+        # check that operation-level language overrides client-level default lang
+        output = client.get_answers_from_text(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+            ],
+            language="en",
+            raw_response_hook=callback_en
+        )

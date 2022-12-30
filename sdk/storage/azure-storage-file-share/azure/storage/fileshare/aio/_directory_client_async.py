@@ -5,9 +5,13 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 import functools
+import sys
 import time
-from typing import ( # pylint: disable=unused-import
-    Optional, Union, Any, Dict, TYPE_CHECKING
+import warnings
+from datetime import datetime
+from typing import (
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    TYPE_CHECKING
 )
 
 from azure.core.async_paging import AsyncItemPaged
@@ -17,7 +21,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
-
 from .._generated.aio import AzureFileStorage
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -30,9 +33,8 @@ from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from .._models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
-    from .._generated.models import HandleItem
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from .._models import DirectoryProperties, Handle, NTFSAttributes
 
 
 class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBase):
@@ -70,32 +72,30 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword loop:
-        The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name, # type: str
-            directory_path, # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    def __init__(
+            self, account_url: str,
+            share_name: str,
+            directory_path: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
+        if loop and sys.version_info >= (3, 8):
+            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
+            "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareDirectoryClient, self).__init__(
             account_url,
             share_name=share_name,
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
-        self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
         # type: (str, Any) -> ShareFileClient
@@ -118,7 +118,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> ShareDirectoryClient
@@ -149,7 +149,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, **kwargs):
@@ -407,8 +407,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -444,7 +444,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:
@@ -700,18 +700,17 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def upload_file(
-            self, file_name,  # type: str
-            data, # type: Any
-            length=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareFileClient
+            self, file_name: str,
+            data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            **kwargs
+        ) -> ShareFileClient:
         """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
         :param str file_name:
             The name of the file.
-        :param Any data:
+        :param data:
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
@@ -755,7 +754,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             data,
             length=length,
             **kwargs)
-        return file_client # type: ignore
+        return file_client
 
     @distributed_trace_async
     async def delete_file(

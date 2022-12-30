@@ -17,31 +17,29 @@ from ._models_py3 import MetricValue
 from ._models_py3 import Response
 from ._models_py3 import TimeSeriesElement
 
-
-from ._monitor_management_client_enums import (
-    AggregationType,
-    MetricClass,
-    MetricUnit,
-    ResultType,
-)
+from ._monitor_management_client_enums import AggregationType
+from ._monitor_management_client_enums import MetricClass
+from ._monitor_management_client_enums import MetricUnit
+from ._monitor_management_client_enums import ResultType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ErrorResponse',
-    'LocalizableString',
-    'MetadataValue',
-    'Metric',
-    'MetricAvailability',
-    'MetricDefinition',
-    'MetricDefinitionCollection',
-    'MetricValue',
-    'Response',
-    'TimeSeriesElement',
-    'AggregationType',
-    'MetricClass',
-    'MetricUnit',
-    'ResultType',
+    "ErrorResponse",
+    "LocalizableString",
+    "MetadataValue",
+    "Metric",
+    "MetricAvailability",
+    "MetricDefinition",
+    "MetricDefinitionCollection",
+    "MetricValue",
+    "Response",
+    "TimeSeriesElement",
+    "AggregationType",
+    "MetricClass",
+    "MetricUnit",
+    "ResultType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

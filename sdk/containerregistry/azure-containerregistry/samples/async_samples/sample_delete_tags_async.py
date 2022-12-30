@@ -37,9 +37,8 @@ class DeleteTagsAsync(object):
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
-        async with client:
+        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
             async for repository in client.list_repository_names():
                 print(repository)
                 # [END list_repository_names]
@@ -58,5 +57,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

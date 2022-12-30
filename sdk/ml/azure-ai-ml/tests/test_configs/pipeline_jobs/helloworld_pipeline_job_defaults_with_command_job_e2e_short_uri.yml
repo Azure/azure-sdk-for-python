@@ -21,7 +21,7 @@ jobs:
 
     command: pip freeze && echo Hello World
     environment: azureml:AzureML-Minimal:1
-    code: ./
+    code: ../python
     compute: "azureml:cpu-cluster"
     experiment_name: test-iris-example-1
     description: Train a model on the Iris dataset-1.
@@ -52,4 +52,4 @@ jobs:
     properties:
       test_property: test_value
     identity:
-      type: AMLToken
+      type: aml_token

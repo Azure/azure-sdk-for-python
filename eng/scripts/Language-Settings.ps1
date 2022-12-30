@@ -22,7 +22,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    pip install packaging==20.4 setuptools==44.1.1 -q -I
+    pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -258,7 +258,7 @@ function FallbackValidation
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder `
-        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
+        --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
@@ -266,7 +266,7 @@ function FallbackValidation
         install `
         $packageExpression `
         --no-cache-dir `
-        --target $installTargetFolder 2>&1 | Out-Null
+        --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
@@ -286,7 +286,6 @@ function FallbackValidation
 $PackageExclusions = @{
   'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
   'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
-  'azure-mgmt-webpubsub' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/21346';
   'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
   'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
@@ -523,8 +522,8 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
   {
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
-  pip install -r "$EngDir/versioning/requirements.txt" -q -I
-  python "$EngDir/versioning/version_set.py" --package-name $PackageName --new-version $Version `
+  pip install "$RepoRoot/tools/azure-sdk-tools[build]" -q -I
+  sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
 }
 
@@ -574,7 +573,7 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-
+  python -m pip install requests
   python $pathToScript
 }
 

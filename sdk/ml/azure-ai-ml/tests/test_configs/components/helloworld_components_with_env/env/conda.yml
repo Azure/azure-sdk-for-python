@@ -1,0 +1,11 @@
+name: example-environment
+channels:
+  - conda-forge
+dependencies:
+  - python=3.6.1
+  - pip
+  - pip:
+    - nbgitpuller
+    - sphinx-gallery
+    - pandas
+    - matplotlib

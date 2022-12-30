@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,84 +9,72 @@
 
 from typing import List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class DataContainer(msrest.serialization.Model):
+class DataContainer(_serialization.Model):
     """Information about a container with data for a given resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar workspace: Required. Log Analytics workspace information.
+    :ivar workspace: Log Analytics workspace information. Required.
     :vartype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
     """
 
     _validation = {
-        'workspace': {'required': True},
+        "workspace": {"required": True},
     }
 
     _attribute_map = {
-        'workspace': {'key': 'workspace', 'type': 'WorkspaceInfo'},
+        "workspace": {"key": "workspace", "type": "WorkspaceInfo"},
     }
 
-    def __init__(
-        self,
-        *,
-        workspace: "_models.WorkspaceInfo",
-        **kwargs
-    ):
+    def __init__(self, *, workspace: "_models.WorkspaceInfo", **kwargs):
         """
-        :keyword workspace: Required. Log Analytics workspace information.
+        :keyword workspace: Log Analytics workspace information. Required.
         :paramtype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
         """
-        super(DataContainer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.workspace = workspace
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Error details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Error code identifying the specific error.
+    :ivar code: Error code identifying the specific error. Required.
     :vartype code: str
     :ivar message: Error message in the caller's locale.
     :vartype message: str
     """
 
     _validation = {
-        'code': {'required': True},
+        "code": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: Optional[str] = None, **kwargs):
         """
-        :keyword code: Required. Error code identifying the specific error.
+        :keyword code: Error code identifying the specific error. Required.
         :paramtype code: str
         :keyword message: Error message in the caller's locale.
         :paramtype message: str
         """
-        super(Error, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -99,57 +88,48 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class ResponseWithError(msrest.serialization.Model):
+class ResponseWithError(_serialization.Model):
     """An error response from the API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar error: Required. Error information.
+    :ivar error: Error information. Required.
     :vartype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "_models.Error",
-        **kwargs
-    ):
+    def __init__(self, *, error: "_models.Error", **kwargs):
         """
-        :keyword error: Required. Error information.
+        :keyword error: Error information. Required.
         :paramtype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
         """
-        super(ResponseWithError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
@@ -169,31 +149,31 @@ class VMInsightsOnboardingStatus(ProxyResource):
     :vartype resource_id: str
     :ivar onboarding_status: The onboarding status for the resource. Note that, a higher level
      scope, e.g., resource group or subscription, is considered onboarded if at least one resource
-     under it is onboarded. Known values are: "onboarded", "notOnboarded", "unknown".
+     under it is onboarded. Known values are: "onboarded", "notOnboarded", and "unknown".
     :vartype onboarding_status: str or
      ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
     :ivar data_status: The status of VM Insights data from the resource. When reported as
      ``present`` the data array will contain information about the data containers to which data for
-     the specified resource is being routed. Known values are: "present", "notPresent".
+     the specified resource is being routed. Known values are: "present" and "notPresent".
     :vartype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
     :ivar data: Containers that currently store VM Insights data for the specified resource.
     :vartype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
-        'onboarding_status': {'key': 'properties.onboardingStatus', 'type': 'str'},
-        'data_status': {'key': 'properties.dataStatus', 'type': 'str'},
-        'data': {'key': 'properties.data', 'type': '[DataContainer]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "resource_id": {"key": "properties.resourceId", "type": "str"},
+        "onboarding_status": {"key": "properties.onboardingStatus", "type": "str"},
+        "data_status": {"key": "properties.dataStatus", "type": "str"},
+        "data": {"key": "properties.data", "type": "[DataContainer]"},
     }
 
     def __init__(
@@ -211,65 +191,58 @@ class VMInsightsOnboardingStatus(ProxyResource):
         :paramtype resource_id: str
         :keyword onboarding_status: The onboarding status for the resource. Note that, a higher level
          scope, e.g., resource group or subscription, is considered onboarded if at least one resource
-         under it is onboarded. Known values are: "onboarded", "notOnboarded", "unknown".
+         under it is onboarded. Known values are: "onboarded", "notOnboarded", and "unknown".
         :paramtype onboarding_status: str or
          ~$(python-base-namespace).v2018_11_27_preview.models.OnboardingStatus
         :keyword data_status: The status of VM Insights data from the resource. When reported as
          ``present`` the data array will contain information about the data containers to which data for
-         the specified resource is being routed. Known values are: "present", "notPresent".
+         the specified resource is being routed. Known values are: "present" and "notPresent".
         :paramtype data_status: str or ~$(python-base-namespace).v2018_11_27_preview.models.DataStatus
         :keyword data: Containers that currently store VM Insights data for the specified resource.
         :paramtype data: list[~$(python-base-namespace).v2018_11_27_preview.models.DataContainer]
         """
-        super(VMInsightsOnboardingStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.onboarding_status = onboarding_status
         self.data_status = data_status
         self.data = data
 
 
-class WorkspaceInfo(msrest.serialization.Model):
+class WorkspaceInfo(_serialization.Model):
     """Information about a Log Analytics Workspace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Azure Resource Manager identifier of the Log Analytics Workspace.
+    :ivar id: Azure Resource Manager identifier of the Log Analytics Workspace. Required.
     :vartype id: str
-    :ivar location: Required. Location of the Log Analytics workspace.
+    :ivar location: Location of the Log Analytics workspace. Required.
     :vartype location: str
-    :ivar customer_id: Required. Log Analytics workspace identifier.
+    :ivar customer_id: Log Analytics workspace identifier. Required.
     :vartype customer_id: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'location': {'required': True},
-        'customer_id': {'required': True},
+        "id": {"required": True},
+        "location": {"required": True},
+        "customer_id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "customer_id": {"key": "properties.customerId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        location: str,
-        customer_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, location: str, customer_id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. Azure Resource Manager identifier of the Log Analytics Workspace.
+        :keyword id: Azure Resource Manager identifier of the Log Analytics Workspace. Required.
         :paramtype id: str
-        :keyword location: Required. Location of the Log Analytics workspace.
+        :keyword location: Location of the Log Analytics workspace. Required.
         :paramtype location: str
-        :keyword customer_id: Required. Log Analytics workspace identifier.
+        :keyword customer_id: Log Analytics workspace identifier. Required.
         :paramtype customer_id: str
         """
-        super(WorkspaceInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.location = location
         self.customer_id = customer_id

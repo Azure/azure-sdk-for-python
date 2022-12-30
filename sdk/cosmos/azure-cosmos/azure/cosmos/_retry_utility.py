@@ -86,7 +86,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ] = resourceThrottle_retry_policy.current_retry_attempt_count
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
-            ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
 
             return result
         except exceptions.CosmosHttpResponseError as e:
@@ -117,7 +117,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 ] = resourceThrottle_retry_policy.current_retry_attempt_count
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryWaitTimeInMs
-                ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise

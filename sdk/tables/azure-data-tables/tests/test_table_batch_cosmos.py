@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
 import os
-import sys
-
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
@@ -28,14 +26,16 @@ from azure.data.tables import (
     TableServiceClient,
     generate_table_sas,
     TableErrorCode,
+    TableClient
 )
+from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 
+from test_table_batch import CheckBatchURL, RequestCorrect
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
 
 class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -71,7 +71,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -112,7 +111,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -157,7 +155,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update_if_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -191,7 +188,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_update_if_doesnt_match(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -225,7 +221,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert_replace(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -261,7 +256,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_insert_merge(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -297,7 +291,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_delete(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -335,7 +328,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_inserts(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -376,7 +368,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_all_operations_together(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -452,7 +443,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_different_partition_operations_fail(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -483,7 +473,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_new_non_existent_table(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -507,7 +496,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_new_delete_nonexistent_entity(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -528,7 +516,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_delete_batch_with_bad_kwarg(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -562,7 +549,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
     @cosmos_decorator
     def test_batch_sas_auth(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -616,7 +602,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
     @cosmos_decorator
     def test_batch_request_too_large(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -645,7 +630,6 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
     @recorded_by_proxy
     def test_batch_with_specialchar_partitionkey(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -709,3 +693,35 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+class TestBatchCosmosUnitTests(TableTestCase):
+    tables_cosmos_account_name = "fake_cosmos_account"
+    tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA=="
+    entity1 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk001"
+    }
+    entity2 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk002"
+    }
+    batch = [
+        ("upsert", entity1),
+        ("upsert", entity2)
+    ]
+
+    def test_batch_url_with_connection_string(self):
+        endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.{2}:443/;'.format(
+            self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key, endpoint_suffix)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name='foo',
+            endpoint_type='cosmos',
+            per_call_policies=[CheckBatchURL("https://{}.table.{}:443".format(self.tables_cosmos_account_name, endpoint_suffix), "foo")]
+        )
+        assert table.account_name == self.tables_cosmos_account_name
+        assert table.url.startswith('https://' + self.tables_cosmos_account_name + '.table.' + endpoint_suffix)
+        assert table.scheme == 'https'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)

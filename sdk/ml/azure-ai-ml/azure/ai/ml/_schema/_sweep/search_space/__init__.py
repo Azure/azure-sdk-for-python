@@ -5,9 +5,9 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .choice import ChoiceSchema
-from .normal import NormalSchema, QNormalSchema
+from .normal import IntegerQNormalSchema, NormalSchema, QNormalSchema
 from .randint import RandintSchema
-from .uniform import UniformSchema, QUniformSchema
+from .uniform import IntegerQUniformSchema, QUniformSchema, UniformSchema
 
 __all__ = [
     "ChoiceSchema",
@@ -16,4 +16,6 @@ __all__ = [
     "RandintSchema",
     "UniformSchema",
     "QUniformSchema",
+    "IntegerQUniformSchema",
+    "IntegerQNormalSchema",
 ]

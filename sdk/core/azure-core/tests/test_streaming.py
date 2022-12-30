@@ -47,6 +47,7 @@ def test_decompress_plain_no_header(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_plain_no_header_offline(port, http_request):
+    # cspell:disable-next-line
     # thanks to Daisy Cisneros for this test!
     # expect plain text
     request = http_request(method="GET", url="http://localhost:{}/streams/string".format(port))

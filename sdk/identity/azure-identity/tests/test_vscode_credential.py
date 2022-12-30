@@ -291,7 +291,7 @@ def test_multitenant_authentication():
         return mock_response(json_payload=build_aad_response(access_token=token))
 
     credential = get_credential(
-        tenant_id=first_tenant, transport=mock.Mock(send=send)
+        tenant_id=first_tenant, transport=mock.Mock(send=send), additionally_allowed_tenants=['*']
     )
     with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
         token = credential.get_token("scope")
@@ -318,7 +318,7 @@ def test_multitenant_authentication_not_allowed():
         token = expected_token if tenant == expected_tenant else expected_token * 2
         return mock_response(json_payload=build_aad_response(access_token=token))
 
-    credential = get_credential(tenant_id=expected_tenant, transport=mock.Mock(send=send))
+    credential = get_credential(tenant_id=expected_tenant, transport=mock.Mock(send=send), additionally_allowed_tenants=['*'])
 
     with mock.patch(GET_REFRESH_TOKEN, lambda _: "**"):
         token = credential.get_token("scope")

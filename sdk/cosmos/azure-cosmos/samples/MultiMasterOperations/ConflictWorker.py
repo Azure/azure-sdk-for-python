@@ -511,8 +511,8 @@ class ConflictWorker(object):
 
     def validate_manual_conflict_async_internal(self, client, conflict_document):
         while True:
-            conflicts_iterartor = iter(client.ReadConflicts(self.manual_collection_link))
-            conflict = next(conflicts_iterartor, None)
+            conflicts_iterator = iter(client.ReadConflicts(self.manual_collection_link))
+            conflict = next(conflicts_iterator, None)
             while conflict:
                 if conflict['operationType'] != 'delete':
                     conflict_document_content = json.loads(conflict['content'])
@@ -534,7 +534,7 @@ class ConflictWorker(object):
                     if conflict['resourceId'] == conflict_document['_rid']:
                         print("Delete conflict found @ %s" % client.ReadEndpoint)
                         return False
-                conflict = next(conflicts_iterartor, None)
+                conflict = next(conflicts_iterator, None)
 
             self.trace_error("Document %s is not found in conflict feed @ %s, retrying" %
                              (conflict_document['id'], client.ReadEndpoint))
@@ -543,8 +543,8 @@ class ConflictWorker(object):
 
     def delete_conflict_async(self, conflict_document):
         del_client = self.clients[0]
-        conflicts_iterartor = iter(del_client.ReadConflicts(self.manual_collection_link))
-        conflict = next(conflicts_iterartor, None)
+        conflicts_iterator = iter(del_client.ReadConflicts(self.manual_collection_link))
+        conflict = next(conflicts_iterator, None)
 
         while conflict:
             conflict_content = json.loads(conflict['content'])
@@ -562,20 +562,20 @@ class ConflictWorker(object):
                       (conflict['resourceId'],
                        int(conflict_document['regionId'])))
                 del_client.DeleteConflict(conflict['_self'], options)
-            conflict = next(conflicts_iterartor, None)
+            conflict = next(conflicts_iterator, None)
 
     def validate_LWW_async(self, clients, conflict_document, has_delete_conflict):
         for client in clients:
             self.validate_LWW_async_internal(client, conflict_document, has_delete_conflict)
 
     def validate_LWW_async_internal(self, client, conflict_document, has_delete_conflict):
-        conflicts_iterartor =iter(client.ReadConflicts(self.lww_collection_link))
+        conflicts_iterator =iter(client.ReadConflicts(self.lww_collection_link))
 
-        conflict = next(conflicts_iterartor, None)
+        conflict = next(conflicts_iterator, None)
         conflict_count = 0
         while conflict:
             conflict_count += 1
-            conflict = next(conflicts_iterartor, None)
+            conflict = next(conflicts_iterator, None)
 
         if conflict_count > 0:
             self.trace_error("Found %d conflicts in the lww collection" % conflict_count)
@@ -587,7 +587,7 @@ class ConflictWorker(object):
                     options = {'partitionKey': conflict_document[0]['id']}
                     client.ReadItem(conflict_document[0]['_self'], options)
 
-                    self.trace_error("Delete conflict for document %s didnt win @ %s" %
+                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
@@ -595,7 +595,7 @@ class ConflictWorker(object):
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
                 except exceptions.CosmosHttpResponseError:
-                    self.trace_error("Delete conflict for document %s didnt win @ %s" %
+                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
@@ -633,13 +633,13 @@ class ConflictWorker(object):
             self.validate_UDP_async_internal(client, conflict_document, has_delete_conflict)
 
     def validate_UDP_async_internal(self, client, conflict_document, has_delete_conflict):
-        conflicts_iterartor = iter(client.ReadConflicts(self.udp_collection_link))
+        conflicts_iterator = iter(client.ReadConflicts(self.udp_collection_link))
 
-        conflict = next(conflicts_iterartor, None)
+        conflict = next(conflicts_iterator, None)
         conflict_count = 0
         while conflict:
             conflict_count += 1
-            conflict = next(conflicts_iterartor, None)
+            conflict = next(conflicts_iterator, None)
 
         if conflict_count > 0:
             self.trace_error("Found %d conflicts in the udp collection" % conflict_count)
@@ -651,7 +651,7 @@ class ConflictWorker(object):
                     options = {'partitionKey': conflict_document[0]['id']}
                     client.ReadItem(conflict_document[0]['_self'], options)
 
-                    self.trace_error("Delete conflict for document %s didnt win @ %s" %
+                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
                                      (conflict_document[0]['id'], client.ReadEndpoint))
 
                     time.sleep(0.5)
@@ -659,7 +659,7 @@ class ConflictWorker(object):
                     print("Delete conflict won @ %s" % client.ReadEndpoint)
                     return
                 except exceptions.CosmosHttpResponseError:
-                    self.trace_error("Delete conflict for document %s didnt win @ %s" %
+                    self.trace_error("Delete conflict for document %s didn't win @ %s" %
                                     (conflict_document[0]['id'], client.ReadEndpoint))
                     time.sleep(0.5)
 

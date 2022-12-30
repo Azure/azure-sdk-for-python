@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the aggregation type of the metric.
-    """
+    """the aggregation type of the metric."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -21,9 +20,9 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+
 class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The class of the metric.
-    """
+    """The class of the metric."""
 
     AVAILABILITY = "Availability"
     TRANSACTIONS = "Transactions"
@@ -31,9 +30,9 @@ class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LATENCY = "Latency"
     SATURATION = "Saturation"
 
+
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric.
-    """
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"
@@ -49,7 +48,9 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NANO_CORES = "NanoCores"
     BITS_PER_SECOND = "BitsPerSecond"
 
+
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     DATA = "Data"
     METADATA = "Metadata"

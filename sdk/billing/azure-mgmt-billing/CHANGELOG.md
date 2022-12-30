@@ -1,5 +1,17 @@
 # Release History
 
+## 6.1.0b1 (2022-11-01)
+
+### Features Added
+
+  - Model Agreement has a new parameter billing_profile_info
+  - Model BillingProfileListResult has a new parameter total_count
+  - Model BillingSubscription has a new parameter suspension_reasons
+  - Model InvoiceListResult has a new parameter total_count
+  - Model InvoiceSection has a new parameter tags
+  - Model ProductsListResult has a new parameter total_count
+  - Model TransactionListResult has a new parameter total_count
+
 ## 6.0.0 (2021-05-12)
 
 **Features**

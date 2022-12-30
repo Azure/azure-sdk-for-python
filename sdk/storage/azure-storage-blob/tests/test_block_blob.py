@@ -87,10 +87,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         actual_data = blob.download_blob()
         assert actual_data.readall() == expected_data
 
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
-
     #--Test cases for block blobs --------------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
@@ -147,8 +143,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_upload_blob_from_url_with_existing_blob(
-            self, storage_account_name, storage_account_key):
+    def test_upload_blob_from_url_with_existing_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         blob = self._create_blob(data=b"test data")
         # Act
@@ -174,8 +172,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_upload_blob_from_url_with_standard_tier_specified(
-            self, storage_account_name, storage_account_key):
+    def test_upload_blob_from_url_with_standard_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
         blob = self._create_blob()
@@ -196,6 +196,39 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self.get_resource_name("blobcopy")
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_tier = StandardBlobTier.Hot
+        new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+
+        new_blob_properties = new_blob.get_blob_properties()
+
+        # Assert
+        assert new_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_from_url_with_cold_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
+        blob = self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            container_name=self.container_name,
+            blob_name=blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob.blob_name, sas)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_tier = StandardBlobTier.Cold
         new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
 
         new_blob_properties = new_blob.get_blob_properties()
@@ -244,9 +277,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Act
         self._setup(storage_account_name, storage_account_key)
         source_blob = self._create_blob()
-        early_test_datetime = self._get_datetime_variable(
+        early_test_datetime = self.get_datetime_variable(
             variables, "early_test_dt", (datetime.utcnow() - timedelta(minutes=15)))
-        late_test_datetime = self._get_datetime_variable(
+        late_test_datetime = self.get_datetime_variable(
             variables, "late_test_dt", (datetime.utcnow() + timedelta(minutes=15)))
         sas = self.generate_sas(
             generate_blob_sas,
@@ -574,7 +607,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob.stage_block('3', b'CCC')
 
         # Act
-        expiry_time = self._get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
@@ -657,6 +690,30 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_client.stage_block('2', b'BBB')
         blob_client.stage_block('3', b'CCC')
         blob_tier = StandardBlobTier.Cool
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        blob_client.commit_block_list(block_list,
+                                      standard_blob_tier=blob_tier)
+
+        # Assert
+        blob_properties = blob_client.get_blob_properties()
+        assert blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_blob_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.stage_block('1', b'AAA')
+        blob_client.stage_block('2', b'BBB')
+        blob_client.stage_block('3', b'CCC')
+        blob_tier = StandardBlobTier.Cold
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1722,5 +1779,65 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_with_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cold
+        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_tier_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Cold)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
 #------------------------------------------------------------------------------

@@ -1,5 +1,40 @@
 # Release History
 
+## 1.26.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fix 'ClientSession' object has no attribute 'auto_decompress'  (thanks to @mghextreme for the contribution)
+
+### Other Changes
+
+- Add "x-ms-error-code" as secure header to log
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
+## 1.26.1 (2022-11-03)
+
+### Other Changes
+
+- Added example of RequestsTransport with custom session.  (thanks to @inirudebwoy for the contribution)   #26768
+- Added Python 3.11 support.
+
+## 1.26.0 (2022-10-06)
+
+### Other Changes
+
+- LRO polling will not wait anymore before doing the first status check  #26376
+- Added extra dependency for [aio]. pip install azure-core[aio] installs aiohttp too.
+
+## 1.25.1 (2022-09-01)
+
+### Bugs Fixed
+
+- Added @runtime_checkable to `TokenCredential` protocol definitions  #25187
+
 ## 1.25.0 (2022-08-04)
 
 Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
@@ -454,7 +489,7 @@ set the http logging policy of the config  #12218
 - Tracing: `azure.core.tracing.context.tracing_context.with_current_context` renamed to `azure.core.tracing.common.with_current_context`  #7252
 - Tracing: `link` renamed `link_from_headers`  and `link` takes now a string
 - Tracing: opencensus implementation has been moved to the package `azure-core-tracing-opencensus`
-- Some modules and classes that were importables from several differente places have been removed:
+- Some modules and classes that were importables from several different places have been removed:
 
    - `azure.core.HttpResponseError` is now only `azure.core.exceptions.HttpResponseError`
    - `azure.core.Configuration` is now only `azure.core.configuration.Configuration`

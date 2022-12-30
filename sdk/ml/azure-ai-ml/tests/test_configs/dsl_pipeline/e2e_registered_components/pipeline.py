@@ -1,18 +1,18 @@
-from azure.ai.ml import dsl, MLClient, Input
-from azure.ai.ml.entities import load_component
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities import Component as ComponentEntity
 from pathlib import Path
+
+from azure.ai.ml import Input, MLClient, dsl, load_component
+from azure.ai.ml.entities import Component as ComponentEntity
+from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline(
-        client: MLClient,
-        pipeline_samples_e2e_registered_train_components: ComponentEntity,
-        pipeline_samples_e2e_registered_score_components: ComponentEntity,
-        pipeline_samples_e2e_registered_eval_components: ComponentEntity,
-    ) -> PipelineJob:
+    client: MLClient,
+    pipeline_samples_e2e_registered_train_components: ComponentEntity,
+    pipeline_samples_e2e_registered_score_components: ComponentEntity,
+    pipeline_samples_e2e_registered_eval_components: ComponentEntity,
+) -> PipelineJob:
     # 1. Load component funcs
     train_func = load_component(
         client=client,
@@ -36,11 +36,11 @@ def generate_dsl_pipeline(
         description="E2E dummy train-score-eval pipeline with registered components",
     )
     def e2e_registered_components(
-            pipeline_job_training_input,
-            pipeline_job_test_input,
-            pipeline_job_training_max_epocs,
-            pipeline_job_training_learning_rate,
-            pipeline_job_learning_rate_schedule,
+        pipeline_job_training_input,
+        pipeline_job_test_input,
+        pipeline_job_training_max_epocs,
+        pipeline_job_training_learning_rate,
+        pipeline_job_learning_rate_schedule,
     ):
         train_job = train_func(
             training_data=pipeline_job_training_input,

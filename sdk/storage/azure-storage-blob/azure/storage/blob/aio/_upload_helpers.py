@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
+import asyncio
 from io import SEEK_SET, UnsupportedOperation
 from typing import TypeVar, TYPE_CHECKING
 
@@ -70,7 +71,10 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
-                data = data.read(length)
+                if asyncio.iscoroutinefunction(data.read):
+                    data = await data.read(length)
+                else:
+                    data = data.read(length)
                 if not isinstance(data, six.binary_type):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:

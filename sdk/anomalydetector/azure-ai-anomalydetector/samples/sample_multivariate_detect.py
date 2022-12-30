@@ -19,156 +19,175 @@ USAGE:
     2) ANOMALY_DETECTOR_ENDPOINT - the endpoint to your source Anomaly Detector resource.
 """
 
+import json
 import os
 import time
 from datetime import datetime, timezone
 
 from azure.ai.anomalydetector import AnomalyDetectorClient
-from azure.ai.anomalydetector.models import DetectionRequest, ModelInfo, LastDetectionRequest
-from azure.ai.anomalydetector.models import ModelStatus, DetectionStatus
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
+from azure.ai.anomalydetector.models import *
+
 
 class MultivariateSample:
-
-    def __init__(self, subscription_key, anomaly_detector_endpoint, data_source=None):
+    def __init__(self, subscription_key, anomaly_detector_endpoint):
         self.sub_key = subscription_key
         self.end_point = anomaly_detector_endpoint
 
         # Create an Anomaly Detector client
 
         # <client>
-        self.ad_client = AnomalyDetectorClient(AzureKeyCredential(self.sub_key), self.end_point)
+        self.ad_client = AnomalyDetectorClient(self.end_point, AzureKeyCredential(self.sub_key))
         # </client>
 
-        self.data_source = data_source
+    def list_models(self):
 
-    def train(self, start_time, end_time):
+        # List models
+        models = self.ad_client.list_multivariate_models(skip=0, top=10)
+        return list(models)
+
+    def train(self, body):
 
         # Number of models available now
-        model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
-        print("{:d} available models before training.".format(len(model_list)))
+        try:
+            model_list = self.list_models()
+            print("{:d} available models before training.".format(len(model_list)))
 
-        # Use sample data to train the model
-        print("Training new model...(it may take a few minutes)")
-        data_feed = ModelInfo(start_time=start_time, end_time=end_time, source=self.data_source)
-        response_header = \
-            self.ad_client.train_multivariate_model(data_feed, cls=lambda *args: [args[i] for i in range(len(args))])[
-                -1]
-        trained_model_id = response_header['Location'].split("/")[-1]
+            # Use sample data to train the model
+            print("Training new model...(it may take a few minutes)")
+            model = self.ad_client.train_multivariate_model(body)
+            trained_model_id = model.model_id
+            print("Training model id is {}".format(trained_model_id))
 
-        # Wait until the model is ready. It usually takes several minutes
-        model_status = None
+            ## Wait until the model is ready. It usually takes several minutes
+            model_status = None
+            model = None
 
-        while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
-            model_info = self.ad_client.get_multivariate_model(trained_model_id).model_info
-            model_status = model_info.status
-            time.sleep(1)
+            while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
+                model = self.ad_client.get_multivariate_model(trained_model_id)
+                print(model)
+                model_status = model.model_info.status
+                print("Model is {}".format(model_status))
+                time.sleep(30)
 
-        if model_status == ModelStatus.FAILED:
-            print("Creating model failed.")
-            print("Errors:")
-            if model_info.errors:
-                for error in model_info.errors:
-                    print("Error code: {}. Message: {}".format(error.code, error.message))
-            else:
-                print("None")
-            return None
+            if model_status == ModelStatus.FAILED:
+                print("Creating model failed.")
+                print("Errors:")
+                if len(model.model_info.errors) > 0:
+                    print(
+                        "Error code: {}. Message: {}".format(
+                            model.model_info.errors[0].code,
+                            model.model_info.errors[0].message,
+                        )
+                    )
+                else:
+                    print("None")
 
-        if model_status == ModelStatus.READY:
-            # Model list after training
-            new_model_list = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
+            if model_status == ModelStatus.READY:
+                # Model list after training
+                model_list = self.list_models()
 
-            print("Done.\n--------------------")
-            print("{:d} available models after training.".format(len(new_model_list)))
+                print("Done.\n--------------------")
+                print("{:d} available models after training.".format(len(model_list)))
 
-            # Return the latest model id
+                # Return the latest model id
             return trained_model_id
+        except HttpResponseError as e:
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
+        except Exception as e:
+            raise e
 
+        return None
 
-    def detect(self, model_id, start_time, end_time):
+    def batch_detect(self, model_id, body):
 
         # Detect anomaly in the same data source (but a different interval)
         try:
-            detection_req = DetectionRequest(source=self.data_source, start_time=start_time, end_time=end_time)
-            response_header = self.ad_client.detect_anomaly(model_id, detection_req,
-                                                            cls=lambda *args: [args[i] for i in range(len(args))])[-1]
-            result_id = response_header['Location'].split("/")[-1]
+            result = self.ad_client.detect_multivariate_batch_anomaly(model_id, body)
+            result_id = result.result_id
 
             # Get results (may need a few seconds)
-            r = self.ad_client.get_detection_result(result_id)
+            r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
-            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED:
-                r = self.ad_client.get_detection_result(result_id)
-                time.sleep(1)
+            while r.summary.status != MultivariateBatchDetectionStatus.READY and r.summary.status != MultivariateBatchDetectionStatus.FAILED:
+                r = self.ad_client.get_multivariate_batch_detection_result(result_id)
+                print("Detection is {}".format(r.summary.status))
+                time.sleep(15)
 
-            if r.summary.status == DetectionStatus.FAILED:
+            if r.summary.status == MultivariateBatchDetectionStatus.FAILED:
                 print("Detection failed.")
                 print("Errors:")
-                if r.summary.errors:
-                    for error in r.summary.errors:
-                        print("Error code: {}. Message: {}".format(error.code, error.message))
+                if len(r.summary.errors) > 0:
+                    print("Error code: {}. Message: {}".format(r.summary.errors[0].code, r.summary.errors[0].message))
                 else:
                     print("None")
                 return None
 
+            return r
+
         except HttpResponseError as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
         except Exception as e:
             raise e
 
-        return r
-
-    def export_model(self, model_id, model_path="model.zip"):
-
-        # Export the model
-        model_stream_generator = self.ad_client.export_model(model_id)
-        with open(model_path, "wb") as f_obj:
-            while True:
-                try:
-                    f_obj.write(next(model_stream_generator))
-                except StopIteration:
-                    break
-                except Exception as e:
-                    raise e
+        return None
 
     def delete_model(self, model_id):
 
-        # Delete the mdoel
+        # Delete the model
         self.ad_client.delete_multivariate_model(model_id)
-        model_list_after_delete = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
-        print("{:d} available models after deletion.".format(len(model_list_after_delete)))
+        model_list = self.list_models()
+        print("{:d} available models after deletion.".format(len(model_list)))
 
-
-    def last_detect(self, model_id, variables, detecting_points):
+    def last_detect(self, model_id, variables):
 
         # Detect anomaly by sync api
-        last_detection_req = LastDetectionRequest(variables=variables, detecting_points=detecting_points)
-        r = self.ad_client.last_detect_anomaly(model_id, last_detection_req)
+        r = self.ad_client.detect_multivariate_last_anomaly(model_id, variables)
         print("Get last detection result")
         return r
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
     ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
 
-    # *****************************
-    # Use your own data source here
-    # *****************************
-    data_source = "<YOUR OWN DATA SOURCE>"
-
-    # Create a new sample and client
-    sample = MultivariateSample(SUBSCRIPTION_KEY, ANOMALY_DETECTOR_ENDPOINT, data_source)
+    ## Create a new sample and client
+    sample = MultivariateSample(SUBSCRIPTION_KEY, ANOMALY_DETECTOR_ENDPOINT)
 
     # Train a new model
-    model_id = sample.train(datetime(2021, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
-                            datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc))
-    assert model_id is not None
+    time_format = "%Y-%m-%dT%H:%M:%SZ"
+    blob_url = "{Your Blob Url}"
+    train_body = ModelInfo(
+        data_source=blob_url,
+        start_time=datetime.strptime("2021-01-02T00:00:00Z", time_format),
+        end_time=datetime.strptime("2021-01-02T05:00:00Z", time_format),
+        data_schema=DataSchema.MULTI_TABLE,
+        display_name="sample",
+        sliding_window=200,
+        align_policy=AlignPolicy(
+            align_mode=AlignMode.OUTER,
+            fill_n_a_method=FillNAMethod.LINEAR,
+            padding_value=0,
+        ),
+    )
+    model_id = sample.train(train_body)
 
-    # Inference
-    result = sample.detect(model_id, datetime(2021, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
-                           datetime(2021, 1, 3, 0, 0, 0, tzinfo=timezone.utc))
+    # Batch Inference
+    batch_inference_body = MultivariateBatchDetectionOptions(
+        data_source=blob_url,
+        top_contributor_count=10,
+        start_time=datetime.strptime("2021-01-02T00:00:00Z", time_format),
+        end_time=datetime.strptime("2021-01-02T05:00:00Z", time_format),
+    )
+    result = sample.batch_detect(model_id, batch_inference_body)
     assert result is not None
 
     print("Result ID:\t", result.result_id)
@@ -177,38 +196,59 @@ if __name__ == '__main__':
 
     # See detailed inference result
     for r in result.results:
-        print("timestamp: {}, is_anomaly: {:<5}, anomaly score: {:.4f}, severity: {:.4f}, contributor count: {:<4d}".format(r.timestamp, str(r.value.is_anomaly), r.value.score, r.value.severity, len(r.value.contributors) if r.value.is_anomaly else 0))
-        if r.value.contributors:
-            for contributor in r.value.contributors:
-                print("\tcontributor variable: {:<10}, contributor score: {:.4f}".format(contributor.variable, contributor.contribution_score))
-
-    # Export model
-    sample.export_model(model_id, "model.zip")
-
-    # Delete model
-    sample.delete_model(model_id)
+        print(
+            "timestamp: {}, is_anomaly: {:<5}, anomaly score: {:.4f}, severity: {:.4f}, contributor count: {:<4d}".format(
+                r.timestamp,
+                r.value.is_anomaly,
+                r.value.score,
+                r.value.severity,
+                len(r.value.interpretation) if r.value.is_anomaly else 0,
+            )
+        )
+        if r.value.interpretation:
+            for contributor in r.value.interpretation:
+                print(
+                    "\tcontributor variable: {:<10}, contributor score: {:.4f}".format(
+                        contributor.variable, contributor.contribution_score
+                    )
+                )
 
     # *******************************************************************************************************************
     # use your own inference data sending to last detection api, you should define your own variables and detectingPoints
     # *****************************************************************************************************************
     # define "<YOUR OWN variables>"
-    variables = [
-        {
-            "name": "variables_name1",
-            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
-            "values": [0, 0, ...]
-        },
-        {
-            "name": "variables_name2",
-            "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
-            "values": [0, 0, ...]
-        }
-    ]
-    # define <YOUR OWN number of detectingPoints>"
-    detectingPoints = 10
+    # variables = [
+    #    {
+    #        "name": "variables_name1",
+    #        "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+    #        "values": [0, 0, ...]
+    #    },
+    #    {
+    #        "name": "variables_name2",
+    #        "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
+    #        "values": [0, 0, ...]
+    #    }
+    # ]
 
     # Last detection
-    last_detect_result = sample.last_detect(model_id, variables, detectingPoints)
+    with open("./sample_data/multivariate_sample_data.json") as f:
+        variables_data = json.load(f)
+
+    variables = []
+    for item in variables_data["variables"]:
+        variables.append(
+            VariableValues(
+                variable=item["variable"],
+                timestamps=item["timestamps"],
+                values=item["values"],
+            )
+        )
+
+    last_inference_body = MultivariateLastDetectionOptions(
+        variables=variables,
+        top_contributor_count=10,
+    )
+    last_detect_result = sample.last_detect(model_id, last_inference_body)
 
     assert last_detect_result is not None
 
@@ -216,3 +256,6 @@ if __name__ == '__main__':
     print("Variable States length:\t", len(last_detect_result.variable_states))
     print("Results:\t", last_detect_result.results)
     print("Results length:\t", len(last_detect_result.results))
+
+    # Delete model
+    sample.delete_model(model_id)

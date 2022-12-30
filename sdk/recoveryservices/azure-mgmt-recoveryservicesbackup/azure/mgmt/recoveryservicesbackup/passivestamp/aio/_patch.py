@@ -27,13 +27,17 @@
 from typing import Any, TYPE_CHECKING
 import importlib
 from .._patch import DUPLICATE_PARAMS_POLICY
-from ._recovery_services_backup_passive_client import RecoveryServicesBackupPassiveClient as RecoveryServicesBackupPassiveClientGenerated
+from ._recovery_services_backup_passive_client import (
+    RecoveryServicesBackupPassiveClient as RecoveryServicesBackupPassiveClientGenerated,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGenerated):
     __doc__ = RecoveryServicesBackupPassiveClientGenerated.__doc__
+
     def __init__(
         self,
         credential: "AsyncTokenCredential",
@@ -53,6 +57,7 @@ class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGen
             per_call_policies=per_call_policies,
             **kwargs
         )
+
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md

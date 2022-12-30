@@ -7,18 +7,15 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 ## _Disclaimer_
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-_Python 3.7 or later is required to use this package. For more details, please refer to [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)._
 
 # Usage
 
 
 To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-
-
  
 For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/?view=azure-python-preview)
 Code samples for this package can be found at [Key Vault Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
-Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+Additional code samples for different Azure services are available at [Samples Repo](https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/keyvault)
 
 
 # Provide Feedback

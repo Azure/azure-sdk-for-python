@@ -16,7 +16,11 @@ parser = argparse.ArgumentParser(
     epilog=_epilog,
 )
 parser.add_argument(
-    "--output", "-o", dest="output", default=".", help="Output dir, should be SDK repo folder. [default: %(default)s]"
+    "--output",
+    "-o",
+    dest="output",
+    default=".",
+    help="Output dir, should be SDK repo folder. [default: %(default)s]",
 )
 parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 parser.add_argument(
@@ -44,7 +48,11 @@ if not args.package_names and not args.jenkins:
 
 try:
     build_packaging(
-        args.output, os.environ.get("GH_TOKEN", None), args.jenkins, args.package_names, build_conf=args.build_conf
+        args.output,
+        os.environ.get("GH_TOKEN", None),
+        args.jenkins,
+        args.package_names,
+        build_conf=args.build_conf,
     )
 except Exception as err:
     if args.debug:

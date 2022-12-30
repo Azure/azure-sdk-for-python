@@ -9,12 +9,12 @@ from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(secret) resource for Azure Key Vault
@@ -31,9 +31,7 @@ from azure.identity import DefaultAzureCredential
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=VAULT_URL, credential=credential)

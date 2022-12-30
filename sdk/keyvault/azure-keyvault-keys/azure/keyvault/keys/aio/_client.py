@@ -25,22 +25,24 @@ from .. import (
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from azure.core.async_paging import AsyncItemPaged
-    from typing import Any, List, Optional, Union
+    from typing import Any, Optional, Union
     from .. import KeyType
 
 
 class KeyClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's keys.
 
-    :param str vault_url: URL of the vault the client will access
+    :param str vault_url: URL of the vault the client will access. This is also called the vault's "DNS Name".
+        You should validate that this URL references a valid Key Vault or Managed HSM resource.
+        See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion
-    :keyword transport: transport to use. Defaults to
-     :class:`~azure.core.pipeline.transport.AioHttpTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.AsyncHttpTransport
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault or Managed HSM domain. Defaults to True.
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -264,6 +266,44 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         hsm = kwargs.pop("hardware_protected", False)
         return await self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
+
+    @distributed_trace_async
+    async def create_okp_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+        """Create a new octet key pair or, if ``name`` is in use, create a new version of the key.
+
+        Requires the keys/create permission.
+
+        :param str name: The name for the new key.
+
+        :keyword curve: Elliptic curve name.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :keyword key_operations: Allowed key operations.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
+        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
+            Defaults to ``False``.
+        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
+        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword bool exportable: Whether the key can be exported.
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+
+        :returns: The created key
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example:
+            .. literalinclude:: ../tests/test_samples_keys_async.py
+                :start-after: [START create_okp_key]
+                :end-before: [END create_okp_key]
+                :language: python
+                :caption: Create an octet key pair (OKP)
+                :dedent: 8
+        """
+        hsm = kwargs.pop("hardware_protected", False)
+        return await self.create_key(name, key_type="OKP-HSM" if hsm else "OKP", **kwargs)
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
