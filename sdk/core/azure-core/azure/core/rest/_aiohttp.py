@@ -23,9 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import collections.abc
 import asyncio
 from itertools import groupby
+from typing import Iterator, cast
 from multidict import CIMultiDict
 from ._http_response_impl_async import (
     AsyncHttpResponseImpl,
@@ -57,22 +59,25 @@ class _ItemsView(collections.abc.ItemsView):
         return f"dict_items({list(self.__iter__())})"
 
 
-class _KeysView(collections.abc.KeysView):
+class _KeysView(collections.abc.KeysView[str]):
     def __init__(self, items):
         super().__init__(items)
         self._items = items
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         for key, _ in self._items:
             yield key
 
     def __contains__(self, key):
-        for k in self.__iter__():
-            if key.lower() == k.lower():
-                return True
+        try:
+            for k in self.__iter__():
+                if cast(str, key).lower() == k.lower():
+                    return True
+        except AttributeError:  # Catch "lower()" if key not a string
+            pass
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"dict_keys({list(self.__iter__())})"
 
 
@@ -179,8 +184,7 @@ class RestAioHttpTransportResponse(
         return state
 
     @property
-    def content(self):
-        # type: (...) -> bytes
+    def content(self) -> bytes:
         """Return the response's content in bytes."""
         if self._content is None:
             raise ResponseNotReadError(self)
