@@ -44,6 +44,7 @@ module_logger = logging.getLogger(__name__)
 
 class BlobStorageClient:
     def __init__(self, credential: str, account_url: str, container_name: Optional[str] = None):
+        self.account_name = account_url.split(".")[0].split("//")[1]
         self.service_client = BlobServiceClient(account_url=account_url, credential=credential)
         self.upload_to_root_container = None
         if container_name:
@@ -90,8 +91,9 @@ class BlobStorageClient:
             # warn if large file (> 100 MB)
             file_size, _ = get_directory_size(source)
             file_size_in_mb = file_size / 10**6
+            full_storage_url = f"https://{self.account_name}.blob.core.windows.net/{self.container}/{dest}"
             if file_size_in_mb > 100:
-                module_logger.warning(FILE_SIZE_WARNING)
+                module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
 
             # start upload
             if os.path.isdir(source):
@@ -212,6 +214,7 @@ class BlobStorageClient:
         """
         try:
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
+            download_size_in_mb = 0
             for item in my_list:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
@@ -221,6 +224,13 @@ class BlobStorageClient:
                     continue
 
                 blob_content = self.container_client.download_blob(item)
+
+                # check if total size of download has exceeded 100 MB
+                full_storage_url = f"https://{self.account_name}.blob.core.windows.net/{self.container}/{starts_with}"
+                download_size_in_mb += (blob_content.size / 10**6)
+                if download_size_in_mb > 100:
+                    module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
+
                 blob_content = blob_content.content_as_bytes(max_concurrency)
                 target_path.parent.mkdir(parents=True, exist_ok=True)
                 with target_path.open("wb") as file:

@@ -35,6 +35,7 @@ module_logger = logging.getLogger(__name__)
 class Gen2StorageClient:
     def __init__(self, credential: str, file_system: str, account_url: str):
         service_client = DataLakeServiceClient(account_url=account_url, credential=credential)
+        self.account_name = account_url.split(".")[0].split("//")[1]
         self.file_system = file_system
         self.file_system_client = service_client.get_file_system_client(file_system=file_system)
         try:
@@ -81,8 +82,9 @@ class Gen2StorageClient:
             # warn if large file (> 100 MB)
             file_size, _ = get_directory_size(source)
             file_size_in_mb = file_size / 10**6
+            full_storage_url = f"https://{self.account_name}.dfs.core.windows.net/{self.file_system}/{dest}"
             if file_size_in_mb > 100:
-                module_logger.warning(FILE_SIZE_WARNING)
+                module_logger.warning(FILE_SIZE_WARNING.format(source=source, destination=full_storage_url))
 
             # start upload
             self.directory_client = self.file_system_client.get_directory_client(asset_id)
@@ -166,6 +168,7 @@ class Gen2StorageClient:
         prefix `starts_with` to the destination folder."""
         try:
             mylist = self.file_system_client.get_paths(path=starts_with)
+            download_size_in_mb = 0
             for item in mylist:
                 file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
 
@@ -175,6 +178,13 @@ class Gen2StorageClient:
 
                 target_path = Path(destination, file_name)
                 file_client = self.file_system_client.get_file_client(item.name)
+
+                # check if total size of download has exceeded 100 MB
+                full_storage_url = f"https://{self.account_name}.dfs.core.windows.net/{self.file_system}/{starts_with}"
+                download_size_in_mb += (file_client.get_file_properties().size / 10**6)
+                if download_size_in_mb > 100:
+                    module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
+
                 file_content = file_client.download_file().readall()
                 try:
                     os.makedirs(str(target_path.parent), exist_ok=True)
