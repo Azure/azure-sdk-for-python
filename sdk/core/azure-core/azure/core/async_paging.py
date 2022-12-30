@@ -88,7 +88,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self._response = None
         self._current_page = None
 
-    async def __anext__(self):
+    async def __anext__(self) -> AsyncIterator[ReturnType]:
         if self.continuation_token is None and self._did_a_call_already:
             raise StopAsyncIteration("End of paging")
         try:
@@ -112,7 +112,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
 
 class AsyncItemPaged(AsyncIterator[ReturnType]):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Return an async iterator of items.
 
         args and kwargs will be passed to the AsyncPageIterator constructor directly,

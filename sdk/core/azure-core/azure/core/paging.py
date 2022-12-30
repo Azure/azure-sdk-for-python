@@ -32,6 +32,7 @@ from typing import (  # pylint: disable=unused-import
     Iterable,
     Tuple,
 )
+from typing_extensions import Self
 import logging
 
 from .exceptions import AzureError
@@ -64,7 +65,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._response: Optional[ResponseType] = None
         self._current_page: Optional[Iterable[ReturnType]] = None
 
-    def __iter__(self):
+    def __iter__(self) -> Self:
         """Return 'self'."""
         return self
 
@@ -86,7 +87,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
 
 class ItemPaged(Iterator[ReturnType]):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Return an iterator of items.
 
         args and kwargs will be passed to the PageIterator constructor directly,
@@ -114,12 +115,12 @@ class ItemPaged(Iterator[ReturnType]):
             continuation_token=continuation_token, *self._args, **self._kwargs
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<iterator object azure.core.paging.ItemPaged at {}>".format(
             hex(id(self))
         )
 
-    def __iter__(self):
+    def __iter__(self) -> Self:
         """Return 'self'."""
         return self
 

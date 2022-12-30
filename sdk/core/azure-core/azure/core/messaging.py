@@ -73,7 +73,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     """
 
     def __init__(
-        self, source: str, type: str, **kwargs  # pylint: disable=redefined-builtin
+        self, source: str, type: str, **kwargs: Any  # pylint: disable=redefined-builtin
     ) -> None:
         self.source: str = source
         self.type: str = type
@@ -86,7 +86,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         self.subject: Optional[str] = kwargs.pop("subject", None)
         self.data: Optional[object] = kwargs.pop("data", None)
 
-        self.extensions: Optional[dict] = kwargs.pop("extensions", None)
+        self.extensions: Optional[Dict[str, Any]] = kwargs.pop("extensions", None)
         if self.extensions:
             for key in self.extensions.keys():
                 if not key.islower() or not key.isalnum():
@@ -101,20 +101,20 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
                 + "Any extension attributes must be passed explicitly using extensions."
             )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "CloudEvent(source={}, type={}, specversion={}, id={}, time={})".format(
             self.source, self.type, self.specversion, self.id, self.time
         )[:1024]
 
     @classmethod
-    def from_dict(cls, event: dict) -> "CloudEvent":
+    def from_dict(cls, event: Dict[str, Any]) -> "CloudEvent":
         """
         Returns the deserialized CloudEvent object when a dict is provided.
         :param event: The dict representation of the event which needs to be deserialized.
         :type event: dict
         :rtype: CloudEvent
         """
-        kwargs: Dict[Any, Any] = {}
+        kwargs: Dict[str, Any] = {}
         reserved_attr = [
             "data",
             "data_base64",
