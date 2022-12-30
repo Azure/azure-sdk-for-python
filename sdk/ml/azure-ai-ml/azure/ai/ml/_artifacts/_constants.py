@@ -28,7 +28,7 @@ CHANGED_ASSET_PATH_MSG = (
 CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA = "The code asset is already linked to an asset."
 EMPTY_DIRECTORY_ERROR = "Directory {0} is empty. path or local_path must be a non-empty directory."
 FILE_SIZE_WARNING = (
-    "Your file exceeds 100 MB. If you experience low upload speeds or latency, we recommend using "
+    "Your file exceeds 100 MB. If you experience low speeds, latency, or broken connections, we recommend using "
     "the AzCopyv10 tool for this file transfer.\n\nExample: azcopy copy '{source}' '{destination}' "
     "\n\nSee https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
 )
