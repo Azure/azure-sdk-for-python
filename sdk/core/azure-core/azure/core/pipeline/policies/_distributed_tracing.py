@@ -116,7 +116,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     def end_span(
         self,
         request: "PipelineRequest",
-        response: Optional[HttpResponseType] = None,
+        response: Optional["HttpResponseType"] = None,
         exc_info: Optional[Tuple] = None,
     ) -> None:
         """Ends the span that is tracing the network and updates its status."""

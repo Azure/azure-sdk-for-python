@@ -106,7 +106,7 @@ class AbstractSpan(Protocol):
         """
 
     def set_http_attributes(
-        self, request: "HttpRequest", response: Optional[HttpResponseType] = None
+        self, request: "HttpRequest", response: Optional["HttpResponseType"] = None
     ) -> None:
         """
         Add correct attributes for a http client span.
@@ -131,7 +131,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, traceparent: str, attributes: Attributes = None) -> None:
+    def link(cls, traceparent: str, attributes: "Attributes" = None) -> None:
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
@@ -141,7 +141,7 @@ class AbstractSpan(Protocol):
 
     @classmethod
     def link_from_headers(
-        cls, headers: dict[str, str], attributes: Attributes = None
+        cls, headers: dict[str, str], attributes: "Attributes" = None
     ) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
@@ -175,7 +175,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def change_context(cls, span: AbstractSpan) -> ContextManager:
+    def change_context(cls, span: "AbstractSpan") -> ContextManager:
         """Change the context for the life of this context manager.
 
         :rtype: contextmanager
@@ -208,7 +208,7 @@ class HttpSpanMixin(_MIXIN_BASE):
     _HTTP_STATUS_CODE = "http.status_code"
 
     def set_http_attributes(
-        self, request: "HttpRequest", response: Optional[HttpResponseType] = None
+        self, request: "HttpRequest", response: Optional["HttpResponseType"] = None
     ) -> None:
         """
         Add correct attributes for a http client span.
@@ -240,6 +240,6 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: Attributes = None):
+    def __init__(self, headers: Dict[str, str], attributes: "Attributes" = None):
         self.headers = headers
         self.attributes = attributes

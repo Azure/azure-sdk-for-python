@@ -226,7 +226,7 @@ class LROPoller(Generic[PollingReturnType]):
         polling_method: PollingMethod[PollingReturnType],
         continuation_token: str,
         **kwargs
-    ) -> LROPoller[PollingReturnType]:
+    ) -> "LROPoller[PollingReturnType]":
         (
             client,
             initial_response,

@@ -84,7 +84,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: ResponseType) -> dict:
+def _as_json(response: "ResponseType") -> dict:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -97,7 +97,7 @@ def _as_json(response: ResponseType) -> dict:
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-def _raise_if_bad_http_status_and_method(response: ResponseType) -> None:
+def _raise_if_bad_http_status_and_method(response: "ResponseType") -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -114,7 +114,7 @@ def _raise_if_bad_http_status_and_method(response: ResponseType) -> None:
     )
 
 
-def _is_empty(response: ResponseType) -> bool:
+def _is_empty(response: "ResponseType") -> bool:
     """Check if response body contains meaningful content.
 
     :rtype: bool
@@ -134,7 +134,7 @@ class LongRunningOperation(ABC):
     """
 
     @abc.abstractmethod
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         raise NotImplementedError()
 
@@ -144,7 +144,7 @@ class LongRunningOperation(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -152,13 +152,13 @@ class LongRunningOperation(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Return the status string extracted from this response."""
         raise NotImplementedError()
 
     @abc.abstractmethod
     def get_final_get_url(
-        self, pipeline_response: PipelineResponseType
+        self, pipeline_response: "PipelineResponseType"
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -210,7 +210,7 @@ class OperationResourcePolling(LongRunningOperation):
         return self._async_url
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponseType
+        self, pipeline_response: "PipelineResponseType"
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -247,7 +247,7 @@ class OperationResourcePolling(LongRunningOperation):
 
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -261,14 +261,14 @@ class OperationResourcePolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response: ResponseType) -> None:
+    def _set_async_url_if_present(self, response: "ResponseType") -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
         if location_url:
             self._location_url = location_url
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process the latest status update retrieved from an "Operation-Location" header.
 
         :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
@@ -293,7 +293,7 @@ class LocationPolling(LongRunningOperation):
     def __init__(self):
         self._location_url = None
 
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         response = pipeline_response.http_response
         return "location" in response.headers
@@ -303,7 +303,7 @@ class LocationPolling(LongRunningOperation):
         return self._location_url
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponseType
+        self, pipeline_response: "PipelineResponseType"
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -311,7 +311,7 @@ class LocationPolling(LongRunningOperation):
         """
         return None
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -324,7 +324,7 @@ class LocationPolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse response: latest REST call response.
@@ -342,7 +342,7 @@ class StatusCheckPolling(LongRunningOperation):
     if not other polling are detected and status code is 2xx.
     """
 
-    def can_poll(self, pipeline_response: PipelineResponseType) -> bool:
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         return True
 
@@ -350,7 +350,7 @@ class StatusCheckPolling(LongRunningOperation):
         """Return the polling URL."""
         raise ValueError("This polling doesn't support polling")
 
-    def set_initial_status(self, pipeline_response: PipelineResponseType) -> str:
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running
         operation and set self.status attribute.
 
@@ -358,11 +358,11 @@ class StatusCheckPolling(LongRunningOperation):
         """
         return "Succeeded"
 
-    def get_status(self, pipeline_response: PipelineResponseType) -> str:
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         return "Succeeded"
 
     def get_final_get_url(
-        self, pipeline_response: PipelineResponseType
+        self, pipeline_response: "PipelineResponseType"
     ) -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
@@ -542,7 +542,9 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    def _parse_resource(self, pipeline_response: PipelineResponseType) -> Optional[Any]:
+    def _parse_resource(
+        self, pipeline_response: "PipelineResponseType"
+    ) -> Optional[Any]:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
         """

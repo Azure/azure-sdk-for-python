@@ -113,7 +113,7 @@ def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
 
 
 def _prepare_multipart_body_helper(
-    http_request: HTTPRequestType, content_index: int = 0
+    http_request: "HTTPRequestType", content_index: int = 0
 ) -> int:
     """Helper for prepare_multipart_body.
 
@@ -132,7 +132,7 @@ def _prepare_multipart_body_helper(
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests: List[HTTPRequestType] = http_request.multipart_mixed_info[0]
+    requests: List["HTTPRequestType"] = http_request.multipart_mixed_info[0]
     boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
@@ -185,7 +185,7 @@ class _HTTPSerializer(HTTPConnection, object):
         self.buffer += data
 
 
-def _serialize_request(http_request: HTTPRequestType) -> bytes:
+def _serialize_request(http_request: "HTTPRequestType") -> bytes:
     """Helper for serialize.
 
     Serialize a request using the application/http spec/

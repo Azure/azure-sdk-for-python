@@ -313,7 +313,7 @@ class HttpRequest:
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests: HttpRequest, **kwargs) -> None:
+    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -402,17 +402,17 @@ class _HttpResponseBase:
     def _decode_parts(
         self,
         message: Message,
-        http_response_type: Type[_HttpResponseBase],
+        http_response_type: Type["_HttpResponseBase"],
         requests: list[HttpRequest],
-    ) -> list[HttpResponse]:
+    ) -> list["HttpResponse"]:
         """Rebuild an HTTP response from pure string."""
         return _decode_parts_helper(
             self, message, http_response_type, requests, _deserialize_response
         )
 
     def _get_raw_parts(
-        self, http_response_type: Optional[Type[_HttpResponseBase]] = None
-    ) -> Iterator[HttpResponse]:
+        self, http_response_type: Optional[Type["_HttpResponseBase"]] = None
+    ) -> Iterator["HttpResponse"]:
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
@@ -449,7 +449,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :rtype: iterator[bytes]
         """
 
-    def parts(self) -> Iterator[HttpResponse]:
+    def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator[HttpResponse]
