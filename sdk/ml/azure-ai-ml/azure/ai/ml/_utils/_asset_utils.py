@@ -354,7 +354,7 @@ def traverse_directory(
 
         # check for symlinks to get their true paths
         if os.path.islink(path):
-            target_absolute_path = os.path.join(os.path.dirname(path), os.readlink(path))
+            target_absolute_path = os.path.join(working_dir, os.readlink(path))
             target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
 
             # follow and add child links if the directory is a symlink
