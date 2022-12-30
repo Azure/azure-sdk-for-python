@@ -28,7 +28,7 @@ class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
         pass
 
 
-class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

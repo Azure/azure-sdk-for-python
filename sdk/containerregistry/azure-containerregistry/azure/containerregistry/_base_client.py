@@ -6,6 +6,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, Optional
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
@@ -17,13 +18,13 @@ if TYPE_CHECKING:
 
 
 
-class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ContainerRegistryApiVersion(str, Enum, CaseInsensitiveEnumMeta):
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ContainerRegistryBaseClient(object):
     """Base class for ContainerRegistryClient
 
     :param str endpoint: Azure Container Registry endpoint
