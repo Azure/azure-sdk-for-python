@@ -3,10 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
+from json import JSONDecodeError
 from typing import Any, Union
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
-from json import JSONDecodeError
 
 
 PolymorphicConfigurationSetting = Union[
