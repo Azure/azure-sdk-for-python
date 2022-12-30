@@ -153,7 +153,12 @@ try:
                 return True
             if instr1 is None or instr2 is None:
                 return False
-            return instr1.opcode == instr2.opcode and instr1.arg == instr2.arg
+            if instr1.__class__ != instr2.__class__:
+                return False
+            if isinstance(instr1, Instr):
+                return instr1.opcode == instr2.opcode and instr1.arg == instr2.arg
+            # objects like Label and TryBegin
+            return True
 
         @classmethod
         def is_body_instruction(cls, instr: Instr) -> bool:

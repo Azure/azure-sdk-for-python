@@ -1,5 +1,12 @@
 # Release History
 
+## 4.0.0b6 (2022-12-30)
+
+### Features Added
+
+  - Model Database has a new parameter preferred_enclave_type
+  - Model DatabaseUpdate has a new parameter preferred_enclave_type
+
 ## 4.0.0b5 (2022-11-10)
 
 ### Features Added
