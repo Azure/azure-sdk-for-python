@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -64,7 +64,7 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
+    def exchange_aad_token_for_refresh_token(self, service: Optional[str] = None, **kwargs: Dict[str, Any]) -> str:
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
@@ -74,7 +74,7 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
         return refresh_token.refresh_token
 
     def exchange_refresh_token_for_access_token(
-        self, refresh_token: str, service: str = None, scope: str = None, **kwargs: Dict[str, Any]
+        self, refresh_token: str, service: Optional[str] = None, scope: Optional[str] = None, **kwargs: Dict[str, Any]
     ) -> str:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, **kwargs

@@ -27,7 +27,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Optional["AsyncTokenCredential"] = None,
+        credential: Optional[AsyncTokenCredential] = None,
         *,
         audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
         **kwargs: Any

@@ -9,9 +9,7 @@ from enum import Enum
 from typing import Dict, Any, List
 
 from ._generated.models import (
-    ArtifactArchitecture,
     ArtifactTagProperties as GeneratedArtifactTagProperties,
-    ArtifactOperatingSystem,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
@@ -19,6 +17,39 @@ from ._generated.models import (
     ManifestAttributesBase,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
+
+
+class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+    AMD64 = "amd64"
+    ARM = "arm"
+    ARM64 = "arm64"
+    I386 = "386"
+    MIPS = "mips"
+    MIPS64 = "mips64"
+    MIPS64LE = "mips64le"
+    MIPSLE = "mipsle"
+    PPC64 = "ppc64"
+    PPC64LE = "ppc64le"
+    RISCV64 = "riscv64"
+    S390X = "s390x"
+    WASM = "wasm"
+
+
+class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+    AIX = "aix"
+    ANDROID = "android"
+    DARWIN = "darwin"
+    DRAGONFLY = "dragonfly"
+    FREEBSD = "freebsd"
+    ILLUMOS = "illumos"
+    IOS = "ios"
+    JS = "js"
+    LINUX = "linux"
+    NETBSD = "netbsd"
+    OPENBSD = "openbsd"
+    PLAN9 = "plan9"
+    SOLARIS = "solaris"
+    WINDOWS = "windows"
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -245,7 +276,9 @@ class ArtifactTagProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedArtifactTagProperties, **kwargs: Dict[str, Any]) -> "ArtifactTagProperties":
+    def _from_generated(
+        cls, generated: GeneratedArtifactTagProperties, **kwargs: Dict[str, Any]
+    ) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
@@ -314,38 +347,3 @@ class DownloadManifestResult(object):
         self.manifest = kwargs.get("manifest")
         self.data = kwargs.get("data")
         self.digest = kwargs.get("digest")
-
-
-class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
-
-    AMD64 = "amd64"
-    ARM = "arm"
-    ARM64 = "arm64"
-    I386 = "386"
-    MIPS = "mips"
-    MIPS64 = "mips64"
-    MIPS64LE = "mips64le"
-    MIPSLE = "mipsle"
-    PPC64 = "ppc64"
-    PPC64LE = "ppc64le"
-    RISCV64 = "riscv64"
-    S390X = "s390x"
-    WASM = "wasm"
-
-
-class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
-
-    AIX = "aix"
-    ANDROID = "android"
-    DARWIN = "darwin"
-    DRAGONFLY = "dragonfly"
-    FREEBSD = "freebsd"
-    ILLUMOS = "illumos"
-    IOS = "ios"
-    JS = "js"
-    LINUX = "linux"
-    NETBSD = "netbsd"
-    OPENBSD = "openbsd"
-    PLAN9 = "plan9"
-    SOLARIS = "solaris"
-    WINDOWS = "windows"

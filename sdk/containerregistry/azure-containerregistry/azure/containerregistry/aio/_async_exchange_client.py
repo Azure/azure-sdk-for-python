@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -34,7 +35,7 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Dict[str, Any]) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -63,7 +64,7 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    async def exchange_aad_token_for_refresh_token(self, service: str = None, **kwargs: Dict[str, Any]) -> str:
+    async def exchange_aad_token_for_refresh_token(self, service: Optional[str] = None, **kwargs: Dict[str, Any]) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
@@ -71,7 +72,7 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
         return refresh_token.refresh_token
 
     async def exchange_refresh_token_for_access_token(
-        self, refresh_token: str, service: str = None, scope: str = None, **kwargs: Dict[str, Any]
+        self, refresh_token: str, service: Optional[str] = None, scope: Optional[str] = None, **kwargs: Dict[str, Any]
     ) -> str:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token, **kwargs

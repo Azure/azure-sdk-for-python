@@ -45,7 +45,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Optional["TokenCredential"] = None,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -859,7 +859,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs: Any) -> DownloadBlobResult | None:
+    def download_blob(self, repository: str, digest: str, **kwargs: Any) -> Union[DownloadBlobResult, None]:
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository

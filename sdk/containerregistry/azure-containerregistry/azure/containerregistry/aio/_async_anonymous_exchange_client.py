@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -46,10 +46,10 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
 
     async def exchange_refresh_token_for_access_token(
         self,
-        refresh_token: str = None,
-        service: str = None,
-        scope: str = None,
-        grant_type: str = TokenGrantType.PASSWORD,
+        refresh_token: Optional[str] = None,
+        service: Optional[str] = None,
+        scope: Optional[str] = None,
+        grant_type: Optional[str] = TokenGrantType.PASSWORD,
         **kwargs: Any
     ) -> str:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(

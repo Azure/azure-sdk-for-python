@@ -16,7 +16,7 @@ from .._helpers import _enforce_https
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenCredential, endpoint: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         if self._credential is None:
