@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar
+from typing import Any, Union, Generic, TypeVar, List
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -32,12 +32,12 @@ from ._tools_async import await_result as _await_result
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-ImplPoliciesType = list[
+ImplPoliciesType = List[
     AsyncHTTPPolicy[  # pylint: disable=unsubscriptable-object
         HTTPRequestType, AsyncHTTPResponseType
     ]
 ]
-AsyncPoliciesType = list[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
