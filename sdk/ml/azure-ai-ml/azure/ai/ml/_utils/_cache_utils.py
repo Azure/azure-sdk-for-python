@@ -84,19 +84,33 @@ class CachedNodeResolver(object):
     def __init__(
         self,
         resolver,
-        subscription_id: str,
-        resource_group_name: str,
-        workspace_name: str,
-        registry_name: str,
+        subscription_id: Optional[str],
+        resource_group_name: Optional[str],
+        workspace_name: Optional[str],
+        registry_name: Optional[str],
     ):
         self._resolver = resolver
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
+        self._client_hash = self._get_client_hash(
+            subscription_id, resource_group_name, workspace_name, registry_name
+        )
+
+    @staticmethod
+    def _get_client_hash(
+        subscription_id: Optional[str],
+        resource_group_name: Optional[str],
+        workspace_name: Optional[str],
+        registry_name: Optional[str],
+    ) -> str:
+        """Get a hash for used client.
+        Works for both workspace client and registry client.
+        """
         object_hash = hashlib.sha256()
         for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
             object_hash.update(str(s).encode("utf-8"))
-        self._workspace_hash = object_hash.hexdigest()
+        return object_hash.hexdigest()
 
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
@@ -156,15 +170,21 @@ class CachedNodeResolver(object):
             object_hash.update(content_hash.encode("utf-8"))
             return _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
 
-    @staticmethod
-    def get_on_disk_cache_base_dir() -> Path:
+    def get_on_disk_cache_base_dir(self) -> Path:
         """Get the base path for on disk cache."""
         from azure.ai.ml._version import VERSION
-        return Path(tempfile.gettempdir()).joinpath(".azureml", "azure-ai-ml", VERSION, "cache", "components")
+        return Path(tempfile.gettempdir()).joinpath(
+            ".azureml",
+            "azure-ai-ml",
+            VERSION,
+            "cache",
+            self._client_hash,
+            "components",
+        )
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
         """Get the on disk cache path for a component."""
-        return self.get_on_disk_cache_base_dir().joinpath(self._workspace_hash, on_disk_hash)
+        return self.get_on_disk_cache_base_dir().joinpath(on_disk_hash)
 
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache."""

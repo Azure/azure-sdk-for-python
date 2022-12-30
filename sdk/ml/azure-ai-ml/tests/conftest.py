@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import json
 import os
 import random
@@ -7,13 +8,15 @@ import shutil
 import time
 import uuid
 from datetime import datetime
+from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Union, Optional
 from unittest.mock import Mock, patch
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -524,8 +527,28 @@ def generate_component_hash(*args, **kwargs):
     return dict_hash
 
 
+def get_client_hash_with_request_node_name(
+    subscription_id: Optional[str],
+    resource_group_name: Optional[str],
+    workspace_name: Optional[str],
+    registry_name: Optional[str],
+    request_node_name: str
+):
+    """Generate a hash for the client."""
+    object_hash = hashlib.sha256()
+    for s in [
+        subscription_id,
+        resource_group_name,
+        workspace_name,
+        registry_name,
+        request_node_name,
+    ]:
+        object_hash.update(str(s).encode("utf-8"))
+    return object_hash.hexdigest()
+
+
 @pytest.fixture
-def mock_component_hash(mocker: MockFixture):
+def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     """Mock the component hash function.
 
     In playback mode, workspace information in returned arm_id will be normalized like this:
@@ -538,6 +561,9 @@ def mock_component_hash(mocker: MockFixture):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
+    # do nothing if in live mode and not recording
+    if is_live_and_not_recording():
+        return
 
     if is_live():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
@@ -546,29 +572,41 @@ def mock_component_hash(mocker: MockFixture):
             side_effect=generate_component_hash
         )
 
-    if is_live_and_not_recording():
-        return
+    # On-disk cache can't be shared among different tests in playback mode or when recording.
+    # When doing recording:
+    # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+    #    the cached result from tests run earlier, so we won't found enough recordings when
+    #    running tests in reversed order.
+    # In playback mode:
+    # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+    #   with the same on-disk hash.
+    # 2) Server-side may return different version for the same anonymous component in different workspace,
+    #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+    #   and test2 in workspace B, the version in recordings can be different.
+    # So we use different on-disk cache base directory for different tests and clear them before running tests.
+    # Given each test has a unique on-disk cache base directory, on-disk cache operations
+    # are thread-safe when concurrently running different tests.
+    mocker.patch(
+        "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
+        side_effect=partial(get_client_hash_with_request_node_name, request_node_name=request.node.name)
+    )
 
-    if not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_TESTS", False) in ["True", "true", True]:
-        # On-disk cache can't be shared among different tests in playback mode or when recording.
-        # When doing recording:
-        # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
-        #    the cached result from tests run earlier, so we won't found enough recordings when
-        #    running tests in reversed order.
-        # In playback mode:
-        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
-        #   with the same on-disk hash.
-        # 2) Server-side may return different version for the same anonymous component in different workspace,
-        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
-        #   and test2 in workspace B, the version in recordings can be different.
-        # So we need to clear on-disk cache for each test.
+    from azure.ai.ml._utils._cache_utils import CachedNodeResolver
 
-        # If you want to run tests concurrently, you can either:
-        # 1) Disable on-disk cache or
-        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_TESTS to True and acknowledge that you may meet
-        #   the issues mentioned above.
-        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
-        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
+    for client_fixture_name in ["client", "registry_client"]:
+        if client_fixture_name not in request.fixturenames:
+            continue
+        client: MLClient = request.getfixturevalue(client_fixture_name)
+        shutil.rmtree(
+            CachedNodeResolver(
+                resolver=None,
+                subscription_id=client.subscription_id,
+                resource_group_name=client.resource_group_name,
+                workspace_name=client.workspace_name,
+                registry_name=client._operation_scope.registry_name,
+            ).get_on_disk_cache_base_dir(),
+            ignore_errors=True
+        )
 
 
 @pytest.fixture
