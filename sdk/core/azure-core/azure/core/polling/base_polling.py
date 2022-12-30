@@ -27,7 +27,7 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable
+from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable, Dict
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -84,7 +84,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response: "ResponseType") -> dict:
+def _as_json(response: "ResponseType") -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.

@@ -34,6 +34,7 @@ from typing import (
     Optional,
     Union,
     MutableMapping,
+    Dict,
 )
 
 from ..utils._utils import case_insensitive_dict
@@ -97,7 +98,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         headers: Optional[MutableMapping[str, str]] = None,
         json: Any = None,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         **kwargs
     ):
@@ -128,7 +129,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
     def _set_body(
         self,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         json: Any = None,
     ) -> MutableMapping[str, str]:
