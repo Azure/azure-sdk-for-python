@@ -32,6 +32,9 @@ class ContainerRegistryBaseClient(object):
     :type credential: ~azure.identity.DefaultTokenCredential
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
+    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+     may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint, credential, **kwargs):

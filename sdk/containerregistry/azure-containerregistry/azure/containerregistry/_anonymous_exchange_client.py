@@ -22,6 +22,9 @@ class AnonymousACRExchangeClient(object):
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+     may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
