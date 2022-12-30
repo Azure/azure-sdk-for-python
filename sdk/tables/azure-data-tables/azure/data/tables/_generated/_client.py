@@ -76,7 +76,7 @@ class AzureTable:  # pylint: disable=client-accepts-api-version-keyword
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> 'AzureTable':
+    def __enter__(self) -> "AzureTable":
         self._client.__enter__()
         return self
 
