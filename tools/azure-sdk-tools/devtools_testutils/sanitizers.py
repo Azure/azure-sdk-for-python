@@ -597,8 +597,12 @@ def _send_reset_request(headers: dict) -> None:
 
     client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
     client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
+    tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    sub_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=sub_id, value="00000000-0000-0000-0000-000000000000")
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
