@@ -280,7 +280,7 @@ class Metrics(_serialization.Model):
         enabled: bool,
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
+        retention_policy: Optional[_models.RetentionPolicy] = None,
         **kwargs
     ):
         """
@@ -362,7 +362,7 @@ class SignedIdentifier(_serialization.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        access_policy: Optional["_models.AccessPolicy"] = None,
+        access_policy: Optional[_models.AccessPolicy] = None,
         **kwargs
     ):
         """
@@ -440,7 +440,7 @@ class TableQueryResponse(_serialization.Model):
         self,
         *,
         odata_metadata: Optional[str] = None,
-        value: Optional[List["_models.TableResponseProperties"]] = None,
+        value: Optional[List[_models.TableResponseProperties]] = None,
         **kwargs
     ):
         """
@@ -601,10 +601,10 @@ class TableServiceProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        logging: Optional["_models.Logging"] = None,
-        hour_metrics: Optional["_models.Metrics"] = None,
-        minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        logging: Optional[_models.Logging] = None,
+        hour_metrics: Optional[_models.Metrics] = None,
+        minute_metrics: Optional[_models.Metrics] = None,
+        cors: Optional[List[_models.CorsRule]] = None,
         **kwargs
     ):
         """
