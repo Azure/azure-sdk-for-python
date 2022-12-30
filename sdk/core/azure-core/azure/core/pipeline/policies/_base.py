@@ -39,7 +39,7 @@ from typing import (
     Dict,
 )
 
-from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
@@ -51,7 +51,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.

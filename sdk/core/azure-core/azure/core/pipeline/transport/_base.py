@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 from collections.abc import MutableMapping
+from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
@@ -51,10 +52,6 @@ from typing import (
 from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import (
-    ABC,
-    AbstractContextManager,
-)
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -117,7 +114,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
 
 
 class HttpTransport(
-    AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
+    AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]
 ):
     """An http sender ABC."""
 
