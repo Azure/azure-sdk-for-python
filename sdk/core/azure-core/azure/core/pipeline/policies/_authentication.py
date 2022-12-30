@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Optional  # pylint:disable=unused-import
+from typing import TYPE_CHECKING, Dict, Optional  # pylint:disable=unused-import
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -57,7 +57,7 @@ class _BearerTokenCredentialPolicyBase:
             )
 
     @staticmethod
-    def _update_headers(headers: dict[str, str], token: str) -> None:
+    def _update_headers(headers: Dict[str, str], token: str) -> None:
         """Updates the Authorization header with the bearer token.
 
         :param dict headers: The HTTP Request headers
