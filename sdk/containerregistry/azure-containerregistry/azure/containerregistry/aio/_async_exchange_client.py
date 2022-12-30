@@ -64,7 +64,9 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    async def exchange_aad_token_for_refresh_token(self, service: Optional[str] = None, **kwargs: Dict[str, Any]) -> str:
+    async def exchange_aad_token_for_refresh_token(
+        self, service: Optional[str] = None, **kwargs: Dict[str, Any]
+    ) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
