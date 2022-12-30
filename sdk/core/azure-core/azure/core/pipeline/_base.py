@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, Union, Any, List
+from typing import Generic, TypeVar, Union, Any, List, Dict
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -156,7 +156,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         requests: list[HTTPRequestType] = multipart_mixed_info[0]
         policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
-        pipeline_options: dict[str, Any] = multipart_mixed_info[3]
+        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         # Apply on_requests concurrently to all requests
         import concurrent.futures

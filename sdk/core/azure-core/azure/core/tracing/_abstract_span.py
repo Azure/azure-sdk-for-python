@@ -90,7 +90,7 @@ class AbstractSpan(Protocol):
     def finish(self) -> None:
         """Set the end time for a span."""
 
-    def to_header(self) -> dict[str, str]:
+    def to_header(self) -> Dict[str, str]:
         """
         Returns a dictionary with the header labels and values.
         """

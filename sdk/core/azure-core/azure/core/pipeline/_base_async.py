@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar, List
+from typing import Any, Union, Generic, TypeVar, List, Dict
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -156,7 +156,7 @@ class AsyncPipeline(
 
         requests: list[HTTPRequestType] = multipart_mixed_info[0]
         policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
-        pipeline_options: dict[str, Any] = multipart_mixed_info[3]
+        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         async def prepare_requests(req):
             if req.multipart_mixed_info:
