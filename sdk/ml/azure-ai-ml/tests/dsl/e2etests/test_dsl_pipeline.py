@@ -1451,8 +1451,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         mpi_func = load_component(source=str(components_dir / "helloworld_component_mpi.yml"))
         assert mpi_func._validate().passed
 
+        invalid_component_name = "_invalid"
+
         # name of anonymous component in pipeline job should be overwritten
-        mpi_func.name = "_invalid"
+        mpi_func.name = invalid_component_name
         assert not mpi_func._validate().passed
 
         @dsl.pipeline(
@@ -1476,6 +1478,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_job: PipelineJob = client.jobs.create_or_update(
             pipeline, experiment_name=experiment_name, continue_on_step_failure=True
         )
+        # Theoretically, we should keep the invalid name in request body,
+        # as component name valid in azureml-components maybe invalid in azure-ai-ml.
+        # So we leave this validation to server-side for now.
+        assert mpi_func._to_rest_object().properties.component_spec["name"] == invalid_component_name
+
         # continue_on_step_failure can't be set in create_or_update
         assert created_job.settings.continue_on_step_failure is False
         assert created_job.jobs["hello_world_component_mpi"].component.startswith(ANONYMOUS_COMPONENT_NAME)

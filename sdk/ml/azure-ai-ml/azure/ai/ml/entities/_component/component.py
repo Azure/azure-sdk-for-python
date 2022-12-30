@@ -425,6 +425,16 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
+    def _validate(self, raise_error=False) -> MutableValidationResult:
+        origin_name = self.name
+        # skip name validation for anonymous component as ANONYMOUS_COMPONENT_NAME will be used in component creation
+        if self._is_anonymous:
+            self.name = ANONYMOUS_COMPONENT_NAME
+        try:
+            return super()._validate(raise_error)
+        finally:
+            self.name = origin_name
+
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
         # If private features are enable and component has code value of type str we need to check
