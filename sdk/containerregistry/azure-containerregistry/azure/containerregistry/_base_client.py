@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 
 
-class ContainerRegistryApiVersion(str, Enum, CaseInsensitiveEnumMeta):
+class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""

@@ -344,7 +344,7 @@ class DownloadManifestResult(object):
         self.digest = kwargs.get("digest")
 
 
-class ArtifactArchitecture(str, Enum, CaseInsensitiveEnumMeta):
+class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -361,7 +361,7 @@ class ArtifactArchitecture(str, Enum, CaseInsensitiveEnumMeta):
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum, CaseInsensitiveEnumMeta):
+class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AIX = "aix"
     ANDROID = "android"
