@@ -26,7 +26,6 @@ _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
-_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
 # Storage table validation regex breakdown:
 # ^ Match start of string.
@@ -51,15 +50,8 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if len(ex.args) > 0:
         msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
+    return desired_type(msg)
     # TODO: In the future we will log the trace
-    return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
 def _validate_storage_tablename(table_name):

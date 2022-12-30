@@ -1,7 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""Contains entities and SDK objects for Azure Machine Learning SDKv2.
 
+Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
+model, runs and run output/logging etc.
+"""
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
@@ -49,9 +53,14 @@ from ._deployment.batch_job import BatchJob
 from ._deployment.code_configuration import CodeConfiguration
 from ._deployment.container_resource_settings import ResourceSettings
 from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
-from ._deployment.online_deployment import KubernetesOnlineDeployment, ManagedOnlineDeployment, OnlineDeployment
+from ._deployment.online_deployment import (
+    Deployment,
+    KubernetesOnlineDeployment,
+    ManagedOnlineDeployment,
+    OnlineDeployment,
+)
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings, OnlineScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import (
@@ -142,6 +151,7 @@ __all__ = [
     "InputPort",
     "BatchEndpoint",
     "OnlineEndpoint",
+    "Deployment",
     "BatchDeployment",
     "BatchJob",
     "CodeConfiguration",
@@ -153,6 +163,7 @@ __all__ = [
     "KubernetesOnlineDeployment",
     "ManagedOnlineDeployment",
     "OnlineRequestSettings",
+    "OnlineScaleSettings",
     "ProbeSettings",
     "BatchRetrySettings",
     "RetrySettings",

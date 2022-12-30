@@ -24,6 +24,7 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
     CommonYamlFields,
+    AzureMLResourceType,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
@@ -36,6 +37,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult, SchemaVali
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from .code import ComponentIgnoreFile
+from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -497,12 +499,32 @@ class Component(
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
         if not hasattr(self, "code"):
-            raise ValueError(f"{self.__class__} does not have attribute code.")
+            yield None
+            return
+
         code = getattr(self, "code")
-        if code is None:
+
+        if is_ARM_id_for_resource(code, AzureMLResourceType.CODE) or is_registry_id_for_resource(code):
+            # arm id can be passed directly
+            yield None
+        elif isinstance(code, Code):
+            # Code object & registry id need to be resolved into arm id
+            # note that:
+            # 1. Code & CodeOperation are not public for now
+            # 2. AnonymousCodeSchema is not supported in Component for now
+            # So isinstance(component.code, Code) will always be false, or an exception will be raised
+            # in validation stage.
+            yield code
+        elif isinstance(code, str) and code.startswith("git+"):
+            # git also need to be resolved into arm id
+            yield Code(path=code, is_remote=True)
+        elif code is None:
             # Hack: when code not specified, we generated a file which contains
             # COMPONENT_PLACEHOLDER as code
             # This hack was introduced because job does not allow running component without a
