@@ -31,7 +31,7 @@ FILE_SIZE_WARNING = (
     "Your file exceeds 100 MB. If you experience low speeds, latency, or broken connections, we recommend using "
     "the AzCopyv10 tool for this file transfer.\n\nExample: azcopy copy '{source}' '{destination}' "
     "\n\nSee https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
-)
+)  # cspell:disable-line
 INVALID_MLTABLE_METADATA_SCHEMA_MSG = "Invalid MLTable metadata schema"
 INVALID_MLTABLE_METADATA_SCHEMA_ERROR = (
     "{jsonSchemaErrorPath}{jsonSchemaMessage}\n{invalidMLTableMsg}:\n{invalidSchemaSnippet}"
