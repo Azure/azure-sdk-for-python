@@ -85,6 +85,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
         return iter(self._current_page)
 
+    next = __next__  # Python 2 compatibility. Can't be removed as some people are using ".next()" even in Py3
+
 
 class ItemPaged(Iterator[ReturnType]):
     def __init__(self, *args: Any, **kwargs: Any):
@@ -128,3 +130,5 @@ class ItemPaged(Iterator[ReturnType]):
         if self._page_iterator is None:
             self._page_iterator = itertools.chain.from_iterable(self.by_page())
         return next(self._page_iterator)
+
+    next = __next__  # Python 2 compatibility. Can't be removed as some people are using ".next()" even in Py3
