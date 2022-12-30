@@ -3,16 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, List, Any
+from typing import Dict, List, Any
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
 from .._generated.models._container_registry_enums import TokenGrantType
 from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AnonymousACRExchangeClient(object):
@@ -25,7 +22,7 @@ class AnonymousACRExchangeClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
         self, endpoint: str, **kwargs: Dict[str, Any]
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
