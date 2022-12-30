@@ -437,6 +437,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storage msrest>=0.7.1
 #override azure-mgmt-guestconfig typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-batch msrest>=0.7.1
+#override azure-mgmt-securitydevops typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-appconfiguration msrest>=0.7.1
 #override azure-mgmt-dnsresolver msrest>=0.7.1
 #override azure-mgmt-devtestlabs typing-extensions>=4.3.0; python_version<'3.8.0'
