@@ -8,6 +8,8 @@ from types import FunctionType, MethodType, CodeType
 from typing import Any, List, Optional, Union, Tuple, Dict
 import logging
 
+from azure.ai.ml._utils.utils import is_private_preview_enabled
+
 logger = logging.getLogger(__name__)
 
 
@@ -293,4 +295,6 @@ def get_outputs_and_locals(func, _all_kwargs):
     :return: A tuple of outputs and locals.
     :rtype: typing.Tuple[typing.Dict, typing.Dict]
     """
-    return PersistentLocalsFunctionBytecodeBuilder().call(func, _all_kwargs)
+    if is_private_preview_enabled():
+        return PersistentLocalsFunctionBytecodeBuilder().call(func, _all_kwargs)
+    return PersistentLocalsFunctionProfilerBuilder().call(func, _all_kwargs)
