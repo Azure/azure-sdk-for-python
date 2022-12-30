@@ -36,7 +36,8 @@ from typing import (
     Any,
     Optional,
     Awaitable,
-)  # pylint: disable=unused-import
+    Dict,
+)
 
 from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
 
@@ -146,7 +147,7 @@ class RequestHistory:
         http_request: HTTPRequestType,
         http_response: Optional[HTTPResponseType] = None,
         error: Exception = None,
-        context: Optional[dict[str, Any]] = None,
+        context: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response

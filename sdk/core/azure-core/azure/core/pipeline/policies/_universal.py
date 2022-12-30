@@ -44,6 +44,7 @@ from typing import (
     Union,
     Optional,
     AnyStr,
+    Dict,
 )
 import urllib
 
@@ -84,7 +85,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(
-        self, base_headers: dict[str, str] = None, **kwargs
+        self, base_headers: Dict[str, str] = None, **kwargs
     ) -> None:  # pylint: disable=super-init-not-called
         self._headers = base_headers or {}
         self._headers.update(kwargs.pop("headers", {}))

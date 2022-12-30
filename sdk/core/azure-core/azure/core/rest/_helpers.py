@@ -39,6 +39,7 @@ from typing import (
     MutableMapping,
     AsyncIterable,
     cast,
+    Dict,
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -143,7 +144,7 @@ def set_content_body(
     )
 
 
-def set_json_body(json: Any) -> Tuple[dict[str, str], Any]:
+def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
     headers = {"Content-Type": "application/json"}
     if hasattr(json, "read"):
         content_headers, body = set_content_body(json)

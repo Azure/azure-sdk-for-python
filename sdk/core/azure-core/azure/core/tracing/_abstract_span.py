@@ -12,6 +12,7 @@ from typing import (
     Union,
     Callable,
     ContextManager,
+    Dict,
 )
 
 if TYPE_CHECKING:
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
         Sequence[int],
         Sequence[float],
     ]
-    Attributes = Optional[dict[str, AttributeValue]]
+    Attributes = Optional[Dict[str, AttributeValue]]
 
 try:
     from typing_extensions import Protocol
@@ -239,6 +240,6 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: dict[str, str], attributes: Attributes = None):
+    def __init__(self, headers: Dict[str, str], attributes: Attributes = None):
         self.headers = headers
         self.attributes = attributes

@@ -44,6 +44,7 @@ from typing import (
     Tuple,
     Iterator,
     Type,
+    Dict,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -183,7 +184,7 @@ class HttpRequest:
             return copy.copy(self)
 
     @property
-    def query(self) -> dict[str, str]:
+    def query(self) -> Dict[str, str]:
         """The query parameters of the request as a dict.
 
         :rtype: dict[str, str]
@@ -217,7 +218,7 @@ class HttpRequest:
         """
         return _format_data_helper(data)
 
-    def format_parameters(self, params: dict[str, str]) -> None:
+    def format_parameters(self, params: Dict[str, str]) -> None:
         """Format parameters into a valid query string.
         It's assumed all parameters have already been quoted as
         valid URL strings.

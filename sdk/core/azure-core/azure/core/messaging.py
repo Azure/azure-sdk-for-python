@@ -7,7 +7,7 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
-from typing import cast, Union, Any, Optional
+from typing import cast, Union, Any, Optional, Dict
 from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
@@ -114,7 +114,7 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         :type event: dict
         :rtype: CloudEvent
         """
-        kwargs: dict[Any, Any] = {}
+        kwargs: Dict[Any, Any] = {}
         reserved_attr = [
             "data",
             "data_base64",

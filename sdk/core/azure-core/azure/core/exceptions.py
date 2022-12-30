@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Optional, Union, Type, TYPE_CHECKING
+from typing import Callable, Any, Optional, Union, Type, List, Dict, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -173,14 +173,14 @@ class ODataV4Format:
         self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
 
         # details is recursive of this very format
-        self.details: list[ODataV4Format] = []
+        self.details: List[ODataV4Format] = []
         for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        self.innererror: dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
+        self.innererror: Dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
 
     @property
     def error(self):
@@ -412,7 +412,7 @@ class ODataV4Error(HttpResponseError):
 
     def __init__(self, response: "_HttpResponseBase", **kwargs):
         # Ensure field are declared, whatever can happen afterwards
-        self.odata_json: Optional[dict[str, Any]] = None
+        self.odata_json: Optional[Dict[str, Any]] = None
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
@@ -423,8 +423,8 @@ class ODataV4Error(HttpResponseError):
         self.code: Optional[str] = None
         self.message: Optional[str] = kwargs.get("message", odata_message)
         self.target: Optional[str] = None
-        self.details: Optional[list[Any]] = []
-        self.innererror: Optional[dict[str, Any]] = {}
+        self.details: Optional[List[Any]] = []
+        self.innererror: Optional[Dict[str, Any]] = {}
 
         if self.message and "message" not in kwargs:
             kwargs["message"] = self.message

@@ -31,7 +31,7 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Callable, cast, Union, TYPE_CHECKING
+from typing import Type, Optional, Callable, cast, Union, Dict, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
 if TYPE_CHECKING:
@@ -137,7 +137,7 @@ def get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpa
     return get_opencensus_span()
 
 
-_tracing_implementation_dict: dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
+_tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
     "opencensus": get_opencensus_span
 }
 
