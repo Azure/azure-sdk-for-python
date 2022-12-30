@@ -36,6 +36,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -773,6 +774,11 @@ def is_private_preview_enabled():
 
 def is_on_disk_cache_enabled():
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True] \
+        and is_private_preview_enabled()
+
+
+def is_concurrent_component_registration_enabled():
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True] \
         and is_private_preview_enabled()
 
 

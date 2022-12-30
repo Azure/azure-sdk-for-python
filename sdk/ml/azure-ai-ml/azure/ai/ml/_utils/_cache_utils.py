@@ -7,13 +7,15 @@ import os.path
 import tempfile
 import threading
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 from typing import List, Dict, Optional
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
-from azure.ai.ml._utils.utils import is_on_disk_cache_enabled
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled
+from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 
@@ -50,11 +52,11 @@ class CachedNodeResolver(object):
           state of nodes, e.g., hash of its inner component.
     2) self._resolve_component is only called concurrently on independent components
         a) we have used an in-memory component hash to deduplicate components to resolve first;
-        b) dependent components have been resolved before as nodes are registered & resolved
+        b) dependent components have been resolved before registered as nodes are registered & resolved
           layer by layer;
-        c) dependent code will never be an instance, so it won't cause cache hit issue.
-        d) resolution of potential shared dependencies other than code and components are thread-safe
-          as they do not involve further dependency resolution. However, it's still a good practice to
+        c) dependent code will never be an instance, so it won't cause cache hit issue described in d;
+        d) resolution of potential shared dependencies (1 instance used in 2 components) other than components
+          are thread-safe as they do not involve further dependency resolution. However, it's still a good practice to
           resolve them before calling self.register_node_for_lazy_resolution as it will impact cache hit rate.
           For example, if:
           node1.component, node2.component = Component(environment=env1, ...), Component(environment=env1, ...)
@@ -111,6 +113,33 @@ class CachedNodeResolver(object):
         for s in [subscription_id, resource_group_name, workspace_name, registry_name]:
             object_hash.update(str(s).encode("utf-8"))
         return object_hash.hexdigest()
+
+    @staticmethod
+    def _get_component_registration_max_workers():
+        """Get the max workers for component registration.
+
+        Before Python 3.8, the default max_worker is the number of processors multiplied by 5.
+        It may send a large number of the uploading snapshot requests that will occur remote refuses requests.
+        In order to avoid retrying the upload requests, max_worker will use the default value in Python 3.8,
+        min(32, os.cpu_count + 4).
+
+        1 risk is that, asset_utils will create a new thread pool to upload files in subprocesses, which may cause
+        the number of threads exceed the max_worker.
+        """
+        default_max_workers = min(32, (os.cpu_count() or 1) + 4)
+        try:
+            max_workers = int(os.environ.get(AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS, default_max_workers))
+        except ValueError:
+            logger.info(
+                "Environment variable %s with value %s set but failed to parse. "
+                "Use the default max_worker %s as registration thread pool max_worker."
+                "Please reset the value to an integer.",
+                AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
+                os.environ.get(AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS),
+                default_max_workers
+            )
+            max_workers = default_max_workers
+        return max_workers
 
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
@@ -207,17 +236,18 @@ class CachedNodeResolver(object):
         """Resolve all components to resolve and save the results in cache.
         """
         _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
+        _map_func = partial(resolver, azureml_type=AzureMLResourceType.COMPONENT)
 
-        # TODO: do concurrent resolution controlled by an environment variable here
-        # given deduplication has already been done, we can safely assume that there is no
-        # conflict in concurrent local cache access
-        # multiprocessing need to dump input objects before starting a new process, which will fail
-        # on _AttrDict for now, so put off the concurrent resolution
-        for cache_content in cache_contents_to_resolve:
-            cache_content.arm_id = resolver(
-                cache_content.component_ref,
-                azureml_type=AzureMLResourceType.COMPONENT
-            )
+        if len(_components) > 1 and is_concurrent_component_registration_enabled():
+            # given deduplication has already been done, we can safely assume that there is no
+            # conflict in concurrent local cache access
+            with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
+                resolution_results = executor.map(_map_func, _components)
+        else:
+            resolution_results = map(_map_func, _components)
+
+        for cache_content, resolution_results in zip(cache_contents_to_resolve, resolution_results):
+            cache_content.arm_id = resolution_results
             if is_on_disk_cache_enabled():
                 self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
 
