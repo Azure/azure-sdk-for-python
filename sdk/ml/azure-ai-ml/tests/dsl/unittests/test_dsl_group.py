@@ -1,4 +1,3 @@
-import logging
 import sys
 from enum import Enum as PyEnum
 from io import StringIO
@@ -12,12 +11,15 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_group
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
-from azure.ai.ml.exceptions import UnexpectedAttributeError, UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.usefixtures(
+    "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features"
+)
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -405,14 +407,14 @@ class TestDSLGroup:
         sys.stdout = stdout_str_IO = StringIO()
         help(MixedGroup.__init__)
         assert (
-            "__init__(self,*,"
-            "int_param:int=None,"
-            "str_default_param:str='test',"
-            "str_param:str=None,"
-            "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
-            "optional_int_param:int=5,"
-            "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
-            "->None" in stdout_str_IO.getvalue().replace(" ", "")
+                "__init__(self,*,"
+                "int_param:int=None,"
+                "str_default_param:str='test',"
+                "str_param:str=None,"
+                "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
+                "optional_int_param:int=5,"
+                "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
+                "->None" in stdout_str_IO.getvalue().replace(" ", "")
         )
         sys.stdout = original_out
 
@@ -421,13 +423,13 @@ class TestDSLGroup:
             int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")
         )
         assert (
-            "MixedGroup("
-            "int_param=1,"
-            "str_default_param='test',"
-            "str_param='test-str',"
-            "input_folder={'type':'uri_folder','path':'input'},"
-            "optional_int_param=5,"
-            "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
+                "MixedGroup("
+                "int_param=1,"
+                "str_default_param='test',"
+                "str_param='test-str',"
+                "input_folder={'type':'uri_folder','path':'input'},"
+                "optional_int_param=5,"
+                "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
         )
 
         # __set_attribute__ func test
@@ -505,3 +507,141 @@ class TestDSLGroup:
                                                *common_omit_fields)
         expected_pipeline_job2 = {}
         assert rest_pipeline_job == expected_pipeline_job2
+
+    def test_group_outputs_return(self):
+        @group
+        class PortOutputs:
+            output1: Output(type="uri_folder")
+            output2: Output(type="uri_folder")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @pipeline
+        def my_pipeline_dict_return() -> PortOutputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            node2 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return {
+                "output1": node1.outputs.component_out_path,
+                "output2": node2.outputs.component_out_path
+            }
+
+        pipeline_job1 = my_pipeline_dict_return()
+
+        @pipeline
+        def my_pipeline() -> PortOutputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            node2 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return PortOutputs(output1=node1.outputs.component_out_path, output2=node2.outputs.component_out_path)
+
+        pipeline_job2 = my_pipeline()
+
+        assert pipeline_job1._to_dict()["outputs"] == pipeline_job2._to_dict()["outputs"]
+
+    def test_group_outputs_validation(self):
+        # test raise validation error if mismatch
+        @group
+        class PortOutputs:
+            output1: Output(type="uri_folder")
+            output2: Output(type="uri_folder")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @pipeline
+        def pipeline_count_mismatch() -> PortOutputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return PortOutputs(output1=node1.outputs.component_out_path)
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_count_mismatch()
+        assert "Unmatched outputs between actual pipeline output and output in annotation" in str(e.value)
+
+        @group
+        class SinglePortOutput:
+            output1: Output(type="mltable")
+
+        @pipeline
+        def pipeline_type_mismatch() -> SinglePortOutput:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=Input(path="/a/path/on/ds"))
+            return SinglePortOutput(output1=node1.outputs.component_out_path)
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_type_mismatch()
+
+        assert "{\'type\': \'uri_folder\'} != annotation output {\'type\': \'mltable\'}" in str(e.value)
+
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @group
+        class PrimitiveOutputs1:
+            output1: Output(type="boolean", is_control=True)
+            output2: Output(type="boolean", is_control=True)
+            output3: Output(type="boolean")
+            output: Output(type="boolean")
+
+        @pipeline
+        def pipeline_is_control_mismatch() -> PrimitiveOutputs1:
+            node1 = basic_component()
+            return PrimitiveOutputs1(
+                output1=node1.outputs.output1,
+                output2=node1.outputs.output2,
+                output3=node1.outputs.output3,
+                output=node1.outputs.output,
+            )
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_is_control_mismatch()
+
+        assert "{\'type\': \'boolean\', 'is_control': True} != annotation output" in str(e.value)
+
+    def test_group_outputs_unsupported_annotation(self):
+        @group
+        class SubOutputs:
+            output1: Output(type="uri_folder")
+            output2: Output(type="uri_folder")
+
+        @group
+        class ParentOutputs:
+            output1: SubOutputs
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline() -> ParentOutputs:
+                node1 = hello_world_component_func(component_in_number=1)
+                return {
+                    "output1": node1.outputs.component_out_path,
+                }
+        assert "Nested group annotation is not supported in pipeline output." in str(e.value)
+
+
+
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class GroupOutputs:
+                output1: PipelineInput
+        assert "Unsupported annotation type" in str(e.value)
+
+    def test_input_in_output_group(self):
+        @group
+        class Outputs:
+            output1: Input(type="uri_folder")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @pipeline
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job._to_dict()["outputs"] == {'output1': {'type': 'uri_folder'}}
+

@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 import copy
+import inspect
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
@@ -23,7 +24,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
-from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
+from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value, is_group
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
@@ -95,6 +96,7 @@ class PipelineComponentBuilder:
         "bool": "boolean",
         "str": "string",
     }
+    DEFAULT_OUTPUT_NAME = "output"
 
     def __init__(
         self,
@@ -121,6 +123,7 @@ class PipelineComponentBuilder:
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
         self.inputs = self._build_inputs(func)
+        self.output_annotation = self._get_output_annotation(func)
         self._name = name
         self.version = version
         self.display_name = display_name
@@ -231,10 +234,12 @@ class PipelineComponentBuilder:
             "The return type of dsl.pipeline decorated function should be a mapping from output name to "
             "azure.ai.ml.Output with owner."
         )
-
+        if is_group(outputs):
+            outputs = {key: val for key, val in outputs.__dict__.items() if val}
         if not isinstance(outputs, dict):
             raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
         output_dict = {}
+        output_meta_dict = {}
         for key, value in outputs.items():
             if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
@@ -260,12 +265,13 @@ class PipelineComponentBuilder:
                 return AssetTypes.URI_FOLDER
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
+            output_meta = Output(
+                type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+            )
             pipeline_output = PipelineOutput(
                 name=key,
                 data=None,
-                meta=Output(
-                    type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
-                ),
+                meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )
@@ -276,7 +282,11 @@ class PipelineComponentBuilder:
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )
+
             output_dict[key] = pipeline_output
+            output_meta_dict[key] = output_meta._to_dict()
+
+        self._validate_inferred_outputs(output_meta_dict, output_dict)
         return output_dict
 
     def _get_group_parameter_defaults(self):
@@ -395,6 +405,66 @@ class PipelineComponentBuilder:
                 anno.name = input_name
                 anno.description = self._args_description.get(input_name)
                 self.inputs[input_name] = anno
+
+    @classmethod
+    def _get_output_annotation(cls, func):
+        """Get the output annotation of the function, validate & refine it."""
+        return_annotation = inspect.signature(func).return_annotation
+
+        if is_group(return_annotation):
+            outputs = _get_param_with_standard_annotation(return_annotation, is_func=False)
+        elif isinstance(return_annotation, Output):
+            outputs = {cls.DEFAULT_OUTPUT_NAME: return_annotation}
+        else:
+            # skip if return annotation is not group or output
+            return {}
+
+        output_annotations = {}
+        for key, val in outputs.items():
+            if isinstance(val, GroupInput):
+                raise UserErrorException(message="Nested group annotation is not supported in pipeline output.")
+            # normalize annotation since currently annotation in @group will be converted to Input
+            if isinstance(val, Input):
+                val = Output(type=val.type)
+            if not isinstance(val, Output):
+                raise UserErrorException(
+                    message="Invalid output annotation. "
+                            f"Only Output annotation in return annotation is supported. Got {type(val)}."
+                )
+            output_annotations[key] = val._to_dict()
+        return output_annotations
+
+    def _validate_inferred_outputs(self, output_meta_dict: dict, output_dict: dict):
+        """Validate inferred output dict against annotation."""
+        if not self.output_annotation:
+            return
+        error_prefix = "Unmatched outputs between actual pipeline output and output in annotation"
+        if output_meta_dict.keys() != self.output_annotation.keys():
+            raise UserErrorException(
+                "{}: actual pipeline component outputs: {}, annotation outputs: {}".format(
+                    error_prefix, output_meta_dict.keys(), self.output_annotation.keys()
+                )
+            )
+
+        unmatched_outputs = []
+        for key, actual_output in output_meta_dict.items():
+            expected_output = self.output_annotation[key]
+            actual_output.pop("description", None)
+            expected_description = expected_output.pop("description", None)
+            # skip comparing mode since when component's from remote, output mode is not available
+            actual_output.pop("mode", None)
+            expected_mode = expected_output.pop("mode", None)
+            if expected_output != actual_output:
+                unmatched_outputs.append(
+                    f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
+                )
+            if expected_description:
+                output_dict[key].description = expected_description
+            if expected_mode:
+                output_dict[key].mode = expected_mode
+
+        if unmatched_outputs:
+            raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")
 
 
 def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
