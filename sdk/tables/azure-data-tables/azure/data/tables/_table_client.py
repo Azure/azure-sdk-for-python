@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
-class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(TablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.

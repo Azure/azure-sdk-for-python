@@ -7,6 +7,7 @@ import sys
 import re
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -256,8 +257,8 @@ class TableTransactionError(HttpResponseError):
 class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
-# pylint: disable=enum-must-be-uppercase
-class TableErrorCode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+
+class TableErrorCode(str, Enum, CaseInsensitiveEnumMeta):
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
