@@ -68,7 +68,7 @@ from ...utils._pipeline_transport_rest_shared import (
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
-DataType = Optional[Union[bytes, Dict[str, str]]]
+DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
 
 _LOGGER = logging.getLogger(__name__)
 
