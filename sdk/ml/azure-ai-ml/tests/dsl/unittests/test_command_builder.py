@@ -98,6 +98,11 @@ class TestCommandFunction:
     def test_command_function(self, test_command):
         assert isinstance(test_command, Command)
         assert test_command._source == "BUILDER"
+
+        # Test print and jupyter rendering for the builder object
+        print(test_command)
+        test_command._repr_html_()
+
         expected_command = {
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
