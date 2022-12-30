@@ -203,7 +203,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
             self.filters = None
 
     @classmethod
-    def _from_generated(cls, key_value: KeyValue) -> Union[FeatureFlagConfigurationSetting, ConfigurationSetting]:
+    def _from_generated(cls, key_value: KeyValue) -> Union["FeatureFlagConfigurationSetting", ConfigurationSetting]:
         if key_value is None:
             return key_value
         enabled = None
