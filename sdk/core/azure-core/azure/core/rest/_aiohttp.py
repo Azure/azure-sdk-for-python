@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from __future__ import annotations
 import collections.abc
 import asyncio
 from itertools import groupby
@@ -59,7 +58,7 @@ class _ItemsView(collections.abc.ItemsView):
         return f"dict_items({list(self.__iter__())})"
 
 
-class _KeysView(collections.abc.KeysView[str]):
+class _KeysView(collections.abc.KeysView):
     def __init__(self, items):
         super().__init__(items)
         self._items = items
