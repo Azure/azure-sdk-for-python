@@ -30,7 +30,7 @@ class _SDKClient(object):
         pass
 
 class StorageManagementClient(MultiApiClientMixin, _SDKClient):
-    """The Azure Storage Management API.
+    """The Azure Storage Management API. Refer the sample code here: https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/storage
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
