@@ -534,24 +534,24 @@ class TablePayloadFormat(object):
     """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
-class UpdateMode(str, Enum, CaseInsensitiveEnumMeta):
+class UpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REPLACE = "replace"
     MERGE = "merge"
 
 
-class TransactionOperation(str, Enum, CaseInsensitiveEnumMeta):
+class TransactionOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "create"
     UPSERT = "upsert"
     UPDATE = "update"
     DELETE = "delete"
 
 
-class SASProtocol(str, Enum, CaseInsensitiveEnumMeta):
+class SASProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HTTPS = "https"
     HTTP = "http"
 
 
-class LocationMode(str, Enum, CaseInsensitiveEnumMeta):
+class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types

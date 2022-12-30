@@ -258,7 +258,7 @@ class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
 
-class TableErrorCode(str, Enum, CaseInsensitiveEnumMeta):
+class TableErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
