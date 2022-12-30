@@ -39,7 +39,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
@@ -64,7 +64,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name = table_name
-        super(TableClient, self).__init__(endpoint, credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
