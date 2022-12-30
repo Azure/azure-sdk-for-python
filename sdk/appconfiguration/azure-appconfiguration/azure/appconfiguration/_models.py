@@ -318,7 +318,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             self.secret_id = None
 
     @classmethod
-    def _from_generated(cls, key_value: KeyValue) -> SecretReferenceConfigurationSetting:
+    def _from_generated(cls, key_value: KeyValue) -> "SecretReferenceConfigurationSetting":
         if key_value is None:
             return key_value
         secret_uri = None
