@@ -124,7 +124,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __init__(
         self, transport: HttpTransportType, policies: PoliciesType = None
     ) -> None:
-        self._impl_policies: list[HTTPPolicy] = []
+        self._impl_policies: List[HTTPPolicy] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -154,8 +154,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         if not multipart_mixed_info:
             return
 
-        requests: list[HTTPRequestType] = multipart_mixed_info[0]
-        policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        requests: List[HTTPRequestType] = multipart_mixed_info[0]
+        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
         pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         # Apply on_requests concurrently to all requests

@@ -45,6 +45,7 @@ from typing import (
     Iterator,
     Type,
     Dict,
+    List,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -403,8 +404,8 @@ class _HttpResponseBase:
         self,
         message: Message,
         http_response_type: Type["_HttpResponseBase"],
-        requests: list[HttpRequest],
-    ) -> list["HttpResponse"]:
+        requests: List[HttpRequest],
+    ) -> List["HttpResponse"]:
         """Rebuild an HTTP response from pure string."""
         return _decode_parts_helper(
             self, message, http_response_type, requests, _deserialize_response

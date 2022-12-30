@@ -154,8 +154,8 @@ class AsyncPipeline(
         if not multipart_mixed_info:
             return
 
-        requests: list[HTTPRequestType] = multipart_mixed_info[0]
-        policies: list[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        requests: List[HTTPRequestType] = multipart_mixed_info[0]
+        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
         pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         async def prepare_requests(req):
