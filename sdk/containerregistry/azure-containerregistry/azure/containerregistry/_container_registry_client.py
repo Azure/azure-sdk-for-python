@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union
+from typing import Any, Dict, IO, Optional, overload, Union
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -35,9 +36,6 @@ from ._models import (
     DownloadManifestResult,
 )
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from typing import Dict
 
 def _return_response(pipeline_response, deserialized, response_headers):
     return pipeline_response, deserialized, response_headers
@@ -94,14 +92,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         super(ContainerRegistryClient, self).__init__(
             endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
 
-    def _get_digest_from_tag(self, repository, tag):
-        # type: (str, str) -> str
+    def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = self.get_tag_properties(repository, tag)
         return tag_props.digest
 
     @distributed_trace
-    def delete_repository(self, repository, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_repository(self, repository: str, **kwargs: Any) -> None:
         """Delete a repository. If the repository cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -122,8 +118,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
-    def list_repository_names(self, **kwargs):
-        # type: (**Any) -> ItemPaged[str]
+    def list_repository_names(self, **kwargs: Any) -> ItemPaged[str]:
         """List all repositories
 
         :keyword results_per_page: Number of repositories to return per page
@@ -230,8 +225,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_properties(self, repository, **kwargs):
-        # type: (str, **Any) -> RepositoryProperties
+    def get_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
         """Get the properties of a repository
 
         :param str repository: Name of the repository
@@ -243,8 +237,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifest_properties(self, repository, **kwargs):
-        # type: (str, **Any) -> ItemPaged[ArtifactManifestProperties]
+    def list_manifest_properties(self, repository: str, **kwargs: Any) -> ItemPaged[ArtifactManifestProperties]:
         """List the artifacts for a repository
 
         :param str repository: Name of the repository
@@ -362,8 +355,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_tag(self, repository, tag, **kwargs):
-        # type: (str, str, **Any) -> None
+    def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
         """Delete a tag from a repository. If the tag cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -387,8 +379,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace
-    def get_manifest_properties(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> ArtifactManifestProperties
+    def get_manifest_properties(self, repository: str, tag_or_digest: str, **kwargs: Any) -> ArtifactManifestProperties:
         """Get the properties of a registry artifact
 
         :param str repository: Name of the repository
@@ -417,8 +408,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_tag_properties(self, repository, tag, **kwargs):
-        # type: (str, str, **Any) -> ArtifactTagProperties
+    def get_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
         """Get the properties for a tag
 
         :param str repository: Name of the repository
@@ -443,8 +433,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_tag_properties(self, repository, **kwargs):
-        # type: (str, **Any) -> ItemPaged[ArtifactTagProperties]
+    def list_tag_properties(self, repository: str, **kwargs: Any) -> ItemPaged[ArtifactTagProperties]:
         """List the tags for a repository
 
         :param str repository: Name of the repository
@@ -574,18 +563,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def update_manifest_properties(self, repository, tag_or_digest, properties, **kwargs):
-        # type: (str, str, ArtifactManifestProperties, **Any) -> ArtifactManifestProperties
+    def update_manifest_properties(
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
+    ) -> ArtifactManifestProperties:
         pass
 
     @overload
-    def update_manifest_properties(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> ArtifactManifestProperties
+    def update_manifest_properties(
+        self, repository: str, tag_or_digest: str, **kwargs: Any
+    ) -> ArtifactManifestProperties:
         pass
 
     @distributed_trace
-    def update_manifest_properties(self, *args, **kwargs):
-        # type: (Union[str, ArtifactManifestProperties], **Any) -> ArtifactManifestProperties
+    def update_manifest_properties(
+        self, *args: Union[str, ArtifactManifestProperties], **kwargs: Any
+    ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -648,18 +640,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_tag_properties(self, repository, tag, properties, **kwargs):
-        # type: (str, str, ArtifactTagProperties, **Any) -> ArtifactTagProperties
+    def update_tag_properties(
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
+    ) -> ArtifactTagProperties:
         pass
 
     @overload
-    def update_tag_properties(self, repository, tag, **kwargs):
-        # type: (str, str, **Any) -> ArtifactTagProperties
+    def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
         pass
 
     @distributed_trace
-    def update_tag_properties(self, *args, **kwargs):
-        # type: (Union[str, ArtifactTagProperties], **Any) -> ArtifactTagProperties
+    def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs: Any) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -715,18 +706,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_repository_properties(self, repository, properties, **kwargs):
-        # type: (str, RepositoryProperties, **Any) -> RepositoryProperties
+    def update_repository_properties(
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
+    ) -> RepositoryProperties:
         pass
 
     @overload
-    def update_repository_properties(self, repository, **kwargs):
-        # type: (str, **Any) -> RepositoryProperties
+    def update_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
         pass
 
     @distributed_trace
-    def update_repository_properties(self, *args, **kwargs):
-        # type: (Union[str, RepositoryProperties], **Any) -> RepositoryProperties
+    def update_repository_properties(
+        self, *args: Union[str, RepositoryProperties], **kwargs: Any
+    ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -763,7 +755,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def upload_manifest(
-        self, repository: str, manifest: Union["OCIManifest", "IO"], *, tag: Optional[str] = None, **kwargs: Any
+        self, repository: str, manifest: Union[OCIManifest, IO], *, tag: Optional[str] = None, **kwargs: Any
     ) -> str:
         """Upload a manifest for an OCI artifact.
 
@@ -807,8 +799,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository, data, **kwargs):
-        # type: (str, IO, **Any) -> str
+    def upload_blob(self, repository: str, data: IO, **kwargs: Any) -> str:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository
@@ -836,8 +827,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return complete_upload_response_headers['Docker-Content-Digest']
 
     @distributed_trace
-    def download_manifest(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> DownloadManifestResult
+    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> DownloadManifestResult:
         """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository
@@ -869,8 +859,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository, digest, **kwargs):
-        # type: (str, str, **Any) -> DownloadBlobResult | None
+    def download_blob(self, repository: str, digest: str, **kwargs: Any) -> DownloadBlobResult | None:
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository
@@ -897,8 +886,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return None
 
     @distributed_trace
-    def delete_manifest(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> None
+    def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
         """Delete a manifest. If the manifest cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -923,8 +911,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
-    def delete_blob(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> None
+    def delete_blob(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
         """Delete a blob. If the blob cannot be found or a response status code of
         404 is returned an error will not be raised.
 

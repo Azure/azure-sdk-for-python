@@ -3,16 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta

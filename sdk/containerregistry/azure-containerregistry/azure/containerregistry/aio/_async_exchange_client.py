@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, List, Any
+from typing import Dict, Any
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -13,9 +13,6 @@ from .._generated.aio import ContainerRegistry
 from .._generated.models import PostContentSchemaGrantType
 from .._helpers import _parse_challenge, _parse_exp_time
 from .._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):

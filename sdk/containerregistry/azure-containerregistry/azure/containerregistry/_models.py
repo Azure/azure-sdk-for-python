@@ -3,24 +3,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import warnings
+from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any, List
+from typing import Dict, Any, List
 
 from ._generated.models import (
+    ArtifactArchitecture,
     ArtifactTagProperties as GeneratedArtifactTagProperties,
+    ArtifactOperatingSystem,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
     ManifestWriteableProperties,
+    ManifestAttributesBase,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
-
-if TYPE_CHECKING:
-    from typing import IO
-    from datetime import datetime
-    from ._generated.models import ManifestAttributesBase, OCIManifest
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -64,8 +62,9 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):
-        # type: (ManifestAttributesBase, Dict[str, Any]) -> ArtifactManifestProperties
+    def _from_generated(
+        cls, generated: ManifestAttributesBase, **kwargs: Dict[str, Any]
+    ) -> "ArtifactManifestProperties":
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -82,8 +81,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             registry=kwargs.get("registry", None),
         )
 
-    def _to_generated(self):
-        # type: () -> ManifestWriteableProperties
+    def _to_generated(self) -> ManifestWriteableProperties:
         return ManifestWriteableProperties(
             can_delete=self.can_delete,
             can_read=self.can_read,
@@ -92,48 +90,39 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         )
 
     @property
-    def architecture(self):
-        # type: () -> ArtifactArchitecture
+    def architecture(self) -> ArtifactArchitecture:
         return self._architecture
 
     @property
-    def created_on(self):
-        # type: () -> datetime
+    def created_on(self) -> datetime:
         return self._created_on
 
     @property
-    def digest(self):
-        # type: () -> str
+    def digest(self) -> str:
         return self._digest
 
     @property
-    def last_updated_on(self):
-        # type: () -> datetime
+    def last_updated_on(self) -> datetime:
         return self._last_updated_on
 
     @property
-    def operating_system(self):
-        # type: () -> ArtifactOperatingSystem
+    def operating_system(self) -> ArtifactOperatingSystem:
         return self._operating_system
 
     @property
-    def repository_name(self):
-        # type: () -> str
+    def repository_name(self) -> str:
         return self._repository_name
 
     @property
-    def size_in_bytes(self):
-        # type: () -> int
+    def size_in_bytes(self) -> int:
         return self._size_in_bytes
 
     @property
-    def tags(self):
-        # type: () -> List[str]
+    def tags(self) -> List[str]:
         return self._tags
 
     @property
-    def fully_qualified_reference(self):
-        # type: () -> str
+    def fully_qualified_reference(self) -> str:
         return "{}/{}{}{}".format(
             _host_only(self._registry),
             self._repository_name,
@@ -141,8 +130,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             _strip_alg(self._digest)
         )
 
-    def _to_generated(self):
-        # type: () -> ManifestWriteableProperties
+    def _to_generated(self) -> ManifestWriteableProperties:
         return ManifestWriteableProperties(
             can_delete=self.can_delete,
             can_read=self.can_read,
@@ -179,8 +167,7 @@ class RepositoryProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (GeneratedRepositoryProperties) -> RepositoryProperties
+    def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
         return cls(
             created_on=generated.created_on,
             last_updated_on=generated.last_updated_on,
@@ -193,8 +180,7 @@ class RepositoryProperties(object):
             can_list=generated.can_list,
         )
 
-    def _to_generated(self):
-        # type: () -> RepositoryWriteableProperties
+    def _to_generated(self) -> RepositoryWriteableProperties:
         return RepositoryWriteableProperties(
             can_delete=self.can_delete,
             can_read=self.can_read,
@@ -211,28 +197,23 @@ class RepositoryProperties(object):
         return super().__getattr__(self, name) # pylint: disable=no-member
 
     @property
-    def created_on(self):
-        # type: () -> datetime
+    def created_on(self) -> datetime:
         return self._created_on
 
     @property
-    def last_updated_on(self):
-        # type: () -> datetime
+    def last_updated_on(self) -> datetime:
         return self._last_updated_on
 
     @property
-    def manifest_count(self):
-        # type: () -> int
+    def manifest_count(self) -> int:
         return self._manifest_count
 
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         return self._name
 
     @property
-    def tag_count(self):
-        # type: () -> int
+    def tag_count(self) -> int:
         return self._tag_count
 
 
@@ -264,8 +245,7 @@ class ArtifactTagProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):
-        # type: (GeneratedArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
+    def _from_generated(cls, generated: GeneratedArtifactTagProperties, **kwargs: Dict[str, Any]) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
@@ -278,8 +258,7 @@ class ArtifactTagProperties(object):
             repository_name=kwargs.get("repository_name", None),
         )
 
-    def _to_generated(self):
-        # type: () -> TagWriteableProperties
+    def _to_generated(self) -> TagWriteableProperties:
         return TagWriteableProperties(
             can_delete=self.can_delete,
             can_read=self.can_read,
@@ -288,28 +267,23 @@ class ArtifactTagProperties(object):
         )
 
     @property
-    def created_on(self):
-        # type: () -> datetime
+    def created_on(self) -> datetime:
         return self._created_on
 
     @property
-    def digest(self):
-        # type: () -> str
+    def digest(self) -> str:
         return self._digest
 
     @property
-    def last_updated_on(self):
-        # type: () -> datetime
+    def last_updated_on(self) -> datetime:
         return self._last_updated_on
 
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         return self._name
 
     @property
-    def repository_name(self):
-        # type: () -> str
+    def repository_name(self) -> str:
         return self._repository_name
 
 

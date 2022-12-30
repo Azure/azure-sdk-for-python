@@ -3,9 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, overload, Union
+from typing import Any, Dict, Optional, overload, Union
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceExistsError,
@@ -20,10 +21,6 @@ from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
 from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from typing import Dict
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):

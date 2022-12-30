@@ -4,17 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any, Optional
+from typing import Dict, Any, Optional
 
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 
 
 class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
@@ -33,8 +30,7 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
     :paramtype credential_scopes: List[str]
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
+    def __init__(self, endpoint: str, credential: Optional[TokenCredential], **kwargs: Dict[str, Any]) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
@@ -53,8 +49,7 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
         self._auth_policy.__exit__(*args)
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """

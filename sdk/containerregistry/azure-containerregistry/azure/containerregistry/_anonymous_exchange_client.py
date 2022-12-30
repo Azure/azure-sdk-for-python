@@ -3,16 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, Any
+from typing import Dict, Any
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._generated.models._container_registry_enums import TokenGrantType
 from ._helpers import _parse_challenge
-from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+from ._user_agent import USER_AGENT    
 
 
 class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -24,8 +21,7 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (str, Dict[str, Any]) -> None
+    def __init__(self, endpoint: str, **kwargs: Dict[str, Any]) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -37,8 +33,7 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
             **kwargs
         )
 
-    def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+    def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
         parsed_challenge = _parse_challenge(challenge)
         parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return self.exchange_refresh_token_for_access_token(
@@ -50,9 +45,13 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
         )
 
     def exchange_refresh_token_for_access_token(
-        self, refresh_token=None, service=None, scope=None, grant_type=TokenGrantType.PASSWORD, **kwargs
-    ):
-        # type: (str, str, str, str, Dict[str, Any]) -> str
+        self,
+        refresh_token: str = None,
+        service: str = None,
+        scope: str = None,
+        grant_type: str = TokenGrantType.PASSWORD,
+        **kwargs: Dict[str, Any]
+    ) -> str:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
@@ -65,8 +64,7 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """

@@ -2,17 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 from ._async_anonymous_exchange_client import AnonymousACRExchangeClient
 from ._async_exchange_client import ACRExchangeClient
 from .._helpers import _enforce_https
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
@@ -26,8 +24,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
-    async def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    async def on_request(self, request: PipelineRequest) -> None:
         """Called before the policy sends a request.
         The base implementation authorizes the request with a bearer token.
         :param ~azure.core.pipeline.PipelineRequest request: the request
@@ -35,8 +32,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         # Future caching implementation will be included here
         pass  # pylint: disable=unnecessary-pass
 
-    async def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Authorizes a request with a bearer token, possibly handling an authentication challenge
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
@@ -53,8 +49,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
 
         return response
 
-    async def on_challenge(self, request, response, challenge):
-        # type: (PipelineRequest, PipelineResponse, str) -> bool
+    async def on_challenge(self, request: PipelineRequest, response: PipelineResponse, challenge: str) -> bool:
         """Authorize request according to an authentication challenge
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
