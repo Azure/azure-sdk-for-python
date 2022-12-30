@@ -448,6 +448,11 @@ class Component(
 
         return validation_result
 
+    def _get_rest_name_version(self):
+        if self._is_anonymous:
+            return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
+        return self.name, self.version
+
     def _to_rest_object(self) -> ComponentVersionData:
         component = self._to_dict()
 

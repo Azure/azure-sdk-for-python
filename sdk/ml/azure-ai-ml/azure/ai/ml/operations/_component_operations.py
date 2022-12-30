@@ -309,10 +309,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(component)
 
-        if component._is_anonymous:
-            target_version = component._get_anonymous_hash()
-        else:
-            target_version = component.version
+        name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
         result = None
         try:
@@ -324,8 +321,8 @@ class ComponentOperations(_ScopeDependentOperations):
                     "registryName": self._registry_name,
                 }
                 poller = self._version_operation.begin_create_or_update(
-                    name=rest_component_resource.name,
-                    version=target_version,
+                    name=name,
+                    version=version,
                     resource_group_name=self._operation_scope.resource_group_name,
                     registry_name=self._registry_name,
                     body=rest_component_resource,
@@ -339,8 +336,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
             else:
                 result = self._version_operation.create_or_update(
-                    name=rest_component_resource.name,
-                    version=target_version,
+                    name=name,
+                    version=version,
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     body=rest_component_resource,

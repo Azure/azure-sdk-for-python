@@ -791,10 +791,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # TODO: optional_param_with_default should also exists
         assert len(pipeline_job.jobs["default_optional_component_1"].inputs) == 2
 
-    @pytest.mark.skipif(
-        not is_live(),
-        reason="TODO 2144070: recording is not stable for this test before the fix after we enable on-disk cache",
-    )
     def test_pipeline_with_none_parameter_has_default_optional_false(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -843,7 +839,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="default_optional_pipeline")
 
-        # only the two required input exists
+        # only the two required inputs exists
         assert len(next(pipeline_job.jobs.values().__iter__()).inputs) == 2
         validate_result = pipeline._validate()
         assert validate_result.passed is True
