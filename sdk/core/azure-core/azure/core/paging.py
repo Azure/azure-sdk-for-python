@@ -31,8 +31,8 @@ from typing import (  # pylint: disable=unused-import
     Iterator,
     Iterable,
     Tuple,
+    Any,
 )
-from typing_extensions import Self
 import logging
 
 from .exceptions import AzureError
@@ -65,7 +65,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._response: Optional[ResponseType] = None
         self._current_page: Optional[Iterable[ReturnType]] = None
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> Iterator[Iterator[ReturnType]]:
         """Return 'self'."""
         return self
 
@@ -95,7 +95,7 @@ class ItemPaged(Iterator[ReturnType]):
         """
         self._args = args
         self._kwargs = kwargs
-        self._page_iterator = None
+        self._page_iterator: Optional[Iterator[ReturnType]] = None
         self._page_iterator_class = self._kwargs.pop(
             "page_iterator_class", PageIterator
         )
@@ -120,7 +120,7 @@ class ItemPaged(Iterator[ReturnType]):
             hex(id(self))
         )
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> Iterator[ReturnType]:
         """Return 'self'."""
         return self
 

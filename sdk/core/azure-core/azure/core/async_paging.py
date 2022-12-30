@@ -33,6 +33,7 @@ from typing import (
     Tuple,
     Optional,
     Awaitable,
+    Any,
 )
 
 from .exceptions import AzureError
@@ -85,8 +86,8 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._response = None
-        self._current_page = None
+        self._response: Optional[ResponseType] = None
+        self._current_page: Optional[AsyncIterator[ReturnType]] = None
 
     async def __anext__(self) -> AsyncIterator[ReturnType]:
         if self.continuation_token is None and self._did_a_call_already:
@@ -120,10 +121,8 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         """
         self._args = args
         self._kwargs = kwargs
-        self._page_iterator = (
-            None
-        )  # type: Optional[AsyncIterator[AsyncIterator[ReturnType]]]
-        self._page = None  # type: Optional[AsyncIterator[ReturnType]]
+        self._page_iterator: Optional[AsyncIterator[AsyncIterator[ReturnType]]] = None
+        self._page: Optional[AsyncIterator[ReturnType]] = None
         self._page_iterator_class = self._kwargs.pop(
             "page_iterator_class", AsyncPageIterator
         )
