@@ -13,12 +13,12 @@ DESCRIPTION:
 USAGE: python sync_token_async_samples.py
 """
 import asyncio
-from typing import Any, List
+from typing import Any, Dict, List
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from util import get_connection_string
 
 
-async def handle_event_grid_notifications(event_grid_events: List[dict[str, Any]]) -> None:
+async def handle_event_grid_notifications(event_grid_events: List[Dict[str, Any]]) -> None:
     CONNECTION_STRING = get_connection_string()
 
     all_keys = []

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Union
+from typing import Any, Dict, Union
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
 
@@ -38,7 +38,7 @@ class ConfigurationSetting(Model):
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -132,7 +132,7 @@ class FeatureFlagConfigurationSetting(
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: list[dict[str, Any]]
+    :paramtype filters: list[Dict[str, Any]]
     :param label:
     :type label: str
     :param display_name:
@@ -146,7 +146,7 @@ class FeatureFlagConfigurationSetting(
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -221,7 +221,7 @@ class FeatureFlagConfigurationSetting(
         filters = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
-            if isinstance(temp, dict):
+            if isinstance(temp, Dict):
                 enabled = temp.get("enabled")
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")

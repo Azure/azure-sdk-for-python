@@ -32,6 +32,7 @@ from consts import (
 )
 from async_preparers import app_config_decorator_async
 from devtools_testutils.aio import recorded_by_proxy_async
+from typing import Dict
 import pytest
 import copy
 import datetime
@@ -680,7 +681,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             sent_config = await client.set_configuration_setting(new)
             self._assert_same_keys(sent_config, new)
 
-            assert isinstance(sent_config.filters[0], dict)
+            assert isinstance(sent_config.filters[0], Dict)
             assert len(sent_config.filters) == 1
 
             sent_config.filters[0]["parameters"]["Audience"]["DefaultRolloutPercentage"] = 80

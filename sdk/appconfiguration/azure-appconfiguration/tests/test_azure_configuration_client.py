@@ -32,6 +32,7 @@ from consts import (
 )
 from preparers import app_config_decorator
 from devtools_testutils import recorded_by_proxy
+from typing import Dict
 import pytest
 import copy
 import datetime
@@ -672,7 +673,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         sent_config = client.set_configuration_setting(new)
         self._assert_same_keys(sent_config, new)
 
-        assert isinstance(sent_config.filters[0], dict)
+        assert isinstance(sent_config.filters[0], Dict)
         assert len(sent_config.filters) == 1
 
         sent_config.filters[0]["parameters"]["Audience"]["DefaultRolloutPercentage"] = 80
