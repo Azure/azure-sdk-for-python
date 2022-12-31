@@ -151,7 +151,7 @@ class FeatureFlagConfigurationSetting(
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "feature_id": {"key": "feaure_id", "type": "str"},
+        "feature_id": {"key": "feature_id", "type": "str"},
         "label": {"key": "label", "type": "str"},
         "content_type": {"key": "_feature_flag_content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
