@@ -50,7 +50,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
-        :keyword credential:
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
             AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
@@ -93,11 +93,16 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
-    def from_table_url(cls, table_url: str, **kwargs: Any) -> "TableClient":
+    def from_table_url(
+        cls,
+        table_url: str,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        **kwargs: Any
+    ) -> "TableClient":
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :keyword credential:
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
             or AzureSasCredential from azure-core.
@@ -132,7 +137,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             table_name = table_name[8:-2]
         if not table_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid table name")
-        return cls(endpoint, table_name=table_name, **kwargs)
+        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace
     def get_table_access_policy(self, **kwargs: Any) -> Dict[str, Optional[TableAccessPolicy]]:
