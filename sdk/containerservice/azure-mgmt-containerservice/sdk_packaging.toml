@@ -4,3 +4,4 @@ package_pprint_name = "Container Service Management"
 package_doc_id = "container-service"
 is_stable = true
 sample_link = "containerservice"
+title = "ContainerServiceClient"

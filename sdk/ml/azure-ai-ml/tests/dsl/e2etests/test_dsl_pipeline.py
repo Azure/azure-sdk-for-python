@@ -25,7 +25,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
@@ -62,6 +62,7 @@ common_omit_fields = [
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features",
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
@@ -791,6 +792,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # TODO: optional_param_with_default should also exists
         assert len(pipeline_job.jobs["default_optional_component_1"].inputs) == 2
 
+    @pytest.mark.skipif(
+        not is_live(),
+        reason="TODO 2144070: recording is not stable for this test before the fix after we enable on-disk cache",
+    )
     def test_pipeline_with_none_parameter_has_default_optional_false(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -1478,7 +1483,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         # continue_on_step_failure can't be set in create_or_update
         assert created_job.settings.continue_on_step_failure is False
-        assert mpi_func._is_anonymous is True
+        assert created_job.jobs["hello_world_component_mpi"].component.startswith(ANONYMOUS_COMPONENT_NAME)
+        assert created_job.jobs["helloworld_component"].component == 'microsoftsamples_command_component_basic:0.0.1'
         assert hello_world_func._is_anonymous is False
         assert origin_id == hello_world_func.id
 
@@ -2388,3 +2394,71 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert default_services["Studio"]["job_service_type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
         assert default_services["Tracking"]["job_service_type"] == "Tracking"
+
+    def test_group_outputs_description_overwrite(self, client):
+        # test group outputs description overwrite
+        @group
+        class Outputs:
+            output1: Output(type="uri_folder", description="new description")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline(default_compute_target="cpu-cluster")
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=job_input)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        # overwrite group outputs mode will appear in pipeline job&component level
+        expected_outputs = {'output1': {'description': 'new description', 'type': 'uri_folder'}}
+        expected_job_outputs = {'output1': {'description': 'new description', 'job_output_type': 'uri_folder'}}
+        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+
+        # assert pipeline job level mode overwrite
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+        # assert pipeline component level mode overwrite
+        assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
+
+        rest_job = assert_job_cancel(pipeline_job, client)
+        rest_job_dict = rest_job._to_rest_object().as_dict()
+        assert rest_job_dict["properties"]["outputs"]["output1"]["description"] == "new description"
+
+        component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
+        assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+
+    def test_group_outputs_mode_overwrite(self, client):
+        # test group outputs mode overwrite
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @group
+        class Outputs:
+            output1: Output(type="uri_folder", mode="upload")
+
+        @dsl.pipeline(default_compute_target="cpu-cluster")
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=job_input)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        # overwrite group outputs mode will appear in pipeline job&component level
+        expected_job_outputs = {'output1': {'mode': 'Upload', 'job_output_type': 'uri_folder'}}
+        expected_outputs = {'output1': {'mode': 'upload', 'type': 'uri_folder'}}
+        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+        # assert pipeline job level mode overwrite
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+        # assert pipeline component level mode overwrite
+        assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
+
+        rest_job = assert_job_cancel(pipeline_job, client)
+        rest_job_dict = rest_job._to_rest_object().as_dict()
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+
+        component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
+        # pipeline component output mode is undefined behavior so we skip assert it
+        # assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs

@@ -99,6 +99,7 @@ class TestPersistentLocalsPrivatePreview(TestPersistentLocals):
         try:
             import bytecode
         except ImportError:
-            import pip
-            pip.main(['install', 'bytecode'])
+            import subprocess
+            subprocess.check_call(['pip', 'install', 'bytecode'])
+        import bytecode
         return PersistentLocalsFunctionBytecodeBuilder().call(func, injected_params)

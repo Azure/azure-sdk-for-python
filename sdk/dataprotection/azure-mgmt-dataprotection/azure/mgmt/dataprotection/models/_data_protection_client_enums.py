@@ -36,6 +36,14 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CrossSubscriptionRestore state."""
+
+    DISABLED = "Disabled"
+    PERMANENTLY_DISABLED = "PermanentlyDisabled"
+    ENABLED = "Enabled"
+
+
 class CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the current protection state of the resource."""
 
@@ -150,16 +158,6 @@ class RehydrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "FAILED"
 
 
-class ResourceGuardProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the BackupVault resource."""
-
-    FAILED = "Failed"
-    PROVISIONING = "Provisioning"
-    SUCCEEDED = "Succeeded"
-    UNKNOWN = "Unknown"
-    UPDATING = "Updating"
-
-
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource move state for backup vault."""
 
@@ -217,6 +215,7 @@ class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ARCHIVE_STORE = "ArchiveStore"
     SNAPSHOT_STORE = "SnapshotStore"
+    OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
 
 
@@ -235,7 +234,7 @@ class StorageSettingStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the datastore."""
 
     ARCHIVE_STORE = "ArchiveStore"
-    SNAPSHOT_STORE = "SnapshotStore"
+    OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
 
 

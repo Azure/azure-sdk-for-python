@@ -34,7 +34,7 @@ class ConfigurationSetting(Model):
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -123,7 +123,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: list[dict[str, Any]]
+    :paramtype filters: list[Dict[str, Any]]
     :param label:
     :type label: str
     :param display_name:
@@ -137,7 +137,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {

@@ -15,6 +15,7 @@
 - Fixed duplicate node name error in pipeline when two node names assigned to the same node and get renamed by node.name='xx'.
 - Resolve the cross references for MLClient, Resource and OnlineDeployment.
 - Explicit use of Optional (or a Union with None), as per PEP 484.
+- Fixed print on Command objects when job id is empty
 
 ### Other Changes
 - Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
