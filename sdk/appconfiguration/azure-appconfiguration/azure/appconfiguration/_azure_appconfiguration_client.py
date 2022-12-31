@@ -48,7 +48,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
     :param str base_url: base url of the service
     :param credential: An object which can provide secrets for the app configuration service
     :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
-     or :class:`~azure.core.credentials.TokenCredential`
+        or :class:`~azure.core.credentials.TokenCredential`
 
     """
 
