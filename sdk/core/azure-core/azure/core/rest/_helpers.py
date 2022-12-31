@@ -39,7 +39,7 @@ from typing import (
     Iterable,
     MutableMapping,
     AsyncIterable,
-    cast
+    cast,
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -62,15 +62,13 @@ ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Tuple[Optional[str], FileContent]
 
-FilesType = Union[
-    Mapping[str, FileType],
-    Sequence[Tuple[str, FileType]]
-]
+FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ########################### HELPER SECTION #################################
+
 
 def _verify_data_object(name, value):
     if not isinstance(name, str):
@@ -85,6 +83,7 @@ def _verify_data_object(name, value):
                 type(name), name
             )
         )
+
 
 def set_urlencoded_body(data, has_files):
     body = {}
@@ -104,11 +103,13 @@ def set_urlencoded_body(data, has_files):
         default_headers["Content-Type"] = "application/x-www-form-urlencoded"
     return default_headers, body
 
+
 def set_multipart_body(files):
     formatted_files = {
         f: _format_data_helper(d) for f, d in files.items() if d is not None
     }
     return {}, formatted_files
+
 
 def set_xml_body(content):
     headers = {}
@@ -118,7 +119,10 @@ def set_xml_body(content):
         headers["Content-Length"] = str(len(body))
     return headers, body
 
-def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]:
+
+def set_content_body(
+    content: Any,
+) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]:
     headers: MutableMapping[str, str] = {}
 
     if isinstance(content, ET.Element):
@@ -135,9 +139,10 @@ def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[C
     if any(hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]):
         return headers, content
     raise TypeError(
-        "Unexpected type for 'content': '{}'. ".format(type(content)) +
-        "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
+        "Unexpected type for 'content': '{}'. ".format(type(content))
+        + "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
     )
+
 
 def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
     headers = {"Content-Type": "application/json"}
@@ -149,6 +154,7 @@ def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
         headers.update({"Content-Length": str(len(body))})
     return headers, body
 
+
 def lookup_encoding(encoding: str) -> bool:
     # including check for whether encoding is known taken from httpx
     try:
@@ -157,6 +163,7 @@ def lookup_encoding(encoding: str) -> bool:
     except LookupError:
         return False
 
+
 def get_charset_encoding(response) -> Optional[str]:
     content_type = response.headers.get("Content-Type")
 
@@ -164,11 +171,12 @@ def get_charset_encoding(response) -> Optional[str]:
         return None
     # https://peps.python.org/pep-0594/#cgi
     m = email.message.Message()
-    m['content-type'] = content_type
-    encoding = cast(str, m.get_param('charset')) # -> utf-8
+    m["content-type"] = content_type
+    encoding = cast(str, m.get_param("charset"))  # -> utf-8
     if encoding is None or not lookup_encoding(encoding):
         return None
     return encoding
+
 
 def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     if not content:
@@ -179,8 +187,8 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
         return content.decode(encoding)
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
 
-class HttpRequestBackcompatMixin(object):
 
+class HttpRequestBackcompatMixin(object):
     def __getattr__(self, attr):
         backcompat_attrs = [
             "files",
@@ -341,7 +349,7 @@ class HttpRequestBackcompatMixin(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
-            kwargs
+            kwargs,
         )
 
     def _prepare_multipart_body(self, content_index=0):
@@ -359,4 +367,6 @@ class HttpRequestBackcompatMixin(object):
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = copy.deepcopy(self._multipart_mixed_info, memo)  # pylint: disable=protected-access
+        request._multipart_mixed_info = (  # pylint: disable=protected-access
+            copy.deepcopy(self._multipart_mixed_info, memo)
+        )
