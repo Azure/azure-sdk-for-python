@@ -62,13 +62,13 @@ async def run_sample():
     created_certificate = await certificate_client.create_certificate(
         certificate_name=cert_name, policy=cert_policy
     )
-    print("Certificate with name '{}' was created".format(created_certificate.name))
+    print(f"Certificate with name '{created_certificate.name}' was created")
 
     # Key Vault also creates a secret with the same name as the created certificate.
     # This secret contains protected information about the certificate, such as its private key.
     print("\n.. Get a secret by name")
     certificate_secret = await secret_client.get_secret(name=cert_name)
-    print("Certificate secret with name '{}' was found.".format(certificate_secret.name))
+    print(f"Certificate secret with name '{certificate_secret.name}' was found.")
 
     # Now we can extract the private key and public certificate from the secret using the cryptography
     # package. `additional_certificates` will be empty since the secret only contains one certificate.
@@ -80,15 +80,15 @@ async def run_sample():
         data=cert_bytes,
         password=None
     )
-    print("Certificate with name '{}' was parsed.".format(certificate_secret.name))
+    print(f"Certificate with name '{certificate_secret.name}' was parsed.")
 
     # Now we can clean up the vault by deleting, then purging, the certificate.
     print("\n.. Delete certificate")
     deleted_certificate = await certificate_client.delete_certificate(certificate_name=cert_name)
-    print("Certificate with name '{}' was deleted.".format(deleted_certificate.name))
+    print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 
     await certificate_client.purge_deleted_certificate(certificate_name=deleted_certificate.name)
-    print("Certificate with name '{}' is being purged.".format(deleted_certificate.name))
+    print(f"Certificate with name '{deleted_certificate.name}' is being purged.")
 
     print("\nrun_sample done")
     await credential.close()
