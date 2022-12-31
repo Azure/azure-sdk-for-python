@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from json import JSONDecodeError
 from typing import Any, Union
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
@@ -123,7 +122,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: list[Dict[str, Any]]
+    :paramtype filters: List[Dict[str, Any]]
     :param label:
     :type label: str
     :param display_name:
@@ -184,7 +183,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
             temp["conditions"]["client_filters"] = self.filters
             self._value = json.dumps(temp)
             return self._value
-        except (JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError):
             return self._value
 
     @value.setter
@@ -197,7 +196,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
             conditions = temp.get("conditions", None)
             if conditions:
                 self.filters = conditions.get("client_filters", None)
-        except (JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError):
             self._value = new_value
             self.enabled = None
             self.filters = None
@@ -214,7 +213,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
                 enabled = temp.get("enabled")
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
-        except (ValueError, JSONDecodeError):
+        except (ValueError, json.JSONDecodeError):
             pass
 
         return cls(
@@ -304,7 +303,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp["uri"] = self.secret_id
             self._value = json.dumps(temp)
             return self._value
-        except (JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError):
             return self._value
 
     @value.setter
@@ -313,7 +312,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             temp = json.loads(new_value)
             self._value = new_value
             self.secret_id = temp.get("uri")
-        except(JSONDecodeError, ValueError):
+        except(json.JSONDecodeError, ValueError):
             self._value = new_value
             self.secret_id = None
 
@@ -327,7 +326,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             secret_uri = temp.get("uri")
             if not secret_uri:
                 secret_uri = temp.get("secret_uri")
-        except (ValueError, JSONDecodeError):
+        except (ValueError, json.JSONDecodeError):
             pass
 
         return cls(
