@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Dict, Union
+from typing import Any, Union
 from ._generated._serialization import Model
 from ._generated.models import KeyValue
 
@@ -221,7 +221,7 @@ class FeatureFlagConfigurationSetting(
         filters = None
         try:
             temp = json.loads(key_value.value)  # type: ignore
-            if isinstance(temp, Dict):
+            if isinstance(temp, dict):
                 enabled = temp.get("enabled")
                 if "conditions" in temp.keys():
                     filters = temp["conditions"].get("client_filters")
