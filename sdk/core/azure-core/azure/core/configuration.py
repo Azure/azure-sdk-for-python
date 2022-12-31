@@ -23,6 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Union, Optional
+
+IntOrFloat = Union[int, float]
 
 
 class Configuration:
@@ -96,8 +99,9 @@ class ConnectionConfiguration:
 
     :keyword int connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
     :keyword int read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
-    :keyword bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
+    :keyword connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
+    :paramtype connection_verify: bool or str
     :keyword str connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
     :keyword int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
@@ -112,9 +116,18 @@ class ConnectionConfiguration:
             :caption: Configuring transport connection settings.
     """
 
-    def __init__(self, **kwargs):
-        self.timeout = kwargs.pop("connection_timeout", 300)
-        self.read_timeout = kwargs.pop("read_timeout", 300)
-        self.verify = kwargs.pop("connection_verify", True)
-        self.cert = kwargs.pop("connection_cert", None)
-        self.data_block_size = kwargs.pop("connection_data_block_size", 4096)
+    def __init__(
+        self,
+        *,
+        connection_timeout: IntOrFloat = 300,
+        read_timeout: IntOrFloat = 300,
+        connection_verify: Union[bool, str] = True,
+        connection_cert: Optional[str] = None,
+        connection_data_block_size: IntOrFloat = 4096,
+        **kwargs
+    ):
+        self.timeout = connection_timeout
+        self.read_timeout = read_timeout
+        self.verify = connection_verify
+        self.cert = connection_cert
+        self.data_block_size = connection_data_block_size
