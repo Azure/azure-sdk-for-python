@@ -6,16 +6,10 @@
 
 import logging
 from typing import Any
+
 from marshmallow import fields, post_load
 
-from azure.ai.ml._utils.utils import snake_to_pascal
-from azure.ai.ml._schema import (
-    PatchedSchemaMeta,
-    StringTransformedEnum,
-    UnionField,
-    RegistryStr,
-    ArmVersionedStr,
-)
+from azure.ai.ml._schema import ArmVersionedStr, PatchedSchemaMeta, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._job.job import JobType
@@ -37,17 +31,11 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
             PipelineComponentFileRefField(),
         ]
     )
-    type = StringTransformedEnum(
-        required=True,
-        allowed_values=[JobType.PIPELINE]
-    )
+    type = StringTransformedEnum(required=True, allowed_values=[JobType.PIPELINE])
     settings = fields.Dict()
     name = fields.Str()
     description = fields.Str()
     tags = fields.Dict()
-
-    def on_bind_field(self, field_name, field_obj):
-        field_obj.data_key = snake_to_pascal(field_obj.data_key or field_name)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

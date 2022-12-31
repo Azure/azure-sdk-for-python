@@ -2,13 +2,14 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
+from pytest_mock import MockFixture
+
 from azure.ai.ml import load_registry
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.operations import RegistryOperations
 from azure.core.exceptions import ResourceExistsError
 from azure.core.polling import LROPoller
-from pytest_mock import MockFixture
 
 
 @pytest.fixture

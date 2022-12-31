@@ -1,9 +1,11 @@
 import base64
+import json
 import os
 import random
+import re
+import shutil
 import time
 import uuid
-import json
 from datetime import datetime
 from importlib import reload
 from os import getenv
@@ -12,7 +14,20 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock, patch
 
 import pytest
-from azure.core.pipeline.transport import HttpTransport
+from devtools_testutils import (
+    add_body_key_sanitizer,
+    add_general_regex_sanitizer,
+    add_general_string_sanitizer,
+    add_remove_header_sanitizer,
+    is_live,
+    set_bodiless_matcher,
+    set_custom_default_matcher,
+)
+from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils.helpers import is_live_and_not_recording
+from devtools_testutils.proxy_fixtures import VariableRecorder
+from pytest_mock import MockFixture
+from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
@@ -27,22 +42,8 @@ from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
-from devtools_testutils import (
-    add_body_key_sanitizer,
-    add_general_regex_sanitizer,
-    add_general_string_sanitizer,
-    add_remove_header_sanitizer,
-    is_live,
-    set_custom_default_matcher,
-    set_bodiless_matcher,
-)
-from devtools_testutils.fake_credentials import FakeTokenCredential
-from devtools_testutils.helpers import is_live_and_not_recording
-from devtools_testutils.proxy_fixtures import VariableRecorder
-from pytest_mock import MockFixture
-
-from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -177,8 +178,8 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
-def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
+def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
 
 
 @pytest.fixture
@@ -194,11 +195,6 @@ def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
 
 
 @pytest.fixture
@@ -491,19 +487,88 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
+def normalized_arm_id_in_object(items):
+    """Replace the arm id in the object with a normalized value."""
+    regex = re.compile(
+        r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
+        r"Microsoft\.MachineLearningServices/workspaces/([^/]+)/"
+    )
+    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
+                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+
+    if isinstance(items, dict):
+        for key, value in items.items():
+            if isinstance(value, str):
+                items[key] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+    elif isinstance(items, list):
+        for i, value in enumerate(items):
+            if isinstance(value, str):
+                items[i] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+
+
+def normalized_hash_dict(items: dict, keys_to_omit=None):
+    """Normalize items with sanitized value and return hash."""
+    normalized_arm_id_in_object(items)
+    return hash_dict(items, keys_to_omit)
+
+
+def generate_component_hash(*args, **kwargs):
+    """Normalize component dict with sanitized value and return hash."""
+    dict_hash = hash_dict(*args, **kwargs)
+    normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    return dict_hash
+
+
 @pytest.fixture
 def mock_component_hash(mocker: MockFixture):
-    fake_component_hash = "000000000000000000000"
+    """Mock the component hash function.
 
-    def generate_compononent_hash(*args, **kwargs):
-        dict_hash = hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=fake_component_hash, target=dict_hash)
-        return dict_hash
+    In playback mode, workspace information in returned arm_id will be normalized like this:
+    /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/.../codes/xxx/versions/xxx
+    =>
+    /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/.../codes/xxx/versions/xxx
+    So the component hash will be different from the recorded one.
+    In this mock, we replace the original hash in recordings with the same hash in playback mode.
+
+    Note that component hash value in playback mode can be different from the one in live mode,
+    so tests that check component hash directly should be skipped if not is_live.
+    """
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
-    else:
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", return_value=fake_component_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
+        mocker.patch(
+            "azure.ai.ml.entities._component.pipeline_component.hash_dict",
+            side_effect=generate_component_hash
+        )
+
+    if is_live_and_not_recording():
+        return
+
+    if not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_TESTS", False) in ["True", "true", True]:
+        # On-disk cache can't be shared among different tests in playback mode or when recording.
+        # When doing recording:
+        # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+        #    the cached result from tests run earlier, so we won't found enough recordings when
+        #    running tests in reversed order.
+        # In playback mode:
+        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+        #   with the same on-disk hash.
+        # 2) Server-side may return different version for the same anonymous component in different workspace,
+        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+        #   and test2 in workspace B, the version in recordings can be different.
+        # So we need to clear on-disk cache for each test.
+
+        # If you want to run tests concurrently, you can either:
+        # 1) Disable on-disk cache or
+        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_TESTS to True and acknowledge that you may meet
+        #   the issues mentioned above.
+        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
 
 
 @pytest.fixture
@@ -614,7 +679,6 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
-    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
@@ -623,12 +687,11 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 @pytest.fixture()
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
-    from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
+    from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
-    from azure.ai.ml.entities._component import (
-        command_component as command_component_entity,
-        pipeline_component as pipeline_component_entity,
-    )
+    from azure.ai.ml.entities._component import command_component as command_component_entity
+    from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
 
     def _reload_related_classes():
         reload(input_output)

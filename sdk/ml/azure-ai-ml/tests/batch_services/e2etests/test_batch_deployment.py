@@ -3,8 +3,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import wait_until_done
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -12,8 +13,6 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import BatchDeployment, BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.operations._run_history_constants import JobStatus
-
-from test_utilities.utils import wait_until_done
 
 
 @contextmanager

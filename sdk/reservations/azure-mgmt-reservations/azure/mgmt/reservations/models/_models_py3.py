@@ -13,13 +13,18 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -87,6 +92,47 @@ class AppliedReservations(_serialization.Model):
         self.name = None
         self.type = None
         self.reservation_order_ids = reservation_order_ids
+
+
+class AppliedScopeProperties(_serialization.Model):
+    """AppliedScopeProperties.
+
+    :ivar tenant_id: Tenant ID of the applied scope type.
+    :vartype tenant_id: str
+    :ivar management_group_id: Management group ID of the format
+     /providers/Microsoft.Management/managementGroups/{managementGroupId}.
+    :vartype management_group_id: str
+    :ivar display_name: Management group display name.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        management_group_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword tenant_id: Tenant ID of the applied scope type.
+        :paramtype tenant_id: str
+        :keyword management_group_id: Management group ID of the format
+         /providers/Microsoft.Management/managementGroups/{managementGroupId}.
+        :paramtype management_group_id: str
+        :keyword display_name: Management group display name.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.tenant_id = tenant_id
+        self.management_group_id = management_group_id
+        self.display_name = display_name
 
 
 class AvailableScopeProperties(_serialization.Model):
@@ -3124,7 +3170,7 @@ class ReservationResponse(_serialization.Model):
         etag: Optional[int] = None,
         sku: Optional["_models.SkuName"] = None,
         properties: Optional["_models.ReservationsProperties"] = None,
-        kind: Optional[str] = None,
+        kind: Optional[Literal["Microsoft.Compute"]] = None,
         **kwargs
     ):
         """
@@ -3280,6 +3326,10 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
     :vartype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
     :ivar merge_properties:
     :vartype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
+    :ivar swap_properties:
+    :vartype swap_properties: ~azure.mgmt.reservations.models.ReservationSwapProperties
+    :ivar applied_scope_properties:
+    :vartype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
     :ivar billing_scope_id: Subscription that will be charged for purchasing Reservation.
     :vartype billing_scope_id: str
     :ivar renew: Setting this to true will automatically purchase a new reservation on the
@@ -3337,6 +3387,8 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         "purchase_date": {"key": "purchaseDate", "type": "date"},
         "split_properties": {"key": "splitProperties", "type": "ReservationSplitProperties"},
         "merge_properties": {"key": "mergeProperties", "type": "ReservationMergeProperties"},
+        "swap_properties": {"key": "swapProperties", "type": "ReservationSwapProperties"},
+        "applied_scope_properties": {"key": "appliedScopeProperties", "type": "AppliedScopeProperties"},
         "billing_scope_id": {"key": "billingScopeId", "type": "str"},
         "renew": {"key": "renew", "type": "bool"},
         "renew_source": {"key": "renewSource", "type": "str"},
@@ -3369,6 +3421,8 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         purchase_date: Optional[datetime.date] = None,
         split_properties: Optional["_models.ReservationSplitProperties"] = None,
         merge_properties: Optional["_models.ReservationMergeProperties"] = None,
+        swap_properties: Optional["_models.ReservationSwapProperties"] = None,
+        applied_scope_properties: Optional["_models.AppliedScopeProperties"] = None,
         billing_scope_id: Optional[str] = None,
         renew: bool = False,
         renew_source: Optional[str] = None,
@@ -3426,6 +3480,10 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         :paramtype split_properties: ~azure.mgmt.reservations.models.ReservationSplitProperties
         :keyword merge_properties:
         :paramtype merge_properties: ~azure.mgmt.reservations.models.ReservationMergeProperties
+        :keyword swap_properties:
+        :paramtype swap_properties: ~azure.mgmt.reservations.models.ReservationSwapProperties
+        :keyword applied_scope_properties:
+        :paramtype applied_scope_properties: ~azure.mgmt.reservations.models.AppliedScopeProperties
         :keyword billing_scope_id: Subscription that will be charged for purchasing Reservation.
         :paramtype billing_scope_id: str
         :keyword renew: Setting this to true will automatically purchase a new reservation on the
@@ -3466,6 +3524,8 @@ class ReservationsProperties(_serialization.Model):  # pylint: disable=too-many-
         self.purchase_date = purchase_date
         self.split_properties = split_properties
         self.merge_properties = merge_properties
+        self.swap_properties = swap_properties
+        self.applied_scope_properties = applied_scope_properties
         self.billing_scope_id = billing_scope_id
         self.renew = renew
         self.renew_source = renew_source
@@ -3558,6 +3618,40 @@ class ReservationSummary(_serialization.Model):
         self.pending_count = None
         self.cancelled_count = None
         self.processing_count = None
+
+
+class ReservationSwapProperties(_serialization.Model):
+    """ReservationSwapProperties.
+
+    :ivar swap_source: Resource Id of the Source Reservation that gets swapped. Format of the
+     resource Id is
+     /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype swap_source: str
+    :ivar swap_destination: Reservation Resource Id that the original resource gets swapped to.
+     Format of the resource Id is
+     /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+    :vartype swap_destination: str
+    """
+
+    _attribute_map = {
+        "swap_source": {"key": "swapSource", "type": "str"},
+        "swap_destination": {"key": "swapDestination", "type": "str"},
+    }
+
+    def __init__(self, *, swap_source: Optional[str] = None, swap_destination: Optional[str] = None, **kwargs):
+        """
+        :keyword swap_source: Resource Id of the Source Reservation that gets swapped. Format of the
+         resource Id is
+         /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype swap_source: str
+        :keyword swap_destination: Reservation Resource Id that the original resource gets swapped to.
+         Format of the resource Id is
+         /providers/microsoft.capacity/reservationOrders/{reservationOrderId}/reservations/{reservationId}.
+        :paramtype swap_destination: str
+        """
+        super().__init__(**kwargs)
+        self.swap_source = swap_source
+        self.swap_destination = swap_destination
 
 
 class ReservationToExchange(_serialization.Model):

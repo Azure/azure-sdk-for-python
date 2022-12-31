@@ -8,7 +8,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -24,8 +24,9 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
+from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -45,6 +46,7 @@ from azure.ai.ml.constants._common import (
     SHORT_URI_REGEX_FORMAT,
     AssetTypes,
     AzureMLResourceType,
+    InputTypes,
     LROConfigurations,
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
@@ -80,7 +82,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
 
@@ -204,8 +206,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         endpoint_name: str,
         *,
-        deployment_name: str = None,
-        inputs: Dict[str, Input] = None,
+        deployment_name: Optional[str] = None,
+        inputs: Optional[Dict[str, Input]] = None,
         **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
@@ -232,7 +234,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         outputs = kwargs.get("outputs", None)
         job_name = kwargs.get("job_name", None)
         params_override = kwargs.get("params_override", None) or []
-        input = kwargs.get("input", None) # pylint: disable=redefined-builtin
+        input = kwargs.get("input", None)  # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
@@ -260,7 +262,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 )
         elif inputs:
             for key, input_data in inputs.items():
-                if isinstance(input_data, Input) and HTTP_PREFIX not in input_data.path:
+                if (
+                    isinstance(input_data, Input)
+                    and input_data.type
+                    not in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]
+                    and HTTP_PREFIX not in input_data.path
+                ):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
@@ -304,9 +311,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
         response = self._requests_pipeline.post(
-           endpoint.properties.scoring_uri,
-           json=BatchJobResource(properties=batch_job).serialize(),
-           headers=headers,
+            endpoint.properties.scoring_uri,
+            json=BatchJobResource(properties=batch_job).serialize(),
+            headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
@@ -380,6 +387,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if not entry.path:
             raise Exception("Input path can't be empty for batch endpoint invoke")
 
+        if entry.type in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]:
+            return
+
         try:
             if entry.path.startswith(ARM_ID_FULL_PREFIX):
                 if not is_ARM_id_for_resource(entry.path, AzureMLResourceType.DATA):
@@ -419,8 +429,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     return
                 if is_private_preview_enabled() and re.match(AZUREML_REGEX_FORMAT, entry.path):
                     return
-                asset_type = AzureMLResourceType.DATASTORE
-                entry.path = remove_datastore_prefix(entry.path)
+                asset_type = AzureMLResourceType.DATA
+                entry.path = remove_aml_prefix(entry.path)
                 orchestrator = OperationOrchestrator(
                     self._all_operations, self._operation_scope, self._operation_config
                 )

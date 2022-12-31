@@ -34,7 +34,7 @@ stages:
 #      strategy:
 #        matrix:
 #          Windows_Python36:
-#            OSVmImage: 'windows-2019'
+#            OSVmImage: 'windows-2022'
 #            PythonVersion: '3.6'
 #      pool:
 #        vmImage: $(OSVmImage)

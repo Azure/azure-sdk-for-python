@@ -8,7 +8,7 @@ import yaml
 
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml.entities import PipelineComponent, PipelineJob, Component
+from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 

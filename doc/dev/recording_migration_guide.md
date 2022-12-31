@@ -60,7 +60,7 @@ Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercont
 - [PowerShell Core][powershell] >= 7.0 is installed.
 - [Docker][docker] or [Podman][podman] is installed.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
-  - These settings can be overridden with environment variables `GIT_COMMIT_EMAIL` and `GIT_COMMIT_OWNER`, respectively.
+  - These settings can be overridden with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively.
 - The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user.
   - This token is necessary for authenticating git requests made in a Docker/Podman container.
 - Membership in the `azure-sdk-write` GitHub group.

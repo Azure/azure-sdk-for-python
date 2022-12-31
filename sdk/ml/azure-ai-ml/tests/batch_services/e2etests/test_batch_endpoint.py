@@ -1,12 +1,11 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
-from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
+from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.core.exceptions import ResourceNotFoundError
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest

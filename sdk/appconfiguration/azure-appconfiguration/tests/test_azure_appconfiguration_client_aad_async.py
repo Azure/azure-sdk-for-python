@@ -288,13 +288,13 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         async with self.create_aad_client(appconfiguration_endpoint_string) as client:
-            resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
-            resered_char_kv = await client.add_configuration_setting(resered_char_kv)
+            reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
+            reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
             escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
             items = await self.convert_to_list(client.list_configuration_settings(label_filter=escaped_label))
             assert len(items) == 1
             assert all(x.label == LABEL_RESERVED_CHARS for x in items)
-            await client.delete_configuration_setting(resered_char_kv.key)
+            await client.delete_configuration_setting(reserved_char_kv.key)
 
     # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_aad_decorator_async
@@ -686,8 +686,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
                     "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
-                            u"Users": [u"abcd", u"defg"],
-                            u"Groups": [u"ghij", u"jklm"],
+                            u"Users": [u"abcd", u"defg"], # cspell:disable-line
+                            u"Groups": [u"ghij", u"jklm"], # cspell:disable-line
                             u"DefaultRolloutPercentage": 50
                         }
                     }
@@ -698,8 +698,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
                     "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
-                            u"Users": [u"abcde", u"defgh"],
-                            u"Groups": [u"ghijk", u"jklmn"],
+                            u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                            u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                             u"DefaultRolloutPercentage": 100
                         }
                     }
@@ -790,8 +790,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
                         "name": FILTER_TARGETING,
                         "parameters": {
                             u"Audience": {
-                                u"Users": [u"abcde", u"defgh"],
-                                u"Groups": [u"ghijk", u"jklmn"],
+                                u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                                u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                                 u"DefaultRolloutPercentage": 100
                             }
                         }

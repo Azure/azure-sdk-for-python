@@ -11,6 +11,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
@@ -74,7 +75,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY, # pylint: disable=unused-argument
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,  # pylint: disable=unused-argument
     ) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
 

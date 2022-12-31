@@ -100,8 +100,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricListResult]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        cls: ClsType[_models.MetricListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -126,12 +126,12 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -139,13 +139,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("MetricListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -158,7 +158,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_metrics.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metrics"}  # type: ignore
+    list_metrics.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metrics"
+    }
 
     @distributed_trace
     def list_metric_definitions(
@@ -181,8 +183,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricDefinitionListResult]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        cls: ClsType[_models.MetricDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -206,12 +208,12 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -219,13 +221,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("MetricDefinitionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -238,7 +240,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_metric_definitions.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metricDefinitions"}  # type: ignore
+    list_metric_definitions.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metricDefinitions"
+    }
 
     @distributed_trace
     def list_by_server(
@@ -261,10 +265,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseListResult]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -288,12 +292,12 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -301,13 +305,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -320,7 +324,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases"}  # type: ignore
+    list_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases"
+    }
 
     @distributed_trace_async
     async def get(
@@ -351,10 +357,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Database]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.Database] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -367,9 +373,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -386,7 +392,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     async def _create_or_update_initial(
         self,
@@ -407,11 +415,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.Database]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -435,9 +443,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -459,7 +467,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -579,16 +589,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Database]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Database] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -609,7 +619,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -621,9 +631,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -639,10 +651,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -655,9 +667,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -670,7 +682,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     @distributed_trace_async
     async def begin_delete(
@@ -700,13 +714,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -725,7 +739,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -737,9 +751,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     async def _update_initial(
         self,
@@ -760,11 +776,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.Database]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -788,9 +804,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -809,7 +825,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    _update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     @overload
     async def begin_update(
@@ -929,16 +947,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Database]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Database] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_initial(  # type: ignore
+            raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -959,7 +977,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -971,9 +989,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"}  # type: ignore
+    begin_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
+    }
 
     async def _export_initial(
         self,
@@ -994,11 +1014,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ImportExportOperationResult]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ImportExportOperationResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1022,9 +1042,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1043,7 +1063,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _export_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"}  # type: ignore
+    _export_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"
+    }
 
     @overload
     async def begin_export(
@@ -1163,16 +1185,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImportExportOperationResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImportExportOperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._export_initial(  # type: ignore
+            raw_result = await self._export_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -1193,7 +1215,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1205,9 +1227,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_export.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"}  # type: ignore
+    begin_export.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"
+    }
 
     async def _failover_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1228,10 +1252,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_failover_request(
             resource_group_name=resource_group_name,
@@ -1245,9 +1269,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1260,7 +1284,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _failover_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"}  # type: ignore
+    _failover_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"
+    }
 
     @distributed_trace_async
     async def begin_failover(
@@ -1298,13 +1324,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._failover_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -1324,7 +1350,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1336,9 +1362,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_failover.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"}  # type: ignore
+    begin_failover.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"
+    }
 
     async def _import_method_initial(
         self,
@@ -1359,11 +1387,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ImportExportOperationResult]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ImportExportOperationResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1387,9 +1415,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1408,7 +1436,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _import_method_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"}  # type: ignore
+    _import_method_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"
+    }
 
     @overload
     async def begin_import_method(
@@ -1528,16 +1558,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ImportExportOperationResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ImportExportOperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._import_method_initial(  # type: ignore
+            raw_result = await self._import_method_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -1558,7 +1588,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1570,9 +1600,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_import_method.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"}  # type: ignore
+    begin_import_method.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"
+    }
 
     @overload
     async def rename(  # pylint: disable=inconsistent-return-statements
@@ -1676,11 +1708,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1704,9 +1736,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1719,7 +1751,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    rename.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move"}  # type: ignore
+    rename.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move"
+    }
 
     async def _pause_initial(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -1735,10 +1769,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.Database]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
         request = build_pause_request(
             resource_group_name=resource_group_name,
@@ -1751,9 +1785,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1772,7 +1806,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _pause_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"}  # type: ignore
+    _pause_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"
+    }
 
     @distributed_trace_async
     async def begin_pause(
@@ -1803,15 +1839,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Database]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.Database] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._pause_initial(  # type: ignore
+            raw_result = await self._pause_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -1830,7 +1866,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1842,9 +1878,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_pause.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"}  # type: ignore
+    begin_pause.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"
+    }
 
     async def _resume_initial(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -1860,10 +1898,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.Database]]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
         request = build_resume_request(
             resource_group_name=resource_group_name,
@@ -1876,9 +1914,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1897,7 +1935,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _resume_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"}  # type: ignore
+    _resume_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"
+    }
 
     @distributed_trace_async
     async def begin_resume(
@@ -1928,15 +1968,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Database]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.Database] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._resume_initial(  # type: ignore
+            raw_result = await self._resume_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 database_name=database_name,
@@ -1955,7 +1995,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1967,9 +2007,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_resume.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"}  # type: ignore
+    begin_resume.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"
+    }
 
     async def _upgrade_data_warehouse_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -1985,10 +2027,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_upgrade_data_warehouse_request(
             resource_group_name=resource_group_name,
@@ -2001,9 +2043,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2016,7 +2058,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _upgrade_data_warehouse_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"}  # type: ignore
+    _upgrade_data_warehouse_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"
+    }
 
     @distributed_trace_async
     async def begin_upgrade_data_warehouse(
@@ -2046,13 +2090,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._upgrade_data_warehouse_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -2071,7 +2115,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))  # type: AsyncPollingMethod
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -2083,9 +2127,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_upgrade_data_warehouse.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"}  # type: ignore
+    begin_upgrade_data_warehouse.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"
+    }
 
     @distributed_trace
     def list_by_elastic_pool(
@@ -2108,10 +2154,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseListResult]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2135,12 +2181,12 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2148,13 +2194,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2167,7 +2213,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_elastic_pool.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/databases"}  # type: ignore
+    list_by_elastic_pool.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/databases"
+    }
 
     @distributed_trace
     def list_inaccessible_by_server(
@@ -2188,10 +2236,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
-        )  # type: Literal["2022-02-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseListResult]
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        )
+        cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2214,12 +2262,12 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2227,13 +2275,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2246,4 +2294,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_inaccessible_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/inaccessibleDatabases"}  # type: ignore
+    list_inaccessible_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/inaccessibleDatabases"
+    }

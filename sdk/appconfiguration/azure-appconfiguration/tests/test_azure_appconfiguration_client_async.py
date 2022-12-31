@@ -295,13 +295,13 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
-            resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
-            resered_char_kv = await client.add_configuration_setting(resered_char_kv)
+            reserved_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
+            reserved_char_kv = await client.add_configuration_setting(reserved_char_kv)
             escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
             items = await self.convert_to_list(client.list_configuration_settings(label_filter=escaped_label))
             assert len(items) == 1
             assert all(x.label == LABEL_RESERVED_CHARS for x in items)
-            await client.delete_configuration_setting(resered_char_kv.key)
+            await client.delete_configuration_setting(reserved_char_kv.key)
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -692,8 +692,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
-                            u"Users": [u"abcd", u"defg"],
-                            u"Groups": [u"ghij", u"jklm"],
+                            u"Users": [u"abcd", u"defg"], # cspell:disable-line
+                            u"Groups": [u"ghij", u"jklm"], # cspell:disable-line
                             u"DefaultRolloutPercentage": 50
                         }
                     }
@@ -704,8 +704,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
-                            u"Users": [u"abcde", u"defgh"],
-                            u"Groups": [u"ghijk", u"jklmn"],
+                            u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                            u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                             u"DefaultRolloutPercentage": 100
                         }
                     }
@@ -796,8 +796,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                         "name": FILTER_TARGETING,
                         "parameters": {
                             u"Audience": {
-                                u"Users": [u"abcde", u"defgh"],
-                                u"Groups": [u"ghijk", u"jklmn"],
+                                u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                                u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                                 u"DefaultRolloutPercentage": 100
                             }
                         }
@@ -832,7 +832,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
                             "End": "Fri, 02 Apr 2021 04:00:00 GMT"
                         }
                     },
@@ -848,7 +848,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
                             "End": "not even trying to be a date"
                         }
                     },
@@ -865,7 +865,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     {
                         "name": FILTER_TIME_WINDOW,
                         "parameters": {
-                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT",
+                            "Start": "bababooey, 31 Mar 2021 25:00:00 GMT", # cspell:disable-line
                             "End": "not even trying to be a date"
                         }
                     },
@@ -938,7 +938,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                     }
                 ]
             )
-            new.feature_flag_content_type = "fakeyfakey"
+            new.feature_flag_content_type = "fakeyfakey" # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
@@ -949,17 +949,17 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_connection_string):
         async with self.create_client(appconfiguration_connection_string) as client:
             new = SecretReferenceConfigurationSetting(
-                "aref",
+                "aref", # cspell:disable-line
                 "notaurl"
             )
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 
             new = SecretReferenceConfigurationSetting(
-                "aref1",
+                "aref1", # cspell:disable-line
                 "notaurl"
             )
-            new.content_type = "fkaeyjfdkal;"
+            new.content_type = "fkaeyjfdkal;" # cspell:disable-line
             await client.set_configuration_setting(new)
             await client.get_configuration_setting(new.key)
 

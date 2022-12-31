@@ -1,7 +1,8 @@
 from pathlib import Path
+
 import pytest
 
-from azure.ai.ml import dsl, load_component, Input
+from azure.ai.ml import Input, dsl, load_component
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"

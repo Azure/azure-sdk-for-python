@@ -17,17 +17,18 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
-from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
+from ..._utils._arm_id_utils import parse_name_label
+from ...entities._assets import Code
+from ...entities._job.distribution import DistributionConfiguration
 from .._schema.component import InternalComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
+from ._merkle_tree import create_merkletree
+from .code import InternalCode, InternalComponentIgnoreFile
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
-from .code import InternalCode, InternalComponentIgnoreFile
-from ..._utils._arm_id_utils import parse_name_label
-from ...entities._job.distribution import DistributionConfiguration
 
 
 class InternalComponent(Component):
@@ -68,32 +69,32 @@ class InternalComponent(Component):
     def __init__(
         self,
         *,
-        _schema: str = None,
-        name: str = None,
-        version: str = None,
-        display_name: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        is_deterministic: bool = None,
-        successful_return_code: str = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        code: str = None,
-        environment: Dict = None,
-        environment_variables: Dict = None,
-        command: str = None,
-        id: str = None,
-        properties: Dict = None,
-        yaml_str: str = None,
-        creation_context: SystemData = None,
-        scope: Dict = None,
-        hemera: Dict = None,
-        hdinsight: Dict = None,
-        parallel: Dict = None,
-        starlite: Dict = None,
-        ae365exepool: Dict = None,
-        launcher: Dict = None,
+        _schema: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        display_name: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        is_deterministic: Optional[bool] = None,
+        successful_return_code: Optional[str] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        code: Optional[str] = None,
+        environment: Optional[Dict] = None,
+        environment_variables: Optional[Dict] = None,
+        command: Optional[str] = None,
+        id: Optional[str] = None,
+        properties: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
+        scope: Optional[Dict] = None,
+        hemera: Optional[Dict] = None,
+        hdinsight: Optional[Dict] = None,
+        parallel: Optional[Dict] = None,
+        starlite: Optional[Dict] = None,
+        ae365exepool: Optional[Dict] = None,
+        launcher: Optional[Dict] = None,
         **kwargs,
     ):
         type, self._type_label = parse_name_label(type)
@@ -117,6 +118,7 @@ class InternalComponent(Component):
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
+        self._origin_name, self._origin_version = None, None
 
         self.successful_return_code = successful_return_code
         self.code = code
@@ -175,10 +177,7 @@ class InternalComponent(Component):
             skip_path_validation = False
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(
-                    self._base_path,
-                    skip_path_validation=skip_path_validation
-                ),
+                self.environment._validate(self._base_path, skip_path_validation=skip_path_validation),
                 field_name="environment",
             )
         return validation_result
@@ -192,8 +191,18 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
+    def _set_is_anonymous(self, is_anonymous: bool):
+        if is_anonymous:
+            self._origin_name, self._origin_version = self.name, self.version
+        super()._set_is_anonymous(is_anonymous)
+
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
+
+        if self._origin_name:
+            component["name"] = self._origin_name
+        if self._origin_version:
+            component["version"] = self._origin_version
 
         properties = ComponentVersionDetails(
             component_spec=component,
@@ -226,11 +235,23 @@ class InternalComponent(Component):
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
-        # Note that if self.code is already a Code object, this function won't be called
-        # in create_or_update => _try_resolve_code_for_component, which is also
-        # forbidden by schema CodeFields for now.
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
+        # an internal component always has a default local code of its base path
+        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
 
         self._additional_includes.resolve()
 

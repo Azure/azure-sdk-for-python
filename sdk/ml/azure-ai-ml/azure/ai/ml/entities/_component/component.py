@@ -5,7 +5,7 @@ import tempfile
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -24,6 +24,7 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
     CommonYamlFields,
+    AzureMLResourceType,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
@@ -32,9 +33,11 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+
 from .code import ComponentIgnoreFile
+from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -91,20 +94,20 @@ class Component(
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        id: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        display_name: str = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        id: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        display_name: Optional[str] = None,
         is_deterministic: bool = True,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        yaml_str: str = None,
-        _schema: str = None,
-        creation_context: SystemData = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        _schema: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
         **kwargs,
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -296,9 +299,9 @@ class Component(
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Component":
         data = data or {}
@@ -313,15 +316,20 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
+
         create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func({
-                BASE_PATH_CONTEXT_KEY: base_path,
-                PARAMS_OVERRIDE_KEY: params_override,
-            }).load(data, unknown=INCLUDE, **kwargs)),
+            **(
+                create_schema_func(
+                    {
+                        BASE_PATH_CONTEXT_KEY: base_path,
+                        PARAMS_OVERRIDE_KEY: params_override,
+                    }
+                ).load(data, unknown=INCLUDE, **kwargs)
+            ),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
@@ -361,6 +369,7 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
+
         create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
@@ -388,14 +397,16 @@ class Component(
         init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
             rest_component_version.component_spec, unknown=INCLUDE
         )
-        init_kwargs.update(dict(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            name=origin_name,
-        ))
+        init_kwargs.update(
+            dict(
+                id=obj.id,
+                is_anonymous=rest_component_version.is_anonymous,
+                creation_context=obj.system_data,
+                inputs=inputs,
+                outputs=outputs,
+                name=origin_name,
+            )
+        )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
@@ -501,12 +512,32 @@ class Component(
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
         if not hasattr(self, "code"):
-            raise ValueError(f"{self.__class__} does not have attribute code.")
+            yield None
+            return
+
         code = getattr(self, "code")
-        if code is None:
+
+        if is_ARM_id_for_resource(code, AzureMLResourceType.CODE) or is_registry_id_for_resource(code):
+            # arm id can be passed directly
+            yield None
+        elif isinstance(code, Code):
+            # Code object & registry id need to be resolved into arm id
+            # note that:
+            # 1. Code & CodeOperation are not public for now
+            # 2. AnonymousCodeSchema is not supported in Component for now
+            # So isinstance(component.code, Code) will always be false, or an exception will be raised
+            # in validation stage.
+            yield code
+        elif isinstance(code, str) and code.startswith("git+"):
+            # git also need to be resolved into arm id
+            yield Code(path=code, is_remote=True)
+        elif code is None:
             # Hack: when code not specified, we generated a file which contains
             # COMPONENT_PLACEHOLDER as code
             # This hack was introduced because job does not allow running component without a

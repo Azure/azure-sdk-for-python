@@ -1,11 +1,11 @@
-from argparse import ArgumentParser
 import logging
 import os
-from pathlib import Path
-from platform import system
 import subprocess
 import sys
 import time
+from argparse import ArgumentParser
+from pathlib import Path
+from platform import system
 from urllib.request import urlopen
 
 module_logger = logging.getLogger(__name__)
