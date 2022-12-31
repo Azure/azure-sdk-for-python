@@ -38,7 +38,7 @@ class ConfigurationSetting(Model):
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
@@ -132,7 +132,7 @@ class FeatureFlagConfigurationSetting(
     :keyword enabled:
     :paramtype enabled: bool
     :keyword filters:
-    :paramtype filters: list[dict[str, Any]]
+    :paramtype filters: list[Dict[str, Any]]
     :param label:
     :type label: str
     :param display_name:
@@ -146,12 +146,12 @@ class FeatureFlagConfigurationSetting(
     :ivar read_only:
     :vartype read_only: bool
     :param tags:
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     """
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
-        "feature_id": {"key": "feaure_id", "type": "str"},
+        "feature_id": {"key": "feature_id", "type": "str"},
         "label": {"key": "label", "type": "str"},
         "content_type": {"key": "_feature_flag_content_type", "type": "str"},
         "value": {"key": "value", "type": "str"},
