@@ -50,11 +50,10 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
         self,
         endpoint: str,
         table_name: str,
-        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs
     ) -> None:

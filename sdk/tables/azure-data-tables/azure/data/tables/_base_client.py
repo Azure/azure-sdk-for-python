@@ -214,10 +214,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
 
 class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
         self,
         endpoint: str,
-        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs: Any
     ) -> None:

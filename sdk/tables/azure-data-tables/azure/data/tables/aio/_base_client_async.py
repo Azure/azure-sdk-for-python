@@ -44,10 +44,9 @@ from ._policies_async import AsyncTablesRetryPolicy
 
 class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(
         self,
         endpoint: str,
-        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs: Any
     ) -> None:
