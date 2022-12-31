@@ -146,7 +146,7 @@ class TablesRetryPolicy(RetryPolicy):
 
         :param options: keyword arguments from context.
         :return: A dict containing settings and history for retries.
-        :rtype: dict
+        :rtype: Dict
         """
         config = super(TablesRetryPolicy, self).configure_retries(options)
         config["retry_secondary"] = options.pop("retry_to_secondary", self.retry_to_secondary)
@@ -160,7 +160,7 @@ class TablesRetryPolicy(RetryPolicy):
         :param context: The pipeline context.
         :type context: ~azure.core.pipeline.PipelineContext
         :param retry_settings: The retry settings.
-        :type retry_settings: dict
+        :type retry_settings: Dict
         """
         super(TablesRetryPolicy, self).update_context(context, retry_settings)
         context['location_mode'] = retry_settings['mode']
@@ -169,7 +169,7 @@ class TablesRetryPolicy(RetryPolicy):
         """Updates the pipeline request before attempting to retry.
 
         :param PipelineRequest request: The outgoing request.
-        :param dict(str, Any) retry_settings: The current retry context settings.
+        :param Dict(str, Any) retry_settings: The current retry context settings.
         """
         set_next_host_location(retry_settings, request)
 

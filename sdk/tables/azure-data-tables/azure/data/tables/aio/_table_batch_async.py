@@ -129,7 +129,7 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -301,7 +301,7 @@ class TableBatchOperations(object):
          is found to update and a replace will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -403,7 +403,7 @@ class TableBatchOperations(object):
          is found to update and a merge will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".

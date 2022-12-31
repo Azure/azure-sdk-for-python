@@ -225,7 +225,7 @@ def _extract_etag(response):
 def _extract_continuation_token(continuation_token):
     """Extract list entity continuation headers from token.
 
-    :param dict(str,str) continuation_token: The listing continuation token.
+    :param Dict(str,str) continuation_token: The listing continuation token.
     :returns: The next partition key and next row key in a tuple
     :rtype: (str,str)
     """
