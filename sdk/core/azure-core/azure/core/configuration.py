@@ -117,7 +117,7 @@ class ConnectionConfiguration:
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         connection_timeout: IntOrFloat = 300,
         read_timeout: IntOrFloat = 300,
