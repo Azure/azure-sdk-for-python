@@ -44,13 +44,16 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
-    # pylint:disable=line-too-long
+class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
 
-    :param str base_url: base url of the service
+    :param str base_url: Base url of the service.
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials.TokenCredential`
+    :type credential: :class:`~azure.appconfiguration.AppConfigConnectionStringCredential`
+        or :class:`~azure.core.credentials.TokenCredential`
+    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
+        value may result in unsupported behavior.
+    :paramtype api_version: str
 
     """
 
