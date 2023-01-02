@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.paging import ItemPaged
@@ -20,6 +20,7 @@ _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureKeyCredential
     from azure.core.async_paging import AsyncItemPaged
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
@@ -30,8 +31,8 @@ class PhoneNumbersClient(object):
     This client provides operations to interact with the phone numbers service
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The credentials with which to authenticate.
+    :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Phone Number API version.
         The default value is "2022-01-11-preview2".
         Note that overriding this default value may result in unsupported behavior.
@@ -40,7 +41,7 @@ class PhoneNumbersClient(object):
     def __init__(
                 self,
                 endpoint, # type: str
-                credential, # type: AsyncTokenCredential
+                credential, # type: Union[AsyncTokenCredential, AzureKeyCredential],
                 **kwargs # type: Any
         ):
         # type: (...) -> None

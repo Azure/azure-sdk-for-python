@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Union
 from uuid import uuid4
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
@@ -16,6 +17,8 @@ from azure.communication.sms._models import SmsSendResult
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from .._version import SDK_MONIKER
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
 
 class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Sms gateway asynchronously.
@@ -24,12 +27,12 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
    :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The AsyncTokenCredential we use to authenticate against the service.
+    :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     """
     def __init__(
             self, endpoint,  # type: str
-            credential,  # type: AsyncTokenCredential
+            credential,  # type: Union[AsyncTokenCredential, AzureKeyCredential],
             **kwargs  # type: Any
         ):
         # type: (...) -> None
