@@ -15,6 +15,8 @@ from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import convert_timedelta_to_mins
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
