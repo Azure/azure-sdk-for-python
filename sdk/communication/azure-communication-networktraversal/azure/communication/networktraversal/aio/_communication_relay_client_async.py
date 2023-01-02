@@ -12,10 +12,12 @@ from .._generated.aio._communication_network_traversal_client\
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureKeyCredential
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import AzureKeyCredential
     from .._generated.models import CommunicationRelayConfiguration
     from azure.communication.identity import CommunicationUserIdentifier
     from azure.communication.networktraversal import RouteType
