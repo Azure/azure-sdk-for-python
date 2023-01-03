@@ -117,13 +117,13 @@ steps:
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_tox_logs'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_tox_logs'
-      CustomCondition: $[eq(variables['Agent.JobStatus'], 'Failed')]
+      CustomCondition: failed()
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
-      CustomCondition: $[and(succeeded(), parameters['RunCoverage'])]
+      CustomCondition: parameters['RunCoverage']
 
   - task: PublishTestResults@2
     condition: always()
