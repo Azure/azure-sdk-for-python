@@ -33,7 +33,7 @@ By default, [Azure Active Directory](https://aka.ms/awps/aad) token authenticati
 In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 {% endif %}
 With above configuration, client can be authenticated by following code:
-{% set sub_namespace = "." + sub_namespace if sub_namespace else "" -%}
+{%- set sub_namespace = "." + sub_namespace if sub_namespace else "" %}
 
 ```python
 from azure.identity import DefaultAzureCredential
