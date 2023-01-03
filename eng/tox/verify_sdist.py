@@ -19,7 +19,7 @@ from tox_helper_tasks import (
 from verify_whl import cleanup, should_verify_package
 from typing import List, Mapping, Any
 
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, parse_require
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -152,4 +152,12 @@ if __name__ == "__main__":
             logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_details.name)
         else:
             logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
+            exit(1)
+    
+    if pkg_details.requires:
+        logging.info("Verifying presence of isodate in package [%s]", pkg_details.name)
+        if "isodate" in parse_require(pkg_details.requires) and "msrest" not in parse_require(pkg_details.requires):
+            logging.info("Isodate is installed properly: [%s]", pkg_details.name)
+        else:
+            logging.info("Isodate should be listed as a requirement in setup.py and msrest should not be a requirement: [%s]", pkg_details.name)
             exit(1)
