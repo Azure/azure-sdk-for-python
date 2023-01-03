@@ -3,6 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
+import copy
+import datetime
+import json
+import re
+import copy
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -30,17 +36,10 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from async_preparers import app_config_decorator_async
 from devtools_testutils.aio import recorded_by_proxy_async
-import pytest
-import copy
-import datetime
-import os
-import json
-import re
-import copy
+from async_preparers import app_config_decorator_async
+from typing import Any
 from uuid import uuid4
-import json
 
 
 class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
@@ -982,7 +981,7 @@ class TestAppConfigurationClientUnitTest:
             async def open(self):
                 pass
 
-            async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            async def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
                 assert request.headers['Authorization'] != self.auth_headers
                 self.auth_headers.append(request.headers['Authorization'])
                 response = HttpResponse(request, None)
