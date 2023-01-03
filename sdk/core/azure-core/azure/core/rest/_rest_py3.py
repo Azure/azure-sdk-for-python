@@ -35,6 +35,7 @@ from typing import (
     Union,
     MutableMapping,
     Dict,
+    AsyncContextManager,
 )
 
 from ..utils._utils import case_insensitive_dict
@@ -378,7 +379,7 @@ class HttpResponse(_HttpResponseBase):
         )
 
 
-class AsyncHttpResponse(_HttpResponseBase):
+class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):
     """Abstract base class for Async HTTP responses.
 
     Use this abstract base class to create your own transport responses.
@@ -426,8 +427,4 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     @abc.abstractmethod
     async def close(self) -> None:
-        ...
-
-    @abc.abstractmethod
-    async def __aexit__(self, *args) -> None:
         ...
