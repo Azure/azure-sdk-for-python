@@ -124,4 +124,3 @@ def get_default_log_analytics_deployment(
             }
         }
     }
-
