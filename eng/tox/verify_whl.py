@@ -124,7 +124,7 @@ if __name__ == "__main__":
     
     if pkg_details.requires:
         logging.info("Verifying presence of isodate in package [%s]", pkg_details.name)
-        if "isodate" in parse_require(' '.join(pkg_details.requires)) and "msrest" not in parse_require(' '.join(pkg_details.requires)):
+        if "isodate" in pkg_details.requires and "msrest" not in pkg_details.requires:
             logging.info("Isodate is installed properly: [%s]", pkg_details.name)
         else:
             logging.info("install_requires should not contain msrest and should contain isodate: [%s]", pkg_details.name)
