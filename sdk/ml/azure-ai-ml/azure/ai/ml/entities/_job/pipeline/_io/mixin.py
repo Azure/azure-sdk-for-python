@@ -303,7 +303,13 @@ class PipelineIOMixin(PipelineNodeIOMixin):
 
     def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
-        return PipelineOutput(name=name, meta=meta, data=data, owner=self)
+        result = PipelineOutput(name=name, meta=meta, data=data, owner=self)
+        # copy mode & description from meta so they won't loss when transform from a pipeline component to pipeline job
+        if meta and meta.description:
+            result.description = meta.description
+        if meta and meta.mode:
+            result.mode = meta.mode
+        return result
 
     def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}

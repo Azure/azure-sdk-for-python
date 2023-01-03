@@ -80,6 +80,7 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+
 class ErrorMap(object):
     """Error Map class. To be used in map_error method, behaves like a dictionary.
     It returns the error type if it is found in custom_error_map. Or return default_error
@@ -87,6 +88,7 @@ class ErrorMap(object):
     :param dict custom_error_map: User-defined error map, it is used to map status codes to error types.
     :keyword error default_error: Default error type. It is returned if the status code is not found in custom_error_map
     """
+
     def __init__(self, custom_error_map=None, **kwargs):
         self._custom_error_map = custom_error_map or {}
         self._default_error = kwargs.pop("default_error", None)
@@ -96,6 +98,7 @@ class ErrorMap(object):
         if ret:
             return ret
         return self._default_error
+
 
 def map_error(status_code, response, error_map):
     if not error_map:
@@ -145,6 +148,7 @@ class ODataV4Format(object):
     :ivar dict innererror: An object. The contents of this object are service-defined.
      Usually this object contains information that will help debug the service.
     """
+
     CODE_LABEL = "code"
     MESSAGE_LABEL = "message"
     TARGET_LABEL = "target"
@@ -161,7 +165,10 @@ class ODataV4Format(object):
         self.message = json_object.get(cls.MESSAGE_LABEL)  # type: Optional[str]
 
         if not (self.code or self.message):
-            raise ValueError("Impossible to extract code/message from received JSON:\n"+json.dumps(json_object))
+            raise ValueError(
+                "Impossible to extract code/message from received JSON:\n"
+                + json.dumps(json_object)
+            )
 
         # Optional fields
         self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
@@ -174,7 +181,9 @@ class ODataV4Format(object):
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        self.innererror = json_object.get(cls.INNERERROR_LABEL, {})  # type: Dict[str, Any]
+        self.innererror = json_object.get(
+            cls.INNERERROR_LABEL, {}
+        )  # type: Dict[str, Any]
 
     @property
     def error(self):
@@ -187,15 +196,10 @@ class ODataV4Format(object):
         return self
 
     def __str__(self):
-        return "({}) {}\n{}".format(
-            self.code,
-            self.message,
-            self.message_details()
-        )
+        return "({}) {}\n{}".format(self.code, self.message, self.message_details())
 
     def message_details(self):
-        """Return a detailled string of the error.
-        """
+        """Return a detailled string of the error."""
         # () -> str
         error_str = "Code: {}".format(self.code)
         error_str += "\nMessage: {}".format(self.message)
@@ -241,7 +245,7 @@ class AzureError(Exception):
         )
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
-        self.continuation_token = kwargs.get('continuation_token')
+        self.continuation_token = kwargs.get("continuation_token")
         super(AzureError, self).__init__(self.message, *args)
 
     def raise_with_traceback(self):
@@ -263,11 +267,14 @@ class ServiceResponseError(AzureError):
     The connection may have timed out. These errors can be retried for idempotent or
     safe operations"""
 
+
 class ServiceRequestTimeoutError(ServiceRequestError):
     """Error raised when timeout happens"""
 
+
 class ServiceResponseTimeoutError(ServiceResponseError):
     """Error raised when timeout happens"""
+
 
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
@@ -309,7 +316,9 @@ class HttpResponseError(AzureError):
             self.model = getattr(
                 self, "error", None
             )  # type: Optional[msrest.serialization.Model]
-        self.error = self._parse_odata_body(error_format, response)  # type: Optional[ODataV4Format]
+        self.error = self._parse_odata_body(
+            error_format, response
+        )  # type: Optional[ODataV4Format]
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -360,8 +369,7 @@ class ResourceExistsError(HttpResponseError):
 
 
 class ResourceNotFoundError(HttpResponseError):
-    """ An error response, typically triggered by a 412 response (for update) or 404 (for get/post)
-    """
+    """An error response, typically triggered by a 412 response (for update) or 404 (for get/post)"""
 
 
 class ClientAuthenticationError(HttpResponseError):
@@ -453,20 +461,23 @@ class ODataV4Error(HttpResponseError):
             return str(self._error_format)
         return super(ODataV4Error, self).__str__()
 
+
 class StreamConsumedError(AzureError):
     """Error thrown if you try to access the stream of a response once consumed.
 
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
     """
+
     def __init__(self, response):
         message = (
-            "You are attempting to read or stream the content from request {}. "\
+            "You are attempting to read or stream the content from request {}. "
             "You have likely already consumed this stream, so it can not be accessed anymore.".format(
                 response.request
             )
         )
         super(StreamConsumedError, self).__init__(message)
+
 
 class StreamClosedError(AzureError):
     """Error thrown if you try to access the stream of a response once closed.
@@ -474,12 +485,14 @@ class StreamClosedError(AzureError):
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
     """
+
     def __init__(self, response):
         message = (
-            "The content for response from request {} can no longer be read or streamed, since the "\
+            "The content for response from request {} can no longer be read or streamed, since the "
             "response has already been closed.".format(response.request)
         )
         super(StreamClosedError, self).__init__(message)
+
 
 class ResponseNotReadError(AzureError):
     """Error thrown if you try to access a response's content without reading first.
@@ -490,17 +503,19 @@ class ResponseNotReadError(AzureError):
 
     def __init__(self, response):
         message = (
-            "You have not read in the bytes for the response from request {}. "\
-            "Call .read() on the response first.".format(
-                response.request
-            )
+            "You have not read in the bytes for the response from request {}. "
+            "Call .read() on the response first.".format(response.request)
         )
         super(ResponseNotReadError, self).__init__(message)
 
+
 class SerializationError(ValueError):
     """Raised if an error is encountered during serialization."""
+
     ...
+
 
 class DeserializationError(ValueError):
     """Raised if an error is encountered during deserialization."""
+
     ...

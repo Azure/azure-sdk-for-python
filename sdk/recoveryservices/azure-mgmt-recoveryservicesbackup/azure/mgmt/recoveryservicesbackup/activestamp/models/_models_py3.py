@@ -47,7 +47,7 @@ class FeatureSupportRequest(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.feature_type = None  # type: Optional[str]
+        self.feature_type: Optional[str] = None
 
 
 class AzureBackupGoalFeatureSupportRequest(FeatureSupportRequest):
@@ -70,7 +70,7 @@ class AzureBackupGoalFeatureSupportRequest(FeatureSupportRequest):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.feature_type = "AzureBackupGoals"  # type: str
+        self.feature_type: str = "AzureBackupGoals"
 
 
 class ProtectionContainer(_serialization.Model):
@@ -169,7 +169,7 @@ class ProtectionContainer(_serialization.Model):
         self.backup_management_type = backup_management_type
         self.registration_status = registration_status
         self.health_status = health_status
-        self.container_type = None  # type: Optional[str]
+        self.container_type: Optional[str] = None
         self.protectable_object_type = protectable_object_type
 
 
@@ -311,7 +311,7 @@ class DpmContainer(ProtectionContainer):  # pylint: disable=too-many-instance-at
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "DPMContainer"  # type: str
+        self.container_type: str = "DPMContainer"
         self.can_re_register = can_re_register
         self.container_id = container_id
         self.protected_item_count = protected_item_count
@@ -463,7 +463,7 @@ class AzureBackupServerContainer(DpmContainer):  # pylint: disable=too-many-inst
             extended_info=extended_info,
             **kwargs
         )
-        self.container_type = "AzureBackupServerContainer"  # type: str
+        self.container_type: str = "AzureBackupServerContainer"
 
 
 class BackupEngineBase(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -594,7 +594,7 @@ class BackupEngineBase(_serialization.Model):  # pylint: disable=too-many-instan
         self.registration_status = registration_status
         self.backup_engine_state = backup_engine_state
         self.health_status = health_status
-        self.backup_engine_type = None  # type: Optional[str]
+        self.backup_engine_type: Optional[str] = None
         self.can_re_register = can_re_register
         self.backup_engine_id = backup_engine_id
         self.dpm_version = dpm_version
@@ -731,7 +731,7 @@ class AzureBackupServerEngine(BackupEngineBase):  # pylint: disable=too-many-ins
             extended_info=extended_info,
             **kwargs
         )
-        self.backup_engine_type = "AzureBackupServerEngine"  # type: str
+        self.backup_engine_type: str = "AzureBackupServerEngine"
 
 
 class BackupRequest(_serialization.Model):
@@ -766,7 +766,7 @@ class BackupRequest(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareBackupRequest(BackupRequest):
@@ -798,7 +798,7 @@ class AzureFileShareBackupRequest(BackupRequest):
         :paramtype recovery_point_expiry_time_in_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareBackupRequest"  # type: str
+        self.object_type: str = "AzureFileShareBackupRequest"
         self.recovery_point_expiry_time_in_utc = recovery_point_expiry_time_in_utc
 
 
@@ -868,7 +868,7 @@ class WorkloadProtectableItem(_serialization.Model):
         super().__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
-        self.protectable_item_type = None  # type: Optional[str]
+        self.protectable_item_type: Optional[str] = None
         self.friendly_name = friendly_name
         self.protection_state = protection_state
 
@@ -958,7 +958,7 @@ class AzureFileShareProtectableItem(WorkloadProtectableItem):
             protection_state=protection_state,
             **kwargs
         )
-        self.protectable_item_type = "AzureFileShare"  # type: str
+        self.protectable_item_type: str = "AzureFileShare"
         self.parent_container_fabric_id = parent_container_fabric_id
         self.parent_container_friendly_name = parent_container_friendly_name
         self.azure_file_share_type = azure_file_share_type
@@ -1125,7 +1125,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype soft_delete_retention_period: int
         """
         super().__init__(**kwargs)
-        self.protected_item_type = None  # type: Optional[str]
+        self.protected_item_type: Optional[str] = None
         self.backup_management_type = None
         self.workload_type = None
         self.container_name = container_name
@@ -1357,7 +1357,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "AzureFileShareProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureFileShareProtectedItem"
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
@@ -1479,7 +1479,7 @@ class ProtectionPolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.protected_items_count = protected_items_count
-        self.backup_management_type = None  # type: Optional[str]
+        self.backup_management_type: Optional[str] = None
         self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
@@ -1562,7 +1562,7 @@ class AzureFileShareProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "AzureStorage"  # type: str
+        self.backup_management_type: str = "AzureStorage"
         self.work_load_type = work_load_type
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
@@ -1600,7 +1600,7 @@ class ILRRequest(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareProvisionILRRequest(ILRRequest):
@@ -1635,7 +1635,7 @@ class AzureFileShareProvisionILRRequest(ILRRequest):
         :paramtype source_resource_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareProvisionILRRequest"  # type: str
+        self.object_type: str = "AzureFileShareProvisionILRRequest"
         self.recovery_point_id = recovery_point_id
         self.source_resource_id = source_resource_id
 
@@ -1674,7 +1674,7 @@ class RecoveryPoint(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareRecoveryPoint(RecoveryPoint):
@@ -1729,7 +1729,7 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
         :paramtype recovery_point_size_in_gb: int
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareRecoveryPoint"  # type: str
+        self.object_type: str = "AzureFileShareRecoveryPoint"
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
         self.file_share_snapshot_uri = file_share_snapshot_uri
@@ -1768,7 +1768,7 @@ class RestoreRequest(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureFileShareRestoreRequest(RestoreRequest):
@@ -1850,7 +1850,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.TargetAFSRestoreInfo
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureFileShareRestoreRequest"  # type: str
+        self.object_type: str = "AzureFileShareRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.copy_options = copy_options
@@ -1974,7 +1974,7 @@ class IaaSVMContainer(ProtectionContainer):
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "IaasVMContainer"  # type: str
+        self.container_type: str = "IaasVMContainer"
         self.virtual_machine_id = virtual_machine_id
         self.virtual_machine_version = virtual_machine_version
         self.resource_group = resource_group
@@ -2088,7 +2088,7 @@ class AzureIaaSClassicComputeVMContainer(IaaSVMContainer):
             resource_group=resource_group,
             **kwargs
         )
-        self.container_type = "Microsoft.ClassicCompute/virtualMachines"  # type: str
+        self.container_type: str = "Microsoft.ClassicCompute/virtualMachines"
 
 
 class IaaSVMProtectableItem(WorkloadProtectableItem):
@@ -2180,7 +2180,7 @@ class IaaSVMProtectableItem(WorkloadProtectableItem):
             protection_state=protection_state,
             **kwargs
         )
-        self.protectable_item_type = "IaaSVMProtectableItem"  # type: str
+        self.protectable_item_type: str = "IaaSVMProtectableItem"
         self.virtual_machine_id = virtual_machine_id
         self.virtual_machine_version = virtual_machine_version
         self.resource_group = resource_group
@@ -2268,7 +2268,7 @@ class AzureIaaSClassicComputeVMProtectableItem(IaaSVMProtectableItem):
             resource_group=resource_group,
             **kwargs
         )
-        self.protectable_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: str
+        self.protectable_item_type: str = "Microsoft.ClassicCompute/virtualMachines"
 
 
 class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -2520,7 +2520,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "AzureIaaSVMProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureIaaSVMProtectedItem"
         self.friendly_name = None
         self.virtual_machine_id = None
         self.protection_status = protection_status
@@ -2781,7 +2781,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
             extended_properties=extended_properties,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: str
+        self.protected_item_type: str = "Microsoft.ClassicCompute/virtualMachines"
 
 
 class AzureIaaSComputeVMContainer(IaaSVMContainer):
@@ -2892,7 +2892,7 @@ class AzureIaaSComputeVMContainer(IaaSVMContainer):
             resource_group=resource_group,
             **kwargs
         )
-        self.container_type = "Microsoft.Compute/virtualMachines"  # type: str
+        self.container_type: str = "Microsoft.Compute/virtualMachines"
 
 
 class AzureIaaSComputeVMProtectableItem(IaaSVMProtectableItem):
@@ -2977,7 +2977,7 @@ class AzureIaaSComputeVMProtectableItem(IaaSVMProtectableItem):
             resource_group=resource_group,
             **kwargs
         )
-        self.protectable_item_type = "Microsoft.Compute/virtualMachines"  # type: str
+        self.protectable_item_type: str = "Microsoft.Compute/virtualMachines"
 
 
 class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -3226,7 +3226,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
             extended_properties=extended_properties,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.Compute/virtualMachines"  # type: str
+        self.protected_item_type: str = "Microsoft.Compute/virtualMachines"
 
 
 class AzureIaaSVMErrorInfo(_serialization.Model):
@@ -3436,7 +3436,7 @@ class Job(_serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
         self.activity_id = activity_id
-        self.job_type = None  # type: Optional[str]
+        self.job_type: Optional[str] = None
 
 
 class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
@@ -3573,7 +3573,7 @@ class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureIaaSVMJob"  # type: str
+        self.job_type: str = "AzureIaaSVMJob"
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -3851,7 +3851,7 @@ class AzureIaaSVMJobV2(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureIaaSVMJobV2"  # type: str
+        self.job_type: str = "AzureIaaSVMJobV2"
         self.actions_info = actions_info
         self.container_name = container_name
         self.duration = duration
@@ -4029,7 +4029,7 @@ class AzureIaaSVMProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "AzureIaasVM"  # type: str
+        self.backup_management_type: str = "AzureIaasVM"
         self.instant_rp_details = instant_rp_details
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
@@ -4122,7 +4122,7 @@ class ProtectionIntent(_serialization.Model):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionStatus
         """
         super().__init__(**kwargs)
-        self.protection_intent_item_type = None  # type: Optional[str]
+        self.protection_intent_item_type: Optional[str] = None
         self.backup_management_type = backup_management_type
         self.source_resource_id = source_resource_id
         self.item_id = item_id
@@ -4215,7 +4215,7 @@ class AzureRecoveryServiceVaultProtectionIntent(ProtectionIntent):
             protection_state=protection_state,
             **kwargs
         )
-        self.protection_intent_item_type = "RecoveryServiceVaultItem"  # type: str
+        self.protection_intent_item_type: str = "RecoveryServiceVaultItem"
 
 
 class AzureResourceProtectionIntent(ProtectionIntent):
@@ -4302,7 +4302,7 @@ class AzureResourceProtectionIntent(ProtectionIntent):
             protection_state=protection_state,
             **kwargs
         )
-        self.protection_intent_item_type = "AzureResourceItem"  # type: str
+        self.protection_intent_item_type: str = "AzureResourceItem"
         self.friendly_name = friendly_name
 
 
@@ -4445,7 +4445,7 @@ class AzureWorkloadContainer(ProtectionContainer):  # pylint: disable=too-many-i
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "AzureWorkloadContainer"  # type: str
+        self.container_type: str = "AzureWorkloadContainer"
         self.source_resource_id = source_resource_id
         self.last_updated_time = last_updated_time
         self.extended_info = extended_info
@@ -4589,7 +4589,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(
             operation_type=operation_type,
             **kwargs
         )
-        self.container_type = "SQLAGWorkLoadContainer"  # type: str
+        self.container_type: str = "SQLAGWorkLoadContainer"
 
 
 class AzureSqlContainer(ProtectionContainer):
@@ -4675,7 +4675,7 @@ class AzureSqlContainer(ProtectionContainer):
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "AzureSqlContainer"  # type: str
+        self.container_type: str = "AzureSqlContainer"
 
 
 class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -4866,7 +4866,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "Microsoft.Sql/servers/databases"  # type: str
+        self.protected_item_type: str = "Microsoft.Sql/servers/databases"
         self.protected_item_data_id = protected_item_data_id
         self.protection_state = protection_state
         self.extended_info = extended_info
@@ -4962,7 +4962,7 @@ class AzureSqlProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "AzureSql"  # type: str
+        self.backup_management_type: str = "AzureSql"
         self.retention_policy = retention_policy
 
 
@@ -5083,7 +5083,7 @@ class AzureStorageContainer(ProtectionContainer):  # pylint: disable=too-many-in
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "StorageContainer"  # type: str
+        self.container_type: str = "StorageContainer"
         self.source_resource_id = source_resource_id
         self.storage_account_version = storage_account_version
         self.resource_group = resource_group
@@ -5264,7 +5264,7 @@ class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureStorageJob"  # type: str
+        self.job_type: str = "AzureStorageJob"
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -5418,7 +5418,7 @@ class ProtectableContainer(_serialization.Model):
         super().__init__(**kwargs)
         self.friendly_name = friendly_name
         self.backup_management_type = backup_management_type
-        self.protectable_container_type = None  # type: Optional[str]
+        self.protectable_container_type: Optional[str] = None
         self.health_status = health_status
         self.container_id = container_id
 
@@ -5494,7 +5494,7 @@ class AzureStorageProtectableContainer(ProtectableContainer):
             container_id=container_id,
             **kwargs
         )
-        self.protectable_container_type = "StorageContainer"  # type: str
+        self.protectable_container_type: str = "StorageContainer"
 
 
 class AzureVMAppContainerProtectableContainer(ProtectableContainer):
@@ -5568,7 +5568,7 @@ class AzureVMAppContainerProtectableContainer(ProtectableContainer):
             container_id=container_id,
             **kwargs
         )
-        self.protectable_container_type = "VMAppContainer"  # type: str
+        self.protectable_container_type: str = "VMAppContainer"
 
 
 class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer):  # pylint: disable=too-many-instance-attributes
@@ -5705,7 +5705,7 @@ class AzureVMAppContainerProtectionContainer(AzureWorkloadContainer):  # pylint:
             operation_type=operation_type,
             **kwargs
         )
-        self.container_type = "VMAppContainer"  # type: str
+        self.container_type: str = "VMAppContainer"
 
 
 class AzureVMResourceFeatureSupportRequest(FeatureSupportRequest):
@@ -5739,7 +5739,7 @@ class AzureVMResourceFeatureSupportRequest(FeatureSupportRequest):
         :paramtype vm_sku: str
         """
         super().__init__(**kwargs)
-        self.feature_type = "AzureVMResourceBackup"  # type: str
+        self.feature_type: str = "AzureVMResourceBackup"
         self.vm_size = vm_size
         self.vm_sku = vm_sku
 
@@ -5828,7 +5828,7 @@ class WorkloadItem(_serialization.Model):
         super().__init__(**kwargs)
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
-        self.workload_item_type = None  # type: Optional[str]
+        self.workload_item_type: Optional[str] = None
         self.friendly_name = friendly_name
         self.protection_state = protection_state
 
@@ -5938,7 +5938,7 @@ class AzureVmWorkloadItem(WorkloadItem):
             protection_state=protection_state,
             **kwargs
         )
-        self.workload_item_type = "AzureVmWorkloadItem"  # type: str
+        self.workload_item_type: str = "AzureVmWorkloadItem"
         self.parent_name = parent_name
         self.server_name = server_name
         self.is_auto_protectable = is_auto_protectable
@@ -6079,7 +6079,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
             protection_state=protection_state,
             **kwargs
         )
-        self.protectable_item_type = "AzureVmWorkloadProtectableItem"  # type: str
+        self.protectable_item_type: str = "AzureVmWorkloadProtectableItem"
         self.parent_name = parent_name
         self.parent_unique_name = parent_unique_name
         self.server_name = server_name
@@ -6361,7 +6361,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadProtectedItem"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadProtectedItem"
         self.friendly_name = None
         self.server_name = server_name
         self.parent_name = parent_name
@@ -6534,7 +6534,7 @@ class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "AzureWorkload"  # type: str
+        self.backup_management_type: str = "AzureWorkload"
         self.work_load_type = work_load_type
         self.settings = settings
         self.sub_protection_policy = sub_protection_policy
@@ -6812,7 +6812,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSAPAseDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSAPAseDatabase"
 
 
 class AzureVmWorkloadSAPAseDatabaseWorkloadItem(AzureVmWorkloadItem):
@@ -6909,7 +6909,7 @@ class AzureVmWorkloadSAPAseDatabaseWorkloadItem(AzureVmWorkloadItem):
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SAPAseDatabase"  # type: str
+        self.workload_item_type: str = "SAPAseDatabase"
 
 
 class AzureVmWorkloadSAPAseSystemProtectableItem(
@@ -7035,7 +7035,7 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SAPAseSystem"  # type: str
+        self.protectable_item_type: str = "SAPAseSystem"
 
 
 class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem):
@@ -7132,7 +7132,7 @@ class AzureVmWorkloadSAPAseSystemWorkloadItem(AzureVmWorkloadItem):
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SAPAseSystem"  # type: str
+        self.workload_item_type: str = "SAPAseSystem"
 
 
 class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
@@ -7258,7 +7258,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SAPHanaDatabase"  # type: str
+        self.protectable_item_type: str = "SAPHanaDatabase"
 
 
 class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
@@ -7532,7 +7532,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSAPHanaDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSAPHanaDatabase"
 
 
 class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
@@ -7629,7 +7629,7 @@ class AzureVmWorkloadSAPHanaDatabaseWorkloadItem(AzureVmWorkloadItem):
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SAPHanaDatabase"  # type: str
+        self.workload_item_type: str = "SAPHanaDatabase"
 
 
 class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylint: disable=too-many-instance-attributes
@@ -7753,7 +7753,7 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SAPHanaDBInstance"  # type: str
+        self.protectable_item_type: str = "SAPHanaDBInstance"
 
 
 class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
@@ -8027,7 +8027,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSAPHanaDBInstance"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSAPHanaDBInstance"
 
 
 class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disable=too-many-instance-attributes
@@ -8151,7 +8151,7 @@ class AzureVmWorkloadSAPHanaHSR(AzureVmWorkloadProtectableItem):  # pylint: disa
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SAPHanaHSR"  # type: str
+        self.protectable_item_type: str = "SAPHanaHSR"
 
 
 class AzureVmWorkloadSAPHanaSystemProtectableItem(
@@ -8277,7 +8277,7 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SAPHanaSystem"  # type: str
+        self.protectable_item_type: str = "SAPHanaSystem"
 
 
 class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem):
@@ -8374,7 +8374,7 @@ class AzureVmWorkloadSAPHanaSystemWorkloadItem(AzureVmWorkloadItem):
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SAPHanaSystem"  # type: str
+        self.workload_item_type: str = "SAPHanaSystem"
 
 
 class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
@@ -8500,7 +8500,7 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SQLAvailabilityGroupContainer"  # type: str
+        self.protectable_item_type: str = "SQLAvailabilityGroupContainer"
 
 
 class AzureVmWorkloadSQLDatabaseProtectableItem(
@@ -8626,7 +8626,7 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SQLDataBase"  # type: str
+        self.protectable_item_type: str = "SQLDataBase"
 
 
 class AzureVmWorkloadSQLDatabaseProtectedItem(
@@ -8900,7 +8900,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
             kpis_healths=kpis_healths,
             **kwargs
         )
-        self.protected_item_type = "AzureVmWorkloadSQLDatabase"  # type: str
+        self.protected_item_type: str = "AzureVmWorkloadSQLDatabase"
 
 
 class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem):
@@ -8997,7 +8997,7 @@ class AzureVmWorkloadSQLDatabaseWorkloadItem(AzureVmWorkloadItem):
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SQLDataBase"  # type: str
+        self.workload_item_type: str = "SQLDataBase"
 
 
 class AzureVmWorkloadSQLInstanceProtectableItem(
@@ -9123,7 +9123,7 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
             prebackupvalidation=prebackupvalidation,
             **kwargs
         )
-        self.protectable_item_type = "SQLInstance"  # type: str
+        self.protectable_item_type: str = "SQLInstance"
 
 
 class AzureVmWorkloadSQLInstanceWorkloadItem(AzureVmWorkloadItem):  # pylint: disable=too-many-instance-attributes
@@ -9228,7 +9228,7 @@ class AzureVmWorkloadSQLInstanceWorkloadItem(AzureVmWorkloadItem):  # pylint: di
             sub_workload_item_count=sub_workload_item_count,
             **kwargs
         )
-        self.workload_item_type = "SQLInstance"  # type: str
+        self.workload_item_type: str = "SQLInstance"
         self.data_directory_paths = data_directory_paths
 
 
@@ -9317,7 +9317,7 @@ class AzureWorkloadAutoProtectionIntent(AzureRecoveryServiceVaultProtectionInten
             protection_state=protection_state,
             **kwargs
         )
-        self.protection_intent_item_type = "AzureWorkloadAutoProtectionIntent"  # type: str
+        self.protection_intent_item_type: str = "AzureWorkloadAutoProtectionIntent"
 
 
 class AzureWorkloadBackupRequest(BackupRequest):
@@ -9370,7 +9370,7 @@ class AzureWorkloadBackupRequest(BackupRequest):
         :paramtype recovery_point_expiry_time_in_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureWorkloadBackupRequest"  # type: str
+        self.object_type: str = "AzureWorkloadBackupRequest"
         self.backup_type = backup_type
         self.enable_compression = enable_compression
         self.recovery_point_expiry_time_in_utc = recovery_point_expiry_time_in_utc
@@ -9454,7 +9454,7 @@ class AzureWorkloadContainerAutoProtectionIntent(ProtectionIntent):
             protection_state=protection_state,
             **kwargs
         )
-        self.protection_intent_item_type = "AzureWorkloadContainerAutoProtectionIntent"  # type: str
+        self.protection_intent_item_type: str = "AzureWorkloadContainerAutoProtectionIntent"
 
 
 class AzureWorkloadContainerExtendedInfo(_serialization.Model):
@@ -9673,7 +9673,7 @@ class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "AzureWorkloadJob"  # type: str
+        self.job_type: str = "AzureWorkloadJob"
         self.workload_type = workload_type
         self.duration = duration
         self.actions_info = actions_info
@@ -9819,7 +9819,7 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointMoveReadinessInfo]
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureWorkloadRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadRecoveryPoint"
         self.recovery_point_time_in_utc = recovery_point_time_in_utc
         self.type = type
         self.recovery_point_tier_details = recovery_point_tier_details
@@ -9906,7 +9906,7 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadPointInTimeRecoveryPoint"
         self.time_ranges = time_ranges
 
 
@@ -9998,7 +9998,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         :paramtype target_virtual_machine_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureWorkloadRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadRestoreRequest"
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
@@ -10097,7 +10097,7 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -10175,7 +10175,7 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
             time_ranges=time_ranges,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"
 
 
 class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
@@ -10272,7 +10272,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaRestoreRequest"
 
 
 class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
@@ -10374,7 +10374,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -10480,7 +10480,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest(AzureWorkloadSA
             point_in_time=point_in_time,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaPointInTimeRestoreWithRehydrateRequest"
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
@@ -10549,7 +10549,7 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaRecoveryPoint"
 
 
 class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestoreRequest):
@@ -10647,7 +10647,7 @@ class AzureWorkloadSAPHanaRestoreWithRehydrateRequest(AzureWorkloadSAPHanaRestor
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSAPHanaRestoreWithRehydrateRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSAPHanaRestoreWithRehydrateRequest"
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
@@ -10741,7 +10741,7 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
             protection_state=protection_state,
             **kwargs
         )
-        self.protection_intent_item_type = "AzureWorkloadSQLAutoProtectionIntent"  # type: str
+        self.protection_intent_item_type: str = "AzureWorkloadSQLAutoProtectionIntent"
         self.workload_item_type = workload_item_type
 
 
@@ -10831,7 +10831,7 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
             recovery_point_move_readiness_info=recovery_point_move_readiness_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSQLRecoveryPoint"
         self.extended_info = extended_info
 
 
@@ -10923,7 +10923,7 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
             extended_info=extended_info,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLPointInTimeRecoveryPoint"  # type: str
+        self.object_type: str = "AzureWorkloadSQLPointInTimeRecoveryPoint"
         self.time_ranges = time_ranges
 
 
@@ -11045,7 +11045,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
             target_virtual_machine_id=target_virtual_machine_id,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLRestoreRequest"
         self.should_use_alternate_target_location = should_use_alternate_target_location
         self.is_non_recoverable = is_non_recoverable
         self.alternate_directory_paths = alternate_directory_paths
@@ -11179,7 +11179,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(
             alternate_directory_paths=alternate_directory_paths,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLPointInTimeRestoreRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLPointInTimeRestoreRequest"
         self.point_in_time = point_in_time
 
 
@@ -11314,7 +11314,7 @@ class AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest(
             point_in_time=point_in_time,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLPointInTimeRestoreWithRehydrateRequest"
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
@@ -11476,7 +11476,7 @@ class AzureWorkloadSQLRestoreWithRehydrateRequest(
             alternate_directory_paths=alternate_directory_paths,
             **kwargs
         )
-        self.object_type = "AzureWorkloadSQLRestoreWithRehydrateRequest"  # type: str
+        self.object_type: str = "AzureWorkloadSQLRestoreWithRehydrateRequest"
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
@@ -13750,7 +13750,7 @@ class DpmBackupEngine(BackupEngineBase):  # pylint: disable=too-many-instance-at
             extended_info=extended_info,
             **kwargs
         )
-        self.backup_engine_type = "DpmBackupEngine"  # type: str
+        self.backup_engine_type: str = "DpmBackupEngine"
 
 
 class DPMContainerExtendedInfo(_serialization.Model):
@@ -13937,7 +13937,7 @@ class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "DpmJob"  # type: str
+        self.job_type: str = "DpmJob"
         self.duration = duration
         self.dpm_server_name = dpm_server_name
         self.container_name = container_name
@@ -14234,7 +14234,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "DPMProtectedItem"  # type: str
+        self.protected_item_type: str = "DPMProtectedItem"
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state
@@ -14504,7 +14504,7 @@ class OperationResultInfoBase(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class ExportJobsOperationResultInfo(OperationResultInfoBase):
@@ -14558,7 +14558,7 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
         :paramtype excel_file_blob_sas_key: str
         """
         super().__init__(**kwargs)
-        self.object_type = "ExportJobsOperationResultInfo"  # type: str
+        self.object_type: str = "ExportJobsOperationResultInfo"
         self.blob_url = blob_url
         self.blob_sas_key = blob_sas_key
         self.excel_file_blob_url = excel_file_blob_url
@@ -14696,7 +14696,7 @@ class GenericContainer(ProtectionContainer):
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "GenericContainer"  # type: str
+        self.container_type: str = "GenericContainer"
         self.fabric_name = fabric_name
         self.extended_information = extended_information
 
@@ -14948,7 +14948,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "GenericProtectedItem"  # type: str
+        self.protected_item_type: str = "GenericProtectedItem"
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
@@ -15023,7 +15023,7 @@ class GenericProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "GenericProtectionPolicy"  # type: str
+        self.backup_management_type: str = "GenericProtectionPolicy"
         self.sub_protection_policy = sub_protection_policy
         self.time_zone = time_zone
         self.fabric_name = fabric_name
@@ -15080,7 +15080,7 @@ class GenericRecoveryPoint(RecoveryPoint):
         :paramtype recovery_point_additional_info: str
         """
         super().__init__(**kwargs)
-        self.object_type = "GenericRecoveryPoint"  # type: str
+        self.object_type: str = "GenericRecoveryPoint"
         self.friendly_name = friendly_name
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
@@ -15177,7 +15177,7 @@ class IaasVMBackupRequest(BackupRequest):
         :paramtype recovery_point_expiry_time_in_utc: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMBackupRequest"  # type: str
+        self.object_type: str = "IaasVMBackupRequest"
         self.recovery_point_expiry_time_in_utc = recovery_point_expiry_time_in_utc
 
 
@@ -15237,7 +15237,7 @@ class IaasVMILRRegistrationRequest(ILRRequest):
         :paramtype renew_existing_registration: bool
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMILRRegistrationRequest"  # type: str
+        self.object_type: str = "IaasVMILRRegistrationRequest"
         self.recovery_point_id = recovery_point_id
         self.virtual_machine_id = virtual_machine_id
         self.initiator_name = initiator_name
@@ -15383,7 +15383,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RecoveryPointMoveReadinessInfo]
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMRecoveryPoint"  # type: str
+        self.object_type: str = "IaasVMRecoveryPoint"
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
         self.recovery_point_additional_info = recovery_point_additional_info
@@ -15599,7 +15599,7 @@ class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.IdentityBasedRestoreDetails
         """
         super().__init__(**kwargs)
-        self.object_type = "IaasVMRestoreRequest"  # type: str
+        self.object_type: str = "IaasVMRestoreRequest"
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
@@ -15848,7 +15848,7 @@ class IaasVMRestoreWithRehydrationRequest(IaasVMRestoreRequest):  # pylint: disa
             identity_based_restore_details=identity_based_restore_details,
             **kwargs
         )
-        self.object_type = "IaasVMRestoreWithRehydrationRequest"  # type: str
+        self.object_type: str = "IaasVMRestoreWithRehydrationRequest"
         self.recovery_point_rehydration_info = recovery_point_rehydration_info
 
 
@@ -16459,7 +16459,7 @@ class SchedulePolicy(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.schedule_policy_type = None  # type: Optional[str]
+        self.schedule_policy_type: Optional[str] = None
 
 
 class LogSchedulePolicy(SchedulePolicy):
@@ -16491,7 +16491,7 @@ class LogSchedulePolicy(SchedulePolicy):
         :paramtype schedule_frequency_in_mins: int
         """
         super().__init__(**kwargs)
-        self.schedule_policy_type = "LogSchedulePolicy"  # type: str
+        self.schedule_policy_type: str = "LogSchedulePolicy"
         self.schedule_frequency_in_mins = schedule_frequency_in_mins
 
 
@@ -16526,7 +16526,7 @@ class RetentionPolicy(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.retention_policy_type = None  # type: Optional[str]
+        self.retention_policy_type: Optional[str] = None
 
 
 class LongTermRetentionPolicy(RetentionPolicy):
@@ -16587,7 +16587,7 @@ class LongTermRetentionPolicy(RetentionPolicy):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.YearlyRetentionSchedule
         """
         super().__init__(**kwargs)
-        self.retention_policy_type = "LongTermRetentionPolicy"  # type: str
+        self.retention_policy_type: str = "LongTermRetentionPolicy"
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
@@ -16615,7 +16615,7 @@ class LongTermSchedulePolicy(SchedulePolicy):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.schedule_policy_type = "LongTermSchedulePolicy"  # type: str
+        self.schedule_policy_type: str = "LongTermSchedulePolicy"
 
 
 class MabContainer(ProtectionContainer):  # pylint: disable=too-many-instance-attributes
@@ -16747,7 +16747,7 @@ class MabContainer(ProtectionContainer):  # pylint: disable=too-many-instance-at
             protectable_object_type=protectable_object_type,
             **kwargs
         )
-        self.container_type = "Windows"  # type: str
+        self.container_type: str = "Windows"
         self.can_re_register = can_re_register
         self.container_id = container_id
         self.protected_item_count = protected_item_count
@@ -17098,7 +17098,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
             soft_delete_retention_period=soft_delete_retention_period,
             **kwargs
         )
-        self.protected_item_type = "MabFileFolderProtectedItem"  # type: str
+        self.protected_item_type: str = "MabFileFolderProtectedItem"
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
@@ -17295,7 +17295,7 @@ class MabJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "MabJob"  # type: str
+        self.job_type: str = "MabJob"
         self.duration = duration
         self.actions_info = actions_info
         self.mab_server_name = mab_server_name
@@ -17456,7 +17456,7 @@ class MabProtectionPolicy(ProtectionPolicy):
             resource_guard_operation_requests=resource_guard_operation_requests,
             **kwargs
         )
-        self.backup_management_type = "MAB"  # type: str
+        self.backup_management_type: str = "MAB"
         self.schedule_policy = schedule_policy
         self.retention_policy = retention_policy
 
@@ -17688,7 +17688,7 @@ class OperationResultInfo(OperationResultInfoBase):
         :paramtype job_list: list[str]
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationResultInfo"  # type: str
+        self.object_type: str = "OperationResultInfo"
         self.job_list = job_list
 
 
@@ -17940,7 +17940,7 @@ class OperationStatusExtendedInfo(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
@@ -17970,7 +17970,7 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
         :paramtype job_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusJobExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusJobExtendedInfo"
         self.job_id = job_id
 
 
@@ -18009,7 +18009,7 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
         :paramtype failed_jobs_error: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusJobsExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusJobsExtendedInfo"
         self.job_ids = job_ids
         self.failed_jobs_error = failed_jobs_error
 
@@ -18043,7 +18043,7 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.InstantItemRecoveryTarget
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusProvisionILRExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusProvisionILRExtendedInfo"
         self.recovery_target = recovery_target
 
 
@@ -18076,7 +18076,7 @@ class OperationStatusValidateOperationExtendedInfo(OperationStatusExtendedInfo):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.ValidateOperationResponse
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationStatusValidateOperationExtendedInfo"  # type: str
+        self.object_type: str = "OperationStatusValidateOperationExtendedInfo"
         self.validate_operation_response = validate_operation_response
 
 
@@ -18242,7 +18242,7 @@ class VaultStorageConfigOperationResultResponse(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse):
@@ -18283,7 +18283,7 @@ class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse):
         :paramtype source_vault_properties: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.object_type = "PrepareDataMoveResponse"  # type: str
+        self.object_type: str = "PrepareDataMoveResponse"
         self.correlation_id = correlation_id
         self.source_vault_properties = source_vault_properties
 
@@ -19995,7 +19995,7 @@ class SimpleRetentionPolicy(RetentionPolicy):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RetentionDuration
         """
         super().__init__(**kwargs)
-        self.retention_policy_type = "SimpleRetentionPolicy"  # type: str
+        self.retention_policy_type: str = "SimpleRetentionPolicy"
         self.retention_duration = retention_duration
 
 
@@ -20062,7 +20062,7 @@ class SimpleSchedulePolicy(SchedulePolicy):
         :paramtype schedule_weekly_frequency: int
         """
         super().__init__(**kwargs)
-        self.schedule_policy_type = "SimpleSchedulePolicy"  # type: str
+        self.schedule_policy_type: str = "SimpleSchedulePolicy"
         self.schedule_run_frequency = schedule_run_frequency
         self.schedule_run_days = schedule_run_days
         self.schedule_run_times = schedule_run_times
@@ -20126,7 +20126,7 @@ class SimpleSchedulePolicyV2(SchedulePolicy):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.WeeklySchedule
         """
         super().__init__(**kwargs)
-        self.schedule_policy_type = "SimpleSchedulePolicyV2"  # type: str
+        self.schedule_policy_type: str = "SimpleSchedulePolicyV2"
         self.schedule_run_frequency = schedule_run_frequency
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
@@ -20620,7 +20620,7 @@ class ValidateOperationRequest(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class ValidateRestoreOperationRequest(ValidateOperationRequest):
@@ -20656,7 +20656,7 @@ class ValidateRestoreOperationRequest(ValidateOperationRequest):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RestoreRequest
         """
         super().__init__(**kwargs)
-        self.object_type = "ValidateRestoreOperationRequest"  # type: str
+        self.object_type: str = "ValidateRestoreOperationRequest"
         self.restore_request = restore_request
 
 
@@ -20688,7 +20688,7 @@ class ValidateIaasVMRestoreOperationRequest(ValidateRestoreOperationRequest):
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.RestoreRequest
         """
         super().__init__(restore_request=restore_request, **kwargs)
-        self.object_type = "ValidateIaasVMRestoreOperationRequest"  # type: str
+        self.object_type: str = "ValidateIaasVMRestoreOperationRequest"
 
 
 class ValidateOperationResponse(_serialization.Model):
@@ -20849,7 +20849,7 @@ class VaultJob(Job):  # pylint: disable=too-many-instance-attributes
             activity_id=activity_id,
             **kwargs
         )
-        self.job_type = "VaultJob"  # type: str
+        self.job_type: str = "VaultJob"
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details

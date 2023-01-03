@@ -62,6 +62,7 @@ common_omit_fields = [
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features",
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
@@ -2389,3 +2390,71 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert default_services["Studio"]["job_service_type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
         assert default_services["Tracking"]["job_service_type"] == "Tracking"
+
+    def test_group_outputs_description_overwrite(self, client):
+        # test group outputs description overwrite
+        @group
+        class Outputs:
+            output1: Output(type="uri_folder", description="new description")
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline(default_compute_target="cpu-cluster")
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=job_input)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        # overwrite group outputs mode will appear in pipeline job&component level
+        expected_outputs = {'output1': {'description': 'new description', 'type': 'uri_folder'}}
+        expected_job_outputs = {'output1': {'description': 'new description', 'job_output_type': 'uri_folder'}}
+        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+
+        # assert pipeline job level mode overwrite
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+        # assert pipeline component level mode overwrite
+        assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
+
+        rest_job = assert_job_cancel(pipeline_job, client)
+        rest_job_dict = rest_job._to_rest_object().as_dict()
+        assert rest_job_dict["properties"]["outputs"]["output1"]["description"] == "new description"
+
+        component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
+        assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+
+    def test_group_outputs_mode_overwrite(self, client):
+        # test group outputs mode overwrite
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @group
+        class Outputs:
+            output1: Output(type="uri_folder", mode="upload")
+
+        @dsl.pipeline(default_compute_target="cpu-cluster")
+        def my_pipeline() -> Outputs:
+            node1 = hello_world_component_func(component_in_number=1, component_in_path=job_input)
+            return Outputs(
+                output1=node1.outputs.component_out_path,
+            )
+
+        pipeline_job = my_pipeline()
+        # overwrite group outputs mode will appear in pipeline job&component level
+        expected_job_outputs = {'output1': {'mode': 'Upload', 'job_output_type': 'uri_folder'}}
+        expected_outputs = {'output1': {'mode': 'upload', 'type': 'uri_folder'}}
+        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+        # assert pipeline job level mode overwrite
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+        # assert pipeline component level mode overwrite
+        assert pipeline_job.component._to_dict()["outputs"] == expected_outputs
+
+        rest_job = assert_job_cancel(pipeline_job, client)
+        rest_job_dict = rest_job._to_rest_object().as_dict()
+        assert rest_job_dict["properties"]["outputs"] == expected_job_outputs
+
+        component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
+        # pipeline component output mode is undefined behavior so we skip assert it
+        # assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
