@@ -10,14 +10,8 @@ load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.pycqa.org/en/latest/technical_reference/features.html'
-# locally-disabled: Warning locally suppressed using disable-msg
-# cyclic-import: because of https://github.com/PyCQA/pylint/issues/850
-# too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
-# Let's black deal with bad-continuation
 
-# Added disables from super-with-arguments
-disable=locally-disabled,fixme,too-few-public-methods,import-outside-toplevel,deprecated-module,assigning-non-slot,deprecated-class,deprecated-argument,deprecated-decorator,consider-using-dict-items,consider-iterating-dictionary,signature-differs,duplicate-code,cyclic-import,consider-using-f-string,no-name-in-module,missing-module-docstring,inconsistent-return-statements,missing-class-docstring,missing-function-docstring,too-many-arguments,invalid-name,check-docstrings,networking-import-outside-azure-core-transport,non-abstract-transport-import,name-too-long,delete-operation-wrong-return-type,no-raise-with-traceback
-
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,inconsistent-return-statements,check-docstrings,networking-import-outside-azure-core-transport,non-abstract-transport-import,client-method-has-tracing-decorator,client-method-missing-tracing-decorator-async,name-too-long,delete-operation-wrong-return-type,no-raise-with-traceback
 
 [FORMAT]
 max-line-length=120
