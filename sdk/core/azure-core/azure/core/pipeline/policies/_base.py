@@ -146,7 +146,7 @@ class RequestHistory:
         self,
         http_request: HTTPRequestType,
         http_response: Optional[HTTPResponseType] = None,
-        error: Exception = None,
+        error: Optional[Exception] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.http_request = copy.deepcopy(http_request)

@@ -167,7 +167,7 @@ def convert_tracing_impl(
 
     value = value.lower()
     get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
-    wrapper_class: Union[None, _Unset, Type[AbstractSpan]] = get_wrapper_class()
+    wrapper_class: Optional[Union[_Unset, Type[AbstractSpan]]] = get_wrapper_class()
     if wrapper_class is _unset:
         raise ValueError(
             "Cannot convert {} to AbstractSpan, valid values are: {}".format(
