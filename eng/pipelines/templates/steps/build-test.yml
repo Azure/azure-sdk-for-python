@@ -113,21 +113,17 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/.logs'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
 
-  - task: PublishPipelineArtifact@1
-    displayName: Publish Tox Logs
-    condition: failed()
-    continueOnError: true
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_tox_logs'
-      artifactType: 'pipeline'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_tox_logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_tox_logs'
+      CustomCondition: $[eq(variables['Agent.JobStatus'], 'Failed')]
 
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish raw .coverage files'
-    continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_coverage'
-      artifactType: 'pipeline'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
+      CustomCondition: $[and(succeeded(), parameters['RunCoverage'])]
 
   - task: PublishTestResults@2
     condition: always()
