@@ -65,20 +65,6 @@ def _set_partition_key(
         yield ed
 
 
-def _trace_batch_message(
-    batch_message: Union[uamqp_BatchMessage, BatchMessage],
-    amqp_transport: AmqpTransport,
-    parent_span: Optional["AbstractSpan"] = None
-) -> None:
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
-    if span_impl_type is None:
-        return
-
-    for (
-        message
-    ) in batch_message.data:  # pylint: disable=protected-access
-        trace_message(message, amqp_transport=amqp_transport, parent_span=parent_span)
-
 class EventHubProducer(
     ConsumerProducerMixin
 ):  # pylint:disable=too-many-instance-attributes
