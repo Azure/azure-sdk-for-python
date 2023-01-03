@@ -1,6 +1,17 @@
 # Release History
 
-## 1.3.0 (Unreleased)
+## 1.4.0 (Unreleased)
+
+### Features Added
+-
+
+### Bugs Fixed
+-
+
+### Other Changes
+-
+
+## 1.3.0 (2023-01-10)
 
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
