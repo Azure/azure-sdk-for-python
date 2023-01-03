@@ -10,11 +10,6 @@ import platform
 import datetime
 import calendar
 import logging
-from base64 import b64encode
-from hashlib import sha256
-from hmac import HMAC
-from urllib.parse import urlencode, quote_plus
-import time
 from typing import (
     TYPE_CHECKING,
     cast,
@@ -28,9 +23,6 @@ from typing import (
     Mapping,
     Callable
 )
-
-import six
-from uamqp import types as uamqp_types
 
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
@@ -51,6 +43,11 @@ from ._constants import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
+    from ._pyamqp import types
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
@@ -94,7 +91,7 @@ def utc_from_timestamp(timestamp):
 
 def create_properties(
     user_agent: Optional[str] = None, *, amqp_transport: AmqpTransport
-) -> Dict[uamqp_types.AMQPSymbol, str]:
+) -> Union[Dict[uamqp_types.AMQPSymbol, str], Dict[str, str]]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
@@ -109,7 +106,7 @@ def create_properties(
     platform_str = platform.platform()
     properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {framework} ({platform_str})"
+    final_user_agent = f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_IDENTIFIER} {framework} ({platform_str})" # pylint: disable=line-too-long
     if user_agent:
         final_user_agent = f"{user_agent} {final_user_agent}"
 
@@ -220,7 +217,7 @@ def event_position_selector(value, inclusive=False):
         return (
             f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'"
         ).encode("utf-8")
-    elif isinstance(value, six.integer_types):
+    elif isinstance(value, int):
         return (
             f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
         ).encode("utf-8")
@@ -325,7 +322,7 @@ def decode_with_recurse(data, encoding="UTF-8"):
 
     if isinstance(data, str):
         return data
-    if isinstance(data, six.binary_type):
+    if isinstance(data, bytes):
         return data.decode(encoding)
     if isinstance(
         data, Mapping
@@ -345,32 +342,3 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return decoded_list
 
     return data
-
-
-def generate_sas_token(audience, policy, key, expiry=None):
-    """
-    Generate a sas token according to the given audience, policy, key and expiry
-    :param str audience:
-    :param str policy:
-    :param str key:
-    :param int expiry: abs expiry time
-    :rtype: str
-    """
-    if not expiry:
-        expiry = int(time.time()) + 3600  # Default to 1 hour.
-
-    encoded_uri = quote_plus(audience)
-    encoded_policy = quote_plus(policy).encode("utf-8")
-    encoded_key = key.encode("utf-8")
-
-    ttl = int(expiry)
-    sign_key = '%s\n%d' % (encoded_uri, ttl)
-    signature = b64encode(HMAC(encoded_key, sign_key.encode('utf-8'), sha256).digest())
-    result = {
-        'sr': audience,
-        'sig': signature,
-        'se': str(ttl)
-    }
-    if policy:
-        result['skn'] = encoded_policy
-    return 'SharedAccessSignature ' + urlencode(result)

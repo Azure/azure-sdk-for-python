@@ -77,7 +77,7 @@ class BaseNodeSchema(PathAwareSchema):
     def remove_meaningless_key_for_node(
         self,
         data,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         data.pop("$schema", None)
         return data
@@ -89,18 +89,26 @@ def _delete_type_for_binding(io):
             io[key].type = None
 
 
+def _resolve_inputs(result, original_job):
+    result._inputs = original_job._build_inputs()
+    # delete type for literal binding input
+    _delete_type_for_binding(result._inputs)
+
+
+def _resolve_outputs(result, original_job):
+    result._outputs = original_job._build_outputs()
+    # delete type for literal binding output
+    _delete_type_for_binding(result._outputs)
+
+
 def _resolve_inputs_outputs(job):
     # Try resolve object's inputs & outputs and return a resolved new object
     import copy
 
     result = copy.copy(job)
-    result._inputs = job._build_inputs()
-    # delete type for literal binding input
-    _delete_type_for_binding(result._inputs)
+    _resolve_inputs(result, job)
+    _resolve_outputs(result, job)
 
-    result._outputs = job._build_outputs()
-    # delete type for literal binding output
-    _delete_type_for_binding(result._outputs)
     return result
 
 

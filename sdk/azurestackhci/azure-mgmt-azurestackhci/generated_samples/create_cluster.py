@@ -33,7 +33,6 @@ def main():
         resource_group_name="test-rg",
         cluster_name="myCluster",
         cluster={
-            "identity": {"type": "SystemAssigned"},
             "location": "East US",
             "properties": {
                 "aadClientId": "24a6e53d-04e5-44d2-b7cc-1b732a847dfc",
@@ -45,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/stable/2022-10-01/examples/CreateCluster.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/CreateCluster.json
 if __name__ == "__main__":
     main()

@@ -13,6 +13,7 @@ import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
+
 @pytest.mark.usefixtures("teardown")
 class QueryTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -62,7 +63,8 @@ class QueryTest(unittest.TestCase):
         # The test targets partition #3
         partition_key = "pk"
         partition_key_range_id = 0
-        partitionParam = {"partition_key": partition_key} if use_partition_key else {"partition_key_range_id": partition_key_range_id}
+        partitionParam = {"partition_key": partition_key} if use_partition_key else {
+            "partition_key_range_id": partition_key_range_id}
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
@@ -167,7 +169,8 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
     def test_populate_query_metrics(self):
-        created_collection = self.created_db.create_container_if_not_exists("query_metrics_test", PartitionKey(path="/pk"))
+        created_collection = self.created_db.create_container_if_not_exists("query_metrics_test",
+                                                                            PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         created_collection.create_item(body=document_definition)
@@ -261,7 +264,8 @@ class QueryTest(unittest.TestCase):
                                   limit=None,
                                   distinct=_DistinctType.Ordered)
 
-    def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit, distinct):
+    def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit,
+                             distinct):
         query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         self.assertTrue(query_execution_info.has_rewritten_query())
@@ -294,7 +298,8 @@ class QueryTest(unittest.TestCase):
     def test_query_with_non_overlapping_pk_ranges(self):
         created_collection = self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'", enable_cross_partition_query=True)
+        query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'",
+                                                        enable_cross_partition_query=True)
         self.assertListEqual(list(query_iterable), [])
 
     def test_offset_limit(self):
@@ -341,8 +346,10 @@ class QueryTest(unittest.TestCase):
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
                 "compositeIndexes": [
-                    [{"path": "/" + pk_field, "order": "ascending"}, {"path": "/" + distinct_field, "order": "ascending"}],
-                    [{"path": "/" + distinct_field, "order": "ascending"}, {"path": "/" + pk_field, "order": "ascending"}]
+                    [{"path": "/" + pk_field, "order": "ascending"},
+                     {"path": "/" + distinct_field, "order": "ascending"}],
+                    [{"path": "/" + distinct_field, "order": "ascending"},
+                     {"path": "/" + pk_field, "order": "ascending"}]
                 ]
             }
         )
@@ -361,49 +368,62 @@ class QueryTest(unittest.TestCase):
         padded_docs = self._pad_with_none(documents, distinct_field)
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),   # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
+                                # nosec
+                                results=self._get_distinct_docs(
+                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
+                                    True),
                                 is_select=False,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),   # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field, pk_field, True),
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
+                                    distinct_field, pk_field, pk_field, distinct_field),  # nosec
+                                results=self._get_distinct_docs(
+                                    self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field,
+                                    pk_field, True),
                                 is_select=False,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),   # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field, pk_field, True),
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
+                                    distinct_field, pk_field, distinct_field, pk_field),  # nosec
+                                results=self._get_distinct_docs(
+                                    self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field,
+                                    pk_field, True),
                                 is_select=False,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field), # nosec
-                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (
+                                    distinct_field, distinct_field),  # nosec
+                                results=self._get_distinct_docs(
+                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
+                                    True),
                                 is_select=False,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
-                                query='SELECT distinct c.%s from c' % (distinct_field), # nosec
+                                query='SELECT distinct c.%s from c' % (distinct_field),  # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
                                 is_select=True,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field), # nosec
+                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
                                 is_select=True,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c' % (distinct_field),   # nosec
+                                query='SELECT distinct value c.%s from c' % (distinct_field),  # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
                                 is_select=True,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), # nosec
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field),
+                                # nosec
                                 results=[],
                                 is_select=True,
                                 fields=[different_field])
@@ -573,7 +593,8 @@ class QueryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             pager = query_iterable.by_page("fake_continuation_token")
 
-    def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
+    def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
+                                                               get_mock_result):
         self.count = 0
         self.get_mock_result = get_mock_result
         query_iterable = collection.query_items(query, enable_cross_partition_query=True)
@@ -586,6 +607,16 @@ class QueryTest(unittest.TestCase):
             else:
                 self.assertEqual(results[i], expected_results[i])
         self.count = 0
+
+    def test_value_max_query(self):
+        container = self.created_db.create_container_if_not_exists(
+            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
+        query_results = container.query_items(query, parameters=[
+            {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
+        ], enable_cross_partition_query=True)
+
+        self.assertListEqual(list(query_results), [None])
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

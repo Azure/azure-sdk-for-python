@@ -1,15 +1,14 @@
 import pytest
-
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
 from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml import MLClient, load_component, Input
+from azure.ai.ml import Input, MLClient, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._parallel_for import parallel_for
 
-from .._util import include_private_preview_nodes_in_pipeline, _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 
 test_input = Input(
     type="uri_file",
@@ -479,8 +478,8 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             parallel_node = parallel_for(
                 body=parallel_body,
                 items=[
-                    {"component_in_number": 1},
-                    {"component_in_number": 2},
+                    {"component_in_number": 3},
+                    {"component_in_number": 4},
                 ]
             )
             return {
@@ -504,9 +503,16 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                               'name': 'parallel_body',
                               'type': 'command'},
             'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '[{"component_in_number": 1}, '
-                                       '{"component_in_number": 2}]',
-                              'type': 'parallel_for'}
+                              'items': '[{"component_in_number": 3}, '
+                                       '{"component_in_number": 4}]',
+                              'type': 'parallel_for',
+                              'outputs': {'component_out_file': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_file}}'},
+                                          'component_out_path': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_path}}'},
+                                          'component_out_table': {'type': 'literal',
+                                                                  'value': '${{parent.outputs.component_out_table}}'}},
+                              }
         }
         assert dsl_pipeline_job_dict["properties"]["outputs"] == {
             'component_out_file': {'job_output_type': 'mltable',
@@ -530,6 +536,17 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             'component_out_file': {'type': 'mltable'},
             'component_out_path': {'type': 'mltable'},
             'component_out_table': {'type': 'mltable'}
+        }
+        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 3}, {"component_in_number": 4}]',
+            'outputs': {'component_out_file': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_file}}'},
+                        'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'},
+                        'component_out_table': {'type': 'literal',
+                                                'value': '${{parent.outputs.component_out_table}}'}},
+            'type': 'parallel_for'
         }
 
         with include_private_preview_nodes_in_pipeline():
@@ -575,6 +592,18 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             'component_out_boolean': {'is_control': True, 'type': 'string'},
             'component_out_number': {'type': 'string'},
             'component_out_path': {'type': 'mltable'}
+        }
+
+        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_boolean': {'type': 'literal',
+                                                  'value': '${{parent.outputs.component_out_boolean}}'},
+                        'component_out_number': {'type': 'literal',
+                                                 'value': '${{parent.outputs.component_out_number}}'},
+                        'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for'
         }
 
         # parallel for pipeline component is correctly generated

@@ -3,9 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import time
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 
 class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
@@ -32,6 +36,8 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             )
             self._token = access_token.decode("utf-8")
 
-    async def on_request(self, request):  # pylint: disable=invalid-overridden-method
+    async def on_request(
+        self, request: PipelineRequest
+    ):  # pylint: disable=invalid-overridden-method
         await self._update_token()
         request.http_request.headers[self._name] = self._token
