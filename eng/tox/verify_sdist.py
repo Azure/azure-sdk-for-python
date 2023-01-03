@@ -159,5 +159,5 @@ if __name__ == "__main__":
         if "isodate" in parse_require(pkg_details.requires) and "msrest" not in parse_require(pkg_details.requires):
             logging.info("Isodate is installed properly: [%s]", pkg_details.name)
         else:
-            logging.info("Isodate should be listed as a requirement in setup.py and msrest should not be a requirement: [%s]", pkg_details.name)
+            logging.info("install_requires should not contain msrest and should contain isodate: [%s]", pkg_details.name)
             exit(1)
