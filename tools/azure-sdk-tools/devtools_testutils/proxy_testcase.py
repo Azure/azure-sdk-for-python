@@ -23,6 +23,7 @@ from .helpers import get_test_id, is_live, is_live_and_not_recording, set_record
 from .proxy_startup import discovered_roots
 from urllib3 import PoolManager, Retry
 from urllib3.exceptions import HTTPError
+import json
 
 if TYPE_CHECKING:
     from typing import Callable, Dict, Tuple
@@ -76,11 +77,13 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     if assets_json:
         json_payload["x-recording-assets-file"] = assets_json
 
+    encoded_payload = json.dumps(json_payload).encode('utf-8')
+
     if is_live():
         result = http_client.request(
             method="POST",
             url=RECORDING_START_URL,
-            fields=json_payload,
+            body=encoded_payload,
         )
         if result.status != 200:
             message = six.ensure_str(result.data)
@@ -91,7 +94,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
         result = http_client.request(
             method="POST",
             url=PLAYBACK_START_URL,
-            fields=json_payload,
+            body=encoded_payload,
         )
         if result.status != 200:
             message = six.ensure_str(result.data)
@@ -101,9 +104,9 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
             recording_id = result.headers["x-recording-id"]
         except KeyError as ex:
             six.raise_from(ValueError("No recording file found for {}".format(test_id)), ex)
-        if result.text:
+        if result.data:
             try:
-                variables = result.json()
+                variables = json.loads(result.data.decode('utf-8'))
             except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
                 six.raise_from(
                     ValueError("The response body returned from starting playback did not contain valid JSON"),
