@@ -18,6 +18,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
+from ._encoder import TableEntityEncoder
 from ._entity import TableEntity
 from ._error import (
     _decode_error,
@@ -313,6 +314,8 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         :param str row_key: The row key of the entity.
         :param entity: The entity to delete
         :type entity: Union[TableEntity, Mapping[str, str]]
+        :keyword encoder: The entity encoder
+        :type encoder: TableEntityEncoder
         :keyword str etag: Etag of the entity
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
@@ -357,11 +360,14 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
 
+        encoder = kwargs.pop('encoder', None)
+        if not encoder:
+            encoder = TableEntityEncoder()
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
-                partition_key=_prepare_key(partition_key),
-                row_key=_prepare_key(row_key),
+                partition_key=encoder.prepare_key(partition_key),
+                row_key=encoder.prepare_key(row_key),
                 if_match=if_match,
                 **kwargs
             )
@@ -381,6 +387,8 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, Mapping[str, Any]]
+        :keyword encoder: The entity encoder
+        :type encoder: TableEntityEncoder
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: Dict[str,str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -394,7 +402,12 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        entity = _add_entity_properties(entity)
+        encoder = kwargs.pop('encoder', None)
+        if not encoder:
+            encoder = TableEntityEncoder()
+        breakpoint()
+        entity = encoder.encode_entity(entity)
+        breakpoint()
         try:
             metadata, content = self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
