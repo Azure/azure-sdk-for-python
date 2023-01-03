@@ -57,6 +57,17 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param uamqp.Message or pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
     def get_message_encoded_size(message):
         """
         Gets the message encoded size given an underlying Message.

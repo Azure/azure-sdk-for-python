@@ -15,9 +15,11 @@ from typing import (
     AnyStr,
     List,
     TYPE_CHECKING,
-    cast
+    cast,
+    Type
 )  # pylint: disable=unused-import
 
+from azure.core.settings import settings
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
@@ -38,11 +40,14 @@ if TYPE_CHECKING:
         from uamqp import SendClient as uamqp_SendClient
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp.message import BatchMessage as uamqp_BatchMessage
     except ImportError:
         uamqp_MessageSendResult = None
         uamqp_SendClient = None
         uamqp_JWTTokenAuth = None
+        uamqp_BatchMessage = None
     from ._pyamqp.client import SendClient
+    from ._pyamqp.message import BatchMessage
     from ._pyamqp.authentication import JWTTokenAuth
     from ._transport._base import AmqpTransport
     from ._producer_client import EventHubProducerClient
@@ -60,13 +65,19 @@ def _set_partition_key(
         yield ed
 
 
-def _set_trace_message(
-    event_datas: Iterable[EventData], parent_span: Optional["AbstractSpan"] = None
-) -> Iterable[EventData]:
-    for ed in iter(event_datas):
-        trace_message(ed, parent_span)
-        yield ed
+def _trace_batch_message(
+    batch_message: Union[uamqp_BatchMessage, BatchMessage],
+    amqp_transport: AmqpTransport,
+    parent_span: Optional["AbstractSpan"] = None
+) -> None:
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    if span_impl_type is None:
+        return
 
+    for (
+        message
+    ) in batch_message.data:  # pylint: disable=protected-access
+        trace_message(message, amqp_transport=amqp_transport, parent_span=parent_span)
 
 class EventHubProducer(
     ConsumerProducerMixin
@@ -204,7 +215,7 @@ class EventHubProducer(
                     outgoing_event_data._message, partition_key  # pylint: disable=protected-access
                 )
             wrapper_event_data = outgoing_event_data
-            trace_message(wrapper_event_data, span)
+            wrapper_event_data._message = trace_message(wrapper_event_data._message, amqp_transport=self._amqp_transport, parent_span=span)
         else:
             if isinstance(
                 event_data, EventDataBatch
@@ -229,17 +240,12 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for (
-                    event
-                ) in event_data._message.data:  # pylint: disable=protected-access
-                    trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(
                         event_data, partition_key, self._amqp_transport
                     )
-                event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key=partition_key
                 )

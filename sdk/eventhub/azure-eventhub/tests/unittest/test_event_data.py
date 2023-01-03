@@ -200,10 +200,12 @@ def test_outgoing_amqp_message_header_properties(uamqp_transport):
     ann_message.header = AmqpMessageHeader()
     ann_message.properties = AmqpMessageProperties()
     ann_message.properties.message_id = ""
+    ann_message.application_properties = {b"key": b"val"}
     amqp_message = amqp_transport.to_outgoing_amqp_message(ann_message)
 
     assert not amqp_message.header
     assert amqp_message.properties
+    assert isinstance(amqp_message.application_properties, dict)
 
 
 def test_amqp_message_from_message(uamqp_transport):
