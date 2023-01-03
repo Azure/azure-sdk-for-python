@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-"""
+""" 
 FILE: consume_cloud_events_from_eventhub.py
 DESCRIPTION:
     These samples demonstrate receiving events from an Event Hub.
