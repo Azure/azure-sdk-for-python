@@ -3,6 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
+import copy
+import datetime
+import json
+import re
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -30,15 +35,10 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
+from typing import Any
+from uuid import uuid4
 from preparers import app_config_decorator
 from devtools_testutils import recorded_by_proxy
-import pytest
-import copy
-import datetime
-import os
-import json
-import re
-from uuid import uuid4
 
 
 class TestAppConfigurationClient(AppConfigTestCase):
@@ -981,7 +981,7 @@ class TestAppConfigurationClientUnitTest:
             def open(self):
                 pass
 
-            def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
                 assert request.headers['Authorization'] != self.auth_headers
                 self.auth_headers.append(request.headers['Authorization'])
                 response = HttpResponse(request, None)
