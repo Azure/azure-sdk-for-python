@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Dict, Any, List
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
+    ArtifactManifestProperties as GeneratedArtifactManifestProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
@@ -65,7 +66,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (ManifestAttributesBase, Dict[str, Any]) -> ArtifactManifestProperties
+        # type: (GeneratedArtifactManifestProperties,  Any) -> ArtifactManifestProperties
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -139,15 +140,6 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             self._repository_name,
             ":" if _is_tag(self._digest) else "@",
             _strip_alg(self._digest)
-        )
-
-    def _to_generated(self):
-        # type: () -> ManifestWriteableProperties
-        return ManifestWriteableProperties(
-            can_delete=self.can_delete,
-            can_read=self.can_read,
-            can_write=self.can_write,
-            can_list=self.can_list,
         )
 
 
@@ -265,7 +257,7 @@ class ArtifactTagProperties(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (GeneratedArtifactTagProperties, Dict[str, Any]) -> ArtifactTagProperties
+        # type: (GeneratedArtifactTagProperties, Any) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,

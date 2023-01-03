@@ -119,7 +119,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
 
-        cls = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None) # type: str
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
@@ -575,14 +575,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a repository.
         :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
         """
-        repository, properties = None, None
+        repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
+        properties = None
         if len(args) == 2:
-            repository = args[0]
             properties = args[1]
+            if not isinstance(properties, RepositoryProperties):
+                raise TypeError("Parameter tag_or_digest should be type of RepositoryProperties.")
         else:
-            repository = args[0]
             properties = RepositoryProperties()
 
         properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
@@ -608,7 +611,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> "ArtifactManifestProperties":
         ...
 
-    @distributed_trace_async
+    @distributed_trace_async # type: ignore
     async def update_manifest_properties(
         self, *args: "Union[str, ArtifactManifestProperties]", **kwargs: "Any"
     ) -> "ArtifactManifestProperties":
@@ -626,7 +629,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a manifest.
         :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
 
         Example
 
@@ -647,10 +650,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
         """
         repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
         tag_or_digest = args[1]
+        if not isinstance(tag_or_digest, str):
+            raise TypeError("Parameter tag_or_digest should be type of string.")
         properties = None
         if len(args) == 3:
             properties = args[2]
+            if not isinstance(properties, ArtifactManifestProperties):
+                raise TypeError("Parameter tag_or_digest should be type of ArtifactManifestProperties.")
         else:
             properties = ArtifactManifestProperties()
 
@@ -683,7 +692,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def update_tag_properties(self, repository: str, tag: str, **kwargs: "Any") -> "ArtifactTagProperties":
         ...
 
-    @distributed_trace_async
+    @distributed_trace_async # type: ignore
     async def update_tag_properties(
         self, *args: "Union[str, ArtifactTagProperties]", **kwargs: "Any"
     ) -> "ArtifactTagProperties":
@@ -701,7 +710,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a tag.
         :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
 
         Example
 
@@ -722,10 +731,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
         """
         repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
         tag = args[1]
+        if not isinstance(tag, str):
+            raise TypeError("Parameter tag should be type of string.")
         properties = None
         if len(args) == 3:
             properties = args[2]
+            if not isinstance(properties, ArtifactTagProperties):
+                raise TypeError("Parameter tag_or_digest should be type of ArtifactTagProperties.")
         else:
             properties = ArtifactTagProperties()
 

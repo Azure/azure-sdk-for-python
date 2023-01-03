@@ -32,7 +32,7 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
     :paramtype credential_scopes: List[str]
     """
 
-    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"], **kwargs) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,

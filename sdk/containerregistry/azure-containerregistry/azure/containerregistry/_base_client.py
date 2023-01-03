@@ -34,7 +34,7 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
+        # type: (str, Optional[TokenCredential], Any) -> None
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,

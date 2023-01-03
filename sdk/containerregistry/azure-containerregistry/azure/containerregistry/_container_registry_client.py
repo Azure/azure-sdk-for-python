@@ -139,7 +139,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Repositories"]
+        cls = kwargs.pop("cls", None)  # type: str
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
@@ -596,7 +596,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a manifest.
         :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
 
         Example
 
@@ -617,10 +617,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
         """
         repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
         tag_or_digest = args[1]
+        if not isinstance(tag_or_digest, str):
+            raise TypeError("Parameter tag_or_digest should be type of string.")
         properties = None
         if len(args) == 3:
             properties = args[2]
+            if not isinstance(properties, ArtifactManifestProperties):
+                raise TypeError("Parameter tag_or_digest should be type of ArtifactManifestProperties.")
         else:
             properties = ArtifactManifestProperties()
 
@@ -670,7 +676,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a tag.
         :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
 
         Example
 
@@ -691,10 +697,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
         """
         repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
         tag = args[1]
+        if not isinstance(tag, str):
+            raise TypeError("Parameter tag should be type of string.")
         properties = None
         if len(args) == 3:
             properties = args[2]
+            if not isinstance(properties, ArtifactTagProperties):
+                raise TypeError("Parameter tag_or_digest should be type of ArtifactTagProperties.")
         else:
             properties = ArtifactTagProperties()
 
@@ -736,14 +748,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a repository.
         :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
         """
-        repository, properties = None, None
+        repository = args[0]
+        if not isinstance(repository, str):
+            raise TypeError("Parameter repository should be type of string.")
+        properties = None
         if len(args) == 2:
-            repository = args[0]
             properties = args[1]
+            if not isinstance(properties, RepositoryProperties):
+                raise TypeError("Parameter tag_or_digest should be type of RepositoryProperties.")
         else:
-            repository = args[0]
             properties = RepositoryProperties()
 
         properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
@@ -775,11 +790,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the digest in the response does not match the digest of the uploaded manifest.
         """
         try:
-            data = manifest
             if isinstance(manifest, OCIManifest):
                 data = _serialize_manifest(manifest)
+            else:
+                data = manifest
             tag_or_digest = tag
-            if tag is None:
+            if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
 
             _, _, response_headers = self._client.container_registry.create_manifest(
@@ -815,21 +831,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            _, _, start_upload_response_headers = self._client.container_registry_blob.start_upload(
+            _, _, start_upload_response_headers = self._client.container_registry_blob.start_upload( # type: ignore
                 repository, cls=_return_response, **kwargs
             )
-            _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
-                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs
+            _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk( # type: ignore
+                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs # type: ignore
             )
             digest = _compute_digest(data)
-            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload(
-                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs
+            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload( # type: ignore
+                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs # type: ignore
             )
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
             raise
-        return complete_upload_response_headers['Docker-Content-Digest']
+        return complete_upload_response_headers['Docker-Content-Digest'] # type: ignore
 
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
@@ -845,15 +861,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the requested digest does not match the digest of the received manifest.
         """
         try:
-            response, manifest_wrapper, _ = self._client.container_registry.get_manifest(
+            response, manifest_wrapper, _ = self._client.container_registry.get_manifest( # type: ignore
                 name=repository,
                 reference=tag_or_digest,
                 headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
                 cls=_return_response,
                 **kwargs
             )
-            digest = response.http_response.headers['Docker-Content-Digest']
-            manifest = OCIManifest.deserialize(manifest_wrapper.serialize())
+            digest = response.http_response.headers['Docker-Content-Digest'] # type: ignore
+            manifest = OCIManifest.deserialize(manifest_wrapper.serialize()) # type: ignore
             manifest_stream = _serialize_manifest(manifest)
         except ValueError:
             if repository is None or tag_or_digest is None:
@@ -876,7 +892,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or digest is None.
         """
         try:
-            _, deserialized, _ = self._client.container_registry_blob.get_blob(
+            _, deserialized, _ = self._client.container_registry_blob.get_blob( # type: ignore
                 repository, digest, cls=_return_response, **kwargs
             )
         except ValueError:

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union, Optional
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
@@ -18,11 +18,11 @@ if TYPE_CHECKING:
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, credential: Optional["AsyncTokenCredential"], endpoint: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint) # type: Union[AnonymousACRExchangeClient, ACRExchangeClient]
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
