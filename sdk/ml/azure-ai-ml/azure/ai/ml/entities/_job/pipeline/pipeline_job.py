@@ -353,6 +353,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
+                # exclude control flow node as it does not have inputs
                 if _is_control_flow_node(_job_name):
                     continue
                 for _input_name in _job.inputs:
