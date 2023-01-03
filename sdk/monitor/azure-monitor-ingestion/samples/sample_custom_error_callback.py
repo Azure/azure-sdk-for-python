@@ -1,10 +1,11 @@
 """
 Usage: python sample_custom_error_callback.py
 """
-
 import os
-from azure.monitor.ingestion import LogsIngestionClient
+
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
+
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()

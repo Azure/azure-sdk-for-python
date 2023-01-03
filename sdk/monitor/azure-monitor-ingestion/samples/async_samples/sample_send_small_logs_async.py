@@ -1,11 +1,13 @@
 """
 Usage: python sample_send_small_logs_async.py
 """
-
-import os
 import asyncio
-from azure.monitor.ingestion.aio import LogsIngestionClient
+import os
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.ingestion.aio import LogsIngestionClient
+
 
 async def send_logs():
     endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
@@ -26,7 +28,10 @@ async def send_logs():
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
     async with client:
-      await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+      try:
+          await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+      except HttpResponseError as e:
+          print(f"Upload failed: {e}")
     await credential.close()
 
 

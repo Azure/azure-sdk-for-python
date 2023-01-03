@@ -1,11 +1,11 @@
 """
 Usage: python sample_custom_error_callback_async.py
 """
-
-import os
 import asyncio
-from azure.monitor.ingestion.aio import LogsIngestionClient
+import os
+
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.ingestion.aio import LogsIngestionClient
 
 
 async def send_logs():

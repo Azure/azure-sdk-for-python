@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import logging
 import sys
-from typing import Callable, List, Any, Awaitable, Union, IO, Optional
+from typing import Callable, List, Any, Awaitable, Optional
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests
@@ -28,7 +28,8 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: Union[List[JSON], IO],
+        logs: List[JSON],
+        *,
         on_error: Optional[Callable[[Exception, List[JSON]], Awaitable[None]]] = None,
         **kwargs: Any
     ) -> None:
@@ -41,7 +42,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
         :param logs: An array of objects matching the schema defined by the provided stream.
-        :type logs: list[JSON] or IO
+        :type logs: list[JSON]
         :param on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
             This function should expect two arguments that correspond to the error encountered and
             the list of logs that failed to upload. If no function is provided, then the first exception

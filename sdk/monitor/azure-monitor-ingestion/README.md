@@ -101,8 +101,10 @@ This example shows uploading logs to Azure Monitor.
 
 ```python
 import os
-from azure.monitor.ingestion import LogsIngestionClient
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
@@ -123,7 +125,10 @@ body = [
       }
     ]
 
-client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+try:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")
 ```
 
 ### Upload with custom error handling
