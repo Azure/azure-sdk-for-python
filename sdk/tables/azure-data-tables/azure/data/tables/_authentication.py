@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
- 
+
 try:
     from urllib.parse import urlparse
 except ImportError:
