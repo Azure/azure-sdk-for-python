@@ -43,6 +43,7 @@ from ._models import (
     ServerDataMessage,
     JoinGroupMessage,
     LeaveGroupMessage,
+    AckMessageError,
 )
 from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType
 from ._util import delay
@@ -172,7 +173,9 @@ class WebPubSubClient:
 
         message = message_provider(ack_id)
         if ack_id not in self._ack_map:
-            self._ack_map[ack_id] = SendMessageErrorOptions()
+            self._ack_map[ack_id] = SendMessageErrorOptions(
+                error_detail=AckMessageError(name="", message="timeout to receive ack message")
+            )
         try:
             self._send_message(message)
         except Exception as e:
@@ -181,7 +184,7 @@ class WebPubSubClient:
 
         # wait for ack from service
         with self._ack_map[ack_id].cv:
-            self._ack_map[ack_id].cv.wait()
+            self._ack_map[ack_id].cv.wait(60.0)
             options = self._ack_map.pop(ack_id)
             if options.error_detail is not None:
                 raise SendMessageError(
@@ -389,6 +392,9 @@ class WebPubSubClient:
             return new_url
         return None
 
+    def _is_connected(self) -> bool:
+        return self._state == WebPubSubClientState.CONNECTED and self._ws.sock
+
     def _connect(self, url: str):
         def on_open(_: Any):
             if self._is_stopping:
@@ -528,7 +534,9 @@ class WebPubSubClient:
         self._thread = threading.Thread(target=self._ws.run_forever)
         self._thread.start()
         with self._cv:
-            self._cv.wait()
+            self._cv.wait(timeout=5.0)
+        if not self._is_connected():
+            raise Exception("Fail to start client")
 
     def _start_core(self):
         self._state = WebPubSubClientState.CONNECTING
