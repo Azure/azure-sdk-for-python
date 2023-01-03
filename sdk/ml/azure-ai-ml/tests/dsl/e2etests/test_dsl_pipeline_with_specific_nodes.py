@@ -1,9 +1,13 @@
+from functools import partial
 from pathlib import Path
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
+from devtools_testutils import AzureRecordedTestCase
+from mock import mock
+
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, submit_and_cancel_new_dsl_pipeline
 
 from azure.ai.ml import (
     Input,
@@ -12,7 +16,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep
+from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep, Component
 from azure.ai.ml.entities import PipelineJob
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -110,3 +114,79 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         name, version = created_pipeline.jobs["sweep_job1"].trial.split(":")
         created_component = client.components.get(name, version)
         assert created_component.display_name == "sweep_job1"
+
+    def test_dsl_pipeline_component_cache_in_resolver(self, client: MLClient) -> None:
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        input_data_path = "./tests/test_configs/data/"
+
+        @dsl.pipeline
+        def pipeline_leaf(component_in_path: Input):
+            component_func1 = load_component(source=path)
+            component_func1(component_in_path=component_in_path, component_in_number=1)
+
+            component_func2 = load_component(source=path, params_override=[{
+                "name": "another_component_name",
+                "version": "another_component_version",
+            }])
+            component_func2(component_in_path=component_in_path, component_in_number=1)
+
+            component_func3 = load_component(source=path, params_override=[{
+                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:2"
+            }])
+            component_func3(component_in_path=component_in_path, component_in_number=1)
+
+            component_func4 = load_component(source=path)
+            component_func4.command += " & echo updated1"
+            component_func4(component_in_path=component_in_path, component_in_number=1)
+
+        @dsl.pipeline
+        def pipeline_mid(job_in_path: Input):
+            pipeline_leaf(job_in_path)
+            pipeline_leaf(job_in_path)
+
+        @dsl.pipeline
+        def pipeline_root(job_in_path: Input):
+            pipeline_mid(job_in_path)
+            pipeline_mid(job_in_path)
+
+        _submit_and_cancel = partial(submit_and_cancel_new_dsl_pipeline, client=client, job_in_path=Input(path=input_data_path))
+
+        def _mock_get_component_arm_id(_component: Component) -> str:
+            # the logic has no diff comparing to original function other than always using show_progress=False
+            # just to mock the function and check call information
+            if not _component.id:
+                _component._id = client.components.create_or_update(
+                    _component, is_anonymous=True, show_progress=False
+                ).id
+            return _component.id
+
+        with mock.patch.object(
+            OperationOrchestrator,
+            "_get_component_arm_id",
+            side_effect=_mock_get_component_arm_id
+        ) as mock_resolve:
+            _submit_and_cancel(pipeline_root)
+            # pipeline_leaf, pipeline_mid and 3 command components will be resolved
+            assert mock_resolve.call_count == 5
+
+        with mock.patch.object(
+            OperationOrchestrator,
+            "_get_component_arm_id",
+            side_effect=_mock_get_component_arm_id
+        ) as mock_resolve:
+            _submit_and_cancel(pipeline_root)
+            # no more requests to resolve components as local cache is hit
+            assert mock_resolve.call_count == 0
+
+        pipeline_job = pipeline_root(job_in_path=Input(path=input_data_path))
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        leaf_subgraph = pipeline_job.jobs["pipeline_mid"].component.jobs["pipeline_leaf"].component
+        leaf_subgraph.jobs["another_component_name"].component.command += " & echo updated2"
+        with mock.patch.object(
+            OperationOrchestrator,
+            "_get_component_arm_id",
+            side_effect=_mock_get_component_arm_id
+        ) as mock_resolve:
+            assert_job_cancel(pipeline_job, client)
+            # updated command component and its parents (pipeline_leaf and pipeline_mid) will be resolved
+            assert mock_resolve.call_count == 3

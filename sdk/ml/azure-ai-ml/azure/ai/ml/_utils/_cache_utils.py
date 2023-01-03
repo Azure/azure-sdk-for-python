@@ -4,6 +4,7 @@
 import hashlib
 import logging
 import os.path
+import shutil
 import tempfile
 import threading
 from collections import defaultdict
@@ -11,10 +12,11 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import partial
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union, Callable
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
-from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled
+from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled, \
+    is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
@@ -26,7 +28,7 @@ _ANONYMOUS_HASH_PREFIX = "anonymous-component-"
 _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
 
-_node_resolution_lock = threading.Lock()
+_node_resolution_lock = defaultdict(threading.Lock)
 
 
 @dataclass
@@ -85,7 +87,7 @@ class CachedNodeResolver(object):
 
     def __init__(
         self,
-        resolver,
+        resolver: Callable[[Union[Component, str]], str],
         subscription_id: Optional[str],
         resource_group_name: Optional[str],
         workspace_name: Optional[str],
@@ -98,6 +100,8 @@ class CachedNodeResolver(object):
         self._client_hash = self._get_client_hash(
             subscription_id, resource_group_name, workspace_name, registry_name
         )
+        # 1 client share 1 lock
+        self._lock = _node_resolution_lock[self._client_hash]
 
     @staticmethod
     def _get_client_hash(
@@ -199,7 +203,8 @@ class CachedNodeResolver(object):
             object_hash.update(content_hash.encode("utf-8"))
             return _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
 
-    def get_on_disk_cache_base_dir(self) -> Path:
+    @property
+    def _on_disk_cache_dir(self) -> Path:
         """Get the base path for on disk cache."""
         from azure.ai.ml._version import VERSION
         return Path(tempfile.gettempdir()).joinpath(
@@ -213,7 +218,7 @@ class CachedNodeResolver(object):
 
     def _get_on_disk_cache_path(self, on_disk_hash: str) -> Path:
         """Get the on disk cache path for a component."""
-        return self.get_on_disk_cache_base_dir().joinpath(on_disk_hash)
+        return self._on_disk_cache_dir.joinpath(on_disk_hash)
 
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache."""
@@ -238,7 +243,7 @@ class CachedNodeResolver(object):
         _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
         _map_func = partial(resolver, azureml_type=AzureMLResourceType.COMPONENT)
 
-        if len(_components) > 1 and is_concurrent_component_registration_enabled():
+        if len(_components) > 1 and is_concurrent_component_registration_enabled() and is_private_preview_enabled():
             # given deduplication has already been done, we can safely assume that there is no
             # conflict in concurrent local cache access
             with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
@@ -248,7 +253,7 @@ class CachedNodeResolver(object):
 
         for cache_content, resolution_results in zip(cache_contents_to_resolve, resolution_results):
             cache_content.arm_id = resolution_results
-            if is_on_disk_cache_enabled():
+            if is_on_disk_cache_enabled() and is_private_preview_enabled():
                 self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
 
     def _prepare_items_to_resolve(self):
@@ -313,12 +318,19 @@ class CachedNodeResolver(object):
         """
         dict_of_nodes_to_resolve, cache_contents_to_resolve = self._prepare_items_to_resolve()
 
-        if is_on_disk_cache_enabled():
+        if is_on_disk_cache_enabled() and is_private_preview_enabled():
             cache_contents_to_resolve = self._resolve_cache_contents_from_disk(cache_contents_to_resolve)
 
         self._resolve_cache_contents(cache_contents_to_resolve, resolver=self._resolver)
 
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
+
+    def clear_on_disk_cache(self):
+        """Clear on disk cache for current client."""
+        if is_on_disk_cache_enabled() and is_private_preview_enabled():
+            self._lock.acquire()
+            shutil.rmtree(self._on_disk_cache_dir, ignore_errors=True)
+            self._lock.release()
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
         """Register a node with its component to resolve.
@@ -350,9 +362,9 @@ class CachedNodeResolver(object):
         # state of nodes, e.g. hash of its inner component.
         # This will happen only on concurrent external calls; In 1 external call, all nodes in
         # subgraph will be skipped on register_node_for_lazy_resolution when resolving subgraph
-        _node_resolution_lock.acquire()
+        self._lock.acquire()
         try:
             self._resolve_nodes()
         finally:
             # release lock even if exception happens
-            _node_resolution_lock.release()
+            self._lock.release()

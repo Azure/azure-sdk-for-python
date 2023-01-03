@@ -532,7 +532,7 @@ def get_client_hash_with_request_node_name(
     resource_group_name: Optional[str],
     workspace_name: Optional[str],
     registry_name: Optional[str],
-    request_node_name: str
+    request_node_id: str
 ):
     """Generate a hash for the client."""
     object_hash = hashlib.sha256()
@@ -541,7 +541,7 @@ def get_client_hash_with_request_node_name(
         resource_group_name,
         workspace_name,
         registry_name,
-        request_node_name,
+        request_node_id,
     ]:
         object_hash.update(str(s).encode("utf-8"))
     return object_hash.hexdigest()
@@ -588,7 +588,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     # are thread-safe when concurrently running different tests.
     mocker.patch(
         "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
-        side_effect=partial(get_client_hash_with_request_node_name, request_node_name=request.node.name)
+        side_effect=partial(get_client_hash_with_request_node_name, request_node_id=request.node.nodeid)
     )
 
     from azure.ai.ml._utils._cache_utils import CachedNodeResolver
@@ -597,16 +597,13 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
         if client_fixture_name not in request.fixturenames:
             continue
         client: MLClient = request.getfixturevalue(client_fixture_name)
-        shutil.rmtree(
-            CachedNodeResolver(
-                resolver=None,
-                subscription_id=client.subscription_id,
-                resource_group_name=client.resource_group_name,
-                workspace_name=client.workspace_name,
-                registry_name=client._operation_scope.registry_name,
-            ).get_on_disk_cache_base_dir(),
-            ignore_errors=True
-        )
+        CachedNodeResolver(
+            resolver=None,
+            subscription_id=client.subscription_id,
+            resource_group_name=client.resource_group_name,
+            workspace_name=client.workspace_name,
+            registry_name=client._operation_scope.registry_name,
+        ).clear_on_disk_cache()
 
 
 @pytest.fixture
@@ -720,6 +717,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._utils._cache_utils.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
