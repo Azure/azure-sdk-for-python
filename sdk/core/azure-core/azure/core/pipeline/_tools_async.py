@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from ..rest import AsyncHttpResponse as RestAsyncHttpResponse
 
@@ -35,6 +36,7 @@ async def await_result(func, *args, **kwargs):
         # type ignore on await: https://github.com/python/mypy/issues/7587
         return await result  # type: ignore
     return result
+
 
 async def handle_no_stream_rest_response(response: "RestAsyncHttpResponse") -> None:
     """Handle reading and closing of non stream rest responses.

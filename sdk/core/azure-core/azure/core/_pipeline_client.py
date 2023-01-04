@@ -48,6 +48,7 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
 
@@ -94,11 +95,11 @@ class PipelineClient(PipelineClientBase):
     def close(self):
         self.__exit__()
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-        per_call_policies = kwargs.get('per_call_policies', [])
-        per_retry_policies = kwargs.get('per_retry_policies', [])
+    def _build_pipeline(self, config, **kwargs):  # pylint: disable=no-self-use
+        transport = kwargs.get("transport")
+        policies = kwargs.get("policies")
+        per_call_policies = kwargs.get("per_call_policies", [])
+        per_retry_policies = kwargs.get("per_retry_policies", [])
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -106,25 +107,33 @@ class PipelineClient(PipelineClientBase):
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs)
+                ContentDecodePolicy(**kwargs),
             ]
             if isinstance(per_call_policies, Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies.extend([config.redirect_policy,
-                             config.retry_policy,
-                             config.authentication_policy,
-                             config.custom_hook_policy])
+            policies.extend(
+                [
+                    config.redirect_policy,
+                    config.retry_policy,
+                    config.authentication_policy,
+                    config.custom_hook_policy,
+                ]
+            )
             if isinstance(per_retry_policies, Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies.extend([config.logging_policy,
-                             DistributedTracingPolicy(**kwargs),
-                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+            policies.extend(
+                [
+                    config.logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                    config.http_logging_policy or HttpLoggingPolicy(**kwargs),
+                ]
+            )
         else:
             if isinstance(per_call_policies, Iterable):
                 per_call_policies_list = list(per_call_policies)
@@ -143,20 +152,22 @@ class PipelineClient(PipelineClientBase):
                     if isinstance(policy, RetryPolicy):
                         index_of_retry = index
                 if index_of_retry == -1:
-                    raise ValueError("Failed to add per_retry_policies; "
-                                     "no RetryPolicy found in the supplied list of policies. ")
-                policies_1 = policies[:index_of_retry+1]
-                policies_2 = policies[index_of_retry+1:]
+                    raise ValueError(
+                        "Failed to add per_retry_policies; "
+                        "no RetryPolicy found in the supplied list of policies. "
+                    )
+                policies_1 = policies[: index_of_retry + 1]
+                policies_2 = policies[index_of_retry + 1 :]
                 policies_1.extend(per_retry_policies_list)
                 policies_1.extend(policies_2)
                 policies = policies_1
 
         if not transport:
             from .pipeline.transport import RequestsTransport
+
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
-
 
     def send_request(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> HTTPResponseType
@@ -174,9 +185,11 @@ class PipelineClient(PipelineClientBase):
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        stream = kwargs.pop("stream", False) # want to add default value
+        stream = kwargs.pop("stream", False)  # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs) # pylint: disable=protected-access
+        pipeline_response = self._pipeline.run(
+            request, stream=stream, **kwargs
+        )  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response
         return pipeline_response.http_response

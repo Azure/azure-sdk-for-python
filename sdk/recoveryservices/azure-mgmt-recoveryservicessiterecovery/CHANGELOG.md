@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0 (2022-12-15)
+
+### Features Added
+
+  - Model AzureFabricSpecificDetails has a new parameter extended_locations
+  - Model RecoveryPlanA2ADetails has a new parameter primary_extended_location
+  - Model RecoveryPlanA2ADetails has a new parameter recovery_extended_location
+
 ## 1.0.0b2 (2022-11-18)
 
 ### Features Added

@@ -67,7 +67,7 @@ class FileStorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
         """Upload a file or directory to a path inside the file system."""
@@ -122,7 +122,7 @@ class FileStorageClient:
         msg: Optional[str] = None,
         in_directory: bool = False,
         subdirectory_client: Optional[ShareDirectoryClient] = None,
-        callback: Any = None,
+        callback: Optional[Any] = None,
     ) -> None:
         """ " Upload a single file to a path inside the file system
         directory."""

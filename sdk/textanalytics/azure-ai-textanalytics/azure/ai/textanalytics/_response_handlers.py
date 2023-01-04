@@ -409,7 +409,10 @@ def pad_result(tasks_obj, doc_id_order):
     return [
         DocumentError(
             id=doc_id,
-            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+            error=TextAnalyticsError(
+                code=None,  # type: ignore
+                message=f"No result for document. Action returned status '{tasks_obj.status}'."
+            )
         ) for doc_id in doc_id_order
     ]
 

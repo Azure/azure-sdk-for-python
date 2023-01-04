@@ -4,3 +4,4 @@ package_pprint_name = "Kusto Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "KustoManagementClient"

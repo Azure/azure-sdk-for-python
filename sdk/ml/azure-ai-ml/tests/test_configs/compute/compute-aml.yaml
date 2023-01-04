@@ -2,6 +2,7 @@ name: banchaml
 type: amlcompute
 description: some_desc_aml
 size: Standard_DS2_v2
+location: eastus
 ssh_public_access_enabled: true
 ssh_settings:
    admin_username: azureuser
@@ -15,3 +16,4 @@ identity:
 min_instances: 0
 max_instances: 2
 idle_time_before_scale_down: 100
+enable_node_public_ip: true

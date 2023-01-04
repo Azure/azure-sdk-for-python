@@ -19,7 +19,7 @@ class WebpubsubReverseProxyTest(WebpubsubTest):
             raise ValueError("Success!")
         wps_endpoint = "https://wps.contoso.com/"
         apim_endpoint = "https://apim.contoso.com/"
-        credential = AzureKeyCredential("abcdabcdabcdabcdabcdabcdabcdabcd")
+        credential = AzureKeyCredential("AzureKeyCredential")
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
         request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 
