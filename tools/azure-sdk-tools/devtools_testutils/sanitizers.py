@@ -556,6 +556,10 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
     if is_live():
         return
 
+    for key in headers:
+        if headers[key] is None:
+            headers[key] = ""
+
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
     http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, fields=parameters)
