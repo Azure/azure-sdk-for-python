@@ -47,9 +47,9 @@ class HelloWorldAsync(object):
                     async for tag in client.list_tag_properties(repository_name):
                         print(tag.digest)
 
-                    # [START delete_repository]
-                    await client.delete_repository(repository_name, "hello-world")
-                    # [END delete_repository]
+                        # [START delete_repository]
+                        await client.delete_repository(repository_name, tag.name)
+                        # [END delete_repository]
 
 
 async def main():

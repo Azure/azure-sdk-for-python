@@ -45,9 +45,9 @@ class HelloWorld(object):
                     for tag in client.list_tag_properties(repository_name):
                         print(tag.digest)
 
-                    # [START delete_repository]
-                    client.delete_repository(repository_name, tag.name)
-                    # [END delete_repository]
+                        # [START delete_repository]
+                        client.delete_repository(repository_name, tag.name)
+                        # [END delete_repository]
 
 
 if __name__ == "__main__":
