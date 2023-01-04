@@ -109,9 +109,9 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: RestWorkspaceConnectionSharedAccessSignature
+        cls, obj: Optional[RestWorkspaceConnectionSharedAccessSignature]
     ) -> "SasTokenConfiguration":
-        return cls(sas_token=obj.sas if obj.sas else None)
+        return cls(sas_token=obj.sas if obj is not None and obj.sas else None)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SasTokenConfiguration):
@@ -139,9 +139,9 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: RestWorkspaceConnectionPersonalAccessToken
+        cls, obj: Optional[RestWorkspaceConnectionPersonalAccessToken]
     ) -> "PatTokenConfiguration":
-        return cls(pat=obj.pat if obj and obj.pat else None)
+        return cls(pat=obj.pat if obj is not None and obj.pat else None)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, PatTokenConfiguration):
@@ -174,11 +174,11 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: RestWorkspaceConnectionUsernamePassword
+        cls, obj: Optional[RestWorkspaceConnectionUsernamePassword]
     ) -> "UsernamePasswordConfiguration":
         return cls(
-            username=obj.username if obj and obj.username else None,
-            password=obj.password if obj and obj.password else None,
+            username=obj.username if obj is not None and obj.username else None,
+            password=obj.password if obj is not None and obj.password else None,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -244,12 +244,12 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: RestWorkspaceConnectionServicePrincipal
+        cls, obj: Optional[RestWorkspaceConnectionServicePrincipal]
     ) -> "ServicePrincipalConfiguration":
         return cls(
-            client_id=obj.client_id if obj.client_id else None,
-            client_secret=obj.client_secret if obj.client_secret else None,
-            tenant_id=obj.tenant_id if obj.tenant_id else None,
+            client_id=obj.client_id if obj is not None and obj.client_id else None,
+            client_secret=obj.client_secret if obj is not None and obj.client_secret else None,
+            tenant_id=obj.tenant_id if obj is not None and obj.tenant_id else None,
             authority_url=None,
         )
 
@@ -396,11 +396,11 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls, obj: RestWorkspaceConnectionManagedIdentity
+        cls, obj: Optional[RestWorkspaceConnectionManagedIdentity]
     ) -> "ManagedIdentityConfiguration":
         return cls(
-            client_id=obj.client_id if obj else None,
-            resource_id=obj.resource_id if obj else None,
+            client_id=obj.client_id if obj is not None and obj.client_id else None,
+            resource_id=obj.resource_id if obj is not None and obj.client_id else None,
         )
 
     def _to_job_rest_object(self) -> RestJobManagedIdentity:
