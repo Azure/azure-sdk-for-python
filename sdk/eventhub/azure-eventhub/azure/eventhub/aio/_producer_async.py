@@ -11,7 +11,7 @@ from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING, 
 from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
-from .._producer import _set_partition_key, _trace_batch_message
+from .._producer import _set_partition_key
 from .._utils import (
     create_properties,
     trace_message,
@@ -223,7 +223,6 @@ class EventHubProducer(
                 wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key
                 )
-            _trace_batch_message(wrapper_event_data._message, span)
         return wrapper_event_data
 
     async def send(
