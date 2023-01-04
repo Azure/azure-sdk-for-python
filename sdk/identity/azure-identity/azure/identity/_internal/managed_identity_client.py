@@ -22,9 +22,8 @@ if TYPE_CHECKING:
 
     PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
 
-ABC = abc.ABC
 
-class ManagedIdentityClientBase(ABC):
+class ManagedIdentityClientBase(abc.ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,

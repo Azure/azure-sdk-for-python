@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any, List, Union, Dict
+from typing import Any, List, Union, Dict, Optional
 
 import msal
 
@@ -19,20 +19,22 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
             client_id: str,
-            client_credential: Union[str, Dict] = None,
+            client_credential: Optional[Union[str, Dict]] = None,
             *,
-            additionally_allowed_tenants: List[str] = None,
-            allow_broker: bool = None,
+            additionally_allowed_tenants: Optional[List[str]] = None,
+            allow_broker: Optional[bool] = None,
+            authority: Optional[str] = None,
+            instance_discovery: Optional[bool] = None,
+            tenant_id: Optional[str] = None,
             **kwargs
     ) -> None:
-        authority = kwargs.pop("authority", None)
-        self._instance_discovery = kwargs.pop("instance_discovery", None)
+        self._instance_discovery = instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
-        self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        self._tenant_id = tenant_id or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)
-        self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
+        self._client_applications: Dict[str, msal.ClientApplication] = {}
         self._client_credential = client_credential
         self._client_id = client_id
         self._allow_broker = allow_broker

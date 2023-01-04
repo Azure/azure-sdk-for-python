@@ -91,8 +91,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._client:
             self._client.__exit__(*args)
 
-    def get_token(self, *scopes, **kwargs):
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 

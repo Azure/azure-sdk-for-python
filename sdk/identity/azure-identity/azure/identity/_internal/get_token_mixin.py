@@ -25,17 +25,14 @@ class GetTokenMixin(ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token from the STS"""
 
-    def _should_refresh(self, token):
-        # type: (AccessToken) -> bool
+    def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
@@ -43,8 +40,7 @@ class GetTokenMixin(ABC):
             return False
         return True
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

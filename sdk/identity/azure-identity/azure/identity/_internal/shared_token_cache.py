@@ -180,8 +180,7 @@ class SharedTokenCacheBase(ABC):
 
         raise CredentialUnavailableError(message=message)
 
-    def _get_cached_access_token(self, scopes, account):
-        # type: (Iterable[str], CacheItem) -> Optional[AccessToken]
+    def _get_cached_access_token(self, scopes: Iterable[str], account: CacheItem) -> Optional[AccessToken]:
         if "home_account_id" not in account:
             return None
 
@@ -215,8 +214,7 @@ class SharedTokenCacheBase(ABC):
             six.raise_from(CredentialUnavailableError(message=message), ex)
 
     @staticmethod
-    def supported():
-        # type: () -> bool
+    def supported() -> bool:
         """Whether the shared token cache is supported on the current platform.
 
         :rtype: bool

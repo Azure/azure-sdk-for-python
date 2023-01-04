@@ -259,8 +259,12 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_refresh_token_request(self, scopes, refresh_token, **kwargs):
-        # type: (Iterable[str], str, **Any) -> HttpRequest
+    def _get_refresh_token_request(
+            self,
+            scopes: Iterable[str],
+            refresh_token: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -271,8 +275,13 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_refresh_token_on_behalf_of_request(self, scopes, client_credential, refresh_token, **kwargs):
-        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> HttpRequest
+    def _get_refresh_token_on_behalf_of_request(
+            self,
+            scopes: Iterable[str],
+            client_credential: Union[str, AadClientCertificate],
+            refresh_token: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -297,21 +306,18 @@ class AadClientBase(abc.ABC):
         )
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
-    def _post(self, data, **kwargs):
-        # type: (dict, **Any) -> HttpRequest
+    def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
 
 
-def _scrub_secrets(response):
-    # type: (dict) -> None
+def _scrub_secrets(response: Dict) -> None:
     for secret in ("access_token", "refresh_token"):
         if secret in response:
             response[secret] = "***"
 
 
-def _raise_for_error(response, content):
-    # type: (PipelineResponse, dict) -> None
+def _raise_for_error(response: PipelineResponse, content: Dict) -> None:
     if "error" not in content:
         return
 
