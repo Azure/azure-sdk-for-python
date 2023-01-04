@@ -13,7 +13,7 @@ from .._constants import EnvironmentVariables
 from .._persistent_cache import _load_persistent_cache
 
 
-class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
+class MsalCredential:   # pylint: disable=too-many-instance-attributes
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(

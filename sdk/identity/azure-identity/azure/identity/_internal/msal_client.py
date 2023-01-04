@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 _POST = ["POST"]
 
 
-class MsalResponse(object):
+class MsalResponse:
     """Wraps HttpResponse according to msal.oauth2cli.http"""
 
     def __init__(self, response: PipelineResponse) -> None:
@@ -56,7 +56,7 @@ class MsalResponse(object):
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 
 
-class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
+class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
     """Wraps Pipeline according to msal.oauth2cli.http"""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint:disable=missing-client-constructor-parameter-credential

@@ -13,7 +13,7 @@ from typing import Optional
 import six
 
 
-class AadClientCertificate(object):
+class AadClientCertificate:
     """Wraps 'cryptography' to provide the crypto operations AadClient requires for certificate authentication.
 
     :param bytes pem_bytes: bytes of a a PEM-encoded certificate including the (RSA) private key
