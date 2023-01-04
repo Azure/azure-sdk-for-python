@@ -26,7 +26,9 @@
 from typing import Any, AsyncIterator
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
 from ._http_response_impl import (
-    _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase, _RestHttpClientTransportResponseBase
+    _HttpResponseBaseImpl,
+    _HttpResponseBackcompatMixinBase,
+    _RestHttpClientTransportResponseBase,
 )
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
@@ -51,9 +53,14 @@ class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
                 "You can't get parts if the response is not multipart/mixed"
             )
 
-        return _PartGenerator(self, default_http_response_type=RestAsyncHttpClientTransportResponse)
+        return _PartGenerator(
+            self, default_http_response_type=RestAsyncHttpClientTransportResponse
+        )
 
-class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin):
+
+class AsyncHttpResponseImpl(
+    _HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin
+):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.AsyncHttpResponse is an abstract base class, we need to
@@ -113,9 +120,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         else:
             self._stream_download_check()
             async for part in self._stream_download_generator(
-                response=self,
-                pipeline=None,
-                decompress=True
+                response=self, pipeline=None, decompress=True
             ):
                 yield part
             await self.close()
@@ -141,9 +146,11 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
             self.status_code, self.reason, content_type_str
         )
 
-class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
-    """Create a Rest HTTPResponse from an http.client response.
-    """
+
+class RestAsyncHttpClientTransportResponse(
+    _RestHttpClientTransportResponseBase, AsyncHttpResponseImpl
+):
+    """Create a Rest HTTPResponse from an http.client response."""
 
     async def iter_bytes(self, **kwargs):
         raise TypeError("We do not support iter_bytes for this transport response")

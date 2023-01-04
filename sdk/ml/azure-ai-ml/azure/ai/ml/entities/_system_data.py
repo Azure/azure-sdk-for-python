@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2021_10_01.models import SystemData as RestSystemData
+from azure.ai.ml._restclient.v2022_10_01.models import SystemData as RestSystemData
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 

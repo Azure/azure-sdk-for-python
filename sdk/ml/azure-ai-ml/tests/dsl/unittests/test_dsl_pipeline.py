@@ -509,6 +509,18 @@ class TestDSLPipeline:
             "microsoftsamplescommandcomponentbasic_nopaths_test_2",
         ]
 
+        @dsl.pipeline(name="pipeline_with_user_defined_nodes_3")
+        def pipeline_with_user_defined_nodes_3():
+            node1 = component_func1()
+            node1.name = "my_node"
+            node2 = node1
+
+        pipeline = pipeline_with_user_defined_nodes_3()
+        variable_names = list(pipeline.component.jobs.keys())
+        pipeline_job_names = list(pipeline.jobs.keys())
+        assert variable_names == pipeline_job_names
+        assert variable_names == ["my_node"]
+
         @dsl.pipeline(name="pipeline_with_duplicate_user_defined_nodes_1")
         def pipeline_with_duplicate_user_defined_nodes_1():
             node1 = component_func1()
@@ -1633,7 +1645,7 @@ class TestDSLPipeline:
                         },
                         # add mode in rest if binding output set mode
                         "outputs": {
-                            "trained_model": {
+                            "output": {
                                 "value": "${{parent.outputs.pipeline_trained_model}}",
                                 "type": "literal",
                                 "mode": "Upload",
@@ -2569,3 +2581,18 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_return_annotation(self, client: MLClient) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline() -> Output(type="uri_folder", description="new description", mode="upload"):
+            node = hello_world_component_func(component_in_path=Input(path="path/on/ds"), component_in_number=10)
+            return {"output": node.outputs.component_out_path}
+
+        pipeline_job = my_pipeline()
+        expected_outputs = {'output': {
+            'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
+        }}
+        assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs

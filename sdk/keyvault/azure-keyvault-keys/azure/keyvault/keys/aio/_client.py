@@ -25,7 +25,7 @@ from .. import (
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from azure.core.async_paging import AsyncItemPaged
-    from typing import Any, List, Optional, Union
+    from typing import Any, Optional, Union
     from .. import KeyType
 
 

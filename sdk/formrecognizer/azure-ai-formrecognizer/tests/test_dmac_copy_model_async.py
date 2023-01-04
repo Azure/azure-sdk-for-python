@@ -28,17 +28,19 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id=None, target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id="", target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._models import JsonWebKey
-    from ._enums import KeyCurveName, KeyType
+    from ._enums import KeyType
 
 
 def _get_key_id(vault_url, key_name, version=None):
