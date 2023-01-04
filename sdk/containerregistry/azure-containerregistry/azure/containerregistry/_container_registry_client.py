@@ -845,12 +845,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
             digest = _compute_digest(data)
-            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload( # pylint: disable=line-too-long, type: ignore
+            # pylint: disable=line-too-long
+            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload( # type: ignore
                 digest=digest,
                 next_link=upload_chunk_response_headers['Location'], # type: ignore
                 cls=_return_response,
                 **kwargs
             )
+             # pylint: enable=line-too-long
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.transport import HttpTransport
