@@ -209,12 +209,8 @@ class PhoneNumbersClient(object):
         """
         polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         
-        print("hello world")
-        print(phone_number)
-
         if not phone_number:
             raise ValueError("phone_number can't be empty")
-        print("by world")
         
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
