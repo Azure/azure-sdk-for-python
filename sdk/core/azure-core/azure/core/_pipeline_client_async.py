@@ -34,6 +34,7 @@ from typing import (
     Generic,
     Generator,
     cast,
+    TYPE_CHECKING,
 )
 from typing_extensions import Protocol
 from .configuration import Configuration
@@ -48,16 +49,18 @@ from .pipeline.policies import (
 )
 
 
-class _AsyncContextManagerCloseable(AsyncContextManager, Protocol):
-    """Defines a context manager that is closeable at the same time."""
+if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
 
-    async def close(self):
-        ...
+    class _AsyncContextManagerCloseable(AsyncContextManager, Protocol):
+        """Defines a context manager that is closeable at the same time."""
+
+        async def close(self):
+            ...
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar(
-    "AsyncHTTPResponseType", bound=_AsyncContextManagerCloseable
+    "AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable"
 )
 
 _LOGGER = logging.getLogger(__name__)
