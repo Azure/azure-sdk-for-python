@@ -123,7 +123,7 @@ steps:
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
       ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
-      CustomCondition: parameters['RunCoverage']
+      CustomCondition: '${{ parameters.RunCoverage }}'
 
   - task: PublishTestResults@2
     condition: always()
