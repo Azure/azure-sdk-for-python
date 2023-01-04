@@ -15,9 +15,9 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-package-version: 1.0.0b1
-tag: package-2021-10-01-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/Email/readme.md
+package-version: 1.0.0b2
+tag: package-2023-01-15-preview
+require: https://raw.githubusercontent.com/apattath/azure-rest-api-specs-apattath/main/specification/communication/data-plane/Email/readme.md
 output-folder: ../azure/communication/email/_generated
 namespace: azure.communication.email
 no-namespace-folders: true
@@ -34,11 +34,12 @@ use-extension:
   "@autorest/python": "6.1.1"
 ```
 
-### Change the bCC property to bcc
+### Remove the LRO property from SEND
+
 ```yaml
 directive:
   - from: swagger-document
-    where: $.definitions.EmailRecipients.properties.bCC
+    where: '$.paths["/emails:send"].post'
     transform: >
-      $["x-ms-client-name"] = "bcc"
+      $["x-ms-long-running-operation"] = false
 ```

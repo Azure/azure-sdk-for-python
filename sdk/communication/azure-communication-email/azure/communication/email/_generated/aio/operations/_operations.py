@@ -119,10 +119,11 @@ class EmailOperations:
     @overload
     async def send(  # pylint: disable=inconsistent-return-statements
         self,
-        email_message: JSON,
+        message: JSON,
         *,
         repeatability_request_id: str,
         repeatability_first_sent: str,
+        client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -130,8 +131,8 @@ class EmailOperations:
 
         Queues an email message to be sent to one or more recipients.
 
-        :param email_message: Message payload for sending an email. Required.
-        :type email_message: JSON
+        :param message: Message payload for sending an email. Required.
+        :type message: JSON
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -144,6 +145,9 @@ class EmailOperations:
          was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
          2019 16:06:51 GMT. Required.
         :paramtype repeatability_first_sent: str
+        :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
+         value is None.
+        :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -155,7 +159,7 @@ class EmailOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                email_message = {
+                message = {
                     "content": {
                         "subject": "str",  # Subject of the email message. Required.
                         "html": "str",  # Optional. Html version of the email message.
@@ -169,43 +173,36 @@ class EmailOperations:
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "CC": [
+                        "bcc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "bCC": [
+                        "cc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ]
                     },
-                    "sender": "str",  # Sender email address from a verified domain. Required.
+                    "senderEmail": "str",  # Sender email address from a verified domain.
+                      Required.
                     "attachments": [
                         {
-                            "attachmentType": "str",  # The type of attachment file.
-                              Required. Known values are: "avi", "bmp", "doc", "docm", "docx", "gif",
-                              "jpeg", "mp3", "one", "pdf", "png", "ppsm", "ppsx", "ppt", "pptm",
-                              "pptx", "pub", "rpmsg", "rtf", "tif", "txt", "vsd", "wav", "wma", "xls",
-                              "xlsb", "xlsm", and "xlsx".
                             "contentBytesBase64": "str",  # Base64 encoded contents of
                               the attachment. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "type": "str"  # MIME type of the content being attached.
+                              Required.
                         }
                     ],
                     "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
                       engagement tracking should be disabled for this request if the resource-level
                       user engagement tracking setting was already enabled in the control plane.
-                    "headers": [
-                        {
-                            "name": "str",  # Header name. Required.
-                            "value": "str"  # Header value. Required.
-                        }
-                    ],
-                    "importance": "normal",  # Optional. Default value is "normal". The
-                      importance type for the email. Known values are: "high", "normal", and "low".
+                    "headers": {
+                        "str": "str"  # Optional. Custom email headers to be passed.
+                    },
                     "replyTo": [
                         {
                             "email": "str",  # Email address. Required.
@@ -218,10 +215,11 @@ class EmailOperations:
     @overload
     async def send(  # pylint: disable=inconsistent-return-statements
         self,
-        email_message: IO,
+        message: IO,
         *,
         repeatability_request_id: str,
         repeatability_first_sent: str,
+        client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -229,8 +227,8 @@ class EmailOperations:
 
         Queues an email message to be sent to one or more recipients.
 
-        :param email_message: Message payload for sending an email. Required.
-        :type email_message: IO
+        :param message: Message payload for sending an email. Required.
+        :type message: IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -243,6 +241,9 @@ class EmailOperations:
          was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
          2019 16:06:51 GMT. Required.
         :paramtype repeatability_first_sent: str
+        :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
+         value is None.
+        :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -254,19 +255,20 @@ class EmailOperations:
     @distributed_trace_async
     async def send(  # pylint: disable=inconsistent-return-statements
         self,
-        email_message: Union[JSON, IO],
+        message: Union[JSON, IO],
         *,
         repeatability_request_id: str,
         repeatability_first_sent: str,
+        client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Queues an email message to be sent to one or more recipients.
 
         Queues an email message to be sent to one or more recipients.
 
-        :param email_message: Message payload for sending an email. Is either a model type or a IO
-         type. Required.
-        :type email_message: JSON or IO
+        :param message: Message payload for sending an email. Is either a model type or a IO type.
+         Required.
+        :type message: JSON or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -279,6 +281,9 @@ class EmailOperations:
          was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
          2019 16:06:51 GMT. Required.
         :paramtype repeatability_first_sent: str
+        :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
+         value is None.
+        :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -298,14 +303,15 @@ class EmailOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(email_message, (IO, bytes)):
-            _content = email_message
+        if isinstance(message, (IO, bytes)):
+            _content = message
         else:
-            _json = email_message
+            _json = message
 
         request = build_email_send_request(
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
+            client_request_id=client_request_id,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -333,7 +339,6 @@ class EmailOperations:
             "str", response.headers.get("Repeatability-Result")
         )
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
 
         if cls:

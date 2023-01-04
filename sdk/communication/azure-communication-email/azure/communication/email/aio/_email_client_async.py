@@ -96,7 +96,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                email_message = {
+                message = {
                     "content": {
                         "subject": "str",  # Subject of the email message. Required.
                         "html": "str",  # Optional. Html version of the email message.
@@ -110,54 +110,42 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "cc": [
+                        "bcc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "bcc": [
+                        "cc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ]
                     },
-                    "sender": "str",  # Sender email address from a verified domain. Required.
+                    "senderEmail": "str",  # Sender email address from a verified domain.
+                      Required.
                     "attachments": [
                         {
-                            "attachmentType": "str",  # The type of attachment file.
-                              Required. Known values are: "avi", "bmp", "doc", "docm", "docx", "gif",
-                              "jpeg", "mp3", "one", "pdf", "png", "ppsm", "ppsx", "ppt", "pptm",
-                              "pptx", "pub", "rpmsg", "rtf", "tif", "txt", "vsd", "wav", "wma", "xls",
-                              "xlsb", "xlsm", and "xlsx".
                             "contentBytesBase64": "str",  # Base64 encoded contents of
                               the attachment. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "type": "str"  # MIME type of the content being attached.
+                              Required.
                         }
                     ],
                     "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
                       engagement tracking should be disabled for this request if the resource-level
                       user engagement tracking setting was already enabled in the control plane.
-                    "headers": [
-                        {
-                            "name": "str",  # Header name. Required.
-                            "value": "str"  # Header value. Required.
-                        }
-                    ],
-                    "importance": "normal",  # Optional. Default value is "normal". The
-                      importance type for the email. Known values are: "high", "normal", and "low".
+                    "headers": {
+                        "str": "str"  # Optional. Custom email headers to be passed.
+                    },
                     "replyTo": [
                         {
                             "email": "str",  # Email address. Required.
                             "displayName": "str"  # Optional. Email display name.
                         }
                     ]
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "messageId": "str",  # System generated id of an email message sent. Required.
                 }
         """
         # cSpell:enable
