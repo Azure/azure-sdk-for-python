@@ -4,9 +4,10 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING
+from typing import List, Any
 
 from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
 from .azure_cli import AzureCliCredential
@@ -17,8 +18,6 @@ from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +64,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -102,7 +101,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials = []  # type: List[AsyncTokenCredential]
+        credentials: List[AsyncTokenCredential] = []
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
@@ -125,7 +124,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

@@ -5,7 +5,7 @@
 import asyncio
 import sys
 import os
-from typing import List
+from typing import List, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -40,7 +40,7 @@ class AzureCliCredential(AsyncContextManager):
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must

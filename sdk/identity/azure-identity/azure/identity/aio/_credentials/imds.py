@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Any
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessToken
@@ -18,15 +18,15 @@ T = TypeVar("T", bound="ImdsCredential")
 
 
 class ImdsCredential(AsyncContextManager, GetTokenMixin):
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
         self._client = AsyncManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
-            self._endpoint_available = True  # type: Optional[bool]
+            self._endpoint_available: Optional[bool] = True
         else:
             self._endpoint_available = None
-        self._error_message = None  # type: Optional[str]
+        self._error_message: Optional[str] = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
     async def __aenter__(self: T) -> T:
@@ -36,10 +36,10 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_token(*scopes)
 
-    async def _request_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (because it lacks the Metadata header),
