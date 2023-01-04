@@ -87,7 +87,7 @@ class TestEmailClient(AzureRecordedTestCase):
             "attachments": [
                 {
                     "name": "readme.txt",
-                    "attachmentType": "txt",
+                    "type": "txt",
                     "contentBytesBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
                 }
             ]

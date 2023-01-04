@@ -66,7 +66,7 @@ class EmailWithAttachmentSampleAsync(object):
             "attachments": [
                 {
                     "name": "attachment.txt",
-                    "attachmentType": "txt",
+                    "type": "txt",
                     "contentBytesBase64": file_bytes_b64.decode()
                 }
             ]
