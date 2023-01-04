@@ -6,20 +6,113 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import logging
+import time
 from functools import partial
 from typing import List, IO, Optional, Any, Union
 
-from azure.core.polling import NoPolling
+from azure.core.polling import NoPolling, PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
 from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
-from .._polling import ValidationCheckPoller, LoadTestingLROPoller, TestRunStatusPoller
 from .._serialization import Serializer
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+logger = logging.getLogger(__name__)
+
+class LoadTestingPollingMethod(PollingMethod):
+    """Base class for custom sync polling methods."""
+
+    def _update_status(self) -> None:
+        raise NotImplementedError("This method needs to be implemented")
+
+    def _update_resource(self) -> None:
+        self._resource = self._command()
+
+    def initialize(self, client, initial_response, deserialization_callback) -> None:
+        self._command = client
+        self._initial_response = initial_response
+        self._resource = initial_response
+
+    def status(self) -> str:
+        return self._status
+
+    def finished(self) -> bool:
+        return self._status in self._termination_statuses
+
+
+    def resource(self) -> JSON:
+        return self._resource
+
+    def run(self) -> None:
+        try:
+            while not self.finished():
+                self._update_resource()
+                self._update_status()
+
+                if not self.finished():
+                    time.sleep(self._polling_interval)
+
+        except Exception as e:
+            logger.error(e)
+            raise e
+
+class ValidationCheckPoller(LoadTestingPollingMethod):
+    """polling method for long-running validation check operation."""
+    def __init__(self, interval=5) -> None:
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
+
+    def _update_status(self) -> None:
+        self._status = self._resource["validationStatus"]
+
+
+class TestRunStatusPoller(LoadTestingPollingMethod):
+
+    def __init__(self, interval=5) -> None:
+        self._resource = None
+        self._command = None
+        self._initial_response = None
+        self._polling_interval = interval
+        self._status = None
+        self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+
+    def _update_status(self) -> None:
+        self._status = self._resource["status"]
+
+
+class LoadTestingLROPoller(LROPoller):
+    """LoadTesting Poller for long-running operations.
+
+    :param client: A pipeline service client
+    :type client: ~azure.core.PipelineClient
+    :param initial_response: The initial call response
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
+    :type deserialization_callback: callable or msrest.serialization.Model
+    :param polling_method: The polling strategy to adopt
+    :type polling_method: ~azure.core.polling.PollingMethod
+    """
+    def __init__(self, client, initial_response, deserialization_callback, polling_method):
+        # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
+        self._initial_response = initial_response
+        super(LoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
+
+    def get_initial_response(self) -> Any:
+        """Return the result of the initial operation.
+
+        :return: The result of the initial operation.
+        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
+        """
+        return self._initial_response
 
 class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
     """
@@ -88,7 +181,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         super(LoadTestRunOperations, self).__init__(*args, **kwargs)
 
     @distributed_trace
-    def begin_create_or_update_test_run(
+    def begin_test_run(
         self,
         test_run_id: str,
         body: Union[JSON, IO],
@@ -144,7 +237,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
             return LoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
 
 
-__all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations"]
+__all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations", "LoadTestingLROPoller"]
 
 
 # Add all objects you want publicly available to users at this package level

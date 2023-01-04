@@ -52,7 +52,7 @@ class TestRunOps(LoadtestingAsyncTest):
 
         run_client = self.create_run_client(endpoint)
 
-        run_poller = await run_client.begin_create_or_update_test_run(
+        run_poller = await run_client.begin_test_run(
             test_run_id,
             {
                 "testId": test_id,
@@ -70,7 +70,7 @@ class TestRunOps(LoadtestingAsyncTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = await run_client.begin_create_or_update_test_run(
+        run_poller = await run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -156,8 +156,12 @@ class TestRunOps(LoadtestingAsyncTest):
         await self.setup_loadtest(loadtesting_endpoint, "new-load-test-from-pytest-aio-abc")
         run_client = self.create_run_client(loadtesting_endpoint)
 
+        try:
+            await run_client.delete_test_run("my-new-test-run-from-pytest-aio-abc")
+        except ResourceNotFoundError:
+            pass
 
-        run_poller = await run_client.begin_create_or_update_test_run(
+        run_poller = await run_client.begin_test_run(
             "my-new-test-run-from-pytest-aio-abc",
             {
                 "testId": "new-load-test-from-pytest-aio-abc",

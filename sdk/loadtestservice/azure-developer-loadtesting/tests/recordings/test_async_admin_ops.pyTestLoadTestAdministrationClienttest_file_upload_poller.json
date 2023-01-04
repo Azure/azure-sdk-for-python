@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:09 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:06 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -63,13 +63,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "317",
+        "Content-Length": "412",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:10 GMT",
-        "mise-correlation-id": "fd95459c-f64e-443f-87bf-e0ba97e5e73e",
+        "Date": "Wed, 04 Jan 2023 10:27:07 GMT",
+        "mise-correlation-id": "b5a6736a-bf17-4171-9c8c-4c228010e22a",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "81e0f445-2295-4ee2-bfbd-d80b0ffac5fd"
+        "x-ms-correlation-request-id": "5d8341e2-4df1-4780-a3fe-1ea9c47f8b6c"
       },
       "ResponseBody": {
         "passFailCriteria": {
@@ -86,7 +86,9 @@
         "testId": "pytest_setup_load_test_id",
         "description": "",
         "displayName": "TestingResourcePyTest",
-        "keyvaultReferenceIdentityType": "SystemAssigned"
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "createdDateTime": "2023-01-04T10:26:52.536Z",
+        "lastModifiedDateTime": "2023-01-04T10:27:07.733Z"
       }
     },
     {
@@ -105,7 +107,7 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:09 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:07 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -137,20 +139,20 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "146",
+        "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:10 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:08 GMT",
         "Location": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
-        "mise-correlation-id": "412856aa-313b-4c43-9ac1-68c0acfea0da",
+        "mise-correlation-id": "d4dc3c87-6279-465d-8cfb-65f313f27d7d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "70696775-a83d-4861-b18e-688f14cfc5dc"
+        "x-ms-correlation-request-id": "26a15bfa-b527-4c9c-becc-7ba7d6bb2934"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:10.94855",
+        "expireDateTime": "2023-01-04T10:37:08.7721246",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -169,17 +171,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:11 GMT",
-        "mise-correlation-id": "969f161c-837f-49af-9574-f3b46af0489e",
+        "Date": "Wed, 04 Jan 2023 10:27:09 GMT",
+        "mise-correlation-id": "e02c4994-813e-4c3b-b668-573efa25d441",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1b978391-2a50-4e12-b893-d7366267d41c"
+        "x-ms-correlation-request-id": "128d650a-f7fe-4d8a-a619-1c04b9c16d25"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:11.4923919",
+        "expireDateTime": "2023-01-04T10:37:09.3178521",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -198,17 +200,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:17 GMT",
-        "mise-correlation-id": "0434879d-735d-48fa-8748-598dbee015b8",
+        "Date": "Wed, 04 Jan 2023 10:27:14 GMT",
+        "mise-correlation-id": "f9c24323-438a-4c6e-b801-ec758d69075e",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "db08a28d-b846-4871-9d6c-f66c93b20ccb"
+        "x-ms-correlation-request-id": "8834e915-53f9-437c-855a-360247c50843"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:17.0445654",
+        "expireDateTime": "2023-01-04T10:37:14.8959875",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -227,17 +229,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:22 GMT",
-        "mise-correlation-id": "a85235b6-f7a9-4a32-a714-cb821c65c76f",
+        "Date": "Wed, 04 Jan 2023 10:27:20 GMT",
+        "mise-correlation-id": "0c5a266d-8076-46a3-803b-93e0ada746b7",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "65d3da37-00a9-4b60-81e6-c5c6abcfd865"
+        "x-ms-correlation-request-id": "2de9ad57-dcf2-4fa5-b481-294a13b6cc12"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:22.6335092",
+        "expireDateTime": "2023-01-04T10:37:20.6887812",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -256,17 +258,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:28 GMT",
-        "mise-correlation-id": "b8d39dec-5836-4193-b2e5-3566f7a92685",
+        "Date": "Wed, 04 Jan 2023 10:27:26 GMT",
+        "mise-correlation-id": "76cfa85b-aaee-4cfb-80ed-eed713109275",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "29d10589-80f6-43f3-9268-7ccc6326c188"
+        "x-ms-correlation-request-id": "76d77331-a22e-46e8-9779-b2ea3d896f58"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:28.1872474",
+        "expireDateTime": "2023-01-04T10:37:26.2630958",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -285,17 +287,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:33 GMT",
-        "mise-correlation-id": "e5f94df2-2dca-4566-ab7f-9ba449ec37f8",
+        "Date": "Wed, 04 Jan 2023 10:27:31 GMT",
+        "mise-correlation-id": "f8c0c40d-fa46-4473-9316-17b744936fe2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "49151504-3f64-4f21-90b6-ef6a6cdcc807"
+        "x-ms-correlation-request-id": "21bef9e3-1df9-40f0-a90f-ce165a8c1bcd"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:33.7074917",
+        "expireDateTime": "2023-01-04T10:37:31.8250178",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -314,75 +316,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:39 GMT",
-        "mise-correlation-id": "96c061ca-319d-41c8-bfa8-439e020c2a9f",
+        "Date": "Wed, 04 Jan 2023 10:27:37 GMT",
+        "mise-correlation-id": "60a0d1aa-25cf-4bae-b097-a5a69640efb8",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4f6d9d30-343d-4dbd-b186-2fafb5a43215"
+        "x-ms-correlation-request-id": "699ec43e-6d68-48f0-921f-1ce2f45af227"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:39.2639931",
-        "validationStatus": "VALIDATION_INITIATED"
-      }
-    },
-    {
-      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
-        "Connection": "keep-alive",
-        "Content-Length": "148",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:44 GMT",
-        "mise-correlation-id": "64b3d171-20f8-44bb-90c2-f1799ead677b",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "89caa441-0264-4c8f-a214-567d606367b2"
-      },
-      "ResponseBody": {
-        "url": "url",
-        "fileName": "sample.jmx",
-        "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:44.8096456",
-        "validationStatus": "VALIDATION_INITIATED"
-      }
-    },
-    {
-      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
-        "Connection": "keep-alive",
-        "Content-Length": "148",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:50 GMT",
-        "mise-correlation-id": "52253129-018c-47c5-9abb-d8a9e16d7a6a",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2c6593e4-e03a-408f-a557-f0e07ac72cf1"
-      },
-      "ResponseBody": {
-        "url": "url",
-        "fileName": "sample.jmx",
-        "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:50.3451418",
+        "expireDateTime": "2023-01-04T10:37:37.3838852",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -401,17 +345,17 @@
         "Connection": "keep-alive",
         "Content-Length": "147",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:55 GMT",
-        "mise-correlation-id": "bb10771a-4acf-45af-a730-8dc9f9d7a3b2",
+        "Date": "Wed, 04 Jan 2023 10:27:42 GMT",
+        "mise-correlation-id": "7da39f02-c4a0-4edb-93e8-3e2c71b62735",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0b81e054-e665-421b-9cc3-8c05005793fe"
+        "x-ms-correlation-request-id": "897456ed-29ca-40c7-8a94-0fa01f98e9af"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:39:55.872347",
+        "expireDateTime": "2023-01-04T10:37:42.987209",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -430,17 +374,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:01 GMT",
-        "mise-correlation-id": "6719c42b-7db4-4ec6-b364-56b0284b9a69",
+        "Date": "Wed, 04 Jan 2023 10:27:48 GMT",
+        "mise-correlation-id": "fe14f418-e218-4158-9d2e-e79d7360addc",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a4d56010-465c-4ef5-a1ff-1c8efadb7caa"
+        "x-ms-correlation-request-id": "7812f136-a0a3-4de1-b210-a956ebc9568a"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:01.8486757",
+        "expireDateTime": "2023-01-04T10:37:48.5833146",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -459,17 +403,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:07 GMT",
-        "mise-correlation-id": "0d020a66-1c96-4617-b2a9-b9eb2dda856c",
+        "Date": "Wed, 04 Jan 2023 10:27:54 GMT",
+        "mise-correlation-id": "4e27a6f1-35a8-42b6-92a6-ad45ddcc0d91",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d8ddb6ea-e6de-4d1f-91fd-acee77afb0e4"
+        "x-ms-correlation-request-id": "dc8385ee-6a26-4311-9675-f7b3d5575467"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:07.3777419",
+        "expireDateTime": "2023-01-04T10:37:54.1921116",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -488,17 +432,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:12 GMT",
-        "mise-correlation-id": "a6734aa2-00e2-44d4-981e-cbc966f2c9c6",
+        "Date": "Wed, 04 Jan 2023 10:27:59 GMT",
+        "mise-correlation-id": "da87baac-b765-446f-a662-6340c2b218d6",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d2481fee-715b-4bdf-8c70-2f164304c662"
+        "x-ms-correlation-request-id": "f029dfae-1037-4691-9808-9000ed6bc29d"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:12.9547792",
+        "expireDateTime": "2023-01-04T10:37:59.7645771",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -517,17 +461,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:18 GMT",
-        "mise-correlation-id": "c854ea2e-c322-442a-80fb-de6a453abd74",
+        "Date": "Wed, 04 Jan 2023 10:28:05 GMT",
+        "mise-correlation-id": "55e6fcbd-61a5-41ed-b6fb-702cad1ead25",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3c8e00de-7aa0-4c87-b64f-5d4c19479ec6"
+        "x-ms-correlation-request-id": "8766fd4f-1d98-4629-bb38-2b9badfe23e2"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:18.5421367",
+        "expireDateTime": "2023-01-04T10:38:05.5530474",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -546,17 +490,46 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:29 GMT",
-        "mise-correlation-id": "471d935b-bc16-43f1-8335-3a9164710fa8",
+        "Date": "Wed, 04 Jan 2023 10:28:11 GMT",
+        "mise-correlation-id": "e3497ffc-fa17-4635-84e5-14fb6fff4689",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a1c77a31-4bf4-4d2b-bb07-52cdd39fc3da"
+        "x-ms-correlation-request-id": "1e2cea8c-780b-4d24-bcd4-ae7708d8684c"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:29.7403276",
+        "expireDateTime": "2023-01-04T10:38:11.1348211",
+        "validationStatus": "VALIDATION_INITIATED"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "147",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Jan 2023 10:28:16 GMT",
+        "mise-correlation-id": "33bc5b67-fda8-4c75-a559-9609096fd2f6",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "5949009f-0988-449f-b048-2529193a8eb5"
+      },
+      "ResponseBody": {
+        "url": "url",
+        "fileName": "sample.jmx",
+        "fileType": "JMX_FILE",
+        "expireDateTime": "2023-01-04T10:38:16.696396",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -575,17 +548,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:35 GMT",
-        "mise-correlation-id": "5d9ca8e2-56b0-4589-a4af-252d938559e9",
+        "Date": "Wed, 04 Jan 2023 10:28:22 GMT",
+        "mise-correlation-id": "97e5ebc0-c536-41c5-bc39-bf0edc3d7a76",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3212a87f-2764-4df4-87d6-e2371cc2ec6a"
+        "x-ms-correlation-request-id": "5884656d-4f9b-4e28-849a-15542c886954"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:35.5097935",
+        "expireDateTime": "2023-01-04T10:38:22.3323568",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -604,17 +577,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:41 GMT",
-        "mise-correlation-id": "1286204d-1126-41f4-9f66-ea419aafd591",
+        "Date": "Wed, 04 Jan 2023 10:28:27 GMT",
+        "mise-correlation-id": "bc1baddc-c6ed-48e1-8544-7eab270208f3",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "af4528df-8f6c-490f-b705-a16210151ff0"
+        "x-ms-correlation-request-id": "f1eabfe7-f8af-4620-890a-28cc8e8e1311"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:41.4799514",
+        "expireDateTime": "2023-01-04T10:38:27.8735195",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -633,17 +606,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:47 GMT",
-        "mise-correlation-id": "ba948b15-229f-4bfd-b115-54ce3f20245c",
+        "Date": "Wed, 04 Jan 2023 10:28:33 GMT",
+        "mise-correlation-id": "01999a45-f5ba-4a9a-be02-3962d999355f",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3ea18a54-47f8-4178-8857-3899351ed784"
+        "x-ms-correlation-request-id": "5707c8b8-76f0-422c-9fdd-2b7ee99de888"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:47.0192818",
+        "expireDateTime": "2023-01-04T10:38:33.6628382",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -662,17 +635,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:52 GMT",
-        "mise-correlation-id": "5cdc1b89-cb49-443b-ad20-27c3478d3eb8",
+        "Date": "Wed, 04 Jan 2023 10:28:39 GMT",
+        "mise-correlation-id": "32f51c47-8b7d-4320-803f-ba198f0e280d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f477692a-0400-4248-9cbc-bd78d57f1445"
+        "x-ms-correlation-request-id": "9f37e292-50fe-42fb-b0fe-f52bb2307043"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:52.6013679",
+        "expireDateTime": "2023-01-04T10:38:39.2809757",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -691,17 +664,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:30:58 GMT",
-        "mise-correlation-id": "f28185fd-8670-4582-82bf-1cc618e569f3",
+        "Date": "Wed, 04 Jan 2023 10:28:44 GMT",
+        "mise-correlation-id": "82c8a692-5804-4506-ae4f-ea536a16ad8b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b6b97a13-1925-4a72-958e-b1414957f903"
+        "x-ms-correlation-request-id": "da8cfdd5-9ec4-4c34-854d-50ff2c8d98d4"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:40:58.1653709",
+        "expireDateTime": "2023-01-04T10:38:44.8655651",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -720,17 +693,17 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:31:03 GMT",
-        "mise-correlation-id": "d3b90902-6a18-4bc7-84dc-4a84111f5e94",
+        "Date": "Wed, 04 Jan 2023 10:28:50 GMT",
+        "mise-correlation-id": "9550dce5-a015-4956-9bac-470c237e75d3",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2ead076f-9ca7-47a6-b93a-50e6d412f094"
+        "x-ms-correlation-request-id": "b57d6fec-6f35-4296-945f-41be7f7c8b79"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:41:03.7534438",
+        "expireDateTime": "2023-01-04T10:38:50.4310291",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -749,17 +722,104 @@
         "Connection": "keep-alive",
         "Content-Length": "148",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:31:09 GMT",
-        "mise-correlation-id": "5aecf7d3-8425-4dfc-b4e8-d42c535af2ec",
+        "Date": "Wed, 04 Jan 2023 10:28:55 GMT",
+        "mise-correlation-id": "974a1637-06cc-411a-9efa-a39c8dfe614d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0e3392ba-731e-4b2b-9a03-dd6fa54ffe2a"
+        "x-ms-correlation-request-id": "b25ced36-431d-47d7-89ad-b000a661ce6f"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:41:09.7970183",
+        "expireDateTime": "2023-01-04T10:38:55.9843044",
+        "validationStatus": "VALIDATION_INITIATED"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "148",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Jan 2023 10:29:01 GMT",
+        "mise-correlation-id": "363f1bce-b0e9-4020-80f6-a4c7ae6acb06",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "7ff1035e-db08-4269-9d9a-a59f3e1c58f5"
+      },
+      "ResponseBody": {
+        "url": "url",
+        "fileName": "sample.jmx",
+        "fileType": "JMX_FILE",
+        "expireDateTime": "2023-01-04T10:39:01.5569816",
+        "validationStatus": "VALIDATION_INITIATED"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "148",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Jan 2023 10:29:07 GMT",
+        "mise-correlation-id": "86823755-3408-48d4-88a7-d72da4a890b6",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "59fc5094-1189-4689-b927-48c43f6b8ef0"
+      },
+      "ResponseBody": {
+        "url": "url",
+        "fileName": "sample.jmx",
+        "fileType": "JMX_FILE",
+        "expireDateTime": "2023-01-04T10:39:07.1128611",
+        "validationStatus": "VALIDATION_INITIATED"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "148",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Jan 2023 10:29:12 GMT",
+        "mise-correlation-id": "18f30266-2605-4527-a303-d12b8fce058f",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "bf936deb-2ce1-44bf-9716-be5e03ff7881"
+      },
+      "ResponseBody": {
+        "url": "url",
+        "fileName": "sample.jmx",
+        "fileType": "JMX_FILE",
+        "expireDateTime": "2023-01-04T10:39:12.7421067",
         "validationStatus": "VALIDATION_INITIATED"
       }
     },
@@ -778,17 +838,46 @@
         "Connection": "keep-alive",
         "Content-Length": "146",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:31:15 GMT",
-        "mise-correlation-id": "01be38f6-6bf0-448e-992b-5e0e62fd5f6c",
+        "Date": "Wed, 04 Jan 2023 10:29:18 GMT",
+        "mise-correlation-id": "3df1f0ec-9115-4b38-ab2a-f3c4d15a3c50",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "67079604-0b84-4443-b886-cf6e2f43570b"
+        "x-ms-correlation-request-id": "33613035-1fce-4635-bd10-bc07059bbba9"
       },
       "ResponseBody": {
         "url": "url",
         "fileName": "sample.jmx",
         "fileType": "JMX_FILE",
-        "expireDateTime": "2022-12-27T04:41:15.3375472",
+        "expireDateTime": "2023-01-04T10:39:18.2938417",
+        "validationStatus": "VALIDATION_FAILURE"
+      }
+    },
+    {
+      "RequestUri": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/files/sample.jmx?api-version=2022-11-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
+        "Connection": "keep-alive",
+        "Content-Length": "146",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Jan 2023 10:29:23 GMT",
+        "mise-correlation-id": "8c48dca6-b7d8-44bf-8cd6-b42d5876e718",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a981c5fb-78cb-4b71-a4db-3b621d84ad1d"
+      },
+      "ResponseBody": {
+        "url": "url",
+        "fileName": "sample.jmx",
+        "fileType": "JMX_FILE",
+        "expireDateTime": "2023-01-04T10:39:23.8602746",
         "validationStatus": "VALIDATION_SUCCESS"
       }
     }

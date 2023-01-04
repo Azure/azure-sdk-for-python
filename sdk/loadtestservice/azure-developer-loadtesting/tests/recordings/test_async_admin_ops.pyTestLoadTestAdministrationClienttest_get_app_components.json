@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:05 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:03 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -63,13 +63,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "317",
+        "Content-Length": "412",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
-        "mise-correlation-id": "2d03aa59-9b03-4fb2-a00d-72180fcc4e30",
+        "Date": "Wed, 04 Jan 2023 10:27:04 GMT",
+        "mise-correlation-id": "a3a61315-462c-4943-b2ac-d7fd32ac097d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5c395ade-3da2-4cc3-9f30-b50474888ffc"
+        "x-ms-correlation-request-id": "48a57a46-55e9-49ff-a7f9-5e3bc13f7b99"
       },
       "ResponseBody": {
         "passFailCriteria": {
@@ -86,7 +86,9 @@
         "testId": "pytest_setup_load_test_id",
         "description": "",
         "displayName": "TestingResourcePyTest",
-        "keyvaultReferenceIdentityType": "SystemAssigned"
+        "keyvaultReferenceIdentityType": "SystemAssigned",
+        "createdDateTime": "2023-01-04T10:26:52.536Z",
+        "lastModifiedDateTime": "2023-01-04T10:27:04.637Z"
       }
     },
     {
@@ -105,14 +107,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:06 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:04 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -146,14 +148,14 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "653",
+        "Content-Length": "655",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:05 GMT",
         "Location": "https://https://myservice.azure.com/tests/pytest_setup_load_test_id/app-components?api-version=2022-11-01",
-        "mise-correlation-id": "4631c677-6f2d-40c9-939a-09f336ec2d80",
+        "mise-correlation-id": "41b53a71-fe0e-4a54-8cb3-76050cb58152",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "67366c7c-895d-4120-a789-7f1626d3612f"
+        "x-ms-correlation-request-id": "0022a14c-25be-47d4-a2fb-82f1a488e4ed"
       },
       "ResponseBody": {
         "components": {
@@ -167,8 +169,8 @@
           }
         },
         "testId": "pytest_setup_load_test_id",
-        "createdDateTime": "2022-12-27T04:29:07.67Z",
-        "lastModifiedDateTime": "2022-12-27T04:29:07.67Z"
+        "createdDateTime": "2023-01-04T10:27:05.417Z",
+        "lastModifiedDateTime": "2023-01-04T10:27:05.417Z"
       }
     },
     {
@@ -187,14 +189,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:07 GMT",
+        "Date": "Wed, 04 Jan 2023 10:27:05 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -217,13 +219,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "653",
+        "Content-Length": "655",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:08 GMT",
-        "mise-correlation-id": "44f98385-5343-4c7b-a4a1-b53553553d4d",
+        "Date": "Wed, 04 Jan 2023 10:27:06 GMT",
+        "mise-correlation-id": "9216251c-19f0-4901-b426-b41e2ddfb75c",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "75914777-6276-4b29-bb8e-3d557eaaf0aa"
+        "x-ms-correlation-request-id": "25849f10-acd2-4b61-ac98-6b33318a4cec"
       },
       "ResponseBody": {
         "components": {
@@ -237,8 +239,8 @@
           }
         },
         "testId": "pytest_setup_load_test_id",
-        "createdDateTime": "2022-12-27T04:29:07.67Z",
-        "lastModifiedDateTime": "2022-12-27T04:29:07.67Z"
+        "createdDateTime": "2023-01-04T10:27:05.417Z",
+        "lastModifiedDateTime": "2023-01-04T10:27:05.417Z"
       }
     },
     {
@@ -256,11 +258,11 @@
         "Connection": "keep-alive",
         "Content-Length": "101",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 04:29:08 GMT",
-        "mise-correlation-id": "92c0c730-6bfd-4d04-85f8-856bb7fe2b16",
+        "Date": "Wed, 04 Jan 2023 10:27:06 GMT",
+        "mise-correlation-id": "b0b9da2c-071e-4efe-a106-74b7f7adaaa2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7af92860-f6c1-498b-b1c9-ca8c8fb91631"
+        "x-ms-correlation-request-id": "b9deb1fc-bded-48da-932c-68c1b1d1ef5a"
       },
       "ResponseBody": {
         "error": {

@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 07:18:10 GMT",
+        "Date": "Wed, 04 Jan 2023 10:48:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 07:18:10 GMT",
+        "Date": "Wed, 04 Jan 2023 10:48:14 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "37303f79-6dee-4c94-b0e1-a5d3f0a50fc3",
+        "client-request-id": "bb39e33c-2913-4265-9d62-2a4237a7520f",
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "37303f79-6dee-4c94-b0e1-a5d3f0a50fc3",
+        "client-request-id": "bb39e33c-2913-4265-9d62-2a4237a7520f",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 07:18:11 GMT",
+        "Date": "Wed, 04 Jan 2023 10:48:14 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14357.7 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -226,17 +226,51 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview, 2022-11-01",
         "Connection": "keep-alive",
-        "Content-Length": "1864",
+        "Content-Length": "2517",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 07:18:12 GMT",
-        "mise-correlation-id": "576ff7ed-d1de-4802-821a-118b2ab9db96",
+        "Date": "Wed, 04 Jan 2023 10:48:15 GMT",
+        "mise-correlation-id": "af09cfca-341d-4f0e-bad3-7512895ff8f7",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1a1d4b6d-4750-4a03-8184-12d478fdbc76"
+        "x-ms-correlation-request-id": "d1eca42d-e4ae-43eb-9ae3-389bde579035"
       },
       "ResponseBody": {
         "passFailCriteria": {
           "passFailMetrics": {}
+        },
+        "testRunStatistics": {
+          "GET": {
+            "transaction": "GET",
+            "sampleCount": 16717.0,
+            "errorCount": 0.0,
+            "errorPct": 0.0,
+            "meanResTime": 38.401627086199674,
+            "medianResTime": 37.0,
+            "maxResTime": 1083.0,
+            "minResTime": 31.0,
+            "pct1ResTime": 43.0,
+            "pct2ResTime": 48.0,
+            "pct3ResTime": 55.0,
+            "throughput": 41.17,
+            "receivedKBytesPerSec": 0.0,
+            "sentKBytesPerSec": 0.0
+          },
+          "Total": {
+            "transaction": "Total",
+            "sampleCount": 16717.0,
+            "errorCount": 0.0,
+            "errorPct": 0.0,
+            "meanResTime": 38.401627086199674,
+            "medianResTime": 37.0,
+            "maxResTime": 1083.0,
+            "minResTime": 31.0,
+            "pct1ResTime": 43.0,
+            "pct2ResTime": 48.0,
+            "pct3ResTime": 55.0,
+            "throughput": 41.17,
+            "receivedKBytesPerSec": 0.0,
+            "sentKBytesPerSec": 0.0
+          }
         },
         "loadTestConfiguration": {
           "engineInstances": 1,
@@ -249,21 +283,21 @@
               "url": "url",
               "fileName": "config.yaml",
               "fileType": "ADDITIONAL_ARTIFACTS",
-              "expireDateTime": "2022-12-27T08:18:12.4353339",
+              "expireDateTime": "2023-01-04T11:48:15.22023",
               "validationStatus": "VALIDATION_NOT_REQUIRED"
             },
             "testScriptFileInfo": {
               "url": "url",
               "fileName": "sample.jmx",
               "fileType": "JMX_FILE",
-              "expireDateTime": "2022-12-27T08:18:12.4344508",
+              "expireDateTime": "2023-01-04T11:48:15.2113127",
               "validationStatus": "VALIDATION_SUCCESS"
             },
             "inputArtifactsZipFileInfo": {
               "url": "url",
               "fileName": "inputartifacts.zip",
               "fileType": "ADDITIONAL_ARTIFACTS",
-              "expireDateTime": "2022-12-27T08:18:12.435635",
+              "expireDateTime": "2023-01-04T11:48:15.2245039",
               "validationStatus": "VALIDATION_NOT_REQUIRED"
             },
             "additionalFileInfo": []
@@ -273,29 +307,31 @@
               "url": "url",
               "fileName": "csv.zip",
               "fileType": "ADDITIONAL_ARTIFACTS",
-              "expireDateTime": "2022-12-27T08:18:12.435999",
+              "expireDateTime": "2023-01-04T11:48:15.228317",
               "validationStatus": "VALIDATION_NOT_REQUIRED"
             },
             "logsFileInfo": {
               "url": "url",
               "fileName": "logs.zip",
               "fileType": "ADDITIONAL_ARTIFACTS",
-              "expireDateTime": "2022-12-27T08:18:12.4363122",
+              "expireDateTime": "2023-01-04T11:48:15.2318868",
               "validationStatus": "VALIDATION_NOT_REQUIRED"
             }
           }
         },
         "testResult": "NOT_APPLICABLE",
+        "virtualUsers": 10,
         "testRunId": "000",
         "displayName": "My New Load Test Run from PyTest",
         "testId": "000",
         "status": "DONE",
-        "startDateTime": "2022-12-27T07:09:24.294Z",
-        "endDateTime": "2022-12-27T07:17:06.156Z",
-        "executedDateTime": "2022-12-27T07:09:23.814Z",
+        "startDateTime": "2023-01-04T10:32:01Z",
+        "endDateTime": "2023-01-04T10:38:48Z",
+        "executedDateTime": "2023-01-04T10:31:20.931Z",
         "portalUrl": "https://portal.azure.com/?feature.canmodifyextensions=true\u0026feature.canmodifystamps=true\u0026Microsoft_Azure_CloudNativeTesting=canary#blade/Microsoft_Azure_CloudNativeTesting/NewReport//resourceId/%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fnivedit-jain%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2fnivedittestresource/testId/000/testRunId/000",
-        "createdDateTime": "2022-12-27T07:09:24.179Z",
-        "lastModifiedDateTime": "2022-12-27T07:09:24.179Z"
+        "duration": 407000,
+        "createdDateTime": "2023-01-04T10:31:21.706Z",
+        "lastModifiedDateTime": "2023-01-04T10:48:13.186Z"
       }
     },
     {
@@ -314,11 +350,11 @@
         "Connection": "keep-alive",
         "Content-Length": "108",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 27 Dec 2022 07:18:13 GMT",
-        "mise-correlation-id": "d5d22fe3-c76b-4417-b906-12e97c5190e9",
+        "Date": "Wed, 04 Jan 2023 10:48:15 GMT",
+        "mise-correlation-id": "03645cb7-a7f7-4d63-8177-7201d5c44c2f",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f97d298d-1904-4b84-aaba-293765c7f673"
+        "x-ms-correlation-request-id": "3650ca92-5196-479d-b9dd-9bf6977be931"
       },
       "ResponseBody": {
         "error": {

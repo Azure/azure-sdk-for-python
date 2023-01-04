@@ -51,7 +51,7 @@ class TestRunOps(LoadtestingTest):
 
         run_client = self.create_run_client(endpoint)
 
-        run_poller = run_client.begin_create_or_update_test_run(
+        run_poller = run_client.begin_test_run(
             test_run_id,
             {
                 "testId": test_id,
@@ -69,7 +69,7 @@ class TestRunOps(LoadtestingTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = run_client.begin_create_or_update_test_run(
+        run_poller = run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -154,8 +154,12 @@ class TestRunOps(LoadtestingTest):
         self.setup_loadtest(loadtesting_endpoint, "new-load-test-from-pytest-abc")
         run_client = self.create_run_client(loadtesting_endpoint)
 
+        try:
+            run_client.delete_test_run("my-new-test-run-from-pytest")
+        except ResourceNotFoundError:
+            pass
 
-        run_poller = run_client.begin_create_or_update_test_run(
+        run_poller = run_client.begin_test_run(
             "my-new-test-run-from-pytest",
             {
                 "testId": "new-load-test-from-pytest-abc",
