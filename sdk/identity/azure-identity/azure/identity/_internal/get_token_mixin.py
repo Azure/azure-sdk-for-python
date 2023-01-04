@@ -5,19 +5,16 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
+from azure.core.credentials import AccessToken
 from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
-
-ABC = abc.ABC
 _LOGGER = logging.getLogger(__name__)
 
 
-class GetTokenMixin(ABC):
+class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
