@@ -184,7 +184,7 @@ class EventHubProducer(
                     partition_key,
                 )
             wrapper_event_data = outgoing_event_data
-            wrapper_event_data._message = trace_message(
+            wrapper_event_data._message = trace_message(    # pylint: disable=protected-access
                 wrapper_event_data._message,    # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
                 parent_span=span

@@ -689,7 +689,7 @@ class EventDataBatch(object):
                     self._partition_key,
                 )
 
-        outgoing_event_data._message = trace_message(
+        outgoing_event_data._message = trace_message(   # pylint: disable=protected-access
             outgoing_event_data._message,   # pylint: disable=protected-access
             amqp_transport=self._amqp_transport
         )

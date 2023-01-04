@@ -16,10 +16,8 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
-    Type
-)  # pylint: disable=unused-import
+)
 
-from azure.core.settings import settings
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
@@ -201,7 +199,7 @@ class EventHubProducer(
                     outgoing_event_data._message, partition_key  # pylint: disable=protected-access
                 )
             wrapper_event_data = outgoing_event_data
-            wrapper_event_data._message = trace_message(
+            wrapper_event_data._message = trace_message(  # pylint: disable=protected-access
                 wrapper_event_data._message,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
                 parent_span=span
