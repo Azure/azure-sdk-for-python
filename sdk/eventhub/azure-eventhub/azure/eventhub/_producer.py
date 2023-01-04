@@ -201,7 +201,11 @@ class EventHubProducer(
                     outgoing_event_data._message, partition_key  # pylint: disable=protected-access
                 )
             wrapper_event_data = outgoing_event_data
-            wrapper_event_data._message = trace_message(wrapper_event_data._message, amqp_transport=self._amqp_transport, parent_span=span)
+            wrapper_event_data._message = trace_message(
+                wrapper_event_data._message,  # pylint: disable=protected-access
+                amqp_transport=self._amqp_transport,
+                parent_span=span
+            )
         else:
             if isinstance(
                 event_data, EventDataBatch
