@@ -72,17 +72,23 @@ def _filtered_accounts(accounts, username=None, tenant_id=None):
 
 
 class SharedTokenCacheBase(ABC):
-    def __init__(self, username=None, **kwargs) -> None:  # pylint:disable=unused-argument
-        # type: (Optional[str], **Any) -> None
-        authority = kwargs.pop("authority", None)
+    def __init__(
+            self,
+            username: Optional[str] = None,
+            *,
+            authority: Optional[str] = None,
+            tenant_id: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:  # pylint:disable=unused-argument
+        authority = authority
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
         self._username = username
-        self._tenant_id = kwargs.pop("tenant_id", None)
+        self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
-        self._client = None  # type: Optional[AadClientBase]
+        self._client: Optional[AadClientBase] = None
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
         self._initialized = False

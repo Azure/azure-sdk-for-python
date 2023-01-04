@@ -3,15 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional
 from azure.core.exceptions import ClientAuthenticationError
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, TokenCredential
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 

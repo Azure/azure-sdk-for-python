@@ -3,13 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-
+from typing import Optional
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
-from typing import Optional
 import six
 
 
