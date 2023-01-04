@@ -4,18 +4,18 @@
 import copy
 import json
 
-# pylint: disable=no-self-use,protected-access
-
 from marshmallow import INCLUDE, fields, pre_dump
 
 from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
+
+from ..job.input_output_entry import OutputSchema
+from ..job.job_limits import DoWhileLimitsSchema
 from .component_job import _resolve_outputs
 from .pipeline_job_io import OutputBindingStr
-from ..job.input_output_entry import OutputSchema
 
-from ..job.job_limits import DoWhileLimitsSchema
+# pylint: disable=no-self-use,protected-access
 
 
 class ControlFlowSchema(PathAwareSchema):
@@ -82,7 +82,7 @@ class ParallelForSchema(BaseLoopSchema):
             fields.Dict(keys=fields.Str(), values=fields.Dict()),
             fields.List(fields.Dict()),
         ],
-        required=True
+        required=True,
     )
     max_concurrency = fields.Int()
     outputs = fields.Dict(

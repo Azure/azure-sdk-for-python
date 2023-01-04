@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 """Entrypoints for creating AutoML tasks."""
-from typing import List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -20,15 +20,15 @@ def classification(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = None,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
     **kwargs,
 ) -> ClassificationJob:
     """Function to create a ClassificationJob.
@@ -161,15 +161,15 @@ def regression(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = None,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
     **kwargs,
 ) -> RegressionJob:
     """Function to create a Regression Job.
@@ -303,16 +303,16 @@ def forecasting(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: str = None,
-    enable_model_explainability: bool = None,
-    weight_column_name: str = None,
-    validation_data: Input = None,
-    validation_data_size: float = None,
-    n_cross_validations: Union[str, int] = None,
-    cv_split_column_names: List[str] = None,
-    test_data: Input = None,
-    test_data_size: float = None,
-    forecasting_settings: ForecastingSettings = None,
+    primary_metric: Optional[str] = None,
+    enable_model_explainability: Optional[bool] = None,
+    weight_column_name: Optional[str] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = None,
+    n_cross_validations: Optional[Union[str, int]] = None,
+    cv_split_column_names: Optional[List[str]] = None,
+    test_data: Optional[Input] = None,
+    test_data_size: Optional[float] = None,
+    forecasting_settings: Optional[ForecastingSettings] = None,
     **kwargs,
 ) -> ForecastingJob:
     """Function to create a Forecasting job.

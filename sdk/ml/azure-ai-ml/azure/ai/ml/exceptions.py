@@ -1,10 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""Contains exception module in Azure Machine Learning SDKv2.
 
+This includes enums and classes for exceptions.
+"""
 import logging
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from azure.core.exceptions import AzureError
 
@@ -19,14 +22,16 @@ class ValidationErrorType(Enum):
     When using ValidationException, specify the type that best describes the nature of the error being captured.
     If no type fits, add a new enum here and update raise_error.py to handle it.
 
-    INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
-    UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
-    MISSING_FIELD -> At least one required schema parameter is missing
-    FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
-    CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
-    CANNOT_PARSE -> YAML file cannot be parsed
-    RESOURCE_NOT_FOUND -> Resource could not be found
-    GENERIC -> Undefined placeholder. Avoid using.
+    Types of validation errors:
+
+    * INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
+    * UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
+    * MISSING_FIELD -> At least one required schema parameter is missing
+    * FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
+    * CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
+    * CANNOT_PARSE -> YAML file cannot be parsed
+    * RESOURCE_NOT_FOUND -> Resource could not be found
+    * GENERIC -> Undefined placeholder. Avoid using.
     """
 
     INVALID_VALUE = "INVALID VALUE"
@@ -597,7 +602,7 @@ class LocalEndpointNotFoundError(MLException):
     def __init__(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -631,7 +636,7 @@ class LocalEndpointInFailedStateError(MLException):
             error_category=error_category,
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message=(
-                f"Local ({resource_type}) is in failed state. " "Try getting logs to debug scoring script."
+                f"Local ({resource_type}) is in failed state. Try getting logs to debug scoring script."
             ),
         )
 
@@ -703,7 +708,7 @@ class CloudArtifactsNotSupportedError(MLException):
         self,
         endpoint_name: str,
         invalid_artifact: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -732,7 +737,7 @@ class RequiredLocalArtifactsNotFoundError(MLException):
         endpoint_name: str,
         required_artifact: str,
         required_artifact_type: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -741,8 +746,10 @@ class RequiredLocalArtifactsNotFoundError(MLException):
             else f"Local endpoint ({endpoint_name})"
         )
         err = (
-            "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
-            " of type '%s'.",
+            (
+                "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
+                " of type '%s'."
+            ),
             resource_name,
             required_artifact,
             required_artifact_type,

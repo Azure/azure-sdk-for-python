@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
+from azure.core.exceptions import HttpResponseError
 from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import async_create_token_credential, get_http_logging_policy
@@ -88,6 +88,17 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             result_trunks = await self._sip_routing_client.get_trunks()
         assert result_trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(result_trunks,[self.additional_trunk]), "Trunks are not equal."
+
+    @recorded_by_proxy_async
+    async def test_set_trunks_empty_list(self):
+        """Verification of bug fix. SDK shouldn't send empty PATCH, otherwise it will receive exception.
+        This situation occurs, when sending empty trunks list to already empty trunk configuration."""
+        async with self._sip_routing_client:
+            try: 
+                await self._sip_routing_client.set_trunks([])
+                await self._sip_routing_client.set_trunks([])
+            except HttpResponseError as exception:
+                assert False, "Trying to set empty trunks list returned Http error: " + str(exception.status_code) + ", message: " + exception.message
     
     @recorded_by_proxy_async
     async def test_set_routes(self):

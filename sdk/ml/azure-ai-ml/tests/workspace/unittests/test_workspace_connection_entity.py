@@ -1,13 +1,13 @@
 from pathlib import Path
 
 import pytest
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._credentials import PatTokenConfiguration
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
+from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
 
 @pytest.mark.unittest

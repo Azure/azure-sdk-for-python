@@ -7,11 +7,13 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+
+from conftest import normalized_arm_id_in_object
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -367,6 +369,28 @@ class TestCommandComponentEntity:
                 in std_out.getvalue()
             )
 
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
+            }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [sweep_job1.early_termination.evaluation_interval,
+                sweep_job1.early_termination.delay_evaluation,
+                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
+
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
         component = load_component(yaml_path)
@@ -497,3 +521,16 @@ class TestCommandComponentEntity:
         finally:
             if pycache.is_dir():
                 shutil.rmtree(pycache)
+
+    def test_normalized_arm_id_in_component_dict(self):
+        component_dict = {
+            "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx"
+        }
+        normalized_arm_id_in_object(component_dict)
+
+        expected_dict = {
+            'code': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx',
+            'environment': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx'
+        }
+        assert component_dict == expected_dict
