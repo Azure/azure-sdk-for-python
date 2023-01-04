@@ -154,7 +154,7 @@ class ODataV4Format:
     DETAILS_LABEL = "details"
     INNERERROR_LABEL = "innererror"
 
-    def __init__(self, json_object):
+    def __init__(self, json_object: Dict[str, Any]):
         if "error" in json_object:
             json_object = json_object["error"]
         cls: Type[ODataV4Format] = self.__class__
@@ -410,7 +410,7 @@ class ODataV4Error(HttpResponseError):
 
     _ERROR_FORMAT = ODataV4Format
 
-    def __init__(self, response: "_HttpResponseBase", **kwargs):
+    def __init__(self, response: "_HttpResponseBase", **kwargs) -> None:
         # Ensure field are declared, whatever can happen afterwards
         self.odata_json: Optional[Dict[str, Any]] = None
         try:

@@ -125,7 +125,7 @@ class ConnectionConfiguration:
         connection_cert: Optional[str] = None,
         connection_data_block_size: IntOrFloat = 4096,
         **kwargs
-    ):
+    ) -> None:
         self.timeout = connection_timeout
         self.read_timeout = read_timeout
         self.verify = connection_verify

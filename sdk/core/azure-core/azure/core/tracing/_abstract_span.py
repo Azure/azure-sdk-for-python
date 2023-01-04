@@ -240,6 +240,8 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: "Attributes" = None):
+    def __init__(
+        self, headers: Dict[str, str], attributes: "Attributes" = None
+    ) -> None:
         self.headers = headers
         self.attributes = attributes

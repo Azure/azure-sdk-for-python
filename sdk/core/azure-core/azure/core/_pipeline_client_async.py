@@ -105,7 +105,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType], Generic[AsyncHTTPResponseType
     :param wrapped: Must be an async context manager that supports async "close()"
     """
 
-    def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]):
+    def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]) -> None:
         super().__init__()
         self._wrapped = wrapped
         # If someone tries to use the object without awaiting, they will get a

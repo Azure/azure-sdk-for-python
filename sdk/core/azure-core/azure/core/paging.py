@@ -89,7 +89,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
 
 class ItemPaged(Iterator[ReturnType]):
-    def __init__(self, *args: Any, **kwargs: Any):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Return an iterator of items.
 
         args and kwargs will be passed to the PageIterator constructor directly,
