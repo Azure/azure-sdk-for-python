@@ -3,14 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional
 from azure.core.exceptions import ClientAuthenticationError
 
+from azure.core.credentials import AccessToken, TokenCredential
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,7 +26,7 @@ Attempted credentials:\n\t{}""".format(
     )
 
 
-class ChainedTokenCredential(object):
+class ChainedTokenCredential:
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
@@ -38,12 +36,11 @@ class ChainedTokenCredential(object):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, *credentials):
-        # type: (*TokenCredential) -> None
+    def __init__(self, *credentials: TokenCredential) -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
 
-        self._successful_credential = None  # type: Optional[TokenCredential]
+        self._successful_credential: Optional[TokenCredential] = None
         self.credentials = credentials
 
     def __enter__(self):
@@ -51,17 +48,15 @@ class ChainedTokenCredential(object):
             credential.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any):
         for credential in self.credentials:
             credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the transport session of each credential in the chain."""
         self.__exit__()
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """Request a token from each chained credential, in order, returning the first token received.
 
         This method is called automatically by Azure SDK clients.
