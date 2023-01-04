@@ -392,8 +392,15 @@ class WebPubSubClient:
             return new_url
         return None
 
-    def _is_connected(self) -> bool:
-        return self._state == WebPubSubClientState.CONNECTED and self._ws.sock
+    def is_connected(self) -> bool:
+        """check whether the client is still coneected to server after start"""
+        return (
+            self._state == WebPubSubClientState.CONNECTED
+            and self._thread
+            and self._thread.is_alive()
+            and self._ws
+            and self._ws.sock
+        )
 
     def _connect(self, url: str):
         def on_open(_: Any):
@@ -514,29 +521,31 @@ class WebPubSubClient:
             on_close=on_close,
             subprotocols=[self._protocol.name] if self._protocol else [],
         )
+
+        # set thread to start listen to server
+        self._thread = threading.Thread(target=self._ws.run_forever)
+        self._thread.start()
+        with self._cv:
+            self._cv.wait(timeout=60.0)
+        if not self.is_connected():
+            raise Exception("Fail to start client")
+
         # set thread to check sequence id if needed
-        if self._protocol.is_reliable_sub_protocol and self._thread_seq_ack is None:
+        if self._protocol.is_reliable_sub_protocol and (
+            (self._thread_seq_ack and not self._thread_seq_ack.is_alive()) or (self._thread_seq_ack is None)
+        ):
 
             def sequence_id_ack_periodically():
-                while self._ws and self._ws.sock:
+                while self.is_connected():
                     try:
                         is_updated, seq_id = self._sequence_id.try_get_sequence_id()
                         if is_updated:
                             self._send_message(SequenceAckMessage(sequence_id=seq_id))
                     finally:
                         delay(1000)
-                self._thread_seq_ack = None
 
             self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically)
             self._thread_seq_ack.start()
-
-        # set thread to start listen to server
-        self._thread = threading.Thread(target=self._ws.run_forever)
-        self._thread.start()
-        with self._cv:
-            self._cv.wait(timeout=5.0)
-        if not self._is_connected():
-            raise Exception("Fail to start client")
 
     def _start_core(self):
         self._state = WebPubSubClientState.CONNECTING
@@ -579,10 +588,10 @@ class WebPubSubClient:
             self._ws.close()
         if self._thread_seq_ack and self._thread_seq_ack.is_alive():
             self._thread_seq_ack.join()
-            self._thread_seq_ack = None
         if self._thread and self._thread.is_alive():
             self._thread.join()
-            self._thread = None
+        self._thread_seq_ack = None
+        self._thread = None
 
     def _build_default_options(self):
         if self._options.auto_reconnect is None:
