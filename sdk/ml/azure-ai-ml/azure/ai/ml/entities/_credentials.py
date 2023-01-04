@@ -104,7 +104,7 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def _from_datastore_rest_object(cls, obj: RestSasDatastoreCredentials) -> "SasTokenConfiguration":
         return cls(sas_token=obj.secrets.sas_token if obj.secrets else None)
 
-    def _to_rest_workspace_connection_object(self) -> RestWorkspaceConnectionSharedAccessSignature:
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionSharedAccessSignature:
         return RestWorkspaceConnectionSharedAccessSignature(sas=self.sas_token)
 
     @classmethod
