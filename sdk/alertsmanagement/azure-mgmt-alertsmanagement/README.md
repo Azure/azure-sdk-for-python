@@ -12,8 +12,6 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 
 To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
-
-
  
 For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
 Code samples for this package can be found at [Alerts Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.

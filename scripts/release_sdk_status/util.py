@@ -8,8 +8,9 @@ def _find_certificate():
         return fr.read()
 
 
-def add_certificate(file: str):
+def add_certificate():
     certification = _find_certificate()
-    with open(file, 'a+') as f:
+    cacert_path = Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')
+    with open(cacert_path, 'a+') as f:
         f.seek(0, 0)
         f.write(certification)

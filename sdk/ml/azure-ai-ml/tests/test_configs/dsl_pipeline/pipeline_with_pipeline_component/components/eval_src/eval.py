@@ -1,6 +1,6 @@
 import argparse
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 parser = argparse.ArgumentParser("score")
 parser.add_argument("--scoring_result", type=str, help="Path of scoring result")

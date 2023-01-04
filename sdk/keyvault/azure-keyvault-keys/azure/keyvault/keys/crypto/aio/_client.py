@@ -56,6 +56,8 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :dedent: 8
     """
 
+    # pylint:disable=protected-access
+
     def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         self._jwk = kwargs.pop("_jwk", False)
         self._not_before = None  # type: Optional[datetime]
@@ -65,7 +67,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if isinstance(key, KeyVaultKey):
             self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
             self._key_id = parse_key_vault_id(key.id)
-            if key.properties._attributes:  # pylint:disable=protected-access
+            if key.properties._attributes:
                 self._not_before = key.properties.not_before
                 self._expires_on = key.properties.expires_on
         elif isinstance(key, str):
@@ -141,7 +143,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     self._key_id.version if self._key_id else None,
                     **kwargs
                 )
-                key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
                 self._key_id = parse_key_vault_id(key.id)  # update the key ID in case we didn't have the version before
             except HttpResponseError as ex:

@@ -3,3 +3,4 @@ package_name = "azure-mgmt-reservations"
 package_pprint_name = "Reservations"
 package_doc_id = ""
 is_stable = false
+title = "AzureReservationAPI"

@@ -47,7 +47,7 @@ class EndpointYamlFields(object):
     BATCH_JOB_NAME = "job_name"
 
 
-class OnlineEndpointConfigurations:
+class EndpointConfigurations:
     MIN_NAME_LENGTH = 3
     MAX_NAME_LENGTH = 32
     NAME_REGEX_PATTERN = r"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$"
@@ -75,6 +75,7 @@ class LocalEndpointConstants:
     CONDA_ENV_NAME = "inf-conda-env"
     CONDA_ENV_BIN_PATH = "/opt/miniconda/envs/inf-conda-env/bin"
     CONDA_ENV_PYTHON_PATH = "/opt/miniconda/envs/inf-conda-env/bin/python"
+
 
 class BatchEndpointInvoke:
     INPUTS = "inputs"
