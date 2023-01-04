@@ -6,7 +6,7 @@
 
 import warnings
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any, List
+from typing import TYPE_CHECKING, Any, List
 
 from azure.core import CaseInsensitiveEnumMeta
 

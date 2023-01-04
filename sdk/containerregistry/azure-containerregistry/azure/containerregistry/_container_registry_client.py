@@ -839,11 +839,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 repository, cls=_return_response, **kwargs
             )
             _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk( # type: ignore
-                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs # type: ignore
+                start_upload_response_headers['Location'], # type: ignore
+                data,
+                cls=_return_response,
+                **kwargs
             )
             digest = _compute_digest(data)
-            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload( # type: ignore
-                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs # type: ignore
+            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload( # pylint: disable=line-too-long, type: ignore
+                digest=digest,
+                next_link=upload_chunk_response_headers['Location'], # type: ignore
+                cls=_return_response,
+                **kwargs
             )
         except ValueError:
             if repository is None or data is None:

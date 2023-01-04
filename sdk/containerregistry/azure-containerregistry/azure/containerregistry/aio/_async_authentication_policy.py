@@ -22,7 +22,9 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         super().__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint) # type: Union[AnonymousACRExchangeClient, ACRExchangeClient]
+            # pylint: disable=line-too-long
+            self._exchange_client = AnonymousACRExchangeClient(endpoint) #  type: Union[AnonymousACRExchangeClient, ACRExchangeClient]
+            # pylint: enable=line-too-long
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 

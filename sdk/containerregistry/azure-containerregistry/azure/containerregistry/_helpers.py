@@ -8,7 +8,7 @@ import hashlib
 import re
 import time
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 from io import BytesIO
 from urllib.parse import urlparse
 
@@ -16,7 +16,7 @@ from azure.core.exceptions import ServiceRequestError
 from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
-    from typing import List, Dict, IO, Optional
+    from typing import List, IO, Optional
     from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"

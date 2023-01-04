@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Any, Optional, Union
+from typing import Any, Union
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
