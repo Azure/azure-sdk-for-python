@@ -73,20 +73,32 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     """
 
     def __init__(
-        self, source: str, type: str, **kwargs: Any  # pylint: disable=redefined-builtin
+        self,
+        source: str,
+        type: str,  # pylint: disable=redefined-builtin
+        *,
+        specversion: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        time: Optional[datetime] = None,
+        datacontenttype: Optional[str] = None,
+        dataschema: Optional[str] = None,
+        subject: Optional[str] = None,
+        data: Optional[object] = None,
+        extensions: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
     ) -> None:
         self.source: str = source
         self.type: str = type
-        self.specversion: Optional[str] = kwargs.pop("specversion", "1.0")
-        self.id: Optional[str] = kwargs.pop("id", str(uuid.uuid4()))
-        self.time: Optional[datetime] = kwargs.pop("time", datetime.now(TZ_UTC))
+        self.specversion: str = specversion or "1.0"
+        self.id: str = id or str(uuid.uuid4())
+        self.time: Optional[datetime] = time or datetime.now(TZ_UTC)
 
-        self.datacontenttype: Optional[str] = kwargs.pop("datacontenttype", None)
-        self.dataschema: Optional[str] = kwargs.pop("dataschema", None)
-        self.subject: Optional[str] = kwargs.pop("subject", None)
-        self.data: Optional[object] = kwargs.pop("data", None)
+        self.datacontenttype: Optional[str] = datacontenttype
+        self.dataschema: Optional[str] = dataschema
+        self.subject: Optional[str] = subject
+        self.data: Optional[object] = data
 
-        self.extensions: Optional[Dict[str, Any]] = kwargs.pop("extensions", None)
+        self.extensions: Optional[Dict[str, Any]] = extensions
         if self.extensions:
             for key in self.extensions.keys():
                 if not key.islower() or not key.isalnum():
