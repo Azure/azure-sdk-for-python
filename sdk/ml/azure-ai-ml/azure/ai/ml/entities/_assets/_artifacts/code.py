@@ -52,6 +52,7 @@ class Code(Artifact):
         ignore_file: Optional[IgnoreFile] = None,
         **kwargs,
     ):
+        self._is_remote = kwargs.pop("is_remote", False)
         super().__init__(
             name=name,
             version=version,

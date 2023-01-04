@@ -35,6 +35,7 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -770,6 +771,11 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_on_disk_cache_enabled():
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True] \
+        and is_private_preview_enabled()
+
+
 def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
@@ -898,7 +904,7 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
+def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException

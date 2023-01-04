@@ -56,7 +56,7 @@ class Codec(_serialization.Model):
         :paramtype label: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.label = label
 
 
@@ -115,7 +115,7 @@ class Audio(Codec):
         :paramtype bitrate: int
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.Audio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Audio"
         self.channels = channels
         self.sampling_rate = sampling_rate
         self.bitrate = bitrate
@@ -179,7 +179,7 @@ class AacAudio(Audio):
         :paramtype profile: str or ~azure.mgmt.media.models.AacAudioProfile
         """
         super().__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
-        self.odata_type = "#Microsoft.Media.AacAudio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AacAudio"
         self.profile = profile
 
 
@@ -213,7 +213,7 @@ class ClipTime(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AbsoluteClipTime(ClipTime):
@@ -245,7 +245,7 @@ class AbsoluteClipTime(ClipTime):
         :paramtype time: ~datetime.timedelta
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AbsoluteClipTime"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AbsoluteClipTime"
         self.time = time
 
 
@@ -1250,7 +1250,7 @@ class Preset(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioAnalyzerPreset(Preset):
@@ -1325,7 +1325,7 @@ class AudioAnalyzerPreset(Preset):
         :paramtype experimental_options: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioAnalyzerPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioAnalyzerPreset"
         self.audio_language = audio_language
         self.mode = mode
         self.experimental_options = experimental_options
@@ -1434,7 +1434,7 @@ class Overlay(_serialization.Model):
         :paramtype audio_gain_level: float
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.input_label = input_label
         self.start = start
         self.end = end
@@ -1547,7 +1547,7 @@ class AudioOverlay(Overlay):
             audio_gain_level=audio_gain_level,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.AudioOverlay"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioOverlay"
 
 
 class TrackBase(_serialization.Model):
@@ -1581,7 +1581,7 @@ class TrackBase(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioTrack(TrackBase):
@@ -1655,7 +1655,7 @@ class AudioTrack(TrackBase):
         :paramtype mpeg4_track_id: int
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioTrack"
         self.file_name = file_name
         self.display_name = display_name
         self.language_code = language_code
@@ -1695,7 +1695,7 @@ class TrackDescriptor(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioTrackDescriptor(TrackDescriptor):
@@ -1740,7 +1740,7 @@ class AudioTrackDescriptor(TrackDescriptor):
         :paramtype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioTrackDescriptor"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioTrackDescriptor"
         self.channel_mapping = channel_mapping
 
 
@@ -1796,7 +1796,7 @@ class BuiltInStandardEncoderPreset(Preset):
         :paramtype preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.BuiltInStandardEncoderPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.BuiltInStandardEncoderPreset"
         self.configurations = configurations
         self.preset_name = preset_name
 
@@ -2158,7 +2158,7 @@ class ContentKeyPolicyConfiguration(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
@@ -2181,7 +2181,7 @@ class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
 
 
 class ContentKeyPolicyCollection(_serialization.Model):
@@ -2225,7 +2225,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar ask: The key that must be used as FairPlay Application Secret key. Required.
+    :ivar ask: The key that must be used as FairPlay Application Secret key. This needs to be
+     base64 encoded. Required.
     :vartype ask: bytes
     :ivar fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
      format. Required.
@@ -2278,7 +2279,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         **kwargs
     ):
         """
-        :keyword ask: The key that must be used as FairPlay Application Secret key. Required.
+        :keyword ask: The key that must be used as FairPlay Application Secret key. This needs to be
+         base64 encoded. Required.
         :paramtype ask: bytes
         :keyword fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
          format. Required.
@@ -2297,7 +2299,7 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
          ~azure.mgmt.media.models.ContentKeyPolicyFairPlayOfflineRentalConfiguration
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"
         self.ask = ask
         self.fair_play_pfx_password = fair_play_pfx_password
         self.fair_play_pfx = fair_play_pfx
@@ -2371,7 +2373,7 @@ class ContentKeyPolicyRestriction(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
@@ -2394,7 +2396,7 @@ class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyOpenRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyOpenRestriction"
 
 
 class ContentKeyPolicyOption(_serialization.Model):
@@ -2490,7 +2492,7 @@ class ContentKeyPolicyPlayReadyConfiguration(ContentKeyPolicyConfiguration):
         :paramtype response_custom_data: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"
         self.licenses = licenses
         self.response_custom_data = response_custom_data
 
@@ -2526,7 +2528,7 @@ class ContentKeyPolicyPlayReadyContentKeyLocation(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2549,7 +2551,7 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPl
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2579,7 +2581,7 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyP
         :paramtype key_id: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"
         self.key_id = key_id
 
 
@@ -2983,7 +2985,7 @@ class ContentKeyPolicyRestrictionTokenKey(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
@@ -3019,7 +3021,7 @@ class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
         :paramtype modulus: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"
         self.exponent = exponent
         self.modulus = modulus
 
@@ -3051,7 +3053,7 @@ class ContentKeyPolicySymmetricTokenKey(ContentKeyPolicyRestrictionTokenKey):
         :paramtype key_value: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"
         self.key_value = key_value
 
 
@@ -3162,7 +3164,7 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
         :paramtype open_id_connect_discovery_document: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyTokenRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyTokenRestriction"
         self.issuer = issuer
         self.audience = audience
         self.primary_verification_key = primary_verification_key
@@ -3192,7 +3194,7 @@ class ContentKeyPolicyUnknownConfiguration(ContentKeyPolicyConfiguration):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"
 
 
 class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
@@ -3215,7 +3217,7 @@ class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"
 
 
 class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
@@ -3245,7 +3247,7 @@ class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
         :paramtype widevine_template: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"
         self.widevine_template = widevine_template
 
 
@@ -3278,7 +3280,7 @@ class ContentKeyPolicyX509CertificateTokenKey(ContentKeyPolicyRestrictionTokenKe
         :paramtype raw_body: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"
         self.raw_body = raw_body
 
 
@@ -3309,7 +3311,7 @@ class CopyAudio(Codec):
         :paramtype label: str
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.CopyAudio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.CopyAudio"
 
 
 class CopyVideo(Codec):
@@ -3339,7 +3341,7 @@ class CopyVideo(Codec):
         :paramtype label: str
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.CopyVideo"  # type: str
+        self.odata_type: str = "#Microsoft.Media.CopyVideo"
 
 
 class CrossSiteAccessPolicies(_serialization.Model):
@@ -3877,7 +3879,7 @@ class FaceDetectorPreset(Preset):
         :paramtype experimental_options: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.FaceDetectorPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FaceDetectorPreset"
         self.resolution = resolution
         self.mode = mode
         self.blur_type = blur_type
@@ -4094,7 +4096,7 @@ class Format(_serialization.Model):
         :paramtype filename_pattern: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.filename_pattern = filename_pattern
 
 
@@ -4137,7 +4139,7 @@ class InputDefinition(_serialization.Model):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.included_tracks = included_tracks
 
 
@@ -4169,7 +4171,7 @@ class FromAllInputFile(InputDefinition):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.FromAllInputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FromAllInputFile"
 
 
 class FromEachInputFile(InputDefinition):
@@ -4200,7 +4202,7 @@ class FromEachInputFile(InputDefinition):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.FromEachInputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FromEachInputFile"
 
 
 class Layer(_serialization.Model):
@@ -4619,7 +4621,7 @@ class Video(Codec):
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Video"
         self.key_frame_interval = key_frame_interval
         self.stretch_mode = stretch_mode
         self.sync_mode = sync_mode
@@ -4720,7 +4722,7 @@ class H264Video(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.H264Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.H264Video"
         self.complexity = complexity
         self.layers = layers
         self.rate_control_mode = rate_control_mode
@@ -5111,7 +5113,7 @@ class H265Video(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.H265Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.H265Video"
         self.scene_change_detection = scene_change_detection
         self.complexity = complexity
         self.layers = layers
@@ -5309,7 +5311,7 @@ class Image(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.Image"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Image"
         self.start = start
         self.step = step
         self.range = range
@@ -5367,7 +5369,7 @@ class ImageFormat(Format):
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.ImageFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ImageFormat"
 
 
 class InputFile(InputDefinition):
@@ -5409,7 +5411,7 @@ class InputFile(InputDefinition):
         :paramtype filename: str
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.InputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.InputFile"
         self.filename = filename
 
 
@@ -5718,7 +5720,7 @@ class JobInput(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class JobInputClip(JobInput):
@@ -5802,7 +5804,7 @@ class JobInputClip(JobInput):
         :paramtype input_definitions: list[~azure.mgmt.media.models.InputDefinition]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputClip"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputClip"
         self.files = files
         self.start = start
         self.end = end
@@ -5888,7 +5890,7 @@ class JobInputAsset(JobInputClip):
         :paramtype asset_name: str
         """
         super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputAsset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputAsset"
         self.asset_name = asset_name
 
 
@@ -5975,7 +5977,7 @@ class JobInputHttp(JobInputClip):
         :paramtype base_uri: str
         """
         super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputHttp"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputHttp"
         self.base_uri = base_uri
 
 
@@ -6005,7 +6007,7 @@ class JobInputs(JobInput):
         :paramtype inputs: list[~azure.mgmt.media.models.JobInput]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputs"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputs"
         self.inputs = inputs
 
 
@@ -6035,7 +6037,7 @@ class JobInputSequence(JobInput):
         :paramtype inputs: list[~azure.mgmt.media.models.JobInputClip]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputSequence"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputSequence"
         self.inputs = inputs
 
 
@@ -6120,7 +6122,7 @@ class JobOutput(_serialization.Model):
         :paramtype label: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.error = None
         self.preset_override = preset_override
         self.state = None
@@ -6219,7 +6221,7 @@ class JobOutputAsset(JobOutput):
         :paramtype asset_name: str
         """
         super().__init__(preset_override=preset_override, label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobOutputAsset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobOutputAsset"
         self.asset_name = asset_name
 
 
@@ -6268,7 +6270,7 @@ class JpgFormat(ImageFormat):
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.JpgFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JpgFormat"
 
 
 class JpgImage(Image):
@@ -6422,7 +6424,7 @@ class JpgImage(Image):
             range=range,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.JpgImage"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JpgImage"
         self.layers = layers
         self.sprite_column = sprite_column
 
@@ -8095,7 +8097,7 @@ class MultiBitrateFormat(Format):
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.MultiBitrateFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.MultiBitrateFormat"
         self.output_files = output_files
 
 
@@ -8151,7 +8153,7 @@ class Mp4Format(MultiBitrateFormat):
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = "#Microsoft.Media.Mp4Format"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Mp4Format"
 
 
 class NoEncryption(_serialization.Model):
@@ -8385,7 +8387,7 @@ class PngFormat(ImageFormat):
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.PngFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.PngFormat"
 
 
 class PngImage(Image):
@@ -8525,7 +8527,7 @@ class PngImage(Image):
             range=range,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.PngImage"  # type: str
+        self.odata_type: str = "#Microsoft.Media.PngImage"
         self.layers = layers
 
 
@@ -9126,7 +9128,7 @@ class SelectAudioTrackByAttribute(AudioTrackDescriptor):
         :paramtype filter_value: str
         """
         super().__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = "#Microsoft.Media.SelectAudioTrackByAttribute"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9172,7 +9174,7 @@ class SelectAudioTrackById(AudioTrackDescriptor):
         :paramtype track_id: int
         """
         super().__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = "#Microsoft.Media.SelectAudioTrackById"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackById"
         self.track_id = track_id
 
 
@@ -9206,7 +9208,7 @@ class VideoTrackDescriptor(TrackDescriptor):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.VideoTrackDescriptor"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoTrackDescriptor"
 
 
 class SelectVideoTrackByAttribute(VideoTrackDescriptor):
@@ -9264,7 +9266,7 @@ class SelectVideoTrackByAttribute(VideoTrackDescriptor):
         :paramtype filter_value: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.SelectVideoTrackByAttribute"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9297,7 +9299,7 @@ class SelectVideoTrackById(VideoTrackDescriptor):
         :paramtype track_id: int
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.SelectVideoTrackById"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackById"
         self.track_id = track_id
 
 
@@ -9376,7 +9378,7 @@ class StandardEncoderPreset(Preset):
         :paramtype formats: list[~azure.mgmt.media.models.Format]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.StandardEncoderPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.StandardEncoderPreset"
         self.filters = filters
         self.codecs = codecs
         self.formats = formats
@@ -10485,7 +10487,7 @@ class TextTrack(TrackBase):
         :paramtype hls_settings: ~azure.mgmt.media.models.HlsSettings
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.TextTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.TextTrack"
         self.file_name = file_name
         self.display_name = display_name
         self.language_code = None
@@ -10768,7 +10770,7 @@ class TransportStreamFormat(MultiBitrateFormat):
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = "#Microsoft.Media.TransportStreamFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.TransportStreamFormat"
 
 
 class UserAssignedManagedIdentity(_serialization.Model):
@@ -10827,7 +10829,7 @@ class UtcClipTime(ClipTime):
         :paramtype time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.UtcClipTime"  # type: str
+        self.odata_type: str = "#Microsoft.Media.UtcClipTime"
         self.time = time
 
 
@@ -10918,7 +10920,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
         :paramtype insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
         """
         super().__init__(audio_language=audio_language, mode=mode, experimental_options=experimental_options, **kwargs)
-        self.odata_type = "#Microsoft.Media.VideoAnalyzerPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoAnalyzerPreset"
         self.insights_to_extract = insights_to_extract
 
 
@@ -11047,7 +11049,7 @@ class VideoOverlay(Overlay):
             audio_gain_level=audio_gain_level,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.VideoOverlay"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoOverlay"
         self.position = position
         self.opacity = opacity
         self.crop_rectangle = crop_rectangle
@@ -11073,4 +11075,4 @@ class VideoTrack(TrackBase):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.VideoTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoTrack"
