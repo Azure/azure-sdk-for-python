@@ -20,8 +20,6 @@ except ImportError:
     from urlparse import parse_qs  # type: ignore
     from urllib2 import quote  # type: ignore
 
-import six
-
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -348,7 +346,7 @@ class TransportWrapper(HttpTransport):
 
 
 def _format_shared_key_credential(account_name, credential):
-    if isinstance(credential, six.string_types):
+    if isinstance(credential, str):
         if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
         credential = {"account_name": account_name, "account_key": credential}
@@ -458,7 +456,7 @@ def parse_query(query_str):
 
 
 def is_credential_sastoken(credential):
-    if not credential or not isinstance(credential, six.string_types):
+    if not credential or not isinstance(credential, str):
         return False
 
     sas_values = QueryStringConstants.to_list()
