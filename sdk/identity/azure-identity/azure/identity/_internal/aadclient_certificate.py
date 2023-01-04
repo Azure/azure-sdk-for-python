@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.backends import default_backend
+from typing import Optional
 import six
 
 
@@ -21,7 +22,7 @@ class AadClientCertificate(object):
     def __init__(
             self,
             pem_bytes: bytes,
-            password: bytes = None
+            password: Optional[bytes] = None
     ) -> None:
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         if not isinstance(private_key, RSAPrivateKey):

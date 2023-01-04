@@ -59,8 +59,7 @@ class MsalResponse(object):
 class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
     """Wraps Pipeline according to msal.oauth2cli.http"""
 
-    def __init__(self, **kwargs):  # pylint:disable=missing-client-constructor-parameter-credential
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:  # pylint:disable=missing-client-constructor-parameter-credential
         self._local = threading.local()
         self._pipeline = build_pipeline(**kwargs)
 
@@ -71,8 +70,7 @@ class MsalClient(object):  # pylint:disable=client-accepts-api-version-keyword
     def __exit__(self, *args):
         self._pipeline.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
     def post(self, url, params=None, data=None, headers=None, **kwargs):  # pylint:disable=unused-argument

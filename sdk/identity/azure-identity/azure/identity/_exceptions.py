@@ -26,7 +26,7 @@ class AuthenticationRequiredError(CredentialUnavailableError):
             message: Optional[str] = None,
             claims: Optional[str] = None,
             **kwargs: Any
-    ):
+    ) -> None:
         self._claims = claims
         self._scopes = scopes
         if not message:

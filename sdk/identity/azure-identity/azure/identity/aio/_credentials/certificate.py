@@ -73,7 +73,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
         await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         await self._client.__aexit__()

@@ -26,7 +26,13 @@ ABC = abc.ABC
 
 class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, request_factory, client_id=None, identity_config=None, **kwargs):
+    def __init__(
+        self,
+        request_factory,
+        client_id=None,
+        identity_config=None,
+        **kwargs
+    ) -> None:
         # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
@@ -105,8 +111,7 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
     def __exit__(self, *args):
         self._pipeline.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
     def request_token(self, *scopes, **kwargs):

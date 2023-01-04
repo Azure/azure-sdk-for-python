@@ -39,7 +39,7 @@ class ChainedTokenCredential:
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, *credentials) -> None:
+    def __init__(self, *credentials):
         # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")

@@ -72,7 +72,7 @@ def _filtered_accounts(accounts, username=None, tenant_id=None):
 
 
 class SharedTokenCacheBase(ABC):
-    def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
+    def __init__(self, username=None, **kwargs) -> None:  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()

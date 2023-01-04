@@ -58,7 +58,7 @@ class ImdsCredential(GetTokenMixin):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:

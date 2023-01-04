@@ -34,7 +34,12 @@ class AzureCliCredential(AsyncContextManager):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: List[str] = None
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
@@ -81,7 +86,7 @@ class AzureCliCredential(AsyncContextManager):
 
         return token
 
-    async def close(self):
+    async def close(self) -> None:
         """Calling this method is unnecessary"""
 
 

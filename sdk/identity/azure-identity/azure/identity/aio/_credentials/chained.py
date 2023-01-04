@@ -34,7 +34,7 @@ class ChainedTokenCredential(AsyncContextManager):
         self._successful_credential: Optional[AsyncTokenCredential] = None
         self.credentials = credentials
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the transport sessions of all credentials in the chain."""
 
         await asyncio.gather(*(credential.close() for credential in self.credentials))

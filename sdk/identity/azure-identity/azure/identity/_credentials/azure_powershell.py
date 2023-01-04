@@ -52,7 +52,12 @@ class AzurePowerShellCredential:
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
@@ -163,8 +168,7 @@ def get_command_line(scopes: Tuple, tenant_id: str) -> List[str]:
     return ["/bin/sh", "-c", command]
 
 
-def raise_for_error(return_code, stdout, stderr):
-    # type: (int, str, str) -> None
+def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
     if return_code == 0:
         if NO_AZ_ACCOUNT_MODULE in stdout:
             raise CredentialUnavailableError(AZ_ACCOUNT_NOT_INSTALLED)

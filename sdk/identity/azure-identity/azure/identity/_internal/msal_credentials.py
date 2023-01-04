@@ -55,8 +55,7 @@ class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
     def _get_app(self, **kwargs):

@@ -78,7 +78,7 @@ def _build_auth_record(response):
 
 
 class InteractiveCredential(MsalCredential, ABC):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
