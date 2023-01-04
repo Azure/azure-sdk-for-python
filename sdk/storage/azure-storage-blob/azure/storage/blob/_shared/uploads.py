@@ -255,7 +255,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        index = '{0:032d}'.format(chunk_offset)
+        index = f'{chunk_offset:032d}'
         block_id = encode_base64(url_quote(encode_base64(index)))
         self.service.stage_block(
             block_id,
@@ -269,7 +269,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
+            block_id = f'BlockId{index/self.chunk_size:05%}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -294,7 +294,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # avoid uploading the empty pages
         if not self._is_chunk_empty(chunk_data):
             chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
+            content_range = f"bytes={chunk_offset}-{chunk_end}"
             computed_md5 = None
             self.response_headers = self.service.upload_pages(
                 body=chunk_data,
@@ -392,7 +392,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end), response
+        return f'bytes={chunk_offset}-{chunk_end}', response
 
     # TODO: Implement this method.
     def _upload_substream_block(self, index, block_stream):

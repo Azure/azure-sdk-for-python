@@ -39,8 +39,6 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
-
-    # for blob only
     SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
@@ -78,7 +76,6 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
-            # for blob only
             QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
@@ -231,4 +228,4 @@ class _SharedAccessHelper(object):
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])
