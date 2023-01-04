@@ -66,7 +66,7 @@ class AzureKeyCredential:
     def __init__(self, key: str) -> None:
         if not isinstance(key, str):
             raise TypeError("key must be a string.")
-        self._key: str = key
+        self._key = key
 
     @property
     def key(self) -> str:
