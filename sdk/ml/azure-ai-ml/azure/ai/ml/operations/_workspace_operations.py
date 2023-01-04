@@ -31,7 +31,7 @@ from azure.ai.ml._utils._appinsights_utils import (
     default_log_analytics_workspace_exists,
     get_default_resource_group_deployment,
     get_default_log_analytics_deployment,
-    get_default_log_analytics_arm_id
+    get_default_log_analytics_arm_id,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
@@ -483,22 +483,22 @@ class WorkspaceOperations:
                 app_insights_location = workspace.location
             # check if default resource group already exists
             rg_is_existing = default_resource_group_for_app_insights_exists(
-                self._credentials,
-                self._subscription_id,
-                app_insights_location)
+                self._credentials, self._subscription_id, app_insights_location
+            )
             # if default resource group does not exist yet, create rg and log analytics
             if not rg_is_existing:
                 # add resource group and log analytics deployments to resources
-                app_insights_resource_group_deployment_name = "DeployResourceGroup%s"%get_deployment_name("")
-                app_insights_log_workspace_deployment_name = "DeployLogWorkspace%s"%get_deployment_name("")
-                template["resources"].append(get_default_resource_group_deployment(
-                    app_insights_resource_group_deployment_name,
-                    app_insights_location,
-                    self._subscription_id))
+                deployment_string = get_deployment_name("")
+                app_insights_resource_group_deployment_name = f"DeployResourceGroup{deployment_string}"
+                app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
+                template["resources"].append(
+                    get_default_resource_group_deployment(
+                        app_insights_resource_group_deployment_name, app_insights_location, self._subscription_id
+                    )
+                )
                 log_analytics_deployment = get_default_log_analytics_deployment(
-                    app_insights_log_workspace_deployment_name,
-                    app_insights_location,
-                    self._subscription_id)
+                    app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
+                )
                 log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deployment_name]
                 template["resources"].append(log_analytics_deployment)
                 for resource in template["resources"]:
@@ -508,15 +508,17 @@ class WorkspaceOperations:
             else:
                 # check if default log analytics workspace already exists
                 la_is_existing = default_log_analytics_workspace_exists(
-                    self._credentials, self._subscription_id,
-                    app_insights_location)
+                    self._credentials, self._subscription_id, app_insights_location
+                )
                 # if this does not exist yet, add the deployment needed to resources
                 if not la_is_existing:
-                    app_insights_log_workspace_deployment_name = "DeployLogWorkspace%s"%get_deployment_name("")
-                    template["resources"].append(get_default_log_analytics_deployment(
-                        app_insights_log_workspace_deployment_name,
-                        app_insights_location,
-                        self._subscription_id))
+                    deployment_string = get_deployment_name("")
+                    app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
+                    template["resources"].append(
+                        get_default_log_analytics_deployment(
+                            app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
+                        )
+                    )
                     for resource in template["resources"]:
                         if resource["type"] == "Microsoft.Insights/components":
                             resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
@@ -527,8 +529,8 @@ class WorkspaceOperations:
                     resource["properties"] = {
                         "Application_Type": "web",
                         "WorkspaceResourceId": get_default_log_analytics_arm_id(
-                            self._subscription_id,
-                            app_insights_location)
+                            self._subscription_id, app_insights_location
+                        ),
                     }
 
             app_insights = _generate_app_insights(workspace.name, resources_being_deployed)

@@ -8,16 +8,15 @@ from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
 from azure.ai.ml.constants._common import ArmConstants
 from azure.core.credentials import TokenCredential
-from azure.core.exceptions import (HttpResponseError)
+from azure.core.exceptions import HttpResponseError
 from azure.ai.ml.constants._workspace import AppInsightsDefaults
 
 module_logger = logging.getLogger(__name__)
 
 
 def default_resource_group_for_app_insights_exists(
-    credentials: TokenCredential,
-    subscription_id: str,
-    location: str) -> bool:
+    credentials: TokenCredential, subscription_id: str, location: str
+) -> bool:
     client = ResourceManagementClient(
         credential=credentials,
         subscription_id=subscription_id,
@@ -32,10 +31,7 @@ def default_resource_group_for_app_insights_exists(
         return False
 
 
-def default_log_analytics_workspace_exists(
-    credentials: TokenCredential,
-    subscription_id: str,
-    location: str) -> bool:
+def default_log_analytics_workspace_exists(credentials: TokenCredential, subscription_id: str, location: str) -> bool:
     client = ResourceManagementClient(
         credential=credentials,
         subscription_id=subscription_id,
@@ -45,18 +41,16 @@ def default_log_analytics_workspace_exists(
     default_resource_group = AppInsightsDefaults.DEFAULT_RESOURCE_GROUP_NAME.format(location=location)
     default_workspace = client.resources.list_by_resource_group(
         default_resource_group,
-        filter=f"substringof('{AppInsightsDefaults.DEFAULT_LOG_ANALYTICS_NAME.format(location=location)}',name)"
+        filter=f"substringof('{AppInsightsDefaults.DEFAULT_LOG_ANALYTICS_NAME.format(location=location)}',name)",
     )
-    for item in default_workspace: # pylint: disable=unused-variable
+    for item in default_workspace:  # pylint: disable=unused-variable
         # return true for is_existing
         return True
     # else return false for is_existing
     return False
 
 
-def get_default_log_analytics_arm_id(
-    subscription_id: str,
-    location: str) -> str:
+def get_default_log_analytics_arm_id(subscription_id: str, location: str) -> str:
     return (
         f"/subscriptions/{subscription_id}/"
         f"resourceGroups/{AppInsightsDefaults.DEFAULT_RESOURCE_GROUP_NAME.format(location=location)}/"
@@ -65,10 +59,7 @@ def get_default_log_analytics_arm_id(
     )
 
 
-def get_default_resource_group_deployment(
-    deployment_name: str,
-    location: str,
-    subscription_id: str) -> dict:
+def get_default_resource_group_deployment(deployment_name: str, location: str, subscription_id: str) -> dict:
     return {
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2019-10-01",
@@ -78,7 +69,7 @@ def get_default_resource_group_deployment(
         "properties": {
             "mode": "Incremental",
             "template": {
-            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
                 "contentVersion": "1.0.0.1",
                 "parameters": {},
                 "variables": {},
@@ -88,17 +79,15 @@ def get_default_resource_group_deployment(
                         "apiVersion": "2018-05-01",
                         "location": location,
                         "name": AppInsightsDefaults.DEFAULT_RESOURCE_GROUP_NAME.format(location=location),
-                        "properties": {}
-                    }]
-                }
-            }
-        }
+                        "properties": {},
+                    }
+                ],
+            },
+        },
+    }
 
 
-def get_default_log_analytics_deployment(
-    deployment_name: str,
-    location: str,
-    subscription_id: str) -> dict:
+def get_default_log_analytics_deployment(deployment_name: str, location: str, subscription_id: str) -> dict:
     return {
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2019-10-01",
@@ -118,9 +107,9 @@ def get_default_log_analytics_deployment(
                         "name": AppInsightsDefaults.DEFAULT_LOG_ANALYTICS_NAME.format(location=location),
                         "type": "Microsoft.OperationalInsights/workspaces",
                         "location": location,
-                        "properties": {}
+                        "properties": {},
                     }
-                ]
-            }
-        }
+                ],
+            },
+        },
     }

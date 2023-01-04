@@ -56,15 +56,11 @@ class TestWorkspaceOperation:
         mock_workspace_operation.get_keys("random_name")
         mock_workspace_operation._operation.list_keys.assert_called_once()
 
-    def test_begin_sync_keys_no_wait(
-        self, mock_workspace_operation: WorkspaceOperations
-    ) -> None:
+    def test_begin_sync_keys_no_wait(self, mock_workspace_operation: WorkspaceOperations) -> None:
         mock_workspace_operation.begin_sync_keys(name="random_name")
         mock_workspace_operation._operation.begin_resync_keys.assert_called_once()
 
-    def test_begin_sync_keys_wait(
-        self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
-    ) -> None:
+    def test_begin_sync_keys_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
         mock_workspace_operation.begin_sync_keys(name="random_name")
         mock_workspace_operation._operation.begin_resync_keys.assert_called_once()
@@ -110,6 +106,7 @@ class TestWorkspaceOperation:
         def outgoing_call(rg, name, params, polling, cls):
             assert name == "name"
             return DEFAULT
+
         mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=Workspace(name="name"))
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
@@ -129,11 +126,11 @@ class TestWorkspaceOperation:
                 type=camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED),
                 user_assigned_identities=[
                     ManagedIdentityConfiguration(resource_id="resource1"),
-                    ManagedIdentityConfiguration(resource_id="resource2")
+                    ManagedIdentityConfiguration(resource_id="resource2"),
                 ],
             ),
             primary_user_assigned_identity="resource2",
-            customer_managed_key = CustomerManagedKey(key_uri="new_cmk_uri")
+            customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
 
         def outgoing_call(rg, name, params, polling, cls):
@@ -153,7 +150,7 @@ class TestWorkspaceOperation:
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
                     key_identifier="new_cmk_uri",
                 )
-            )            
+            )
             assert polling is True
             assert callable(cls)
             return DEFAULT
@@ -205,20 +202,17 @@ class TestWorkspaceOperation:
             mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
             mock_workspace_operation._operation.begin_delete.assert_called_once()
 
-    def test_begin_diagnose_no_wait(
-        self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
-    ) -> None:
+    def test_begin_diagnose_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
         mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
 
-    def test_begin_diagnose_wait(
-        self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
-    ) -> None:
+    def test_begin_diagnose_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
         mocker.patch("azure.ai.ml._restclient.v2022_10_01.models.DiagnoseRequestProperties", return_value=None)
 
+<<<<<<< HEAD
     def test_populate_arm_paramaters(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
@@ -227,12 +221,24 @@ class TestWorkspaceOperation:
 =======
         mocker.patch("azure.ai.ml.operations._workspace_operations.get_default_log_analytics_arm_id", return_value=("random_id", True))
 >>>>>>> a42f60d482 (comment fix)
+=======
+    def test_populate_arm_paramaters(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name"
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.get_default_log_analytics_arm_id",
+            return_value=("random_id", True),
+        )
+>>>>>>> 969fdb7b0b (run black, remove % interpolation)
         mock_workspace_operation._populate_arm_paramaters(workspace=Workspace(name="name"))
 
     def test_populate_arm_paramaters_other_branches(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
-        mocker.patch("azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name")
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name"
+        )
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations.get_resource_and_group_name",
             return_value=("resource_name", "group_name"),
@@ -262,4 +268,4 @@ class TestWorkspaceOperation:
         wps = load_workspace("./tests/test_configs/workspace/workspace_uai.yaml", params_override=params_override)
         assert isinstance(wps.identity, IdentityConfiguration)
         assert isinstance(wps.identity.user_assigned_identities, list)
-        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration) 
+        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
