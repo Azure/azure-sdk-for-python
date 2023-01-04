@@ -93,7 +93,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     if not storage_error.response:
         raise storage_error
     # If it is one of those three then it has been serialized prior by the generated layer.
-    if isinstance(storage_error, (PartialBatchErrorException, ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
+    if isinstance(storage_error, (PartialBatchErrorException,
+                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
         serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message

@@ -122,7 +122,7 @@ def validate_and_format_range_headers(
     # Page ranges must be 512 aligned
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
-             raise ValueError(f"Invalid page blob start_range: {start_range}. "
+            raise ValueError(f"Invalid page blob start_range: {start_range}. "
                              "The size must be aligned to a 512-byte boundary.")
         if end_range is not None and end_range % 512 != 511:
             raise ValueError(f"Invalid page blob end_range: {end_range}. "
