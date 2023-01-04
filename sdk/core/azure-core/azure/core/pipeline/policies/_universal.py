@@ -36,15 +36,11 @@ import types
 import re
 import uuid
 from typing import (
-    Mapping,
     IO,
     TypeVar,
     TYPE_CHECKING,
     Type,
     cast,
-    List,
-    Callable,
-    Iterator,  # pylint: disable=unused-import
     Any,
     Union,
     Dict,
