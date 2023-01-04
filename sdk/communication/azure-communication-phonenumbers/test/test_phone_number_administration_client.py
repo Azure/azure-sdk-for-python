@@ -260,7 +260,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
-    def test_update_phone_number_capabilities_with__phone_number(self, **kwargs):
+    def test_update_phone_number_capabilities_with_invalid_phone_number(self, **kwargs):
         if self.is_playback():
             phone_number = "invalid_phone_number"
         else:
