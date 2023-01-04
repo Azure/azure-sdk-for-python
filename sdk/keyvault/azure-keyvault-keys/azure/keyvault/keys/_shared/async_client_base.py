@@ -88,9 +88,7 @@ class AsyncKeyVaultClientBase(object):
         await self._client.close()
 
     @distributed_trace_async
-    async def send_request(
-        self, request: "HttpRequest", *, stream: bool = False, **kwargs: "Any"
-    ) -> "AsyncHttpResponse":
+    async def send_request(self, request: "HttpRequest", **kwargs: "Any") -> "AsyncHttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -109,4 +107,4 @@ class AsyncKeyVaultClientBase(object):
             "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
         }
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)
+        return await self._client._client.send_request(request_copy, **kwargs)

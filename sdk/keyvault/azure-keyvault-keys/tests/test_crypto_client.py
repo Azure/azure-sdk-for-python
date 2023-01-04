@@ -82,10 +82,10 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
         
@@ -95,14 +95,14 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     def _import_test_key(self, client, name, hardware_protected=False):
         def _to_bytes(hex):
             if len(hex) % 2:
-                hex = "0{}".format(hex)
+                hex = f"0{hex}"
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
@@ -465,7 +465,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     def test_rsa_verify_local(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             for signature_algorithm, hash_function in (
@@ -490,7 +490,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     def test_rsa_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
@@ -523,7 +523,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
 
@@ -548,7 +548,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)

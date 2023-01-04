@@ -24,9 +24,11 @@ from .. import (
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from azure.core.async_paging import AsyncItemPaged
+    from datetime import datetime
     from typing import Any, Optional, Union
+    from azure.core.async_paging import AsyncItemPaged
     from .. import KeyType
+    from .._generated_models import KeyAttributes
 
 
 class KeyClient(AsyncKeyVaultClientBase):
@@ -55,7 +57,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access, too-many-public-methods
 
-    def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
+    def _get_attributes(
+        self,
+        enabled: "Optional[bool]",
+        not_before: "Optional[datetime]",
+        expires_on: "Optional[datetime]",
+        exportable: "Optional[bool]" = None,
+    ) -> "Optional[KeyAttributes]":
         """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
         if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
             return self._models.KeyAttributes(
@@ -63,8 +71,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key_name, **kwargs):
-        # type: (str, **Any) -> CryptographyClient
+    def get_cryptography_client(self, key_name: str, **kwargs: "Any") -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -93,9 +100,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type key_type: ~azure.keyvault.keys.KeyType or str
 
         :keyword int size: Key size in bits. Applies only to RSA and symmetric keys. Consider using
-         :func:`create_rsa_key` or :func:`create_oct_key` instead.
+            :func:`create_rsa_key` or :func:`create_oct_key` instead.
         :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
-         elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+            elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
         :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :keyword key_operations: Allowed key operations
@@ -111,6 +118,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -179,6 +187,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -205,7 +214,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-         Defaults to ``False``.
+            Defaults to ``False``.
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
@@ -217,6 +226,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -242,7 +252,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword key_operations: Allowed key operations.
         :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
         :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-         Defaults to ``False``.
+            Defaults to ``False``.
         :keyword bool enabled: Whether the key is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
@@ -254,6 +264,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -292,6 +303,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -316,6 +328,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.DeletedKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -357,6 +370,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             of the key.
 
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -385,6 +399,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.DeletedKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -482,9 +497,8 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
         """Permanently deletes a deleted key. Only possible in a vault with soft-delete enabled.
 
-        Performs an irreversible deletion of the specified key, without
-        possibility for recovery. The operation is not available if the
-        :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
+        Performs an irreversible deletion of the specified key, without possibility for recovery. The operation is not
+        available if the :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
         This method is only necessary for purging a key before its
         :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`.
 
@@ -493,6 +507,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the deleted key to purge
 
         :returns: None
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -517,6 +532,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The recovered key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -563,6 +579,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -606,15 +623,14 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
         """Back up a key in a protected form useable only by Azure Key Vault.
 
-        Requires key/backup permission.
-
-        This is intended to allow copying a key from one vault to another. Both vaults must be owned by the same Azure
-        subscription. Also, backup / restore cannot be performed across geopolitical boundaries. For example, a backup
-        from a vault in a USA region cannot be restored to a vault in an EU region.
+        Requires key/backup permission. This is intended to allow copying a key from one vault to another. Both vaults
+        must be owned by the same Azure subscription. Also, backup / restore cannot be performed across geopolitical
+        boundaries. For example, a backup from a vault in a USA region cannot be restored to a vault in an EU region.
 
         :param str name: The name of the key to back up
 
         :rtype: bytes
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -634,16 +650,15 @@ class KeyClient(AsyncKeyVaultClientBase):
     async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultKey:
         """Restore a key backup to the vault.
 
-        Requires keys/restore permission.
-
-        This imports all versions of the key, with its name, attributes, and access control policies. If the key's name
-        is already in use, restoring it will fail. Also, the target vault must be owned by the same Microsoft Azure
-        subscription as the source vault.
+        Requires keys/restore permission. This imports all versions of the key, with its name, attributes, and access
+        control policies. If the key's name is already in use, restoring it will fail. Also, the target vault must be
+        owned by the same Microsoft Azure subscription as the source vault.
 
         :param bytes backup: A key backup as returned by :func:`backup_key`
 
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -686,6 +701,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         enabled = kwargs.pop("enabled", None)
@@ -731,6 +747,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         version = kwargs.pop("version", "")
@@ -755,6 +772,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :return: The random bytes.
         :rtype: bytes
+
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -781,6 +799,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
@@ -796,6 +815,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :return: The new version of the rotated key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = await self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
@@ -823,6 +843,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
