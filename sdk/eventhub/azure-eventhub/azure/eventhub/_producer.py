@@ -38,12 +38,10 @@ if TYPE_CHECKING:
         from uamqp import SendClient as uamqp_SendClient
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-        from uamqp.message import BatchMessage as uamqp_BatchMessage
     except ImportError:
         uamqp_MessageSendResult = None
         uamqp_SendClient = None
         uamqp_JWTTokenAuth = None
-        uamqp_BatchMessage = None
     from ._pyamqp.client import SendClient
     from ._pyamqp.message import BatchMessage
     from ._pyamqp.authentication import JWTTokenAuth
