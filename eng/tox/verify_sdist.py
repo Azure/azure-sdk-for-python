@@ -27,9 +27,6 @@ ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
 EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
 
-EXCLUDED_MSREST_PACKAGES = ["azure-core", "azure-mgmt-core"]
-
-
 def get_root_directories_in_source(package_dir: str) -> List[str]:
     """
     Find all allowed directories in source path.
@@ -156,7 +153,7 @@ if __name__ == "__main__":
             logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
             exit(1)
     
-    if should_verify_package(pkg_details.name) and pkg_details.requires:
+    if ("azure-core" not in pkg_details.name and "azure-mgmt-core" not in pkg_details.name)  and pkg_details.requires:
         logging.info("Verifying presence of isodate in package [%s]", pkg_details.name)
         if "isodate" in pkg_details.requires and "msrest" not in pkg_details.requires:
             logging.info("Isodate is installed properly: [%s]", pkg_details.name)

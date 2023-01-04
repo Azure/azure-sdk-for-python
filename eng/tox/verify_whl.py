@@ -30,9 +30,6 @@ EXCLUDED_PACKAGES = [
     "azure-loganalytics",
 ]
 
-EXCLUDED_MSREST_PACKAGES = ["azure-core", "azure-mgmt-core"]
-
-
 def extract_whl(dist_dir, version):
     # Find whl for the package
     path_to_whl = glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
@@ -124,7 +121,7 @@ if __name__ == "__main__":
             )
             exit(1)
     
-    if should_verify_package(pkg_details.name) and pkg_details.requires:
+    if ("azure-core" not in pkg_details.name and "azure-mgmt-core" not in pkg_details.name) and pkg_details.requires:
         logging.info("Verifying presence of isodate in package [%s]", pkg_details.name)
         if "isodate" in pkg_details.requires and "msrest" not in pkg_details.requires:
             logging.info("Isodate is installed properly: [%s]", pkg_details.name)
