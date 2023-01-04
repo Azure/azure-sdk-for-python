@@ -80,7 +80,6 @@ class SharedTokenCacheBase(ABC):
             tenant_id: Optional[str] = None,
             **kwargs: Any
     ) -> None:  # pylint:disable=unused-argument
-        authority = authority
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))

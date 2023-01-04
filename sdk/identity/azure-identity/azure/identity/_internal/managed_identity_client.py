@@ -12,11 +12,11 @@ import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.pipeline import PipelineResponse
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
 
@@ -28,12 +28,11 @@ class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
-        request_factory,
-        client_id=None,
-        identity_config=None,
-        **kwargs
+        request_factory: Callable[[str, dict], HttpRequest],
+        client_id: Optional[str] = None,
+        identity_config: Optional[Dict] = None,
+        **kwargs: Any
     ) -> None:
-        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
@@ -42,9 +41,7 @@ class ManagedIdentityClientBase(ABC):
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 
-    def _process_response(self, response, request_time):
-        # type: (PipelineResponse, int) -> AccessToken
-
+    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessToken:
         content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
         if not content:
             try:
@@ -84,8 +81,7 @@ class ManagedIdentityClientBase(ABC):
 
         return token
 
-    def get_cached_token(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
         for token in tokens:
@@ -114,8 +110,7 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
     def close(self) -> None:
         self.__exit__()
 
-    def request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         kwargs.pop("tenant_id", None)
