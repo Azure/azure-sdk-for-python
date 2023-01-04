@@ -8,16 +8,11 @@ import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpResponse
-
-    RequestData = Union[Dict[str, str], str]
-
-
+RequestData = Union[Dict[str, str], str]
 _POST = ["POST"]
 
 
