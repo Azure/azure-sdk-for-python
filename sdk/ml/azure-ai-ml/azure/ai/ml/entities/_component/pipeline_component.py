@@ -353,7 +353,7 @@ class PipelineComponent(Component):
         for node_name, node in rest_jobs.items():
             # TODO: Remove this ad-hoc fix after unified arm id format in object
             component_id = node.get("componentId", "")
-            if re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
+            if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
                 node["componentId"] = component_id[len(ARM_ID_PREFIX):]
             if not LoopNode._is_loop_node_dict(node):
                 # skip resolve LoopNode first since it may reference other nodes
