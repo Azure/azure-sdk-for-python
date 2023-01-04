@@ -24,12 +24,9 @@ if TYPE_CHECKING:
 class ConversationAuthoringClient(
     ConversationAuthoringClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
-    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
+    """The language service conversations API is a suite of natural language processing (NLP) skills
+    that can be used to analyze structured conversations (textual or spoken). Further documentation
+    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.

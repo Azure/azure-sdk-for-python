@@ -1,3 +1,5 @@
+import copy
+import json
 import logging
 from pathlib import Path
 
@@ -5,7 +7,8 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_component, load_job
-from azure.ai.ml.entities import PipelineComponent, PipelineJob
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
@@ -39,26 +42,19 @@ class TestPipelineComponentEntity:
                 "component_in_path": {"type": "uri_folder", "description": "A path"},
                 "node_compute": {"type": "string", "default": "azureml:cpu-cluster"},
             },
-            "outputs": {},
             "type": "pipeline",
             "jobs": {
                 "component_a_job": {
-                    "properties": {},
                     "component": {
                         "command": 'echo "hello" && echo ' '"world" > ' "${{outputs.world_output}}/world.txt",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
-                        "inputs": {},
                         "is_deterministic": True,
                         "name": "azureml_anonymous",
                         "outputs": {"world_output": {"type": "uri_folder"}},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
                     "compute": "${{parent.inputs.node_compute}}",
-                    "environment_variables": {},
-                    "inputs": {},
-                    "outputs": {},
                     "type": "command",
                 },
             },
@@ -70,6 +66,7 @@ class TestPipelineComponentEntity:
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
         component: PipelineComponent = load_component(source=component_path)
+        assert component._base_path is not None
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "description": "This is the basic pipeline component",
@@ -85,7 +82,6 @@ class TestPipelineComponentEntity:
             },
             "jobs": {
                 "component_a_job": {
-                    "properties": {},
                     "component": {
                         "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                         "command": "echo Hello World & "
@@ -116,7 +112,6 @@ class TestPipelineComponentEntity:
                         "type": "command",
                         "version": "1",
                     },
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
@@ -155,10 +150,8 @@ class TestPipelineComponentEntity:
                 "pipeline_component": {
                     "component": {
                         "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
-                        "creation_context": None,
                         "description": "This is the " "basic pipeline " "component",
                         "display_name": "Hello World " "Pipeline " "Component",
-                        "id": None,
                         "inputs": {
                             "component_in_number": {
                                 "default": "10.99",
@@ -168,7 +161,6 @@ class TestPipelineComponentEntity:
                             },
                             "component_in_path": {"description": "A " "path", "type": "uri_folder"},
                         },
-                        "is_deterministic": None,
                         "jobs": {
                             "component_a_job": {
                                 "component": {
@@ -206,26 +198,21 @@ class TestPipelineComponentEntity:
                                     "type": "command",
                                     "version": "1",
                                 },
-                                "environment_variables": {},
                                 "inputs": {
                                     "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                                     "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                                 },
                                 "outputs": {"component_out_path": "${{parent.outputs.output_path}}"},
-                                "properties": {},
                                 "type": "command",
                             }
                         },
-                        "latest_version": None,
                         "name": "azureml_anonymous",
                         "outputs": {"output_path": {"type": "uri_folder"}},
                         "tags": {"owner": "sdkteam", "tag": "tagvalue"},
                         "type": "pipeline",
                         "version": "1",
                     },
-                    "properties": {},
                     "inputs": {"component_in_path": {"path": "${{parent.inputs.component_in_path}}"}},
-                    "outputs": {},
                     "type": "pipeline",
                 }
             },
@@ -251,33 +238,25 @@ class TestPipelineComponentEntity:
             },
             "jobs": {
                 "hello_world_component": {
-                    "properties": {},
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.job_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "hello_world_component_2": {
-                    "properties": {},
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.job_in_other_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
             },
             "name": "azureml_anonymous",
-            "outputs": {},
-            "tags": {},
             "type": "pipeline",
             "version": "1",
         }
@@ -422,8 +401,8 @@ class TestPipelineComponentEntity:
         test_path = "./tests/test_configs/components/pipeline_component_jobs_rest_data.json"
         with open(test_path, "r") as f:
             json_in_file = yaml.safe_load(f)
-        json_in_file = json_in_file['properties']['component_spec']['jobs']
-        jobs = PipelineComponent._resolve_sub_nodes(json_in_file)
+        job_dict = copy.deepcopy(json_in_file['properties']['component_spec']['jobs'])
+        jobs = PipelineComponent._resolve_sub_nodes(job_dict)
         node_dict = {key: node._to_rest_object() for key, node in jobs.items()}['component_a_job']
         assert node_dict['computeId'] == '${{parent.inputs.node_compute}}'
         assert node_dict['outputs'] == {
@@ -443,3 +422,9 @@ class TestPipelineComponentEntity:
             'literal_input2': {'job_input_type': 'literal', 'value': '12'}}
         assert node_dict['resources'] == {'instance_count': 1, 'properties': {
             'target_selector': {'my_resource_only': 'false', 'allow_spot_vm': 'true'}}, 'shm_size': '2g'}
+
+        rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(json_in_file)))
+        pipeline_component = Component._from_rest_object(rest_obj)
+        assert pipeline_component.jobs
+        obj_node_dict = {key: node._to_rest_object() for key, node in pipeline_component.jobs.items()}['component_a_job']
+        assert obj_node_dict == node_dict

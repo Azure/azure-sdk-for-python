@@ -32,8 +32,9 @@ async def sample_query_text():
 
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
+        question = "How long it takes to charge surface?"
         input = qna.AnswersFromTextOptions(
-            question="How long it takes to charge surface?",
+            question=question,
             text_documents=[
                 "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
                 "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
@@ -43,10 +44,12 @@ async def sample_query_text():
         )
 
         output = await client.get_answers_from_text(input)
-
-        best_answer = [a for a in output.answers if a.confidence > 0.9][0]
-        print("Q: {}".format(input.question))
-        print("A: {}".format(best_answer.answer))
+        if output.answers:
+            best_answer = [a for a in output.answers if a.confidence and a.confidence > 0.9][0]
+            print("Q: {}".format(question))
+            print("A: {}".format(best_answer.answer))
+        else:
+            print(f"No answers returned from question '{question}'")
 
     # [END query_text_async]
 

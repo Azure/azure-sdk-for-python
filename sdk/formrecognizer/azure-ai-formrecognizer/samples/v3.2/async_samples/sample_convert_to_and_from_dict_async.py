@@ -61,8 +61,8 @@ async def convert_to_and_from_dict_async():
     # save the dictionary as JSON content in a JSON file, use the AzureJSONEncoder
     # to help make types, such as dates, JSON serializable
     # NOTE: AzureJSONEncoder is only available with azure.core>=1.18.0.
-    with open('data.json', 'w') as f:
-        json.dump(analyze_result_dict, f, cls=AzureJSONEncoder)
+    with open('data.json', 'w') as output_file:
+        json.dump(analyze_result_dict, output_file, cls=AzureJSONEncoder)
 
     # convert the dictionary back to the original model
     model = AnalyzeResult.from_dict(analyze_result_dict)

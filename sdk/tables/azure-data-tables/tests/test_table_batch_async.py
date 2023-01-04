@@ -34,6 +34,7 @@ from azure.data.tables import (
     TransactionOperation,
     TableErrorCode
 )
+from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
@@ -978,29 +979,13 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             await table.submit_transaction(self.batch)
 
     @pytest.mark.asyncio
-    async def test_batch_url_china(self):
-        url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
-        table = TableClient(
-            url,
-            credential=self.credential,
-            table_name='foo',
-            per_call_policies=[CheckBatchURL(url, "foo")])
-
-        # Assert
-        assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
-        assert table.scheme == 'https'
-
-        with pytest.raises(RequestCorrect):
-            await table.submit_transaction(self.batch)
-
-    @pytest.mark.asyncio
     async def test_batch_url_with_connection_string_key(self):
         conn_string = 'AccountName={};AccountKey={};'.format(self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}".format(self.tables_storage_account_name, endpoint_suffix), "foo")]
         )
         assert table.scheme == 'https'
         with pytest.raises(RequestCorrect):
@@ -1010,45 +995,15 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
     async def test_batch_url_with_connection_string_sas(self):
         token = AzureSasCredential(self.generate_sas_token())
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token.signature)
-
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}".format(self.tables_storage_account_name, endpoint_suffix), "foo")]
         )
 
         assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
-        with pytest.raises(RequestCorrect):
-            await table.submit_transaction(self.batch)
-
-    @pytest.mark.asyncio
-    async def test_batch_url_with_connection_string_cosmos(self):
-        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-        table = TableClient.from_connection_string(
-            conn_string,
-            table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.cosmos.azure.com:443".format(self.tables_storage_account_name), "foo")]
-        )
-        assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
-        assert table.scheme == 'https'
-        with pytest.raises(RequestCorrect):
-            await table.submit_transaction(self.batch)
-
-    @pytest.mark.asyncio
-    async def test_batch_url_with_connection_string_endpoint_protocol(self):
-        # Arrange
-        conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-        table = TableClient.from_connection_string(
-            conn_string,
-            table_name="foo",
-            per_call_policies=[CheckBatchURL("http://{}.table.core.chinacloudapi.cn".format(self.tables_storage_account_name), "foo")]
-        )
-        assert table.account_name == self.tables_storage_account_name
-        assert table.scheme == 'http'
+        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.' + endpoint_suffix)
         with pytest.raises(RequestCorrect):
             await table.submit_transaction(self.batch)
 
@@ -1125,11 +1080,12 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_batch_url_with_complete_table_url(self):
         table_url = self.account_url(self.tables_storage_account_name, "table") + "/foo"
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient(
             table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net/foo".format(self.tables_storage_account_name), "bar")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}/foo".format(self.tables_storage_account_name, endpoint_suffix), "bar")]
         )
 
         assert table.scheme == 'https'
@@ -1141,12 +1097,13 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_batch_url_with_complete_url(self):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+        table_url = "https://{}.table.{}:443/foo".format(self.tables_storage_account_name, endpoint_suffix)
         table = TableClient(
             endpoint=table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name), "bar")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}:443/foo".format(self.tables_storage_account_name, endpoint_suffix), "bar")]
         )
 
         # Assert

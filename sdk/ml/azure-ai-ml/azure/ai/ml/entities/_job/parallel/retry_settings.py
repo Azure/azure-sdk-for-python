@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
 from azure.ai.ml._utils.utils import load_yaml
@@ -27,8 +27,8 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        timeout: int = None,
-        max_retries: int = None,
+        timeout: Optional[int] = None,
+        max_retries: Optional[int] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.timeout = timeout
@@ -40,8 +40,8 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     @classmethod
     def _load(
         cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> "RetrySettings":
         params_override = params_override or []
@@ -52,8 +52,8 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
     def _load_from_dict(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "RetrySettings":
         params_override = params_override or []

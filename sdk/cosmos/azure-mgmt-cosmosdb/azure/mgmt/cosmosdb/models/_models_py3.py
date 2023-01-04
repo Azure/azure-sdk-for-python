@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -360,11 +361,12 @@ class DataTransferDataSourceSink(_serialization.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBlobDataTransferDataSourceSink, CosmosCassandraDataTransferDataSourceSink,
-    CosmosSqlDataTransferDataSourceSink
+    CosmosMongoDataTransferDataSourceSink, CosmosSqlDataTransferDataSourceSink
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBSql", and "AzureBlobStorage".
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
     """
 
@@ -380,6 +382,7 @@ class DataTransferDataSourceSink(_serialization.Model):
         "component": {
             "AzureBlobStorage": "AzureBlobDataTransferDataSourceSink",
             "CosmosDBCassandra": "CosmosCassandraDataTransferDataSourceSink",
+            "CosmosDBMongo": "CosmosMongoDataTransferDataSourceSink",
             "CosmosDBSql": "CosmosSqlDataTransferDataSourceSink",
         }
     }
@@ -395,7 +398,8 @@ class AzureBlobDataTransferDataSourceSink(DataTransferDataSourceSink):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBSql", and "AzureBlobStorage".
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
     :ivar container_name: Required.
     :vartype container_name: str
@@ -3145,7 +3149,8 @@ class CosmosCassandraDataTransferDataSourceSink(DataTransferDataSourceSink):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBSql", and "AzureBlobStorage".
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
     :ivar keyspace_name: Required.
     :vartype keyspace_name: str
@@ -3178,12 +3183,52 @@ class CosmosCassandraDataTransferDataSourceSink(DataTransferDataSourceSink):
         self.table_name = table_name
 
 
+class CosmosMongoDataTransferDataSourceSink(DataTransferDataSourceSink):
+    """A CosmosDB Cassandra API data source/sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
+    :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
+    :ivar database_name: Required.
+    :vartype database_name: str
+    :ivar collection_name: Required.
+    :vartype collection_name: str
+    """
+
+    _validation = {
+        "component": {"required": True},
+        "database_name": {"required": True},
+        "collection_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "component": {"key": "component", "type": "str"},
+        "database_name": {"key": "databaseName", "type": "str"},
+        "collection_name": {"key": "collectionName", "type": "str"},
+    }
+
+    def __init__(self, *, database_name: str, collection_name: str, **kwargs):
+        """
+        :keyword database_name: Required.
+        :paramtype database_name: str
+        :keyword collection_name: Required.
+        :paramtype collection_name: str
+        """
+        super().__init__(**kwargs)
+        self.component = "CosmosDBMongo"  # type: str
+        self.database_name = database_name
+        self.collection_name = collection_name
+
+
 class CosmosSqlDataTransferDataSourceSink(DataTransferDataSourceSink):
     """A CosmosDB Cassandra API data source/sink.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBSql", and "AzureBlobStorage".
+    :ivar component: Known values are: "CosmosDBCassandra", "CosmosDBMongo", "CosmosDBSql", and
+     "AzureBlobStorage".
     :vartype component: str or ~azure.mgmt.cosmosdb.models.DataTransferComponent
     :ivar database_name: Required.
     :vartype database_name: str

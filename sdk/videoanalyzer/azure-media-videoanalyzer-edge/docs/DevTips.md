@@ -19,7 +19,7 @@ tox -c eng/tox/tox.ini
 To run a specific tox command from your directory use the following commands:
 ```bash
 > tox -c ../../../eng/tox/tox.ini -e sphinx
-> tox -c ../../../eng/tox/tox.ini -e lint
+> tox -c ../../../eng/tox/tox.ini -e pylint
 > tox -c ../../../eng/tox/tox.ini -e mypy
 > tox -c ../../../eng/tox/tox.ini -e whl
 > tox -c ../../../eng/tox/tox.ini -e sdist

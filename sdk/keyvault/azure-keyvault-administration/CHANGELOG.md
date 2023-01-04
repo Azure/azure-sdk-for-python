@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0b1 (Unreleased)
+## 4.3.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,8 +9,21 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.3.0b1 (2022-11-15)
+
+### Features Added
+- Added sync and async `KeyVaultSettingsClient`s for getting and updating Managed HSM settings.
+- Added support for service API version `7.4-preview.1`
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Key Vault API version `7.4-preview.1` is now the default
 - Updated minimum `azure-core` version to 1.24.0
-- Updated minimum `msrest` version to 0.7.1
+- Dropped `msrest` requirement
+- Dropped `six` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
 
 ## 4.2.0 (2022-09-19)
 

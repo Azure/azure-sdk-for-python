@@ -1,5 +1,18 @@
 # Release History
 
+## 14.1.0 (2022-10-28)
+
+### Features Added
+
+  - Model RedisLinkedServerCreateParameters has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerCreateParameters has a new parameter primary_host_name
+  - Model RedisLinkedServerCreateProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerCreateProperties has a new parameter primary_host_name
+  - Model RedisLinkedServerProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerProperties has a new parameter primary_host_name
+  - Model RedisLinkedServerWithProperties has a new parameter geo_replicated_primary_host_name
+  - Model RedisLinkedServerWithProperties has a new parameter primary_host_name
+
 ## 14.0.0 (2022-09-05)
 
 ### Features Added

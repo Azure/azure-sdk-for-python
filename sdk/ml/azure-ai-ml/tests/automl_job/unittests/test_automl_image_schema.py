@@ -1,4 +1,5 @@
 import os
+import sys
 from copy import deepcopy
 from email.mime import image
 from pathlib import Path
@@ -39,6 +40,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
@@ -53,7 +56,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ObjectDetectionPrimaryMetrics,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
 from azure.ai.ml.automl import (
     ImageClassificationSearchSpace,
     ImageLimitSettings,
@@ -65,11 +68,11 @@ from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.image import (
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
     image_classification_job,
     image_instance_segmentation_job,
     image_object_detection_job,
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
 )
 
 
@@ -688,13 +691,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'random_lr_scheduler1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["learning_rate_scheduler"] = f"{LearningRateScheduler.WARMUP_COSINE}"
+        test_config_copy["search_space"][0]["learning_rate_scheduler"] = f"{camel_to_snake(LearningRateScheduler.WARMUP_COSINE)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
 
         test_config_copy["search_space"][0]["learning_rate_scheduler"] = {
             "type": "choice",
-            "values": [f"{LearningRateScheduler.WARMUP_COSINE}", f"{LearningRateScheduler.STEP}"],
+            "values": [f"{camel_to_snake(LearningRateScheduler.WARMUP_COSINE)}", f"{camel_to_snake(LearningRateScheduler.STEP)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
@@ -706,13 +709,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'random1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["optimizer"] = f"{StochasticOptimizer.ADAM}"
+        test_config_copy["search_space"][0]["optimizer"] = f"{camel_to_snake(StochasticOptimizer.ADAM)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
 
         test_config_copy["search_space"][0]["optimizer"] = {
             "type": "choice",
-            "values": [f"{StochasticOptimizer.SGD}", f"{StochasticOptimizer.ADAM}"],
+            "values": [f"{camel_to_snake(StochasticOptimizer.SGD)}", f"{camel_to_snake(StochasticOptimizer.ADAM)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
@@ -761,13 +764,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 100 passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["model_size"] = f"{ModelSize.SMALL}"
+        test_config_copy["search_space"][0]["model_size"] = f"{camel_to_snake(ModelSize.SMALL)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
 
         test_config_copy["search_space"][0]["model_size"] = {
             "type": "choice",
-            "values": [f"{ModelSize.SMALL}", f"{ModelSize.LARGE}"],
+            "values": [f"{camel_to_snake(ModelSize.SMALL)}", f"{camel_to_snake(ModelSize.LARGE)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
@@ -795,13 +798,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'type1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["validation_metric_type"] = f"{ValidationMetricType.COCO}"
+        test_config_copy["search_space"][0]["validation_metric_type"] = f"{camel_to_snake(ValidationMetricType.COCO)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)
 
         test_config_copy["search_space"][0]["validation_metric_type"] = {
             "type": "choice",
-            "values": [f"{ValidationMetricType.COCO}", f"{ValidationMetricType.VOC}"],
+            "values": [f"{camel_to_snake(ValidationMetricType.COCO)}", f"{camel_to_snake(ValidationMetricType.VOC)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)

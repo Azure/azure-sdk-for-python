@@ -1,5 +1,17 @@
 # Release History
 
+## 1.3.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
 ## 1.3.2 (2022-08-11)
 
 ### Other Changes

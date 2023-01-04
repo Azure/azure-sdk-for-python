@@ -12,11 +12,13 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 from .operations import (
     AgentPoolsOperations,
+    FleetMembersOperations,
+    FleetsOperations,
     MaintenanceConfigurationsOperations,
     ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
@@ -69,6 +71,12 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar trusted_access_role_bindings: TrustedAccessRoleBindingsOperations operations
     :vartype trusted_access_role_bindings:
      azure.mgmt.containerservice.v2022_09_02_preview.aio.operations.TrustedAccessRoleBindingsOperations
+    :ivar fleets: FleetsOperations operations
+    :vartype fleets:
+     azure.mgmt.containerservice.v2022_09_02_preview.aio.operations.FleetsOperations
+    :ivar fleet_members: FleetMembersOperations operations
+    :vartype fleet_members:
+     azure.mgmt.containerservice.v2022_09_02_preview.aio.operations.FleetMembersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -94,7 +102,7 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -125,6 +133,8 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

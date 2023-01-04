@@ -6,7 +6,7 @@
 
 import copy
 from abc import ABC, abstractmethod
-from typing import List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -16,12 +16,7 @@ from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    UserErrorException,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
 
 
 def _build_data_binding(data: Union["PipelineInput", "Output"]) -> str:
@@ -60,7 +55,7 @@ def _data_to_input(data):
 
 
 class InputOutputBase(ABC):
-    def __init__(self, meta: Union[Input, Output], data, **kwargs):
+    def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
         """Base class of input & output.
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
@@ -69,14 +64,20 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
+        :param default_data: default value of input/output, None means un-configured data.
+        :type default_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
         """
         self._meta = meta
+        self._original_data = data
         self._data = self._build_data(data)
-        self._type = meta.type if meta else kwargs.pop("type", None)
-        self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        self._default_data = default_data
+        self._type = meta.type if meta is not None else kwargs.pop("type", None)
+        self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
-            if self._data and hasattr(self._data, "description") and self._data.description
+            if self._data is not None and hasattr(self._data, "description") and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this
@@ -125,6 +126,16 @@ class InputOutputBase(ABC):
     def description(self) -> str:
         return self._description
 
+    @description.setter
+    def description(self, description):
+        # For un-configured input/output, we build a default data entry for them.
+        self._build_default_data()
+        self._description = description
+        if isinstance(self._data, (Input, Output)):
+            self._data.description = description
+        else:
+            self._data._description = description
+
     @property
     def path(self) -> str:
         # This property is introduced for static intellisense.
@@ -170,6 +181,29 @@ class InputOutputBase(ABC):
         except AttributeError:
             return super(InputOutputBase, self).__str__()
 
+    def __hash__(self):
+        return id(self)
+
+    @classmethod
+    def _get_mode(cls, original_data, data, kwargs):
+        """Get mode of this input/output builder.
+
+        :param original_data: Original value of input/output.
+        :type original_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output,
+                          azure.ai.ml.entities._job.pipeline._io.PipelineInput]
+        :param data: Built input/output data.
+        :type data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
+
+        """
+        # pipeline level inputs won't pass mode to bound node level inputs
+        if isinstance(original_data, PipelineInput):
+            return None
+        return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
+
 
 class NodeInput(InputOutputBase):
     """Define one input of a Component."""
@@ -179,8 +213,8 @@ class NodeInput(InputOutputBase):
         name: str,
         meta: Input,
         *,
-        data: Union[int, bool, float, str, Output, "PipelineInput", Input] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an input of a component.
@@ -311,8 +345,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         name: str,
         meta: Output,
         *,
-        data: Union[Output, str] = None,
-        owner: Union["BaseComponent", "PipelineJob"] = None,
+        data: Optional[Union[Output, str]] = None,
+        owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         **kwargs,
     ):
         """Initialize an Output of a component.
@@ -332,7 +366,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             Details will be provided in the error message.
         """
         # Allow inline output binding with string, eg: "component_out_path_1": "${{parents.outputs.job_out_data_1}}"
-        if data and not isinstance(data, (Output, str)):
+        if data is not None and not isinstance(data, (Output, str)):
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
                 message=msg.format(data),
@@ -342,7 +376,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._is_control = meta.is_control if meta else None
+        self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
@@ -380,8 +414,13 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta else None
-            result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
+            is_control = self._meta.is_control if self._meta is not None else None
+            result = Output(
+                path=self._data._data_binding(),
+                mode=self.mode,
+                is_control=is_control,
+                description=self.description
+            )
         else:
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
@@ -410,14 +449,11 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             meta=self._meta,
         )
 
-    def __hash__(self):
-        return id(self)
-
 
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: List[str] = None, **kwargs):
+    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
         """
         Initialize a PipelineInput.
 
@@ -430,6 +466,22 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         """
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
+
+    def result(self):
+        """Return original value of pipeline input."""
+        # example:
+        #
+        # @pipeline
+        # def pipeline_func(param1):
+        #   node1 = component_func(param1=param1.result())
+        #   # node1's param1 will get actual value of param1 instead of a input binding.
+        # use this to break self loop
+        original_data_cache = set()
+        original_data = self._original_data
+        while isinstance(original_data, PipelineInput) and original_data not in original_data_cache:
+            original_data_cache.add(original_data)
+            original_data = original_data._original_data
+        return original_data
 
     def __str__(self) -> str:
         return self._data_binding()
@@ -495,6 +547,11 @@ class PipelineOutput(NodeOutput):
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
             return self._data
+        if self._data is None and self._meta and self._meta.type:
+            # For un-configured pipeline output with meta, we need to return Output with accurate type,
+            # so it won't default to uri_folder.
+            return Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
+
         return super(PipelineOutput, self)._to_job_output()
 
     def _data_binding(self):

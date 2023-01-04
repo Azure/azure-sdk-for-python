@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -12,7 +13,7 @@ from azure.ai.ml.entities._assets.environment import BuildContext
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestEnvironmentEntity:
     def test_eq_neq(self) -> None:
         environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04")
@@ -27,6 +28,30 @@ class TestEnvironmentEntity:
         assert environment == same_environment
         assert environment != diff_environment
 
+    def test_rest_object(self) -> None:
+        # Tests serialization and deserialization of Environment object, including asset properties
+        env = Environment(
+            name="name",
+            version="16",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            properties={"key": "value"},
+        )
+        diff_env = Environment(
+            name=env.name,
+            version=env.version,
+            image=env.image,
+        )
+        rest_object = env._to_rest_object()
+        # Set id to match the one that would be returned by the service, otherwise _from_rest_object will fail
+        rest_object.id = f"azureml://registries/test/environments/{env.name}/versions/{env.version}"
+        env_from_rest_object = Environment._from_rest_object(rest_object)
+        # Exclude id from comparisons below
+        env_from_rest_object._id = None
+
+        assert env == env_from_rest_object
+        assert env.properties == env_from_rest_object.properties
+        assert env != diff_env
+        
     def test_conda_file_deserialize_and_serialize(self) -> None:
         # Tests that conda file is deserialized same way if using load_environment() or Environment()
         conda_file_path = "tests/test_configs/environment/environment_files/environment.yml"
@@ -68,3 +93,34 @@ class TestEnvironmentEntity:
         assert env_0.name == env_1.name == env_2.name == ANONYMOUS_ENV_NAME
         assert env_0.version == env_1.version == env_2.version
         assert env_0 == env_1 == env_2
+
+    def test_anonymous_environment_version_changes_with_inference_config(self):
+        tests_root_dir = Path(__file__).parent.parent.parent
+        inference_conf = """{"scoring_route":
+                            {"port": "5001",
+                            "path": "/predict"},
+                        "liveness_route":
+                            {"port": "5002",
+                            "path": "/health/live"},
+                        "readiness_route":
+                            {"port": "5003",
+                            "path": "/health/ready"}
+                        }"""
+
+        inference_conf_obj = json.loads(inference_conf)
+
+        env_no_inference_config = Environment(
+                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1"
+                )
+
+        env_with_inference_config = Environment(
+                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+                    inference_config=inference_conf_obj
+                )
+
+        assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
+        assert env_no_inference_config.version != env_with_inference_config.version
+        assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
+        assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"

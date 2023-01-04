@@ -4,8 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
+from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
 from .azure_cli import AzureCliCredential
@@ -17,8 +18,6 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 
 if TYPE_CHECKING:
-    from typing import Any, List
-    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,7 +65,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -126,16 +125,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
           `message` attribute listing each authentication attempt and its error message.
         """

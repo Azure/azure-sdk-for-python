@@ -7,11 +7,11 @@
       "provisioning_state":"Succeeded",
       "services":{
          "Tracking":{
-            "type":"tracking",
+            "type":"Tracking",
             "endpoint":"azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS?"
          },
          "Studio":{
-            "type":"studio",
+            "type":"Studio",
             "endpoint":"https://ml.azure.com/experiments/mfe-test1/runs/test_297155932351?wsid=/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourcegroups/RLTesting/workspaces/AnkitWS"
          }
       },

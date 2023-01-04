@@ -1,15 +1,16 @@
 # Optional list of scenarios. If specified multiple stress test jobs will be generated,
 # one for each scenario in the list. The pod spec can then be configured to pass the
 # scenario name down to the test command, e.g. `command: ["node", "{{ .Scenario }}.js"]`
-scenarios:
-- "identity"
-- "sendsync"
-- "sendlistsync"
-- "sendasync"
-- "sendlistasync"
-- "sendconsumeasync"
-- "sendconsumesync"
-- "sendlistconsumeasync"
-- "sendlistconsumesync"
-- "consumeasyncidentity"
-- "consumesyncidentity"
+# scenarios:
+# - "event-async"
+# - "event-sync"
+# - "batch-async"
+# - "batch-sync"
+# - "bufferedproducerlistsync"
+# - "bufferedproducerasync"
+# - "bufferedproducerlistasync"
+# - "bufferedproducersync"
+# - "syncwebsockets"
+# - "asyncwebsockets"
+# - "sync-batch-web"
+# - "async-batch-web"

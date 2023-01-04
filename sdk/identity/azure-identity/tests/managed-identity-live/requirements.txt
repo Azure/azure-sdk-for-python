@@ -1,6 +1,8 @@
 ../../../../core/azure-core
 ../..
 ../../../../keyvault/azure-keyvault-secrets
+../../../../../tools/azure-devtools
+../../../../../tools/azure-sdk-tools
 pytest
 pytest-asyncio
 aiohttp>=3.0

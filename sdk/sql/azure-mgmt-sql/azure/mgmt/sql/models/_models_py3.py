@@ -963,6 +963,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
+     enclaves. Known values are: "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
     :ivar source_resource_id: The resource identifier of the source associated with the create
      operation of this database.
 
@@ -1063,6 +1066,7 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
     }
 
@@ -1097,6 +1101,7 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
         source_resource_id: Optional[str] = None,
         **kwargs
     ):
@@ -1226,6 +1231,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
+         enclaves. Known values are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
         :keyword source_resource_id: The resource identifier of the source associated with the create
          operation of this database.
 
@@ -1294,6 +1302,7 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.preferred_enclave_type = preferred_enclave_type
         self.source_resource_id = source_resource_id
 
 
@@ -2810,6 +2819,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
+     enclaves. Known values are: "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
     """
 
     _validation = {
@@ -2874,6 +2886,7 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2906,6 +2919,7 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
         **kwargs
     ):
         """
@@ -3017,6 +3031,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
+         enclaves. Known values are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -3060,6 +3077,7 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.preferred_enclave_type = preferred_enclave_type
 
 
 class DatabaseUsage(ProxyResource):
@@ -16872,6 +16890,9 @@ class ServerDevOpsAuditingSettings(ProxyResource):
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -16909,6 +16930,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "is_azure_monitor_target_enabled": {"key": "properties.isAzureMonitorTargetEnabled", "type": "bool"},
+        "is_managed_identity_in_use": {"key": "properties.isManagedIdentityInUse", "type": "bool"},
         "state": {"key": "properties.state", "type": "str"},
         "storage_endpoint": {"key": "properties.storageEndpoint", "type": "str"},
         "storage_account_access_key": {"key": "properties.storageAccountAccessKey", "type": "str"},
@@ -16919,6 +16941,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         self,
         *,
         is_azure_monitor_target_enabled: Optional[bool] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
         state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
@@ -16942,6 +16965,9 @@ class ServerDevOpsAuditingSettings(ProxyResource):
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
         :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
          isAzureMonitorTargetEnabled are required. Known values are: "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -16969,6 +16995,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         super().__init__(**kwargs)
         self.system_data = None
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key

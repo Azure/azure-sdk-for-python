@@ -11,8 +11,6 @@ import uuid
 import logging
 from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
-import six
-
 import uamqp.errors
 import uamqp.message
 
@@ -211,7 +209,7 @@ class ServiceBusMessage(
 
     def _build_message(self, body):
         if not (
-            isinstance(body, (six.string_types, six.binary_type)) or (body is None)
+            isinstance(body, (str, bytes)) or (body is None)
         ):
             raise TypeError(
                 "ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(

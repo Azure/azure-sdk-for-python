@@ -36,6 +36,9 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     ClassifyDocumentResult,
     ActionPointerKind,
+    ExtractSummaryResult,
+    AbstractSummaryResult,
+    DynamicClassificationResult,
 )
 
 
@@ -131,6 +134,15 @@ def prepare_result(func):
 
 
 @prepare_result
+def abstract_summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return AbstractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
+    )
+
+
+@prepare_result
 def language_result(language, results):  # pylint: disable=unused-argument
     return DetectLanguageResult(
         id=language.id,
@@ -164,6 +176,9 @@ def entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -184,6 +199,9 @@ def linked_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -201,6 +219,9 @@ def key_phrases_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             phrases.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            phrases.detected_language
+        ) if hasattr(phrases, "detected_language") and phrases.detected_language else None
     )
 
 
@@ -227,6 +248,9 @@ def sentiment_result(
             )
             for s in sentiment.sentences
         ],
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            sentiment.detected_language
+        ) if hasattr(sentiment, "detected_language") and sentiment.detected_language else None
     )
 
 
@@ -250,6 +274,9 @@ def pii_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -259,6 +286,15 @@ def healthcare_result(
 ):  # pylint: disable=unused-argument
     return AnalyzeHealthcareEntitiesResult._from_generated(  # pylint: disable=protected-access
         health_result
+    )
+
+
+@prepare_result
+def summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
     )
 
 
@@ -277,6 +313,15 @@ def classify_document_result(
 ):  # pylint: disable=unused-argument
     return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
+    )
+
+
+@prepare_result
+def dynamic_classification_result(
+    categories, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return DynamicClassificationResult._from_generated(  # pylint: disable=protected-access
+        categories
     )
 
 
@@ -313,6 +358,10 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return classify_document_result
     if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
         return healthcare_result
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return summary_result
+    if task_type == _AnalyzeActionsType.ABSTRACT_SUMMARY:
+        return abstract_summary_result
     return key_phrases_result
 
 
@@ -360,7 +409,10 @@ def pad_result(tasks_obj, doc_id_order):
     return [
         DocumentError(
             id=doc_id,
-            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+            error=TextAnalyticsError(
+                code=None,  # type: ignore
+                message=f"No result for document. Action returned status '{tasks_obj.status}'."
+            )
         ) for doc_id in doc_id_order
     ]
 

@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Optional, Any
+from typing import Mapping, Optional, Any
 
+from opentelemetry.util.types import AttributeValue
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,
@@ -24,6 +25,7 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
+from azure.monitor.opentelemetry.exporter._constants import _AUTOCOLLECTED_INSTRUMENT_NAMES
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MetricDataPoint,
@@ -62,6 +64,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_aggregation=kwargs.get("preferred_aggregation"),
         )
 
+    # pylint: disable=R1702
     def export(
         self,
         metrics_data: OTMetricsData,
@@ -81,14 +84,14 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                 for metric in scope_metric.metrics:
                     for point in metric.data.data_points:
                         if point is not None:
-                            envelopes.append(
-                                self._point_to_envelope(
-                                    point,
-                                    metric.name,
-                                    resource_metric.resource,
-                                    scope_metric.scope
-                                )
+                            envelope = self._point_to_envelope(
+                                point,
+                                metric.name,
+                                resource_metric.resource,
+                                scope_metric.scope
                             )
+                            if envelope is not None:
+                                envelopes.append(envelope)
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
@@ -124,9 +127,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         name: str,
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None
-    ) -> TelemetryItem:
+    ) -> Optional[TelemetryItem]:
         envelope = _convert_point_to_envelope(point, name, resource, scope)
-        envelope.instrumentation_key = self._instrumentation_key
+        if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
+            envelope = _handle_std_metric_envelope(envelope, name, point.attributes)
+        if envelope is not None:
+            envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
     @classmethod
@@ -174,15 +180,20 @@ def _convert_point_to_envelope(
         min_ = point.min
         max_ = point.max
 
+    # truncation logic
+    properties = _utils._filter_custom_properties(point.attributes)
+
+    if namespace is not None:
+        namespace = str(namespace)[:256]
     data_point = MetricDataPoint(
         name=str(name)[:1024],
-        namespace=str(namespace)[:256],
+        namespace=namespace,
         value=value,
         count=count,
         min=min_,
         max=max_,
     )
-    properties = _utils._filter_custom_properties(point.attributes)
+
     data = MetricsData(
         properties=properties,
         metrics=[data_point],
@@ -191,6 +202,64 @@ def _convert_point_to_envelope(
     envelope.data = MonitorBase(base_data=data, base_type="MetricData")
 
     return envelope
+
+
+# pylint: disable=protected-access
+def _handle_std_metric_envelope(
+    envelope: TelemetryItem,
+    name: str,
+    attributes:Mapping[str, AttributeValue]
+) -> Optional[TelemetryItem]:
+    properties = {}
+    tags = envelope.tags
+    # TODO: switch to semconv constants
+    status_code = attributes.get("http.status_code", None)
+    if name == "http.client.duration":
+        properties["_MS.MetricId"] = "dependencies/duration"
+        properties["_MS.IsAutocollected"] = "True"
+        properties["Dependency.Type"] = "http"
+        properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400))
+        target = None
+        if "peer.service" in attributes:
+            target = attributes["peer.service"]
+        elif "net.peer.name" in attributes:
+            if attributes["net.peer.name"] is None:
+                target = None
+            elif "net.host.port" in attributes and \
+                attributes["net.host.port"] is not None:
+                target = "{}:{}".format(
+                    attributes["net.peer.name"],
+                    attributes["net.host.port"],
+                )
+            else:
+                target = attributes["net.peer.name"]
+        properties["dependency/target"] = target
+        properties["dependency/resultCode"] = str(status_code)
+        # TODO: operation/synthetic
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
+        properties["cloud/roleName"] = tags["ai.cloud.role"]
+    elif name == "http.server.duration":
+        properties["_MS.MetricId"] = "requests/duration"
+        properties["_MS.IsAutocollected"] = "True"
+        properties["request/resultCode"] = str(status_code)
+        # TODO: operation/synthetic
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
+        properties["cloud/roleName"] = tags["ai.cloud.role"]
+        properties["Request.Success"] = str(_is_status_code_success(status_code, 500))
+    else:
+        # Any other autocollected metrics are not supported yet for standard metrics
+        # We ignore these envelopes in these cases
+        return None
+
+    # TODO: rpc, database, messaging
+
+    envelope.data.base_data.properties = properties
+
+    return envelope
+
+
+def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
+    return status_code is not None and int(status_code) < threshold
 
 
 def _get_metric_export_result(result: ExportResult) -> MetricExportResult:

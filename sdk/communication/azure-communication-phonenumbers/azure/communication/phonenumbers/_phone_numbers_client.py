@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -13,9 +13,11 @@ from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
+_DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
+
 if TYPE_CHECKING:
     from typing import Any
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
@@ -27,8 +29,8 @@ class PhoneNumbersClient(object):
     This client provides operations to interact with the phone numbers service
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The credentials with which to authenticate.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Phone Number API version.
         The default value is "2022-01-11-preview2".
         Note that overriding this default value may result in unsupported behavior.
@@ -37,7 +39,7 @@ class PhoneNumbersClient(object):
     def __init__(
         self,
         endpoint, # type: str
-        credential, # type: TokenCredential
+        credential, # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs # type: Any
     ):
         # type: (...) -> None
@@ -91,12 +93,14 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
             search_id,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -115,12 +119,14 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
+        polling_interval = kwargs.pop("polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -155,7 +161,7 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
         """
@@ -166,9 +172,11 @@ class PhoneNumbersClient(object):
             quantity=kwargs.pop('quantity', None),
             area_code=kwargs.pop('area_code', None)
         )
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
+            polling_interval=polling_interval,
             **kwargs
         )
     @distributed_trace
@@ -193,14 +201,16 @@ class PhoneNumbersClient(object):
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls
+        :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
+        polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             calling=calling,
             sms=sms,
+            polling_interval=polling_interval,
             **kwargs
         )
 

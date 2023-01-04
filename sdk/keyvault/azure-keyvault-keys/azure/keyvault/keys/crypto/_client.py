@@ -5,11 +5,10 @@
 import logging
 from typing import TYPE_CHECKING, cast
 
-import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
-    from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from . import KeyWrapAlgorithm, SignatureAlgorithm
     from .._shared import KeyVaultResourceId
 
 _LOGGER = logging.getLogger(__name__)
@@ -106,6 +105,8 @@ class CryptographyClient(KeyVaultClientBase):
         :dedent: 8
     """
 
+    # pylint:disable=protected-access
+
     def __init__(self, key, credential, **kwargs):
         # type: (Union[KeyVaultKey, str], TokenCredential, **Any) -> None
         self._jwk = kwargs.pop("_jwk", False)
@@ -116,10 +117,10 @@ class CryptographyClient(KeyVaultClientBase):
         if isinstance(key, KeyVaultKey):
             self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
             self._key_id = parse_key_vault_id(key.id)
-            if key.properties._attributes:  # pylint:disable=protected-access
+            if key.properties._attributes:
                 self._not_before = key.properties.not_before
                 self._expires_on = key.properties.expires_on
-        elif isinstance(key, six.string_types):
+        elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
             if self._key_id.version is None:
@@ -135,7 +136,7 @@ class CryptographyClient(KeyVaultClientBase):
                 self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
                 self._initialized = True
             except Exception as ex:  # pylint:disable=broad-except
-                six.raise_from(ValueError("The provided jwk is not valid for local cryptography"), ex)
+                raise ValueError("The provided jwk is not valid for local cryptography") from ex
         else:
             self._local_provider = NoLocalCryptography()
             self._initialized = False
@@ -197,7 +198,7 @@ class CryptographyClient(KeyVaultClientBase):
                     self._key_id.version if self._key_id else None,
                     **kwargs
                 )
-                key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
                 self._key_id = parse_key_vault_id(key.id)  # update the key ID in case we didn't have the version before
             except HttpResponseError as ex:
@@ -256,7 +257,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.encrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.encrypt(
@@ -327,7 +328,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.decrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.decrypt(
@@ -372,7 +373,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.wrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.wrap_key(
@@ -414,7 +415,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.unwrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.unwrap_key(
@@ -456,7 +457,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.sign}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.sign(
@@ -500,7 +501,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.verify}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.verify(

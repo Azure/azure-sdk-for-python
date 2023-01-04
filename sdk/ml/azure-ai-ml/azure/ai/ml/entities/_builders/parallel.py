@@ -5,11 +5,11 @@
 # pylint: disable=protected-access
 
 import copy
+import json
 import logging
 import re
-import json
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -25,7 +25,6 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
-from .._job.distribution import DistributionConfiguration
 from .._job.pipeline._io import NodeOutput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
@@ -89,32 +88,34 @@ class Parallel(BaseNode):
         self,
         *,
         component: Union[ParallelComponent, str],
-        compute: str = None,
-        inputs: Dict[
-            str,
-            Union[
-                NodeOutput,
-                Input,
+        compute: Optional[str] = None,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        retry_settings: Dict[str, Union[RetrySettings, str]] = None,
-        logging_level: str = None,
-        max_concurrency_per_instance: int = None,
-        error_threshold: int = None,
-        mini_batch_error_threshold: int = None,
-        input_data: str = None,
-        task: Dict[str, Union[ParallelTask, str]] = None,
-        partition_keys: List = None,
-        mini_batch_size: int = None,
-        resources: JobResourceConfiguration = None,
-        environment_variables: Dict = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        retry_settings: Optional[Dict[str, Union[RetrySettings, str]]] = None,
+        logging_level: Optional[str] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        error_threshold: Optional[int] = None,
+        mini_batch_error_threshold: Optional[int] = None,
+        input_data: Optional[str] = None,
+        task: Optional[Dict[str, Union[ParallelTask, str]]] = None,
+        partition_keys: Optional[List] = None,
+        mini_batch_size: Optional[int] = None,
+        resources: Optional[JobResourceConfiguration] = None,
+        environment_variables: Optional[Dict] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -232,11 +233,11 @@ class Parallel(BaseNode):
     def set_resources(
         self,
         *,
-        instance_type: Union[str, List[str]] = None,
-        instance_count: int = None,
-        properties: Dict = None,
-        docker_args: str = None,
-        shm_size: str = None,
+        instance_type: Optional[Union[str, List[str]]] = None,
+        instance_count: Optional[int] = None,
+        properties: Optional[Dict] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         """Set resources for Parallel."""
@@ -331,7 +332,8 @@ class Parallel(BaseNode):
                     logging_level=self.logging_level,
                     mini_batch_size=self.mini_batch_size,
                     partition_keys=json.dumps(self.partition_keys)
-                        if self.partition_keys is not None else self.partition_keys,
+                    if self.partition_keys is not None
+                    else self.partition_keys,
                     resources=get_rest_dict_for_node_attrs(self.resources),
                 )
             )
@@ -339,8 +341,8 @@ class Parallel(BaseNode):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Parallel":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
             obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
@@ -355,21 +357,13 @@ class Parallel(BaseNode):
             if task_env and isinstance(task_env, str) and task_env.startswith(ARM_ID_PREFIX):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
-        return Parallel(**obj)
+        return obj
 
     def _build_inputs(self):
         inputs = super(Parallel, self)._build_inputs()

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import asyncio
 import os
 import time
 import uuid
@@ -42,6 +43,7 @@ from azure.storage.blob import (
     ResourceTypes,
     RetentionPolicy,
     StandardBlobTier,
+    StorageErrorCode,
     generate_account_sas,
     generate_container_sas,
     generate_blob_sas)
@@ -285,6 +287,81 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert data == raw_data*2
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob_from_async_generator(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b'Hello Async World!'
+
+        async def data_generator():
+            for _ in range(3):
+                yield data
+                await asyncio.sleep(0.1)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data=data_generator())
+
+        # Assert
+        result = await (await blob.download_blob()).readall()
+        assert result == data*3
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob_from_async_generator_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob_name = self._get_blob_reference()
+        data = b'abc' * 1024
+
+        async def data_generator():
+            for _ in range(3):
+                yield data
+                await asyncio.sleep(0.1)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data=data_generator())
+
+        # Assert
+        result = await (await blob.download_blob()).readall()
+        assert result == data*3
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_upload_blob_from_async_generator_chunks_parallel(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.bsc._config.max_single_put_size = 1024
+        self.bsc._config.max_block_size = 1024
+
+        blob_name = self._get_blob_reference()
+        data = b'abcde' * 1024
+
+        async def data_generator():
+            for _ in range(3):
+                yield data
+                await asyncio.sleep(0.1)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(data=data_generator(), max_concurrency=3, overwrite=True)
+
+        # Assert
+        result = await (await blob.download_blob()).readall()
+        assert result == data * 3
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -595,13 +672,28 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg_async")
+
+        # Create a blob to download with aiohttp using SAS
+        data = b'a' * 1024 * 1024
+        blob = await self._create_blob(data=data)
+
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = blob.url + '?' + sas
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
                 async for text, _ in data.content.iter_chunks():
-                    resp = await blob.upload_blob(data=text, overwrite=True)
+                    blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
+                    resp = await blob2.upload_blob(data=text, overwrite=True)
                     assert resp.get('etag') is not None
 
     @BlobPreparer()
@@ -1812,15 +1904,21 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         copy = await copied_blob.start_copy_from_url(source_blob)
         assert copy['copy_status'] == 'pending'
 
-        await copied_blob.abort_copy(copy)
-        props = await self._wait_for_async_copy(copied_blob)
-        assert props.copy.status == 'aborted'
+        try:
+            await copied_blob.abort_copy(copy)
+            props = await self._wait_for_async_copy(copied_blob)
+            assert props.copy.status == 'aborted'
 
-        # Assert
-        actual_data = await copied_blob.download_blob()
-        bytes_data = await (await copied_blob.download_blob()).readall()
-        assert bytes_data == b""
-        assert actual_data.properties.copy.status == 'aborted'
+            # Assert
+            actual_data = await copied_blob.download_blob()
+            bytes_data = await (await copied_blob.download_blob()).readall()
+            assert bytes_data == b""
+            assert actual_data.properties.copy.status == 'aborted'
+
+        # In the Live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @BlobPreparer()
     @recorded_by_proxy_async

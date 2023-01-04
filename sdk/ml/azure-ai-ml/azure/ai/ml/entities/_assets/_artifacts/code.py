@@ -4,12 +4,12 @@
 import os
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
 from azure.ai.ml._schema import CodeAssetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import get_content_hash, get_content_hash_version, get_ignore_file
+from azure.ai.ml._utils._asset_utils import IgnoreFile, get_content_hash, get_content_hash_version, get_ignore_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
@@ -34,6 +34,8 @@ class Code(Artifact):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param ignore_file: Ignore file for the resource.
+    :type ignore_file: IgnoreFile
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -41,14 +43,16 @@ class Code(Artifact):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        path: Union[str, PathLike] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        path: Optional[Union[str, PathLike]] = None,
+        ignore_file: Optional[IgnoreFile] = None,
         **kwargs,
     ):
+        self._is_remote = kwargs.pop("is_remote", False)
         super().__init__(
             name=name,
             version=version,
@@ -61,15 +65,15 @@ class Code(Artifact):
         self._arm_type = ArmConstants.CODE_VERSION_TYPE
         if self.path and os.path.isabs(self.path):
             # Only calculate hash for local files
-            _ignore_file = get_ignore_file(self.path)
-            self._hash_sha256 = get_content_hash(self.path, _ignore_file)
+            self._ignore_file = get_ignore_file(self.path) if ignore_file is None else ignore_file
+            self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
 
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Code":
         data = data or {}

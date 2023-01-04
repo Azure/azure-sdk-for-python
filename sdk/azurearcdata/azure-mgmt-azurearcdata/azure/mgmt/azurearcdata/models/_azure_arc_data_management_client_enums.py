@@ -6,61 +6,65 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ArcSqlManagedInstanceLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The license type to apply for this managed instance.
-    """
+class AccountProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The service account provisioning mode for this Active Directory connector."""
+
+    AUTOMATIC = "automatic"
+    MANUAL = "manual"
+
+
+class ArcSqlManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The license type to apply for this managed instance."""
 
     BASE_PRICE = "BasePrice"
     LICENSE_INCLUDED = "LicenseIncluded"
+    DISASTER_RECOVERY = "DisasterRecovery"
 
-class ArcSqlServerLicenseType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server license type.
-    """
 
-    PAID = "Paid"
+class ArcSqlServerLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server license type."""
+
+    UNDEFINED = "Undefined"
     FREE = "Free"
     HADR = "HADR"
-    UNDEFINED = "Undefined"
+    SERVER_CAL = "ServerCAL"
+    LICENSE_ONLY = "LicenseOnly"
+    PAYG = "PAYG"
+    PAID = "Paid"
 
-class ConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The cloud connectivity status.
-    """
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The cloud connectivity status."""
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
+    REGISTERED = "Registered"
     UNKNOWN = "Unknown"
 
-class DefenderStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of Azure Defender.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class DefenderStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of Azure Defender."""
 
     PROTECTED = "Protected"
     UNPROTECTED = "Unprotected"
     UNKNOWN = "Unknown"
 
-class EditionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server edition.
-    """
+
+class EditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server edition."""
 
     EVALUATION = "Evaluation"
     ENTERPRISE = "Enterprise"
@@ -69,24 +73,33 @@ class EditionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DEVELOPER = "Developer"
     EXPRESS = "Express"
 
-class ExtendedLocationTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of extendedLocation.
-    """
+
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of extendedLocation."""
 
     CUSTOM_LOCATION = "CustomLocation"
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that creates/modifies resources
-    """
 
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
+class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of host for Azure Arc SQL Server."""
 
-class Infrastructure(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The infrastructure the data controller is running on.
-    """
+    AZURE_VIRTUAL_MACHINE = "Azure Virtual Machine"
+    AZURE_VM_WARE_VIRTUAL_MACHINE = "Azure VMWare Virtual Machine"
+    AZURE_KUBERNETES_SERVICE = "Azure Kubernetes Service"
+    AWS_VM_WARE_VIRTUAL_MACHINE = "AWS VMWare Virtual Machine"
+    AWS_KUBERNETES_SERVICE = "AWS Kubernetes Service"
+    GCP_VM_WARE_VIRTUAL_MACHINE = "GCP VMWare Virtual Machine"
+    GCP_KUBERNETES_SERVICE = "GCP Kubernetes Service"
+    CONTAINER = "Container"
+    VIRTUAL_MACHINE = "Virtual Machine"
+    PHYSICAL_SERVER = "Physical Server"
+    AWS_VIRTUAL_MACHINE = "AWS Virtual Machine"
+    GCP_VIRTUAL_MACHINE = "GCP Virtual Machine"
+    OTHER = "Other"
+
+
+class Infrastructure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The infrastructure the data controller is running on."""
 
     AZURE = "azure"
     GCP = "gcp"
@@ -95,24 +108,28 @@ class Infrastructure(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ONPREMISES = "onpremises"
     OTHER = "other"
 
-class OperationOrigin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The intended executor of the operation.
-    """
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation."""
 
     USER = "user"
     SYSTEM = "system"
 
-class SqlManagedInstanceSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The pricing tier for the instance.
-    """
+
+class SqlManagedInstanceSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The pricing tier for the instance."""
 
     GENERAL_PURPOSE = "GeneralPurpose"
     BUSINESS_CRITICAL = "BusinessCritical"
 
-class SqlVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server version.
-    """
 
-    SQL_SERVER2019 = "SQL Server 2019"
-    SQL_SERVER2017 = "SQL Server 2017"
+class SqlVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server version."""
+
+    SQL_SERVER2012 = "SQL Server 2012"
+    SQL_SERVER2014 = "SQL Server 2014"
     SQL_SERVER2016 = "SQL Server 2016"
+    SQL_SERVER2017 = "SQL Server 2017"
+    SQL_SERVER2019 = "SQL Server 2019"
+    SQL_SERVER2022 = "SQL Server 2022"
+    UNKNOWN = "Unknown"

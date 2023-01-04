@@ -2,16 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Optional
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, List
-    from azure.core.credentials import AccessToken
 
 
 class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
@@ -47,7 +43,12 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             await self._client.__aexit__()
 
     def __init__(
-        self, tenant_id: str, client_id: str, authorization_code: str, redirect_uri: str, **kwargs: "Any"
+            self,
+            tenant_id: str,
+            client_id: str,
+            authorization_code: str,
+            redirect_uri: str,
+            **kwargs
     ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
@@ -56,7 +57,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         self._redirect_uri = redirect_uri
         super().__init__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -66,20 +67,20 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         redeeming the authorization code.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         if self._authorization_code:
             token = await self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs

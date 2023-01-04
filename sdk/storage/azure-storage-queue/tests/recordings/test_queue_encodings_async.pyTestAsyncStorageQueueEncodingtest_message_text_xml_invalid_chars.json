@@ -1,0 +1,39 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/mytestqueueaeaa37d5/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "96",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 26 Oct 2022 23:41:17 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003E\u0001\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "327",
+        "Content-Type": "application/xml",
+        "Date": "Wed, 26 Oct 2022 23:41:16 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "InvalidXmlDocument",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidXmlDocument\u003C/Code\u003E\u003CMessage\u003EXML specified is not syntactically valid.\n",
+        "RequestId:077f1658-3003-009b-4f94-e93724000000\n",
+        "Time:2022-10-26T23:41:17.1684288Z\u003C/Message\u003E\u003CLineNumber\u003E2\u003C/LineNumber\u003E\u003CLinePosition\u003E28\u003C/LinePosition\u003E\u003CReason\u003EError parsing Xml content\u003C/Reason\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

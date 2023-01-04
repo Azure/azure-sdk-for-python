@@ -10,8 +10,14 @@ from ._capacities_operations import CapacitiesOperations
 from ._operations import Operations
 from ._auto_scale_vcores_operations import AutoScaleVCoresOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CapacitiesOperations',
-    'Operations',
-    'AutoScaleVCoresOperations',
+    "CapacitiesOperations",
+    "Operations",
+    "AutoScaleVCoresOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

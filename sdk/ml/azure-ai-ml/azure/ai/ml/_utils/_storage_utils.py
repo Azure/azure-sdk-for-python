@@ -4,13 +4,14 @@
 
 import logging
 import re
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._constants import STORAGE_URI_REGEX
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
 from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     FOLDER_PREFIX,
@@ -135,8 +136,8 @@ def get_storage_client(
     credential: str,
     storage_account: str,
     storage_type: Union[DatastoreType, str] = DatastoreType.AZURE_BLOB,
-    account_url: str = None,
-    container_name: str = None,
+    account_url: Optional[str] = None,
+    container_name: Optional[str] = None,
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
     """Return a storage client class instance based on the storage account
     type."""
@@ -182,7 +183,19 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str) -> Tuple[str, str]:
-    ds_name = asset_uri.split("paths")[0].split("/")[-2]
-    path_prefix = asset_uri.split("paths")[1][1:]
+def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = None) -> Tuple[str, str]:
+    if registry_name:
+        try:
+            split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
+            path_prefix = split_paths[0][3]
+        except Exception:
+            raise Exception("Registry asset URI could not be parsed.")
+        ds_name = None
+    else:
+        try:
+            ds_name = asset_uri.split("paths")[0].split("/")[-2]
+            path_prefix = asset_uri.split("paths")[1][1:]
+        except Exception:
+            raise Exception("Workspace asset URI could not be parsed.")
+
     return ds_name, path_prefix

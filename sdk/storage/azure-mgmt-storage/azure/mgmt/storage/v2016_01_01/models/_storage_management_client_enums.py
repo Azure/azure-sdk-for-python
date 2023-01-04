@@ -11,11 +11,11 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
-    """
+    """Required for storage accounts where kind = BlobStorage. The access tier used for billing."""
 
     HOT = "Hot"
     COOL = "Cool"
+
 
 class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
@@ -25,27 +25,34 @@ class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
+
+class EncryptionKeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage."""
+
+    MICROSOFT_STORAGE = "Microsoft.Storage"
+
+
 class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Permissions for the key -- read-only or full permissions.
-    """
+    """Permissions for the key -- read-only or full permissions."""
 
     READ = "READ"
     FULL = "FULL"
 
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Required. Indicates the type of storage account.
-    """
+    """Required. Indicates the type of storage account."""
 
     STORAGE = "Storage"
     BLOB_STORAGE = "BlobStorage"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the status of the storage account at the time the operation was called.
-    """
+    """Gets the status of the storage account at the time the operation was called."""
 
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
+
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
@@ -54,6 +61,7 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
+
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
@@ -66,16 +74,22 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the sku tier. This is based on the SKU name.
-    """
+    """Gets the sku tier. This is based on the SKU name."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
+
+class StorageAccountCheckNameAvailabilityParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StorageAccountCheckNameAvailabilityParametersType."""
+
+    MICROSOFT_STORAGE_STORAGE_ACCOUNTS = "Microsoft.Storage/storageAccounts"
+
+
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the unit of measurement.
-    """
+    """Gets the unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

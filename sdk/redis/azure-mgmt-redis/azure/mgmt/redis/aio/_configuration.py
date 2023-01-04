@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -13,6 +14,11 @@ from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
 
 from .._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,14 +36,14 @@ class RedisManagementClientConfiguration(Configuration):  # pylint: disable=too-
     :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft
      Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(RedisManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-05-01")  # type: str
+        api_version = kwargs.pop("api_version", "2022-06-01")  # type: Literal["2022-06-01"]
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

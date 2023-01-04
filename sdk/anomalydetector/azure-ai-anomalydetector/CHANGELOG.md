@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b6 (Unreleased)
+## 3.0.0b7 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,40 @@
 
 ### Other Changes
 
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+## 3.0.0b6 (2022-12-08)
+  **Features**
+  - Added `OneTable` and `MultiTable` two data schemas.
+  - Added `DataSchema` to `ModelInfo`.
+  - Added Azure Managed Identity data reader access for Azure Blob Storage.
+  - Added `topContributorCount` in the request body for `get_multivariate_batch_detection_result`, `detect_multivariate_batch_anomaly` and `detect_multivariate_last_anomaly`.
+
+  **Breaking Changes**
+  - Renamed `Model` to `AnomalyDetectionModel`.
+  - Renamed `DetectionRequest` to `MultivariateBatchDetectionOptions`.
+  - Renamed `DetectionResult` to `MultivariateDetectionResult`.
+  - Renamed `DetectionStatus` to `MultivariateBatchDetectionStatus`.
+  - Renamed `DetectionResultSummary` to `MultivariateBatchDetectionResultSummary`.
+  - Renamed `FillNaMethod` to `FillNAMethod`.
+  - Renamed `LastDetectionRequest` to `MultivariateLastDetectionOptions`.
+  - Renamed `LastDetectionResult` to `MultivariateLastDetectionResult`.
+  - Replaced `ModelSnapshot` with `AnomalyDetectionModel` in `list_multivariate_model`.
+  - Renamed `train_multivariate_model_with_response` to `train_multivariate_model`.
+  - Renamed `detect_anomaly_with_response` to `detect_multivariate_batch_anomaly`.
+  - Renamed `get_detection_result` to `get_multivariate_batch_detection_result`.
+  - Renamed `list_multivariate_model` to `list_multivariate_models`.
+  - Renamed `last_detect_anomaly_with_response` to `detect_multivariate_last_anomaly`.
+  - Renamed `DetectRequest` to `UnivariateDetectionOptions`.
+  - Renamed `EntireDetectResponse` to `UnivariateEntireDetectionResult`.
+  - Renamed `LastDetectResponse` to `UnivariateLastDetectionResult`.
+  - Renamed `ChangePointDetectRequest` to `UnivariateChangePointDetectionOptions`.
+  - Renamed `ChangePointDetectResponse` to `UnivariateChangePointDetectionResult`.
+  - Renamed `detect_entire_series` to `detect_univariate_entire_series`.
+  - Renamed `detect_last_point` to `detect_univariate_last_point`.
+  - Renamed `detect_change_point` to `detect_univariate_change_point`.
+  - Removed `AnomalyDetectorErrorException`.
+  - Removed `export_model_with_response`.
+  - Removed `changedvalue` in the inference response body.
+  - Removed `detecting_points` in the sync inference request body.
 
 ## 3.0.0b5 (2022-01-23)
 

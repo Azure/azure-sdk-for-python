@@ -1,5 +1,19 @@
 # Release History
 
+## 9.0.0b1 (2022-10-28)
+
+### Features Added
+
+  - Model Resource has a new parameter identity
+  - Model Resource has a new parameter location
+  - Model Resource has a new parameter tags
+
+### Breaking Changes
+
+  - Model PrivateLinkResourceProperties no longer has parameter shareable_private_link_resource_types
+  - Model SearchService no longer has parameter shared_private_link_resources
+  - Removed operation group SharedPrivateLinkResourcesOperations
+
 ## 8.0.0 (2020-12-22)
 
 - GA release

@@ -7,9 +7,9 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction, DaysOfWeek, RecurrenceFrequency
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
-from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType, WeekDay
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
@@ -35,13 +35,13 @@ class RecurrenceScheduleSchema(metaclass=PatchedSchemaMeta):
     week_days = fields.List(
         StringTransformedEnum(
             allowed_values=[
-                DaysOfWeek.Sunday,
-                DaysOfWeek.Monday,
-                DaysOfWeek.Tuesday,
-                DaysOfWeek.Wednesday,
-                DaysOfWeek.Thursday,
-                DaysOfWeek.Friday,
-                DaysOfWeek.Saturday,
+                WeekDay.SUNDAY,
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+                WeekDay.THURSDAY,
+                WeekDay.FRIDAY,
+                WeekDay.SATURDAY,
             ],
         )
     )
@@ -60,7 +60,6 @@ class RecurrenceTriggerSchema(BaseTriggerSchema):
     frequency = StringTransformedEnum(
         required=True,
         allowed_values=[
-            RecurrenceFrequency.SECOND,
             RecurrenceFrequency.MINUTE,
             RecurrenceFrequency.HOUR,
             RecurrenceFrequency.DAY,

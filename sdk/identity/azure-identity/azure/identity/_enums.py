@@ -2,15 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
 from enum import Enum
-from six import with_metaclass
-
-from azure.core import CaseInsensitiveEnumMeta
 from msal import ConfidentialClientApplication
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class RegionalAuthority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifies a regional authority for authentication"""
 
     #: Attempt to discover the appropriate authority. This works on some Azure hosts, such as VMs and

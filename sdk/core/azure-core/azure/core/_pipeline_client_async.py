@@ -26,7 +26,7 @@
 
 import logging
 import collections.abc
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TypeVar
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -38,31 +38,13 @@ from .pipeline.policies import (
     AsyncRetryPolicy,
 )
 
-try:
-    from typing import TYPE_CHECKING, TypeVar
-except ImportError:
-    TYPE_CHECKING = False
-
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 
-if TYPE_CHECKING:
-    from typing import (
-        List,
-        Dict,
-        Union,
-        IO,
-        Tuple,
-        Optional,
-        Callable,
-        Iterator,
-        cast,
-    )  # pylint: disable=unused-import
-
 _LOGGER = logging.getLogger(__name__)
 
-class _AsyncContextManager(collections.abc.Awaitable):
 
+class _AsyncContextManager(collections.abc.Awaitable):
     def __init__(self, wrapped: collections.abc.Awaitable):
         super().__init__()
         self.wrapped = wrapped
@@ -130,11 +112,11 @@ class AsyncPipelineClient(PipelineClientBase):
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-        per_call_policies = kwargs.get('per_call_policies', [])
-        per_retry_policies = kwargs.get('per_retry_policies', [])
+    def _build_pipeline(self, config, **kwargs):  # pylint: disable=no-self-use
+        transport = kwargs.get("transport")
+        policies = kwargs.get("policies")
+        per_call_policies = kwargs.get("per_call_policies", [])
+        per_retry_policies = kwargs.get("per_retry_policies", [])
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -142,25 +124,33 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs)
+                ContentDecodePolicy(**kwargs),
             ]
             if isinstance(per_call_policies, collections.abc.Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies.extend([config.redirect_policy,
-                             config.retry_policy,
-                             config.authentication_policy,
-                             config.custom_hook_policy])
+            policies.extend(
+                [
+                    config.redirect_policy,
+                    config.retry_policy,
+                    config.authentication_policy,
+                    config.custom_hook_policy,
+                ]
+            )
             if isinstance(per_retry_policies, collections.abc.Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies.extend([config.logging_policy,
-                             DistributedTracingPolicy(**kwargs),
-                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+            policies.extend(
+                [
+                    config.logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                    config.http_logging_policy or HttpLoggingPolicy(**kwargs),
+                ]
+            )
         else:
             if isinstance(per_call_policies, collections.abc.Iterable):
                 per_call_policies_list = list(per_call_policies)
@@ -178,16 +168,19 @@ class AsyncPipelineClient(PipelineClientBase):
                     if isinstance(policy, AsyncRetryPolicy):
                         index_of_retry = index
                 if index_of_retry == -1:
-                    raise ValueError("Failed to add per_retry_policies; "
-                                     "no RetryPolicy found in the supplied list of policies. ")
-                policies_1 = policies[:index_of_retry + 1]
-                policies_2 = policies[index_of_retry + 1:]
+                    raise ValueError(
+                        "Failed to add per_retry_policies; "
+                        "no RetryPolicy found in the supplied list of policies. "
+                    )
+                policies_1 = policies[: index_of_retry + 1]
+                policies_2 = policies[index_of_retry + 1 :]
                 policies_1.extend(per_retry_policies_list)
                 policies_1.extend(policies_2)
                 policies = policies_1
 
         if not transport:
             from .pipeline.transport import AioHttpTransport
+
             transport = AioHttpTransport(**kwargs)
 
         return AsyncPipeline(transport, policies)
@@ -202,11 +195,7 @@ class AsyncPipelineClient(PipelineClientBase):
         return pipeline_response.http_response
 
     def send_request(
-        self,
-        request: HTTPRequestType,
-        *,
-        stream: bool = False,
-        **kwargs: Any
+        self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any
     ) -> Awaitable[AsyncHTTPResponseType]:
         """Method that runs the network request through the client's chained policies.
 

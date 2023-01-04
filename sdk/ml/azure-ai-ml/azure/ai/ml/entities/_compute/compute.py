@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -28,7 +28,7 @@ class Compute(Resource, RestTranslatableMixin):
     :type type: str
     :param name: Name of the compute
     :type name: str
-    :param location: The resource location, defaults to None
+    :param location: The resource location, defaults to workspace location.
     :type location: Optional[str], optional
     :param description: Description of the resource.
     :type description: Optional[str], optional
@@ -40,8 +40,8 @@ class Compute(Resource, RestTranslatableMixin):
         self,
         name: str,
         location: Optional[str] = None,
-        description: str = None,
-        resource_id: str = None,
+        description: Optional[str] = None,
+        resource_id: Optional[str] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
@@ -150,9 +150,9 @@ class Compute(Resource, RestTranslatableMixin):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Compute":
         data = data or {}
@@ -199,8 +199,8 @@ class NetworkSettings:
     def __init__(
         self,
         *,
-        vnet_name: str = None,
-        subnet: str = None,
+        vnet_name: Optional[str] = None,
+        subnet: Optional[str] = None,
         **kwargs,
     ):
         """Network settings for a compute.

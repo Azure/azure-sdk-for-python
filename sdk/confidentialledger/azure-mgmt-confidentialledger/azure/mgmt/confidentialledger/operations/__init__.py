@@ -7,11 +7,15 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._confidential_ledger_operations import ConfidentialLedgerOperationsMixin
 from ._ledger_operations import LedgerOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'ConfidentialLedgerOperationsMixin',
-    'LedgerOperations',
+    "Operations",
+    "LedgerOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

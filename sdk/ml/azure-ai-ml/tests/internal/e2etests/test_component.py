@@ -5,9 +5,9 @@ import json
 import os.path
 from typing import Callable, Dict, List
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
@@ -46,10 +46,7 @@ def load_registered_component(
     component_rest_object = component_entity._to_rest_object()
     return pydash.omit(component_rest_object.properties.component_spec, *omit_fields)
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(
@@ -57,7 +54,7 @@ def bodiless_matching(test_proxy):
     "enable_internal_components",
     "mock_code_hash",
     "mock_asset_name",
-    "mock_component_hash"
+    "mock_component_hash",
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

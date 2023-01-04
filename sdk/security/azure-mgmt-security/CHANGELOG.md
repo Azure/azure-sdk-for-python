@@ -1,5 +1,18 @@
 # Release History
 
+## 3.0.0 (2022-11-17)
+
+### Features Added
+
+  - Model DefenderFoDatabasesAwsOffering has a new parameter rds
+
+### Breaking Changes
+
+  - Model DefenderFoDatabasesAwsOfferingArcAutoProvisioning no longer has parameter service_principal_secret_metadata
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioning no longer has parameter configuration
+  - Model DefenderForServersAwsOfferingArcAutoProvisioning no longer has parameter service_principal_secret_metadata
+  - Model DefenderForServersGcpOfferingArcAutoProvisioning no longer has parameter configuration
+
 ## 2.0.0 (2022-09-28)
 
 ### Features Added

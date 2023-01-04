@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 import six
 
@@ -17,7 +17,6 @@ from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
-    from typing import Any, List, Optional
     import msal
     from .. import AuthenticationRecord
 
@@ -53,8 +52,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            **kwargs
+    ) -> None:
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
             raise TypeError('"user_assertion" is required.')
@@ -79,7 +82,11 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         else:
             raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
-        super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
+        super(OnBehalfOfCredential, self).__init__(
+            client_id=client_id,
+            client_credential=credential,
+            tenant_id=tenant_id,
+            **kwargs)
         self._auth_record = None  # type: Optional[AuthenticationRecord]
 
     @wrap_exceptions

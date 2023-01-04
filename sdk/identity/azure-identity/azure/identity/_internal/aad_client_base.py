@@ -7,7 +7,7 @@ import base64
 import json
 import time
 from uuid import uuid4
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
 import six
 from msal import TokenCache
@@ -16,13 +16,10 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from . import get_default_authority, normalize_authority
-from .._internal import resolve_tenant
-from .._internal.aadclient_certificate import AadClientCertificate
+from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .aadclient_certificate import AadClientCertificate
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional, Union
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -56,8 +53,7 @@ class AadClientBase(abc.ABC):
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
-    def get_cached_access_token(self, scopes, **kwargs):
-        # type: (Iterable[str], **Any) -> Optional[AccessToken]
+    def get_cached_access_token(self, scopes: Iterable[str], **kwargs) -> Optional[AccessToken]:
         tenant = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
@@ -74,8 +70,7 @@ class AadClientBase(abc.ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_cached_refresh_tokens(self, scopes):
-        # type: (Iterable[str]) -> List[dict]
+    def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 

@@ -210,21 +210,15 @@ class RoomsClientTest(CommunicationTestCase):
     def test_get_invalid_room(self):
         # random room id
         with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.get_room(room_id="89469124725336262")
+            create_response = self.rooms_client.create_room()
+            self.rooms_client.delete_room(room_id=create_response.id)
+            self.rooms_client.get_room(room_id=create_response.id)
 
         # Resource not found
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
-
-    def test_delete_invalid_room(self):
-        # random room id
-        with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.delete_room(room_id="78469124725336262")
-
-        # Resource not found
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
-
+        self.rooms_client.delete_room(room_id=create_response.id)
+            
     def test_update_room_only_ValidFrom(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
