@@ -100,7 +100,7 @@ class CachedNodeResolver(object):
         self._client_hash = self._get_client_hash(
             subscription_id, resource_group_name, workspace_name, registry_name
         )
-        # 1 client share 1 lock
+        # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
 
     @staticmethod

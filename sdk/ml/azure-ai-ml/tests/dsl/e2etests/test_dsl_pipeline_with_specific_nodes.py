@@ -1,13 +1,17 @@
+import multiprocessing
+import uuid
 from functools import partial
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Union
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 from mock import mock
+from pytest_mock import MockFixture
 
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, submit_and_cancel_new_dsl_pipeline
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, submit_and_cancel_new_dsl_pipeline, \
+    omit_with_wildcard
 
 from azure.ai.ml import (
     Input,
@@ -16,7 +20,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep, Component
+from azure.ai.ml.entities import CommandComponent, Command, Choice, Sweep, Component, Environment, PipelineComponent
 from azure.ai.ml.entities import PipelineJob
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -42,6 +46,19 @@ common_omit_fields = [
 ]
 
 
+def _get_component_in_first_child(_with_jobs: Union[PipelineJob, PipelineComponent], client: MLClient) -> Component:
+    if not _with_jobs.jobs:
+        raise ValueError("No jobs found in the pipeline")
+    _result = next(iter(_with_jobs.jobs.values())).component.split(":")
+    if len(_result) == 2:
+        _name, _version = _result
+    elif len(_result) == 3:
+        _, _name, _version = _result
+    else:
+        raise ValueError("Invalid component arm string: {}".format(_result))
+    return client.components.get(_name, _version)
+
+
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
@@ -53,6 +70,89 @@ common_omit_fields = [
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
+    @staticmethod
+    def _generate_multi_layer_pipeline_func():
+        path = "./tests/test_configs/components/helloworld_component.yml"
+
+        @dsl.pipeline
+        def pipeline_leaf(component_in_path: Input):
+            component_func1 = load_component(source=path)
+            component_func1(component_in_path=component_in_path, component_in_number=1)
+
+            component_func2 = load_component(source=path, params_override=[{
+                "name": "another_component_name",
+                "version": "another_component_version",
+            }])
+            component_func2(component_in_path=component_in_path, component_in_number=1)
+
+            component_func3 = load_component(source=path, params_override=[{
+                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:2"
+            }])
+            component_func3(component_in_path=component_in_path, component_in_number=1)
+
+            component_func4 = load_component(source=path)
+            component_func4.command += " & echo updated1"
+            component_func4(component_in_path=component_in_path, component_in_number=1)
+
+        @dsl.pipeline
+        def pipeline_mid(job_in_path: Input):
+            pipeline_leaf(job_in_path)
+            pipeline_leaf(job_in_path)
+
+        @dsl.pipeline
+        def pipeline_root(job_in_path: Input):
+            pipeline_mid(job_in_path)
+            pipeline_mid(job_in_path)
+        return pipeline_root
+
+    @staticmethod
+    def _generate_pipeline_func_for_concurrent_component_registration_test(shared_input):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        conda_file_path = "./tests/test_configs/environment/environment_files/environment.yml"
+
+        environment = Environment(
+            name="test-environment",
+            conda_file=conda_file_path,
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            version="1",
+            description="This is an anonymous environment",
+        )
+
+        @dsl.pipeline
+        def pipeline_leaf():
+            component_func1a = load_component(source=path)
+            component_func1a.environment = environment
+            component_func1a.command += " & echo updated1"
+            component_func1a(component_in_path=shared_input, component_in_number=1)
+
+            component_func1b = load_component(source=path)
+            component_func1b.environment = environment
+            component_func1b.command += " & echo updated1"
+            component_func1b(component_in_path=shared_input, component_in_number=1)
+
+            component_func2 = load_component(source=path)
+            component_func2.command += " & echo updated2"
+            component_func2.environment = environment
+            component_func2(component_in_path=shared_input, component_in_number=1)
+
+            component_func3 = load_component(source=path)
+            component_func3.command += " & echo updated3"
+            component_func3.environment = environment
+            component_func3(component_in_path=shared_input, component_in_number=1)
+
+        # TODO: test with multiple pipelines after server-side return jobs for pipeline component
+        # @dsl.pipeline
+        # def pipeline_mid():
+        #     pipeline_leaf()
+        #     pipeline_leaf()
+        #
+        # @dsl.pipeline
+        # def pipeline_root():
+        #     pipeline_mid()
+        #     pipeline_mid()
+
+        return pipeline_leaf
+
     def test_dsl_pipeline_sweep_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
@@ -116,40 +216,14 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         assert created_component.display_name == "sweep_job1"
 
     def test_dsl_pipeline_component_cache_in_resolver(self, client: MLClient) -> None:
-        path = "./tests/test_configs/components/helloworld_component.yml"
         input_data_path = "./tests/test_configs/data/"
+        pipeline_root = self._generate_multi_layer_pipeline_func()
 
-        @dsl.pipeline
-        def pipeline_leaf(component_in_path: Input):
-            component_func1 = load_component(source=path)
-            component_func1(component_in_path=component_in_path, component_in_number=1)
-
-            component_func2 = load_component(source=path, params_override=[{
-                "name": "another_component_name",
-                "version": "another_component_version",
-            }])
-            component_func2(component_in_path=component_in_path, component_in_number=1)
-
-            component_func3 = load_component(source=path, params_override=[{
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:2"
-            }])
-            component_func3(component_in_path=component_in_path, component_in_number=1)
-
-            component_func4 = load_component(source=path)
-            component_func4.command += " & echo updated1"
-            component_func4(component_in_path=component_in_path, component_in_number=1)
-
-        @dsl.pipeline
-        def pipeline_mid(job_in_path: Input):
-            pipeline_leaf(job_in_path)
-            pipeline_leaf(job_in_path)
-
-        @dsl.pipeline
-        def pipeline_root(job_in_path: Input):
-            pipeline_mid(job_in_path)
-            pipeline_mid(job_in_path)
-
-        _submit_and_cancel = partial(submit_and_cancel_new_dsl_pipeline, client=client, job_in_path=Input(path=input_data_path))
+        _submit_and_cancel = partial(
+            submit_and_cancel_new_dsl_pipeline,
+            client=client,
+            job_in_path=Input(path=input_data_path)
+        )
 
         def _mock_get_component_arm_id(_component: Component) -> str:
             # the logic has no diff comparing to original function other than always using show_progress=False
@@ -190,3 +264,39 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             assert_job_cancel(pipeline_job, client)
             # updated command component and its parents (pipeline_leaf and pipeline_mid) will be resolved
             assert mock_resolve.call_count == 3
+
+    def test_dsl_pipeline_concurrent_component_registration(self, client: MLClient, mocker: MockFixture) -> None:
+        # disable on-disk cache to test concurrent component registration
+        mocker.patch("azure.ai.ml._utils.utils.is_on_disk_cache_enabled", return_value=False)
+
+        input_data_path = "./tests/test_configs/data/"
+        pipeline_root = self._generate_pipeline_func_for_concurrent_component_registration_test(
+            shared_input=Input(path=input_data_path)
+        )
+
+        _submit_and_cancel = partial(
+            submit_and_cancel_new_dsl_pipeline,
+            client=client,
+        )
+
+        treatment_pipeline_job = _submit_and_cancel(pipeline_root)
+
+        with mock.patch("azure.ai.ml._utils.utils.is_concurrent_component_registration_enabled", return_value=False):
+            base_pipeline_job = _submit_and_cancel(pipeline_root)
+
+        # Server-side does not guarantee the same anonymous pipeline component share the same version
+        # So omit name and version and do comparison layer by layer
+        omit_fields = ["id", "name", "version", "creation_context", "services", "jobs.*.component"]
+
+        base, treat = base_pipeline_job, treatment_pipeline_job
+        # TODO: test with multiple pipelines after server-side return jobs for pipeline component
+        for _ in range(0, 0):
+            assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(
+                treat._to_dict(), *omit_fields)
+            base = _get_component_in_first_child(base, client)
+            treat = _get_component_in_first_child(treat, client)
+
+        # The last layer contains the command components
+        omit_fields.pop()
+        assert omit_with_wildcard(base._to_dict(), *omit_fields) == omit_with_wildcard(
+            treat._to_dict(), *omit_fields)

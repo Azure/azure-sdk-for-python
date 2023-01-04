@@ -532,7 +532,7 @@ def get_client_hash_with_request_node_name(
     resource_group_name: Optional[str],
     workspace_name: Optional[str],
     registry_name: Optional[str],
-    request_node_id: str
+    random_seed: str
 ):
     """Generate a hash for the client."""
     object_hash = hashlib.sha256()
@@ -541,7 +541,7 @@ def get_client_hash_with_request_node_name(
         resource_group_name,
         workspace_name,
         registry_name,
-        request_node_id,
+        random_seed,
     ]:
         object_hash.update(str(s).encode("utf-8"))
     return object_hash.hexdigest()
@@ -583,27 +583,33 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     # 2) Server-side may return different version for the same anonymous component in different workspace,
     #   while workspace information will be normalized in recordings. If we record test1 in workspace A
     #   and test2 in workspace B, the version in recordings can be different.
-    # So we use different on-disk cache base directory for different tests and clear them before running tests.
-    # Given each test has a unique on-disk cache base directory, on-disk cache operations
-    # are thread-safe when concurrently running different tests.
+    # So we use a random (probably unique) on-disk cache base directory for each test, and on-disk cache operations
+    # will be thread-safe when concurrently running different tests.
     mocker.patch(
         "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
-        side_effect=partial(get_client_hash_with_request_node_name, request_node_id=request.node.nodeid)
+        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex)
     )
 
+    # Collect involved resolvers before yield, as fixtures may be destroyed after yield.
     from azure.ai.ml._utils._cache_utils import CachedNodeResolver
-
+    involved_resolvers = []
     for client_fixture_name in ["client", "registry_client"]:
         if client_fixture_name not in request.fixturenames:
             continue
         client: MLClient = request.getfixturevalue(client_fixture_name)
-        CachedNodeResolver(
+        involved_resolvers.append(CachedNodeResolver(
             resolver=None,
             subscription_id=client.subscription_id,
             resource_group_name=client.resource_group_name,
             workspace_name=client.workspace_name,
             registry_name=client._operation_scope.registry_name,
-        ).clear_on_disk_cache()
+        ))
+
+    yield
+
+    # clear on-disk cache after each test
+    for resolver in involved_resolvers:
+        resolver.clear_on_disk_cache()
 
 
 @pytest.fixture

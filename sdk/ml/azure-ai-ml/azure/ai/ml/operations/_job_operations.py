@@ -996,7 +996,12 @@ class JobOperations(_ScopeDependentOperations):
 
                 entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
-                local_path = Path(base_path, entry.path).resolve()
+                # Base path will be None for dsl pipeline component for now. We have 2 choices if the dsl pipeline
+                # function is imported from another file:
+                # 1) Use cwd as default base path;
+                # 2) Use the file path of the dsl pipeline function as default base path.
+                # Pick solution 1 for now as defining input path in the script to submit is a more common scenario.
+                local_path = Path(base_path or Path.cwd(), entry.path).resolve()
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
