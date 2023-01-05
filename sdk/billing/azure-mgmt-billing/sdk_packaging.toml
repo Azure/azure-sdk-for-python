@@ -5,3 +5,4 @@ package_pprint_name = "Billing"
 package_doc_id = "billing"
 is_stable = false
 is_arm = true
+title = "BillingManagementClient"

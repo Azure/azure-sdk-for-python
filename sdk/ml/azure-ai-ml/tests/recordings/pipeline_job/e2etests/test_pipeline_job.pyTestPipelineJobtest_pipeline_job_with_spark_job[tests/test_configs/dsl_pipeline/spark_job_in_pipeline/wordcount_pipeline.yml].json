@@ -244,7 +244,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "954",
+        "Content-Length": "919",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
@@ -270,7 +270,7 @@
             "args": "--input1 ${{inputs.input1}}",
             "name": "azureml_anonymous",
             "description": "Aml Spark wordcount test module",
-            "version": "2b91a81a-18ce-151e-bf24-1f67a804f1ff",
+            "version": "1",
             "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
             "display_name": "Aml Spark wordcount test module",
             "is_deterministic": true,
@@ -288,7 +288,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1748",
+        "Content-Length": "1747",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 04 Jan 2023 04:34:14 GMT",
         "Expires": "-1",
@@ -306,8 +306,8 @@
         "x-request-time": "0.597"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/dd7aaab1-712e-4f04-addc-a8c04b9f0fb7",
-        "name": "dd7aaab1-712e-4f04-addc-a8c04b9f0fb7",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/164e5f9e-e0cf-41ce-ac1a-16c2ecbe55c4",
+        "name": "164e5f9e-e0cf-41ce-ac1a-16c2ecbe55c4",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -317,7 +317,7 @@
           "isAnonymous": true,
           "componentSpec": {
             "name": "azureml_anonymous",
-            "version": "dd7aaab1-712e-4f04-addc-a8c04b9f0fb7",
+            "version": "164e5f9e-e0cf-41ce-ac1a-16c2ecbe55c4",
             "display_name": "Aml Spark wordcount test module",
             "is_deterministic": "True",
             "type": "spark",
@@ -344,10 +344,10 @@
           }
         },
         "systemData": {
-          "createdAt": "2022-12-25T15:14:31.4139214\u002B00:00",
+          "createdAt": "2022-12-30T02:50:11.592391\u002B00:00",
           "createdBy": "Xingzhi Zhang",
           "createdByType": "User",
-          "lastModifiedAt": "2022-12-25T15:14:31.804948\u002B00:00",
+          "lastModifiedAt": "2022-12-30T02:50:11.592391\u002B00:00",
           "lastModifiedBy": "Xingzhi Zhang",
           "lastModifiedByType": "User"
         }
@@ -572,7 +572,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/dd7aaab1-712e-4f04-addc-a8c04b9f0fb7",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/164e5f9e-e0cf-41ce-ac1a-16c2ecbe55c4",
               "entry": {
                 "spark_job_entry_type": "SparkJobPythonEntry",
                 "file": "wordcount.py"
@@ -680,7 +680,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/dd7aaab1-712e-4f04-addc-a8c04b9f0fb7",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/164e5f9e-e0cf-41ce-ac1a-16c2ecbe55c4",
               "entry": {
                 "spark_job_entry_type": "SparkJobPythonEntry",
                 "file": "wordcount.py"

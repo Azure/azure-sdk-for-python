@@ -430,7 +430,7 @@
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "d356320f-9d97-4be7-a1b1-3172218bb40c",
         "x-ms-ratelimit-remaining-subscription-reads": "11922",
@@ -512,7 +512,7 @@
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "bb6f6b90-b144-4565-a06d-b3269c45bde7",
         "x-ms-ratelimit-remaining-subscription-reads": "11921",

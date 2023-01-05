@@ -490,7 +490,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1218",
+        "Content-Length": "1183",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
@@ -504,7 +504,7 @@
           "componentSpec": {
             "name": "azureml_anonymous",
             "description": "parallel component for batch score",
-            "version": "434b5b52-75b9-b8c6-9485-d1a15fb2e571",
+            "version": "1",
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
             "display_name": "BatchScore",
             "is_deterministic": true,
@@ -560,8 +560,8 @@
         "x-request-time": "1.629"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/2e0e07f1-44ce-40d6-bfce-070eeedde84a",
-        "name": "2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/19edf6fb-f114-406b-bfb2-f7181aa691f5",
+        "name": "19edf6fb-f114-406b-bfb2-f7181aa691f5",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -571,7 +571,7 @@
           "isAnonymous": true,
           "componentSpec": {
             "name": "azureml_anonymous",
-            "version": "2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+            "version": "19edf6fb-f114-406b-bfb2-f7181aa691f5",
             "display_name": "BatchScore",
             "is_deterministic": "True",
             "type": "parallel",
@@ -609,10 +609,10 @@
           }
         },
         "systemData": {
-          "createdAt": "2022-12-25T15:20:37.9443024\u002B00:00",
+          "createdAt": "2022-12-30T02:56:47.0213461\u002B00:00",
           "createdBy": "Xingzhi Zhang",
           "createdByType": "User",
-          "lastModifiedAt": "2022-12-25T15:20:38.3114979\u002B00:00",
+          "lastModifiedAt": "2022-12-30T02:56:47.0213461\u002B00:00",
           "lastModifiedBy": "Xingzhi Zhang",
           "lastModifiedByType": "User"
         }
@@ -862,7 +862,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "806",
+        "Content-Length": "771",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
@@ -877,7 +877,7 @@
             "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/3af49689-e732-4d3f-9854-43df40223df3/versions/1",
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
             "name": "azureml_anonymous",
-            "version": "9b1c6fd8-f890-bb5d-94be-41ad1cb3f3b8",
+            "version": "1",
             "display_name": "Convert_To_Mltable_File_Dataset",
             "is_deterministic": true,
             "inputs": {
@@ -916,8 +916,8 @@
         "x-request-time": "1.087"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/60b74f31-9f93-4653-8d60-9c524cc9709c",
-        "name": "60b74f31-9f93-4653-8d60-9c524cc9709c",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/63ec30e6-fc7e-4fcf-a0fa-b8052abbba05",
+        "name": "63ec30e6-fc7e-4fcf-a0fa-b8052abbba05",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -927,7 +927,7 @@
           "isAnonymous": true,
           "componentSpec": {
             "name": "azureml_anonymous",
-            "version": "60b74f31-9f93-4653-8d60-9c524cc9709c",
+            "version": "63ec30e6-fc7e-4fcf-a0fa-b8052abbba05",
             "display_name": "Convert_To_Mltable_File_Dataset",
             "is_deterministic": "True",
             "type": "command",
@@ -952,10 +952,10 @@
           }
         },
         "systemData": {
-          "createdAt": "2022-12-25T15:20:42.0511989\u002B00:00",
+          "createdAt": "2022-12-30T02:56:51.4745364\u002B00:00",
           "createdBy": "Xingzhi Zhang",
           "createdByType": "User",
-          "lastModifiedAt": "2022-12-25T15:20:42.3991902\u002B00:00",
+          "lastModifiedAt": "2022-12-30T02:56:51.4745364\u002B00:00",
           "lastModifiedBy": "Xingzhi Zhang",
           "lastModifiedByType": "User"
         }
@@ -1179,7 +1179,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/19edf6fb-f114-406b-bfb2-f7181aa691f5",
               "mini_batch_size": 1
             },
             "convert_data_node": {
@@ -1197,7 +1197,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/60b74f31-9f93-4653-8d60-9c524cc9709c"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/63ec30e6-fc7e-4fcf-a0fa-b8052abbba05"
             },
             "file_batch_inference_duplicate_node": {
               "type": "parallel",
@@ -1230,7 +1230,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/19edf6fb-f114-406b-bfb2-f7181aa691f5",
               "mini_batch_size": 1
             }
           },
@@ -1340,7 +1340,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/19edf6fb-f114-406b-bfb2-f7181aa691f5",
               "mini_batch_size": 1
             },
             "convert_data_node": {
@@ -1358,7 +1358,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/60b74f31-9f93-4653-8d60-9c524cc9709c"
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/63ec30e6-fc7e-4fcf-a0fa-b8052abbba05"
             },
             "file_batch_inference_duplicate_node": {
               "type": "parallel",
@@ -1391,7 +1391,7 @@
                 }
               },
               "_source": "YAML.JOB",
-              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/2e0e07f1-44ce-40d6-bfce-070eeedde84a",
+              "componentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/19edf6fb-f114-406b-bfb2-f7181aa691f5",
               "mini_batch_size": 1
             }
           },

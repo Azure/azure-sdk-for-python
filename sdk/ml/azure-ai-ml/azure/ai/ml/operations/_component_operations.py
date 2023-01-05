@@ -300,15 +300,16 @@ class ComponentOperations(_ScopeDependentOperations):
                 **self._init_args,
             )
 
-        if not (hasattr(component, "_is_anonymous") and component._is_anonymous):
-            component._set_is_anonymous(kwargs.pop("is_anonymous", False))
+        if not component._is_anonymous:
+            component._is_anonymous = kwargs.pop("is_anonymous", False)
+
         if not skip_validation:
             self._validate(component, raise_on_failure=True)
 
         # Create all dependent resources
         self._resolve_arm_id_or_upload_dependencies(component)
 
-        component._update_anonymous_hash()
+        name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
         result = None
         try:
@@ -320,8 +321,8 @@ class ComponentOperations(_ScopeDependentOperations):
                     "registryName": self._registry_name,
                 }
                 poller = self._version_operation.begin_create_or_update(
-                    name=component.name,
-                    version=component.version,
+                    name=name,
+                    version=version,
                     resource_group_name=self._operation_scope.resource_group_name,
                     registry_name=self._registry_name,
                     body=rest_component_resource,
@@ -335,8 +336,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
             else:
                 result = self._version_operation.create_or_update(
-                    name=rest_component_resource.name,
-                    version=component.version,
+                    name=name,
+                    version=version,
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     body=rest_component_resource,
