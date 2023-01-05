@@ -94,6 +94,7 @@ from ._workspace.diagnose import (
     DiagnoseResult,
     DiagnoseWorkspaceParameters,
 )
+from ._workspace.networking import OutboundRule, ManagedNetwork, IsolationMode, FqdnDestination, ServiceTagDestination, PrivateEndpointDestination
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
@@ -160,6 +161,12 @@ __all__ = [
     "DiagnoseResponseResultValue",
     "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
+    "OutboundRule",
+    "ManagedNetwork", 
+    "IsolationMode",
+    "FqdnDestination", 
+    "ServiceTagDestination", 
+    "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
     "Datastore",
