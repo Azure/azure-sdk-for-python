@@ -15,6 +15,7 @@ from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifi
 from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedPathProperties, StaticWebsite, \
     RetentionPolicy, Metrics, AnalyticsLogging, PathProperties  # pylint: disable=protected-access
 from ._shared.models import StorageErrorCode
+from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
     pass
@@ -105,14 +106,6 @@ def normalize_headers(headers):
             key = key[5:]
         normalized[key.lower().replace('-', '_')] = value
     return normalized
-
-
-def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    try:
-        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
-    except AttributeError:
-        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
 
 
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
