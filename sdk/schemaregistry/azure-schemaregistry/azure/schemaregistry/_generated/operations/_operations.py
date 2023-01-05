@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, cast
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -17,9 +18,11 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
+from azure.core.utils import case_insensitive_dict
 
 from ..rest import schema as rest_schema, schema_groups as rest_schema_groups
 
@@ -49,25 +52,26 @@ class SchemaGroupsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def list(self, **kwargs: Any) -> JSON:
+    def list(self, **kwargs: Any) -> Iterable[str]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
 
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == {
-                    "schemaGroups": [
-                        "str"  # Optional. Array of schema groups.
-                    ]
-                }
+                response == "str"  # Optional.
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -76,40 +80,65 @@ class SchemaGroupsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+                request = rest_schema_groups.build_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        request = rest_schema_groups.build_list_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+            return request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["schemaGroups"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return cast(JSON, deserialized)
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
 
 class SchemaOperations:
@@ -171,27 +200,43 @@ class SchemaOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        if response.status_code == 200:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+            response_headers["Schema-Id-Location"] = self._deserialize(
+                "str", response.headers.get("Schema-Id-Location")
+            )
+            response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+            response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+            response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
 
-        deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes()
+
+        if response.status_code == 200:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+            response_headers["Schema-Id-Location"] = self._deserialize(
+                "str", response.headers.get("Schema-Id-Location")
+            )
+            response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+            response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+            response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)
 
         return cast(Iterator[bytes], deserialized)
 
-    def get_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> JSON:
+    def get_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> Iterable[int]:
         """Get list schema versions.
 
         Gets the list of all versions of one schema.
@@ -201,20 +246,21 @@ class SchemaOperations:
         :type group_name: str
         :param schema_name: Name of schema. Required.
         :type schema_name: str
-        :return: JSON object
-        :rtype: JSON
+        :return: An iterator like instance of int
+        :rtype: ~azure.core.paging.ItemPaged[int]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response == {
-                    "schemaVersions": [
-                        0  # Optional. Array of schema groups.
-                    ]
-                }
+                response == 0  # Optional.
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -223,42 +269,67 @@ class SchemaOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+                request = rest_schema.build_get_versions_request(
+                    group_name=group_name,
+                    schema_name=schema_name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        request = rest_schema.build_get_versions_request(
-            group_name=group_name,
-            schema_name=schema_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+            return request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["schemaVersions"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return cast(JSON, deserialized)
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     def get_schema_version(
         self, group_name: str, schema_name: str, schema_version: int, **kwargs: Any
@@ -310,20 +381,36 @@ class SchemaOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        if response.status_code == 200:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+            response_headers["Schema-Id-Location"] = self._deserialize(
+                "str", response.headers.get("Schema-Id-Location")
+            )
+            response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+            response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+            response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
 
-        deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes()
+
+        if response.status_code == 200:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+            response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
+            response_headers["Schema-Id-Location"] = self._deserialize(
+                "str", response.headers.get("Schema-Id-Location")
+            )
+            response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
+            response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
+            response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)
@@ -354,22 +441,18 @@ class SchemaOperations:
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            415: HttpResponseError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type")  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; serialization=Avro")
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _content = schema_content
-        if not content_type:
-            raise TypeError(
-                "Missing required keyword-only argument: content_type. Known values are:"
-                + "'application/json; serialization=Avro'"
-            )
 
         request = rest_schema.build_query_id_by_content_request(
             group_name=group_name,
@@ -431,22 +514,18 @@ class SchemaOperations:
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            415: HttpResponseError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type")  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; serialization=Avro")
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _content = schema_content
-        if not content_type:
-            raise TypeError(
-                "Missing required keyword-only argument: content_type. Known values are:"
-                + "'application/json; serialization=Avro'"
-            )
 
         request = rest_schema.build_register_request(
             group_name=group_name,

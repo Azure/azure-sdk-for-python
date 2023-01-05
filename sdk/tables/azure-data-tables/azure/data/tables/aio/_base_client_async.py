@@ -44,7 +44,22 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class AsyncTablesBaseClient(AccountHostsMixin):
+    """Base class for TableClient
+
+    :param str endpoint: A URL to an Azure Tables account.
+    :keyword credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
+    :keyword api_version: Specifies the version of the operation to use for this request. Default value
+        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,

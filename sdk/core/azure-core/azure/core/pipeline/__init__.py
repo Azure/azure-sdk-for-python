@@ -26,12 +26,13 @@
 
 import abc
 from typing import TypeVar, Generic
-from contextlib import AbstractContextManager   # pylint: disable=unused-import
+from contextlib import AbstractContextManager  # pylint: disable=unused-import
 
 ABC = abc.ABC
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
 
 class PipelineContext(dict):
     """A context object carried by the pipeline request and response containers.
@@ -44,9 +45,8 @@ class PipelineContext(dict):
     :param transport: The HTTP transport type.
     :param kwargs: Developer-defined keyword arguments.
     """
-    _PICKLE_CONTEXT = {
-        'deserialized_data'
-    }
+
+    _PICKLE_CONTEXT = {"deserialized_data"}
 
     def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
         self.transport = transport
@@ -56,7 +56,7 @@ class PipelineContext(dict):
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        del state['transport']
+        del state["transport"]
         return state
 
     def __reduce__(self):
@@ -82,7 +82,7 @@ class PipelineContext(dict):
     def __setitem__(self, key, item):
         # If reloaded from pickle, _protected might not be here until restored by pickle
         # this explains the hasattr test
-        if hasattr(self, '_protected') and key in self._protected:
+        if hasattr(self, "_protected") and key in self._protected:
             raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 
@@ -106,8 +106,7 @@ class PipelineContext(dict):
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
-        """Removes specified key and returns the value.
-        """
+        """Removes specified key and returns the value."""
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)
@@ -155,7 +154,14 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
         self.http_response = http_response
         self.context = context
 
+
 from ._base import Pipeline  # pylint: disable=wrong-import-position
 from ._base_async import AsyncPipeline  # pylint: disable=wrong-import-position
 
-__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext", "AsyncPipeline"]
+__all__ = [
+    "Pipeline",
+    "PipelineRequest",
+    "PipelineResponse",
+    "PipelineContext",
+    "AsyncPipeline",
+]

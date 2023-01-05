@@ -37,9 +37,8 @@ class DeleteImagesAsync(object):
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
-        async with client:
+        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
             async for repository in client.list_repository_names():
                 print(repository)
 
