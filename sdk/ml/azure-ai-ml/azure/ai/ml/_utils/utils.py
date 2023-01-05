@@ -932,3 +932,23 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resour
             target=ErrorTarget.GENERAL,
             error_category=ErrorCategory.USER_ERROR,
         )
+
+
+@contextmanager
+def open_shared_file(file: str, mode: str = 'r', **kwargs) -> IO:
+    """Open file with specific mode and return the file object.
+
+    :param file: Path to the file.
+    :param mode: Mode to open the file with.
+    :return: The file object.
+    """
+    origin_mask = os.umask(0)
+    try:
+        def opener(path, flags):
+            # w+r for owner, group and others
+            return os.open(path, flags, 0o666)
+
+        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
+            yield f
+    finally:
+        os.umask(origin_mask)
