@@ -12,15 +12,14 @@ from azure.core.exceptions import ResourceNotFoundError
 from .._util import _DSL_TIMEOUT_SECOND
 
 
+@pytest.mark.skipif(
+    condition=not is_live(), reason="registry test, may fail in playback mode during retrieving registry client"
+)
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "recorded_test")
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="registry test, may fail in playback mode during retrieving registry client",
-    )
     def test_pipeline_job_create_with_registered_component_on_registry(self, pipelines_registry_client: MLClient):
         local_component = load_component("./tests/test_configs/components/basic_component_code_local_path.yml")
         try:
@@ -38,8 +37,6 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert pipelines_registry_client.jobs.validate(pipeline_job).passed
 
-    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
-                             "'Unable to find a record for the request' in playback mode")
     def test_pipeline_with_local_component_and_registry_model_as_input(self, registry_client: MLClient, client: MLClient):
         # get dataset
         test_data = Input(
@@ -67,8 +64,6 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
-                             "'Unable to find a record for the request' in playback mode")
     def test_pipeline_with_local_component_and_registry_model_as_input_with_model_input(
             self,
             registry_client: MLClient,
@@ -101,8 +96,6 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
-                             "'Unable to find a record for the request' in playback mode")
     def test_pipeline_with_registry_component_and_model_as_input(self, registry_client: MLClient, client: MLClient):
         # get dataset
         test_data = Input(
