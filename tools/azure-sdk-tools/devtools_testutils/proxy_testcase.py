@@ -32,7 +32,10 @@ if TYPE_CHECKING:
 # To learn about how to migrate SDK tests to the test proxy, please refer to the migration guide at
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 
-http_client = PoolManager(retries=Retry(total=3, raise_on_status=False))
+if os.getenv("REQUESTS_CA_BUNDLE"):
+    http_client = PoolManager(retries=Retry(total=3, raise_on_status=False), cert_reqs="CERT_REQUIRED", ca_certs=os.getenv("REQUESTS_CA_BUNDLE"))
+else:
+    http_client = PoolManager(retries=Retry(total=3, raise_on_status=False))
 
 # defaults
 RECORDING_START_URL = "{}/record/start".format(PROXY_URL)

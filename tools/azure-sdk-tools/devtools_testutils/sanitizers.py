@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 
 from urllib3 import PoolManager, Retry
-import json
+import json, os
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
@@ -15,9 +15,10 @@ from .helpers import get_recording_id, is_live, is_live_and_not_recording
 if TYPE_CHECKING:
     from typing import Any, Iterable, Optional
 
-
-
-http_client = PoolManager(retries=Retry(total=3, raise_on_status=True))
+if os.getenv("REQUESTS_CA_BUNDLE"):
+    http_client = PoolManager(retries=Retry(total=3, raise_on_status=True), cert_reqs="CERT_REQUIRED", ca_certs=os.getenv("REQUESTS_CA_BUNDLE"))
+else:
+    http_client = PoolManager(retries=Retry(total=3, raise_on_status=True))
 
 # This file contains methods for adjusting many aspects of test proxy behavior:
 #
