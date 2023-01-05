@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, cast
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -85,13 +85,13 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if self._authorization_code:
-            token: Optional[AccessToken] = await self._client.obtain_token_by_authorization_code(
+            token = await self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
             )
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = None
+        token = cast(AccessToken, None)
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             if "secret" in refresh_token:
                 token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
