@@ -75,14 +75,12 @@ class WebPubSubClientCredential:
         return self._client_access_url_provider()
 
 
-class WebPubSubClient:
+class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient."""
 
     @overload
     def __init__(
-        self,
-        credential: WebPubSubClientCredential,
-        options: Optional[WebPubSubClientOptions] = None,
+        self, credential: WebPubSubClientCredential, options: Optional[WebPubSubClientOptions] = None, **kwargs: Any
     ) -> None:
         """WebPubSubClient
         :param credential: The credential to use when connecting. Required.
@@ -92,11 +90,7 @@ class WebPubSubClient:
         """
 
     @overload
-    def __init__(
-        self,
-        credential: str,
-        options: Optional[WebPubSubClientOptions] = None,
-    ) -> None:
+    def __init__(self, credential: str, options: Optional[WebPubSubClientOptions] = None, **kwargs: Any) -> None:
         """WebPubSubClient
         :param credential: The url to connect. Required.
         :type credential: str
@@ -104,11 +98,19 @@ class WebPubSubClient:
         :type options: ~azure.webpubsub.client.WebPubSubClientOptions
         """
 
+    # pylint: disable=unused-argument
     def __init__(
         self,
         credential: Union[WebPubSubClientCredential, str],
         options: Optional[WebPubSubClientOptions] = None,
+        **kwargs: Any,
     ) -> None:
+        """WebPubSubClient
+        :param credential: The url to connect or credential to use when connecting. Required.
+        :type credential: str
+        :param options: The client options
+        :type options: ~azure.webpubsub.client.WebPubSubClientOptions
+        """
         if isinstance(credential, WebPubSubClientCredential):
             self._credential = credential
         elif isinstance(credential, str):
@@ -147,16 +149,18 @@ class WebPubSubClient:
         self._is_initial_connected = False
         self._is_stopping = False
         self._last_close_event: Optional[CloseEvent] = None
-        self._reconnection_token = None
+        self._reconnection_token: Optional[str] = None
         self._cv: threading.Condition = threading.Condition()
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
+        self._ack_timeout: float = kwargs.pop("ack_timeout", 60.0)
+        self._start_timeout: float = kwargs.pop("start_timeout", 60.0)
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
         return self._ack_id
 
-    def _send_message(self, message: WebPubSubMessage):
+    def _send_message(self, message: WebPubSubMessage) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
             raise Exception("The connection is not connected.")
@@ -167,7 +171,7 @@ class WebPubSubClient:
         self,
         message_provider: Callable[[int], WebPubSubMessage],
         ack_id: Optional[int] = None,
-    ):
+    ) -> None:
         if ack_id is None:
             ack_id = self._next_ack_id()
 
@@ -184,7 +188,7 @@ class WebPubSubClient:
 
         # wait for ack from service
         with self._ack_map[ack_id].cv:
-            self._ack_map[ack_id].cv.wait(60.0)
+            self._ack_map[ack_id].cv.wait(self._ack_timeout)
             options = self._ack_map.pop(ack_id)
             if options.error_detail is not None:
                 raise SendMessageError(
@@ -196,7 +200,7 @@ class WebPubSubClient:
             self._group_map[name] = WebPubSubGroup(name=name)
         return self._group_map[name]
 
-    def join_group(self, group_name: str, options: Optional[JoinGroupOptions] = None):
+    def join_group(self, group_name: str, options: Optional[JoinGroupOptions] = None) -> None:
         """Join the client to group.
 
         :param group_name: The group name. Required.
@@ -212,13 +216,13 @@ class WebPubSubClient:
 
         self._retry(join_group_attempt)
 
-    def _join_group_core(self, group_name: str, options: Optional[JoinGroupOptions] = None):
+    def _join_group_core(self, group_name: str, options: Optional[JoinGroupOptions] = None) -> None:
         self._send_message_with_ack_id(
             message_provider=lambda id: JoinGroupMessage(group=group_name, ack_id=id),
             ack_id=options.ack_id if options else None,
         )
 
-    def leave_group(self, group_name: str, options: Optional[LeaveGroupOptions] = None):
+    def leave_group(self, group_name: str, options: Optional[LeaveGroupOptions] = None) -> None:
         """Leave the client from group
         :param group_name: The group name. Required.
         :type group_name: str.
@@ -242,7 +246,7 @@ class WebPubSubClient:
         content: Any,
         data_type: WebPubSubDataType,
         options: Optional[SendEventOptions] = None,
-    ):
+    ) -> None:
         """Send custom event to server
         :param event_name: The event name. Required.
         :type event_name: str.
@@ -273,7 +277,7 @@ class WebPubSubClient:
         content: Any,
         data_type: WebPubSubDataType,
         options: Optional[SendEventOptions] = None,
-    ):
+    ) -> None:
         fire_and_forget = options.fire_and_forget if options else False
         if not fire_and_forget:
             self._send_message_with_ack_id(
@@ -290,7 +294,7 @@ class WebPubSubClient:
         content: Any,
         data_type: WebPubSubDataType,
         options: Optional[SendToGroupOptions] = None,
-    ):
+    ) -> None:
         """Send message to group.
         :param group_name: The group name. Required.
         :type group_name: str.
@@ -324,7 +328,7 @@ class WebPubSubClient:
             try:
                 func()
                 return
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
                 delay_in_ms = self._message_retry_policy.next_retry_delay_in_ms(retry_attempt)
                 if delay_in_ms is None:
@@ -354,13 +358,13 @@ class WebPubSubClient:
                 self._start_from_restarting()
                 success = True
                 break
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed %s", e)
                 attempt = attempt + 1
                 delay_in_ms = self._reconnect_retry_policy.next_retry_delay_in_ms(attempt)
                 if not delay_in_ms:
                     break
-                _LOGGER.debug(f"Delay time for reconnect attempt {attempt}: {delay_in_ms}")
+                _LOGGER.debug("Delay time for reconnect attempt %d: %d", attempt, delay_in_ms)
                 delay(delay_in_ms)
         if not success:
             self._handle_connection_stopped()
@@ -395,7 +399,7 @@ class WebPubSubClient:
 
     def is_connected(self) -> bool:
         """check whether the client is still coneected to server after start"""
-        return (
+        return bool(
             self._state == WebPubSubClientState.CONNECTED
             and self._thread
             and self._thread.is_alive()
@@ -403,7 +407,7 @@ class WebPubSubClient:
             and self._ws.sock
         )
 
-    def _connect(self, url: str):
+    def _connect(self, url: str):  # pylint: disable=too-many-statements
         def on_open(_: Any):
             if self._is_stopping:
                 try:
@@ -438,7 +442,7 @@ class WebPubSubClient:
                         if group.is_joined:
                             try:
                                 self._join_group_core(group_name)
-                            except Exception as e:
+                            except Exception as e:  # pylint: disable=broad-except
                                 self._call_back(
                                     CallBackType.REJOIN_GROUP_FAILED,
                                     OnRestoreGroupFailedArgs(group=group_name, error=e),
@@ -484,7 +488,7 @@ class WebPubSubClient:
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
             if self._state == WebPubSubClientState.CONNECTED:
-                _LOGGER.info(f"WebSocket connection closed. Code: {close_status_code}, Reason: {close_msg}")
+                _LOGGER.info("WebSocket connection closed. Code: %d, Reason: %s", close_status_code, close_msg)
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
@@ -517,11 +521,11 @@ class WebPubSubClient:
                     try:
                         self._connect(recovery_url)
                         return
-                    except:
+                    except:  # pylint: disable=bare-except
                         delay(1000)
                     i = i + 1
 
-                _LOGGER.warning("Recovery attempts failed more then 30 seconds or the client is stopping")
+                _LOGGER.warning("Recovery attempts failed more than 30 times or the client is stopping")
                 self._handle_connection_close_and_no_recovery()
             else:
                 _LOGGER.debug("WebSocket closed before open")
@@ -542,7 +546,7 @@ class WebPubSubClient:
         self._thread = threading.Thread(target=self._ws.run_forever)
         self._thread.start()
         with self._cv:
-            self._cv.wait(timeout=60.0)
+            self._cv.wait(timeout=self._start_timeout)
         if not self.is_connected():
             raise Exception("Fail to start client")
 
@@ -579,7 +583,7 @@ class WebPubSubClient:
         self._url = self._credential.get_client_access_url()
         self._connect(self._url)
 
-    def start(self):
+    def start(self) -> None:
         """start the client and connect to service"""
 
         if self._is_stopping:
@@ -594,7 +598,7 @@ class WebPubSubClient:
             self._is_stopping = False
             raise e
 
-    def stop(self):
+    def stop(self) -> None:
         """stop the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:

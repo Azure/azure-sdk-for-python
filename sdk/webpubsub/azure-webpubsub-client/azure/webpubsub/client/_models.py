@@ -354,7 +354,7 @@ class WebPubSubClientProtocol:
                 )
             if message["event"] == "disconnected":
                 return DisconnectedMessage(message=message["message"])
-            raise Exception("wrong message event type: {}".format(message["event"]))
+            raise Exception(f"wrong message event type: {message['event']}")
         if message["type"] == "message":
             if message["from"] == "group":
                 data = parse_payload(message["data"], message["dataType"])
@@ -370,14 +370,14 @@ class WebPubSubClientProtocol:
                 return ServerDataMessage(
                     data=data, data_type=message["dataType"], sequence_id=message.get("sequenceId")
                 )
-            raise Exception("wrong message from: {}".format(message["from"]))
+            raise Exception(f"wrong message from: {message['from']}")
         if message["type"] == "ack":
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
                 error=message.get("error"),
             )
-        raise Exception("wrong message type: {}".format(message["type"]))
+        raise Exception(f"wrong message type: {message['type']}")
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
