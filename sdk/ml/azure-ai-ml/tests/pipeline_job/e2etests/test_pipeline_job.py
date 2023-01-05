@@ -86,15 +86,13 @@ class TestPipelineJob(AzureRecordedTestCase):
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
             params_override=params_override,
         )
-        assert (
-            pipeline_job.jobs.get("a").environment
-            == "azureml://registries/sdk-test/environments/openMPIUbuntu/versions/1"
-        )
+        # registry sdk-test may be sanitized as other name, so use two assertions to avoid this issue
+        assert str(pipeline_job.jobs["a"].environment).startswith("azureml://registries/")
+        assert str(pipeline_job.jobs["a"].environment).endswith("/environments/openMPIUbuntu/versions/1")
         job = assert_job_cancel(pipeline_job, client)
         assert job.name == params_override[0]["name"]
-        assert (
-            job.jobs.get("a").component == "azureml://registries/sdk-test/components/my_hello_world_asset/versions/1"
-        )
+        assert str(job.jobs["a"].component).startswith("azureml://registries/")
+        assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
     @pytest.mark.parametrize(
         "pipeline_job_path",
