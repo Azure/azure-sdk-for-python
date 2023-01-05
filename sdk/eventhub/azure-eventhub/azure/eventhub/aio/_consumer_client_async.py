@@ -135,7 +135,7 @@ class EventHubConsumerClient(
     :paramtype connection_verify: str or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
-    :paramtype uamqp_transport: bool or None
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -315,7 +315,7 @@ class EventHubConsumerClient(
         :paramtype connection_verify: str or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
-        :paramtype uamqp_transport: bool or None
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
