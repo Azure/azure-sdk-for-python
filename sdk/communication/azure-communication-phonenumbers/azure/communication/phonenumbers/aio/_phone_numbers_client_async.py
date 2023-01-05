@@ -208,10 +208,8 @@ class PhoneNumbersClient(object):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
-        
         if not phone_number:
             raise ValueError("phone_number can't be empty")
-        
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             calling,
