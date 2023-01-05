@@ -29,7 +29,7 @@ PIPELINE_SETTINGS = {
 }
 
 
-def get_request(scope: str, identity_config: Dict):
+def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
     url = (
         os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
         + IMDS_TOKEN_PATH
@@ -43,7 +43,7 @@ class ImdsCredential(GetTokenMixin):
     def __init__(self, **kwargs: Any) -> None:
         super(ImdsCredential, self).__init__()
 
-        self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+        self._client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
         else:
