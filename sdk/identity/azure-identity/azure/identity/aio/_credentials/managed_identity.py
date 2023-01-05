@@ -4,14 +4,16 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, Any
+from typing import TYPE_CHECKING, Optional, Any
 
 from azure.core.credentials import AccessToken
-from azure.core.credentials_async import AsyncTokenCredential
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +35,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._credential: Optional[AsyncTokenCredential] = None
+        self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):

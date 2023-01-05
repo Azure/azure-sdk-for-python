@@ -3,13 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
+if TYPE_CHECKING:
+    from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,11 +39,12 @@ class ChainedTokenCredential:
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, *credentials: TokenCredential) -> None:
+    def __init__(self, *credentials):
+        # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
 
-        self._successful_credential: Optional[TokenCredential] = None
+        self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 
     def __enter__(self):

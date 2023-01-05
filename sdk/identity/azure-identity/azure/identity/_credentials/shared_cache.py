@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
-from azure.core.credentials import TokenCredential, AccessToken
+from typing import TYPE_CHECKING, Any, Optional
+from azure.core.credentials import AccessToken
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
@@ -12,7 +12,8 @@ from .._internal import AadClient, AadClientBase
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
-
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 class SharedTokenCacheCredential:
     """Authenticates using tokens in the local cache shared between Microsoft applications.
@@ -34,7 +35,7 @@ class SharedTokenCacheCredential:
 
     def __init__(self, username: Optional[str] = None, **kwargs: Any) -> None:
         if "authentication_record" in kwargs:
-            self._credential: TokenCredential = SilentAuthenticationCredential(**kwargs)
+            self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 

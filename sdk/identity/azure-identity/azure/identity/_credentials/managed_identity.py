@@ -4,12 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, Any
+from typing import Optional, TYPE_CHECKING, Any
 
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +34,7 @@ class ManagedIdentityCredential:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._credential: Optional[TokenCredential] = None
+        self._credential = None  # type: Optional[TokenCredential]
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
                 if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):

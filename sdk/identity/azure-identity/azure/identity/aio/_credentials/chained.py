@@ -4,15 +4,17 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, Any
+from typing import Optional, TYPE_CHECKING, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
-from azure.core.credentials_async import AsyncTokenCredential
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 from ..._internal import within_credential_chain
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,11 +29,11 @@ class ChainedTokenCredential(AsyncContextManager):
     :type credentials: :class:`azure.core.credentials.AsyncTokenCredential`
     """
 
-    def __init__(self, *credentials: AsyncTokenCredential) -> None:
+    def __init__(self, *credentials: "AsyncTokenCredential") -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
 
-        self._successful_credential: Optional[AsyncTokenCredential] = None
+        self._successful_credential = None  # type: Optional[AsyncTokenCredential]
         self.credentials = credentials
 
     async def close(self) -> None:

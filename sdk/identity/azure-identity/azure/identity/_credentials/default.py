@@ -4,9 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, Any
+from typing import List, TYPE_CHECKING, Any
 
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
 from .azure_powershell import AzurePowerShellCredential
@@ -18,6 +18,8 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .vscode import VisualStudioCodeCredential
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -110,7 +112,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials: List[TokenCredential] = []
+        credentials = []  # type: List[TokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
