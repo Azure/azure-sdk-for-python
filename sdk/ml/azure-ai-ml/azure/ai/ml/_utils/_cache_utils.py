@@ -4,7 +4,6 @@
 import hashlib
 import logging
 import os.path
-import shutil
 import tempfile
 import threading
 from collections import defaultdict
@@ -324,13 +323,6 @@ class CachedNodeResolver(object):
         self._resolve_cache_contents(cache_contents_to_resolve, resolver=self._resolver)
 
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
-
-    def clear_on_disk_cache(self):
-        """Clear on disk cache for current client."""
-        if is_on_disk_cache_enabled() and is_private_preview_enabled():
-            self._lock.acquire()
-            shutil.rmtree(self._on_disk_cache_dir, ignore_errors=True)
-            self._lock.release()
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
         """Register a node with its component to resolve.

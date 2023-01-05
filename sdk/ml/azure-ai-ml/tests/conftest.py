@@ -547,6 +547,13 @@ def get_client_hash_with_request_node_name(
     return object_hash.hexdigest()
 
 
+def clear_on_disk_cache(cached_resolver):
+    """Clear on disk cache for current client."""
+    cached_resolver._lock.acquire()
+    shutil.rmtree(cached_resolver._on_disk_cache_dir, ignore_errors=True)
+    cached_resolver._lock.release()
+
+
 @pytest.fixture
 def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     """Mock the component hash function.
@@ -609,7 +616,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
 
     # clear on-disk cache after each test
     for resolver in involved_resolvers:
-        resolver.clear_on_disk_cache()
+        clear_on_disk_cache(resolver)
 
 
 @pytest.fixture
