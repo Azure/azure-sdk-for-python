@@ -32,7 +32,7 @@ async def send_data_message(producer: EventHubProducerClient) -> None:
         delivery_annotations=delivery_annotations,
         application_properties=application_properties
     )
-    batch: EventDataBatch = await producer.create_batch()
+    batch = await producer.create_batch()
     batch.add(data_message)
     await producer.send_batch(batch)
     print("Message of data body sent.")

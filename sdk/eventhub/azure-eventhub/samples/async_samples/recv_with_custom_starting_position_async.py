@@ -42,7 +42,7 @@ async def on_error(partition_context: PartitionContext, error: Exception) -> Non
 
 async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print(f"Received event: {event.body_as_str()} from partition: {partition_context.partition_id}.") # type: ignore
+    print(f"Received event: {event.body_as_str()} from partition: {partition_context.partition_id}.")
     await partition_context.update_checkpoint(event)
 
 
