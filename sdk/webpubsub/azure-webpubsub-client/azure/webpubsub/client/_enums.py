@@ -18,14 +18,6 @@ class WebPubSubClientState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVERING = "Recovering"
 
 
-class DownstreamMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ACK = "ack"
-    CONNECTED = "connected"
-    DISCONNECTED = "disconnected"
-    GROUP_DATA = "groupData"
-    SERVER_DATA = "serverData"
-
-
 class UpstreamMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOIN_GROUP = "joinGroup"
     LEAVE_GROUP = "leaveGroup"
