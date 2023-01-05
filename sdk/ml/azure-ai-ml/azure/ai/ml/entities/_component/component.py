@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import re
 import tempfile
 from contextlib import contextmanager
 from os import PathLike
@@ -26,7 +27,7 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
     AzureMLResourceType,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -265,7 +266,7 @@ class Component(
         lower2original_kwargs = {}
 
         for name in io_dict.keys():
-            if not name.isidentifier():
+            if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
             # validate name conflict
