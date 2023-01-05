@@ -79,11 +79,6 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
             ),
             (
-                    # items with empty dict as content
-                    [{}],
-                    "but got <class \'dict\'> for {}"
-            ),
-            (
                     # item meta not match
                     [
                         {"component_in_path": "test_path1"},
@@ -102,7 +97,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                     # invalid JSON string items
 
                     '[{"component_in_number": 1}, {}]',
-                    "Items has to be list/dict of non-empty dict as value"
+                    "Items should to have same keys with body inputs"
             )
         ],
     )
@@ -122,6 +117,27 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         with pytest.raises(ValidationException) as e:
             invalid_pipeline()
         assert error_message in str(e.value)
+    @pytest.mark.parametrize(
+        "items",
+        (
+            # items with empty dict as content
+            [{}],
+        ),
+    )
+    def test_dsl_parallel_for_pipeline_legal_items_content(self, items):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def valid_pipeline():
+            body = basic_component()
+            parallel_for(
+                body=body,
+                items=items,
+            )
+
+        valid_pipeline()
 
     def test_dsl_parallel_for_pipeline_items(self):
         # TODO: submit those pipelines
