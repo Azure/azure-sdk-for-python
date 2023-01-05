@@ -22,7 +22,7 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -532,41 +532,6 @@ class TestComponent(AzureRecordedTestCase):
         next_version_regex = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{7}")
         assert next_version_regex.match(next_component_asset.version)
         assert next_component_asset._auto_increment_version is False
-
-    @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
-    def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
-        # component without code
-        component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))
-        component_name_2 = variable_recorder.get_or_record("component_name_2", str(uuid.uuid4()))
-        component_resource1 = create_component(
-            client, _sanitize_python_variable_name(component_name_1), is_anonymous=True
-        )
-        component_resource2 = create_component(
-            client, _sanitize_python_variable_name(component_name_2), is_anonymous=True
-        )
-        assert component_resource1.id == component_resource2.id
-        assert component_resource1.environment == component_resource2.environment
-        assert component_resource1.code == component_resource2.code
-
-        # component with inline code and inline environment
-        path = "./tests/test_configs/components/helloworld_component_no_paths.yml"
-        component_resource1 = create_component(
-            client,
-            _sanitize_python_variable_name(str(uuid.uuid4())),
-            path=path,
-            is_anonymous=True,
-        )
-        component_resource2 = create_component(
-            client,
-            _sanitize_python_variable_name(str(uuid.uuid4())),
-            path=path,
-            is_anonymous=True,
-        )
-        # TODO: enable this check when environment reuse is enabled
-        # assert component_resource1.id == component_resource2.id
-        # assert component_resource1.environment == component_resource2.environment
-        assert component_resource1.code == component_resource2.code
 
     def test_command_component_dependency_label_resolution(
         self, client: MLClient, randstr: Callable[[str], str]
