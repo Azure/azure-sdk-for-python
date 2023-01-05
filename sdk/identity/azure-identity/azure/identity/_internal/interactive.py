@@ -83,13 +83,12 @@ class InteractiveCredential(MsalCredential, ABC):
             *,
             authentication_record: Optional[AuthenticationRecord] = None,
             disable_automatic_authentication: bool = False,
-            tenant_id: Optional[str] = None,
             **kwargs: Any) -> None:
         self._disable_automatic_authentication = disable_automatic_authentication
         self._auth_record = authentication_record
         if self._auth_record:
             kwargs.pop("client_id", None)  # authentication_record overrides client_id argument
-            tenant_id = tenant_id or self._auth_record.tenant_id
+            tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
             super(InteractiveCredential, self).__init__(
                 client_id=self._auth_record.client_id,
                 authority=self._auth_record.authority,
