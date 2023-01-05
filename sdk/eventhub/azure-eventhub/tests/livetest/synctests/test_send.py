@@ -296,6 +296,8 @@ def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport
     assert len(root_span.children[0].children[2].children) == 1
     assert root_span.children[0].children[2].children[0].name == "Azure.EventHubs.message"
     assert root_span.children[0].children[2].children[0].kind == SpanKind.PRODUCER
+    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
+    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest
