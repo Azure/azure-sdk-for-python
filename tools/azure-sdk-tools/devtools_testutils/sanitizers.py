@@ -556,12 +556,12 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
     if is_live():
         return
 
-    for key in headers:
-        if headers[key] is None:
-            headers.popitem(key)
-
     headers_to_send = {"x-abstraction-identifier": matcher}
-    headers_to_send.update(headers)
+
+    for key in headers:
+        if headers[key] is not None:
+            headers_to_send[key] = headers[key]
+
     http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, body=json.dumps(parameters).encode('utf-8'))
 
 
@@ -579,7 +579,12 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, body=json.dumps(parameters).encode('utf-8'))
+    headers_to_send = {}
+    for key in headers:
+        if headers[key] is not None:
+            headers_to_send[key] = headers[key]
+
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers_to_send, body=json.dumps(parameters).encode('utf-8'))
 
 
 
@@ -595,7 +600,12 @@ def _send_reset_request(headers: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    request = http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers)
+    headers_to_send = {}
+    for key in headers:
+        if headers[key] is not None:
+            headers_to_send[key] = headers[key]
+
+    request = http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers_to_send)
     
 
 
