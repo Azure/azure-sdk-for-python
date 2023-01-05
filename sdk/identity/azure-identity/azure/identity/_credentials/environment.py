@@ -14,7 +14,7 @@ from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
-EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
+EnvironmentCredentialTypes = Union[CertificateCredential, ClientSecretCredential, UsernamePasswordCredential]
 
 _LOGGER = logging.getLogger(__name__)
 
