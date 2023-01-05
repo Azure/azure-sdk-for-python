@@ -72,7 +72,7 @@ async def on_event(partition_context: PartitionContext, event: Optional[EventDat
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
     print(f"Received event from partition: {partition_context.partition_id}")
-    raw_amqp_message = event.raw_amqp_message # type: ignore
+    raw_amqp_message = event.raw_amqp_message
     if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
         print("Message of data body received. Body is:")
         for data_section in raw_amqp_message.body:

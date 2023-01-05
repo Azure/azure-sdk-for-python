@@ -41,8 +41,8 @@ class CustomizedSASCredential(object):
         :param float expiry: The epoch timestamp
 
         """
-        self.token: str = token
-        self.expiry: float = expiry
+        self.token = token
+        self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):

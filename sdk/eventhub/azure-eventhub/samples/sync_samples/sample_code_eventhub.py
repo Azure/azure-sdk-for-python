@@ -18,15 +18,12 @@ Examples to show basic use case of python azure-eventhub SDK, including:
 
 import time
 import logging
-import os
-from typing import TYPE_CHECKING, Optional, List
-from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 
-if TYPE_CHECKING:
-    from azure.eventhub import EventData, EventDataBatch, PartitionContext
 
-def example_create_eventhub_producer_client() -> EventHubProducerClient:
+def example_create_eventhub_producer_client():
     # [START create_eventhub_producer_client_from_conn_str_sync]
+    import os
+    from azure.eventhub import EventHubProducerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
     producer = EventHubProducerClient.from_connection_string(
@@ -36,6 +33,8 @@ def example_create_eventhub_producer_client() -> EventHubProducerClient:
     # [END create_eventhub_producer_client_from_conn_str_sync]
 
     # [START create_eventhub_producer_client_sync]
+    import os
+    from azure.eventhub import EventHubProducerClient, EventHubSharedKeyCredential
 
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
@@ -52,8 +51,10 @@ def example_create_eventhub_producer_client() -> EventHubProducerClient:
     return producer
 
 
-def example_create_eventhub_consumer_client() -> EventHubConsumerClient:
-    # [START create_eventhub_consumer_client_from_conn_str_sync] 
+def example_create_eventhub_consumer_client():
+    # [START create_eventhub_consumer_client_from_conn_str_sync]
+    import os
+    from azure.eventhub import EventHubConsumerClient
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
     consumer = EventHubConsumerClient.from_connection_string(
@@ -64,7 +65,9 @@ def example_create_eventhub_consumer_client() -> EventHubConsumerClient:
     # [END create_eventhub_consumer_client_from_conn_str_sync]
 
     # [START create_eventhub_consumer_client_sync]
-    
+    import os
+    from azure.eventhub import EventHubConsumerClient, EventHubSharedKeyCredential
+
     fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
     eventhub_name = os.environ['EVENT_HUB_NAME']
     shared_access_policy = os.environ['EVENT_HUB_SAS_POLICY']
@@ -80,13 +83,14 @@ def example_create_eventhub_consumer_client() -> EventHubConsumerClient:
     return consumer
 
 
-def example_eventhub_sync_send_and_receive() -> None:
-    producer: EventHubProducerClient = example_create_eventhub_producer_client()
-    consumer: EventHubConsumerClient = example_create_eventhub_consumer_client()
+def example_eventhub_sync_send_and_receive():
+    producer = example_create_eventhub_producer_client()
+    consumer = example_create_eventhub_consumer_client()
     try:
         logger = logging.getLogger("azure.eventhub")
 
         # [START create_event_data]
+        from azure.eventhub import EventData
 
         event_data = EventData("String data")
         event_data = EventData(b"Bytes data")
@@ -94,7 +98,7 @@ def example_eventhub_sync_send_and_receive() -> None:
         # [END create_event_data]
 
         # [START eventhub_producer_client_create_batch_sync]
-        event_data_batch: EventDataBatch = producer.create_batch()
+        event_data_batch = producer.create_batch()
         while True:
             try:
                 event_data_batch.add(EventData('Message inside EventBatchData'))
@@ -123,7 +127,7 @@ def example_eventhub_sync_send_and_receive() -> None:
         # [START eventhub_consumer_client_receive_sync]
         logger = logging.getLogger("azure.eventhub")
 
-        def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
+        def on_event(partition_context, event):
             # Put your code here.
             # If the operation is i/o intensive, multi-thread will have better performance.
             logger.info("Received event from partition: {}".format(partition_context.partition_id))
@@ -135,7 +139,7 @@ def example_eventhub_sync_send_and_receive() -> None:
         # [START eventhub_consumer_client_receive_batch_sync]
         logger = logging.getLogger("azure.eventhub")
 
-        def on_event_batch(partition_context: PartitionContext, event_batch: List[EventData]):
+        def on_event_batch(partition_context, event_batch):
             # Put your code here.
             # If the operation is i/o intensive, multi-thread will have better performance.
             logger.info("Received events from partition: {}".format(partition_context.partition_id))
@@ -147,8 +151,11 @@ def example_eventhub_sync_send_and_receive() -> None:
         pass
 
 
-def example_eventhub_producer_send_and_close() -> None:
+def example_eventhub_producer_send_and_close():
     # [START eventhub_producer_client_close_sync]
+    import os
+    from azure.eventhub import EventHubProducerClient, EventData
+
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
 
@@ -157,7 +164,7 @@ def example_eventhub_producer_send_and_close() -> None:
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
     try:
-        event_data_batch: EventDataBatch = producer.create_batch()
+        event_data_batch = producer.create_batch()
 
         while True:
             try:
@@ -174,13 +181,15 @@ def example_eventhub_producer_send_and_close() -> None:
     # [END eventhub_producer_client_close_sync]
 
 
-def example_eventhub_consumer_receive_and_close() -> None:
+def example_eventhub_consumer_receive_and_close():
     # [START eventhub_consumer_client_close_sync]
+    import os
     import threading
 
     event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
     eventhub_name = os.environ['EVENT_HUB_NAME']
 
+    from azure.eventhub import EventHubConsumerClient
     consumer = EventHubConsumerClient.from_connection_string(
         conn_str=event_hub_connection_str,
         consumer_group="$Default",
@@ -189,7 +198,7 @@ def example_eventhub_consumer_receive_and_close() -> None:
 
     logger = logging.getLogger("azure.eventhub")
 
-    def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
+    def on_event(partition_context, event):
         # Put your code here.
         # If the operation is i/o intensive, multi-thread will have better performance.
         logger.info("Received event from partition: {}".format(partition_context.partition_id))

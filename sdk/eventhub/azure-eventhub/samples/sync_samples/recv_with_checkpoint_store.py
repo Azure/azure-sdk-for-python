@@ -34,7 +34,7 @@ def on_event(partition_context: PartitionContext, event: Optional[EventData]) ->
 
 
 if __name__ == '__main__':
-    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME) # type: ignore
+    checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',

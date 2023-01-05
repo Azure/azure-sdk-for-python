@@ -30,7 +30,7 @@ def create_producer_client() -> None:
 
     # Create producer client from connection string.
 
-    producer_client: EventHubProducerClient = EventHubProducerClient.from_connection_string(
+    producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STRING  # connection string contains EventHub name.
     )
 

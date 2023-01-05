@@ -35,7 +35,7 @@ async def run() -> None:
     bytes_per_message = 256
 
     async with producer:
-        event_data_batch: EventDataBatch = await producer.create_batch()
+        event_data_batch = await producer.create_batch()
         for i in range(to_send_message_cnt):
             event_data = EventData('D' * bytes_per_message)
             try:

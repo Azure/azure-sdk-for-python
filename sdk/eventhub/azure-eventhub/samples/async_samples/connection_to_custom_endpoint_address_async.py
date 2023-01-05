@@ -15,8 +15,7 @@ from typing import TYPE_CHECKING, Optional, Awaitable
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 if TYPE_CHECKING:
-    from azure.eventhub.aio._eventprocessor.partition_context import PartitionContext
-    from azure.eventhub import EventDataBatch
+    from azure.eventhub.aio import PartitionContext
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -41,7 +40,7 @@ async def producer_connecting_to_custom_endpoint() -> None:
     async with producer_client:
         # Without specifying partition_id or partition_key
         # the events will be distributed to available partitions via round-robin.
-        event_data_batch: EventDataBatch = await producer_client.create_batch()
+        event_data_batch = await producer_client.create_batch()
         event_data_batch.add(EventData('Single message'))
         await producer_client.send_batch(event_data_batch)
         print("Send a message.")
