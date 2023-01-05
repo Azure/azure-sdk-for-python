@@ -20,7 +20,8 @@ from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 @pytest.fixture
 def storage_test_directory() -> str:
     with tempfile.TemporaryDirectory() as temp_dir:
-        shutil.copytree("./tests/test_configs/storage/", temp_dir, dirs_exist_ok=True)
+        shutil.rmtree(temp_dir)
+        shutil.copytree("./tests/test_configs/storage/", temp_dir)
         yield temp_dir
 
 
@@ -153,7 +154,7 @@ class TestAssetUtils:
         target_file_path, link_file_path = generate_link_file(storage_test_directory)
 
         source_path = Path(storage_test_directory).resolve()
-        prefix = source_path.name + "/"
+        prefix = "random_prefix/"
         upload_paths_list = []
 
         for root, _, files in os.walk(source_path, followlinks=True):
@@ -162,5 +163,8 @@ class TestAssetUtils:
         local_paths = [i for i, _ in upload_paths_list]
         remote_paths = [j for _, j in upload_paths_list]
 
-        assert target_file_path in local_paths
-        assert any([rp in link_file_path for rp in remote_paths])  # remote file names are relative
+        # When username is too long, temp folder path will be truncated, e.g. longusername -> LONGUS~
+        # so resolve target_file_path to get the full path
+        assert Path(target_file_path).resolve().as_posix() in local_paths
+        # remote file names are relative to root and include the prefix
+        assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
