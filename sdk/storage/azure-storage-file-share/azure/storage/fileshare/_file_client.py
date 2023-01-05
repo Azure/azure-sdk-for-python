@@ -14,7 +14,6 @@ from typing import (
 )
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -229,7 +228,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         mode hostname.
         """
         share_name = self.share_name
-        if isinstance(share_name, six.text_type):
+        if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -1156,7 +1155,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(encoding)
 
         end_range = offset + length - 1  # Reformat to an inclusive range index

@@ -1,6 +1,17 @@
 # Release History
 
-## 1.3.0 (Unreleased)
+## 1.4.0 (Unreleased)
+
+### Features Added
+-
+
+### Bugs Fixed
+-
+
+### Other Changes
+- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights. 
+
+## 1.3.0 (2023-01-10)
 
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
@@ -16,6 +27,7 @@
 - Resolve the cross references for MLClient, Resource and OnlineDeployment.
 - Explicit use of Optional (or a Union with None), as per PEP 484.
 - Fixed print on Command objects when job id is empty
+- Fixed issue where `SasTokenConfiguration` cannot be used as credential for `WorkspaceConnection`
 
 ### Other Changes
 - Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.

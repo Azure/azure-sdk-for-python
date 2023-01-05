@@ -737,7 +737,6 @@ class TestComponent(AzureRecordedTestCase):
             dict(rest_pipeline_component._to_dict()),
             "name",
             "creation_context",
-            # jobs not returned now
             "jobs",
             "id",
         )
@@ -762,6 +761,10 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        jobs_dict = rest_pipeline_component._to_dict()["jobs"]
+        # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
+        assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
+        assert jobs_dict["component_a_job"]["type"] == "command"
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
