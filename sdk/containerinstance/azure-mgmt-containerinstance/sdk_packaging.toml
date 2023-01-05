@@ -4,3 +4,4 @@ package_pprint_name = "Container Instance"
 package_doc_id = "containerinstance"
 is_stable = true
 sample_link = "containerinstance"
+title = "ContainerInstanceManagementClient"

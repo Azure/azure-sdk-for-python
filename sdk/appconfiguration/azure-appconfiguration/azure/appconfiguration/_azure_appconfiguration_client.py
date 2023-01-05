@@ -4,9 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Optional, Any, Union, Mapping, TYPE_CHECKING
+from typing import Optional, Any, Union, Mapping
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
+from azure.core.paging import ItemPaged
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
@@ -39,10 +41,6 @@ from ._utils import (
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.paging import ItemPaged
-    from azure.core.credentials import TokenCredential
-
 
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
@@ -58,9 +56,9 @@ class AzureAppConfigurationClient:
     """
 
     # pylint:disable=protected-access
-
-    def __init__(self, base_url, credential, **kwargs):
-        # type: (str, Union[AppConfigConnectionStringCredential, TokenCredential], **Any) -> None
+    def __init__(
+        self, base_url: str, credential: Union[AppConfigConnectionStringCredential, TokenCredential], **kwargs: Any
+    ) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -93,8 +91,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string, **kwargs):
-        # type: (str, **Any) -> AzureAppConfigurationClient
+    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
 
         :param str connection_string: Connection String
@@ -118,9 +115,7 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(
-        self, credential, base_url=None, aad_mode=False, **kwargs
-    ):
+    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
 
@@ -155,9 +150,8 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_configuration_settings(
-        self, key_filter=None, label_filter=None, **kwargs
-    ):  # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
-
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
 
@@ -168,7 +162,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -216,12 +210,12 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def get_configuration_setting(
         self,
-        key,  # type: str
-        label=None,  # type: Optional[str]
-        etag="*",  # type: Optional[str]
-        match_condition=MatchConditions.Unconditionally,  # type: Optional[MatchConditions]
-        **kwargs  # type: Any
-    ):  # type: (...) -> Union[None, ConfigurationSetting]
+        key: str,
+        label: Optional[str] = None,
+        etag: Optional[str] = "*",
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
         :param key: key of the ConfigurationSetting
@@ -275,9 +269,9 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def add_configuration_setting(self, configuration_setting, **kwargs):
-        # type: (ConfigurationSetting, **Any) -> ConfigurationSetting
-
+    def add_configuration_setting(
+        self, configuration_setting: ConfigurationSetting, **kwargs: Any
+    ) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
@@ -321,11 +315,10 @@ class AzureAppConfigurationClient:
     @distributed_trace
     def set_configuration_setting(
         self,
-        configuration_setting,
-        match_condition=MatchConditions.Unconditionally,
-        **kwargs
-    ):  # type: (ConfigurationSetting, Optional[MatchConditions], **Any) -> ConfigurationSetting
-
+        configuration_setting: ConfigurationSetting,
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> ConfigurationSetting:
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
@@ -387,8 +380,9 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def delete_configuration_setting(self, key, label=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> ConfigurationSetting
+    def delete_configuration_setting(
+        self, key: str, label: Optional[str] = None, **kwargs: Any
+    ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
         :param key: key used to identify the ConfigurationSetting
@@ -441,9 +435,9 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def list_revisions(self, key_filter=None, label_filter=None, **kwargs):
-        # type: (Optional[str], Optional[str], **Any) -> ItemPaged[ConfigurationSetting]
-
+    def list_revisions(
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged[ConfigurationSetting]:
         """
         Find the ConfigurationSetting revision history.
 
@@ -454,7 +448,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -500,9 +494,9 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def set_read_only(self, configuration_setting, read_only=True, **kwargs):
-        # type: (ConfigurationSetting, Optional[bool], **Any) -> ConfigurationSetting
-
+    def set_read_only(
+        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs: Any
+    ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
         :param configuration_setting: the ConfigurationSetting to be set read only
@@ -569,9 +563,7 @@ class AzureAppConfigurationClient:
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
 
-    def update_sync_token(self, token):
-        # type: (str) -> None
-
+    def update_sync_token(self, token: str) -> None:
         """Add a sync token to the internal list of tokens.
 
         :param str token: The sync token to be added to the internal list of tokens
@@ -582,9 +574,7 @@ class AzureAppConfigurationClient:
             )
         self._sync_token_policy.add_token(token)
 
-    def close(self):
-        # type: (...) -> None
-
+    def close(self) -> None:
         """Close all connections made by the client"""
         self._impl._client.close()
 
