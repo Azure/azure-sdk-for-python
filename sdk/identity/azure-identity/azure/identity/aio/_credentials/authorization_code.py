@@ -85,7 +85,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if self._authorization_code:
-            token = await self._client.obtain_token_by_authorization_code(
+            token: Optional[AccessToken] = await self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
             )
             self._authorization_code = None  # auth codes are single-use

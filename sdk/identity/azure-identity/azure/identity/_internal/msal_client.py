@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Union
 import six
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -74,8 +74,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             params: Optional[Dict[str, str]] = None,
             data: Optional[RequestData] = None,
             headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
-    ) -> MsalResponse:  # pylint:disable=unused-argument
+            **kwargs: Any) -> MsalResponse:  # pylint:disable=unused-argument
         request = HttpRequest("POST", url, headers=headers)
         if params:
             request.format_parameters(params)
@@ -98,8 +97,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             url: str,
             params: Optional[Dict[str, str]] = None,
             headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
-    ) -> MsalResponse:  # pylint:disable=unused-argument
+            **kwargs: Any) -> MsalResponse:  # pylint:disable=unused-argument
         request = HttpRequest("GET", url, headers=headers)
         if params:
             request.format_parameters(params)

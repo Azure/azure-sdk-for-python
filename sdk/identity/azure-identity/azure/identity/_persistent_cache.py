@@ -51,8 +51,7 @@ class TokenCachePersistenceOptions:
             *,
             allow_unencrypted_storage: bool = False,
             name: str = "msal.cache",
-            **kwargs: Any
-    ) -> None:  # pylint:disable=unused-argument
+            **kwargs: Any) -> None:  # pylint:disable=unused-argument
         self.allow_unencrypted_storage = allow_unencrypted_storage
         self.name = name
 

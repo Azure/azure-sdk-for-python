@@ -4,7 +4,7 @@
 # ------------------------------------
 import abc
 import time
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
 import six
