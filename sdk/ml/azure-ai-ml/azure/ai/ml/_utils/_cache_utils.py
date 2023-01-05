@@ -6,6 +6,7 @@ import logging
 import os.path
 import tempfile
 import threading
+import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -26,6 +27,7 @@ logger = logging.getLogger(__name__)
 _ANONYMOUS_HASH_PREFIX = "anonymous-component-"
 _YAML_SOURCE_PREFIX = "yaml-source-"
 _CODE_INVOLVED_PREFIX = "code-involved-"
+EXPIRE_TIME_IN_SECONDS = 60 * 60 * 24 * 7  # 7 days
 
 _node_resolution_lock = defaultdict(threading.Lock)
 
@@ -223,7 +225,7 @@ class CachedNodeResolver(object):
         """Load component arm id from on disk cache."""
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
-        if on_disk_cache_path.is_file():
+        if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
             return on_disk_cache_path.read_text().strip()
         return None
 
