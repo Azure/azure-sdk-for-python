@@ -2296,8 +2296,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         from azure.ai.ml.dsl._group_decorator import group
 
         @group
-        class ParamClass:
+        class SubParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer")
+
+        @group
+        class ParamClass:
+            sub: SubParamClass
             str_param: str = "test"
             bool_param: bool = True
             number_param = 4.0
@@ -2308,28 +2312,28 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 component_in_string=group.str_param,
                 component_in_ranged_number=group.number_param,
                 component_in_boolean=group.bool_param,
-                component_in_ranged_integer=group.int_param,
+                component_in_ranged_integer=group.sub.int_param,
             )
         component = client.components.create_or_update(pipeline_with_group)
         # Assert key not exists
         match = "(.*)unexpected keyword argument 'group.not_exist'(.*)valid keywords: " \
-                "'group', 'group.int_param', 'group.str_param', 'group.bool_param', 'group.number_param'"
+                "'group', 'group.sub.int_param', 'group.str_param', 'group.bool_param', 'group.number_param'"
         with pytest.raises(UnexpectedKeywordError, match=match):
             component(**{
                 "group.number_param": 4.0, "group.str_param": "testing",
-                "group.int_param": 4, "group.not_exist": 4,
+                "group.sub.int_param": 4, "group.not_exist": 4,
             })
         # Assert conflict assignment
         with pytest.raises(ValidationException, match="Conflict parameter key 'group' and 'group.number_param'"):
             pipeline = component(**{
                 "group.number_param": 4.0, "group.str_param": "testing",
-                "group.int_param": 4, "group": ParamClass(int_param=1)
+                "group.sub.int_param": 4, "group": ParamClass(sub=SubParamClass(int_param=1))
             })
             pipeline.settings.default_compute = "cpu-cluster"
             client.jobs.create_or_update(pipeline)
         # Assert happy path
         inputs = {
-            "group.number_param": 4.0, "group.str_param": "testing", "group.int_param": 4
+            "group.number_param": 4.0, "group.str_param": "testing", "group.sub.int_param": 4
         }
         pipeline = component(**inputs)
         pipeline.settings.default_compute = "cpu-cluster"
