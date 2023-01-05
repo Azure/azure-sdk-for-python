@@ -13,7 +13,7 @@ from urllib.parse import quote
 from datetime import datetime, timezone
 
 from azure.core.pipeline.transport import HttpTransport
-from azure.data.tables import TableClient, TableServiceClient, TableEntityEncoder, EdmType, EntityProperty, UpdateMode
+from azure.data.tables import TableClient, TableEntityEncoder, EdmType, EntityProperty, UpdateMode
 from azure.data.tables._base_client import _DEV_CONN_STRING
 from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
 
@@ -28,6 +28,10 @@ class MyKeysEncoder(TableEntityEncoder):
         """Custom key preparer to support key in type UUID, int, float or bool."""
         if isinstance(key, uuid.UUID) or isinstance(key, int) or isinstance(key, float) or isinstance(key, bool):
             key = str(key)
+        elif isinstance(key, datetime):
+            key = str(_to_utc_datetime(key))
+        elif isinstance(key, bytes):
+            key = str(_encode_base64(key))
         return super().prepare_key(key)
 
 
@@ -84,7 +88,7 @@ class EncoderVerificationTransport(HttpTransport):
 class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Test basic string, int32, float and bool type in PartitionKey or RowKey.
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
@@ -115,10 +119,27 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "3.14",
         }
+        entity5 = {
+            "PartitionKey": datetime.now(),
+            "RowKey": uuid.uuid4(),
+        }
+        expected_entity5 = {
+            "PartitionKey": _to_utc_datetime(entity5["PartitionKey"]),
+            "RowKey": str(entity5["RowKey"]),
+        }
+        entity6 = {
+            "PartitionKey": b"binarydata",
+            "RowKey": 1234,
+        }
+        expected_entity6 = {
+            "PartitionKey": str(_encode_base64(entity6["PartitionKey"])),
+            "RowKey": "1234",
+        }
         
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
             
+            # Test keys in basic type string, int32, float and bool.
             client.create_entity(entity1)
             entity1 = client.get_entity(entity1["PartitionKey"], entity1["RowKey"])
             assert json.dumps(entity1) == json.dumps(expected_entity1)
@@ -139,54 +160,19 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             assert json.dumps(entity4) == json.dumps(expected_entity4)
             client.delete_entity(entity4, encoder=MyKeysEncoder())
             
+            # Test keys in complex type datetime, UUID and binary.
+            client.create_entity(entity5, encoder=MyKeysEncoder())
+            entity5 = client.get_entity(entity5["PartitionKey"], entity5["RowKey"], encoder=MyKeysEncoder())
+            assert json.dumps(entity5) == json.dumps(expected_entity5)
+            client.delete_entity(entity5, encoder=MyKeysEncoder())
+            
+            client.create_entity(entity6, encoder=MyKeysEncoder())
+            entity6 = client.get_entity(entity6["PartitionKey"], entity6["RowKey"], encoder=MyKeysEncoder())
+            assert json.dumps(entity6) == json.dumps(expected_entity6)
+            client.delete_entity(entity6, encoder=MyKeysEncoder())
+            
             client.delete_table()
 
-    @tables_decorator
-    @recorded_by_proxy
-    def test_encoder_create_entity_complex_keys(self):
-        # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING,
-            table_name="foo",
-            transport=EncoderVerificationTransport())
-
-        test_entity = {
-            "PartitionKey": datetime.now(),
-            "RowKey": uuid.uuid4(),
-        }
-        expected_entity = {
-            "PartitionKey": _to_utc_datetime(test_entity["PartitionKey"]),
-            "PartitionKey@odata.type": "Edm.DateTime",
-            "RowKey": str(test_entity["RowKey"]),
-            "RowKey@odata.type": "Edm.Guid",
-        }
-        verification = json.dumps(expected_entity)
-
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-                )
-        test_entity = {
-            "PartitionKey": b"binarydata",
-            "RowKey": 1234,
-        }
-        expected_entity = {
-            "PartitionKey": _encode_base64(test_entity["PartitionKey"]),
-            "PartitionKey@odata.type": "Edm.Binary",
-            "RowKey": 1234,
-        }
-        verification = json.dumps(expected_entity)
-
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-                )
     
     @tables_decorator
     @recorded_by_proxy
