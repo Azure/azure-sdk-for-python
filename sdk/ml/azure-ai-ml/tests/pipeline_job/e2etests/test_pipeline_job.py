@@ -77,9 +77,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert updated_job.tags[new_tag_name] == new_tag_value
 
     def test_pipeline_job_create_with_registries(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
+        self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
