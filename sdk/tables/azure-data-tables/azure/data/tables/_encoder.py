@@ -69,7 +69,7 @@ class TableEntityEncoder:
         """
         encoded = {}
         for key, value in entity.items():  # TODO: Confirm what to do with None values (before and after encoding).
-            if "PartitionKey" or "RowKey" in key:
+            if "PartitionKey" in key or "RowKey" in key:
                 if key == "PartitionKey" or key == "RowKey":
                     encoded[key] = self.prepare_key(value)
                 continue

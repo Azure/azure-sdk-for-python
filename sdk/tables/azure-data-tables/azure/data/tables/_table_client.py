@@ -409,9 +409,7 @@ class TableClient(TablesBaseClient):
         encoder = kwargs.pop('encoder', None)
         if not encoder:
             encoder = TableEntityEncoder()
-        breakpoint()
         entity = encoder.encode_entity(entity)
-        breakpoint()
         try:
             metadata, content = self._client.table.insert_entity(  # type: ignore
                 table=self.table_name,
@@ -606,6 +604,8 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
+        :keyword encoder: The entity encoder
+        :type encoder: TableEntityEncoder
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: :class:`~azure.data.tables.TableEntity`
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -622,11 +622,14 @@ class TableClient(TablesBaseClient):
         user_select = kwargs.pop("select", None)
         if user_select and not isinstance(user_select, str):
             user_select = ",".join(user_select)
+        encoder = kwargs.pop('encoder', None)
+        if not encoder:
+            encoder = TableEntityEncoder()
         try:
             entity = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
-                partition_key=_prepare_key(partition_key),
-                row_key=_prepare_key(row_key),
+                partition_key=encoder.prepare_key(partition_key),
+                row_key=encoder.prepare_key(row_key),
                 select=user_select,
                 **kwargs
             )
