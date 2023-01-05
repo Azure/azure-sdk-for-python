@@ -1,5 +1,5 @@
 # Microsoft Azure SDK for Python
-
+ 
 This is the Microsoft Azure Recovery Services Site Recovery Management Client Library.
 This package has been tested with Python 3.7+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
