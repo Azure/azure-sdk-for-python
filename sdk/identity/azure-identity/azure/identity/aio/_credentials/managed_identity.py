@@ -96,7 +96,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     async def close(self) -> None:
         """Close the credential's transport session."""
         if self._credential:
-            await self._credential.__aexit__()
+            await self._credential.close()
 
     @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

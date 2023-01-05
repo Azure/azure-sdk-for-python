@@ -37,8 +37,7 @@ class ChainedTokenCredential:
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    def __init__(self, *credentials):
-        # type: (*TokenCredential) -> None
+    def __init__(self, *credentials: TokenCredential) -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
 
@@ -47,12 +46,12 @@ class ChainedTokenCredential:
 
     def __enter__(self):
         for credential in self.credentials:
-            credential.__enter__()
+            credential.__enter__()  # type: ignore
         return self
 
     def __exit__(self, *args: Any):
         for credential in self.credentials:
-            credential.__exit__(*args)
+            credential.__exit__(*args)  # type: ignore
 
     def close(self) -> None:
         """Close the transport session of each credential in the chain."""

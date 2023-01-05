@@ -5,7 +5,7 @@
 import abc
 import platform
 import time
-from typing import Any, Iterable, List, Mapping, Optional
+from typing import Any, Iterable, List, Mapping, Optional, cast
 from urllib.parse import urlparse
 import six
 import msal
@@ -87,7 +87,7 @@ class SharedTokenCacheBase(ABC):
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
-        self._client: Optional[AadClientBase] = None
+        self._client: AadClientBase = cast(AadClientBase, None)
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
         self._initialized = False

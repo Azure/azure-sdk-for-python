@@ -50,7 +50,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             redirect_uri: str,
             *,
             client_secret: Optional[str] = None,
-            client: Optional[str] = None,
+            client: Optional[AadClient] = None,
             **kwargs
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
