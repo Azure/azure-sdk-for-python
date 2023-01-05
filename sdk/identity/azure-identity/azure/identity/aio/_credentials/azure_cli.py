@@ -5,7 +5,7 @@
 import asyncio
 import sys
 import os
-from typing import List, Any
+from typing import List, Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
