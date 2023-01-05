@@ -30,7 +30,7 @@ class TableEntityEncoder:
         removing int validation.
         """
         if isinstance(value, str):
-            return None, value
+            return EdmType.STRING, value
         if isinstance(value, int):
             return None, value  # TODO: Test what happens if the supplied value exceeds int32.
         if value in [True, False]:

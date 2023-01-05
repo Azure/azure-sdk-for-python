@@ -92,6 +92,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
         # Test basic string, int32, float and bool type in PartitionKey or RowKey.
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
+        # TableEntity keys in basic type string, int32, float and bool.
         entity1 = {
             "PartitionKey": "PK",
             "RowKey": "RK",
@@ -119,6 +120,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "3.14",
         }
+        # TableEntity keys in complex type datetime, UUID and binary.
         entity5 = {
             "PartitionKey": datetime.now(),
             "RowKey": uuid.uuid4(),
@@ -135,55 +137,49 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": str(_encode_base64(entity6["PartitionKey"])),
             "RowKey": "1234",
         }
-        
+
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
-            
-            # Test keys in basic type string, int32, float and bool.
+
             client.create_entity(entity1)
             entity1 = client.get_entity(entity1["PartitionKey"], entity1["RowKey"])
             assert json.dumps(entity1) == json.dumps(expected_entity1)
             client.delete_entity(entity1["PartitionKey"], entity1["RowKey"])
-            
+
             client.create_entity(entity2, encoder=MyKeysEncoder())
             entity2 = client.get_entity(entity2["PartitionKey"], entity2["RowKey"], encoder=MyKeysEncoder())
             assert json.dumps(entity2) == json.dumps(expected_entity2)
             client.delete_entity(entity2, encoder=MyKeysEncoder())
-            
+
             client.create_entity(entity3, encoder=MyKeysEncoder())
             entity3 = client.get_entity(entity3["PartitionKey"], entity3["RowKey"], encoder=MyKeysEncoder())
             assert json.dumps(entity3) == json.dumps(expected_entity3)
             client.delete_entity(entity3, encoder=MyKeysEncoder())
-            
+
             client.create_entity(entity4, encoder=MyKeysEncoder())
             entity4 = client.get_entity(entity4["PartitionKey"], entity4["RowKey"], encoder=MyKeysEncoder())
             assert json.dumps(entity4) == json.dumps(expected_entity4)
             client.delete_entity(entity4, encoder=MyKeysEncoder())
-            
-            # Test keys in complex type datetime, UUID and binary.
+
             client.create_entity(entity5, encoder=MyKeysEncoder())
             entity5 = client.get_entity(entity5["PartitionKey"], entity5["RowKey"], encoder=MyKeysEncoder())
             assert json.dumps(entity5) == json.dumps(expected_entity5)
             client.delete_entity(entity5, encoder=MyKeysEncoder())
-            
+
             client.create_entity(entity6, encoder=MyKeysEncoder())
             entity6 = client.get_entity(entity6["PartitionKey"], entity6["RowKey"], encoder=MyKeysEncoder())
             assert json.dumps(entity6) == json.dumps(expected_entity6)
             client.delete_entity(entity6, encoder=MyKeysEncoder())
-            
+
             client.delete_table()
 
-    
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_type_conversion(self):
+    def test_encoder_create_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # All automatically detected data types
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING,
-            table_name="foo",
-            transport=EncoderVerificationTransport())
-
-        test_entity = {
+        entity = {
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 12345,
@@ -196,16 +192,14 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
         }
         expected_entity = {
             "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
             "RowKey": "RK",
-            "RowKey@odata.type": "Edm.String",
             "Data1": 12345,
             "Data2": False,
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
-            "Data4": _to_utc_datetime(test_entity["Data4"]),
+            "Data4": _to_utc_datetime(entity["Data4"]),
             "Data4@odata.type": "Edm.DateTime",
-            "Data5": str(test_entity["Data5"]),
+            "Data5": str(entity["Data5"]),
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
             "Data6@odata.type": "Edm.String",
@@ -213,15 +207,17 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data7@odata.type": "Edm.Double",
 
         }
-        verification = json.dumps(expected_entity)
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-                )
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+
+            encoder = MyKeysEncoder()
+            client.create_entity(entity, encoder=encoder)
+            entity = encoder.encode_entity(entity)
+            assert json.dumps(entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
+            client.delete_entity(entity, encoder=encoder)
+
+            client.delete_table()
 
     @tables_decorator
     @recorded_by_proxy
