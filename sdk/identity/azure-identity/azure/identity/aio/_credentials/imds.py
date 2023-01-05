@@ -12,7 +12,7 @@ from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
-from ..._credentials.imds import get_request, PIPELINE_SETTINGS
+from ..._credentials.imds import _get_request, PIPELINE_SETTINGS
 
 T = TypeVar("T", bound="ImdsCredential")
 
@@ -21,7 +21,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
-        self._client = AsyncManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+        self._client = AsyncManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
         else:
