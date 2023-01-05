@@ -39,6 +39,7 @@ from urllib3.exceptions import HTTPError
 
 http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
 
+
 def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
@@ -177,7 +178,7 @@ def start_test_proxy(request) -> None:
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
-                    stderr=log
+                    stderr=log,
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:

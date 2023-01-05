@@ -33,7 +33,11 @@ if TYPE_CHECKING:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 
 if os.getenv("REQUESTS_CA_BUNDLE"):
-    http_client = PoolManager(retries=Retry(total=3, raise_on_status=False), cert_reqs="CERT_REQUIRED", ca_certs=os.getenv("REQUESTS_CA_BUNDLE"))
+    http_client = PoolManager(
+        retries=Retry(total=3, raise_on_status=False),
+        cert_reqs="CERT_REQUIRED",
+        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
+    )
 else:
     http_client = PoolManager(retries=Retry(total=3, raise_on_status=False))
 
@@ -80,7 +84,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     if assets_json:
         json_payload["x-recording-assets-file"] = assets_json
 
-    encoded_payload = json.dumps(json_payload).encode('utf-8')
+    encoded_payload = json.dumps(json_payload).encode("utf-8")
 
     if is_live():
         result = http_client.request(
@@ -109,7 +113,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
             six.raise_from(ValueError("No recording file found for {}".format(test_id)), ex)
         if result.data:
             try:
-                variables = json.loads(result.data.decode('utf-8'))
+                variables = json.loads(result.data.decode("utf-8"))
             except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
                 six.raise_from(
                     ValueError("The response body returned from starting playback did not contain valid JSON"),
