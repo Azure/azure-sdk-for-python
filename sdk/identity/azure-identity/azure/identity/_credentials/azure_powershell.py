@@ -153,7 +153,7 @@ def parse_token(output: str) -> AccessToken:
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 
-def get_command_line(scopes: Tuple, tenant_id: str) -> List[str]:
+def get_command_line(scopes: Tuple[str], tenant_id: str) -> List[str]:
     if tenant_id:
         tenant_argument = " -TenantId " + tenant_id
     else:
