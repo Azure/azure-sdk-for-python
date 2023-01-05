@@ -13,14 +13,9 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpRequest
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
-
-if TYPE_CHECKING:
-    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-    from azure.core.pipeline.transport import HttpRequest
-
-    PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
 
 
 class ManagedIdentityClientBase(abc.ABC):
