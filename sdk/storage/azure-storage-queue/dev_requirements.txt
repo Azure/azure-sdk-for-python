@@ -1,7 +1,6 @@
 -e ../../../tools/vcrpy
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
--e ../../resources/azure-mgmt-resource
 ../../core/azure-core
 azure-identity
 azure-mgmt-storage==20.1.0

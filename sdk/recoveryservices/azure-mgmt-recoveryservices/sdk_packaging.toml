@@ -4,3 +4,4 @@ package_pprint_name = "Recovery Services"
 package_doc_id = ""
 is_stable = false
 sample_link = "recoveryservices"
+title = "RecoveryServicesClient"

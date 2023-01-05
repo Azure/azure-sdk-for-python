@@ -63,13 +63,6 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
             except:
                 pass
 
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
-            except:
-                pass
-
     def _get_container_reference(self):
         return self.get_resource_name(TEST_CONTAINER_PREFIX)
 
@@ -612,16 +605,14 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
             with pytest.raises(ValueError):
                 blob.upload_blob(stream, length=512, blob_type=service)
 
-            file_name = 'blob_strict_mode.temp.dat'
-            with open(file_name, 'wb') as stream:
-                stream.write(content)
-            with open(file_name, 'rb') as stream:
+            with tempfile.TemporaryFile() as temp_file:
+                temp_file.write(content)
+                temp_file.seek(0)
                 with pytest.raises(ValueError):
-                    blob.upload_blob(stream, blob_type=service)
+                    blob.upload_blob(temp_file, blob_type=service)
 
-            with pytest.raises(ValueError):
-                blob.upload_blob('To encrypt', blob_type=service)
-        self._teardown(file_name)
+                with pytest.raises(ValueError):
+                    blob.upload_blob('To encrypt', blob_type=service)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -765,14 +756,12 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         stream = BytesIO(self.bytes)
         self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
 
-        file_name = 'block_blob_from_star.temp.dat'
-        with open(file_name, 'wb') as stream:
-            stream.write(self.bytes)
-        with open(file_name, 'rb') as stream:
-            self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(self.bytes)
+            temp_file.seek(0)
+            self._create_blob_from_star(BlobType.BlockBlob, self.bytes, temp_file)
 
         self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt')
-        self._teardown(file_name)
 
     @BlobPreparer()
     @recorded_by_proxy
