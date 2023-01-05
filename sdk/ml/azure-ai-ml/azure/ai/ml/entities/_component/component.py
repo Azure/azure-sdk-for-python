@@ -265,6 +265,9 @@ class Component(
         lower2original_kwargs = {}
 
         for name in io_dict.keys():
+            if not name.isidentifier():
+                msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
+                validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
             # validate name conflict
             lower_key = name.lower()
             if lower_key in lower2original_kwargs:

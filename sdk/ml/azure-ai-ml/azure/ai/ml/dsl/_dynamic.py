@@ -71,10 +71,6 @@ def _replace_function_name(func: types.FunctionType, new_name):
 
 def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
-    # pylint: disable=protected-access
-    # validate component input names
-    Component._validate_io_names(io_dict=kwargs, raise_error=True)
-
     lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []
     for key in kwargs:
@@ -123,6 +119,9 @@ def create_kw_function_from_parameters(
 
     def f(**kwargs):
         # We need to make sure all keys of kwargs are valid.
+        # pylint: disable=protected-access
+        # validate component input names, only default kwargs will be used to generate function
+        Component._validate_io_names(io_dict=default_kwargs, raise_error=True)
         # Merge valid group keys with original keys.
         _assert_arg_valid(
             kwargs, [*list(default_kwargs.keys()), *flattened_group_keys], func_name=func_name
