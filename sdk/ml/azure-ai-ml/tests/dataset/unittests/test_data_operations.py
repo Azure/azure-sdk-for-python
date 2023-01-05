@@ -28,12 +28,12 @@ from azure.core.paging import ItemPaged
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -41,14 +41,14 @@ def mock_datastore_operation(
 def mock_data_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_datastore_operation: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
     yield DataOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_05_01,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
