@@ -76,6 +76,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registries(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -1320,7 +1321,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
-    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registry_model_as_input(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
