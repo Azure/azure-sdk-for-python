@@ -38,7 +38,7 @@ class AzureCliCredential(AsyncContextManager):
         self,
         *,
         tenant_id: str = "",
-        additionally_allowed_tenants: List[str] = None
+        additionally_allowed_tenants: Optional[List[str]] = None
     ) -> None:
 
         self.tenant_id = tenant_id
