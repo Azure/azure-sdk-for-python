@@ -76,7 +76,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
-    @pytest.mark.skip("skip as registries not work in canary region for now")
     def test_pipeline_job_create_with_registries(
         self,
         client: MLClient,
@@ -89,12 +88,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         assert (
             pipeline_job.jobs.get("a").environment
-            == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+            == "azureml://registries/sdk-test/environments/openMPIUbuntu/versions/1"
         )
-        job = client.jobs.create_or_update(pipeline_job)
+        job = assert_job_cancel(pipeline_job, client)
         assert job.name == params_override[0]["name"]
         assert (
-            job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+            job.jobs.get("a").component == "azureml://registries/sdk-test/components/my_hello_world_asset/versions/1"
         )
 
     @pytest.mark.parametrize(
@@ -980,6 +979,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "sweep": {
                 "sampling_algorithm": "random",
                 "early_termination": {
+                    "evaluation_interval": 10,
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
                     "type": "bandit",
