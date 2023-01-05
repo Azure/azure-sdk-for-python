@@ -39,7 +39,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
             redirect_uri: str,
             **kwargs: Any
     ) -> None:
-        self._authorization_code = authorization_code
+        self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
         self._client_secret = kwargs.pop("client_secret", None)
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
