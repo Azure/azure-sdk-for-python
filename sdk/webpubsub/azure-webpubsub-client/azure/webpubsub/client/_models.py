@@ -29,7 +29,7 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class JoinGroupMessage():
+class JoinGroupMessage:
     def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
         self.kind: Literal["joinGroup"] = "joinGroup"
         self.group = group
@@ -226,7 +226,7 @@ class OnConnectedArgs(_model_base.Model):
 
 
 class ConnectedMessage:
-    def __init__(self, connection_id: str, user_id: str, reconnection_token: str) -> None:
+    def __init__(self, connection_id: str, user_id: str, reconnection_token: Optional[str] = None) -> None:
         self.kind: Literal["connected"] = "connected"
         self.connection_id = connection_id
         self.user_id = user_id
@@ -350,11 +350,11 @@ class WebPubSubClientProtocol:
                 return ConnectedMessage(
                     connection_id=message["connectionId"],
                     user_id=message["userId"],
-                    reconnection_token=message["reconnectionToken"],
+                    reconnection_token=message.get("reconnectionToken"),
                 )
             if message["event"] == "disconnected":
                 return DisconnectedMessage(message=message["message"])
-            raise Exception()
+            raise Exception("wrong message event type: {}".format(message["event"]))
         if message["type"] == "message":
             if message["from"] == "group":
                 data = parse_payload(message["data"], message["dataType"])
@@ -363,19 +363,21 @@ class WebPubSubClientProtocol:
                     data=data,
                     group=message["group"],
                     from_user_id=message["fromUserId"],
-                    sequence_id=message["sequenceId"],
+                    sequence_id=message.get("sequenceId"),
                 )
-            if message["type"] == "server":
+            if message["from"] == "server":
                 data = parse_payload(message["data"], message["dataType"])
-                return ServerDataMessage(data=data, **message)
-            raise Exception()
+                return ServerDataMessage(
+                    data=data, data_type=message["dataType"], sequence_id=message.get("sequenceId")
+                )
+            raise Exception("wrong message from: {}".format(message["from"]))
         if message["type"] == "ack":
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
                 error=message.get("error"),
             )
-        raise Exception()
+        raise Exception("wrong message type: {}".format(message["type"]))
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:

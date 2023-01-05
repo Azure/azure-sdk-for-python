@@ -347,7 +347,7 @@ class WebPubSubClient:
             raise e
 
     def _auto_reconnect(self):
-        success = True
+        success = False
         attempt = 0
         while not self._is_stopping:
             try:
@@ -360,6 +360,7 @@ class WebPubSubClient:
                 delay_in_ms = self._reconnect_retry_policy.next_retry_delay_in_ms(attempt)
                 if not delay_in_ms:
                     break
+                _LOGGER.debug(f"Delay time for reconnect attempt {attempt}: {delay_in_ms}")
                 delay(delay_in_ms)
         if not success:
             self._handle_connection_stopped()
@@ -409,8 +410,9 @@ class WebPubSubClient:
                     if self._ws:
                         self._ws.close()
                 finally:
-                    return
+                    raise Exception("The client is stopped")
 
+            _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
             with self._cv:
                 self._cv.notify()
@@ -419,13 +421,16 @@ class WebPubSubClient:
             def handle_ack_message(message: AckMessage):
                 if message.ack_id in self._ack_map:
                     if not (message.success or (message.error and message.error.name == "Duplicate")):
-                        self._ack_map[message.ack_id].ack_id = message.ack_id
                         self._ack_map[message.ack_id].error_detail = message.error
+                    else:
+                        self._ack_map[message.ack_id].error_detail = None
+                    self._ack_map[message.ack_id].ack_id = message.ack_id
                     with self._ack_map[message.ack_id].cv:
                         self._ack_map[message.ack_id].cv.notify()
 
             def handle_connected_message(message: ConnectedMessage):
                 self._connection_id = message.connection_id
+                self._reconnection_token = message.reconnection_token
 
                 if not self._is_initial_connected:
                     self._is_initial_connected = True
@@ -439,14 +444,16 @@ class WebPubSubClient:
                                     OnRestoreGroupFailedArgs(group=group_name, error=e),
                                 )
 
-                    connected_args = OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id)
-                    self._call_back(CallBackType.CONNECTED, connected_args)
+                    self._call_back(
+                        CallBackType.CONNECTED,
+                        OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id),
+                    )
 
             def handle_disconnected_message(message: DisconnectedMessage):
                 self._last_disconnected_message = message
 
             def handle_group_data_message(message: GroupDataMessage):
-                if message.sequence_id is not None:
+                if message.sequence_id:
                     if not self._sequence_id.try_update(message.sequence_id):
                         # // drop duplicated message
                         return
@@ -454,7 +461,7 @@ class WebPubSubClient:
                 self._call_back(CallBackType.GROUP_MESSAGE, OnGroupDataMessageArgs(message))
 
             def handle_server_data_message(message: ServerDataMessage):
-                if message.sequence_id is not None:
+                if message.sequence_id:
                     if not self._sequence_id.try_update(message.sequence_id):
                         # // drop duplicated message
                         return
@@ -476,43 +483,52 @@ class WebPubSubClient:
                 raise Exception(f"unknown message type: {parsed_message.kind}")
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
-            self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
-            # clean ack cache
-            self._ack_map.clear()
+            if self._state == WebPubSubClientState.CONNECTED:
+                _LOGGER.info(f"WebSocket connection closed. Code: {close_status_code}, Reason: {close_msg}")
 
-            if self._is_stopping:
-                _LOGGER.warning("The client is stopping state. Stop recovery.")
-                self._handle_connection_close_and_no_recovery()
-                return
+                self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
+                # clean ack cache
+                self._ack_map.clear()
 
-            if self._last_close_event and self._last_close_event.close_status_code == 1008:
-                _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
-                self._handle_connection_close_and_no_recovery()
-                return
-
-            if not self._protocol.is_reliable_sub_protocol:
-                _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
-                self._handle_connection_close_and_no_recovery()
-                return
-
-            recovery_url = self._build_recovery_url()
-            if not recovery_url:
-                _LOGGER.warning("Connection id or reconnection token is not available")
-                self._handle_connection_close_and_no_recovery()
-                return
-
-            self._state = WebPubSubClientState.RECOVERING
-            i = 0
-            while i < 30 or self._is_stopping:
-                try:
-                    self._connect(recovery_url)
+                if self._is_stopping:
+                    _LOGGER.warning("The client is stopping state. Stop recovery.")
+                    self._handle_connection_close_and_no_recovery()
                     return
-                except:
-                    delay(1000)
-                i = i + 1
 
-            _LOGGER.warning("Recovery attempts failed more then 30 seconds or the client is stopping")
-            self._handle_connection_close_and_no_recovery()
+                if self._last_close_event and self._last_close_event.close_status_code == 1008:
+                    _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
+                    self._handle_connection_close_and_no_recovery()
+                    return
+
+                if not self._protocol.is_reliable_sub_protocol:
+                    _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
+                    self._handle_connection_close_and_no_recovery()
+                    return
+
+                recovery_url = self._build_recovery_url()
+                if not recovery_url:
+                    _LOGGER.warning("Connection id or reconnection token is not available")
+                    self._handle_connection_close_and_no_recovery()
+                    return
+
+                self._state = WebPubSubClientState.RECOVERING
+                i = 0
+                while i < 30 or self._is_stopping:
+                    try:
+                        self._connect(recovery_url)
+                        return
+                    except:
+                        delay(1000)
+                    i = i + 1
+
+                _LOGGER.warning("Recovery attempts failed more then 30 seconds or the client is stopping")
+                self._handle_connection_close_and_no_recovery()
+            else:
+                _LOGGER.debug("WebSocket closed before open")
+                raise Exception(f"Fail to start Websocket: {close_status_code}")
+
+        if self._is_stopping:
+            raise Exception("Can't start a client during stopping")
 
         self._ws = websocket.WebSocketApp(
             url=url,
@@ -564,7 +580,7 @@ class WebPubSubClient:
         self._connect(self._url)
 
     def start(self):
-        """start the client and connect to serverice"""
+        """start the client and connect to service"""
 
         if self._is_stopping:
             raise Exception("Can't start a client during stopping")
