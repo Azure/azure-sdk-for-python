@@ -280,3 +280,22 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 name, _ = parse_prefixed_name_version(deployment.job_definition.component)
                 deployment.job_definition.name = name
             deployment.job_definition.component_id = component_id
+        elif(deployment.job_definition.job):
+            if isinstance(deployment.job_definition.job, str):
+                component = PipelineComponent(source_job_id= deployment.job_definition.job)
+                rest_component = self._component_operations.create_or_update(
+                    name = component.name,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body = component._to_rest_object(),
+                    version= component.version,
+                    **self._init_kwargs
+                )
+                deployment.job_definition.job = None
+                deployment.job_definition.component_id = rest_component.id
+                if not deployment.job_definition.name and rest_component.name:
+                    deployment.job_definition.name = rest_component.name
+                if not deployment.job_definition.description and rest_component.properties.description:
+                    deployment.job_definition.description = rest_component.properties.description
+                if not deployment.job_definition.tags and rest_component.properties.tags:
+                    deployment.job_definition.tags = rest_component.properties.tags
