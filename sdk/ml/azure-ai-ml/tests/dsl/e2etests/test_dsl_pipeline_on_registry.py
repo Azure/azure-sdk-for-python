@@ -1,13 +1,13 @@
 from pathlib import Path
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import Input, MLClient, load_component, load_model
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.dsl import pipeline
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -17,25 +17,26 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
-    @pytest.mark.skip(reason="not able to re-record")
-    def test_pipeline_job_create_with_registered_component_on_registry(
-        self,
-        registry_client: MLClient,
-    ) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="registry test, may fail in playback mode during retrieving registry client",
+    )
+    def test_pipeline_job_create_with_registered_component_on_registry(self, pipelines_registry_client: MLClient):
         local_component = load_component("./tests/test_configs/components/basic_component_code_local_path.yml")
         try:
-            created_component = registry_client.components.get(local_component.name, version=local_component.version)
-        except HttpResponseError:
-            created_component = registry_client.components.create_or_update(local_component)
+            created_component = pipelines_registry_client.components.get(
+                local_component.name, version=local_component.version
+            )
+        except ResourceNotFoundError:
+            created_component = pipelines_registry_client.components.create_or_update(local_component)
 
-        @pipeline()
+        @pipeline
         def sample_pipeline():
-            node = created_component()
-            node.compute = "cpu-cluster"
+            created_component()
 
         pipeline_job = sample_pipeline()
-        assert registry_client.jobs.validate(pipeline_job).passed
-        # TODO: add test for pipeline job create with registered component on registry after support is ready on canary
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert pipelines_registry_client.jobs.validate(pipeline_job).passed
 
     @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
                              "'Unable to find a record for the request' in playback mode")
