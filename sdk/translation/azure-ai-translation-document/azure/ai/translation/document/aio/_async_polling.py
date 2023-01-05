@@ -46,13 +46,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
             return TranslationStatus._from_generated(  # pylint: disable=protected-access
                 self._polling_method._current_body  # type: ignore # pylint: disable=protected-access
             )
-        # if accessed before first GET is made, we only know the operation ID
-        return TranslationStatus(
-            id=self._polling_method._get_id_from_headers(), error=None, # type: ignore # pylint:disable=protected-access
-            documents_in_progress_count=None, last_updated_on=None, documents_total_count=None, # type: ignore
-            total_characters_charged=None, documents_succeeded_count=None, status=None, created_on=None,  # type: ignore
-            documents_not_started_count=None, documents_canceled_count=None, documents_failed_count=None  # type: ignore
-        )
+        return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
     def from_continuation_token(

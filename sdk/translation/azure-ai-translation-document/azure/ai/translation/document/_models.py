@@ -4,7 +4,7 @@
 # ------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Any
 from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
@@ -46,22 +46,26 @@ class TranslationGlossary:
         :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
     :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
+    """
 
-    :ivar str glossary_url: Required. Location of the glossary file. This should be a URL to
+    glossary_url: str
+    """Location of the glossary file. This should be a URL to
         the glossary file in the storage blob container. The URL can be a SAS URL (see the
         service documentation for the supported SAS permissions for accessing storage
         containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions) or a managed identity
         can be created and used to access documents in your storage account
         (see https://aka.ms/azsdk/documenttranslation/managed-identity). Note that if the translation
-        language pair is not present in the glossary, it will not be applied.
-    :ivar str file_format: Required. Format of the glossary file. To see supported formats,
-        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :ivar Optional[str] format_version: File format version. If not specified, the service will
+        language pair is not present in the glossary, it will not be applied."""
+    file_format: str
+    """Format of the glossary file. To see supported formats,
+        call the :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method."""
+    format_version: Optional[str] = None
+    """File format version. If not specified, the service will
         use the default_version for the file format returned from the
-        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method.
-    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
-        Currently only "AzureBlob" is supported.
-    """
+        :func:`~DocumentTranslationClient.get_supported_glossary_formats()` client method."""
+    storage_source: Optional[str] = None
+    """Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported."""
 
     def __init__(
         self,
@@ -119,21 +123,25 @@ class TranslationTarget:
     :paramtype glossaries: Optional[list[~azure.ai.translation.document.TranslationGlossary]]
     :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
+    """
 
-    :ivar str target_url: Required. The target location for your translated documents.
+    target_url: str
+    """The target location for your translated documents.
         This can be a SAS URL (see the service documentation for the supported SAS permissions
         for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
         or a managed identity can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-    :ivar str language: Required. Target Language Code. This is the language
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity)."""
+    language: str
+    """Target Language Code. This is the language
         you want your documents to be translated to. See supported languages here:
-        https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-    :ivar Optional[str] category_id: Category / custom model ID for using custom translation.
-    :ivar glossaries: Glossaries to apply to translation.
-    :vartype glossaries: Optional[list[~azure.ai.translation.document.TranslationGlossary]]
-    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
-        Currently only "AzureBlob" is supported.
-    """
+        https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate"""
+    category_id: Optional[str] = None
+    """Category / custom model ID for using custom translation."""
+    glossaries: Optional[List[TranslationGlossary]] = None
+    """Glossaries to apply to translation."""
+    storage_source: Optional[str] = None
+    """Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported."""
 
     def __init__(
         self,
@@ -209,28 +217,33 @@ class DocumentTranslationInput:
     :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
     :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
+    """
 
-    :ivar str source_url: Required. Location of the folder / container or single file with your
+    source_url: str
+    """Location of the folder / container or single file with your
         documents. This can be a SAS URL (see the service documentation for the supported SAS permissions
         for accessing source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
         or a managed identity can be created and used to access documents in your storage account
-        (see https://aka.ms/azsdk/documenttranslation/managed-identity).
-    :ivar targets: Required. Location of the destination for the output. This is a list of
-        TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :vartype targets: list[~azure.ai.translation.document.TranslationTarget]
-    :ivar Optional[str] source_language: Language code for the source documents.
-        If none is specified, the source language will be auto-detected for each document.
-    :ivar Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
+        (see https://aka.ms/azsdk/documenttranslation/managed-identity)."""
+    targets: List[TranslationTarget]
+    """Location of the destination for the output. This is a list of
+        TranslationTargets. Note that a TranslationTarget is required for each language code specified."""
+    source_language: Optional[str] = None
+    """Language code for the source documents.
+        If none is specified, the source language will be auto-detected for each document."""
+    storage_type: Optional[Union[str, StorageInputType]] = None
+    """Storage type of the input documents source string. Possible values
+        include: "Folder", "File"."""
+    storage_source: Optional[str] = None
+    """Storage Source. Default value: "AzureBlob".
+        Currently only "AzureBlob" is supported."""
+    prefix: Optional[str] = None
+    """A case-sensitive prefix string to filter documents in the source path for
         translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
-        sub folders for translation.
-    :ivar Optional[str] suffix: A case-sensitive suffix string to filter documents in the source path for
-        translation. This is most often use for file extensions.
-    :ivar storage_type: Storage type of the input documents source string. Possible values
-        include: "Folder", "File".
-    :vartype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
-    :ivar Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
-        Currently only "AzureBlob" is supported.
-    """
+        sub folders for translation."""
+    suffix: Optional[str] = None
+    """A case-sensitive suffix string to filter documents in the source path for
+        translation. This is most often use for file extensions."""
 
     def __init__(
         self,
@@ -290,13 +303,16 @@ class DocumentTranslationInput:
 
 class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     """Status information about the translation operation.
+    """
 
-    :ivar str id: Id of the translation operation.
-    :ivar created_on: The date time when the translation operation was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: The date time when the translation operation's status was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar str status: Status for a translation operation.
+    id: str  # pylint: disable=redefined-builtin
+    """Id of the translation operation."""
+    created_on: datetime.datetime
+    """The date time when the translation operation was created."""
+    last_updated_on: datetime.datetime
+    """The date time when the translation operation's status was last updated."""
+    status: str
+    """Status for a translation operation.
 
         * `NotStarted` - the operation has not begun yet.
         * `Running` - translation is in progress.
@@ -305,47 +321,42 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
         * `Canceling` - the operation is being canceled.
         * `ValidationFailed` - the input failed validation. E.g. there was insufficient permissions on blob containers.
         * `Failed` - all the documents within the operation failed.
-
-    :ivar error: Returned if there is an error with the translation operation.
-        Includes error code, message, target.
-    :vartype error: Optional[~azure.ai.translation.document.DocumentTranslationError]
-    :ivar int documents_total_count: Number of translations to be made on documents in the operation.
-    :ivar int documents_failed_count: Number of documents that failed translation.
-    :ivar int documents_succeeded_count: Number of successful translations on documents.
-    :ivar int documents_in_progress_count: Number of translations on documents in progress.
-    :ivar int documents_not_started_count: Number of documents that have not started being translated.
-    :ivar int documents_canceled_count: Number of documents that were canceled for translation.
-    :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
+    documents_total_count: int
+    """Number of translations to be made on documents in the operation."""
+    documents_failed_count: int
+    """Number of documents that failed translation."""
+    documents_succeeded_count: int
+    """Number of successful translations on documents."""
+    documents_in_progress_count: int
+    """Number of translations on documents in progress."""
+    documents_not_started_count: int
+    """Number of documents that have not started being translated."""
+    documents_canceled_count: int
+    """Number of documents that were canceled for translation."""
+    total_characters_charged: int
+    """Total characters charged across all documents within the translation operation."""
+    error: Optional["DocumentTranslationError"] = None
+    """Returned if there is an error with the translation operation.
+        Includes error code, message, target."""
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        created_on: datetime.datetime,
-        last_updated_on: datetime.datetime,
-        status: str,
-        documents_total_count: int,
-        documents_failed_count: int,
-        documents_succeeded_count: int,
-        documents_in_progress_count: int,
-        documents_not_started_count: int,
-        documents_canceled_count: int,
-        total_characters_charged: int,
-        error: Optional["DocumentTranslationError"] = None,
-    ) -> None:
-        self.id = id
-        self.created_on = created_on
-        self.last_updated_on = last_updated_on
-        self.status = status
-        self.error = error
-        self.documents_total_count = documents_total_count
-        self.documents_failed_count = documents_failed_count
-        self.documents_succeeded_count = documents_succeeded_count
-        self.documents_in_progress_count = documents_in_progress_count
-        self.documents_not_started_count = documents_not_started_count
-        self.documents_canceled_count = documents_canceled_count
-        self.total_characters_charged = total_characters_charged
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.status = kwargs.get("status", None)
+        self.error = kwargs.get("error", None)
+        self.documents_total_count = kwargs.get("documents_total_count", None)
+        self.documents_failed_count = kwargs.get("documents_failed_count", None)
+        self.documents_succeeded_count = kwargs.get("documents_succeeded_count", None)
+        self.documents_in_progress_count = kwargs.get(
+            "documents_in_progress_count", None
+        )
+        self.documents_not_started_count = kwargs.get(
+            "documents_not_started_count", None
+        )
+        self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
+        self.total_characters_charged = kwargs.get("total_characters_charged", None)
 
     @classmethod
     def _from_generated(cls, batch_status_details):
@@ -393,58 +404,52 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
 
 class DocumentStatus:
     """Status information about a particular document within a translation operation.
+    """
 
-    :ivar str source_document_url: Location of the source document in the source
-        container. Note that any SAS tokens are removed from this path.
-    :ivar Optional[str] translated_document_url: Location of the translated document in the target
-        container. Note that any SAS tokens are removed from this path.
-    :ivar created_on: The date time when the document was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: The date time when the document's status was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar str status: Status for a document.
+    id: str  # pylint: disable=redefined-builtin
+    """Document Id."""
+    source_document_url: str
+    """Location of the source document in the source
+        container. Note that any SAS tokens are removed from this path."""
+    created_on: datetime.datetime
+    """The date time when the document was created."""
+    last_updated_on: datetime.datetime
+    """The date time when the document's status was last updated."""
+    status: str
+    """Status for a document.
 
         * `NotStarted` - the document has not been translated yet.
         * `Running` - translation is in progress for document
         * `Succeeded` - translation succeeded for the document
         * `Failed` - the document failed to translate. Check the error property.
         * `Canceled` - the operation was canceled, the document was not translated.
-        * `Canceling` - the operation is canceling, the document will not be translated.
-    :ivar str translated_to: The language code of the language the document was translated to,
-        if successful.
-    :ivar error: Returned if there is an error with the particular document.
-        Includes error code, message, target.
-    :vartype error: Optional[~azure.ai.translation.document.DocumentTranslationError]
-    :ivar float translation_progress: Progress of the translation if available.
-        Value is between [0.0, 1.0].
-    :ivar str id: Document Id.
-    :ivar Optional[int] characters_charged: Characters charged for the document.
-    """
+        * `Canceling` - the operation is canceling, the document will not be translated."""
+    translated_to: str
+    """The language code of the language the document was translated to,
+        if successful."""
+    translation_progress: float
+    """Progress of the translation if available.
+        Value is between [0.0, 1.0]."""
+    translated_document_url: Optional[str] = None
+    """Location of the translated document in the target
+        container. Note that any SAS tokens are removed from this path."""
+    characters_charged: Optional[int] = None
+    """Characters charged for the document."""
+    error: Optional["DocumentTranslationError"] = None
+    """Returned if there is an error with the particular document.
+        Includes error code, message, target."""
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        source_document_url: str,
-        created_on: datetime.datetime,
-        last_updated_on: datetime.datetime,
-        status: str,
-        translated_to: str,
-        translation_progress: float,
-        translated_document_url: Optional[str] = None,
-        characters_charged: Optional[int] = None,
-        error: Optional["DocumentTranslationError"] = None,
-    ) -> None:
-        self.source_document_url = source_document_url
-        self.translated_document_url = translated_document_url
-        self.created_on = created_on
-        self.last_updated_on = last_updated_on
-        self.status = status
-        self.translated_to = translated_to
-        self.error = error
-        self.translation_progress = translation_progress
-        self.id = id
-        self.characters_charged = characters_charged
+    def __init__(self, **kwargs: Any) -> None:
+        self.source_document_url = kwargs.get("source_document_url", None)
+        self.translated_document_url = kwargs.get("translated_document_url", None)
+        self.created_on = kwargs["created_on"]
+        self.last_updated_on = kwargs["last_updated_on"]
+        self.status = kwargs["status"]
+        self.translated_to = kwargs["translated_to"]
+        self.error = kwargs.get("error", None)
+        self.translation_progress = kwargs.get("translation_progress", None)
+        self.id = kwargs.get("id", None)
+        self.characters_charged = kwargs.get("characters_charged", None)
 
     @classmethod
     def _from_generated(cls, doc_status):
@@ -488,25 +493,22 @@ class DocumentStatus:
 class DocumentTranslationError:
     """This contains the error code, message, and target with descriptive details on why
     a translation operation or particular document failed.
-
-    :ivar str code: The error code. Possible high level values include:
-        "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
-        "ResourceNotFound", "Unauthorized", "RequestRateTooHigh".
-    :ivar str message: The error message associated with the failure.
-    :ivar Optional[str] target: The source of the error.
-        For example it would be "documents" or "document id" in case of invalid document.
     """
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None
-    ) -> None:
-        self.code = code
-        self.message = message
-        self.target = target
+    code: str
+    """The error code. Possible high level values include:
+        "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
+        "ResourceNotFound", "Unauthorized", "RequestRateTooHigh"."""
+    message: str
+    """The error message associated with the failure."""
+    target: Optional[str] = None
+    """The source of the error.
+        For example it would be "documents" or "document id" in case of invalid document."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
     @classmethod
     def _from_generated(cls, error):
@@ -529,33 +531,25 @@ class DocumentTranslationError:
 
 class DocumentTranslationFileFormat:
     """Possible file formats supported by the Document Translation service.
-
-    :ivar file_format: Name of the format.
-    :vartype file_format: str
-    :ivar file_extensions: Supported file extension for this format.
-    :vartype file_extensions: list[str]
-    :ivar content_types: Supported Content-Types for this format.
-    :vartype content_types: list[str]
-    :ivar format_versions: Supported Version.
-    :vartype format_versions: list[str]
-    :ivar default_format_version: Default format version if none is specified.
-    :vartype default_format_version: Optional[str]
     """
 
-    def __init__(
-        self,
-        *,
-        file_format: str,
-        file_extensions: List[str],
-        content_types: List[str],
-        format_versions: List[str],
-        default_format_version: Optional[str] = None
-    ) -> None:
-        self.file_format = file_format
-        self.file_extensions = file_extensions
-        self.content_types = content_types
-        self.format_versions = format_versions
-        self.default_format_version = default_format_version
+    file_format: str
+    """Name of the format."""
+    file_extensions: List[str]
+    """Supported file extension for this format."""
+    content_types: List[str]
+    """Supported Content-Types for this format."""
+    format_versions: List[str]
+    """Supported Version."""
+    default_format_version: Optional[str] = None
+    """Default format version if none is specified."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.file_format = kwargs.get("file_format", None)
+        self.file_extensions = kwargs.get("file_extensions", None)
+        self.content_types = kwargs.get("content_types", None)
+        self.format_versions = kwargs.get("format_versions", None)
+        self.default_format_version = kwargs.get("default_format_version", None)
 
     @classmethod
     def _from_generated(cls, file_format):
