@@ -11,7 +11,7 @@ from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
