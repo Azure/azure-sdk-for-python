@@ -121,6 +121,8 @@ def create_kw_function_from_parameters(
         # We need to make sure all keys of kwargs are valid.
         # pylint: disable=protected-access
         # validate component input names, only default kwargs will be used to generate function
+        # Note: Here we don't need to validate kwargs names, because keys not in function parameters(default_kwargs)
+        # will raise Unexpected key error.
         Component._validate_io_names(io_dict=default_kwargs, raise_error=True)
         # Merge valid group keys with original keys.
         _assert_arg_valid(
