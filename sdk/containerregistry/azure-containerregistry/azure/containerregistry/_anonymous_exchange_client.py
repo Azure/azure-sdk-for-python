@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict, Any
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
-from ._generated.models._container_registry_enums import TokenGrantType
+from ._generated.models import TokenGrantType
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
