@@ -61,7 +61,6 @@ def load_common(
     :return: _description_
     :rtype: Resource
     """
-
     path = kwargs.pop("path", None)
     # Check for deprecated path input, either named or as first unnamed input
     if source is None and path is not None:

@@ -23,6 +23,7 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from ._virtual_cluster_operations import VirtualClusterOperations
 
 __all__ = [
@@ -31,6 +32,7 @@ __all__ = [
     "JobOperations",
     "ModelOperations",
     "WorkspaceOperations",
+    "WorkspaceOutboundRuleOperations",
     "RegistryOperations",
     "OnlineEndpointOperations",
     "BatchEndpointOperations",
