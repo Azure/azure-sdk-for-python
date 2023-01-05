@@ -4,15 +4,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
+from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
-from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
-from azure.core.exceptions import ServiceRequestError
-
-class WebpubsubClientSmokeTest(WebpubsubClientTest):
 
 
+class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
-    def test_webpubsub_send_to_all(self, webpubsub_endpoint):
-        client = self.create_client(endpoint=webpubsub_endpoint, hub='hub')
-        client.send_to_all({'hello': 'test_webpubsub_send_to_all'})
+    @recorded_by_proxy
+    def test_start_stop(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        client.start()
+        assert client.is_connected()
+        client.stop()
+        assert not client.is_connected()

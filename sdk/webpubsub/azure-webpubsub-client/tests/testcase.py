@@ -4,20 +4,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import List
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.webpubsub.client import WebPubSubClient
 from azure.webpubsub.client import WebPubSubClientOptions
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 
-class WebpubsubClientTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(WebpubsubClientTest, self).__init__(method_name, **kwargs)
+class WebpubsubClientTest(AzureRecordedTestCase):
 
-    def create_client(self, connection_string, hub: str = "Hub", auto_reconnect: bool = False, **kwargs):
-        service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub, **kwargs)
-        roles = kwargs.get("roles", ["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])
+    def create_client(self, connection_string, hub: str = "Hub", auto_reconnect: bool = False,
+                      roles: List[str] = ["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]):
+        service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
         url = service_client.get_client_access_token(roles=roles)["url"]
 
         return WebPubSubClient(credential=url, options=WebPubSubClientOptions(auto_reconnect=auto_reconnect))
