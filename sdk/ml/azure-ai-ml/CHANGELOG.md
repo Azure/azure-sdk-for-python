@@ -9,7 +9,7 @@
 -
 
 ### Other Changes
--
+- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights. 
 
 ## 1.3.0 (2023-01-10)
 
