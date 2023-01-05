@@ -11,7 +11,7 @@
 - Method added `azure.developer.loadtesting.LoadTestRunClient.create_or_update_server_metrics_config`
 - Method added `azure.developer.loadtesting.LoadTestRunClient.get_server_metrics_config`
 - Method added `azure.developer.loadtesting.LoadTestAdministration.begin_upload_test_file`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.begin_create_or_update_load_test_run`
+- Method added `azure.developer.loadtesting.LoadTestRunClient.begin_test_run`
 - Method added `azure.developer.loadtesting.LoadTestRunClient.begin_test_run_status`
 - Method added `azure.developer.loadtesting.aio.LoadTestRunClient.list_metric_namespaces`
 - Method added `azure.developer.loadtesting.aio.LoadTestRunClient.list_metric_definitions`
@@ -23,7 +23,7 @@
 - Method added `azure.developer.loadtesting.aio.LoadTestAdministration.begin_upload_test_file`
 - Method added `azure.developer.loadtesting.aio.LoadTestRunClient.begin_test_run_status`
 - Method added `azure.developer.loadtesting.aio.LoadTestRunClient.get_metric_dimension_values`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.begin_create_or_update_load_test_run`
+- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.begin_test_run`
 
 
 ### Breaking Changes
