@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 
 from urllib3 import PoolManager, Retry
-
+import json
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
@@ -558,11 +558,11 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
 
     for key in headers:
         if headers[key] is None:
-            headers[key] = ""
+            headers.popitem(key)
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, fields=parameters)
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, body=json.dumps(parameters).encode('utf-8'))
 
 
 def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" = None) -> None:
@@ -579,7 +579,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, fields=parameters)
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, body=json.dumps(parameters).encode('utf-8'))
 
 
 
@@ -595,7 +595,8 @@ def _send_reset_request(headers: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers)
+    request = http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers)
+    
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
@@ -617,7 +618,7 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
             "x-abstraction-identifier": sanitizer,
             "Content-Type": "application/json",
         },
-        fields=parameters,
+        body=json.dumps(parameters).encode('utf-8'),
     )
 
 
@@ -636,5 +637,5 @@ def _send_transform_request(transform: str, parameters: dict) -> None:
     http_client.request(method="POST", url=
         f"{PROXY_URL}/Admin/AddTransform",
         headers={"x-abstraction-identifier": transform, "Content-Type": "application/json"},
-        fields=parameters,
+        body=json.dumps(parameters).encode('utf-8')
     )
