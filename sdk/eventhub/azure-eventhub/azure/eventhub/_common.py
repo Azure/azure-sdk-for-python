@@ -125,8 +125,8 @@ class EventData(object):
         self,
         body: Optional[Union[str, bytes, List[AnyStr]]] = None,
     ) -> None:
-        self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
-        self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
+        self._last_enqueued_event_properties: Dict[str, Any] = {}
+        self._sys_properties: Optional[Dict[bytes, Any]] = None
         if body is None:
             raise ValueError("EventData cannot be None.")
 

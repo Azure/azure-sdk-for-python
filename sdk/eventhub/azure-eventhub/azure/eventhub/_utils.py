@@ -121,7 +121,7 @@ def create_properties(
 
 @contextmanager
 def send_context_manager():
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
@@ -138,10 +138,12 @@ def set_event_partition_key(
     if not partition_key:
         return
 
+    raw_message: AmqpAnnotatedMessage
     try:
-        raw_message = event.raw_amqp_message  # type: ignore
+        event = cast(EventData, event)
+        raw_message =  event.raw_amqp_message
     except AttributeError:
-        raw_message = event
+        raw_message = cast(AmqpAnnotatedMessage, event)
 
     annotations = raw_message.annotations
     if annotations is None:
@@ -155,15 +157,17 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def trace_message(event, parent_span=None):
-    # type: (EventData, Optional[AbstractSpan]) -> None
+def trace_message(
+    event: EventData,
+    parent_span: Optional["AbstractSpan"] = None
+) -> None:
     """Add tracing information to this event.
 
     Will open and close a "Azure.EventHubs.message" span, and
     add the "DiagnosticId" as app properties of the event.
     """
     try:
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
         if span_impl_type is not None:
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
@@ -184,10 +188,10 @@ def trace_message(event, parent_span=None):
 
 def get_event_links(events):
     # pylint:disable=isinstance-second-argument-not-valid-type
-    trace_events = events if isinstance(events, Iterable) else (events,)
+    trace_events: Union[Iterable, Tuple] = events if isinstance(events, Iterable) else (events,)
     links = []
     try:
-        for event in trace_events:  # type: ignore
+        for event in trace_events:
             if event.properties:
                 traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
                 if traceparent:
@@ -206,8 +210,10 @@ def get_event_links(events):
     return links
 
 
-def event_position_selector(value, inclusive=False):
-    # type: (Union[int, str, datetime.datetime], bool) -> bytes
+def event_position_selector(
+    value: Union[int, str, datetime.datetime],
+    inclusive: bool = False
+) -> bytes:
     """Creates a selector expression of the offset."""
     operator = ">=" if inclusive else ">"
     if isinstance(value, datetime.datetime):  # pylint:disable=no-else-return
@@ -226,8 +232,9 @@ def event_position_selector(value, inclusive=False):
     )
 
 
-def get_last_enqueued_event_properties(event_data):
-    # type: (EventData) -> Optional[Dict[str, Any]]
+def get_last_enqueued_event_properties(
+    event_data: EventData
+) -> Optional[Dict[str, Any]]:
     """Extracts the last enqueued event in from the received event delivery annotations.
 
     :rtype: Dict[str, Any]
@@ -267,8 +274,7 @@ def get_last_enqueued_event_properties(event_data):
     return None
 
 
-def parse_sas_credential(credential):
-    # type: (AzureSasCredential) -> Tuple
+def parse_sas_credential(credential: "AzureSasCredential") -> Tuple:
     sas = credential.signature
     parsed_sas = sas.split("&")
     expiry = None
@@ -278,8 +284,11 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def transform_outbound_single_message(message, message_type, to_outgoing_amqp_message):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData], Callable) -> EventData
+def transform_outbound_single_message(
+    message: Union[AmqpAnnotatedMessage, EventData],
+    message_type: Type[EventData],
+    to_outgoing_amqp_message: Callable
+) -> EventData:
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
@@ -293,9 +302,9 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     try:
         # pylint: disable=protected-access
         # If EventData, set EventData._message to uamqp/pyamqp.Message right before sending.
-        message = cast("EventData", message)
+        message = cast(EventData, message)
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
-        return message  # type: ignore
+        return message
     except AttributeError:
         # pylint: disable=protected-access
         # If AmqpAnnotatedMessage, create EventData object with _from_message.
@@ -304,12 +313,11 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
         message = cast(AmqpAnnotatedMessage, message)
         amqp_message = to_outgoing_amqp_message(message)
         return message_type._from_message(
-            message=amqp_message, raw_amqp_message=message  # type: ignore
+            message=amqp_message, raw_amqp_message=message
         )
 
 
-def decode_with_recurse(data, encoding="UTF-8"):
-    # type: (Any, str) -> Any
+def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
     # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary

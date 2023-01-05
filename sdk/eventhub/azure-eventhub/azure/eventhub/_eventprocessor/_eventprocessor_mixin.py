@@ -39,14 +39,14 @@ if TYPE_CHECKING:
 class EventProcessorMixin(object):
 
     _eventhub_client: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]] = None
-    _consumer_group = ""  # type: str
-    _owner_level = None  # type: Optional[int]
-    _prefetch = None  # type: Optional[int]
-    _track_last_enqueued_event_properties = False  # type: bool
-    _initial_event_position_inclusive = {}  # type: Union[bool, Dict[str, bool]]
-    _initial_event_position = (
-        {}
-    )  # type: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]]
+    _consumer_group: str = ""
+    _owner_level: Optional[int] = None
+    _prefetch: Optional[int] = None
+    _track_last_enqueued_event_properties: bool = False
+    _initial_event_position_inclusive: Union[bool, Dict[str, bool]] = {}
+    _initial_event_position: Union[
+        int, str, datetime, Dict[str, Union[int, str, datetime]]
+    ] = {}
 
     def get_init_event_position(
         self,
@@ -63,11 +63,11 @@ class EventProcessorMixin(object):
         elif isinstance(self._initial_event_position_inclusive, bool):
             event_position_inclusive = self._initial_event_position_inclusive
 
-        event_position = "-1"  # type: Union[int, str, datetime]
+        event_position: Union[int, str, datetime] = "-1" 
         if checkpoint_offset:
             event_position = checkpoint_offset
         elif isinstance(self._initial_event_position, dict):
-            event_position = self._initial_event_position.get(partition_id, "-1")  # type: ignore
+            event_position = self._initial_event_position.get(partition_id, "-1")
         else:
             event_position = cast(
                 Union[int, str, datetime], self._initial_event_position
@@ -83,7 +83,10 @@ class EventProcessorMixin(object):
         on_event_received: Callable[[Union[Optional[EventData], List[EventData]]], None],
         **kwargs: Any
     ) -> Union[EventHubConsumer, EventHubConsumerAsync]:
-        consumer = self._eventhub_client._create_consumer(  # type: ignore  # pylint: disable=protected-access
+        self._eventhub_client = cast(
+            Union[EventHubConsumerClient, EventHubConsumerClientAsync], self._eventhub_client
+        )
+        consumer = self._eventhub_client._create_consumer(  # pylint: disable=protected-access
             self._consumer_group,
             partition_id,
             initial_event_position,
@@ -99,13 +102,16 @@ class EventProcessorMixin(object):
     @contextmanager
     def _context(self, links: List[Link]=None) -> Iterator[None]:
         """Tracing"""
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        span_impl_type : Type["AbstractSpan"] = settings.tracing_implementation()
         if span_impl_type is None:
             yield
         else:
             child = span_impl_type(
                 name="Azure.EventHubs.process", kind=SpanKind.CONSUMER, links=links
             )
-            self._eventhub_client._add_span_request_attributes(child)  # type: ignore  # pylint: disable=protected-access
+            self._eventhub_client = cast(
+                Union[EventHubConsumerClient, EventHubConsumerClientAsync], self._eventhub_client
+            )
+            self._eventhub_client._add_span_request_attributes(child)   # pylint: disable=protected-access
             with child:
                 yield

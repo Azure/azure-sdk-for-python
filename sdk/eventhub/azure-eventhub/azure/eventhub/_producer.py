@@ -195,6 +195,7 @@ class EventHubProducer(
         span: Optional["AbstractSpan"],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
+        wrapper_event_data: Union[EventData, EventDataBatch]
         if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(
                 event_data, EventData, self._amqp_transport.to_outgoing_amqp_message
@@ -233,14 +234,14 @@ class EventHubProducer(
                     event
                 ) in event_data._message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
-                wrapper_event_data = event_data  # type:ignore
+                wrapper_event_data = event_data
             else:
                 if partition_key:
                     event_data = _set_partition_key(
                         event_data, partition_key, self._amqp_transport
                     )
                 event_data = _set_trace_message(event_data, span)
-                wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
+                wrapper_event_data = EventDataBatch._from_batch(    # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key=partition_key
                 )
         return wrapper_event_data
