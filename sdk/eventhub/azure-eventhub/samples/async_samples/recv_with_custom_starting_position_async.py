@@ -15,7 +15,7 @@ from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 from azure.eventhub import EventData
 
 if TYPE_CHECKING:
-    from azure.eventhub.aio._eventprocessor.partition_context import PartitionContext
+    from azure.eventhub.aio import PartitionContext
     from azure.eventhub import CloseReason, EventDataBatch
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
