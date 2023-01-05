@@ -55,20 +55,26 @@ def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -
     results = []
     for item in ordered:
         if not item["body"].get("error"):
-            results.append(
-                kwargs.get("obj")._from_generated(item["body"]) # pylint: disable=protected-access
-            )
+            result_obj = kwargs.get("obj")
+            if result_obj:
+                results.append(
+                    result_obj._from_generated(item["body"]) # pylint: disable=protected-access
+                )
         else:
             error = item["body"]["error"]
             if error.get("code") == "PartialError":
-                res = kwargs.get("partial_err")._from_generated(  # pylint: disable=protected-access
-                    item["body"], kwargs.get("raise_with")
-                )
+                partial_err = kwargs.get("partial_err")
+                if partial_err:
+                    res = partial_err._from_generated(  # pylint: disable=protected-access
+                        item["body"], kwargs.get("raise_with")
+                    )
                 results.append(res)
             else:
-                results.append(
-                    kwargs.get("err")._from_generated(error) # pylint: disable=protected-access
-                )
+                err = kwargs.get("err")
+                if err:
+                    results.append(
+                        err._from_generated(error) # pylint: disable=protected-access
+                    )
     return results
 
 

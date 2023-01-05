@@ -4,10 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
+import sys
+from typing import Any, List, Optional
 
 from ._models import LogsQueryStatus
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # pylint: disable=ungrouped-imports
+
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsQueryError(object):
@@ -25,12 +33,12 @@ class LogsQueryError(object):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.details = kwargs.get("details", None)
+        self.code: Optional[str] = kwargs.get("code", None)
+        self.message: Optional[str] = kwargs.get("message", None)
+        self.details: Optional[List[JSON]] = kwargs.get("details", None)
         self.status = LogsQueryStatus.FAILURE
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.__dict__)
 
     @classmethod
