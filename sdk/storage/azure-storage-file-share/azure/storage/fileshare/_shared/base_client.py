@@ -385,9 +385,9 @@ def parse_connection_str(conn_str, credential, service):
                 f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
                 f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
-            primary =(
-                f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
-                f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
+            secondary = (
+                f"{conn_settings['ACCOUNTNAME']}-secondary."
+                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
             )
         except KeyError:
             pass
