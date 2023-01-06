@@ -153,7 +153,13 @@ if __name__ == "__main__":
             logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
             exit(1)
     
-    if ("azure-core" not in pkg_details.name and "azure-mgmt-core" not in pkg_details.name)  and pkg_details.requires:
+    requires_isodate = False
+    for file in os.listdir(pkg_dir):
+        if file.endswith("_serialization.py"):
+            requires_isodate = True
+            break
+
+    if ("azure-core" not in pkg_details.name and "azure-mgmt-core" not in pkg_details.name) and pkg_details.requires and requires_isodate:
         logging.info("Verifying presence of isodate in package [%s]", pkg_details.name)
         if "isodate" in pkg_details.requires and "msrest" not in pkg_details.requires:
             logging.info("Isodate is installed properly: [%s]", pkg_details.name)
