@@ -67,11 +67,12 @@ class Tree:
     """A description of the location of the tree."""
     num_branches: int
     """Number of branches on tree."""
-    kind: typing.Literal["oak"] = "oak"
+    kind: str = "oak"
     """The kind of tree."""
 
-    def __init__(self, *, location: str, num_branches: int) -> None:
-        self.kind = "oak"
+    def __init__(self, *, location: str, num_branches: int, kind: Optional[str] = None) -> None:
+        if kind: 
+            self.kind = kind
         self.location = location
         self.num_branches = num_branches
 ```
