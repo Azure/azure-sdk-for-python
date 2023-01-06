@@ -62,6 +62,7 @@ class Deployment(Resource, RestTranslatableMixin):
     def __init__(
         self,
         name: Optional[str] = None,
+        *,
         endpoint_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, Any]] = None,

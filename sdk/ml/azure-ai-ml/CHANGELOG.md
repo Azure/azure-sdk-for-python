@@ -9,13 +9,14 @@
 -
 
 ### Other Changes
--
+- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights. 
 
 ## 1.3.0 (2023-01-10)
 
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
 - Added property to enable/disable public ip addresses to Compute Instances and AML Computes.
+- `Deployment` and `ScheduleOperations` added to public interface.
 
 ### Bugs Fixed
 - Fixed issue with date-time format for utc_time_created field when creating models.

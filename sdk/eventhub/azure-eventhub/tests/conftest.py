@@ -27,6 +27,7 @@ except (ModuleNotFoundError, ImportError):
     uamqp_transport_ids = ["pyamqp"]
 
 from devtools_testutils import get_region_override
+from tracing_common import FakeSpan
 
 collect_ignore = []
 PARTITION_COUNT = 2
@@ -84,6 +85,10 @@ def timeout_factor(uamqp_transport):
         return 1000
     else:
         return 1
+
+@pytest.fixture(scope="session")
+def fake_span():
+    return FakeSpan
 
 @pytest.fixture(scope="session")
 def resource_group():
