@@ -19,38 +19,29 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes the registry "myacr.azurecr.io" has a repository "hello-world" with image tagged "v1".
+    This sample assumes your registry has a repository "library/hello-world" with image tagged "v1".
 """
-
 import asyncio
-from dotenv import find_dotenv, load_dotenv
-import os
-
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.identity.aio import DefaultAzureCredential
+from sample_base_async import SampleBaseAsync
 
 
-class SetImagePropertiesAsync(object):
-    def __init__(self):
-        load_dotenv(find_dotenv())
-
+class SetImagePropertiesAsync(SampleBaseAsync):
     async def set_image_properties(self):
+        self._set_up()
         # Instantiate an instance of ContainerRegistryClient
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        audience = "https://management.azure.com"
-        credential = DefaultAzureCredential()
-        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Set permissions on the v1 image's "latest" tag
             await client.update_manifest_properties(
                 "library/hello-world",
-                "latest",
+                "v1",
                 can_write=False,
                 can_delete=False
             )
-            # After this update, if someone were to push an update to "myacr.azurecr.io\hello-world:v1", it would fail.
-            # It's worth noting that if this image also had another tag, such as "latest", and that tag did not have
-            # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
-            # if someone were to push an update to "myacr.azurecr.io\hello-world:latest"
+            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
+            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
+            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
+            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
             # (which references the same image), it would succeed.
 
 

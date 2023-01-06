@@ -20,32 +20,23 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes the registry "myacr.azurecr.io" has a repository "hello-world".
+    This sample assumes your registry has a repository "library/hello-world".
 """
-
 import asyncio
-from dotenv import find_dotenv, load_dotenv
-import os
-
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.identity.aio import DefaultAzureCredential
+from sample_base_async import SampleBaseAsync
 
 
-class ListTagsAsync(object):
-    def __init__(self):
-        load_dotenv(find_dotenv())
-
+class ListTagsAsync(SampleBaseAsync):
     async def list_tags(self):
+        self._set_up()
         # Instantiate an instance of ContainerRegistryClient    
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        credential = DefaultAzureCredential()
-        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             manifest = await client.get_manifest_properties("library/hello-world", "latest")
-            print(manifest.repository_name + ": ")
+            print("Tags of " + manifest.repository_name + ": ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(tag + "\n")
+                print(tag)
 
 
 async def main():

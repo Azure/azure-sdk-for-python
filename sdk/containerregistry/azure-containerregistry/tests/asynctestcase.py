@@ -6,15 +6,12 @@
 import logging
 import os
 
-from azure.containerregistry.aio import (
-    ContainerRegistryClient,
-)
+from azure.containerregistry.aio import ContainerRegistryClient
+from azure.containerregistry._helpers import _get_authority,_get_audience, _get_credential
 
 from azure.core.credentials import AccessToken
-from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
-from azure.identity import AzureAuthorityHosts
 
-from testcase import ContainerRegistryTestClass, get_audience, get_authority
+from testcase import ContainerRegistryTestClass
 
 logger = logging.getLogger()
 
@@ -34,25 +31,18 @@ class AsyncFakeTokenCredential(object):
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-                return ClientSecretCredential(
-                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-                    authority=authority
-                )
-            return DefaultAzureCredential(**kwargs)
+            _get_credential(is_async=True)
         return AsyncFakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        authority = get_authority(endpoint)
+        authority = _get_authority(endpoint)
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = get_audience(authority)
+            audience = _get_audience(authority)
         credential = self.get_credential(authority=authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
-        authority = get_authority(endpoint)
-        audience = get_audience(authority)
+        authority = _get_authority(endpoint)
+        audience = _get_audience(authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)

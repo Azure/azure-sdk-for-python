@@ -8,12 +8,8 @@ import os
 import pytest
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from azure.containerregistry._helpers import _is_tag, _import_image, _get_audience, _get_authority, _get_credential
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
-
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, is_live_and_not_recording
 
@@ -33,33 +29,26 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         # tags is a List of repository/tag combos in the format <repository>:<tag>
         if not self.is_live:
             return
-        authority = get_authority(endpoint)
-        import_image(authority, repository, tags)
+        authority = _get_authority(endpoint)
+        _import_image(authority, repository, tags)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-                return ClientSecretCredential(
-                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-                    authority=authority
-                )
-            return DefaultAzureCredential(**kwargs)
+            return _get_credential(authority, **kwargs)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
-        authority = get_authority(endpoint)
+        authority = _get_authority(endpoint)
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = get_audience(authority)
+            audience = _get_audience(authority)
         credential = self.get_credential(authority=authority)
         logger.warning("Authority: {} \nAuthorization scope: {}".format(authority, audience))
         return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
-        authority = get_authority(endpoint)
-        audience = get_audience(authority)
+        authority = _get_authority(endpoint)
+        audience = _get_audience(authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
 
     def set_all_properties(self, properties, value):
@@ -124,68 +113,11 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def get_test_directory(self):
         return os.path.join(os.getcwd(), "tests")
 
-
-def get_authority(endpoint):
-    if ".azurecr.io" in endpoint:
-        logger.warning("Public cloud Authority:")
-        return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-    if ".azurecr.cn" in endpoint:
-        logger.warning("China Authority:")
-        return AzureAuthorityHosts.AZURE_CHINA
-    if ".azurecr.us" in endpoint:
-        logger.warning("US Gov Authority:")
-        return AzureAuthorityHosts.AZURE_GOVERNMENT
-    raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
-
-def get_audience(authority):
-    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        logger.warning("Public cloud auth audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_CHINA:
-        logger.warning("China cloud auth audience")
-        return "https://management.chinacloudapi.cn"
-    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-        logger.warning("US Gov cloud auth audience")
-        return "https://management.usgovcloudapi.net"
-
-# Moving this out of testcase so the fixture and individual tests can use it
-def import_image(authority, repository, tags):
-    logger.warning("Import image authority: {}".format(authority))
-    credential = ClientSecretCredential(
-        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-        authority=authority
-    )
-    sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
-    audience = get_audience(authority)
-    scope = [audience + "/.default"]
-    mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
-    )
-    logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
-    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
-
-    while not result.done():
-        pass
-
 @pytest.fixture(scope="session")
 def load_registry():
     if not is_live():
         return
-    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
+    authority = _get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     repos = [
         "library/hello-world",
         "library/alpine",
@@ -204,7 +136,7 @@ def load_registry():
     ]
     for repo, tag in zip(repos, tags):
         try:
-            import_image(authority, repo, tag)
+            _import_image(authority, repo, tag)
         except Exception as e:
             print(e)
 

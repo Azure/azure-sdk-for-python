@@ -16,11 +16,11 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest
+from azure.containerregistry._helpers import _deserialize_manifest, _get_authority, _get_audience
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
-from testcase import ContainerRegistryTestClass, get_authority, get_audience
+from testcase import ContainerRegistryTestClass
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils import recorded_by_proxy
@@ -575,9 +575,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_construct_container_registry_client(self, **kwargs):
-        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        authority = get_authority(containerregistry_endpoint)
+    def test_construct_container_registry_client(self, containerregistry_endpoint):
+        authority = _get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
 
         with ContainerRegistryClient(
@@ -721,9 +720,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_set_audience(self, containerregistry_endpoint):
-        authority = get_authority(containerregistry_endpoint)
+        authority = _get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = get_audience(authority)
+        valid_audience = _get_audience(authority)
 
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
@@ -732,11 +731,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 pass
         
         with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            if valid_audience == _get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
                 for repo in client.list_repository_names():
                     pass
                 
-                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+                invalid_audience = _get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
                 invalid_client = ContainerRegistryClient(
                     endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
                 )
