@@ -1,6 +1,21 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+* Added missing methods for Mapping API
+
+### Breaking Changes
+* Removed custom Key Vault Error
+* Removed unneeded __repr__ and copy methods.
+
+### Bugs Fixed
+
+### Other Changes
+* Updated method docs
+
+
+## 1.0.0b1 (2022-10-13)
 
 New Azure App Configuration Provider
 
