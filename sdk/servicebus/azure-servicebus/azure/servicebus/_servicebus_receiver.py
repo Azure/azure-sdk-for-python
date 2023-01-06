@@ -782,8 +782,10 @@ class ServiceBusReceiver(
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
+        
+        For more information about message browsing see https://aka.ms/azsdk/servicebus/message-browsing
 
-        :param int max_message_count: The maximum number of messages to try and peek. The default
+        :param int max_message_count: The maximum number of messages to try and peek up to service limits. The default
          value is 1.
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
