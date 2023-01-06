@@ -412,11 +412,11 @@ Reference documentation is available [here](https://azuresdkdocs.blob.core.windo
 The EventHubs SDK integrates nicely with the [Schema Registry][schemaregistry_service] service and [Avro][avro].
 For more information, please refer to [Schema Registry SDK][schemaregistry_repo] and [Schema Registry Avro Encoder SDK][schemaregistry_avroencoder_repo].
 
-### Pure Python AMQP Transport and Backward Compatibility
+### Pure Python AMQP Transport and Backward Compatibility Support
 
 The Azure Event Hubs client library is now based on a pure Python AMQP implementation. `uAMQP` has been removed as required dependency.
 
-To opt for `uAMQP` as the underlying transport:
+To use `uAMQP` as the underlying transport:
 
 1. Install `uamqp` with pip.
 
@@ -440,6 +440,9 @@ client = EventHubConsumerClient.from_connection_string(
     connection_str, consumer_group, eventhub_name=eventhub_name, uamqp_transport=True
 )
 ```
+
+Note: The `message` attribute on `EventData`/`EventDataBatch`, which previously exposed the `uamqp.Message`, has been deprecated.
+ The "Legacy" objects returned by `EventData.message`/`EventDataBatch.message` have been introduced to help facilitate the transition.
 
 ### Building uAMQP wheel from source
 
