@@ -22,12 +22,6 @@ logger = logging.getLogger()
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    @classmethod
-    def setup_class(cls):
-        # Sleep to avoid resource deployment delay in live pipelines.
-        if is_live_and_not_recording():
-            time.sleep(10)
-    
     def import_image(self, endpoint, repository, tags):
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
@@ -210,7 +204,9 @@ def load_registry():
             import_image(authority_anon, repo, tag, registry_name_anon)
         except Exception as e:
             print(e)
-    
+
+    time.sleep(10)
+
 
 def assert_manifest_config_or_layer_properties(value, expected):
     assert value.media_type == expected.media_type
