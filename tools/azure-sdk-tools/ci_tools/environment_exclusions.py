@@ -83,9 +83,6 @@ MYPY_OPT_OUT = [
     "azure-confidentialledger",
     "azure-containerregistry",
     "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
     "azure-eventhub-checkpointstoreblob",
@@ -139,11 +136,6 @@ PYRIGHT_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
-    "azure-core",
-    "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
@@ -214,11 +206,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
-    "azure-core",
-    "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
@@ -289,11 +276,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
-    "azure-core",
-    "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
@@ -339,7 +321,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-ai-translation-document",
     "azure-messaging-webpubsubservice",
 ]
-
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.

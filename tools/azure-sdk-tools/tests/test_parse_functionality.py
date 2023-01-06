@@ -5,7 +5,7 @@ import pdb
 from unittest.mock import patch
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 def test_parse_require():
     test_scenarios = [
@@ -40,6 +40,20 @@ def test_parse_require_with_no_spec():
         assert result[0] == scenario.replace("_", "-")
         assert result[1] is None
 
+
+def test_toml_result():
+    package_with_toml = os.path.join(repo_root, "sdk", "core", "azure-core")
+    
+    parsed_setup = ParsedSetup.from_path(package_with_toml)
+    result = parsed_setup.get_build_config()
+
+    expected = {
+        "type_check_samples": False,
+        "verifytypes": False,
+        "pyright": False,
+    }
+
+    assert(expected == result)
 
 @patch("ci_tools.parsing.parse_functions.read_setup_py_content")
 def test_sdk_sample_setup(test_patch):

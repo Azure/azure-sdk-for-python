@@ -2,7 +2,15 @@ import os
 import ast
 import textwrap
 import re
-from typing import Dict, List, Tuple
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+
+from typing import Dict, List, Tuple, Any
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -73,6 +81,20 @@ class ParsedSetup:
             package_data,
             include_package_data,
         )
+
+    def get_build_config(self) -> Dict[str, Any]:
+        toml_file = os.path.join(self.folder, "pyproject.toml")
+
+        if os.path.exists(toml_file):
+            try:
+                with open(toml_file, "rb") as f:
+                    toml_dict = toml.load(f)
+                    if "tool" in toml_dict:
+                        tool_configs = toml_dict["tool"]
+                        if "azure-sdk-build" in tool_configs:
+                            return tool_configs["azure-sdk-build"]
+            except:
+                return {}
 
 
 def read_setup_py_content(setup_filename: str) -> str:
