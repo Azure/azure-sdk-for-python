@@ -1,16 +1,19 @@
 # Release History
 
-## 5.11.0 (Unreleased)
+## 5.11.0 (2023-01-10)
 
 ### Features Added
 
-### Breaking Changes
+- A new boolean keyword argument `uamqp_transport` has been added to sync and async `EventHubProducerClient`/`EventHubConsumerClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
 
 ### Bugs Fixed
 
+- Fixed a bug that caused an error when sending batches with tracing enabled (issue #27986).
+
 ### Other Changes
 
-- Updated uAMQP dependency to 1.6.3.
+- Removed uAMQP from required dependencies.
+- Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
   - Added support for Python 3.11.
 
 ## 5.10.1 (2022-08-22)

@@ -261,7 +261,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 )
 
     @recorded_by_proxy_async
-    async def test_update_phone_number_capabilities_with_invalid_phone_number(self):
+    async def test_update_phone_number_capabilities_with_unauthorized_number(self):
         if self.is_playback():
             phone_number = "sanitized"
         else:

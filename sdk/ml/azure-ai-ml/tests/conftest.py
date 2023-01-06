@@ -1,17 +1,22 @@
 import base64
+import hashlib
 import json
 import os
 import random
+import re
+import shutil
 import time
 import uuid
 from datetime import datetime
+from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Union, Optional
 from unittest.mock import Mock, patch
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -176,8 +181,8 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
-def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
+def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
 
 
 @pytest.fixture
@@ -193,11 +198,6 @@ def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_02_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
 
 
 @pytest.fixture
@@ -490,19 +490,133 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
-@pytest.fixture
-def mock_component_hash(mocker: MockFixture):
-    fake_component_hash = "000000000000000000000"
+def normalized_arm_id_in_object(items):
+    """Replace the arm id in the object with a normalized value."""
+    regex = re.compile(
+        r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
+        r"Microsoft\.MachineLearningServices/workspaces/([^/]+)/"
+    )
+    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
+                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
 
-    def generate_compononent_hash(*args, **kwargs):
-        dict_hash = hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=fake_component_hash, target=dict_hash)
-        return dict_hash
+    if isinstance(items, dict):
+        for key, value in items.items():
+            if isinstance(value, str):
+                items[key] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+    elif isinstance(items, list):
+        for i, value in enumerate(items):
+            if isinstance(value, str):
+                items[i] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+
+
+def normalized_hash_dict(items: dict, keys_to_omit=None):
+    """Normalize items with sanitized value and return hash."""
+    normalized_arm_id_in_object(items)
+    return hash_dict(items, keys_to_omit)
+
+
+def generate_component_hash(*args, **kwargs):
+    """Normalize component dict with sanitized value and return hash."""
+    dict_hash = hash_dict(*args, **kwargs)
+    normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    return dict_hash
+
+
+def get_client_hash_with_request_node_name(
+    subscription_id: Optional[str],
+    resource_group_name: Optional[str],
+    workspace_name: Optional[str],
+    registry_name: Optional[str],
+    random_seed: str
+):
+    """Generate a hash for the client."""
+    object_hash = hashlib.sha256()
+    for s in [
+        subscription_id,
+        resource_group_name,
+        workspace_name,
+        registry_name,
+        random_seed,
+    ]:
+        object_hash.update(str(s).encode("utf-8"))
+    return object_hash.hexdigest()
+
+
+def clear_on_disk_cache(cached_resolver):
+    """Clear on disk cache for current client."""
+    cached_resolver._lock.acquire()
+    shutil.rmtree(cached_resolver._on_disk_cache_dir, ignore_errors=True)
+    cached_resolver._lock.release()
+
+
+@pytest.fixture
+def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
+    """Mock the component hash function.
+
+    In playback mode, workspace information in returned arm_id will be normalized like this:
+    /subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/.../codes/xxx/versions/xxx
+    =>
+    /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/.../codes/xxx/versions/xxx
+    So the component hash will be different from the recorded one.
+    In this mock, we replace the original hash in recordings with the same hash in playback mode.
+
+    Note that component hash value in playback mode can be different from the one in live mode,
+    so tests that check component hash directly should be skipped if not is_live.
+    """
+    # do nothing if in live mode and not recording
+    if is_live_and_not_recording():
+        return
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
-    else:
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", return_value=fake_component_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
+        mocker.patch(
+            "azure.ai.ml.entities._component.pipeline_component.hash_dict",
+            side_effect=generate_component_hash
+        )
+
+    # On-disk cache can't be shared among different tests in playback mode or when recording.
+    # When doing recording:
+    # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+    #    the cached result from tests run earlier, so we won't found enough recordings when
+    #    running tests in reversed order.
+    # In playback mode:
+    # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+    #   with the same on-disk hash.
+    # 2) Server-side may return different version for the same anonymous component in different workspace,
+    #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+    #   and test2 in workspace B, the version in recordings can be different.
+    # So we use a random (probably unique) on-disk cache base directory for each test, and on-disk cache operations
+    # will be thread-safe when concurrently running different tests.
+    mocker.patch(
+        "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
+        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex)
+    )
+
+    # Collect involved resolvers before yield, as fixtures may be destroyed after yield.
+    from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+    involved_resolvers = []
+    for client_fixture_name in ["client", "registry_client"]:
+        if client_fixture_name not in request.fixturenames:
+            continue
+        client: MLClient = request.getfixturevalue(client_fixture_name)
+        involved_resolvers.append(CachedNodeResolver(
+            resolver=None,
+            subscription_id=client.subscription_id,
+            resource_group_name=client.resource_group_name,
+            workspace_name=client.workspace_name,
+            registry_name=client._operation_scope.registry_name,
+        ))
+
+    yield
+
+    # clear on-disk cache after each test
+    for resolver in involved_resolvers:
+        clear_on_disk_cache(resolver)
 
 
 @pytest.fixture
@@ -613,10 +727,10 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
-    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._utils._cache_utils.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()

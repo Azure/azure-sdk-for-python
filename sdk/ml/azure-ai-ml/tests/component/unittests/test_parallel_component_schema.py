@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

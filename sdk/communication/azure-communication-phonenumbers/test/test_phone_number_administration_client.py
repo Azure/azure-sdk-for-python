@@ -244,7 +244,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             )
 
     @recorded_by_proxy
-    def test_update_phone_number_capabilities_with_invalid_phone_number(self, **kwargs):
+    def test_update_phone_number_capabilities_with_unauthorized_number(self, **kwargs):
         if self.is_playback():
             phone_number = "sanitized"
         else:
@@ -257,6 +257,15 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 PhoneNumberCapabilityType.INBOUND,
                 polling=True
             )
+        assert str(ex.value.status_code) == "404"  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy
+    def test_update_phone_number_capabilities_with_invalid_number(self, **kwargs):
+        if self.is_playback():
+            phone_number = "invalid_phone_number"
+        else:
+            phone_number = "invalid_phone_number"
 
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None

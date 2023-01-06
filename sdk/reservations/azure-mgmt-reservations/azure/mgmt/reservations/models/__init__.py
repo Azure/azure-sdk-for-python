@@ -8,6 +8,7 @@
 
 from ._models_py3 import AppliedReservationList
 from ._models_py3 import AppliedReservations
+from ._models_py3 import AppliedScopeProperties
 from ._models_py3 import AvailableScopeProperties
 from ._models_py3 import AvailableScopeRequest
 from ._models_py3 import AvailableScopeRequestProperties
@@ -82,6 +83,7 @@ from ._models_py3 import ReservationOrderResponse
 from ._models_py3 import ReservationResponse
 from ._models_py3 import ReservationSplitProperties
 from ._models_py3 import ReservationSummary
+from ._models_py3 import ReservationSwapProperties
 from ._models_py3 import ReservationToExchange
 from ._models_py3 import ReservationToPurchaseCalculateExchange
 from ._models_py3 import ReservationToPurchaseExchange
@@ -124,12 +126,13 @@ from ._azure_reservation_api_enums import ResourceType
 from ._azure_reservation_api_enums import UserFriendlyAppliedScopeType
 from ._azure_reservation_api_enums import UserFriendlyRenewState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AppliedReservationList",
     "AppliedReservations",
+    "AppliedScopeProperties",
     "AvailableScopeProperties",
     "AvailableScopeRequest",
     "AvailableScopeRequestProperties",
@@ -204,6 +207,7 @@ __all__ = [
     "ReservationResponse",
     "ReservationSplitProperties",
     "ReservationSummary",
+    "ReservationSwapProperties",
     "ReservationToExchange",
     "ReservationToPurchaseCalculateExchange",
     "ReservationToPurchaseExchange",

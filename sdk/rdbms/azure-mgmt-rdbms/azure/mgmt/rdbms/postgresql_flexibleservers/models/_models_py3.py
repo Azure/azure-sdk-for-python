@@ -249,40 +249,47 @@ class AdministratorListResult(_serialization.Model):
 class AuthConfig(_serialization.Model):
     """Authentication configuration properties of a server.
 
-    :ivar active_directory_auth_enabled: If true, Azure Active Directory authentication is enabled.
-    :vartype active_directory_auth_enabled: bool
-    :ivar password_auth_enabled: If true, Password authentication is enabled.
-    :vartype password_auth_enabled: bool
+    :ivar active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
+     Known values are: "Enabled" and "Disabled".
+    :vartype active_directory_auth: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ActiveDirectoryAuthEnum
+    :ivar password_auth: If Enabled, Password authentication is enabled. Known values are:
+     "Enabled" and "Disabled".
+    :vartype password_auth: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.PasswordAuthEnum
     :ivar tenant_id: Tenant id of the server.
     :vartype tenant_id: str
     """
 
     _attribute_map = {
-        "active_directory_auth_enabled": {"key": "activeDirectoryAuthEnabled", "type": "bool"},
-        "password_auth_enabled": {"key": "passwordAuthEnabled", "type": "bool"},
+        "active_directory_auth": {"key": "activeDirectoryAuth", "type": "str"},
+        "password_auth": {"key": "passwordAuth", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        active_directory_auth_enabled: Optional[bool] = None,
-        password_auth_enabled: bool = True,
+        active_directory_auth: Optional[Union[str, "_models.ActiveDirectoryAuthEnum"]] = None,
+        password_auth: Union[str, "_models.PasswordAuthEnum"] = "Enabled",
         tenant_id: str = "",
         **kwargs
     ):
         """
-        :keyword active_directory_auth_enabled: If true, Azure Active Directory authentication is
-         enabled.
-        :paramtype active_directory_auth_enabled: bool
-        :keyword password_auth_enabled: If true, Password authentication is enabled.
-        :paramtype password_auth_enabled: bool
+        :keyword active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype active_directory_auth: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ActiveDirectoryAuthEnum
+        :keyword password_auth: If Enabled, Password authentication is enabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype password_auth: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.PasswordAuthEnum
         :keyword tenant_id: Tenant id of the server.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
-        self.active_directory_auth_enabled = active_directory_auth_enabled
-        self.password_auth_enabled = password_auth_enabled
+        self.active_directory_auth = active_directory_auth
+        self.password_auth = password_auth
         self.tenant_id = tenant_id
 
 

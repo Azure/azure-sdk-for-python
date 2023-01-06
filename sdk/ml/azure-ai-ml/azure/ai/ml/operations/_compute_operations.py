@@ -110,7 +110,17 @@ class ComputeOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a Compute.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Compute]
         """
-        compute.location = self._get_workspace_location()
+        if compute.type != ComputeType.AMLCOMPUTE:
+            if compute.location:
+                module_logger.warning(
+                    "Warning: 'Location' is not supported for compute type %s and will not be used.",
+                    compute.type,
+                    )
+            compute.location = self._get_workspace_location()
+
+        if not compute.location:
+            compute.location = self._get_workspace_location()
+
         compute._set_full_subnet_name(
             self._operation_scope.subscription_id,
             self._operation_scope.resource_group_name,

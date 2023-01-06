@@ -1,4 +1,3 @@
-
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -45,11 +44,12 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
      is instantiated and all policies chained.
     :type next: ~azure.core.pipeline.policies.AsyncHTTPPolicy or ~azure.core.pipeline.transport.AsyncHttpTransport
     """
+
     def __init__(self) -> None:
         # next will be set once in the pipeline
         from ..transport._base_async import AsyncHttpTransport
-        self.next = cast(Union[AsyncHTTPPolicy,
-                               AsyncHttpTransport], None)
+
+        self.next = cast(Union[AsyncHTTPPolicy, AsyncHttpTransport], None)
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
