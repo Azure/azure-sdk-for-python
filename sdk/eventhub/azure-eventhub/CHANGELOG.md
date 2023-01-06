@@ -2,6 +2,8 @@
 
 ## 5.11.0 (2023-01-10)
 
+Version 5.11.0 is our first stable release of the Azure Event Hubs client library based on a pure Python implemented AMQP stack.
+
 ### Features Added
 
 - A new boolean keyword argument `uamqp_transport` has been added to sync and async `EventHubProducerClient`/`EventHubConsumerClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
@@ -12,6 +14,8 @@
 
 ### Other Changes
 
+- The `message` attribute on `EventData`/`EventDataBatch`, which previously exposed the `uamqp.Message`, has been deprecated.
+  - `LegacyMessage`/`LegacyBatchMessage` objects returned by the `message` attribute on `EventData`/`EventDataBatch` have been introduced to help facilitate the transition.
 - Removed uAMQP from required dependencies.
 - Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
   - Added support for Python 3.11.
