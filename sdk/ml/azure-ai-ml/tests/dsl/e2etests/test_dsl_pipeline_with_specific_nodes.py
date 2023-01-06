@@ -113,8 +113,8 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         environment = Environment(
             name="test-environment",
             conda_file=conda_file_path,
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
-            version="1",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
+            version="2",  # TODO: anonymous environment has potential version conflict?
             description="This is an anonymous environment",
         )
 
