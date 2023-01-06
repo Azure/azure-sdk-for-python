@@ -935,18 +935,21 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resour
 
 
 @contextmanager
-def open_shared_file(file: str, mode: str = 'r', **kwargs) -> IO:
+def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
     """Open file with specific mode and return the file object.
 
     :param file: Path to the file.
-    :param mode: Mode to open the file with.
+    :param mode: Mode to open the file.
+    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
+    w+r for owner, group and others.
+    :param int_mode: Mode for the opener.
     :return: The file object.
     """
     origin_mask = os.umask(0)
     try:
         def opener(path, flags):
             # w+r for owner, group and others
-            return os.open(path, flags, 0o666)
+            return os.open(path, flags, int_mode)
 
         with open(file=file, mode=mode, **kwargs, opener=opener) as f:
             yield f

@@ -16,7 +16,7 @@ from typing import List, Dict, Optional, Union, Callable
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled, \
-    is_private_preview_enabled, open_shared_file
+    is_private_preview_enabled, open_file_with_int_mode
 from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
@@ -226,7 +226,15 @@ class CachedNodeResolver(object):
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
-            return on_disk_cache_path.read_text().strip()
+            try:
+                return on_disk_cache_path.read_text().strip()
+            except (OSError, PermissionError) as e:
+                logger.warning(
+                    "Failed to read on-disk cache for component due to %s. "
+                    "Please check if the file %s is in use or current user doesn't have the permission.",
+                    type(e).__name__,
+                    on_disk_cache_path.as_posix(),
+                )
         return None
 
     def _save_to_on_disk_cache(self, on_disk_hash: str, arm_id: str) -> None:
@@ -237,11 +245,11 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with open_shared_file(on_disk_cache_path.as_posix(), "w") as f:
+            with open_file_with_int_mode(on_disk_cache_path, "w") as f:
                 f.write(arm_id)
         except PermissionError:
             logger.warning(
-                "Failed to save component to on disk cache due to permission error. "
+                "Failed to save on-disk cache for component due to permission error. "
                 "Please check if the file %s is in use or current user doesn't have the permission.",
                 on_disk_cache_path.as_posix(),
             )
