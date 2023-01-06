@@ -149,7 +149,7 @@ def get_audience(authority):
         return "https://management.usgovcloudapi.net"
 
 # Moving this out of testcase so the fixture and individual tests can use it
-def import_image(authority, repository, tags):
+def import_image(authority, repository, tags, registry_name):
     logger.warning("Import image authority: {}".format(authority))
     credential = ClientSecretCredential(
         tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
@@ -166,7 +166,6 @@ def import_image(authority, repository, tags):
     logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
-    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
 
     import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
@@ -186,6 +185,9 @@ def load_registry():
     if not is_live():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
+    authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
+    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+    registry_name_anon = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
     repos = [
         "library/hello-world",
         "library/alpine",
@@ -204,9 +206,11 @@ def load_registry():
     ]
     for repo, tag in zip(repos, tags):
         try:
-            import_image(authority, repo, tag)
+            import_image(authority, repo, tag, registry_name)
+            import_image(authority_anon, repo, tag, registry_name_anon)
         except Exception as e:
             print(e)
+    
 
 def assert_manifest_config_or_layer_properties(value, expected):
     assert value.media_type == expected.media_type
