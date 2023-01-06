@@ -4,3 +4,4 @@ package_pprint_name = "Event Hub Management"
 package_doc_id = "event-hub?view=azure-python-preview"
 is_stable = true
 sample_link = "eventhub"
+title = "EventHubManagementClient"

@@ -3,6 +3,7 @@ import json
 import os
 import random
 import re
+import shutil
 import time
 import uuid
 from datetime import datetime
@@ -486,6 +487,43 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
+def normalized_arm_id_in_object(items):
+    """Replace the arm id in the object with a normalized value."""
+    regex = re.compile(
+        r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
+        r"Microsoft\.MachineLearningServices/workspaces/([^/]+)/"
+    )
+    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
+                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+
+    if isinstance(items, dict):
+        for key, value in items.items():
+            if isinstance(value, str):
+                items[key] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+    elif isinstance(items, list):
+        for i, value in enumerate(items):
+            if isinstance(value, str):
+                items[i] = regex.sub(replacement, value)
+            else:
+                normalized_arm_id_in_object(value)
+
+
+def normalized_hash_dict(items: dict, keys_to_omit=None):
+    """Normalize items with sanitized value and return hash."""
+    normalized_arm_id_in_object(items)
+    return hash_dict(items, keys_to_omit)
+
+
+def generate_component_hash(*args, **kwargs):
+    """Normalize component dict with sanitized value and return hash."""
+    dict_hash = hash_dict(*args, **kwargs)
+    normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
+    add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
+    return dict_hash
+
+
 @pytest.fixture
 def mock_component_hash(mocker: MockFixture):
     """Mock the component hash function.
@@ -500,43 +538,37 @@ def mock_component_hash(mocker: MockFixture):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
-    regex = re.compile(
-        r"/subscriptions/[\-0-9a-z]+/resourceGroups/[\-0-9a-z]+/providers/"
-        r"Microsoft\.MachineLearningServices/workspaces/[_\-0-9a-z]+/"
-    )
-    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
-                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
-
-    def normalized_arm_id_in_object(items):
-        if isinstance(items, dict):
-            for key, value in items.items():
-                if isinstance(value, str):
-                    items[key] = regex.sub(replacement, value)
-                else:
-                    normalized_arm_id_in_object(value)
-        elif isinstance(items, list):
-            for i, value in enumerate(items):
-                if isinstance(value, str):
-                    items[i] = regex.sub(replacement, value)
-                else:
-                    normalized_arm_id_in_object(value)
-
-    def normalized_hash_dict(items: dict, keys_to_omit=None):
-        normalized_arm_id_in_object(items)
-        return hash_dict(items, keys_to_omit)
-
-    def generate_compononent_hash(*args, **kwargs):
-        dict_hash = hash_dict(*args, **kwargs)
-        normalized_dict_hash = normalized_hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=normalized_dict_hash, target=dict_hash)
-        return dict_hash
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
-            side_effect=generate_compononent_hash
+            side_effect=generate_component_hash
         )
+
+    if is_live_and_not_recording():
+        return
+
+    if not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_TESTS", False) in ["True", "true", True]:
+        # On-disk cache can't be shared among different tests in playback mode or when recording.
+        # When doing recording:
+        # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+        #    the cached result from tests run earlier, so we won't found enough recordings when
+        #    running tests in reversed order.
+        # In playback mode:
+        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+        #   with the same on-disk hash.
+        # 2) Server-side may return different version for the same anonymous component in different workspace,
+        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+        #   and test2 in workspace B, the version in recordings can be different.
+        # So we need to clear on-disk cache for each test.
+
+        # If you want to run tests concurrently, you can either:
+        # 1) Disable on-disk cache or
+        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_TESTS to True and acknowledge that you may meet
+        #   the issues mentioned above.
+        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
 
 
 @pytest.fixture

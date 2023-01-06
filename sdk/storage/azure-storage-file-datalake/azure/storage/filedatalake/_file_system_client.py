@@ -8,7 +8,6 @@ import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.pipeline import Pipeline
@@ -121,7 +120,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
+        if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,

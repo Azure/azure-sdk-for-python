@@ -6,6 +6,7 @@
 
 import json
 import logging
+import re
 import typing
 from collections import Counter
 from typing import Dict, Optional, Tuple, Union
@@ -16,7 +17,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, Com
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
-from azure.ai.ml.constants._common import COMPONENT_TYPE
+from azure.ai.ml.constants._common import COMPONENT_TYPE, ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
@@ -171,7 +172,7 @@ class PipelineComponent(Component):
         parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
             full_node_name = f"{parent_node_name}{node_name}.jobs."
-            if node.type == NodeType.PIPELINE:
+            if node.type == NodeType.PIPELINE and isinstance(node._component, PipelineComponent):
                 validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=full_node_name))
                 continue
             if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
@@ -350,6 +351,10 @@ class PipelineComponent(Component):
         if rest_jobs is None:
             return sub_nodes
         for node_name, node in rest_jobs.items():
+            # TODO: Remove this ad-hoc fix after unified arm id format in object
+            component_id = node.get("componentId", "")
+            if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
+                node["componentId"] = component_id[len(ARM_ID_PREFIX):]
             if not LoopNode._is_loop_node_dict(node):
                 # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode

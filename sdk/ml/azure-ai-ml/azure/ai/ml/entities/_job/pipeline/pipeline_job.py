@@ -330,6 +330,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         if len(set(self.jobs.keys()) - {on_init, on_finalize}) == 0:
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
+        def _is_control_flow_node(_validate_job_name: str) -> bool:
+            from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+
+            _validate_job = self.jobs[_validate_job_name]
+            return issubclass(type(_validate_job), ControlFlowNode)
+
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_binding(_input_output_data) -> Union[str, None]:
                 """Try to get data binding from input/output data, return None if not found."""
@@ -347,6 +353,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
+                # exclude control flow node as it does not have inputs
+                if _is_control_flow_node(_job_name):
+                    continue
                 for _input_name in _job.inputs:
                     _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
                     if _data_binding is not None and is_data_binding_expression(
@@ -354,12 +363,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     ):
                         return False
             return True
-
-        def _is_control_flow_node(_validate_job_name: str) -> bool:
-            from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
-
-            _validate_job = self.jobs[_validate_job_name]
-            return issubclass(type(_validate_job), ControlFlowNode)
 
         # validate on_init
         if on_init is not None:

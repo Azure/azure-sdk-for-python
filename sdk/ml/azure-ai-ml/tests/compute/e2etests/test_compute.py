@@ -29,6 +29,7 @@ class TestCompute(AzureRecordedTestCase):
         compute_resource_get: AmlCompute = client.compute.get(name=compute_name)
         assert compute_resource_get.name == compute_name
         assert compute_resource_get.tier == "dedicated"
+        assert compute_resource_get.location == compute.location
 
         compute_resource_get.idle_time_before_scale_down = 200
         compute_update_poller = client.compute.begin_update(compute_resource_get)
