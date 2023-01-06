@@ -13,6 +13,8 @@ from pypi_tools.pypi import PyPIClient
 from typing import List
 import logging
 
+INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
+
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
@@ -57,7 +59,7 @@ omit_function_dict = {
 }
 
 
-def filter_for_compatibility(package_set: List[str]) -> List[str]:
+def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
     If a package is unsupported by the executable, it will be omitted from the returned list.
@@ -104,7 +106,7 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
-def glob_packages(glob_str: str, target_root_dir: str):
+def glob_packages(glob_str: str, target_root_dir: str) -> List[str]:
     if glob_string:
         individual_globs = glob_string.split(",")
     else:
@@ -119,6 +121,15 @@ def glob_packages(glob_str: str, target_root_dir: str):
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set([collected_top_level_directories]))
+
+def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
+    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
+
+    logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
+    logging.info(
+        "Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered)))
+    )
+    return pkg_set_ci_filtered
 
 def discover_targeted_packages(
     glob_string: str,
@@ -144,9 +155,9 @@ def discover_targeted_packages(
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
 
-    # filter for compatiblity
+    # filter for compatiblity, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
-        collected_packages = filter_for_compatibility(collected_packages)
+        collected_packages = apply_compatibility_filter(collected_packages)
 
     # apply package-specific exclusions only if we have gotten more than one
     # todo: remove this after updating the pyproject exclusion
@@ -154,17 +165,14 @@ def discover_targeted_packages(
         collected_packages = remove_omitted_packages(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
-    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
-    logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
-    logging.info(
-        "Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered)))
-    )
-    return sorted(pkg_set_ci_filtered)
+    collected_packages = apply_business_filter(collected_packages, filter_type)
+
+    return sorted(collected_packages)
 
 
 def remove_omitted_packages(collected_directories):
     packages = [
-        package_dir for package_dir in collected_directories if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
+        pkg for pkg in packages if INACTIVE_CLASSIFIER not in ParsedSetup.from_path(pkg).classifiers
     ]
 
     return packages
