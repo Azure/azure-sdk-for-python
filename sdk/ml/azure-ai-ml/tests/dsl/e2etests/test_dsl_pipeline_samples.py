@@ -9,18 +9,15 @@ from pathlib import Path
 
 import pydash
 import pytest
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Job, PipelineJob
+from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.operations._run_history_constants import JobStatus
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 
 from .._util import _DSL_TIMEOUT_SECOND
-
-from devtools_testutils import AzureRecordedTestCase
 
 tests_root_dir = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(tests_root_dir / "test_configs"))
@@ -31,18 +28,6 @@ def assert_job_completed(pipeline, client: MLClient):
     job = client.jobs.create_or_update(pipeline)
     client.jobs.stream(job.name)
     assert client.jobs.get(job.name).status == JobStatus.COMPLETED
-
-
-def job_cancel_after_submit(pipeline, client: MLClient):
-    # Todo: After Cancel, there are a lot of statuses returned, such as Running and Preparing so far. will not judge
-    #  the status before confirming whether there is a problem with pipeline cancel.
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
 
 
 def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
@@ -65,13 +50,16 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestDSLPipelineSamples(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.e2e_local_components.pipeline import generate_dsl_pipeline as e2e_local_components
+        from test_configs.dsl_pipeline.e2e_local_components.pipeline import (
+            generate_dsl_pipeline as e2e_local_components,
+        )
 
         pipeline = e2e_local_components()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_e2e_registered_components(
@@ -81,7 +69,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline_samples_e2e_registered_score_components: ComponentEntity,
         pipeline_samples_e2e_registered_eval_components: ComponentEntity,
     ) -> None:
-        from test_configs.dsl_pipeline.e2e_registered_components.pipeline import generate_dsl_pipeline as e2e_registered_components
+        from test_configs.dsl_pipeline.e2e_registered_components.pipeline import (
+            generate_dsl_pipeline as e2e_registered_components,
+        )
 
         pipeline = e2e_registered_components(
             client=client,
@@ -89,7 +79,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
             pipeline_samples_e2e_registered_score_components=pipeline_samples_e2e_registered_score_components,
             pipeline_samples_e2e_registered_eval_components=pipeline_samples_e2e_registered_eval_components,
         )
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
         # move unit test here due to permission problem
         job_yaml = str(samples_dir / "e2e_registered_components/pipeline.yml")
         omit_fields = [
@@ -114,7 +104,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         from test_configs.dsl_pipeline.basic_component.pipeline import generate_dsl_pipeline as basic_component
 
         pipeline = basic_component()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_component_with_input_output(self, client: MLClient) -> None:
@@ -123,28 +113,28 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = component_with_input_output()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_basic_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.basic_pipeline.pipeline import generate_dsl_pipeline as basic_pipeline
 
         pipeline = basic_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pipeline_with_data(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipline_with_data.pipeline import generate_dsl_pipeline as pipline_with_data
 
         pipeline = pipline_with_data()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_local_data_input(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.local_data_input.pipeline import generate_dsl_pipeline as local_data_input
 
         pipeline = local_data_input()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_folder(self, client: MLClient) -> None:
@@ -153,7 +143,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = datastore_datapath_uri_folder()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_file(self, client: MLClient) -> None:
@@ -162,92 +152,100 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = datastore_datapath_uri_file()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_dataset_input(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.dataset_input.pipeline import generate_dsl_pipeline as dataset_input
 
         pipeline = dataset_input(client)
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_web_url_input(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.web_url_input.pipeline import generate_dsl_pipeline as web_url_input
 
         pipeline = web_url_input()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_env_public_docker_image(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.env_public_docker_image.pipeline import generate_dsl_pipeline as env_public_docker_image
+        from test_configs.dsl_pipeline.env_public_docker_image.pipeline import (
+            generate_dsl_pipeline as env_public_docker_image,
+        )
 
         pipeline = env_public_docker_image()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_env_registered(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.env_registered.pipeline import generate_dsl_pipeline as env_registered
 
         pipeline = env_registered()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_env_conda_file(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.env_conda_file.pipeline import generate_dsl_pipeline as env_conda_file
 
         pipeline = env_conda_file()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_tf_hello_world(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.tf_hello_world.pipeline import generate_dsl_pipeline as tf_hello_world
 
         pipeline = tf_hello_world()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_mpi_hello_world(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.mpi_hello_world.pipeline import generate_dsl_pipeline as mpi_hello_world
 
         pipeline = mpi_hello_world()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pytorch_hello_world(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pytorch_hello_world.pipeline import generate_dsl_pipeline as pytorch_hello_world
 
         pipeline = pytorch_hello_world()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_nyc_taxi_data_regression(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import generate_dsl_pipeline as nyc_taxi_data_regression
+        from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import (
+            generate_dsl_pipeline as nyc_taxi_data_regression,
+        )
 
         pipeline = nyc_taxi_data_regression()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_tf_mnist(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.tf_mnist.pipeline import generate_dsl_pipeline as tf_mnist
 
         pipeline = tf_mnist()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_e2e_inline_components(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.e2e_inline_components.pipeline import generate_dsl_pipeline as e2e_inline_components
+        from test_configs.dsl_pipeline.e2e_inline_components.pipeline import (
+            generate_dsl_pipeline as e2e_inline_components,
+        )
 
         pipeline = e2e_inline_components()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
+    @pytest.mark.usefixtures("mock_asset_name")
     @pytest.mark.e2etest
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_command_job_in_pipeline(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import generate_dsl_pipeline as command_job_in_pipeline
+        from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as command_job_in_pipeline,
+        )
 
         pipeline = command_job_in_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_multi_parallel_components_with_file_input_pipeline_output(
@@ -259,7 +257,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = pipeline_with_parallel_components()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
@@ -268,21 +266,25 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = pipeline_with_parallel_components()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_parallel_components(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.parallel_component.pipeline import generate_dsl_pipeline as pipeline_with_parallel_components
+        from test_configs.dsl_pipeline.parallel_component.pipeline import (
+            generate_dsl_pipeline as pipeline_with_parallel_components,
+        )
 
         pipeline = pipeline_with_parallel_components()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_automl_job_in_pipeline(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.automl_job_in_pipeline.pipeline import generate_dsl_pipeline as automl_job_in_pipeline
+        from test_configs.dsl_pipeline.automl_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as automl_job_in_pipeline,
+        )
 
         pipeline = automl_job_in_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pipeline_with_pipeline_component(self, client: MLClient) -> None:
@@ -291,7 +293,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = pipeline_with_pipeline_component()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
     def test_pipeline_with_data_as_inputs_for_pipeline_component(self, client: MLClient) -> None:
@@ -300,17 +302,17 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = pipeline_with_pipeline_component(client)
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
-        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import generate_dsl_pipeline_from_yaml as spark_job_in_pipeline
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
+        )
 
         pipeline = spark_job_in_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
@@ -318,9 +320,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = spark_job_in_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
@@ -328,4 +329,22 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = spark_job_in_pipeline()
-        client.create_or_update(pipeline)
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_spark_job_with_builder_in_pipeline_without_entry(self, client: MLClient,) -> None:
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
+            generate_dsl_pipeline_from_builder_without_entry as spark_job_in_pipeline,
+        )
+        pipeline = spark_job_in_pipeline()
+        with pytest.raises(Exception) as ex:
+            created_job = client.jobs.create_or_update(pipeline)
+
+        assert '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Missing data for required field.",' \
+               '\n      "path": "jobs.add_greeting_column.component.entry",\n      "value": null\n    }\n  ]\n}' in ex.value.message
+        
+        validation_result = client.jobs.validate(pipeline)
+        assert validation_result.passed is False
+        assert validation_result.error_messages == {
+            "jobs.add_greeting_column.component.entry": 'Missing data for required field.',
+        }

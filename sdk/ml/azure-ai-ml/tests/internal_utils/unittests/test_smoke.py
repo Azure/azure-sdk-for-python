@@ -6,6 +6,7 @@ ERROR_MSG = "Can't instantiate abstract class"
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 def test_smoke():
     from azure.ai.ml.entities import (
         Asset,

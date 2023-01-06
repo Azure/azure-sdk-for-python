@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import six
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
@@ -43,7 +42,7 @@ class EventHubError(Exception):
         details = []
         self.message = (
             error_list
-            if isinstance(error_list, six.text_type)
+            if isinstance(error_list, str)
             else error_list.decode("UTF-8")
         )
         details_index = self.message.find(" Reference:")

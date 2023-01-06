@@ -1,10 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""Contains exception module in Azure Machine Learning SDKv2.
 
+This includes enums and classes for exceptions.
+"""
 import logging
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from azure.core.exceptions import AzureError
 
@@ -19,14 +22,16 @@ class ValidationErrorType(Enum):
     When using ValidationException, specify the type that best describes the nature of the error being captured.
     If no type fits, add a new enum here and update raise_error.py to handle it.
 
-    INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
-    UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
-    MISSING_FIELD -> At least one required schema parameter is missing
-    FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
-    CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
-    CANNOT_PARSE -> YAML file cannot be parsed
-    RESOURCE_NOT_FOUND -> Resource could not be found
-    GENERIC -> Undefined placeholder. Avoid using.
+    Types of validation errors:
+
+    * INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
+    * UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
+    * MISSING_FIELD -> At least one required schema parameter is missing
+    * FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
+    * CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
+    * CANNOT_PARSE -> YAML file cannot be parsed
+    * RESOURCE_NOT_FOUND -> Resource could not be found
+    * GENERIC -> Undefined placeholder. Avoid using.
     """
 
     INVALID_VALUE = "INVALID VALUE"
@@ -85,7 +90,7 @@ class ErrorTarget:
     UNKNOWN = "Unknown"
 
 
-class MlException(AzureError):
+class MLException(AzureError):
     """
     The base class for all exceptions raised in AzureML SDK code base.
     If there is a need to define a custom exception type, that custom exception type
@@ -157,7 +162,7 @@ class MlException(AzureError):
         self._error_category = value
 
 
-class DeploymentException(MlException):
+class DeploymentException(MLException):
     """
     Class for all exceptions related to Deployments.
 
@@ -191,7 +196,7 @@ class DeploymentException(MlException):
         )
 
 
-class ComponentException(MlException):
+class ComponentException(MLException):
     """
     Class for all exceptions related to Components.
 
@@ -225,7 +230,7 @@ class ComponentException(MlException):
         )
 
 
-class JobException(MlException):
+class JobException(MLException):
     """
     Class for all exceptions related to Jobs.
 
@@ -259,7 +264,7 @@ class JobException(MlException):
         )
 
 
-class ModelException(MlException):
+class ModelException(MLException):
     """
     Class for all exceptions related to Models.
 
@@ -293,7 +298,7 @@ class ModelException(MlException):
         )
 
 
-class AssetException(MlException):
+class AssetException(MLException):
     """
     Class for all exceptions related to Assets.
 
@@ -327,7 +332,7 @@ class AssetException(MlException):
         )
 
 
-class ScheduleException(MlException):
+class ScheduleException(MLException):
     """
     Class for all exceptions related to Job Schedules.
 
@@ -361,7 +366,7 @@ class ScheduleException(MlException):
         )
 
 
-class ValidationException(MlException):
+class ValidationException(MLException):
     def __init__(
         self,
         message: str,
@@ -398,6 +403,8 @@ class ValidationException(MlException):
             **kwargs,
         )
 
+        self.raw_error = message  # used for CLI error formatting
+
         if error_type in list(ValidationErrorType):
             self._error_type = error_type
         else:
@@ -417,7 +424,7 @@ class ValidationException(MlException):
         self._error_type = value
 
 
-class AssetPathException(MlException):
+class AssetPathException(MLException):
     """
     Class for the exception raised when an attempt is made to update the path of an existing asset.
     Asset paths are immutable.
@@ -452,7 +459,7 @@ class AssetPathException(MlException):
         )
 
 
-class EmptyDirectoryError(MlException):
+class EmptyDirectoryError(MLException):
     """Exception raised when an empty directory is provided as input for an I/O operation."""
 
     def __init__(
@@ -471,7 +478,7 @@ class EmptyDirectoryError(MlException):
         )
 
 
-class UserErrorException(MlException):
+class UserErrorException(MLException):
     """Exception raised when invalid or unsupported inputs are provided."""
 
     def __init__(
@@ -504,8 +511,9 @@ class UnsupportedParameterKindError(UserErrorException):
     """Exception raised when a user try setting attributes of
     inputs/outputs."""
 
-    def __init__(self, func_name):
-        msg = "%r: dsl pipeline does not accept *args or **kwargs as parameters." % func_name
+    def __init__(self, func_name, parameter_kind=None):
+        parameter_kind = parameter_kind or "*args or **kwargs"
+        msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
         super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
 
 
@@ -571,6 +579,15 @@ class MultipleValueError(KeywordError):
         super().__init__(message=message, no_personal_data_message=message)
 
 
+class ParamValueNotExistsError(KeywordError):
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
+    dynamic functions."""
+
+    def __init__(self, func_name, keywords):
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
+        super().__init__(message=message, no_personal_data_message=message)
+
+
 class UnsupportedOperationError(UserErrorException):
     """Exception raised when specified operation is not supported."""
 
@@ -579,13 +596,13 @@ class UnsupportedOperationError(UserErrorException):
         super().__init__(message=message, no_personal_data_message=message)
 
 
-class LocalEndpointNotFoundError(MlException):
+class LocalEndpointNotFoundError(MLException):
     """Exception raised if local endpoint cannot be found."""
 
     def __init__(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -603,7 +620,7 @@ class LocalEndpointNotFoundError(MlException):
         )
 
 
-class LocalEndpointInFailedStateError(MlException):
+class LocalEndpointInFailedStateError(MLException):
     """Exception raised when local endpoint is in Failed state."""
 
     def __init__(self, endpoint_name, deployment_name=None, error_category=ErrorCategory.UNKNOWN):
@@ -619,12 +636,12 @@ class LocalEndpointInFailedStateError(MlException):
             error_category=error_category,
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message=(
-                f"Local ({resource_type}) is in failed state. " "Try getting logs to debug scoring script."
+                f"Local ({resource_type}) is in failed state. Try getting logs to debug scoring script."
             ),
         )
 
 
-class DockerEngineNotAvailableError(MlException):
+class DockerEngineNotAvailableError(MLException):
     """Exception raised when local Docker Engine is unavailable for local operation."""
 
     def __init__(self, error_category=ErrorCategory.UNKNOWN):
@@ -637,7 +654,7 @@ class DockerEngineNotAvailableError(MlException):
         )
 
 
-class MultipleLocalDeploymentsFoundError(MlException):
+class MultipleLocalDeploymentsFoundError(MLException):
     """Exception raised when no deployment name is specified for local endpoint
     even though multiple deployments exist."""
 
@@ -650,7 +667,7 @@ class MultipleLocalDeploymentsFoundError(MlException):
         )
 
 
-class InvalidLocalEndpointError(MlException):
+class InvalidLocalEndpointError(MLException):
     """Exception raised when local endpoint is invalid."""
 
     def __init__(
@@ -667,7 +684,7 @@ class InvalidLocalEndpointError(MlException):
         )
 
 
-class LocalEndpointImageBuildError(MlException):
+class LocalEndpointImageBuildError(MLException):
     """Exception raised when local endpoint's Docker image build is unsuccessful."""
 
     def __init__(self, error: Union[str, Exception], error_category=ErrorCategory.UNKNOWN):
@@ -681,7 +698,7 @@ class LocalEndpointImageBuildError(MlException):
         )
 
 
-class CloudArtifactsNotSupportedError(MlException):
+class CloudArtifactsNotSupportedError(MLException):
     """
     Exception raised when remote cloud artifacts are used with local endpoints.
     Local endpoints only support local artifacts.
@@ -691,7 +708,7 @@ class CloudArtifactsNotSupportedError(MlException):
         self,
         endpoint_name: str,
         invalid_artifact: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -712,7 +729,7 @@ class CloudArtifactsNotSupportedError(MlException):
         )
 
 
-class RequiredLocalArtifactsNotFoundError(MlException):
+class RequiredLocalArtifactsNotFoundError(MLException):
     """Exception raised when local artifact is not provided for local endpoint."""
 
     def __init__(
@@ -720,7 +737,7 @@ class RequiredLocalArtifactsNotFoundError(MlException):
         endpoint_name: str,
         required_artifact: str,
         required_artifact_type: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -729,8 +746,10 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             else f"Local endpoint ({endpoint_name})"
         )
         err = (
-            "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
-            " of type '%s'.",
+            (
+                "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
+                " of type '%s'."
+            ),
             resource_name,
             required_artifact,
             required_artifact_type,
@@ -743,7 +762,7 @@ class RequiredLocalArtifactsNotFoundError(MlException):
         )
 
 
-class JobParsingError(MlException):
+class JobParsingError(MLException):
     """Exception that the job data returned by MFE cannot be parsed."""
 
     def __init__(self, error_category, no_personal_data_message, message, *args, **kwargs):
@@ -757,7 +776,7 @@ class JobParsingError(MlException):
         )
 
 
-class PipelineChildJobError(MlException):
+class PipelineChildJobError(MLException):
     """Exception that the pipeline child job is not supported."""
 
     ERROR_MESSAGE_TEMPLATE = "az ml job {command} is not supported on pipeline child job, {prompt_message}."
@@ -787,7 +806,7 @@ class PipelineChildJobError(MlException):
 ## -------- VSCode Debugger Errors -------- ##
 
 
-class InvalidVSCodeRequestError(MlException):
+class InvalidVSCodeRequestError(MLException):
     """Exception raised when VS Code Debug is invoked with a remote endpoint.
     VSCode debug is only supported for local endpoints."""
 
@@ -800,7 +819,7 @@ class InvalidVSCodeRequestError(MlException):
         )
 
 
-class VSCodeCommandNotFound(MlException):
+class VSCodeCommandNotFound(MLException):
     """Exception raised when VSCode instance cannot be instantiated."""
 
     def __init__(self, output=None, error_category=ErrorCategory.USER_ERROR):

@@ -1,0 +1,115 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer8a613ca5?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 21:28:50 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 27 Oct 2022 21:28:49 GMT",
+        "ETag": "\u00220x8DAB8623DC9963F\u0022",
+        "Last-Modified": "Thu, 27 Oct 2022 21:28:50 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainer8a613ca5/blob1",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "11",
+        "Content-Type": "application/octet-stream",
+        "If-None-Match": "*",
+        "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-date": "Thu, 27 Oct 2022 21:28:51 GMT",
+        "x-ms-meta-!": "a",
+        "x-ms-meta-#": "a",
+        "x-ms-meta-$": "a",
+        "x-ms-meta-%": "a",
+        "x-ms-meta-\u0026": "a",
+        "x-ms-meta-*": "a",
+        "x-ms-meta-\u002B": "a",
+        "x-ms-meta--": "a",
+        "x-ms-meta-.": "a",
+        "x-ms-meta-0": "a",
+        "x-ms-meta-1": "a",
+        "x-ms-meta-2": "a",
+        "x-ms-meta-3": "a",
+        "x-ms-meta-4": "a",
+        "x-ms-meta-5": "a",
+        "x-ms-meta-6": "a",
+        "x-ms-meta-7": "a",
+        "x-ms-meta-8": "a",
+        "x-ms-meta-9": "a",
+        "x-ms-meta-a": "a",
+        "x-ms-meta-b": "a",
+        "x-ms-meta-c": "a",
+        "x-ms-meta-d": "a",
+        "x-ms-meta-e": "a",
+        "x-ms-meta-f": "a",
+        "x-ms-meta-g": "a",
+        "x-ms-meta-h": "a",
+        "x-ms-meta-i": "a",
+        "x-ms-meta-j": "a",
+        "x-ms-meta-k": "a",
+        "x-ms-meta-l": "a",
+        "x-ms-meta-m": "a",
+        "x-ms-meta-n": "a",
+        "x-ms-meta-o": "a",
+        "x-ms-meta-p": "a",
+        "x-ms-meta-q": "a",
+        "x-ms-meta-r": "a",
+        "x-ms-meta-s": "a",
+        "x-ms-meta-t": "a",
+        "x-ms-meta-u": "a",
+        "x-ms-meta-v": "a",
+        "x-ms-meta-w": "a",
+        "x-ms-meta-x": "a",
+        "x-ms-meta-y": "a",
+        "x-ms-meta-z": "a",
+        "x-ms-meta-^": "a",
+        "x-ms-meta-_": "a",
+        "x-ms-meta-|": "a",
+        "x-ms-meta-~": "a",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": "aGVsbG8gd29ybGQ=",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "260",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 21:28:51 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-error-code": "InvalidMetadata",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidMetadata\u003C/Code\u003E\u003CMessage\u003EThe metadata specified is invalid. It has characters that are not permitted.\n",
+        "RequestId:e12165f9-901e-0066-244b-eab901000000\n",
+        "Time:2022-10-27T21:28:51.0513253Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

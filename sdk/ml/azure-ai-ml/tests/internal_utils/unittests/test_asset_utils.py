@@ -78,6 +78,7 @@ def link_file_path(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestAssetUtils:
     def test_amlignore_precedence(
         self, storage_test_directory: str, gitignore_file_directory: str, no_ignore_file_directory: str

@@ -6,75 +6,62 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Authorization
-    from ._models_py3 import EligibleAuthorization
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import JustInTimeAccessPolicy
-    from ._models_py3 import MarketplaceRegistrationDefinition
-    from ._models_py3 import MarketplaceRegistrationDefinitionList
-    from ._models_py3 import MarketplaceRegistrationDefinitionProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import Plan
-    from ._models_py3 import RegistrationAssignment
-    from ._models_py3 import RegistrationAssignmentList
-    from ._models_py3 import RegistrationAssignmentProperties
-    from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinition
-    from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
-    from ._models_py3 import RegistrationDefinition
-    from ._models_py3 import RegistrationDefinitionList
-    from ._models_py3 import RegistrationDefinitionProperties
-except (SyntaxError, ImportError):
-    from ._models import Authorization  # type: ignore
-    from ._models import EligibleAuthorization  # type: ignore
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import JustInTimeAccessPolicy  # type: ignore
-    from ._models import MarketplaceRegistrationDefinition  # type: ignore
-    from ._models import MarketplaceRegistrationDefinitionList  # type: ignore
-    from ._models import MarketplaceRegistrationDefinitionProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import Plan  # type: ignore
-    from ._models import RegistrationAssignment  # type: ignore
-    from ._models import RegistrationAssignmentList  # type: ignore
-    from ._models import RegistrationAssignmentProperties  # type: ignore
-    from ._models import RegistrationAssignmentPropertiesRegistrationDefinition  # type: ignore
-    from ._models import RegistrationAssignmentPropertiesRegistrationDefinitionProperties  # type: ignore
-    from ._models import RegistrationDefinition  # type: ignore
-    from ._models import RegistrationDefinitionList  # type: ignore
-    from ._models import RegistrationDefinitionProperties  # type: ignore
+from ._models_py3 import Authorization
+from ._models_py3 import EligibleApprover
+from ._models_py3 import EligibleAuthorization
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorResponse
+from ._models_py3 import JustInTimeAccessPolicy
+from ._models_py3 import MarketplaceRegistrationDefinition
+from ._models_py3 import MarketplaceRegistrationDefinitionList
+from ._models_py3 import MarketplaceRegistrationDefinitionProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationList
+from ._models_py3 import Plan
+from ._models_py3 import RegistrationAssignment
+from ._models_py3 import RegistrationAssignmentList
+from ._models_py3 import RegistrationAssignmentProperties
+from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinition
+from ._models_py3 import RegistrationAssignmentPropertiesRegistrationDefinitionProperties
+from ._models_py3 import RegistrationDefinition
+from ._models_py3 import RegistrationDefinitionList
+from ._models_py3 import RegistrationDefinitionProperties
+from ._models_py3 import SystemData
 
-from ._managed_services_client_enums import (
-    MultiFactorAuthProvider,
-    ProvisioningState,
-)
+from ._managed_services_client_enums import CreatedByType
+from ._managed_services_client_enums import MultiFactorAuthProvider
+from ._managed_services_client_enums import ProvisioningState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Authorization',
-    'EligibleAuthorization',
-    'ErrorDefinition',
-    'ErrorResponse',
-    'JustInTimeAccessPolicy',
-    'MarketplaceRegistrationDefinition',
-    'MarketplaceRegistrationDefinitionList',
-    'MarketplaceRegistrationDefinitionProperties',
-    'Operation',
-    'OperationDisplay',
-    'OperationList',
-    'Plan',
-    'RegistrationAssignment',
-    'RegistrationAssignmentList',
-    'RegistrationAssignmentProperties',
-    'RegistrationAssignmentPropertiesRegistrationDefinition',
-    'RegistrationAssignmentPropertiesRegistrationDefinitionProperties',
-    'RegistrationDefinition',
-    'RegistrationDefinitionList',
-    'RegistrationDefinitionProperties',
-    'MultiFactorAuthProvider',
-    'ProvisioningState',
+    "Authorization",
+    "EligibleApprover",
+    "EligibleAuthorization",
+    "ErrorDefinition",
+    "ErrorResponse",
+    "JustInTimeAccessPolicy",
+    "MarketplaceRegistrationDefinition",
+    "MarketplaceRegistrationDefinitionList",
+    "MarketplaceRegistrationDefinitionProperties",
+    "Operation",
+    "OperationDisplay",
+    "OperationList",
+    "Plan",
+    "RegistrationAssignment",
+    "RegistrationAssignmentList",
+    "RegistrationAssignmentProperties",
+    "RegistrationAssignmentPropertiesRegistrationDefinition",
+    "RegistrationAssignmentPropertiesRegistrationDefinitionProperties",
+    "RegistrationDefinition",
+    "RegistrationDefinitionList",
+    "RegistrationDefinitionProperties",
+    "SystemData",
+    "CreatedByType",
+    "MultiFactorAuthProvider",
+    "ProvisioningState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

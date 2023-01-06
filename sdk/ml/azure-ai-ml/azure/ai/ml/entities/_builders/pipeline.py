@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -42,20 +42,22 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        settings: PipelineJobSettings = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        settings: Optional[PipelineJobSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -108,6 +110,12 @@ class Pipeline(BaseNode):
         return True
 
     @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> List[str]:
+        # pipeline component must be a file reference when loading from yaml,
+        # so the created object can't pass schema validation.
+        return ["component"]
+
+    @classmethod
     def _attr_type_map(cls) -> dict:
         # Use local import to avoid recursive reference as BaseNode is imported in PipelineComponent.
         from azure.ai.ml.entities import PipelineComponent
@@ -125,7 +133,10 @@ class Pipeline(BaseNode):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            inputs=self._job_inputs,
+            # Filter None out to avoid case below failed with conflict keys check:
+            # group: None (user not specified)
+            # group.xx: 1 (user specified
+            inputs={k: v for k, v in self._job_inputs.items() if v},
             outputs=self._job_outputs,
             component=self.component,
             settings=self.settings,
@@ -146,15 +157,6 @@ class Pipeline(BaseNode):
         if isinstance(self.component, PipelineComponent):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Pipeline":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return Pipeline(**obj)
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)

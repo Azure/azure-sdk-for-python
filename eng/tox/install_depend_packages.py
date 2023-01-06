@@ -12,10 +12,17 @@ import sys
 import logging
 import re
 from subprocess import check_call
+from typing import TYPE_CHECKING
 from pkg_resources import parse_version
 from pypi_tools.pypi import PyPIClient
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version, parse
+import pdb
 
 from ci_tools.parsing import ParsedSetup, parse_require
+
+
+from typing import List
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
@@ -24,7 +31,7 @@ PKGS_TXT_FILE = "packages.txt"
 logging.getLogger().setLevel(logging.INFO)
 
 # both min and max overrides are *inclusive* of the version targeted
-MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
+MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-common": "1.1.10",
     "msrest": "0.6.10",
     "typing-extensions": "3.6.5",
@@ -33,10 +40,27 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
-    "cryptography": "3.3.2"
+    "cryptography": "3.3.2",
 }
 
-MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
+# this array contains overrides ONLY IF the package being processed the key of each item
+MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
+    "azure-eventhub": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
+}
+
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {"cryptography": "4.0.0"}
+
+MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
+
+SPECIAL_CASE_OVERRIDES = {
+    # this package has an override
+    "azure-core": {
+        # if the version being installed matches this specifier, add the listed packages to the install list
+        "<1.24.0": ["msrest<0.7.0"]
+    }
+}
 
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -46,13 +70,25 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
 
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
+
+    override_added_packages = []
+
+    # new section added to account for difficulties with msrest
+    for pkg_spec in released_packages:
+        override_added_packages.extend(check_pkg_against_overrides(pkg_spec))
+
     logging.info("%s released packages: %s", dependency_type, released_packages)
     # filter released packages from dev_requirements and create a new file "new_dev_requirements.txt"
     dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir)
 
+    if override_added_packages:
+        logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
+
+    install_set = released_packages + list(set(override_added_packages))
+
     # install released dependent packages
     if released_packages or dev_req_file_path:
-        install_packages(released_packages, dev_req_file_path)
+        install_packages(install_set, dev_req_file_path)
 
     if released_packages:
         # create a file with list of packages and versions found based on minimum or latest check on PyPI
@@ -64,18 +100,42 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
         logging.info("Created file %s to track azure packages found on PyPI", pkgs_file_path)
 
 
+def check_pkg_against_overrides(pkg_specifier: str) -> List[str]:
+    """
+    Checks a set of package specifiers of form "[A==1.0.0, B=2.0.0]". Used to inject additional package installations
+    as indicated by the SPECIAL_CASE_OVERRIDES dictionary.
+
+    :param str pkg_specifier: A specifically targeted package that is about to be passed to install_packages.
+    """
+    additional_installs = []
+    target_package, target_version = pkg_specifier.split("==")
+
+    target_version = Version(target_version)
+    if target_package in SPECIAL_CASE_OVERRIDES:
+        special_case_specifiers = SPECIAL_CASE_OVERRIDES[target_package]
+
+        for specifier_set in special_case_specifiers.keys():
+            spec = SpecifierSet(specifier_set)
+            if target_version in spec:
+                additional_installs.extend(special_case_specifiers[specifier_set])
+
+    return additional_installs
+
+
 def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
+    pkg_info = ParsedSetup.from_path(setup_py_path)
 
     # parse setup.py and find install requires
-    requires = [r for r in ParsedSetup.from_path(setup_py_path).requires if "-nspkg" not in r]
+    requires = [r for r in pkg_info.requires if "-nspkg" not in r]
 
     # Get available version on PyPI for each required package
-    avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
+    avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type, pkg_info.name), requires) if x]
+
     return avlble_packages
 
 
-def process_requirement(req, dependency_type):
+def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
 
     # find package name and requirement specifier from requires
@@ -86,15 +146,35 @@ def process_requirement(req, dependency_type):
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
-    if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
+    if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
-    if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
+        if (
+            orig_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
+            and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+        ):
+            versions = [
+                v
+                for v in versions
+                if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+            ]
+
+    if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
+
+        if (
+            orig_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
+            and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+        ):
+            versions = [
+                v
+                for v in versions
+                if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+            ]
 
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version

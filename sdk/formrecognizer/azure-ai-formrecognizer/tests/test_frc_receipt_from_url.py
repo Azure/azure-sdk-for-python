@@ -14,11 +14,13 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersi
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 class TestReceiptFromUrl(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -56,6 +58,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

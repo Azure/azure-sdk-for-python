@@ -24,7 +24,6 @@ change_metric_name_view = View(
     instrument_name="my.counter",
     name="my.counter.total",
 )
-
 # Metrics are reported every 1 minute
 reader = PeriodicExportingMetricReader(exporter)
 provider = MeterProvider(

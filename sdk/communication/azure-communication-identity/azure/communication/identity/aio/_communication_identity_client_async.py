@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any, List, Union, Tuple
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
 
 from .._generated.aio._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
@@ -17,17 +19,19 @@ from .._api_versions import DEFAULT_VERSION
 from .._utils import convert_timedelta_to_mins
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import CommunicationTokenScope
 
 
-class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-keyword
+class CommunicationIdentityClient:
     """Azure Communication Services Identity client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The AsyncTokenCredential we use to authenticate against the service.
+    :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
+    :keyword api_version: Azure Communication Identity API version.
+        Default value is "2022-06-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -39,7 +43,7 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
     def __init__(
             self,
             endpoint: str,
-            credential: 'AsyncTokenCredential',
+            credential: Union[AsyncTokenCredential, AzureKeyCredential],
             **kwargs
         ) -> None:
         try:

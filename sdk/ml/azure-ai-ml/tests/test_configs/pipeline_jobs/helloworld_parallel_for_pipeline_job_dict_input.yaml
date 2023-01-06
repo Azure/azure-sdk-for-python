@@ -1,0 +1,25 @@
+display_name: parallel_for_pipeline
+type: pipeline
+jobs:
+  parallel_body:
+    type: command
+    inputs:
+      component_in_path:
+        type: uri_file
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    component: ../components/helloworld_component.yml
+  parallel_node:
+    type: parallel_for
+    body: ${{parent.jobs.parallel_body}}
+    items: {
+      "branch1": {"component_in_number": 1},
+      "branch2": {"component_in_number": 2}
+    }
+  after_node:
+    type: command
+    inputs:
+      component_in_path:
+        path: ${{parent.jobs.parallel_node.outputs.component_out_path}}
+    component: ../components/helloworld_component.yml
+settings:
+  default_compute: azureml:cpu-cluster

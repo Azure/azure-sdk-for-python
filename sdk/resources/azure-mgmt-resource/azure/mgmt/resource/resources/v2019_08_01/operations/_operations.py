@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -32,12 +32,16 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _SERIALIZER = Serializer()
@@ -48,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +71,7 @@ def build_deployments_delete_at_scope_request(scope: str, deployment_name: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +83,7 @@ def build_deployments_delete_at_scope_request(scope: str, deployment_name: str, 
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +98,7 @@ def build_deployments_check_existence_at_scope_request(scope: str, deployment_na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +110,7 @@ def build_deployments_check_existence_at_scope_request(scope: str, deployment_na
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -121,8 +125,8 @@ def build_deployments_create_or_update_at_scope_request(scope: str, deployment_n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +138,7 @@ def build_deployments_create_or_update_at_scope_request(scope: str, deployment_n
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -151,7 +155,7 @@ def build_deployments_get_at_scope_request(scope: str, deployment_name: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +167,7 @@ def build_deployments_get_at_scope_request(scope: str, deployment_name: str, **k
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -178,7 +182,7 @@ def build_deployments_cancel_at_scope_request(scope: str, deployment_name: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +194,7 @@ def build_deployments_cancel_at_scope_request(scope: str, deployment_name: str, 
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -205,8 +209,8 @@ def build_deployments_validate_at_scope_request(scope: str, deployment_name: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +222,7 @@ def build_deployments_validate_at_scope_request(scope: str, deployment_name: str
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -235,7 +239,7 @@ def build_deployments_export_template_at_scope_request(scope: str, deployment_na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -249,7 +253,7 @@ def build_deployments_export_template_at_scope_request(scope: str, deployment_na
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -266,7 +270,7 @@ def build_deployments_list_at_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +279,7 @@ def build_deployments_list_at_scope_request(
         "scope": _SERIALIZER.url("scope", scope, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -294,7 +298,7 @@ def build_deployments_delete_at_tenant_scope_request(deployment_name: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,7 +309,7 @@ def build_deployments_delete_at_tenant_scope_request(deployment_name: str, **kwa
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -320,7 +324,7 @@ def build_deployments_check_existence_at_tenant_scope_request(deployment_name: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +335,7 @@ def build_deployments_check_existence_at_tenant_scope_request(deployment_name: s
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -346,8 +350,8 @@ def build_deployments_create_or_update_at_tenant_scope_request(deployment_name: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +362,7 @@ def build_deployments_create_or_update_at_tenant_scope_request(deployment_name: 
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -375,7 +379,7 @@ def build_deployments_get_at_tenant_scope_request(deployment_name: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +390,7 @@ def build_deployments_get_at_tenant_scope_request(deployment_name: str, **kwargs
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -401,7 +405,7 @@ def build_deployments_cancel_at_tenant_scope_request(deployment_name: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -412,7 +416,7 @@ def build_deployments_cancel_at_tenant_scope_request(deployment_name: str, **kwa
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -427,8 +431,8 @@ def build_deployments_validate_at_tenant_scope_request(deployment_name: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -439,7 +443,7 @@ def build_deployments_validate_at_tenant_scope_request(deployment_name: str, **k
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -456,7 +460,7 @@ def build_deployments_export_template_at_tenant_scope_request(deployment_name: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +471,7 @@ def build_deployments_export_template_at_tenant_scope_request(deployment_name: s
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -484,7 +488,7 @@ def build_deployments_list_at_tenant_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -509,7 +513,7 @@ def build_deployments_delete_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -524,7 +528,7 @@ def build_deployments_delete_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -541,7 +545,7 @@ def build_deployments_check_existence_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -556,7 +560,7 @@ def build_deployments_check_existence_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -573,8 +577,8 @@ def build_deployments_create_or_update_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +593,7 @@ def build_deployments_create_or_update_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -608,7 +612,7 @@ def build_deployments_get_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -623,7 +627,7 @@ def build_deployments_get_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -640,7 +644,7 @@ def build_deployments_cancel_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -655,7 +659,7 @@ def build_deployments_cancel_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -672,8 +676,8 @@ def build_deployments_validate_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -688,7 +692,7 @@ def build_deployments_validate_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -707,7 +711,7 @@ def build_deployments_export_template_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -722,7 +726,7 @@ def build_deployments_export_template_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -739,7 +743,7 @@ def build_deployments_list_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -751,7 +755,7 @@ def build_deployments_list_at_management_group_scope_request(
         "groupId": _SERIALIZER.url("group_id", group_id, "str", max_length=90, min_length=1),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -772,7 +776,7 @@ def build_deployments_delete_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -786,7 +790,7 @@ def build_deployments_delete_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -803,7 +807,7 @@ def build_deployments_check_existence_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,7 +821,7 @@ def build_deployments_check_existence_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -834,8 +838,8 @@ def build_deployments_create_or_update_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -849,7 +853,7 @@ def build_deployments_create_or_update_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -868,7 +872,7 @@ def build_deployments_get_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -882,7 +886,7 @@ def build_deployments_get_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -899,7 +903,7 @@ def build_deployments_cancel_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -914,7 +918,7 @@ def build_deployments_cancel_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -931,8 +935,8 @@ def build_deployments_validate_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -947,7 +951,7 @@ def build_deployments_validate_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -966,8 +970,8 @@ def build_deployments_what_if_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -982,7 +986,7 @@ def build_deployments_what_if_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1001,7 +1005,7 @@ def build_deployments_export_template_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1016,7 +1020,7 @@ def build_deployments_export_template_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1033,7 +1037,7 @@ def build_deployments_list_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1042,7 +1046,7 @@ def build_deployments_list_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -1063,7 +1067,7 @@ def build_deployments_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1081,7 +1085,7 @@ def build_deployments_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1098,7 +1102,7 @@ def build_deployments_check_existence_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1116,7 +1120,7 @@ def build_deployments_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1133,8 +1137,8 @@ def build_deployments_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1152,7 +1156,7 @@ def build_deployments_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1171,7 +1175,7 @@ def build_deployments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1189,7 +1193,7 @@ def build_deployments_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1206,7 +1210,7 @@ def build_deployments_cancel_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1224,7 +1228,7 @@ def build_deployments_cancel_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1241,8 +1245,8 @@ def build_deployments_validate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1260,7 +1264,7 @@ def build_deployments_validate_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1279,8 +1283,8 @@ def build_deployments_what_if_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1298,7 +1302,7 @@ def build_deployments_what_if_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1317,7 +1321,7 @@ def build_deployments_export_template_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1335,7 +1339,7 @@ def build_deployments_export_template_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1357,7 +1361,7 @@ def build_deployments_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1372,7 +1376,7 @@ def build_deployments_list_by_resource_group_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -1391,8 +1395,8 @@ def build_deployments_calculate_template_hash_request(*, json: JSON, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1415,7 +1419,7 @@ def build_providers_unregister_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1427,7 +1431,7 @@ def build_providers_unregister_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1444,7 +1448,7 @@ def build_providers_register_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1454,7 +1458,7 @@ def build_providers_register_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1471,7 +1475,7 @@ def build_providers_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1480,7 +1484,7 @@ def build_providers_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -1501,7 +1505,7 @@ def build_providers_list_at_tenant_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1526,7 +1530,7 @@ def build_providers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1536,7 +1540,7 @@ def build_providers_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if expand is not None:
@@ -1555,7 +1559,7 @@ def build_providers_get_at_tenant_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1564,7 +1568,7 @@ def build_providers_get_at_tenant_scope_request(
         "resourceProviderNamespace": _SERIALIZER.url("resource_provider_namespace", resource_provider_namespace, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if expand is not None:
@@ -1589,7 +1593,7 @@ def build_resources_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1601,7 +1605,7 @@ def build_resources_list_by_resource_group_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -1624,8 +1628,8 @@ def build_resources_move_resources_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1644,7 +1648,7 @@ def build_resources_move_resources_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1663,8 +1667,8 @@ def build_resources_validate_move_resources_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1683,7 +1687,7 @@ def build_resources_validate_move_resources_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1707,7 +1711,7 @@ def build_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1716,7 +1720,7 @@ def build_resources_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -1765,7 +1769,7 @@ def build_resources_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1808,7 +1812,7 @@ def build_resources_delete_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1833,7 +1837,7 @@ def build_resources_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1852,7 +1856,7 @@ def build_resources_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1879,7 +1883,7 @@ def build_resources_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1898,7 +1902,7 @@ def build_resources_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1943,7 +1947,7 @@ def build_resources_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1966,7 +1970,7 @@ def build_resources_check_existence_by_id_request(resource_id: str, *, api_versi
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1989,7 +1993,7 @@ def build_resources_delete_by_id_request(resource_id: str, *, api_version: str, 
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2004,7 +2008,7 @@ def build_resources_create_or_update_by_id_request(resource_id: str, *, api_vers
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2013,7 +2017,7 @@ def build_resources_create_or_update_by_id_request(resource_id: str, *, api_vers
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2030,7 +2034,7 @@ def build_resources_update_by_id_request(resource_id: str, *, api_version: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2039,7 +2043,7 @@ def build_resources_update_by_id_request(resource_id: str, *, api_version: str, 
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2064,7 +2068,7 @@ def build_resources_get_by_id_request(resource_id: str, *, api_version: str, **k
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2081,7 +2085,7 @@ def build_resource_groups_check_existence_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2093,7 +2097,7 @@ def build_resource_groups_check_existence_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2110,8 +2114,8 @@ def build_resource_groups_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2123,7 +2127,7 @@ def build_resource_groups_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2140,7 +2144,7 @@ def build_resource_groups_delete_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2152,7 +2156,7 @@ def build_resource_groups_delete_request(resource_group_name: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2167,7 +2171,7 @@ def build_resource_groups_get_request(resource_group_name: str, subscription_id:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2179,7 +2183,7 @@ def build_resource_groups_get_request(resource_group_name: str, subscription_id:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2194,8 +2198,8 @@ def build_resource_groups_update_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2207,7 +2211,7 @@ def build_resource_groups_update_request(resource_group_name: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2226,8 +2230,8 @@ def build_resource_groups_export_template_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2241,7 +2245,7 @@ def build_resource_groups_export_template_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2260,7 +2264,7 @@ def build_resource_groups_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2269,7 +2273,7 @@ def build_resource_groups_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if filter is not None:
@@ -2288,7 +2292,7 @@ def build_tags_delete_value_request(tag_name: str, tag_value: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2299,7 +2303,7 @@ def build_tags_delete_value_request(tag_name: str, tag_value: str, subscription_
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2316,7 +2320,7 @@ def build_tags_create_or_update_value_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2327,7 +2331,7 @@ def build_tags_create_or_update_value_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2342,7 +2346,7 @@ def build_tags_create_or_update_request(tag_name: str, subscription_id: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2352,7 +2356,7 @@ def build_tags_create_or_update_request(tag_name: str, subscription_id: str, **k
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2367,7 +2371,7 @@ def build_tags_delete_request(tag_name: str, subscription_id: str, **kwargs: Any
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2377,7 +2381,7 @@ def build_tags_delete_request(tag_name: str, subscription_id: str, **kwargs: Any
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2392,7 +2396,7 @@ def build_tags_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2401,7 +2405,7 @@ def build_tags_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2418,7 +2422,7 @@ def build_deployment_operations_get_at_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2433,7 +2437,7 @@ def build_deployment_operations_get_at_scope_request(
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2450,7 +2454,7 @@ def build_deployment_operations_list_at_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2462,7 +2466,7 @@ def build_deployment_operations_list_at_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -2481,7 +2485,7 @@ def build_deployment_operations_get_at_tenant_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2495,7 +2499,7 @@ def build_deployment_operations_get_at_tenant_scope_request(
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2512,7 +2516,7 @@ def build_deployment_operations_list_at_tenant_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2523,7 +2527,7 @@ def build_deployment_operations_list_at_tenant_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -2542,7 +2546,7 @@ def build_deployment_operations_get_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2558,7 +2562,7 @@ def build_deployment_operations_get_at_management_group_scope_request(
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2575,7 +2579,7 @@ def build_deployment_operations_list_at_management_group_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2590,7 +2594,7 @@ def build_deployment_operations_list_at_management_group_scope_request(
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -2609,7 +2613,7 @@ def build_deployment_operations_get_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2625,7 +2629,7 @@ def build_deployment_operations_get_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2642,7 +2646,7 @@ def build_deployment_operations_list_at_subscription_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2657,7 +2661,7 @@ def build_deployment_operations_list_at_subscription_scope_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -2676,7 +2680,7 @@ def build_deployment_operations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2695,7 +2699,7 @@ def build_deployment_operations_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -2712,7 +2716,7 @@ def build_deployment_operations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
+    api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2730,7 +2734,7 @@ def build_deployment_operations_list_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -2775,8 +2779,8 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2796,16 +2800,23 @@ class Operations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -2813,13 +2824,13 @@ class Operations:
             deserialized = self._deserialize("OperationListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2832,7 +2843,7 @@ class Operations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Resources/operations"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Resources/operations"}
 
 
 class DeploymentsOperations:  # pylint: disable=too-many-public-methods
@@ -2868,8 +2879,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_delete_at_scope_request(
             scope=scope,
@@ -2880,9 +2891,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2895,7 +2906,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _delete_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def begin_delete_at_scope(self, scope: str, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -2928,11 +2939,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_at_scope_initial(  # type: ignore
                 scope=scope,
@@ -2950,7 +2961,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2962,9 +2973,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_delete_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def check_existence_at_scope(self, scope: str, deployment_name: str, **kwargs: Any) -> bool:
@@ -2990,8 +3001,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_check_existence_at_scope_request(
             scope=scope,
@@ -3002,9 +3013,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3018,7 +3029,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    check_existence_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     def _create_or_update_at_scope_initial(
         self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
@@ -3034,9 +3045,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3058,9 +3069,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3077,11 +3088,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_at_scope_initial.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _create_or_update_at_scope_initial.metadata = {
+        "url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @overload
     def begin_create_or_update_at_scope(
@@ -3188,14 +3201,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_at_scope_initial(  # type: ignore
+            raw_result = self._create_or_update_at_scope_initial(
                 scope=scope,
                 deployment_name=deployment_name,
                 parameters=parameters,
@@ -3215,7 +3228,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3227,9 +3240,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_create_or_update_at_scope.metadata = {
+        "url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def get_at_scope(self, scope: str, deployment_name: str, **kwargs: Any) -> _models.DeploymentExtended:
@@ -3255,8 +3270,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         request = build_deployments_get_at_scope_request(
             scope=scope,
@@ -3267,9 +3282,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3286,7 +3301,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    get_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def cancel_at_scope(  # pylint: disable=inconsistent-return-statements
@@ -3319,8 +3334,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_cancel_at_scope_request(
             scope=scope,
@@ -3331,9 +3346,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3346,7 +3361,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
+    cancel_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}
 
     @overload
     def validate_at_scope(
@@ -3430,9 +3445,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentValidateResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3454,9 +3469,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3473,11 +3488,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    validate_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
+    validate_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}
 
     @distributed_trace
     def export_template_at_scope(
@@ -3505,8 +3520,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExportResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
         request = build_deployments_export_template_at_scope_request(
             scope=scope,
@@ -3517,9 +3532,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3536,7 +3551,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    export_template_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
+    export_template_at_scope.metadata = {
+        "url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
+    }
 
     @distributed_trace
     def list_at_scope(
@@ -3561,8 +3578,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3585,16 +3602,23 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -3602,13 +3626,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -3621,7 +3645,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/"}  # type: ignore
+    list_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/"}
 
     def _delete_at_tenant_scope_initial(  # pylint: disable=inconsistent-return-statements
         self, deployment_name: str, **kwargs: Any
@@ -3637,8 +3661,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_delete_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -3648,9 +3672,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3663,7 +3687,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_at_tenant_scope_initial.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _delete_at_tenant_scope_initial.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def begin_delete_at_tenant_scope(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -3694,11 +3718,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_at_tenant_scope_initial(  # type: ignore
                 deployment_name=deployment_name,
@@ -3715,7 +3739,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3727,9 +3751,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_delete_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def check_existence_at_tenant_scope(self, deployment_name: str, **kwargs: Any) -> bool:
@@ -3753,8 +3777,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_check_existence_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -3764,9 +3788,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3780,7 +3804,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    check_existence_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     def _create_or_update_at_tenant_scope_initial(
         self, deployment_name: str, parameters: Union[_models.ScopedDeployment, IO], **kwargs: Any
@@ -3796,9 +3820,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3819,9 +3843,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3838,11 +3862,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_at_tenant_scope_initial.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _create_or_update_at_tenant_scope_initial.metadata = {
+        "url": "/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @overload
     def begin_create_or_update_at_tenant_scope(
@@ -3942,14 +3968,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_at_tenant_scope_initial(  # type: ignore
+            raw_result = self._create_or_update_at_tenant_scope_initial(
                 deployment_name=deployment_name,
                 parameters=parameters,
                 api_version=api_version,
@@ -3968,7 +3994,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3980,9 +4006,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_create_or_update_at_tenant_scope.metadata = {
+        "url": "/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def get_at_tenant_scope(self, deployment_name: str, **kwargs: Any) -> _models.DeploymentExtended:
@@ -4006,8 +4034,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         request = build_deployments_get_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -4017,9 +4045,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4036,7 +4064,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    get_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}"}
 
     @distributed_trace
     def cancel_at_tenant_scope(  # pylint: disable=inconsistent-return-statements
@@ -4067,8 +4095,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_cancel_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -4078,9 +4106,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4093,7 +4121,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
+    cancel_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}
 
     @overload
     def validate_at_tenant_scope(
@@ -4170,9 +4198,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentValidateResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4193,9 +4221,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4212,11 +4240,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    validate_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
+    validate_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}
 
     @distributed_trace
     def export_template_at_tenant_scope(self, deployment_name: str, **kwargs: Any) -> _models.DeploymentExportResult:
@@ -4240,8 +4268,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExportResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
         request = build_deployments_export_template_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -4251,9 +4279,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4270,7 +4298,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    export_template_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
+    export_template_at_tenant_scope.metadata = {
+        "url": "/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
+    }
 
     @distributed_trace
     def list_at_tenant_scope(
@@ -4293,8 +4323,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -4316,16 +4346,23 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -4333,13 +4370,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -4352,7 +4389,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/"}  # type: ignore
+    list_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/"}
 
     def _delete_at_management_group_scope_initial(  # pylint: disable=inconsistent-return-statements
         self, group_id: str, deployment_name: str, **kwargs: Any
@@ -4368,8 +4405,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_delete_at_management_group_scope_request(
             group_id=group_id,
@@ -4380,9 +4417,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4395,7 +4432,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_at_management_group_scope_initial.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _delete_at_management_group_scope_initial.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def begin_delete_at_management_group_scope(
@@ -4430,11 +4469,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_at_management_group_scope_initial(  # type: ignore
                 group_id=group_id,
@@ -4452,7 +4491,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4464,9 +4503,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_delete_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def check_existence_at_management_group_scope(self, group_id: str, deployment_name: str, **kwargs: Any) -> bool:
@@ -4492,8 +4533,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_check_existence_at_management_group_scope_request(
             group_id=group_id,
@@ -4504,9 +4545,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4520,7 +4561,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    check_existence_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     def _create_or_update_at_management_group_scope_initial(
         self, group_id: str, deployment_name: str, parameters: Union[_models.ScopedDeployment, IO], **kwargs: Any
@@ -4536,9 +4579,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4560,9 +4603,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4579,11 +4622,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_at_management_group_scope_initial.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _create_or_update_at_management_group_scope_initial.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @overload
     def begin_create_or_update_at_management_group_scope(
@@ -4696,14 +4741,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_at_management_group_scope_initial(  # type: ignore
+            raw_result = self._create_or_update_at_management_group_scope_initial(
                 group_id=group_id,
                 deployment_name=deployment_name,
                 parameters=parameters,
@@ -4723,7 +4768,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4735,9 +4780,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_create_or_update_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def get_at_management_group_scope(
@@ -4765,8 +4812,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         request = build_deployments_get_at_management_group_scope_request(
             group_id=group_id,
@@ -4777,9 +4824,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4796,7 +4843,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    get_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def cancel_at_management_group_scope(  # pylint: disable=inconsistent-return-statements
@@ -4829,8 +4878,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_cancel_at_management_group_scope_request(
             group_id=group_id,
@@ -4841,9 +4890,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4856,7 +4905,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
+    cancel_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
+    }
 
     @overload
     def validate_at_management_group_scope(
@@ -4946,9 +4997,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentValidateResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4970,9 +5021,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4989,11 +5040,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    validate_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
+    validate_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"
+    }
 
     @distributed_trace
     def export_template_at_management_group_scope(
@@ -5021,8 +5074,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExportResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
         request = build_deployments_export_template_at_management_group_scope_request(
             group_id=group_id,
@@ -5033,9 +5086,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5052,7 +5105,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    export_template_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
+    export_template_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
+    }
 
     @distributed_trace
     def list_at_management_group_scope(
@@ -5077,8 +5132,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5101,16 +5156,23 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -5118,13 +5180,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5137,7 +5199,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/"}  # type: ignore
+    list_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/"
+    }
 
     def _delete_at_subscription_scope_initial(  # pylint: disable=inconsistent-return-statements
         self, deployment_name: str, **kwargs: Any
@@ -5153,8 +5217,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_delete_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -5165,9 +5229,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5180,7 +5244,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_at_subscription_scope_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _delete_at_subscription_scope_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def begin_delete_at_subscription_scope(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -5211,11 +5277,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_at_subscription_scope_initial(  # type: ignore
                 deployment_name=deployment_name,
@@ -5232,7 +5298,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5244,9 +5310,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_delete_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def check_existence_at_subscription_scope(self, deployment_name: str, **kwargs: Any) -> bool:
@@ -5270,8 +5338,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_check_existence_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -5282,9 +5350,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5298,7 +5366,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    check_existence_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     def _create_or_update_at_subscription_scope_initial(
         self, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
@@ -5314,9 +5384,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5338,9 +5408,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5357,11 +5427,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_at_subscription_scope_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _create_or_update_at_subscription_scope_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @overload
     def begin_create_or_update_at_subscription_scope(
@@ -5461,14 +5533,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_at_subscription_scope_initial(  # type: ignore
+            raw_result = self._create_or_update_at_subscription_scope_initial(
                 deployment_name=deployment_name,
                 parameters=parameters,
                 api_version=api_version,
@@ -5487,7 +5559,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5499,9 +5571,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_create_or_update_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def get_at_subscription_scope(self, deployment_name: str, **kwargs: Any) -> _models.DeploymentExtended:
@@ -5525,8 +5599,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         request = build_deployments_get_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -5537,9 +5611,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5556,7 +5630,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    get_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def cancel_at_subscription_scope(  # pylint: disable=inconsistent-return-statements
@@ -5587,8 +5663,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_cancel_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -5599,9 +5675,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5614,7 +5690,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
+    cancel_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
+    }
 
     @overload
     def validate_at_subscription_scope(
@@ -5691,9 +5769,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentValidateResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5715,9 +5793,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5734,11 +5812,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    validate_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
+    validate_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"
+    }
 
     def _what_if_at_subscription_scope_initial(
         self, deployment_name: str, parameters: Union[_models.DeploymentWhatIf, IO], **kwargs: Any
@@ -5754,9 +5834,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.WhatIfOperationResult]]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.WhatIfOperationResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5778,9 +5858,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5804,7 +5884,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _what_if_at_subscription_scope_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
+    _what_if_at_subscription_scope_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"
+    }
 
     @overload
     def begin_what_if_at_subscription_scope(
@@ -5900,14 +5982,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.WhatIfOperationResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.WhatIfOperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._what_if_at_subscription_scope_initial(  # type: ignore
+            raw_result = self._what_if_at_subscription_scope_initial(
                 deployment_name=deployment_name,
                 parameters=parameters,
                 api_version=api_version,
@@ -5926,9 +6008,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5940,9 +6022,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_what_if_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
+    begin_what_if_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"
+    }
 
     @distributed_trace
     def export_template_at_subscription_scope(
@@ -5968,8 +6052,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExportResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
         request = build_deployments_export_template_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -5980,9 +6064,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5999,7 +6083,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    export_template_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
+    export_template_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
+    }
 
     @distributed_trace
     def list_at_subscription_scope(
@@ -6022,8 +6108,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -6046,16 +6132,23 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -6063,13 +6156,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -6082,7 +6175,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/"}  # type: ignore
+    list_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/"
+    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, deployment_name: str, **kwargs: Any
@@ -6098,8 +6193,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_delete_request(
             resource_group_name=resource_group_name,
@@ -6111,9 +6206,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6126,7 +6221,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -6161,11 +6258,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -6183,7 +6280,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -6195,9 +6292,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def check_existence(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> bool:
@@ -6224,8 +6323,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_check_existence_request(
             resource_group_name=resource_group_name,
@@ -6237,9 +6336,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6253,7 +6352,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    check_existence.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     def _create_or_update_initial(
         self, resource_group_name: str, deployment_name: str, parameters: Union[_models.Deployment, IO], **kwargs: Any
@@ -6269,9 +6370,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6294,9 +6395,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6313,11 +6414,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentExtended", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @overload
     def begin_create_or_update(
@@ -6433,14 +6536,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_initial(  # type: ignore
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 parameters=parameters,
@@ -6460,7 +6563,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -6472,9 +6575,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def get(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> _models.DeploymentExtended:
@@ -6501,8 +6606,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExtended]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExtended] = kwargs.pop("cls", None)
 
         request = build_deployments_get_request(
             resource_group_name=resource_group_name,
@@ -6514,9 +6619,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6533,7 +6638,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
+    }
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
@@ -6567,8 +6674,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deployments_cancel_request(
             resource_group_name=resource_group_name,
@@ -6580,9 +6687,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6595,7 +6702,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"}  # type: ignore
+    cancel.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
+    }
 
     @overload
     def validate(
@@ -6688,9 +6797,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentValidateResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DeploymentValidateResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6713,9 +6822,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6732,11 +6841,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentValidateResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    validate.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"}  # type: ignore
+    validate.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate"
+    }
 
     def _what_if_initial(
         self,
@@ -6756,9 +6867,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.WhatIfOperationResult]]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.WhatIfOperationResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6781,9 +6892,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6807,7 +6918,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _what_if_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
+    _what_if_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"
+    }
 
     @overload
     def begin_what_if(
@@ -6923,14 +7036,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.WhatIfOperationResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.WhatIfOperationResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._what_if_initial(  # type: ignore
+            raw_result = self._what_if_initial(
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 parameters=parameters,
@@ -6950,9 +7063,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -6964,9 +7077,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_what_if.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"}  # type: ignore
+    begin_what_if.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/whatIf"
+    }
 
     @distributed_trace
     def export_template(
@@ -6995,8 +7110,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentExportResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentExportResult] = kwargs.pop("cls", None)
 
         request = build_deployments_export_template_request(
             resource_group_name=resource_group_name,
@@ -7008,9 +7123,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7027,7 +7142,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    export_template.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"}  # type: ignore
+    export_template.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -7053,8 +7170,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7078,16 +7195,23 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -7095,13 +7219,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7114,7 +7238,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/"
+    }
 
     @distributed_trace
     def calculate_template_hash(self, template: JSON, **kwargs: Any) -> _models.TemplateHashResult:
@@ -7138,9 +7264,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TemplateHashResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[_models.TemplateHashResult] = kwargs.pop("cls", None)
 
         _json = self._serialize.body(template, "object")
 
@@ -7153,9 +7279,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7172,7 +7298,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    calculate_template_hash.metadata = {"url": "/providers/Microsoft.Resources/calculateTemplateHash"}  # type: ignore
+    calculate_template_hash.metadata = {"url": "/providers/Microsoft.Resources/calculateTemplateHash"}
 
 
 class ProvidersOperations:
@@ -7217,8 +7343,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Provider]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
         request = build_providers_unregister_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -7229,9 +7355,9 @@ class ProvidersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7248,7 +7374,7 @@ class ProvidersOperations:
 
         return deserialized
 
-    unregister.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"}  # type: ignore
+    unregister.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister"}
 
     @distributed_trace
     def register(self, resource_provider_namespace: str, **kwargs: Any) -> _models.Provider:
@@ -7273,8 +7399,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Provider]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
         request = build_providers_register_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -7285,9 +7411,9 @@ class ProvidersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7304,7 +7430,7 @@ class ProvidersOperations:
 
         return deserialized
 
-    register.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"}  # type: ignore
+    register.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register"}
 
     @distributed_trace
     def list(
@@ -7328,8 +7454,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ProviderListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ProviderListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7352,16 +7478,23 @@ class ProvidersOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -7369,13 +7502,13 @@ class ProvidersOperations:
             deserialized = self._deserialize("ProviderListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7388,7 +7521,7 @@ class ProvidersOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers"}
 
     @distributed_trace
     def list_at_tenant_scope(
@@ -7412,8 +7545,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ProviderListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ProviderListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7435,16 +7568,23 @@ class ProvidersOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -7452,13 +7592,13 @@ class ProvidersOperations:
             deserialized = self._deserialize("ProviderListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7471,7 +7611,7 @@ class ProvidersOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_tenant_scope.metadata = {"url": "/providers"}  # type: ignore
+    list_at_tenant_scope.metadata = {"url": "/providers"}
 
     @distributed_trace
     def get(self, resource_provider_namespace: str, expand: Optional[str] = None, **kwargs: Any) -> _models.Provider:
@@ -7498,8 +7638,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Provider]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
         request = build_providers_get_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -7511,9 +7651,9 @@ class ProvidersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7530,7 +7670,7 @@ class ProvidersOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}"}
 
     @distributed_trace
     def get_at_tenant_scope(
@@ -7559,8 +7699,8 @@ class ProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Provider]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.Provider] = kwargs.pop("cls", None)
 
         request = build_providers_get_at_tenant_scope_request(
             resource_provider_namespace=resource_provider_namespace,
@@ -7571,9 +7711,9 @@ class ProvidersOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7590,7 +7730,7 @@ class ProvidersOperations:
 
         return deserialized
 
-    get_at_tenant_scope.metadata = {"url": "/providers/{resourceProviderNamespace}"}  # type: ignore
+    get_at_tenant_scope.metadata = {"url": "/providers/{resourceProviderNamespace}"}
 
 
 class ResourcesOperations:  # pylint: disable=too-many-public-methods
@@ -7658,8 +7798,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7684,16 +7824,23 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -7701,13 +7848,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7720,7 +7867,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources"
+    }
 
     def _move_resources_initial(  # pylint: disable=inconsistent-return-statements
         self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO], **kwargs: Any
@@ -7736,9 +7885,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7760,9 +7909,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7775,7 +7924,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _move_resources_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"}  # type: ignore
+    _move_resources_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"
+    }
 
     @overload
     def begin_move_resources(
@@ -7881,12 +8032,12 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._move_resources_initial(  # type: ignore
                 source_resource_group_name=source_resource_group_name,
@@ -7905,7 +8056,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -7917,9 +8068,11 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_move_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"}  # type: ignore
+    begin_move_resources.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources"
+    }
 
     def _validate_move_resources_initial(  # pylint: disable=inconsistent-return-statements
         self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO], **kwargs: Any
@@ -7935,9 +8088,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7959,9 +8112,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7974,7 +8127,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _validate_move_resources_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"}  # type: ignore
+    _validate_move_resources_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"
+    }
 
     @overload
     def begin_validate_move_resources(
@@ -8086,12 +8241,12 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._validate_move_resources_initial(  # type: ignore
                 source_resource_group_name=source_resource_group_name,
@@ -8110,7 +8265,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -8122,9 +8277,11 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_validate_move_resources.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"}  # type: ignore
+    begin_validate_move_resources.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources"
+    }
 
     @distributed_trace
     def list(
@@ -8165,8 +8322,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -8190,16 +8347,23 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -8207,13 +8371,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("ResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -8226,7 +8390,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}
 
     @distributed_trace
     def check_existence(
@@ -8270,7 +8434,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resources_check_existence_request(
             resource_group_name=resource_group_name,
@@ -8285,9 +8449,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -8301,7 +8465,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    check_existence.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -8324,7 +8490,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resources_delete_request(
             resource_group_name=resource_group_name,
@@ -8339,9 +8505,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -8354,7 +8520,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     @distributed_trace
     def begin_delete(
@@ -8397,10 +8565,10 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -8421,7 +8589,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -8433,9 +8601,11 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     def _create_or_update_initial(
         self,
@@ -8459,8 +8629,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GenericResource]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.GenericResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -8486,9 +8656,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -8510,7 +8680,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     @overload
     def begin_create_or_update(
@@ -8660,13 +8832,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_initial(  # type: ignore
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 resource_provider_namespace=resource_provider_namespace,
                 parent_resource_path=parent_resource_path,
@@ -8689,7 +8861,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -8701,9 +8873,11 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     def _update_initial(
         self,
@@ -8727,8 +8901,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GenericResource]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.GenericResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -8754,9 +8928,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -8775,7 +8949,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    _update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     @overload
     def begin_update(
@@ -8925,13 +9101,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_initial(  # type: ignore
+            raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 resource_provider_namespace=resource_provider_namespace,
                 parent_resource_path=parent_resource_path,
@@ -8954,7 +9130,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -8966,9 +9142,11 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    begin_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     @distributed_trace
     def get(
@@ -9012,7 +9190,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
 
         request = build_resources_get_request(
             resource_group_name=resource_group_name,
@@ -9027,9 +9205,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9046,7 +9224,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}"
+    }
 
     @distributed_trace
     def check_existence_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> bool:
@@ -9075,7 +9255,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resources_check_existence_by_id_request(
             resource_id=resource_id,
@@ -9085,9 +9265,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9101,7 +9281,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
+    check_existence_by_id.metadata = {"url": "/{resourceId}"}
 
     def _delete_by_id_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_id: str, api_version: str, **kwargs: Any
@@ -9117,7 +9297,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resources_delete_by_id_request(
             resource_id=resource_id,
@@ -9127,9 +9307,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9142,7 +9322,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
+    _delete_by_id_initial.metadata = {"url": "/{resourceId}"}
 
     @distributed_trace
     def begin_delete_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> LROPoller[None]:
@@ -9170,10 +9350,10 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_by_id_initial(  # type: ignore
                 resource_id=resource_id,
@@ -9190,7 +9370,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -9202,9 +9382,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
+    begin_delete_by_id.metadata = {"url": "/{resourceId}"}
 
     def _create_or_update_by_id_initial(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO], **kwargs: Any
@@ -9220,8 +9400,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GenericResource]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.GenericResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -9242,9 +9422,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9266,7 +9446,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _create_or_update_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
+    _create_or_update_by_id_initial.metadata = {"url": "/{resourceId}"}
 
     @overload
     def begin_create_or_update_by_id(
@@ -9382,13 +9562,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._create_or_update_by_id_initial(  # type: ignore
+            raw_result = self._create_or_update_by_id_initial(
                 resource_id=resource_id,
                 api_version=api_version,
                 parameters=parameters,
@@ -9407,7 +9587,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -9419,9 +9599,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
+    begin_create_or_update_by_id.metadata = {"url": "/{resourceId}"}
 
     def _update_by_id_initial(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO], **kwargs: Any
@@ -9437,8 +9617,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GenericResource]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.GenericResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -9459,9 +9639,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9480,7 +9660,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _update_by_id_initial.metadata = {"url": "/{resourceId}"}  # type: ignore
+    _update_by_id_initial.metadata = {"url": "/{resourceId}"}
 
     @overload
     def begin_update_by_id(
@@ -9595,13 +9775,13 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._update_by_id_initial(  # type: ignore
+            raw_result = self._update_by_id_initial(
                 resource_id=resource_id,
                 api_version=api_version,
                 parameters=parameters,
@@ -9620,7 +9800,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -9632,9 +9812,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_update_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
+    begin_update_by_id.metadata = {"url": "/{resourceId}"}
 
     @distributed_trace
     def get_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> _models.GenericResource:
@@ -9663,7 +9843,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GenericResource]
+        cls: ClsType[_models.GenericResource] = kwargs.pop("cls", None)
 
         request = build_resources_get_by_id_request(
             resource_id=resource_id,
@@ -9673,9 +9853,9 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9692,7 +9872,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_by_id.metadata = {"url": "/{resourceId}"}  # type: ignore
+    get_by_id.metadata = {"url": "/{resourceId}"}
 
 
 class ResourceGroupsOperations:
@@ -9737,8 +9917,8 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resource_groups_check_existence_request(
             resource_group_name=resource_group_name,
@@ -9749,9 +9929,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9765,7 +9945,7 @@ class ResourceGroupsOperations:
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
 
-    check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    check_existence.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     @overload
     def create_or_update(
@@ -9846,9 +10026,9 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGroup]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -9870,9 +10050,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9889,11 +10069,11 @@ class ResourceGroupsOperations:
             deserialized = self._deserialize("ResourceGroup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, **kwargs: Any
@@ -9909,8 +10089,8 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_resource_groups_delete_request(
             resource_group_name=resource_group_name,
@@ -9921,9 +10101,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -9936,7 +10116,7 @@ class ResourceGroupsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -9963,11 +10143,11 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
@@ -9984,7 +10164,7 @@ class ResourceGroupsOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))  # type: PollingMethod
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -9996,9 +10176,9 @@ class ResourceGroupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     @distributed_trace
     def get(self, resource_group_name: str, **kwargs: Any) -> _models.ResourceGroup:
@@ -10023,8 +10203,8 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGroup]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
         request = build_resource_groups_get_request(
             resource_group_name=resource_group_name,
@@ -10035,9 +10215,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10054,7 +10234,7 @@ class ResourceGroupsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     @overload
     def update(
@@ -10145,9 +10325,9 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGroup]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceGroup] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10169,9 +10349,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10188,7 +10368,7 @@ class ResourceGroupsOperations:
 
         return deserialized
 
-    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}  # type: ignore
+    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}"}
 
     def _export_template_initial(
         self, resource_group_name: str, parameters: Union[_models.ExportTemplateRequest, IO], **kwargs: Any
@@ -10204,9 +10384,9 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ResourceGroupExportResult]]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ResourceGroupExportResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10228,9 +10408,9 @@ class ResourceGroupsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10249,7 +10429,9 @@ class ResourceGroupsOperations:
 
         return deserialized
 
-    _export_template_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate"}  # type: ignore
+    _export_template_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate"
+    }
 
     @overload
     def begin_export_template(
@@ -10346,14 +10528,14 @@ class ResourceGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGroupExportResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceGroupExportResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._export_template_initial(  # type: ignore
+            raw_result = self._export_template_initial(
                 resource_group_name=resource_group_name,
                 parameters=parameters,
                 api_version=api_version,
@@ -10372,9 +10554,9 @@ class ResourceGroupsOperations:
             return deserialized
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -10386,9 +10568,11 @@ class ResourceGroupsOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_export_template.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate"}  # type: ignore
+    begin_export_template.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/exportTemplate"
+    }
 
     @distributed_trace
     def list(
@@ -10412,8 +10596,8 @@ class ResourceGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGroupListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.ResourceGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -10436,16 +10620,23 @@ class ResourceGroupsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -10453,13 +10644,13 @@ class ResourceGroupsOperations:
             deserialized = self._deserialize("ResourceGroupListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -10472,7 +10663,7 @@ class ResourceGroupsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups"}
 
 
 class TagsOperations:
@@ -10520,8 +10711,8 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_tags_delete_value_request(
             tag_name=tag_name,
@@ -10533,9 +10724,9 @@ class TagsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10548,7 +10739,7 @@ class TagsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}  # type: ignore
+    delete_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}
 
     @distributed_trace
     def create_or_update_value(self, tag_name: str, tag_value: str, **kwargs: Any) -> _models.TagValue:
@@ -10574,8 +10765,8 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TagValue]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.TagValue] = kwargs.pop("cls", None)
 
         request = build_tags_create_or_update_value_request(
             tag_name=tag_name,
@@ -10587,9 +10778,9 @@ class TagsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10606,11 +10797,11 @@ class TagsOperations:
             deserialized = self._deserialize("TagValue", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}  # type: ignore
+    create_or_update_value.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}"}
 
     @distributed_trace
     def create_or_update(self, tag_name: str, **kwargs: Any) -> _models.TagDetails:
@@ -10638,8 +10829,8 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TagDetails]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.TagDetails] = kwargs.pop("cls", None)
 
         request = build_tags_create_or_update_request(
             tag_name=tag_name,
@@ -10650,9 +10841,9 @@ class TagsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10669,11 +10860,11 @@ class TagsOperations:
             deserialized = self._deserialize("TagDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}  # type: ignore
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}
 
     @distributed_trace
     def delete(self, tag_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -10699,8 +10890,8 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_tags_delete_request(
             tag_name=tag_name,
@@ -10711,9 +10902,9 @@ class TagsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10726,7 +10917,7 @@ class TagsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}  # type: ignore
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames/{tagName}"}
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.TagDetails"]:
@@ -10741,8 +10932,8 @@ class TagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TagsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.TagsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -10763,16 +10954,23 @@ class TagsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -10780,13 +10978,13 @@ class TagsOperations:
             deserialized = self._deserialize("TagsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -10799,7 +10997,7 @@ class TagsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/tagNames"}
 
 
 class DeploymentOperationsOperations:
@@ -10849,8 +11047,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperation]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
         request = build_deployment_operations_get_at_scope_request(
             scope=scope,
@@ -10862,9 +11060,9 @@ class DeploymentOperationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -10881,7 +11079,9 @@ class DeploymentOperationsOperations:
 
         return deserialized
 
-    get_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"}  # type: ignore
+    get_at_scope.metadata = {
+        "url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"
+    }
 
     @distributed_trace
     def list_at_scope(
@@ -10904,8 +11104,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperationsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -10928,16 +11128,23 @@ class DeploymentOperationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -10945,13 +11152,13 @@ class DeploymentOperationsOperations:
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -10964,7 +11171,7 @@ class DeploymentOperationsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}  # type: ignore
+    list_at_scope.metadata = {"url": "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}
 
     @distributed_trace
     def get_at_tenant_scope(
@@ -10992,8 +11199,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperation]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
         request = build_deployment_operations_get_at_tenant_scope_request(
             deployment_name=deployment_name,
@@ -11004,9 +11211,9 @@ class DeploymentOperationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -11023,7 +11230,9 @@ class DeploymentOperationsOperations:
 
         return deserialized
 
-    get_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"}  # type: ignore
+    get_at_tenant_scope.metadata = {
+        "url": "/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"
+    }
 
     @distributed_trace
     def list_at_tenant_scope(
@@ -11044,8 +11253,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperationsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -11067,16 +11276,23 @@ class DeploymentOperationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -11084,13 +11300,13 @@ class DeploymentOperationsOperations:
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -11103,7 +11319,7 @@ class DeploymentOperationsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}  # type: ignore
+    list_at_tenant_scope.metadata = {"url": "/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}
 
     @distributed_trace
     def get_at_management_group_scope(
@@ -11133,8 +11349,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperation]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
         request = build_deployment_operations_get_at_management_group_scope_request(
             group_id=group_id,
@@ -11146,9 +11362,9 @@ class DeploymentOperationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -11165,7 +11381,9 @@ class DeploymentOperationsOperations:
 
         return deserialized
 
-    get_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"}  # type: ignore
+    get_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"
+    }
 
     @distributed_trace
     def list_at_management_group_scope(
@@ -11188,8 +11406,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperationsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -11212,16 +11430,23 @@ class DeploymentOperationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -11229,13 +11454,13 @@ class DeploymentOperationsOperations:
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -11248,7 +11473,9 @@ class DeploymentOperationsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_management_group_scope.metadata = {"url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}  # type: ignore
+    list_at_management_group_scope.metadata = {
+        "url": "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"
+    }
 
     @distributed_trace
     def get_at_subscription_scope(
@@ -11276,8 +11503,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperation]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
         request = build_deployment_operations_get_at_subscription_scope_request(
             deployment_name=deployment_name,
@@ -11289,9 +11516,9 @@ class DeploymentOperationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -11308,7 +11535,9 @@ class DeploymentOperationsOperations:
 
         return deserialized
 
-    get_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"}  # type: ignore
+    get_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}"
+    }
 
     @distributed_trace
     def list_at_subscription_scope(
@@ -11329,8 +11558,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperationsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -11353,16 +11582,23 @@ class DeploymentOperationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -11370,13 +11606,13 @@ class DeploymentOperationsOperations:
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -11389,7 +11625,9 @@ class DeploymentOperationsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_at_subscription_scope.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"}  # type: ignore
+    list_at_subscription_scope.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations"
+    }
 
     @distributed_trace
     def get(
@@ -11420,8 +11658,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperation]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperation] = kwargs.pop("cls", None)
 
         request = build_deployment_operations_get_request(
             resource_group_name=resource_group_name,
@@ -11434,9 +11672,9 @@ class DeploymentOperationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -11453,7 +11691,9 @@ class DeploymentOperationsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}"
+    }
 
     @distributed_trace
     def list(
@@ -11477,8 +11717,8 @@ class DeploymentOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeploymentOperationsListResult]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -11502,16 +11742,23 @@ class DeploymentOperationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -11519,13 +11766,13 @@ class DeploymentOperationsOperations:
             deserialized = self._deserialize("DeploymentOperationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -11538,4 +11785,6 @@ class DeploymentOperationsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations"
+    }

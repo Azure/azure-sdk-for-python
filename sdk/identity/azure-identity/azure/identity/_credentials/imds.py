@@ -3,22 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 import six
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
 
 IMDS_AUTHORITY = "http://169.254.169.254"
 IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
@@ -44,8 +40,7 @@ def get_request(scope, identity_config):
 
 
 class ImdsCredential(GetTokenMixin):
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         super(ImdsCredential, self).__init__()
 
         self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
@@ -70,8 +65,7 @@ class ImdsCredential(GetTokenMixin):
         # type: (*str, **Any) -> Optional[AccessToken]
         return self._client.get_cached_token(*scopes)
 
-    def _request_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (because it lacks the Metadata header),

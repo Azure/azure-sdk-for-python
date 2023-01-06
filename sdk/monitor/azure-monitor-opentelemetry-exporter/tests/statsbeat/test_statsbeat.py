@@ -211,7 +211,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             5,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
@@ -241,7 +241,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
         )
         metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 2
@@ -259,7 +259,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
         )
         metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 1
@@ -313,7 +313,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         _vm_data = {}
@@ -346,7 +346,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         _vm_data = {}
@@ -373,7 +373,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         metric._vm_retry = False
@@ -392,7 +392,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         with mock.patch('requests.get') as get:
@@ -421,7 +421,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         with mock.patch(
@@ -441,7 +441,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         with mock.patch(
@@ -461,7 +461,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         with mock.patch(
@@ -482,7 +482,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
         )
         metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 2
@@ -499,7 +499,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
         )
         metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 1
@@ -516,7 +516,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -537,7 +537,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            False,
+            True,
             0,
         )
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
@@ -607,7 +607,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         metric.init_non_initial_metrics()
@@ -632,7 +632,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
@@ -657,7 +657,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES

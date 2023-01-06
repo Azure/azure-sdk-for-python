@@ -208,7 +208,9 @@ class ApplicationPackageReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param application_id: Required.
+    :param application_id: Required. When creating a pool, the package's
+     application ID must be fully qualified
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
     :type application_id: str
     :param version: If this is omitted on a Pool, and no default version is
      specified for this application, the request fails with the error code
@@ -1254,6 +1256,9 @@ class CloudJobSchedule(Model):
 class CloudPool(Model):
     """A Pool in the Azure Batch service.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: The ID can contain any combination of alphanumeric characters
      including hyphens and underscores, and cannot contain more than 64
      characters. The ID is case-preserving and case-insensitive (that is, you
@@ -1396,7 +1401,21 @@ class CloudPool(Model):
      dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type identity: ~azure.batch.models.BatchPoolIdentity
+    :param target_node_communication_mode: The desired node communication mode
+     for the pool. If omitted, the default value is Default. Possible values
+     include: 'default', 'classic', 'simplified'
+    :type target_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
+    :ivar current_node_communication_mode: The current state of the pool
+     communication mode. Possible values include: 'default', 'classic',
+     'simplified'
+    :vartype current_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
     """
+
+    _validation = {
+        'current_node_communication_mode': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -1435,6 +1454,8 @@ class CloudPool(Model):
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
         'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
+        'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'current_node_communication_mode': {'key': 'currentNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
     }
 
     def __init__(self, **kwargs):
@@ -1475,6 +1496,8 @@ class CloudPool(Model):
         self.stats = kwargs.get('stats', None)
         self.mount_configuration = kwargs.get('mount_configuration', None)
         self.identity = kwargs.get('identity', None)
+        self.target_node_communication_mode = kwargs.get('target_node_communication_mode', None)
+        self.current_node_communication_mode = None
 
 
 class CloudServiceConfiguration(Model):
@@ -3793,8 +3816,9 @@ class JobConstraints(Model):
      limit. For example, if the maximum retry count is 3, Batch tries a Task up
      to 4 times (one initial try and 3 retries). If the maximum retry count is
      0, the Batch service does not retry Tasks. If the maximum retry count is
-     -1, the Batch service retries Tasks without limit. The default value is 0
-     (no retries).
+     -1, the Batch service retries the Task without limit, however this is not
+     recommended for a start task or any task. The default value is 0 (no
+     retries)
     :type max_task_retry_count: int
     """
 
@@ -7191,9 +7215,9 @@ class OutputFileBlobContainerDestination(Model):
      must have write access to the Azure Blob Storage container
     :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
     :param upload_headers: These headers will be specified when uploading
-     files to Azure Storage. For more information, see [Request Headers (All
-     Blob
-     Types)](https://docs.microsoft.com/rest/api/storageservices/put-blob#request-headers-all-blob-types).
+     files to Azure Storage. Official document on allowed headers when
+     uploading blobs:
+     https://docs.microsoft.com/en-us/rest/api/storageservices/put-blob#request-headers-all-blob-types
     :type upload_headers: list[~azure.batch.models.HttpHeader]
     """
 
@@ -7391,10 +7415,13 @@ class PoolAddParameter(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: Changes to Package references
-     affect all new Nodes joining the Pool, but do not affect Compute Nodes
-     that are already in the Pool until they are rebooted or reimaged. There is
-     a maximum of 10 Package references on any given Pool.
+    :param application_package_references: When creating a pool, the package's
+     application ID must be fully qualified
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
+     Changes to Package references affect all new Nodes joining the Pool, but
+     do not affect Compute Nodes that are already in the Pool until they are
+     rebooted or reimaged. There is a maximum of 10 Package references on any
+     given Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param application_licenses: The list of application licenses must be a
@@ -7417,6 +7444,11 @@ class PoolAddParameter(Model):
     :param mount_configuration: Mount the storage using Azure fileshare, NFS,
      CIFS or Blobfuse based file system.
     :type mount_configuration: list[~azure.batch.models.MountConfiguration]
+    :param target_node_communication_mode: The desired node communication mode
+     for the pool. If omitted, the default value is Default. Possible values
+     include: 'default', 'classic', 'simplified'
+    :type target_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
     """
 
     _validation = {
@@ -7447,6 +7479,7 @@ class PoolAddParameter(Model):
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
+        'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
     }
 
     def __init__(self, **kwargs):
@@ -7473,6 +7506,7 @@ class PoolAddParameter(Model):
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
         self.mount_configuration = kwargs.get('mount_configuration', None)
+        self.target_node_communication_mode = kwargs.get('target_node_communication_mode', None)
 
 
 class PoolDeleteOptions(Model):
@@ -8184,6 +8218,13 @@ class PoolPatchParameter(Model):
      metadata is removed from the Pool. If omitted, any existing metadata is
      left unchanged.
     :type metadata: list[~azure.batch.models.MetadataItem]
+    :param target_node_communication_mode: The desired node communication mode
+     for the pool. If this element is present, it replaces the existing
+     targetNodeCommunicationMode configured on the Pool. If omitted, any
+     existing metadata is left unchanged. Possible values include: 'default',
+     'classic', 'simplified'
+    :type target_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
     """
 
     _attribute_map = {
@@ -8191,6 +8232,7 @@ class PoolPatchParameter(Model):
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
+        'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
     }
 
     def __init__(self, **kwargs):
@@ -8199,6 +8241,7 @@ class PoolPatchParameter(Model):
         self.certificate_references = kwargs.get('certificate_references', None)
         self.application_package_references = kwargs.get('application_package_references', None)
         self.metadata = kwargs.get('metadata', None)
+        self.target_node_communication_mode = kwargs.get('target_node_communication_mode', None)
 
 
 class PoolRemoveNodesOptions(Model):
@@ -8455,10 +8498,13 @@ class PoolSpecification(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: Changes to Package references
-     affect all new Nodes joining the Pool, but do not affect Compute Nodes
-     that are already in the Pool until they are rebooted or reimaged. There is
-     a maximum of 10 Package references on any given Pool.
+    :param application_package_references: When creating a pool, the package's
+     application ID must be fully qualified
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
+     Changes to Package references affect all new Nodes joining the Pool, but
+     do not affect Compute Nodes that are already in the Pool until they are
+     rebooted or reimaged. There is a maximum of 10 Package references on any
+     given Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param application_licenses: The list of application licenses must be a
@@ -8475,6 +8521,11 @@ class PoolSpecification(Model):
     :param mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and
      Blobfuse.
     :type mount_configuration: list[~azure.batch.models.MountConfiguration]
+    :param target_node_communication_mode: The desired node communication mode
+     for the pool. If omitted, the default value is Default. Possible values
+     include: 'default', 'classic', 'simplified'
+    :type target_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
     """
 
     _validation = {
@@ -8503,6 +8554,7 @@ class PoolSpecification(Model):
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
+        'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
     }
 
     def __init__(self, **kwargs):
@@ -8528,6 +8580,7 @@ class PoolSpecification(Model):
         self.user_accounts = kwargs.get('user_accounts', None)
         self.metadata = kwargs.get('metadata', None)
         self.mount_configuration = kwargs.get('mount_configuration', None)
+        self.target_node_communication_mode = kwargs.get('target_node_communication_mode', None)
 
 
 class PoolStatistics(Model):
@@ -8707,6 +8760,12 @@ class PoolUpdatePropertiesParameter(Model):
      configured on the Pool. If omitted, or if you specify an empty collection,
      any existing metadata is removed from the Pool.
     :type metadata: list[~azure.batch.models.MetadataItem]
+    :param target_node_communication_mode: The desired node communication mode
+     for the pool. This setting replaces any existing targetNodeCommunication
+     setting on the Pool. If omitted, the existing setting is default. Possible
+     values include: 'default', 'classic', 'simplified'
+    :type target_node_communication_mode: str or
+     ~azure.batch.models.NodeCommunicationMode
     """
 
     _validation = {
@@ -8720,6 +8779,7 @@ class PoolUpdatePropertiesParameter(Model):
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
+        'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
     }
 
     def __init__(self, **kwargs):
@@ -8728,6 +8788,7 @@ class PoolUpdatePropertiesParameter(Model):
         self.certificate_references = kwargs.get('certificate_references', None)
         self.application_package_references = kwargs.get('application_package_references', None)
         self.metadata = kwargs.get('metadata', None)
+        self.target_node_communication_mode = kwargs.get('target_node_communication_mode', None)
 
 
 class PoolUsageMetrics(Model):
@@ -9121,7 +9182,9 @@ class StartTask(Model):
      For example, if the maximum retry count is 3, Batch tries the Task up to 4
      times (one initial try and 3 retries). If the maximum retry count is 0,
      the Batch service does not retry the Task. If the maximum retry count is
-     -1, the Batch service retries the Task without limit.
+     -1, the Batch service retries the Task without limit, however this is not
+     recommended for a start task or any task. The default value is 0 (no
+     retries)
     :type max_task_retry_count: int
     :param wait_for_success: Whether the Batch service should wait for the
      StartTask to complete successfully (that is, to exit with exit code 0)
@@ -9660,7 +9723,9 @@ class TaskConstraints(Model):
      maximum retry count is 3, Batch tries the Task up to 4 times (one initial
      try and 3 retries). If the maximum retry count is 0, the Batch service
      does not retry the Task after the first attempt. If the maximum retry
-     count is -1, the Batch service retries the Task without limit.
+     count is -1, the Batch service retries the Task without limit, however
+     this is not recommended for a start task or any task. The default value is
+     0 (no retries)
     :type max_task_retry_count: int
     """
 

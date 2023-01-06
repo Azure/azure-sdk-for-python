@@ -1,16 +1,22 @@
 # Release History
 
-## 12.14.1 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service version 2021-12-02.
+- Added support for new blob tier, `Cold`.
+- Added support for `AsyncIterable` as data type for async blob upload.
 
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-blob[aio]` to install.
+
+## 12.14.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty blobs through Azurite.
 
 ## 12.14.0 (2022-10-11)
 

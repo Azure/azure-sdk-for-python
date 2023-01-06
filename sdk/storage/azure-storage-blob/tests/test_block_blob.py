@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-import uuid
+import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
 
@@ -58,13 +57,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 pass
             try:
                 self.bsc.create_container(self.source_container_name)
-            except:
-                pass
-
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
             except:
                 pass
 
@@ -143,8 +135,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_upload_blob_from_url_with_existing_blob(
-            self, storage_account_name, storage_account_key):
+    def test_upload_blob_from_url_with_existing_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         blob = self._create_blob(data=b"test data")
         # Act
@@ -170,8 +164,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_upload_blob_from_url_with_standard_tier_specified(
-            self, storage_account_name, storage_account_key):
+    def test_upload_blob_from_url_with_standard_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
         blob = self._create_blob()
@@ -192,6 +188,39 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self.get_resource_name("blobcopy")
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_tier = StandardBlobTier.Hot
+        new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+
+        new_blob_properties = new_blob.get_blob_properties()
+
+        # Assert
+        assert new_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_from_url_with_cold_tier_specified(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
+        blob = self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            container_name=self.container_name,
+            blob_name=blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob.blob_name, sas)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_tier = StandardBlobTier.Cold
         new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
 
         new_blob_properties = new_blob.get_blob_properties()
@@ -653,6 +682,30 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_client.stage_block('2', b'BBB')
         blob_client.stage_block('3', b'CCC')
         blob_tier = StandardBlobTier.Cool
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        blob_client.commit_block_list(block_list,
+                                      standard_blob_tier=blob_tier)
+
+        # Assert
+        blob_properties = blob_client.get_blob_properties()
+        assert blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_put_block_list_with_blob_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.stage_block('1', b'AAA')
+        blob_client.stage_block('2', b'BBB')
+        blob_client.stage_block('3', b'CCC')
+        blob_tier = StandardBlobTier.Cold
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -1147,20 +1200,18 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_input.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = blob.upload_blob(temp_file)
         props = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1172,20 +1223,18 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
-        FILE_PATH = 'create_blob_from_path_non_par.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream, length=100, max_concurrency=1)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = blob.upload_blob(temp_file, length=100, max_concurrency=1)
         props = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1198,18 +1247,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
-        FILE_PATH = '_path_non_parallel_with_standard_blob.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
         blob_tier = StandardBlobTier.Cool
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=100, max_concurrency=1, standard_blob_tier=blob_tier)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, length=100, max_concurrency=1, standard_blob_tier=blob_tier)
         props = blob.get_blob_properties()
 
         # Assert
         assert props.blob_tier == blob_tier
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1221,9 +1268,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'create_blob_from_path_with_progr.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1233,13 +1277,14 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1251,23 +1296,21 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_path_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings=ContentSettings(
             content_type='image/png',
             content_language='spanish')
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, content_settings=content_settings)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1279,20 +1322,18 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'blob_from_stream_chunked_up.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            create_resp = blob.upload_blob(temp_file)
         props = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1305,18 +1346,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         blob_size = len(data) - 66
-        FILE_PATH = 'stream_nonseek_chunk_upld_knwn_size.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             blob.upload_blob(non_seekable_file, length=blob_size, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1328,18 +1367,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_nonseek_chunk_upld.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             blob.upload_blob(non_seekable_file, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1351,9 +1388,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_with_progress_chunked.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1363,13 +1397,14 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1381,18 +1416,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'chunked_upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            resp = blob.upload_blob(stream, length=blob_size)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            resp = blob.upload_blob(temp_file, length=blob_size)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1404,24 +1437,22 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_stream_chunk_upload_with_cntandrops.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings=ContentSettings(
             content_type='image/png',
             content_language='spanish')
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, content_settings=content_settings)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, length=blob_size, content_settings=content_settings)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1433,23 +1464,21 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings=ContentSettings(
             content_type='image/png',
             content_language='spanish')
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, content_settings=content_settings)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1463,23 +1492,21 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
         blob_tier = StandardBlobTier.Cool
 
         # Act
         content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
 
         properties = blob.get_blob_properties()
 
         # Assert
         assert properties.blob_tier == blob_tier
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1718,5 +1745,65 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         progress.assert_complete()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_upload_blob_with_tier_specified_cold(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        self._create_blob(standard_blob_tier=StandardBlobTier.Cold)
+        blob_name = self._get_blob_reference()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cold
+        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_set_blob_tier_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Cold)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        assert props.blob_tier == StandardBlobTier.Cold
 
 #------------------------------------------------------------------------------

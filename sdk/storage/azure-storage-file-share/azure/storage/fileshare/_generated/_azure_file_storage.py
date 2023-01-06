@@ -35,7 +35,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
+     is "2021-12-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that

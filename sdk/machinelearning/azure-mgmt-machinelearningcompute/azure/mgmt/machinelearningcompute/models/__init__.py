@@ -6,109 +6,82 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AcsClusterProperties
-    from ._models_py3 import AppInsightsCredentials
-    from ._models_py3 import AppInsightsProperties
-    from ._models_py3 import AutoScaleConfiguration
-    from ._models_py3 import AvailableOperations
-    from ._models_py3 import CheckSystemServicesUpdatesAvailableResponse
-    from ._models_py3 import ContainerRegistryCredentials
-    from ._models_py3 import ContainerRegistryProperties
-    from ._models_py3 import ContainerServiceCredentials
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ErrorResponseWrapper
-    from ._models_py3 import GlobalServiceConfiguration
-    from ._models_py3 import KubernetesClusterProperties
-    from ._models_py3 import OperationalizationCluster
-    from ._models_py3 import OperationalizationClusterCredentials
-    from ._models_py3 import OperationalizationClusterUpdateParameters
-    from ._models_py3 import PaginatedOperationalizationClustersList
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceOperation
-    from ._models_py3 import ResourceOperationDisplay
-    from ._models_py3 import ServiceAuthConfiguration
-    from ._models_py3 import ServicePrincipalProperties
-    from ._models_py3 import SslConfiguration
-    from ._models_py3 import StorageAccountCredentials
-    from ._models_py3 import StorageAccountProperties
-    from ._models_py3 import SystemService
-    from ._models_py3 import UpdateSystemServicesResponse
-except (SyntaxError, ImportError):
-    from ._models import AcsClusterProperties  # type: ignore
-    from ._models import AppInsightsCredentials  # type: ignore
-    from ._models import AppInsightsProperties  # type: ignore
-    from ._models import AutoScaleConfiguration  # type: ignore
-    from ._models import AvailableOperations  # type: ignore
-    from ._models import CheckSystemServicesUpdatesAvailableResponse  # type: ignore
-    from ._models import ContainerRegistryCredentials  # type: ignore
-    from ._models import ContainerRegistryProperties  # type: ignore
-    from ._models import ContainerServiceCredentials  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ErrorResponseWrapper  # type: ignore
-    from ._models import GlobalServiceConfiguration  # type: ignore
-    from ._models import KubernetesClusterProperties  # type: ignore
-    from ._models import OperationalizationCluster  # type: ignore
-    from ._models import OperationalizationClusterCredentials  # type: ignore
-    from ._models import OperationalizationClusterUpdateParameters  # type: ignore
-    from ._models import PaginatedOperationalizationClustersList  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceOperation  # type: ignore
-    from ._models import ResourceOperationDisplay  # type: ignore
-    from ._models import ServiceAuthConfiguration  # type: ignore
-    from ._models import ServicePrincipalProperties  # type: ignore
-    from ._models import SslConfiguration  # type: ignore
-    from ._models import StorageAccountCredentials  # type: ignore
-    from ._models import StorageAccountProperties  # type: ignore
-    from ._models import SystemService  # type: ignore
-    from ._models import UpdateSystemServicesResponse  # type: ignore
+from ._models_py3 import AcsClusterProperties
+from ._models_py3 import AppInsightsCredentials
+from ._models_py3 import AppInsightsProperties
+from ._models_py3 import AutoScaleConfiguration
+from ._models_py3 import AvailableOperations
+from ._models_py3 import CheckSystemServicesUpdatesAvailableResponse
+from ._models_py3 import ContainerRegistryCredentials
+from ._models_py3 import ContainerRegistryProperties
+from ._models_py3 import ContainerServiceCredentials
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ErrorResponseWrapper
+from ._models_py3 import GlobalServiceConfiguration
+from ._models_py3 import KubernetesClusterProperties
+from ._models_py3 import OperationalizationCluster
+from ._models_py3 import OperationalizationClusterCredentials
+from ._models_py3 import OperationalizationClusterUpdateParameters
+from ._models_py3 import PaginatedOperationalizationClustersList
+from ._models_py3 import Resource
+from ._models_py3 import ResourceOperation
+from ._models_py3 import ResourceOperationDisplay
+from ._models_py3 import ServiceAuthConfiguration
+from ._models_py3 import ServicePrincipalProperties
+from ._models_py3 import SslConfiguration
+from ._models_py3 import StorageAccountCredentials
+from ._models_py3 import StorageAccountProperties
+from ._models_py3 import SystemService
+from ._models_py3 import UpdateSystemServicesResponse
 
-from ._machine_learning_compute_management_client_enums import (
-    AgentVMSizeTypes,
-    ClusterType,
-    OperationStatus,
-    OrchestratorType,
-    Status,
-    SystemServiceType,
-    UpdatesAvailable,
-)
+from ._machine_learning_compute_management_client_enums import AgentVMSizeTypes
+from ._machine_learning_compute_management_client_enums import ClusterType
+from ._machine_learning_compute_management_client_enums import OperationStatus
+from ._machine_learning_compute_management_client_enums import OrchestratorType
+from ._machine_learning_compute_management_client_enums import Status
+from ._machine_learning_compute_management_client_enums import SystemServiceType
+from ._machine_learning_compute_management_client_enums import UpdatesAvailable
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AcsClusterProperties',
-    'AppInsightsCredentials',
-    'AppInsightsProperties',
-    'AutoScaleConfiguration',
-    'AvailableOperations',
-    'CheckSystemServicesUpdatesAvailableResponse',
-    'ContainerRegistryCredentials',
-    'ContainerRegistryProperties',
-    'ContainerServiceCredentials',
-    'ErrorDetail',
-    'ErrorResponse',
-    'ErrorResponseWrapper',
-    'GlobalServiceConfiguration',
-    'KubernetesClusterProperties',
-    'OperationalizationCluster',
-    'OperationalizationClusterCredentials',
-    'OperationalizationClusterUpdateParameters',
-    'PaginatedOperationalizationClustersList',
-    'Resource',
-    'ResourceOperation',
-    'ResourceOperationDisplay',
-    'ServiceAuthConfiguration',
-    'ServicePrincipalProperties',
-    'SslConfiguration',
-    'StorageAccountCredentials',
-    'StorageAccountProperties',
-    'SystemService',
-    'UpdateSystemServicesResponse',
-    'AgentVMSizeTypes',
-    'ClusterType',
-    'OperationStatus',
-    'OrchestratorType',
-    'Status',
-    'SystemServiceType',
-    'UpdatesAvailable',
+    "AcsClusterProperties",
+    "AppInsightsCredentials",
+    "AppInsightsProperties",
+    "AutoScaleConfiguration",
+    "AvailableOperations",
+    "CheckSystemServicesUpdatesAvailableResponse",
+    "ContainerRegistryCredentials",
+    "ContainerRegistryProperties",
+    "ContainerServiceCredentials",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ErrorResponseWrapper",
+    "GlobalServiceConfiguration",
+    "KubernetesClusterProperties",
+    "OperationalizationCluster",
+    "OperationalizationClusterCredentials",
+    "OperationalizationClusterUpdateParameters",
+    "PaginatedOperationalizationClustersList",
+    "Resource",
+    "ResourceOperation",
+    "ResourceOperationDisplay",
+    "ServiceAuthConfiguration",
+    "ServicePrincipalProperties",
+    "SslConfiguration",
+    "StorageAccountCredentials",
+    "StorageAccountProperties",
+    "SystemService",
+    "UpdateSystemServicesResponse",
+    "AgentVMSizeTypes",
+    "ClusterType",
+    "OperationStatus",
+    "OrchestratorType",
+    "Status",
+    "SystemServiceType",
+    "UpdatesAvailable",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

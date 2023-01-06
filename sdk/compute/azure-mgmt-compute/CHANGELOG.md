@@ -1,5 +1,30 @@
 # Release History
 
+## 29.0.0 (2022-10-13)
+
+### Features Added
+
+  - Model CreationData has a new parameter performance_plus
+  - Model Disk has a new parameter bursting_enabled_time
+  - Model Disk has a new parameter optimized_for_frequent_attach
+  - Model DiskUpdate has a new parameter optimized_for_frequent_attach
+  - Model GalleryApplication has a new parameter custom_actions
+  - Model GalleryApplicationUpdate has a new parameter custom_actions
+  - Model GalleryApplicationVersion has a new parameter safety_profile
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter custom_actions
+  - Model GalleryApplicationVersionUpdate has a new parameter safety_profile
+  - Model GalleryImageVersion has a new parameter safety_profile
+  - Model GalleryImageVersionUpdate has a new parameter safety_profile
+  - Model SharedGalleryImage has a new parameter eula
+  - Model SharedGalleryImage has a new parameter privacy_statement_uri
+  - Model Snapshot has a new parameter incremental_snapshot_family_id
+  - Model SupportedCapabilities has a new parameter disk_controller_types
+  - Model TargetRegion has a new parameter exclude_from_latest
+
+### Breaking Changes
+
+  - Model GalleryArtifactVersionSource no longer has parameter uri
+
 ## 28.0.1 (2022-09-30)
 
 ### Bugs Fixed

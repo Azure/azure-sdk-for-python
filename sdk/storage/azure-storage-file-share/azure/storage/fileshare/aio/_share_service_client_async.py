@@ -214,13 +214,13 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         include = []
+        include_deleted = kwargs.pop('include_deleted', None)
+        if include_deleted:
+            include.append("deleted")
         if include_metadata:
             include.append('metadata')
         if include_snapshots:
             include.append('snapshots')
-        include_deleted = kwargs.pop('include_deleted', None)
-        if include_deleted:
-            include.append("deleted")
 
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(

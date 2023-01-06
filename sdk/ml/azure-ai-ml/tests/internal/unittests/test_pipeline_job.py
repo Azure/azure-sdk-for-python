@@ -7,46 +7,52 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
+from test_utilities.utils import parse_local_path
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
+    Ae365exepool,
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
     AISuperComputerStorageReferenceConfiguration,
+    Command,
+    DataTransfer,
+    Distributed,
+    HDInsight,
+    Hemera,
     ITPConfiguration,
     ITPInteractiveConfiguration,
     ITPPriorityConfiguration,
     ITPResourceConfiguration,
     ITPRetrySettings,
-    TargetSelector,
-    Command,
-    Scope,
-    HDInsight,
     Parallel,
-    Distributed,
-    DataTransfer,
-    Starlite,
     Pipeline,
-    Hemera,
-    Ae365exepool,
+    Scope,
+    Starlite,
+    TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
+    get_expected_runsettings_items,
     set_run_settings,
+    unregister_internal_components,
 )
 
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJob:
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
@@ -95,14 +101,7 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
@@ -198,6 +197,11 @@ class TestPipelineJob:
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+
         yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
 
@@ -404,9 +408,8 @@ class TestPipelineJob:
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
-        for _input in yaml_dict["inputs"].values():
-            if "optional" in _input and _input["optional"] is False:
-                del _input["optional"]
+
+        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
 
@@ -445,7 +448,6 @@ class TestPipelineJob:
                 "ExtractionClause": "column1:string, column2:int",
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
-            "outputs": {},
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
@@ -458,7 +460,6 @@ class TestPipelineJob:
                 "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
-            "outputs": {},
             "type": "ScopeComponent",
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
@@ -468,12 +469,7 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "inputs": {},
                 "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
-                "outputs": {},
-                "properties": {},
-                "settings": {},
-                "tags": {},
                 "type": "pipeline",
             },
             *omit_fields,
@@ -592,3 +588,29 @@ class TestPipelineJob:
         copy_file.outputs.output_dir.path = "path_on_datastore"
         assert copy_file.outputs.output_dir.path == "path_on_datastore"
         assert copy_file.outputs.output_dir.type == "path"
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/internal/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+
+    def test_load_pipeline_job_with_internal_nodes_from_rest(self):
+        # this is a simplified test case which avoid constructing a complete pipeline job rest object
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+        unregister_internal_components()
+        internal_node_type = "CommandComponent"
+        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "False"):
+            with pytest.raises(ValidationException, match=f"Unsupported component type: {internal_node_type}."):
+                pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)
+
+        pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)

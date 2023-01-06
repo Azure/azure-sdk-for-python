@@ -13,6 +13,7 @@ from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -20,6 +21,7 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -42,6 +44,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["modelId"] != model.model_id
             assert copied_model
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -65,6 +68,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copied_model
             assert copied_model.model_name == "mymodel"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -105,6 +109,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert e.value.error.code == "2024"
             assert e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -125,6 +130,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["modelId"] == copy.model_id
             assert target["modelId"] != model.model_id
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     @recorded_by_proxy_async
@@ -138,6 +144,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["resourceRegion"] == "eastus"
             assert target["resourceId"] == formrecognizer_resource_id
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -151,6 +158,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["resourceRegion"] == "eastus"
             assert target["resourceId"] == formrecognizer_resource_id
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async

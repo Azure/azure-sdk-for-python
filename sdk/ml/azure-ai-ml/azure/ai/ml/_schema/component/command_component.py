@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load
+from marshmallow import INCLUDE, fields, post_dump, post_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -48,6 +48,14 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
             ]
         ),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
+
+    @post_dump
+    def remove_unnecessary_fields(self, component_schema_dict, **kwargs):
+        # remove empty properties to keep the component spec unchanged
+        if not component_schema_dict.get("properties"):
+            component_schema_dict.pop("properties", None)
+        return component_schema_dict
 
 
 class RestCommandComponentSchema(CommandComponentSchema):

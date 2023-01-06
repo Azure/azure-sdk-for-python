@@ -9,7 +9,12 @@ from marshmallow import fields
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField, UnionField
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema
-from azure.ai.ml._schema.schedule.create_job import CreateJobFileRefField, PipelineCreateJobSchema
+from azure.ai.ml._schema.schedule.create_job import (
+    CommandCreateJobSchema,
+    CreateJobFileRefField,
+    PipelineCreateJobSchema,
+    SparkCreateJobSchema,
+)
 from azure.ai.ml._schema.schedule.trigger import CronTriggerSchema, RecurrenceTriggerSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 
@@ -28,6 +33,8 @@ class ScheduleSchema(ResourceSchema):
             ArmStr(azureml_type=AzureMLResourceType.JOB),
             CreateJobFileRefField,
             NestedField(PipelineCreateJobSchema),
+            NestedField(CommandCreateJobSchema),
+            NestedField(SparkCreateJobSchema),
         ]
     )
     creation_context = NestedField(CreationContextSchema, dump_only=True)

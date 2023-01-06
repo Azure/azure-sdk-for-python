@@ -31,6 +31,9 @@ class AsyncKeyVaultClientBase(object):
 
         try:
             self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            # If API version was provided as an enum value, need to make a plain string for 3.11 compatibility
+            if hasattr(self.api_version, "value"):
+                self.api_version = self.api_version.value
             self._vault_url = vault_url.strip(" /")
 
             client = kwargs.get("generated_client")

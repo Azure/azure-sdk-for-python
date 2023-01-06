@@ -1,124 +1,120 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 from datetime import timedelta, datetime
+
 import pytest
-import os
+
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsQueryResult, LogsQueryPartialResult
+from devtools_testutils import AzureRecordedTestCase
 
-def _credential():
-    credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
-    return credential
 
-@pytest.mark.live_test_only
-def test_logs_single_query_fatal_exception():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    with pytest.raises(HttpResponseError):
-        client.query_workspace('bad_workspace_id', 'AppRequests', timespan=None)
+class TestQueryExceptions(AzureRecordedTestCase):
 
-@pytest.mark.live_test_only
-def test_logs_single_query_partial_exception():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    query = """let Weight = 92233720368547758;
-    range x from 1 to 3 step 1
-    | summarize percentilesw(x, Weight * 100, 50)"""
-    response = client.query_workspace(os.environ['LOG_WORKSPACE_ID'], query, timespan=timedelta(days=1))
-    assert response.__class__ == LogsQueryPartialResult
-    assert response.partial_error is not None
-    assert response.partial_data is not None
-    assert response.partial_error.code == 'PartialError'
-    assert response.partial_error.__class__ == LogsQueryError
+    def test_logs_single_query_fatal_exception(self, recorded_test):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        with pytest.raises(HttpResponseError):
+            client.query_workspace('bad_workspace_id', 'AppRequests', timespan=None)
 
-@pytest.mark.live_test_only
-def test_logs_batch_query_fatal_exception():
-    credential  = ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = 'bad_secret',
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
-    client = LogsQueryClient(credential)
-    requests = [
-        LogsBatchQuery(
-            query="AzureActivity | summarize count()",
-            timespan=timedelta(hours=1),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """AppRequestsss | take 10""",
-            timespan=(datetime(2021, 6, 2), timedelta(days=1)),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """let Weight = 92233720368547758;
-            range x from 1 to 3 step 1
-            | summarize percentilesw(x, Weight * 100, 50)""",
-            workspace_id= os.environ['LOG_WORKSPACE_ID'],
-            timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
-            include_statistics=True
-        ),
-    ]
-    with pytest.raises(HttpResponseError):
+    def test_logs_single_query_partial_exception(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = """let Weight = 92233720368547758;
+        range x from 1 to 3 step 1
+        | summarize percentilesw(x, Weight * 100, 50)"""
+        response = client.query_workspace(monitor_info['workspace_id'], query, timespan=timedelta(days=1))
+        assert response.__class__ == LogsQueryPartialResult
+        assert response.partial_error is not None
+        assert response.partial_data is not None
+        assert response.partial_error.details is not None
+        assert response.partial_error.code == 'PartialError'
+        assert response.partial_error.__class__ == LogsQueryError
+
+    def test_logs_batch_query_fatal_exception(self, recorded_test, monitor_info):
+        credential  = ClientSecretCredential(
+            client_id = monitor_info['client_id'],
+            client_secret = 'bad_secret',
+            tenant_id = monitor_info['tenant_id']
+        )
+        client = LogsQueryClient(credential)
+        requests = [
+            LogsBatchQuery(
+                query="AzureActivity | summarize count()",
+                timespan=timedelta(hours=1),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """AppRequestsss | take 10""",
+                timespan=(datetime(2021, 6, 2), timedelta(days=1)),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """let Weight = 92233720368547758;
+                range x from 1 to 3 step 1
+                | summarize percentilesw(x, Weight * 100, 50)""",
+                workspace_id=monitor_info['workspace_id'],
+                timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
+                include_statistics=True
+            ),
+        ]
+        with pytest.raises(HttpResponseError):
+            responses = client.query_batch(requests)
+
+    @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
+    def test_logs_batch_query_partial_exception(self, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        requests = [
+            LogsBatchQuery(
+                query="AzureActivity | summarize count()",
+                timespan=timedelta(hours=1),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """AppRequests | take 10""",
+                timespan=(datetime(2021, 6, 2), timedelta(days=1)),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """let Weight = 92233720368547758;
+                range x from 1 to 3 step 1
+                | summarize percentilesw(x, Weight * 100, 50)""",
+                workspace_id=monitor_info['workspace_id'],
+                timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
+                include_statistics=True
+            ),
+        ]
         responses = client.query_batch(requests)
+        r1, r2, r3 = responses[0], responses[1], responses[2]
+        assert r1.__class__ == LogsQueryResult
+        assert r2.__class__ == LogsQueryResult
+        assert r3.__class__ == LogsQueryPartialResult
 
-@pytest.mark.live_test_only
-def test_logs_batch_query_partial_exception():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    requests = [
-        LogsBatchQuery(
-            query="AzureActivity | summarize count()",
-            timespan=timedelta(hours=1),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """AppRequests | take 10""",
-            timespan=(datetime(2021, 6, 2), timedelta(days=1)),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """let Weight = 92233720368547758;
-            range x from 1 to 3 step 1
-            | summarize percentilesw(x, Weight * 100, 50)""",
-            workspace_id= os.environ['LOG_WORKSPACE_ID'],
-            timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
-            include_statistics=True
-        ),
-    ]
-    responses = client.query_batch(requests)
-    r1, r2, r3 = responses[0], responses[1], responses[2]
-    assert r1.__class__ == LogsQueryResult
-    assert r2.__class__ == LogsQueryResult
-    assert r3.__class__ == LogsQueryPartialResult
-
-@pytest.mark.live_test_only
-def test_logs_batch_query_non_fatal_exception():
-    credential = _credential()
-    client = LogsQueryClient(credential)
-    requests = [
-        LogsBatchQuery(
-            query="AzureActivity | summarize count()",
-            timespan=timedelta(hours=1),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """AppRequests | take 10""",
-            timespan=(datetime(2021, 6, 2), timedelta(days=1)),
-            workspace_id= os.environ['LOG_WORKSPACE_ID']
-        ),
-        LogsBatchQuery(
-            query= """Bad Query""",
-            workspace_id= os.environ['LOG_WORKSPACE_ID'],
-            timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
-            include_statistics=True
-        ),
-    ]
-    responses = client.query_batch(requests)
-    r1, r2, r3 = responses[0], responses[1], responses[2]
-    assert r1.__class__ == LogsQueryResult
-    assert r2.__class__ == LogsQueryResult
-    assert r3.__class__ == LogsQueryError
+    @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
+    def test_logs_batch_query_non_fatal_exception(self, monitor_info):
+        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        requests = [
+            LogsBatchQuery(
+                query="AzureActivity | summarize count()",
+                timespan=timedelta(hours=1),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """AppRequests | take 10""",
+                timespan=(datetime(2021, 6, 2), timedelta(days=1)),
+                workspace_id=monitor_info['workspace_id']
+            ),
+            LogsBatchQuery(
+                query= """Bad Query""",
+                workspace_id=monitor_info['workspace_id'],
+                timespan=(datetime(2021, 6, 2), datetime(2021, 6, 3)),
+                include_statistics=True
+            ),
+        ]
+        responses = client.query_batch(requests)
+        r1, r2, r3 = responses[0], responses[1], responses[2]
+        assert r1.__class__ == LogsQueryResult
+        assert r2.__class__ == LogsQueryResult
+        assert r3.__class__ == LogsQueryError

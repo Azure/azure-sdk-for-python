@@ -32,8 +32,7 @@ jobs:
       output1: ${{parent.outputs.output1}}
 
     resources:
-      instance_type: Standard_E8S_V3
+      instance_type: standard_e4s_v3
       runtime_version: 3.1.0
     identity:
       type: user_identity
-#    compute: azureml:spark31

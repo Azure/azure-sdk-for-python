@@ -10,6 +10,7 @@ from azure.ai.ml.entities._assets import Data
 
 
 @pytest.mark.unittest
+@pytest.mark.data_experiences_test
 class TestData:
     def test_deserialize_file(self):
         test_path = "./tests/test_configs/dataset/data_file.yaml"

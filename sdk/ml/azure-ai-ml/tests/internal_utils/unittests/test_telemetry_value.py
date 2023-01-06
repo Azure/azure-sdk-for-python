@@ -15,6 +15,7 @@ from .._util import _UTILS_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_UTILS_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestTelemetryValue:
     def test_component_node_telemetry_value(self):
         # From yaml

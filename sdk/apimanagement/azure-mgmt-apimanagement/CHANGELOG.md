@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.0b1 (2022-11-11)
+
+### Features Added
+
+  - Model DiagnosticContract has a new parameter metrics
+
 ## 3.0.0 (2022-01-13)
 
 **Features**

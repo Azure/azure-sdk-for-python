@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import typing
 from typing import Dict
-
-from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
@@ -21,7 +18,7 @@ class ConditionNode(ControlFlowNode):
     Conditional node in pipeline. Please do not directly use this class.
     """
 
-    def __init__(self, condition, true_block, false_block, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, condition, *, true_block=None, false_block=None, **kwargs):  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition
@@ -29,12 +26,14 @@ class ConditionNode(ControlFlowNode):
         self.false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(
-        cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
+
+    @classmethod
+    def _from_rest_object(cls, obj: dict) -> "ConditionNode":
+        return cls(**obj)
 
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
@@ -57,7 +56,7 @@ class ConditionNode(ControlFlowNode):
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition and not output_definition.is_control:
+            if output_definition is not None and not output_definition.is_control:
                 validation_result.append_error(
                     yaml_path="condition",
                     message=f"'condition' of dsl.condition node must have 'is_control' field "

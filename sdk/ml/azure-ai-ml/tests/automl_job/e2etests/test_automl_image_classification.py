@@ -8,6 +8,7 @@ import os
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
@@ -19,10 +20,8 @@ from azure.ai.ml.entities._job.automl.image import ImageClassificationJob, Image
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
-from devtools_testutils import AzureRecordedTestCase, is_live
 
-
-@pytest.mark.automle2etest
+@pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(
     condition=not is_live(),
@@ -135,7 +134,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)

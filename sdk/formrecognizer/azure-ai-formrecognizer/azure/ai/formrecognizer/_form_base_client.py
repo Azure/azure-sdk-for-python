@@ -49,6 +49,7 @@ class FormRecognizerClientBase:
                 "x-content-type-options",
                 "ms-azure-ai-errorcode",
                 "x-ms-cs-error-code",
+                "x-ms-region",
             }
         )
         http_logging_policy.allowed_query_params.update(

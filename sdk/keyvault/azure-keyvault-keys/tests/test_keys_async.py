@@ -12,6 +12,7 @@ import os
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
     ApiVersion,
     JsonWebKey,
@@ -21,8 +22,8 @@ from azure.keyvault.keys import (
     KeyRotationPolicyAction,
 )
 from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 import pytest
-from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
 from _async_test_case import get_attestation_token, get_decorator, get_release_policy, is_public_cloud, AsyncKeysClientPreparer
@@ -35,6 +36,7 @@ from _keys_test_case import KeysTestCase
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3 = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3])
+only_vault_latest = get_decorator(only_vault=True, is_async=True, api_versions=[DEFAULT_VERSION])
 only_vault_7_3 = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3])
 only_7_3 = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
@@ -250,7 +252,7 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = await self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.asyncio
@@ -768,6 +770,23 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == key.id
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_send_request(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(client, key_name)
+
+        # fetch the key we just created
+        request = HttpRequest(
+            method="GET",
+            url=f"keys/{key_name}/{key.properties.version}",
+            headers={"Accept": "application/json"},
+        )
+        response = await client.send_request(request)
+        assert response.json()["key"]["kid"] == key.id
 
 
 @pytest.mark.asyncio

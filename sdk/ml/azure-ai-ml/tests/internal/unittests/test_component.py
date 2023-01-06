@@ -3,12 +3,17 @@
 # ---------------------------------------------------------
 import copy
 import os
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Dict
+from zipfile import ZipFile
 
 import pydash
 import pytest
 import yaml
+from pytest_mock import MockFixture
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -19,15 +24,22 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
-from .._utils import PARAMETERS_TO_TEST
+from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponent:
     def test_load_v2_component(self):
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
         load_component(yaml_path)
+
+    def test_validate_internal_component(self):
+        yaml_path = r"./tests/test_configs/internal/component_with_code/component_spec.yaml"
+        from azure.ai.ml.entities._validate_funcs import validate_component
+        validation_result = validate_component(yaml_path)
+        assert validation_result.passed, repr(validation_result)
 
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
@@ -64,7 +76,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},
+            "inputs": {"train_data": {"type": "path", "optional": False}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -79,7 +91,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
+            "inputs": {"train_data": {"type": "path", "optional": False}},  # optional will be drop if False
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -124,10 +136,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
+                    'optional': False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
+                    'optional': False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -149,12 +163,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -176,35 +190,46 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        for key, value in {
-            "type": expected_dict["type"].rsplit("@", 1)[0]
-            if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"],
-            "tags": expected_dict.get("tags", {}),
-            "inputs": expected_dict.get("inputs", {}),
-            "outputs": expected_dict.get("outputs", {}),
-        }.items():
-            pydash.set_(expected_dict, key, value)
+
+        # Linux is the default value of os in InternalEnvironment
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
-        for input_port_name in expected_dict["inputs"]:
+
+        for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
                     input_port["default"] = str(input_port["default"])
-            # optional will be dropped if it's False
-            if "optional" in input_port and input_port["optional"] is False:
-                del input_port["optional"]
+
+        # code will be dumped as absolute path
+        if "code" in expected_dict:
+            expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
         assert rest_obj.properties.component_spec == expected_dict
-        assert InternalComponent._load_from_rest(rest_obj)._to_dict() == expected_dict
+
+        # inherit input type map from Component._from_rest_object
+        for input_port in expected_dict.get("inputs", {}).values():
+            if input_port["type"] == "String":
+                input_port["type"] = input_port["type"].lower()
+        assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    @pytest.mark.parametrize(
+        "yaml_path,label",
+        [
+            ("preview_command_component.yaml", "1-preview"),
+            ("legacy_distributed_component.yaml", "1-legacy"),
+        ]
+    )
+    def test_command_mode_command_component(self, yaml_path: str, label: str):
+        component = load_component("./tests/test_configs/internal/command-mode/{}".format(yaml_path))
+        assert component._to_rest_object().properties.component_spec["type"] == f"{component.type}@{label}"
 
     def test_ipp_component_serialization(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
@@ -265,7 +290,7 @@ class TestComponent:
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
         component: InternalComponent = load_component(source=yaml_path)
-        component.environment.resolve(component._source_path)
+        component.environment.resolve(component._base_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
 
@@ -321,20 +346,70 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists(), component.code
-            assert (code_path / "library" / "hello.py").exists(), component.code
-            assert (code_path / "library" / "world.py").exists(), component.code
+            assert (code_path / "LICENSE").exists()
+            assert (code_path / "library.zip").exists()
+            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "world.py").exists()
 
         assert not code_path.is_dir()
+
+    def test_additional_includes_ignore(self) -> None:
+        test_configs_dir = Path("./tests/test_configs/internal/")
+        yaml_path = test_configs_dir / "component_with_additional_includes" / "helloworld_additional_includes.yml"
+        additional_includes_dir = test_configs_dir / "additional_includes"
+        component: InternalComponent = load_component(source=yaml_path)
+        # create some files/folders expected to ignore
+        code_pycache = yaml_path.parent / "__pycache__"
+        additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
+        additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
+        try:
+            if not code_pycache.is_dir():
+                code_pycache.mkdir()
+            (code_pycache / "a.pyc").touch()
+            additional_includes_ignore.touch()
+            if not additional_includes_pycache.is_dir():
+                additional_includes_pycache.mkdir()
+            (additional_includes_pycache / "a.pyc").touch()
+            # resolve and check snapshot directory
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert not (code_path / "__pycache__").exists()
+                assert not (code_path / "library1" / "x.additional_includes").exists()
+                assert not (code_path / "library1" / "__pycache__").exists()
+        finally:
+            if code_pycache.is_dir():
+                shutil.rmtree(code_pycache)
+            if additional_includes_ignore.is_file():
+                additional_includes_ignore.unlink()
+            if additional_includes_pycache.is_dir():
+                shutil.rmtree(additional_includes_pycache)
+
+    def test_additional_includes_merge_folder(self) -> None:
+        yaml_path = (
+            "./tests/test_configs/internal/component_with_additional_includes/additional_includes_merge_folder.yml"
+        )
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code() as code:
+            code_path = code.path
+            # first folder
+            assert (code_path / "library1" / "__init__.py").exists()
+            assert (code_path / "library1" / "hello.py").exists()
+            # second folder content
+            assert (code_path / "library1" / "utils").is_dir()
+            assert (code_path / "library1" / "utils" / "__init__.py").exists()
+            assert (code_path / "library1" / "utils" / "salute.py").exists()
 
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
         [
-            ("helloworld_without_code_and_additional_includes.yml", False),
-            ("helloworld_with_code.yml", False),
-            ("helloworld_with_code_and_additional_includes.yml", True),
+            ("no_code_and_additional_includes/component_spec.yml", False),
+            ("code_only/component_spec.yml", False),
+            ("code_and_additional_includes/component_spec.yml", True),
         ],
     )
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
@@ -342,13 +417,24 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
-                for path in os.listdir("./tests/test_configs/internal/"):
-                    assert (code_path / path).exists(), component.code
-                assert (code_path / "LICENSE").exists(), component.code
+                # manually list here to avoid temp folder like __pycache__ breaking test.
+                for path in [
+                    "additional_includes_merge_folder.yml",
+                    "code_and_additional_includes",
+                    "code_only",
+                    "helloworld_additional_includes.yml",
+                    "helloworld_invalid_additional_includes_existing_file.yml",
+                    "helloworld_invalid_additional_includes_root_directory.yml",
+                    "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                    "no_code_and_additional_includes",
+                ]:
+                    assert (code_path / path).exists()
+                assert (code_path / "LICENSE").exists()
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)
                 yaml_dict = load_yaml(yaml_path)
@@ -356,10 +442,80 @@ class TestComponent:
                 assert code_path.resolve() == specified_code_path.resolve()
 
     def test_docker_file_in_additional_includes(self):
-        yaml_path = "./tests/test_configs/internal/component_with_docker_file_" \
-                    "in_additional_includes/helloworld_additional_includes.yml"
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_docker_file.yml"
+
+        docker_file_path = "./tests/test_configs/internal/additional_includes/docker/DockerFile"
+        with open(docker_file_path, "r") as docker_file:
+            docker_file_content = docker_file.read()
+
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "docker": {
+                    "build": {
+                        "dockerfile": docker_file_content,
+                    }
+                },
+                "os": "Linux",
+            }
+
+    def test_conda_pip_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_conda_pip.yml"
+
+        conda_file_path = "./tests/test_configs/internal/env-conda-dependencies/conda.yaml"
+        with open(conda_file_path, "r") as conda_file:
+            conda_file_content = yaml.safe_load(conda_file)
+
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "conda": {
+                    "conda_dependencies": conda_file_content,
+                },
+                "os": "Linux",
+            }
+
+    def test_artifacts_in_additional_includes(self, mocker: MockFixture):
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
+
+            mocker.patch("azure.ai.ml._internal.entities._artifact_cache.ArtifactCache.get",
+                         side_effect=mock_get_artifacts)
+            from azure.ai.ml._internal.entities._artifact_cache import ArtifactCache
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            assert component._validate().passed, repr(component._validate())
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert code_path.is_dir()
+                for path in ['version_1/', 'version_1/file', 'version_2/', 'version_2/file',
+                             'file_version_1', 'file_version_2', 'DockerFile']:
+                    assert (code_path / path).exists()
+
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/" \
+                        "artifacts_additional_includes_with_conflict.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            validation_result = component._validate()
+            assert validation_result.passed is False
+            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_1 in component-sdk-test-feed' in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_3 in component-sdk-test-feed' in validation_result.error_messages["*"]
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
@@ -371,6 +527,10 @@ class TestComponent:
             (
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
+            ),
+            (
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
             ),
         ],
     )
@@ -423,16 +583,25 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
                 # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
                 "param_string_with_yes_value": {"default": "True", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
+            },
+            "outputs": {
+                'output_data_path': {
+                    'datastore_mode': 'mount',
+                    'description': 'Path to the data',
+                    'is_link_mode': True,
+                    'type': 'path'
+                }
             }
         }
         assert component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._to_rest_object().properties.component_spec["outputs"] == expected_inputs["outputs"]
         assert component._validate().passed is True, repr(component._validate())
 
         regenerated_component = Component._from_rest_object(component._to_rest_object())
@@ -481,3 +650,21 @@ class TestComponent:
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
+
+    @pytest.mark.parametrize(
+        "relative_yaml_path,expected_snapshot_id",
+        ANONYMOUS_COMPONENT_TEST_PARAMS,
+    )
+    def test_anonymous_component_reuse(self, relative_yaml_path: str, expected_snapshot_id: str):
+        component: InternalComponent = load_component(
+            source=Path("./tests/test_configs/internal/component-reuse/") / relative_yaml_path
+        )
+        with component._resolve_local_code() as code:
+            assert code.name == expected_snapshot_id
+
+            code.name = expected_snapshot_id
+            with pytest.raises(
+                AttributeError,
+                match="InternalCode name are calculated based on its content and cannot be changed.*"
+            ):
+                code.name = expected_snapshot_id + "1"

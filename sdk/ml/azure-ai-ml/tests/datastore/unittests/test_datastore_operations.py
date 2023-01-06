@@ -22,6 +22,7 @@ def mock_datastore_operation(
 
 @patch.object(Datastore, "_from_rest_object")
 @pytest.mark.unittest
+@pytest.mark.data_experiences_test
 class TestDatastoreOperations:
     def test_list(self, mock_from_rest, mock_datastore_operation: DatastoreOperations) -> None:
         mock_datastore_operation.list()

@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -17,7 +17,6 @@ from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, Pipeli
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 from .._schema.component import NodeType
-from ._input_outputs import InternalInput
 
 
 class InternalBaseNode(BaseNode):
@@ -43,23 +42,25 @@ class InternalBaseNode(BaseNode):
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        properties: Dict = None,
-        compute: str = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        properties: Optional[Dict] = None,
+        compute: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)
@@ -74,17 +75,14 @@ class InternalBaseNode(BaseNode):
             **kwargs,
         )
 
-    def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
-
     @property
     def _skip_required_compute_missing_validation(self) -> bool:
         return True
 
-    def _to_node(self, context: Dict = None, **kwargs) -> BaseNode:
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> BaseNode:
         return self
 
-    def _to_component(self, context: Dict = None, **kwargs) -> Component:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> Component:
         return self.component
 
     def _to_job(self) -> Job:
@@ -135,22 +133,6 @@ class InternalBaseNode(BaseNode):
             )
         )
         return base_dict
-
-    @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = BaseNode._rest_object_to_init_params(obj)
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return obj
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "InternalBaseNode":
-        obj = cls._rest_object_to_init_params(obj)
-
-        instance = cls.__new__(cls)
-        instance.__init__(**obj)
-        return instance
 
 
 class DataTransfer(InternalBaseNode):

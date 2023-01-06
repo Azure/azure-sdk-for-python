@@ -6,31 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._databases_operations import DatabasesOperations
-from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
-from ._servers_operations import ServersOperations
+from ._administrators_operations import AdministratorsOperations
 from ._backups_operations import BackupsOperations
-from ._firewall_rules_operations import FirewallRulesOperations
-from ._configurations_operations import ConfigurationsOperations
-from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
-from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
+from ._check_name_availability_operations import CheckNameAvailabilityOperations
+from ._check_name_availability_with_location_operations import CheckNameAvailabilityWithLocationOperations
+from ._configurations_operations import ConfigurationsOperations
+from ._databases_operations import DatabasesOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._servers_operations import ServersOperations
 from ._operations import Operations
+from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOperations
+from ._replicas_operations import ReplicasOperations
+from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DatabasesOperations',
-    'GetPrivateDnsZoneSuffixOperations',
-    'ServersOperations',
-    'BackupsOperations',
-    'FirewallRulesOperations',
-    'ConfigurationsOperations',
-    'CheckNameAvailabilityOperations',
-    'LocationBasedCapabilitiesOperations',
-    'VirtualNetworkSubnetUsageOperations',
-    'Operations',
+    "AdministratorsOperations",
+    "BackupsOperations",
+    "LocationBasedCapabilitiesOperations",
+    "CheckNameAvailabilityOperations",
+    "CheckNameAvailabilityWithLocationOperations",
+    "ConfigurationsOperations",
+    "DatabasesOperations",
+    "FirewallRulesOperations",
+    "ServersOperations",
+    "Operations",
+    "GetPrivateDnsZoneSuffixOperations",
+    "ReplicasOperations",
+    "VirtualNetworkSubnetUsageOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -4,6 +4,7 @@
 
 ### Features Added
 * Added missing methods for Mapping API
+* Made load method properties unordered.
 
 ### Breaking Changes
 * Removed custom Key Vault Error
@@ -13,7 +14,8 @@
 
 ### Other Changes
 * Updated method docs
-
+* Fixed load doc that used `selector` instead of `selects`.
+* Fixed CLI link in Readme.
 
 ## 1.0.0b1 (2022-10-13)
 

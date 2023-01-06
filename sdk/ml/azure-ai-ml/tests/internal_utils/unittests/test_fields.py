@@ -37,6 +37,7 @@ class FooSchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestField:
     def test_arm_str(self, mock_workspace_scope: OperationScope) -> None:
         schema = DummySchema()

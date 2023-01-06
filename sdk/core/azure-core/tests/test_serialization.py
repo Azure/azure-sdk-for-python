@@ -86,11 +86,8 @@ def json_dumps_with_encoder():
 def test_bytes(json_dumps_with_encoder):
     test_bytes = b"mybytes"
     result = json.loads(json_dumps_with_encoder(test_bytes))
-    try:
-        assert base64.b64decode(result) == test_bytes  # Python 3
-    except TypeError:
-        assert result == test_bytes  # Python 2.7
-
+    assert base64.b64decode(result) == test_bytes
+    
 def test_byte_array_ascii(json_dumps_with_encoder):
     test_byte_array = bytearray("mybytes", "ascii")
     result = json.loads(json_dumps_with_encoder(test_byte_array))

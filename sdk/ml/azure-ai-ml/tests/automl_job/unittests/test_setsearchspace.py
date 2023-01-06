@@ -8,6 +8,7 @@ from azure.ai.ml.entities._job.sweep.search_space import Choice, Uniform
 from azure.ai.ml.exceptions import ValidationException
 
 
+@pytest.mark.automl_test
 @pytest.mark.parametrize(
     "task_name, expected_type",
     [(image_classification, ImageClassificationSearchSpace), (image_object_detection, ImageObjectDetectionSearchSpace)],
@@ -54,6 +55,7 @@ def test_searchspace(task_name, expected_type):
     assert len(automl_job.search_space) == 2
 
 
+@pytest.mark.automl_test
 @pytest.mark.parametrize(
     "task_name",
     [

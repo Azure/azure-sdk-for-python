@@ -6,22 +6,22 @@
 
 import json
 import logging
+import re
 import typing
 from collections import Counter
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionDetails
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
-from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._common import COMPONENT_TYPE
+from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
+from azure.ai.ml.constants._common import COMPONENT_TYPE, ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
-from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -62,15 +62,15 @@ class PipelineComponent(Component):
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        jobs: Dict[str, BaseNode] = None,
-        is_deterministic: bool = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        jobs: Optional[Dict[str, BaseNode]] = None,
+        is_deterministic: Optional[bool] = None,
         **kwargs,
     ):
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
@@ -143,7 +143,7 @@ class PipelineComponent(Component):
                 pass
             elif isinstance(node, ControlFlowNode):
                 # Validate control flow node.
-                validation_result.merge_with(node._customized_validate(), "jobs.{}".format(node_name))
+                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             else:
                 validation_result.append_error(
                     yaml_path="jobs.{}".format(node_name),
@@ -172,7 +172,7 @@ class PipelineComponent(Component):
         parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
             full_node_name = f"{parent_node_name}{node_name}.jobs."
-            if node.type == NodeType.PIPELINE:
+            if node.type == NodeType.PIPELINE and isinstance(node._component, PipelineComponent):
                 validation_result.merge_with(node._component._validate_compute_is_set(parent_node_name=full_node_name))
                 continue
             if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
@@ -299,6 +299,26 @@ class PipelineComponent(Component):
             component_io = GroupInput.restore_flattened_inputs(component_io)
         return component_io
 
+    def _get_anonymous_hash(self) -> str:
+        """Get anonymous hash for pipeline component."""
+        # ideally we should always use rest object to generate hash as it's the same as
+        # what we send to server-side, but changing the hash function will break reuse of
+        # existing components except for command component (hash result is the same for
+        # command component), so we just use rest object to generate hash for pipeline component,
+        # which doesn't have reuse issue.
+        component_interface_dict = self._to_rest_object().properties.component_spec
+        hash_value = hash_dict(component_interface_dict, keys_to_omit=[
+            # omit name since anonymous component will have same name
+            "name",
+            # omit _source since it doesn't impact component's uniqueness
+            "_source",
+            # omit id since it will be set after component is registered
+            "id",
+            # omit version since it will be set to this hash later
+            "version"
+        ])
+        return hash_value
+
     def _get_flattened_inputs(self):
         _result = {}
         for key, val in self.inputs.items():
@@ -322,6 +342,28 @@ class PipelineComponent(Component):
             jobs=data.get("jobs"),
             _source=ComponentSource.REMOTE_WORKSPACE_JOB,
         )
+
+    @classmethod
+    def _resolve_sub_nodes(cls, rest_jobs):
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+        sub_nodes = {}
+        if rest_jobs is None:
+            return sub_nodes
+        for node_name, node in rest_jobs.items():
+            # TODO: Remove this ad-hoc fix after unified arm id format in object
+            component_id = node.get("componentId", "")
+            if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
+                node["componentId"] = component_id[len(ARM_ID_PREFIX):]
+            if not LoopNode._is_loop_node_dict(node):
+                # skip resolve LoopNode first since it may reference other nodes
+                # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
+        for node_name, node in rest_jobs.items():
+            if LoopNode._is_loop_node_dict(node):
+                # resolve LoopNode after all other nodes are resolved
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node, pipeline_jobs=sub_nodes)
+        return sub_nodes
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -358,6 +400,20 @@ class PipelineComponent(Component):
             }
         )
         return telemetry_values
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # Pop jobs to avoid it goes with schema load
+        jobs = obj.properties.component_spec.pop("jobs", None)
+        init_params_dict = super()._from_rest_object_to_init_params(obj)
+        if jobs:
+            try:
+                init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception as e:  # pylint: disable=broad-except
+                # Skip parse jobs if error exists.
+                # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                module_logger.debug("Parse pipeline component jobs failed with: %s", e)
+        return init_params_dict
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""

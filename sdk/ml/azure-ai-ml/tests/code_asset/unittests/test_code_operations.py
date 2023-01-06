@@ -39,6 +39,7 @@ def mock_code_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestCodeOperations:
     def test_create(
         self,

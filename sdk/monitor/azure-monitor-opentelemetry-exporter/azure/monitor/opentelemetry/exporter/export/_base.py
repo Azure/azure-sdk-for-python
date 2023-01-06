@@ -39,6 +39,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 
 logger = logging.getLogger(__name__)
 
+_AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
@@ -59,26 +60,26 @@ class BaseExporter:
 
         :keyword str api_version: The service API version used. Defaults to latest.
         :keyword str connection_string: The connection string used for your Application Insights resource.
-        :keyword bool enable_local_storage: Determines whether to store failed telemetry records for retry. Defaults to `True`.
-        :keyword str storage_path: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
-        self._enable_local_storage = kwargs.get('enable_local_storage', True)
+        self._disable_offline_storage = kwargs.get('disable_offline_storage', False)
         self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
         self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
         self._storage_min_retry_interval = kwargs.get('storage_min_retry_interval', 60)  # minimum retry interval in seconds
         temp_suffix = self._instrumentation_key or ""
-        default_storage_path = os.path.join(
-            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
+        default_storage_directory = os.path.join(
+            tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
         )
-        self._storage_path = kwargs.get('storage_path', default_storage_path)  # Storage path in which to store retry files.
-        self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
+        self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
+        self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
@@ -101,15 +102,17 @@ class BaseExporter:
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
-        if self._enable_local_storage:
+        if not self._disable_offline_storage:
             self.storage = LocalFileStorage(
-                path=self._storage_path,
+                path=self._storage_directory,
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
                 retention_period=self._storage_retention_period,
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
+        # specifies whether current exporter is used for collection of instrumentation metrics
+        self._instrumentation_collection = kwargs.get('instrumentation_collection', False)
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
@@ -121,7 +124,7 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [TelemetryItem(**x) for x in blob.get()]
+                envelopes = [TelemetryItem.from_dict(x) for x in blob.get()]
                 result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
@@ -205,18 +208,22 @@ class BaseExporter:
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
                         if response_error.response and response_error.response.headers:
+                            redirect_has_headers = True
                             location = response_error.response.headers.get("location")
-                            if location:
-                                url = urlparse(location)
-                                if url.scheme and url.netloc:
-                                    # Change the host to the new redirected host
-                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                                    # Attempt to export again
-                                    result =  self._transmit(envelopes)
-                        if not self._is_stats_exporter():
-                            logger.error(
-                                "Error parsing redirect information."
-                            )
+                            url = urlparse(location)
+                        else:
+                            redirect_has_headers = False
+                        if redirect_has_headers and url.scheme and url.netloc:
+                            # Change the host to the new redirected host
+                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                            # Attempt to export again
+                            result = self._transmit(envelopes)
+                        else:
+                            if not self._is_stats_exporter():
+                                logger.error(
+                                    "Error parsing redirect information.",
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
                             logger.error(
@@ -288,7 +295,8 @@ class BaseExporter:
     def _should_collect_stats(self):
         return is_statsbeat_enabled() and \
             not get_statsbeat_shutdown() and \
-            not self._is_stats_exporter()
+            not self._is_stats_exporter() and \
+            not self._instrumentation_collection
 
     # check to see if statsbeat is in "attempting to be initialized" state
     def _is_statsbeat_initializing_state(self):

@@ -116,7 +116,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveBaseSecurityUserRule(_serialization.Model):
@@ -218,7 +218,7 @@ class ActiveBaseSecurityUserRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveConfigurationParameter(_serialization.Model):
@@ -670,7 +670,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -831,7 +831,7 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disa
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -1025,7 +1025,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1235,7 +1235,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1403,7 +1403,7 @@ class BaseAdminRule(ProxyResource):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1538,7 +1538,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1628,7 +1628,7 @@ class BaseUserRule(ProxyResource):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -2053,7 +2053,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2159,7 +2159,7 @@ class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attrib
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2257,7 +2257,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
@@ -2404,7 +2404,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2586,7 +2586,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -3696,6 +3696,282 @@ class NspAssociationsListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """The network security perimeter link resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar provisioning_state: The provisioning state of the NSP Link resource. Known values are:
+     "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
+    :ivar auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
+     which the link gets created in Auto-approval mode. It should be used when the NSP admin have
+     Microsoft.Network/networkSecurityPerimeters/linkPerimeter/action permission on the remote NSP
+     resource.
+    :vartype auto_approved_remote_perimeter_resource_id: str
+    :ivar remote_perimeter_guid: Remote NSP Guid with which the link gets created.
+    :vartype remote_perimeter_guid: str
+    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
+     *'] to allow inbound to all profiles. It's default value is ['*\ '].
+    :vartype local_inbound_profiles: list[str]
+    :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. In
+     current version, it is readonly property and it's value is set to ['*'] to allow outbound from
+     all profiles. In later version, user will be able to modify it.
+    :vartype local_outbound_profiles: list[str]
+    :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
+     ['\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
+     mode. It's default value is ['*\ '].
+    :vartype remote_inbound_profiles: list[str]
+    :ivar remote_outbound_profiles: Remote Outbound profile names from which Outbound is allowed.
+     In current version, it is readonly property and it's value is set to ['*'] to allow outbound
+     from all profiles. In later version, user will be able to modify it.
+    :vartype remote_outbound_profiles: list[str]
+    :ivar description: A message passed to the owner of the remote NSP link resource with this
+     connection request. In case of Auto-approved flow, it is default to 'Auto Approved'. Restricted
+     to 140 chars.
+    :vartype description: str
+    :ivar status: The NSP link state. Known values are: "Approved", "Pending", "Rejected", and
+     "Disconnected".
+    :vartype status: str or ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "remote_perimeter_guid": {"readonly": True},
+        "local_inbound_profiles": {"unique": True},
+        "local_outbound_profiles": {"readonly": True, "unique": True},
+        "remote_inbound_profiles": {"unique": True},
+        "remote_outbound_profiles": {"readonly": True, "unique": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "auto_approved_remote_perimeter_resource_id": {
+            "key": "properties.autoApprovedRemotePerimeterResourceId",
+            "type": "str",
+        },
+        "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
+        "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
+        "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
+        "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
+        "remote_outbound_profiles": {"key": "properties.remoteOutboundProfiles", "type": "[str]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        auto_approved_remote_perimeter_resource_id: Optional[str] = None,
+        local_inbound_profiles: Optional[List[str]] = None,
+        remote_inbound_profiles: Optional[List[str]] = None,
+        description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
+         which the link gets created in Auto-approval mode. It should be used when the NSP admin have
+         Microsoft.Network/networkSecurityPerimeters/linkPerimeter/action permission on the remote NSP
+         resource.
+        :paramtype auto_approved_remote_perimeter_resource_id: str
+        :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
+         ['\ *'] to allow inbound to all profiles. It's default value is ['*\ '].
+        :paramtype local_inbound_profiles: list[str]
+        :keyword remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
+         ['\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
+         mode. It's default value is ['*\ '].
+        :paramtype remote_inbound_profiles: list[str]
+        :keyword description: A message passed to the owner of the remote NSP link resource with this
+         connection request. In case of Auto-approved flow, it is default to 'Auto Approved'. Restricted
+         to 140 chars.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.auto_approved_remote_perimeter_resource_id = auto_approved_remote_perimeter_resource_id
+        self.remote_perimeter_guid = None
+        self.local_inbound_profiles = local_inbound_profiles
+        self.local_outbound_profiles = None
+        self.remote_inbound_profiles = remote_inbound_profiles
+        self.remote_outbound_profiles = None
+        self.description = description
+        self.status = None
+
+
+class NspLinkListResult(_serialization.Model):
+    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a URL link to get the next set of results.
+
+    :ivar value: Gets a page of NSP Link resources.
+    :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NspLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.NspLink"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Gets a page of NSP Link resources.
+        :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """The network security perimeter linkReference resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar provisioning_state: The provisioning state of the NSP LinkReference resource. Known
+     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
+    :ivar remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with which the link is
+     created.
+    :vartype remote_perimeter_resource_id: str
+    :ivar remote_perimeter_guid: Remote NSP Guid with which the link is created.
+    :vartype remote_perimeter_guid: str
+    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
+     *'] to allow inbound to all profiles. It's default value is ['*\ '].
+    :vartype local_inbound_profiles: list[str]
+    :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. Use
+     ['\ *'] to allow outbound from all profiles. It's default value is ['*\ '].
+    :vartype local_outbound_profiles: list[str]
+    :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. ['*']
+     value implies inbound is allowed to all profiles at remote perimeter. This property can only be
+     updated from remote perimeter.
+    :vartype remote_inbound_profiles: list[str]
+    :ivar remote_outbound_profiles: Remote Outbound profile names from which Outbound is allowed.
+     ['*'] value implies outbound is allowed from all profiles at remote perimeter. This property
+     can only be updated from remote perimeter.
+    :vartype remote_outbound_profiles: list[str]
+    :ivar description: A message sent by the remote NSP link admin for connection request. In case
+     of Auto-approved flow, it is default to 'Auto Approved'.
+    :vartype description: str
+    :ivar status: The NSP linkReference state. It cannot be changed if link is created in
+     auto-approval mode. Known values are: "Approved", "Pending", "Rejected", and "Disconnected".
+    :vartype status: str or ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkStatus
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "remote_perimeter_resource_id": {"readonly": True},
+        "remote_perimeter_guid": {"readonly": True},
+        "local_inbound_profiles": {"unique": True},
+        "local_outbound_profiles": {"readonly": True, "unique": True},
+        "remote_inbound_profiles": {"readonly": True},
+        "remote_outbound_profiles": {"readonly": True},
+        "description": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "remote_perimeter_resource_id": {"key": "properties.remotePerimeterResourceId", "type": "str"},
+        "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
+        "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
+        "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
+        "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
+        "remote_outbound_profiles": {"key": "properties.remoteOutboundProfiles", "type": "[str]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        local_inbound_profiles: Optional[List[str]] = None,
+        status: Optional[Union[str, "_models.NspLinkStatus"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
+         ['\ *'] to allow inbound to all profiles. It's default value is ['*\ '].
+        :paramtype local_inbound_profiles: list[str]
+        :keyword status: The NSP linkReference state. It cannot be changed if link is created in
+         auto-approval mode. Known values are: "Approved", "Pending", "Rejected", and "Disconnected".
+        :paramtype status: str or ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkStatus
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.remote_perimeter_resource_id = None
+        self.remote_perimeter_guid = None
+        self.local_inbound_profiles = local_inbound_profiles
+        self.local_outbound_profiles = None
+        self.remote_inbound_profiles = None
+        self.remote_outbound_profiles = None
+        self.description = None
+        self.status = status
+
+
+class NspLinkReferenceListResult(_serialization.Model):
+    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference resources and a URL link to get the next set of results.
+
+    :ivar value: Gets a page of NSP LinkReference resources.
+    :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NspLinkReference]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.NspLinkReference"]] = None, next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value: Gets a page of NSP LinkReference resources.
+        :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class NspProfile(Resource):
     """The network security perimeter profile resource.
 
@@ -4393,7 +4669,7 @@ class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol

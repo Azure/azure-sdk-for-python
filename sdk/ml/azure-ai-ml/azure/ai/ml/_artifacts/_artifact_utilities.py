@@ -14,7 +14,7 @@ from typing import Dict, Optional, Tuple, TypeVar, Union
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
@@ -39,8 +39,8 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
+from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
@@ -138,7 +138,7 @@ def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_fold
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
         elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas( # pylint: disable=no-value-for-parameter
+            token = generate_file_sas(  # pylint: disable=no-value-for-parameter
                 account_name=ds_info["storage_account"],
                 file_system_name=ds_info["container_name"],
                 file_name=item_name,
@@ -160,10 +160,10 @@ def upload_artifact(
     datastore_operation: DatastoreOperations,
     operation_scope: OperationScope,
     datastore_name: Optional[str],
-    asset_hash: str = None,
+    asset_hash: Optional[str] = None,
     show_progress: bool = True,
-    asset_name: str = None,
-    asset_version: str = None,
+    asset_name: Optional[str] = None,
+    asset_version: Optional[str] = None,
     ignore_file: IgnoreFile = IgnoreFile(None),
     sas_uri=None,
 ) -> ArtifactStorageInfo:
@@ -204,7 +204,7 @@ def download_artifact(
     destination: str,
     datastore_operation: DatastoreOperations,
     datastore_name: Optional[str],
-    datastore_info: Dict = None,
+    datastore_info: Optional[Dict] = None,
 ) -> str:
     """Download datastore path to local file or directory.
 
@@ -263,7 +263,9 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
     )
 
 
-def aml_datastore_path_exists(uri: str, datastore_operation: DatastoreOperations, datastore_info: dict = None):
+def aml_datastore_path_exists(
+    uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
+):
     """Checks whether `uri` of the form "azureml://" points to either a
     directory or a file.
 
@@ -281,13 +283,13 @@ def _upload_to_datastore(
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
     artifact_type: str,
-    datastore_name: str = None,
+    datastore_name: Optional[str] = None,
     show_progress: bool = True,
-    asset_name: str = None,
-    asset_version: str = None,
-    asset_hash: str = None,
-    ignore_file: IgnoreFile = None,
-    sas_uri: str = None,  # contains regstry sas url
+    asset_name: Optional[str] = None,
+    asset_version: Optional[str] = None,
+    asset_hash: Optional[str] = None,
+    ignore_file: Optional[IgnoreFile] = None,
+    sas_uri: Optional[str] = None,  # contains regstry sas url
 ) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
@@ -364,8 +366,8 @@ def _check_and_upload_path(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     artifact_type: str,
-    datastore_name: str = None,
-    sas_uri: str = None,
+    datastore_name: Optional[str] = None,
+    sas_uri: Optional[str] = None,
     show_progress: bool = True,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the
@@ -407,6 +409,7 @@ def _check_and_upload_path(
             sas_uri=sas_uri,
             artifact_type=artifact_type,
             show_progress=show_progress,
+            ignore_file=getattr(artifact, "_ignore_file", None),
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:

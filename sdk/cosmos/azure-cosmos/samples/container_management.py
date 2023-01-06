@@ -6,6 +6,7 @@
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import ThroughputProperties
 
 import config
 
@@ -171,9 +172,11 @@ def create_container(db, id):
     try:
         container = db.create_container(
             id=id+"_container_analytical_store",
-            partition_key=PartitionKey(path='/id', kind='Hash'),analytical_storage_ttl=-1
-
+            partition_key=PartitionKey(path='/id', kind='Hash'), analytical_storage_ttl=None
         )
+        """A value of None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
+        Please note that analytical storage can only be enabled on Synapse Link enabled accounts."""
+
         properties = container.read()
         print('Container with id \'{0}\' created'.format(container.id))
         print('Partition Key - \'{0}\''.format(properties['partitionKey']))

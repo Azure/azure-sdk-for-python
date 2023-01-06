@@ -68,7 +68,9 @@ class AMLVersionedArmId(object):
                     )
 
 
-def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationScope = None) -> Optional[str]:
+def get_datastore_arm_id(
+    datastore_name: Optional[str] = None, operation_scope: Optional[OperationScope] = None
+) -> Optional[str]:
     return (
         DATASTORE_RESOURCE_ID.format(
             operation_scope.subscription_id,
@@ -79,6 +81,49 @@ def get_datastore_arm_id(datastore_name: str = None, operation_scope: OperationS
         if datastore_name
         else None
     )
+
+
+class AMLLabelledArmId(object):
+    """Parser for versioned arm id: e.g. /subscription/.../code/my-
+    code/labels/default.
+
+    :param arm_id: The labelled ARM id.
+    :type arm_id: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the ARM id is incorrectly formatted.
+    """
+
+    REGEX_PATTERN = (
+        "^/?subscriptions/([^/]+)/resourceGroups/(["
+        "^/]+)/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)/([^/]+)/([^/]+)/labels/(["
+        "^/]+)"
+    )
+
+    def __init__(self, arm_id=None):
+        self.is_registry_id = None
+        if arm_id:
+            match = re.match(AMLLabelledArmId.REGEX_PATTERN, arm_id)
+            if match:
+                self.subscription_id = match.group(1)
+                self.resource_group_name = match.group(2)
+                self.workspace_name = match.group(3)
+                self.asset_type = match.group(4)
+                self.asset_name = match.group(5)
+                self.asset_label = match.group(6)
+            else:
+                match = re.match(REGISTRY_VERSION_PATTERN, arm_id)
+                if match:
+                    self.asset_name = match.group(3)
+                    self.asset_label = match.group(4)
+                    self.is_registry_id = True
+                else:
+                    msg = "Invalid AzureML ARM versioned Id {}"
+                    raise ValidationException(
+                        message=msg.format(arm_id),
+                        no_personal_data_message=msg.format("[arm_id]"),
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                        error_category=ErrorCategory.USER_ERROR,
+                        target=ErrorTarget.ARM_RESOURCE,
+                    )
 
 
 class AMLNamedArmId:

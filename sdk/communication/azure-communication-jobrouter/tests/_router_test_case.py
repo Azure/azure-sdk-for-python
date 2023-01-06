@@ -5,16 +5,7 @@
 import time
 from abc import abstractmethod
 
-from _shared.testcase import (
-    CommunicationTestCase,
-)
-from azure_devtools.scenario_tests import LargeResponseBodyReplacer
-from _recording_processors import (
-    RouterHeaderSanitizer,
-    RouterQuerySanitizer,
-    RouterURIIdentityReplacer,
-    RouterScrubber
-)
+from devtools_testutils import AzureRecordedTestCase
 
 from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter import (
@@ -24,40 +15,20 @@ from azure.communication.jobrouter import (
 )
 
 
-class RouterTestCaseBase(CommunicationTestCase):
-    def __init__(self, method_name, *args, **kwargs):
-        super(RouterTestCaseBase, self).__init__(method_name, *args, **kwargs)
-
-    def setUp(self):
-        super(RouterTestCaseBase, self).setUp()
-
-        self.recording_processors.extend([
-            RouterScrubber(keys = ["etag", "functionUri", "functionKey", "appKey", "clientId"]),
-            RouterHeaderSanitizer(headers = ["etag"]),
-        ])
-
-
-class RouterTestCase(RouterTestCaseBase):
-    def setUp(self):
-        super(RouterTestCase, self).setUp()
-
+class RouterRecordedTestCase(AzureRecordedTestCase):
     @abstractmethod
     def clean_up(self):
         pass
 
-    def tearDown(self):
-        super(RouterTestCase, self).tearDown()
-        self.clean_up()
-
     def create_client(self) -> RouterClient:
         return RouterClient.from_connection_string(
-            conn_str = self.connection_str,
-            http_logging_policy=get_http_logging_policy())
+            conn_str = self.connection_string,
+            http_logging_policy = get_http_logging_policy())
 
     def create_admin_client(self) -> RouterAdministrationClient:
         return RouterAdministrationClient.from_connection_string(
-            conn_str = self.connection_str,
-            http_logging_policy=get_http_logging_policy())
+            conn_str = self.connection_string,
+            http_logging_policy = get_http_logging_policy())
 
     def clean_up_job(
             self,
@@ -133,4 +104,4 @@ class RouterTestCase(RouterTestCaseBase):
             except expected_exception:
                 return
 
-        self.fail("expected exception {expected_exception} was not raised")
+        raise AssertionError("expected exception {expected_exception} was not raised")

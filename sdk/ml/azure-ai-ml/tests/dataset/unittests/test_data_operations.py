@@ -6,11 +6,11 @@ import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
-from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
-    DatasetContainerData,
-    DatasetContainerDetails,
-    DatasetVersionData,
-    DatasetVersionDetails,
+from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
+    DataContainerData,
+    DataContainerDetails,
+    DataVersionBaseData,
+    DataVersionBaseDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import (
@@ -69,6 +69,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(Data, "_from_rest_object", new=Mock())
 @patch.object(Data, "_from_container_rest_object", new=Mock())
+@pytest.mark.data_experiences_test
 class TestDataOperations:
     def test_list(self, mock_data_operations: DataOperations) -> None:
         mock_data_operations._operation.list.return_value = [Mock(Data) for _ in range(10)]
@@ -91,8 +92,9 @@ class TestDataOperations:
 
     def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
         name = "random_name"
-        with pytest.raises(Exception):
+        with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
+        assert "At least one required parameter is missing" in str(ex.value)
 
     def test_create_with_spec_file(
         self,
@@ -127,6 +129,7 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -166,6 +169,7 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -212,7 +216,7 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path,
+            base_uri=data_path,
             datastore_operations=mock_datastore_operation,
             requests_pipeline=mock_data_operations._requests_pipeline,
         )
@@ -387,7 +391,7 @@ class TestDataOperations:
 
     def test_archive_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DatasetVersionData(properties=Mock(DatasetVersionDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.archive(name=name, version=version)
@@ -401,7 +405,7 @@ class TestDataOperations:
 
     def test_archive_container(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_container = Mock(DatasetContainerData(properties=Mock(DatasetContainerDetails())))
+        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.archive(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
@@ -413,7 +417,7 @@ class TestDataOperations:
 
     def test_restore_version(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_version = Mock(DatasetVersionData(properties=Mock(DatasetVersionDetails(paths=[]))))
+        dataset_version = Mock(DataVersionBaseData(properties=Mock(DataVersionBaseDetails(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.restore(name=name, version=version)
@@ -427,7 +431,7 @@ class TestDataOperations:
 
     def test_restore_container(self, mock_data_operations: DataOperations):
         name = "random_name"
-        dataset_container = Mock(DatasetContainerData(properties=Mock(DatasetContainerDetails())))
+        dataset_container = Mock(DataContainerData(properties=Mock(DataContainerDetails(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.restore(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
@@ -472,4 +476,5 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )

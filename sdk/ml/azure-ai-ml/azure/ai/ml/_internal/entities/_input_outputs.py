@@ -23,8 +23,9 @@ class InternalInput(Input):
     - Enum, enum (new)
     """
 
-    def __init__(self, datastore_mode=None, **kwargs):
+    def __init__(self, *, datastore_mode=None, is_resource=None, **kwargs):
         self.datastore_mode = datastore_mode
+        self.is_resource = is_resource
         super().__init__(**kwargs)
 
     @property
@@ -90,7 +91,7 @@ class InternalInput(Input):
         return super()._get_python_builtin_type_str()
 
     @classmethod
-    def _cast_from_input_or_dict(cls, _input: Union[Input, Dict]) -> Optional["InternalInput"]:
+    def _from_base(cls, _input: Union[Input, Dict]) -> Optional["InternalInput"]:
         """Cast from Input or Dict to InternalInput. Do not guarantee to create a new object."""
         if _input is None:
             return None
@@ -105,8 +106,13 @@ class InternalInput(Input):
 
 
 class InternalOutput(Output):
+    def __init__(self, *, datastore_mode=None, is_link_mode=None, **kwargs):
+        self.datastore_mode = datastore_mode
+        self.is_link_mode = is_link_mode
+        super().__init__(**kwargs)
+
     @classmethod
-    def _cast_from_output_or_dict(cls, _output: Union[Output, Dict]) -> Optional["InternalOutput"]:
+    def _from_base(cls, _output: Union[Output, Dict]) -> Optional["InternalOutput"]:
         if _output is None:
             return None
         if isinstance(_output, InternalOutput):

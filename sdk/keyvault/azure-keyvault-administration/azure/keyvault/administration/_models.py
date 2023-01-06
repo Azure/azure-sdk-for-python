@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any
 
-if TYPE_CHECKING:
-    from typing import Any
+from ._enums import SettingType
 
 
 class KeyVaultPermission(object):
@@ -155,3 +154,21 @@ class KeyVaultBackupResult(object):
     @classmethod
     def _from_generated(cls, response, deserialized_operation, response_headers):  # pylint:disable=unused-argument
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
+
+
+class KeyVaultSetting(object):
+    """A Key Vault setting.
+
+    :ivar str name: The name of the account setting.
+    :ivar str value: The value of the pool setting.
+    :ivar SettingType type: The type specifier of the value.
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name")
+        self.value = kwargs.get("value")
+        self.type = kwargs.get("type")
+
+    @classmethod
+    def _from_generated(cls, setting):
+        return cls(name=setting.name, value=setting.value, type=SettingType(setting.type))

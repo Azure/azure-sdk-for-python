@@ -1,5 +1,19 @@
 # Release History
 
+## 5.1.0b3 (2023-01-03)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 5.1.0b2 (2022-10-19)
+
+### Features Added
+
+  - Added operation group DeletedProtectionContainersOperations
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter soft_delete_retention_period
+
 ## 5.1.0b1 (2022-08-29)
 
 ### Features Added

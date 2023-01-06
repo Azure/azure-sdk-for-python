@@ -310,14 +310,14 @@
                 "description": "Name of the resource group where the private end point is added to"
             }
         },
-        "imageBuildCompute":{
+        "imageBuildCompute": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "The name of the compute target to use for building environment Docker images with the container registry is behind a VNet."
             }
         },
-        "publicNetworkAccess":{
+        "publicNetworkAccess": {
             "type": "string",
             "defaultValue": "Enabled",
             "allowedValues": [
@@ -371,7 +371,7 @@
                 "description": "The Bring-Your-Own search account that customer brings to store data"
             }
         },
-        "identity":{
+        "identity": {
             "type": "object",
             "defaultValue": {
                 "type": "systemAssigned"
@@ -380,7 +380,7 @@
                 "description": "Managed identities assigned to workspace. If not specificed, SystemAssigned managed identity is the default."
             }
         },
-        "primaryUserAssignedIdentity":{
+        "primaryUserAssignedIdentity": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -405,10 +405,6 @@
                     "id": "[variables('subnet')]"
                 }
             ]
-        },
-        "subnetPolicyForPE": {
-            "privateEndpointNetworkPolicies": "Disabled",
-            "privateLinkServiceNetworkPolicies": "Enabled"
         },
         "privateEndpointSettings": {
             "name": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
@@ -464,31 +460,6 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "[concat('UpdateSubnetPolicy-', uniqueString(parameters('vnetName'), parameters('subnetName')))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "resourceGroup": "[parameters('vnetResourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/virtualNetworks/subnets",
-                            "apiVersion": "2019-09-01",
-                            "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
-                            "properties": "[if(and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none'))), union(reference(variables('subnet'), '2019-09-01'), variables('subnetPolicyForPE')), json('null'))]"
-                        }
-                    ]
-                }
-            }
-        },
-        {
             "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
@@ -515,6 +486,7 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
                 "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
@@ -560,9 +532,9 @@
             "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
-            "apiVersion": "2018-05-01-preview",
+            "apiVersion": "2020-02-02-preview",
             "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap'), equals(toLower(parameters('applicationInsightsLocation')),'westus3')),'southcentralus', if(equals(toLower(parameters('applicationInsightsLocation')),'jioindiawest'), 'centralindia', if(equals(toLower(parameters('applicationInsightsLocation')),'canadaeast'), 'canadacentral', parameters('applicationInsightsLocation'))))]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
             "kind": "web",
             "properties": {
                 "Application_Type": "web"
@@ -590,8 +562,8 @@
                 "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
-                "imageBuildCompute":"[parameters('imageBuildCompute')]",
-                "publicNetworkAccess":"[parameters('publicNetworkAccess')]",
+                "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
                 "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
                 "encryption": {

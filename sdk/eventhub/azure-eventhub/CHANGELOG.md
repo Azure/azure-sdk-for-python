@@ -1,5 +1,21 @@
 # Release History
 
+## 5.11.0 (2023-01-10)
+
+### Features Added
+
+- A new boolean keyword argument `uamqp_transport` has been added to sync and async `EventHubProducerClient`/`EventHubConsumerClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
+
+### Bugs Fixed
+
+- Fixed a bug that caused an error when sending batches with tracing enabled (issue #27986).
+
+### Other Changes
+
+- Removed uAMQP from required dependencies.
+- Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
+  - Added support for Python 3.11.
+
 ## 5.10.1 (2022-08-22)
 
 This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
@@ -75,9 +91,66 @@ This version and all future versions will require Python 3.7+, Python 3.6 is no 
 
 ## 5.9.0b1 (2022-02-09)
 
+- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+## 5.8.0b2 (2022-10-11)
+
 ### Features Added
 
-- The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
+- Updated the optional dependency for async transport using AMQP over WebSocket from `websocket-client` to `aiohttp` (Issue #24315, thanks @hansmbakker for the suggestion).
+
+## 5.8.0b1 (2022-09-22)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Other Changes
+
+- Added the `uamqp_transport` optional parameter to the clients, to allow switching to the `uamqp` library as the transport.
+
+## 5.8.0a5 (2022-07-19)
+
+### Bugs Fixed
+
+- Fixed bug that prevented token refresh at regular intervals.
+- Fixed bug that was improperly passing the debug keyword argument, so that network trace debug logs are output when requested.
+
+### Other Changes
+
+- Added logging added in to track proper token refreshes & fetches, output exception reason for producer init failure.
+
+## 5.8.0a4 (2022-06-07)
+
+### Features Added
+
+- Added support for connection using websocket and http proxy.
+- Added support for custom endpoint connection over websocket.
+
+## 5.8.0a3 (2022-03-08)
+
+### Other Changes
+
+- Improved the performance of async sending and receiving.
+
+## 5.8.0a2 (2022-02-09)
+
+### Features Added
+
+- Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
+
+## 5.8.0a1 (2022-01-13)
+
+Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out which will be added back in future previews as we work towards a stable release:
+  - Async is not supported.
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+### Other Changes
+
+- uAMQP dependency is removed.
 
 ## 5.7.0 (2022-01-12)
 
@@ -585,4 +658,6 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 - Further testing and minor bug fixes.
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
+## 0.2.0a2 (2018-04-02)
+
+- Updated uAQMP dependency.

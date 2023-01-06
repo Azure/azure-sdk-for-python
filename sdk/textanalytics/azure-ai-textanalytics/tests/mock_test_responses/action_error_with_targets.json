@@ -8,12 +8,12 @@
     {
       "code": "InvalidRequest",
       "message": "Some error2",
-      "target": "#/tasks/entityRecognitionPiiTasks/0"
+      "target": "#/tasks/piiEntityRecognitionTasks/0"
     },
     {
       "code": "InvalidRequest",
       "message": "Some error5",
-      "target": "#/tasks/entityRecognitionPiiTasks/1"
+      "target": "#/tasks/piiEntityRecognitionTasks/1"
     },
     {
       "code": "InvalidRequest",

@@ -6,24 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._streaming_jobs_operations import StreamingJobsOperations
+from ._functions_operations import FunctionsOperations
 from ._inputs_operations import InputsOperations
 from ._outputs_operations import OutputsOperations
-from ._transformations_operations import TransformationsOperations
-from ._functions_operations import FunctionsOperations
+from ._operations import Operations
+from ._streaming_jobs_operations import StreamingJobsOperations
+from ._sku_operations import SkuOperations
 from ._subscriptions_operations import SubscriptionsOperations
+from ._transformations_operations import TransformationsOperations
 from ._clusters_operations import ClustersOperations
 from ._private_endpoints_operations import PrivateEndpointsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'StreamingJobsOperations',
-    'InputsOperations',
-    'OutputsOperations',
-    'TransformationsOperations',
-    'FunctionsOperations',
-    'SubscriptionsOperations',
-    'ClustersOperations',
-    'PrivateEndpointsOperations',
+    "FunctionsOperations",
+    "InputsOperations",
+    "OutputsOperations",
+    "Operations",
+    "StreamingJobsOperations",
+    "SkuOperations",
+    "SubscriptionsOperations",
+    "TransformationsOperations",
+    "ClustersOperations",
+    "PrivateEndpointsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

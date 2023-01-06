@@ -799,13 +799,12 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        await share.create_share()
+        share = await self._create_share('random3')
         snapshot1 = await share.create_snapshot()
         snapshot2 = await share.create_snapshot()
 
         # Act
-        shares = self.fsc.list_shares(include_snapshots=True)
+        shares = self.fsc.list_shares(name_starts_with=share.share_name, include_snapshots=True)
 
         # Assert
         assert shares is not None
@@ -825,8 +824,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        await share.create_share()
+        await self._create_share('othershare')
+        share = await self._create_share('random4')
 
         # Act
         shares = []
@@ -1071,6 +1070,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert share2_root_squash == ShareRootSquash.root_squash
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_list_shares_with_root_squash_and_protocols(self, **kwargs):

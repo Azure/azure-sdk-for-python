@@ -7,7 +7,7 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_online_endpoint
-from azure.ai.ml._restclient.v2021_10_01.models import EndpointAuthKeys
+from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
@@ -219,6 +219,7 @@ def mock_online_endpoint_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
     def test_online_list(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         mock_online_endpoint_operations.list()

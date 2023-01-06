@@ -23,9 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import abc
-
 from typing import Any, Union, List, Generic, TypeVar, Dict
+from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -39,20 +38,6 @@ ImplPoliciesType = List[
     ]
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
-
-try:
-    from contextlib import AbstractAsyncContextManager
-except ImportError:  # Python <= 3.7
-
-    class AbstractAsyncContextManager(object):  # type: ignore
-        async def __aenter__(self):
-            """Return `self` upon entering the runtime context."""
-            return self
-
-        @abc.abstractmethod
-        async def __aexit__(self, exc_type, exc_value, traceback):
-            """Raise any exception triggered within the runtime context."""
-            return None
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -165,7 +150,7 @@ class AsyncPipeline(
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:
             return
 

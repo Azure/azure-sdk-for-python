@@ -4,8 +4,8 @@ import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    BanditPolicy as RestBanditPolicy,
     JobBase,
     LogVerbosity,
     MLTableJobInput,
@@ -30,6 +30,7 @@ from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job imp
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLTextClassificationMultilabelJob:
     """Tests for AutoML NLP Text Classification Multilabel Job."""

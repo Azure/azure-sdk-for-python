@@ -12,6 +12,7 @@ from azure.ai.ml.entities._job.automl.tabular.forecasting_job import Forecasting
 from azure.ai.ml.entities._job.automl.tabular.regression_job import RegressionJob
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestNCrossValidationSettings:
     JOBS = [classification, regression, forecasting]

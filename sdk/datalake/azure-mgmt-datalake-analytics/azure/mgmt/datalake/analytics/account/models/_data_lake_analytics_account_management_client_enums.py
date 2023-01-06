@@ -11,23 +11,30 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AADObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of AAD object the object identifier refers to.
-    """
+    """The type of AAD object the object identifier refers to."""
 
     USER = "User"
     GROUP = "Group"
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
-class DataLakeAnalyticsAccountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Data Lake Analytics account.
+
+class CheckNameAvailabilityParametersType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource type. Note: This should not be set by the user, as the constant value is
+    Microsoft.DataLakeAnalytics/accounts.
     """
+
+    MICROSOFT_DATA_LAKE_ANALYTICS_ACCOUNTS = "Microsoft.DataLakeAnalytics/accounts"
+
+
+class DataLakeAnalyticsAccountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the Data Lake Analytics account."""
 
     ACTIVE = "Active"
     SUSPENDED = "Suspended"
 
+
 class DataLakeAnalyticsAccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning status of the Data Lake Analytics account.
-    """
+    """The provisioning status of the Data Lake Analytics account."""
 
     FAILED = "Failed"
     CREATING = "Creating"
@@ -41,13 +48,14 @@ class DataLakeAnalyticsAccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMet
     UNDELETING = "Undeleting"
     CANCELED = "Canceled"
 
+
 class DebugDataAccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the DebugDataAccessLevel for this account.
-    """
+    """The current state of the DebugDataAccessLevel for this account."""
 
     ALL = "All"
     CUSTOMER = "Customer"
     NONE = "None"
+
 
 class FirewallAllowAzureIpsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of allowing or disallowing IPs originating within Azure through the firewall.
@@ -57,32 +65,32 @@ class FirewallAllowAzureIpsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class FirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the IP address firewall for this account.
-    """
+    """The current state of the IP address firewall for this account."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class NestedResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the NestedResourceProvisioning for this account.
-    """
+    """The current state of the NestedResourceProvisioning for this account."""
 
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
 
+
 class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The intended executor of the operation.
-    """
+    """The intended executor of the operation."""
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
+
 class SubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The subscription state.
-    """
+    """The subscription state."""
 
     REGISTERED = "Registered"
     SUSPENDED = "Suspended"
@@ -90,9 +98,9 @@ class SubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNREGISTERED = "Unregistered"
     WARNED = "Warned"
 
+
 class TierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The commitment tier for the next month.
-    """
+    """The commitment tier for the next month."""
 
     CONSUMPTION = "Consumption"
     COMMITMENT100_AU_HOURS = "Commitment_100AUHours"
@@ -104,9 +112,9 @@ class TierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMMITMENT100000_AU_HOURS = "Commitment_100000AUHours"
     COMMITMENT500000_AU_HOURS = "Commitment_500000AUHours"
 
+
 class VirtualNetworkRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the VirtualNetworkRule for this account.
-    """
+    """The current state of the VirtualNetworkRule for this account."""
 
     ACTIVE = "Active"
     NETWORK_SOURCE_DELETED = "NetworkSourceDeleted"

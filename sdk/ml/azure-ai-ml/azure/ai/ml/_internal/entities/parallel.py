@@ -24,6 +24,7 @@ class Parallel(Command):
         self._max_concurrency_per_instance = kwargs.pop("max_concurrency_per_instance", None)
         self._error_threshold = kwargs.pop("error_threshold", None)
         self._mini_batch_size = kwargs.pop("mini_batch_size", None)
+        self._partition_keys = kwargs.pop("partition_keys", None)
         self._logging_level = kwargs.pop("logging_level", None)
         self._retry_settings = kwargs.pop("retry_settings", BatchRetrySettings())
         self._init = False
