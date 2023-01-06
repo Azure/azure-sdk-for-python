@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 
 class AsyncKeyVaultClientBase(object):
+    # pylint:disable=protected-access
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
         if not credential:
             raise ValueError(
