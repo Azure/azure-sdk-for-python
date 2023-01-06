@@ -32,8 +32,8 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    DatasetVersionData,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
@@ -63,7 +63,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5()) # nosec
+hash_type = type(hashlib.md5())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -109,9 +109,11 @@ class IgnoreFile(object):
         file_path = Path(file_path)
         if file_path.is_absolute():
             ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
+            try:
+                file_path = os.path.relpath(file_path, ignore_dirname)
+            except ValueError:
+                # 2 paths are on different drives
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -172,7 +174,7 @@ def _validate_path(path: Union[str, os.PathLike], _type: str) -> None:
 
 
 def _parse_name_version(
-    name: str = None, version_as_int: bool = True
+    name: Optional[str] = None, version_as_int: bool = True
 ) -> Tuple[Optional[str], Optional[Union[str, int]]]:
     if not name:
         return None, None
@@ -233,7 +235,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version") # nosec
+    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -422,12 +424,12 @@ def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
 def upload_file(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
     source: str,
-    dest: str = None,
+    dest: Optional[str] = None,
     msg: Optional[str] = None,
     size: int = 0,
     show_progress: Optional[bool] = None,
     in_directory: bool = False,
-    callback: Any = None,
+    callback: Optional[Any] = None,
 ) -> None:
     """Upload a single file to remote storage.
 
@@ -652,15 +654,46 @@ def _create_or_update_autoincrement(
     return result
 
 
+def _get_next_version_from_container(
+    name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: str,
+    registry_name: str,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.next_version
+
+    except ResourceNotFoundError:
+        version = "1"
+    return version
+
+
 def _get_latest(
     asset_name: str,
     version_operation: Any,
     resource_group_name: str,
-    workspace_name: str = None,
-    registry_name: str = None,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersionData, DatasetVersionData]:
+) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most
@@ -727,11 +760,12 @@ def _archive_or_restore(
     ],
     is_archived: bool,
     name: str,
-    version: str = None,
-    label: str = None,
+    version: Optional[str] = None,
+    label: Optional[str] = None,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
+    registry_name = asset_operations._registry_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -745,14 +779,29 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = version_operation.get(
+        version_resource = (
+            version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
+        )
+        version_resource.properties.is_archived = is_archived
+        version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
             name=name,
             version=version,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-        )
-        version_resource.properties.is_archived = is_archived
-        version_operation.create_or_update(
+            registry_name=registry_name,
+            body=version_resource,
+        ) if registry_name else version_operation.create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
@@ -760,13 +809,26 @@ def _archive_or_restore(
             body=version_resource,
         )
     else:
-        container_resource = container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+        container_resource = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(
+        container_operation.create_or_update(  # pylint: disable=expression-not-assigned
+            name=name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=container_resource,
+        ) if registry_name else container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -802,7 +864,7 @@ def _resolve_label_to_asset(
 
 
 class FileUploadProgressBar(tqdm):
-    def __init__(self, msg: str = None):
+    def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
         is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
         super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
@@ -815,7 +877,7 @@ class FileUploadProgressBar(tqdm):
 
 
 class DirectoryUploadProgressBar(tqdm):
-    def __init__(self, dir_size: int, msg: str = None):
+    def __init__(self, dir_size: int, msg: Optional[str] = None):
         super().__init__(unit="B", unit_scale=True, desc=msg, colour="green")
         self.total = dir_size
         self.completed = 0

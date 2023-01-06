@@ -35,7 +35,7 @@ def load_component_entity_from_yaml(
     with open(path, "r") as f:
         data = yaml.safe_load(f)
     context.update({BASE_PATH_CONTEXT_KEY: Path(path).parent})
-    create_instance_func, create_schema_func = component_factory.get_create_funcs(_type)
+    create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
     data = dict(create_schema_func(context).load(data))
     if fields_to_override is None:
         fields_to_override = {}
@@ -145,6 +145,9 @@ class TestCommandComponent:
             "id",
         )
         assert component_dict == expected_dict
+
+        rest_component_resource = component_entity._to_rest_object()
+        assert rest_component_resource.properties.component_spec["inputs"] == expected_dict["inputs"]
 
     def test_override_params(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
@@ -318,6 +321,12 @@ class TestCommandComponent:
 
         recreated_component = component_factory.load_from_rest(obj=component_entity._to_rest_object())
         assert recreated_component._to_dict() == component_entity._to_dict()
+
+    def test_dump_with_non_existent_base_path(self):
+        test_path = "./tests/test_configs/components/helloworld_component.yml"
+        component_entity = load_component(source=test_path)
+        component_entity._base_path = "/non/existent/path"
+        component_entity._to_dict()
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)

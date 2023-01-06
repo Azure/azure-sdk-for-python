@@ -46,7 +46,7 @@ def build_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01"))  # type: Literal["2017-12-01"]
+    api_version: Literal["2017-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,7 +62,7 @@ def build_list_by_server_request(
         "serverName": _SERIALIZER.url("server_name", server_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -109,8 +109,8 @@ class LogFilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01"))  # type: Literal["2017-12-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LogFileListResult]
+        api_version: Literal["2017-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01"))
+        cls: ClsType[_models.LogFileListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -133,12 +133,12 @@ class LogFilesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -146,13 +146,13 @@ class LogFilesOperations:
             deserialized = self._deserialize("LogFileListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -165,4 +165,6 @@ class LogFilesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/logFiles"}  # type: ignore
+    list_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/logFiles"
+    }

@@ -39,7 +39,11 @@ class EmailWithAttachmentSampleAsync(object):
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        with open("./attachment.txt", "rb") as file:
+        attachment_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "attachment.txt")
+
+        with open(attachment_path, "rb") as file:
             file_bytes = file.read()
 
         file_bytes_b64 = base64.b64encode(file_bytes)

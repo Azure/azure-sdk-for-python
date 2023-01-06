@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -49,8 +50,13 @@ class AnswersFromTextOptions(_serialization.Model):
     }
 
     def __init__(
-        self, *, question: str, text_documents: List["_models.TextDocument"], language: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        question: str,
+        text_documents: List["_models.TextDocument"],
+        language: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword question: User question to query against the given text records. Required.
         :paramtype question: str
@@ -78,7 +84,7 @@ class AnswersFromTextResult(_serialization.Model):
         "answers": {"key": "answers", "type": "[TextAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["_models.TextAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.TextAnswer"]] = None, **kwargs: Any) -> None:
         """
         :keyword answers: Represents the answer results.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.TextAnswer]
@@ -143,8 +149,8 @@ class AnswersOptions(_serialization.Model):
         filters: Optional["_models.QueryFilters"] = None,
         short_answer_options: Optional["_models.ShortAnswerOptions"] = None,
         include_unstructured_sources: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
          question.
@@ -214,8 +220,8 @@ class AnswerSpan(_serialization.Model):
         confidence: Optional[float] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword text: Predicted text of answer span.
         :paramtype text: str
@@ -244,7 +250,7 @@ class AnswersResult(_serialization.Model):
         "answers": {"key": "answers", "type": "[KnowledgeBaseAnswer]"},
     }
 
-    def __init__(self, *, answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None, **kwargs):
+    def __init__(self, *, answers: Optional[List["_models.KnowledgeBaseAnswer"]] = None, **kwargs: Any) -> None:
         """
         :keyword answers: Represents Answer Result list.
         :paramtype answers: list[~azure.ai.language.questionanswering.models.KnowledgeBaseAnswer]
@@ -296,8 +302,8 @@ class Error(_serialization.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerErrorModel"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: One of a server-defined set of error codes. Required. Known values are:
          "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
@@ -334,7 +340,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.ai.language.questionanswering.models.Error
@@ -344,7 +350,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class InnerErrorModel(_serialization.Model):
-    """An object containing more specific information about the error. As per Microsoft One API guidelines -
+    """An object containing more specific information about the error. As per Microsoft One API
+    guidelines -
     https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
     All required parameters must be populated in order to send to Azure.
@@ -385,8 +392,8 @@ class InnerErrorModel(_serialization.Model):
         details: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
         innererror: Optional["_models.InnerErrorModel"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: One of a server-defined set of error codes. Required. Known values are:
          "InvalidRequest", "InvalidParameterValue", "KnowledgeBaseNotFound",
@@ -458,8 +465,8 @@ class KnowledgeBaseAnswer(_serialization.Model):
         metadata: Optional[Dict[str, str]] = None,
         dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
         short_answer: Optional["_models.AnswerSpan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword questions: List of questions associated with the answer.
         :paramtype questions: list[str]
@@ -510,7 +517,7 @@ class KnowledgeBaseAnswerContext(_serialization.Model):
         "previous_question": {"key": "previousUserQuery", "type": "str"},
     }
 
-    def __init__(self, *, previous_qna_id: int, previous_question: Optional[str] = None, **kwargs):
+    def __init__(self, *, previous_qna_id: int, previous_question: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword previous_qna_id: Previous turn top answer result QnA ID. Required.
         :paramtype previous_qna_id: int
@@ -547,8 +554,8 @@ class KnowledgeBaseAnswerDialog(_serialization.Model):
         *,
         is_context_only: Optional[bool] = None,
         prompts: Optional[List["_models.KnowledgeBaseAnswerPrompt"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_context_only: To mark if a prompt is relevant only with a previous question or not.
          If true, do not include this QnA as search result for queries without context; otherwise, if
@@ -589,8 +596,8 @@ class KnowledgeBaseAnswerPrompt(_serialization.Model):
         display_order: Optional[int] = None,
         qna_id: Optional[int] = None,
         display_text: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_order: Index of the prompt - used in ordering of the prompts.
         :paramtype display_order: int
@@ -619,7 +626,9 @@ class MetadataFilter(_serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(self, *, metadata: Optional[List[JSON]] = None, logical_operation: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, metadata: Optional[List[JSON]] = None, logical_operation: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metadata:
         :paramtype metadata: list[JSON]
@@ -655,8 +664,8 @@ class QueryFilters(_serialization.Model):
         metadata_filter: Optional["_models.MetadataFilter"] = None,
         source_filter: Optional[List[str]] = None,
         logical_operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metadata_filter: Find QnAs that are associated with the given list of metadata.
         :paramtype metadata_filter: ~azure.ai.language.questionanswering.models.MetadataFilter
@@ -702,7 +711,9 @@ class ShortAnswerOptions(_serialization.Model):
 
     enable = True
 
-    def __init__(self, *, confidence_threshold: Optional[float] = None, top: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, confidence_threshold: Optional[float] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword confidence_threshold: Minimum threshold score required to include an answer span,
          value ranges from 0 to 1.
@@ -754,8 +765,8 @@ class TextAnswer(_serialization.Model):
         short_answer: Optional["_models.AnswerSpan"] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword answer: Answer.
         :paramtype answer: str
@@ -800,7 +811,7 @@ class TextDocument(_serialization.Model):
         "text": {"key": "text", "type": "str"},
     }
 
-    def __init__(self, *, id: str, text: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, text: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Unique identifier for the text record. Required.
         :paramtype id: str

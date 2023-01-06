@@ -7,19 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class ApplicationProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """WordPress instance provisioning state
-    """
+
+class ApplicationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WordPress instance provisioning state."""
 
     NOT_SPECIFIED = "NotSpecified"
     ACCEPTED = "Accepted"
@@ -29,16 +27,16 @@ class ApplicationProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     CANCELED = "Canceled"
     INSTALLING = "Installing"
 
-class AzureFrontDoorEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to enable Azure front door
-    """
+
+class AzureFrontDoorEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable Azure front door."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class CentralServerVirtualMachineType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the type of central server VM.
-    """
+
+class CentralServerVirtualMachineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the type of central server VM."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
@@ -48,162 +46,163 @@ class CentralServerVirtualMachineType(with_metaclass(CaseInsensitiveEnumMeta, st
     ERS = "ERS"
     STANDBY = "Standby"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DatabaseTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Tier of the server SKU
-    """
+
+class DatabaseTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tier of the server SKU."""
 
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
 
-class DatabaseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Database type
-    """
+
+class DatabaseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Database type."""
 
     MY_SQL = "MySql"
 
-class DiskStorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Storage type
-    """
+
+class DiskStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage type."""
 
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_LRS = "Standard_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
 
-class EnableBackup(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to enable Azure backup for the workload
-    """
+
+class EnableBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable Azure backup for the workload."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EnableSslEnforcement(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to enable SSL enforcement on the database
-    """
+
+class EnableSslEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable SSL enforcement on the database."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EnqueueReplicationServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the type of Enqueue Replication Server.
-    """
+
+class EnqueueReplicationServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the type of Enqueue Replication Server."""
 
     ENQUEUE_REPLICATOR1 = "EnqueueReplicator1"
     ENQUEUE_REPLICATOR2 = "EnqueueReplicator2"
 
-class FileShareStorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """File share backing storage type
-    """
+
+class FileShareStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """File share backing storage type."""
 
     STANDARD_LRS = "Standard_LRS"
     STANDARD_GRS = "Standard_GRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class FileShareType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Share type
-    """
+
+class FileShareType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Share type."""
 
     NFS_ON_CONTROLLER = "NfsOnController"
     AZURE_FILES = "AzureFiles"
 
-class HAEnabled(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether to enable HA for the server
-    """
+
+class HAEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable HA for the server."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Load balancer type
-    """
+
+class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Load balancer type."""
 
     APPLICATION_GATEWAY = "ApplicationGateway"
     LOAD_BALANCER = "LoadBalancer"
 
-class LocationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the extended location.
-    """
+
+class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the extended location."""
 
     REGION = "Region"
     EDGE_ZONE = "EdgeZone"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of managed service identity (only None, UserAssigned types are allowed).
-    """
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (only None, UserAssigned types are allowed)."""
 
     NONE = "None"
     USER_ASSIGNED = "UserAssigned"
 
-class OperationProperties(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the workload operation origin.
-    """
+
+class OperationProperties(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the workload operation origin."""
 
     NOT_SPECIFIED = "NotSpecified"
     USER = "User"
     SYSTEM = "System"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class OSImageOffer(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OS image offer
-    """
+
+class OSImageOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OS image offer."""
 
     UBUNTU_SERVER = "UbuntuServer"
 
-class OSImagePublisher(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OS image publisher
-    """
+
+class OSImagePublisher(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OS image publisher."""
 
     CANONICAL = "Canonical"
 
-class OSImageSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OS image sku
-    """
+
+class OSImageSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OS image sku."""
 
     EIGHTEEN04_LTS = "18.04-LTS"
     SIXTEEN04_LTS = "16.04-LTS"
 
-class OSImageVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OS image version
-    """
+
+class OSImageVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OS image version."""
 
     LATEST = "latest"
 
-class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS Type
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OS Type."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class PHPVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """PHP version
-    """
+
+class PHPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PHP version."""
 
     SEVEN2 = "7.2"
     SEVEN3 = "7.3"
     SEVEN4 = "7.4"
 
-class PhpWorkloadProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Php workload resource provisioning state
-    """
+
+class PhpWorkloadProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Php workload resource provisioning state."""
 
     NOT_SPECIFIED = "NotSpecified"
     ACCEPTED = "Accepted"
@@ -214,14 +213,15 @@ class PhpWorkloadProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     PROVISIONING = "Provisioning"
     DELETING = "Deleting"
 
-class RedisCacheFamily(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Cache family
-    """
+
+class RedisCacheFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cache family."""
 
     C = "C"
     P = "P"
 
-class RoutingPreference(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class RoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sets the routing preference of the SAP monitor. By default only RFC1918 traffic is routed to
     the customer VNET.
     """
@@ -229,51 +229,52 @@ class RoutingPreference(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     ROUTE_ALL = "RouteAll"
 
-class SAPConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The configuration Type.
-    """
+
+class SAPConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The configuration Type."""
 
     DEPLOYMENT = "Deployment"
     DISCOVERY = "Discovery"
     DEPLOYMENT_WITH_OS_CONFIG = "DeploymentWithOSConfig"
 
-class SAPDatabaseScaleMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The database scale method.
-    """
+
+class SAPDatabaseScaleMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The database scale method."""
 
     SCALE_UP = "ScaleUp"
 
-class SAPDatabaseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the supported SAP Database types.
-    """
+
+class SAPDatabaseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the supported SAP Database types."""
 
     HANA = "HANA"
     DB2 = "DB2"
 
-class SAPDeploymentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The deployment Type.
-    """
+
+class SAPDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of SAP deployment, single server or Three tier."""
 
     SINGLE_SERVER = "SingleServer"
     THREE_TIER = "ThreeTier"
 
-class SAPEnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the environment type - Production/Non Production.
-    """
+
+class SAPEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the environment type - Production/Non Production."""
 
     NON_PROD = "NonProd"
     PROD = "Prod"
 
-class SAPHealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the SAP Instance health.
-    """
+
+class SAPHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the health of SAP Instances."""
 
     UNKNOWN = "Unknown"
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"
     DEGRADED = "Degraded"
 
-class SAPHighAvailabilityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SAPHighAvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The high availability Type. AvailabilitySet guarantees 99.95% availability. Availability Zone
     guarantees 99.99% availability.
     """
@@ -281,24 +282,25 @@ class SAPHighAvailabilityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     AVAILABILITY_SET = "AvailabilitySet"
     AVAILABILITY_ZONE = "AvailabilityZone"
 
-class SAPProductType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the SAP Product type.
-    """
+
+class SAPProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the SAP Product type."""
 
     ECC = "ECC"
     S4_HANA = "S4HANA"
     OTHER = "Other"
 
-class SAPSoftwareInstallationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SAP software installation Type.
-    """
+
+class SAPSoftwareInstallationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SAP software installation Type."""
 
     SERVICE_INITIATED = "ServiceInitiated"
     SAP_INSTALL_WITHOUT_OS_CONFIG = "SAPInstallWithoutOSConfig"
+    EXTERNAL = "External"
 
-class SapVirtualInstanceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the provisioning states.
-    """
+
+class SapVirtualInstanceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the provisioning states."""
 
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
@@ -306,9 +308,9 @@ class SapVirtualInstanceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class SAPVirtualInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the Virtual Instance for SAP state.
-    """
+
+class SAPVirtualInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the Virtual Instance for SAP state."""
 
     INFRASTRUCTURE_DEPLOYMENT_PENDING = "InfrastructureDeploymentPending"
     INFRASTRUCTURE_DEPLOYMENT_IN_PROGRESS = "InfrastructureDeploymentInProgress"
@@ -316,14 +318,16 @@ class SAPVirtualInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     SOFTWARE_INSTALLATION_PENDING = "SoftwareInstallationPending"
     SOFTWARE_INSTALLATION_IN_PROGRESS = "SoftwareInstallationInProgress"
     SOFTWARE_INSTALLATION_FAILED = "SoftwareInstallationFailed"
+    SOFTWARE_DETECTION_IN_PROGRESS = "SoftwareDetectionInProgress"
+    SOFTWARE_DETECTION_FAILED = "SoftwareDetectionFailed"
     DISCOVERY_PENDING = "DiscoveryPending"
     DISCOVERY_IN_PROGRESS = "DiscoveryInProgress"
     DISCOVERY_FAILED = "DiscoveryFailed"
     REGISTRATION_COMPLETE = "RegistrationComplete"
 
-class SAPVirtualInstanceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the SAP Instance status.
-    """
+
+class SAPVirtualInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the SAP Instance status."""
 
     STARTING = "Starting"
     RUNNING = "Running"
@@ -332,37 +336,38 @@ class SAPVirtualInstanceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PARTIALLY_RUNNING = "PartiallyRunning"
     UNAVAILABLE = "Unavailable"
 
-class SearchType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Search type
-    """
+
+class SearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Search type."""
 
     ELASTIC = "Elastic"
 
-class SkuRestrictionReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU restriction reason code.
-    """
+
+class SkuRestrictionReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU restriction reason code."""
 
     NOT_SPECIFIED = "NotSpecified"
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class SkuRestrictionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU restriction type.
-    """
+
+class SkuRestrictionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU restriction type."""
 
     NOT_SPECIFIED = "NotSpecified"
     LOCATION = "Location"
     ZONE = "Zone"
 
-class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Scale type of the SKU capacity.
-    """
+
+class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scale type of the SKU capacity."""
 
     NONE = "None"
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -372,31 +377,39 @@ class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class WordpressVersions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Application version
-    """
+
+class SslPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets certificate preference if secure communication is enabled."""
+
+    DISABLED = "Disabled"
+    ROOT_CERTIFICATE = "RootCertificate"
+    SERVER_CERTIFICATE = "ServerCertificate"
+
+
+class WordpressVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Application version."""
 
     FIVE4_3 = "5.4.3"
     FIVE4_2 = "5.4.2"
     FIVE4_1 = "5.4.1"
     FIVE4 = "5.4"
 
-class WorkloadKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates which kind of php workload this resource represent e.g WordPress
-    """
+
+class WorkloadKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates which kind of php workload this resource represent e.g WordPress."""
 
     WORD_PRESS = "WordPress"
 
-class WorkloadMonitorActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the action type of workload operation.
-    """
+
+class WorkloadMonitorActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the action type of workload operation."""
 
     NOT_SPECIFIED = "NotSpecified"
     INTERNAL = "Internal"
 
-class WorkloadMonitorProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of provisioning of the SAP monitor.
-    """
+
+class WorkloadMonitorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of provisioning of the SAP monitor."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
-
+from urllib.parse import unquote
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -481,7 +481,7 @@ class Handle(DictMixin):
     def _from_generated(cls, generated):
         handle = cls()
         handle.id = generated.handle_id
-        handle.path = generated.path
+        handle.path = unquote(generated.path.content) if generated.path.encoded else generated.path.content
         handle.file_id = generated.file_id
         handle.parent_id = generated.parent_id
         handle.session_id = generated.session_id
@@ -590,7 +590,7 @@ class DirectoryProperties(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
-        props.name = generated.name
+        props.name = unquote(generated.name.content) if generated.name.encoded else generated.name.content
         props.file_id = generated.file_id
         props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
@@ -728,7 +728,7 @@ class FileProperties(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
-        props.name = generated.name
+        props.name = unquote(generated.name.content) if generated.name.encoded else generated.name.content
         props.file_id = generated.file_id
         props.etag = generated.properties.etag
         props.file_attributes = generated.attributes

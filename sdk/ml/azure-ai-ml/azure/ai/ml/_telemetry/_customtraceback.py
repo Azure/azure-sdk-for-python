@@ -143,13 +143,7 @@ def format_exc(limit=None, chain=True):
     return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
 
 
-def format_exception(
-    etype, # pylint: disable=unused-argument
-    value,
-    tb,
-    limit=None,
-    chain=True
-):
+def format_exception(etype, value, tb, limit=None, chain=True):  # pylint: disable=unused-argument
     """Format a stack trace and the exception information.
 
     The arguments have the same meaning as the corresponding arguments

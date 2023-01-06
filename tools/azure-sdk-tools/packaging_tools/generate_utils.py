@@ -374,6 +374,9 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     check_call(f"npx cadl compile . --emit {cadl_python} --output-path={str(output_path)}", shell=True)
     if (output_path / "output.yaml").exists():
         os.remove(output_path / "output.yaml")
+    if not (output_path / "sdk_packaging.toml").exists():
+        with open(output_path / "sdk_packaging.toml", "w") as file_out:
+            file_out.write("[packaging]\nauto_update = false")
 
     # get version of codegen used in generation
     npm_package_verstion = get_npm_package_version(autorest_python)

@@ -12,7 +12,6 @@ from typing import (
 )
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core import MatchConditions
@@ -170,7 +169,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     def _format_url(self, hostname):
         container_name = self.container_name
-        if isinstance(container_name, six.text_type):
+        if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,
@@ -910,14 +909,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def upload_blob(
-            self, name,  # type: Union[str, BlobProperties]
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, name: Union[str, BlobProperties],
+            data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> BlobClient
+        ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
         :param name: The blob with which to interact. If specified, this value will override

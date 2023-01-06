@@ -1,17 +1,20 @@
 import os
 import shutil
 import sys
+import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
 import pydash
 import pytest
+
+from conftest import normalized_arm_id_in_object
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -338,10 +341,13 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -363,6 +369,28 @@ class TestCommandComponentEntity:
                 "name: microsoftsamples_command_component_basic\n  version: 0.0.1\n  display_name: CommandComponentBasi"
                 in std_out.getvalue()
             )
+
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
+            }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [sweep_job1.early_termination.evaluation_interval,
+                sweep_job1.early_termination.delay_evaluation,
+                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
@@ -473,16 +501,16 @@ class TestCommandComponentEntity:
         assert validation_result.passed
 
     def test_component_code_asset_ignoring_pycache(self) -> None:
-        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
         component = load_component(component_yaml)
-        # create some files/folders expected to ignore
-        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
-        try:
-            if not pycache.is_dir():
-                pycache.mkdir()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # create some files/folders expected to ignore
+            pycache = Path(temp_dir) / "__pycache__"
+            pycache.mkdir()
             expected_exclude = pycache / "a.pyc"
             expected_exclude.touch()
             # resolve and test for ignore_file's is_file_excluded
+            component.code = temp_dir
             with component._resolve_local_code() as code:
                 excluded = []
                 for root, _, files in os.walk(code.path):
@@ -491,6 +519,16 @@ class TestCommandComponentEntity:
                         if code._ignore_file.is_file_excluded(path):
                             excluded.append(path)
                 assert excluded == [str(expected_exclude.absolute())]
-        finally:
-            if pycache.is_dir():
-                shutil.rmtree(pycache)
+
+    def test_normalized_arm_id_in_component_dict(self):
+        component_dict = {
+            "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx"
+        }
+        normalized_arm_id_in_object(component_dict)
+
+        expected_dict = {
+            'code': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx',
+            'environment': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx'
+        }
+        assert component_dict == expected_dict

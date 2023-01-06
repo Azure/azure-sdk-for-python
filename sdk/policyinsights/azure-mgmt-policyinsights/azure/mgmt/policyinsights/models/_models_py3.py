@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -521,6 +522,344 @@ class ComponentEventDetails(_serialization.Model):
         self.policy_definition_action = policy_definition_action
 
 
+class ComponentExpressionEvaluationDetails(_serialization.Model):
+    """Evaluation details of policy language expressions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar result: Evaluation result.
+    :vartype result: str
+    :ivar expression: Expression evaluated.
+    :vartype expression: str
+    :ivar expression_kind: The kind of expression that was evaluated.
+    :vartype expression_kind: str
+    :ivar path: Property path if the expression is a field or an alias.
+    :vartype path: str
+    :ivar expression_value: Value of the expression.
+    :vartype expression_value: JSON
+    :ivar target_value: Target value to be compared with the expression value.
+    :vartype target_value: JSON
+    :ivar operator: Operator to compare the expression value and the target value.
+    :vartype operator: str
+    """
+
+    _validation = {
+        "expression": {"readonly": True},
+        "expression_kind": {"readonly": True},
+        "path": {"readonly": True},
+        "expression_value": {"readonly": True},
+        "target_value": {"readonly": True},
+        "operator": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "result": {"key": "result", "type": "str"},
+        "expression": {"key": "expression", "type": "str"},
+        "expression_kind": {"key": "expressionKind", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "expression_value": {"key": "expressionValue", "type": "object"},
+        "target_value": {"key": "targetValue", "type": "object"},
+        "operator": {"key": "operator", "type": "str"},
+    }
+
+    def __init__(self, *, result: Optional[str] = None, **kwargs):
+        """
+        :keyword result: Evaluation result.
+        :paramtype result: str
+        """
+        super().__init__(**kwargs)
+        self.result = result
+        self.expression = None
+        self.expression_kind = None
+        self.path = None
+        self.expression_value = None
+        self.target_value = None
+        self.operator = None
+
+
+class ComponentPolicyEvaluationDetails(_serialization.Model):
+    """Policy evaluation details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar evaluated_expressions: Details of the evaluated expressions.
+    :vartype evaluated_expressions:
+     list[~azure.mgmt.policyinsights.models.ComponentExpressionEvaluationDetails]
+    :ivar reason: Additional textual reason for the evaluation outcome.
+    :vartype reason: str
+    """
+
+    _validation = {
+        "evaluated_expressions": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "evaluated_expressions": {"key": "evaluatedExpressions", "type": "[ComponentExpressionEvaluationDetails]"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+        """
+        :keyword reason: Additional textual reason for the evaluation outcome.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
+        self.evaluated_expressions = None
+        self.reason = reason
+
+
+class ComponentPolicyState(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Component Policy State record.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar odata_id: OData entity ID; always set to null since component policy state records do not
+     have an entity ID.
+    :vartype odata_id: str
+    :ivar odata_context: OData context string; used by OData clients to resolve type information
+     based on metadata.
+    :vartype odata_context: str
+    :ivar timestamp: Timestamp for the component policy state record.
+    :vartype timestamp: ~datetime.datetime
+    :ivar component_id: Component Id.
+    :vartype component_id: str
+    :ivar component_type: Component type.
+    :vartype component_type: str
+    :ivar component_name: Component name.
+    :vartype component_name: str
+    :ivar resource_id: Resource ID.
+    :vartype resource_id: str
+    :ivar policy_assignment_id: Policy assignment ID.
+    :vartype policy_assignment_id: str
+    :ivar policy_definition_id: Policy definition ID.
+    :vartype policy_definition_id: str
+    :ivar subscription_id: Subscription ID.
+    :vartype subscription_id: str
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar resource_location: Resource location.
+    :vartype resource_location: str
+    :ivar resource_group: Resource group name.
+    :vartype resource_group: str
+    :ivar policy_assignment_name: Policy assignment name.
+    :vartype policy_assignment_name: str
+    :ivar policy_assignment_owner: Policy assignment owner.
+    :vartype policy_assignment_owner: str
+    :ivar policy_assignment_parameters: Policy assignment parameters.
+    :vartype policy_assignment_parameters: str
+    :ivar policy_assignment_scope: Policy assignment scope.
+    :vartype policy_assignment_scope: str
+    :ivar policy_definition_name: Policy definition name.
+    :vartype policy_definition_name: str
+    :ivar policy_definition_action: Policy definition action, i.e. effect.
+    :vartype policy_definition_action: str
+    :ivar policy_definition_category: Policy definition category.
+    :vartype policy_definition_category: str
+    :ivar policy_set_definition_id: Policy set definition ID, if the policy assignment is for a
+     policy set.
+    :vartype policy_set_definition_id: str
+    :ivar policy_set_definition_name: Policy set definition name, if the policy assignment is for a
+     policy set.
+    :vartype policy_set_definition_name: str
+    :ivar policy_set_definition_owner: Policy set definition owner, if the policy assignment is for
+     a policy set.
+    :vartype policy_set_definition_owner: str
+    :ivar policy_set_definition_category: Policy set definition category, if the policy assignment
+     is for a policy set.
+    :vartype policy_set_definition_category: str
+    :ivar policy_set_definition_parameters: Policy set definition parameters, if the policy
+     assignment is for a policy set.
+    :vartype policy_set_definition_parameters: str
+    :ivar policy_definition_reference_id: Reference ID for the policy definition inside the policy
+     set, if the policy assignment is for a policy set.
+    :vartype policy_definition_reference_id: str
+    :ivar compliance_state: Compliance state of the resource.
+    :vartype compliance_state: str
+    :ivar policy_evaluation_details: Policy evaluation details. This is only included in the
+     response if the request contains $expand=PolicyEvaluationDetails.
+    :vartype policy_evaluation_details:
+     ~azure.mgmt.policyinsights.models.ComponentPolicyEvaluationDetails
+    :ivar policy_definition_group_names: Policy definition group names.
+    :vartype policy_definition_group_names: list[str]
+    :ivar policy_definition_version: Evaluated policy definition version.
+    :vartype policy_definition_version: str
+    :ivar policy_set_definition_version: Evaluated policy set definition version.
+    :vartype policy_set_definition_version: str
+    :ivar policy_assignment_version: Evaluated policy assignment version.
+    :vartype policy_assignment_version: str
+    """
+
+    _validation = {
+        "odata_id": {"readonly": True},
+        "odata_context": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "component_id": {"readonly": True},
+        "component_type": {"readonly": True},
+        "component_name": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "policy_assignment_id": {"readonly": True},
+        "policy_definition_id": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "resource_location": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "policy_assignment_name": {"readonly": True},
+        "policy_assignment_owner": {"readonly": True},
+        "policy_assignment_parameters": {"readonly": True},
+        "policy_assignment_scope": {"readonly": True},
+        "policy_definition_name": {"readonly": True},
+        "policy_definition_action": {"readonly": True},
+        "policy_definition_category": {"readonly": True},
+        "policy_set_definition_id": {"readonly": True},
+        "policy_set_definition_name": {"readonly": True},
+        "policy_set_definition_owner": {"readonly": True},
+        "policy_set_definition_category": {"readonly": True},
+        "policy_set_definition_parameters": {"readonly": True},
+        "policy_definition_reference_id": {"readonly": True},
+        "compliance_state": {"readonly": True},
+        "policy_definition_group_names": {"readonly": True},
+        "policy_definition_version": {"readonly": True},
+        "policy_set_definition_version": {"readonly": True},
+        "policy_assignment_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "odata_id": {"key": "@odata\\.id", "type": "str"},
+        "odata_context": {"key": "@odata\\.context", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "component_id": {"key": "componentId", "type": "str"},
+        "component_type": {"key": "componentType", "type": "str"},
+        "component_name": {"key": "componentName", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "policy_assignment_id": {"key": "policyAssignmentId", "type": "str"},
+        "policy_definition_id": {"key": "policyDefinitionId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "policy_assignment_name": {"key": "policyAssignmentName", "type": "str"},
+        "policy_assignment_owner": {"key": "policyAssignmentOwner", "type": "str"},
+        "policy_assignment_parameters": {"key": "policyAssignmentParameters", "type": "str"},
+        "policy_assignment_scope": {"key": "policyAssignmentScope", "type": "str"},
+        "policy_definition_name": {"key": "policyDefinitionName", "type": "str"},
+        "policy_definition_action": {"key": "policyDefinitionAction", "type": "str"},
+        "policy_definition_category": {"key": "policyDefinitionCategory", "type": "str"},
+        "policy_set_definition_id": {"key": "policySetDefinitionId", "type": "str"},
+        "policy_set_definition_name": {"key": "policySetDefinitionName", "type": "str"},
+        "policy_set_definition_owner": {"key": "policySetDefinitionOwner", "type": "str"},
+        "policy_set_definition_category": {"key": "policySetDefinitionCategory", "type": "str"},
+        "policy_set_definition_parameters": {"key": "policySetDefinitionParameters", "type": "str"},
+        "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
+        "compliance_state": {"key": "complianceState", "type": "str"},
+        "policy_evaluation_details": {"key": "policyEvaluationDetails", "type": "ComponentPolicyEvaluationDetails"},
+        "policy_definition_group_names": {"key": "policyDefinitionGroupNames", "type": "[str]"},
+        "policy_definition_version": {"key": "policyDefinitionVersion", "type": "str"},
+        "policy_set_definition_version": {"key": "policySetDefinitionVersion", "type": "str"},
+        "policy_assignment_version": {"key": "policyAssignmentVersion", "type": "str"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        policy_evaluation_details: Optional["_models.ComponentPolicyEvaluationDetails"] = None,
+        **kwargs
+    ):
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword policy_evaluation_details: Policy evaluation details. This is only included in the
+         response if the request contains $expand=PolicyEvaluationDetails.
+        :paramtype policy_evaluation_details:
+         ~azure.mgmt.policyinsights.models.ComponentPolicyEvaluationDetails
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.odata_id = None
+        self.odata_context = None
+        self.timestamp = None
+        self.component_id = None
+        self.component_type = None
+        self.component_name = None
+        self.resource_id = None
+        self.policy_assignment_id = None
+        self.policy_definition_id = None
+        self.subscription_id = None
+        self.resource_type = None
+        self.resource_location = None
+        self.resource_group = None
+        self.policy_assignment_name = None
+        self.policy_assignment_owner = None
+        self.policy_assignment_parameters = None
+        self.policy_assignment_scope = None
+        self.policy_definition_name = None
+        self.policy_definition_action = None
+        self.policy_definition_category = None
+        self.policy_set_definition_id = None
+        self.policy_set_definition_name = None
+        self.policy_set_definition_owner = None
+        self.policy_set_definition_category = None
+        self.policy_set_definition_parameters = None
+        self.policy_definition_reference_id = None
+        self.compliance_state = None
+        self.policy_evaluation_details = policy_evaluation_details
+        self.policy_definition_group_names = None
+        self.policy_definition_version = None
+        self.policy_set_definition_version = None
+        self.policy_assignment_version = None
+
+
+class ComponentPolicyStatesQueryResults(_serialization.Model):
+    """Query results.
+
+    :ivar odata_context: OData context string; used by OData clients to resolve type information
+     based on metadata.
+    :vartype odata_context: str
+    :ivar odata_count: OData entity count; represents the number of policy state records returned.
+    :vartype odata_count: int
+    :ivar value: Query results.
+    :vartype value: list[~azure.mgmt.policyinsights.models.ComponentPolicyState]
+    """
+
+    _validation = {
+        "odata_count": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "odata_context": {"key": "@odata\\.context", "type": "str"},
+        "odata_count": {"key": "@odata\\.count", "type": "int"},
+        "value": {"key": "value", "type": "[ComponentPolicyState]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        odata_context: Optional[str] = None,
+        odata_count: Optional[int] = None,
+        value: Optional[List["_models.ComponentPolicyState"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword odata_context: OData context string; used by OData clients to resolve type information
+         based on metadata.
+        :paramtype odata_context: str
+        :keyword odata_count: OData entity count; represents the number of policy state records
+         returned.
+        :paramtype odata_count: int
+        :keyword value: Query results.
+        :paramtype value: list[~azure.mgmt.policyinsights.models.ComponentPolicyState]
+        """
+        super().__init__(**kwargs)
+        self.odata_context = odata_context
+        self.odata_count = odata_count
+        self.value = value
+
+
 class ComponentStateDetails(_serialization.Model):
     """Component state details.
 
@@ -946,24 +1285,37 @@ class Operation(_serialization.Model):
 
     :ivar name: Operation name.
     :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     :ivar display: Display metadata associated with the operation.
     :vartype display: ~azure.mgmt.policyinsights.models.OperationDisplay
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        is_data_action: Optional[bool] = None,
+        display: Optional["_models.OperationDisplay"] = None,
+        **kwargs
+    ):
         """
         :keyword name: Operation name.
         :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
         :keyword display: Display metadata associated with the operation.
         :paramtype display: ~azure.mgmt.policyinsights.models.OperationDisplay
         """
         super().__init__(**kwargs)
         self.name = name
+        self.is_data_action = is_data_action
         self.display = display
 
 

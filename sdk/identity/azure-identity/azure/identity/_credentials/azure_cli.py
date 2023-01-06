@@ -5,13 +5,12 @@
 from datetime import datetime
 import json
 import os
-import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
-from typing import Any, List
-
+from typing import List
 import six
 
 from azure.core.credentials import AccessToken
@@ -24,6 +23,7 @@ from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = "az account get-access-token --output json --resource {}"
+EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
 
@@ -59,6 +59,8 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -129,6 +131,10 @@ def sanitize_output(output):
 
 
 def _run_command(command):
+    # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
+    if shutil.which(EXECUTABLE_NAME) is None:
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
     if sys.platform.startswith("win"):
         args = ["cmd", "/c", command]
     else:
@@ -140,14 +146,13 @@ def _run_command(command):
             "stderr": subprocess.PIPE,
             "cwd": working_directory,
             "universal_newlines": True,
+            "timeout": 10,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         }
-        if platform.python_version() >= "3.3":
-            kwargs["timeout"] = 10
-
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
+        # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
         if "az login" in ex.stderr or "az account set" in ex.stderr:
@@ -160,7 +165,7 @@ def _run_command(command):
             message = "Failed to invoke Azure CLI"
         raise ClientAuthenticationError(message=message)
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
+        # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         six.raise_from(error, ex)
     except Exception as ex:  # pylint:disable=broad-except

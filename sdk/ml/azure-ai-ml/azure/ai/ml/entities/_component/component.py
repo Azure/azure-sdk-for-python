@@ -1,11 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import re
 import tempfile
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -24,17 +25,20 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
     CommonYamlFields,
+    AzureMLResourceType,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+
 from .code import ComponentIgnoreFile
+from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -91,20 +95,20 @@ class Component(
     def __init__(
         self,
         *,
-        name: str = None,
-        version: str = None,
-        id: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        display_name: str = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        id: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        display_name: Optional[str] = None,
         is_deterministic: bool = True,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        yaml_str: str = None,
-        _schema: str = None,
-        creation_context: SystemData = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        _schema: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
         **kwargs,
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -113,6 +117,13 @@ class Component(
         self._source = (
             self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
+        # use ANONYMOUS_COMPONENT_NAME instead of guid
+        is_anonymous = kwargs.pop("is_anonymous", False)
+        if not name and version is None:
+            name = ANONYMOUS_COMPONENT_NAME
+            version = "1"
+            is_anonymous = True
+
         super().__init__(
             name=name,
             version=version,
@@ -121,16 +132,12 @@ class Component(
             tags=tags,
             properties=properties,
             creation_context=creation_context,
-            is_anonymous=kwargs.pop("is_anonymous", False),
+            is_anonymous=is_anonymous,
             base_path=kwargs.pop("base_path", None),
             source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
-
-        # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
-        if hasattr(self, "_is_anonymous"):
-            self._set_is_anonymous(self._is_anonymous)
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -259,11 +266,9 @@ class Component(
         lower2original_kwargs = {}
 
         for name in io_dict.keys():
-            # validate name format
-            if not name.isidentifier():
+            if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
-
             # validate name conflict
             lower_key = name.lower()
             if lower_key in lower2original_kwargs:
@@ -296,17 +301,14 @@ class Component(
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Component":
         data = data or {}
         params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
 
         type_in_override = find_type_in_override(params_override)
 
@@ -316,19 +318,25 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(
-            data[CommonYamlFields.TYPE],
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
+
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
+            **(
+                create_schema_func(
+                    {
+                        BASE_PATH_CONTEXT_KEY: base_path,
+                        PARAMS_OVERRIDE_KEY: params_override,
+                    }
+                ).load(data, unknown=INCLUDE, **kwargs)
+            ),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
-        new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
         if yaml_path:
             new_instance._source_path = yaml_path
         return new_instance
@@ -363,12 +371,8 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, _ = component_factory.get_create_funcs(
-            obj.properties.component_spec[CommonYamlFields.TYPE],
-            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
-            if CommonYamlFields.SCHEMA in obj.properties.component_spec
-            else None,
-        )
+
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))
@@ -395,36 +399,19 @@ class Component(
         init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
             rest_component_version.component_spec, unknown=INCLUDE
         )
-        init_kwargs.update(dict(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            name=origin_name,
-        ))
+        init_kwargs.update(
+            dict(
+                id=obj.id,
+                is_anonymous=rest_component_version.is_anonymous,
+                creation_context=obj.system_data,
+                inputs=inputs,
+                outputs=outputs,
+                name=origin_name,
+            )
+        )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
-
-    def _set_is_anonymous(self, is_anonymous: bool):
-        """Mark this component as anonymous and overwrite component name to
-        ANONYMOUS_COMPONENT_NAME."""
-        if is_anonymous is True:
-            self._is_anonymous = True
-            self.name = ANONYMOUS_COMPONENT_NAME
-        else:
-            self._is_anonymous = False
-
-    def _update_anonymous_hash(self):
-        """For anonymous component, we use code hash + yaml hash as component
-        version so the same anonymous component(same interface and same code)
-        won't be created again.
-
-        Should be called before _to_rest_object.
-        """
-        if self._is_anonymous:
-            self.version = self._get_anonymous_hash()
 
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
@@ -436,6 +423,16 @@ class Component(
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
+    def _validate(self, raise_error=False) -> MutableValidationResult:
+        origin_name = self.name
+        # skip name validation for anonymous component as ANONYMOUS_COMPONENT_NAME will be used in component creation
+        if self._is_anonymous:
+            self.name = ANONYMOUS_COMPONENT_NAME
+        try:
+            return super()._validate(raise_error)
+        finally:
+            self.name = origin_name
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
@@ -459,6 +456,11 @@ class Component(
         validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
+
+    def _get_rest_name_version(self):
+        if self._is_anonymous:
+            return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
+        return self.name, self.version
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = self._to_dict()
@@ -485,7 +487,10 @@ class Component(
             tags=self.tags,
         )
         result = ComponentVersionData(properties=properties)
-        result.name = self.name
+        if self._is_anonymous:
+            result.name = ANONYMOUS_COMPONENT_NAME
+        else:
+            result.name = self.name
         return result
 
     def _to_dict(self) -> Dict:
@@ -508,12 +513,32 @@ class Component(
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
         if not hasattr(self, "code"):
-            raise ValueError(f"{self.__class__} does not have attribute code.")
+            yield None
+            return
+
         code = getattr(self, "code")
-        if code is None:
+
+        if is_ARM_id_for_resource(code, AzureMLResourceType.CODE) or is_registry_id_for_resource(code):
+            # arm id can be passed directly
+            yield None
+        elif isinstance(code, Code):
+            # Code object & registry id need to be resolved into arm id
+            # note that:
+            # 1. Code & CodeOperation are not public for now
+            # 2. AnonymousCodeSchema is not supported in Component for now
+            # So isinstance(component.code, Code) will always be false, or an exception will be raised
+            # in validation stage.
+            yield code
+        elif isinstance(code, str) and code.startswith("git+"):
+            # git also need to be resolved into arm id
+            yield Code(path=code, is_remote=True)
+        elif code is None:
             # Hack: when code not specified, we generated a file which contains
             # COMPONENT_PLACEHOLDER as code
             # This hack was introduced because job does not allow running component without a

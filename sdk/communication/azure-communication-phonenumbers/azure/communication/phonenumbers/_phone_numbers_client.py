@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._phone_numbers_client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -17,7 +17,7 @@ _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
 if TYPE_CHECKING:
     from typing import Any
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._generated.models import PhoneNumberSearchResult, PurchasedPhoneNumber, PhoneNumberCapabilities
@@ -29,8 +29,8 @@ class PhoneNumbersClient(object):
     This client provides operations to interact with the phone numbers service
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The credentials with which to authenticate.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Phone Number API version.
         The default value is "2022-01-11-preview2".
         Note that overriding this default value may result in unsupported behavior.
@@ -39,7 +39,7 @@ class PhoneNumbersClient(object):
     def __init__(
         self,
         endpoint, # type: str
-        credential, # type: TokenCredential
+        credential, # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs # type: Any
     ):
         # type: (...) -> None
@@ -206,6 +206,10 @@ class PhoneNumbersClient(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
         polling_interval = kwargs.pop('polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+
+        if not phone_number:
+            raise ValueError("phone_number can't be empty")
+
         poller = self._phone_number_client.phone_numbers.begin_update_capabilities(
             phone_number,
             calling=calling,

@@ -3,8 +3,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import AssetTypes
@@ -13,8 +14,6 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from test_utilities.utils import wait_until_done, sleep_if_live
-
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 

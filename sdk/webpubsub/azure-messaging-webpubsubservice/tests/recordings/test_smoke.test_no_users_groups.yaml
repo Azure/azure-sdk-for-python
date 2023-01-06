@@ -3,21 +3,21 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json, text/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
     method: HEAD
-    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/users/fake%20user?api-version=2021-10-01
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/users/fake%20user?api-version=2022-11-01
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - '2021-10-01'
+      - '2022-11-01'
       connection:
       - keep-alive
       content-length:
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Nov 2021 19:20:56 GMT
+      - Mon, 21 Nov 2022 03:13:37 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-ms-error-code:
@@ -37,21 +37,21 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json, text/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.0 Python/3.9.5 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
     method: HEAD
-    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/groups/fake%20group?api-version=2021-10-01
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/groups/fake%20group?api-version=2022-11-01
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - '2021-10-01'
+      - '2022-11-01'
       connection:
       - keep-alive
       content-length:
@@ -59,7 +59,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 10 Nov 2021 19:20:56 GMT
+      - Mon, 21 Nov 2022 03:13:37 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-ms-error-code:
