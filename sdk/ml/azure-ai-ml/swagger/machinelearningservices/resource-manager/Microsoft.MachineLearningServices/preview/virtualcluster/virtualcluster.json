@@ -1,0 +1,1930 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Machine Learning VirtualCluster Service",
+    "version": "1.0.0"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/virtualClusterOperations/{operationId}": {
+      "get": {
+        "tags": [
+          "AsyncOperation"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "location",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "operationId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}/groupPolicies/{groupPolicyName}": {
+      "put": {
+        "tags": [
+          "GroupPolicy"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "groupPolicyName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/GroupPolicyPropertiesResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GroupPolicyPropertiesResource"
+            }
+          },
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GroupPolicyPropertiesResource"
+            }
+          },
+          "202": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GroupPolicyPropertiesResourceLongRunningOperationResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GroupPolicy"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "groupPolicyName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GroupPolicy"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "groupPolicyName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}/groupPolicies": {
+      "get": {
+        "tags": [
+          "GroupPolicy"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$skipToken",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "page-size",
+            "type": "integer",
+            "format": "int32",
+            "default": 50
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/GroupPolicyPropertiesResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}/jobtemplates/{jobtemplateName}": {
+      "put": {
+        "tags": [
+          "JobTemplate"
+        ],
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "jobtemplateName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/JObjectResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "JobTemplate"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "jobtemplateName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "JobTemplate"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "jobtemplateName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/JObjectResource"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}/jobtemplates": {
+      "get": {
+        "tags": [
+          "JobTemplate"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$skipToken",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/JObjectResourceArmPaginatedResult"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/backfill": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/cleanup": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/addintellectualpropertypublisher/{subscriptionId}/{resourcegroup}/{virtualcluster}/intellectualpropertypublisher/{intellectualpropertypublisher}": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroup",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualCluster",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "intellectualpropertypublisher",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/backfillgrouppoliciesglobal": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/backfillgrouppolicyblobs": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/fillvclocations": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/virtualcluster/v1.0/meta/migration/normalizelocations": {
+      "post": {
+        "tags": [
+          "Migration"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}": {
+      "put": {
+        "tags": [
+          "Subscription"
+        ],
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}/updatevcquota": {
+      "post": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_UpdateVirtualClusterQuota",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ResourceLimitsProperties"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters/{virtualClusterName}": {
+      "put": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          },
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          },
+          "202": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResourceLongRunningOperationResponse"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_Patch",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          },
+          "202": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResourceLongRunningOperationResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_Delete",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "204": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "virtualClusterName",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/virtualClusters": {
+      "get": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_ListByResourceGroup",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "resourceGroupName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$skipToken",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VirtualClusterPropertiesResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/instancetypeseries": {
+      "get": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_GetInstanceTypeSeries",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "path",
+            "name": "location",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$skipToken",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/AvailableInstanceTypesArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/managedComputeImages": {
+      "get": {
+        "tags": [
+          "VirtualCluster"
+        ],
+        "operationId": "VirtualCluster_GetManagedComputeImages",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscriptionId",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "in": "query",
+            "name": "api-version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "$skipToken",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "instanceType",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/StringStringDictionaryArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AmlComputeClusterConfiguration": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "type": "string"
+        },
+        "nodes": {
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "AMLComputeClusters": {
+      "type": "object",
+      "properties": {
+        "schedulingPolicy": {
+          "type": "string"
+        },
+        "priorityRange": {
+          "type": "string"
+        },
+        "nonPreemptedPriorityRange": {
+          "type": "string"
+        },
+        "clusterConfigurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AMLComputeConfiguration"
+          }
+        }
+      }
+    },
+    "AMLComputeConfiguration": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "type": "string"
+        },
+        "isRdmaCapable": {
+          "type": "boolean"
+        },
+        "location": {
+          "type": "string"
+        },
+        "allowedWorkspaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "quota": {
+          "$ref": "#/definitions/InstanceTypeSeriesQuota"
+        }
+      }
+    },
+    "AmlK8sClusterConfiguration": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "type": "string"
+        },
+        "resourceLimits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AmlK8sResourceLimits"
+          }
+        }
+      }
+    },
+    "AmlK8sResourceLimits": {
+      "type": "object",
+      "properties": {
+        "instanceType": {
+          "type": "string"
+        },
+        "instanceCount": {
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "AttachedAmlComputeClusters": {
+      "type": "object",
+      "properties": {
+        "schedulingPolicy": {
+          "type": "string"
+        },
+        "clusterConfigurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AmlComputeClusterConfiguration"
+          }
+        }
+      }
+    },
+    "AttachedAmlK8sClusters": {
+      "type": "object",
+      "properties": {
+        "schedulingPolicy": {
+          "type": "string"
+        },
+        "clusterConfigurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AmlK8sClusterConfiguration"
+          }
+        }
+      }
+    },
+    "AvailableInstanceTypes": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instanceTypeSeriesId": {
+          "type": "string"
+        },
+        "numberOfGPUs": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "numberOfCores": {
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "AvailableInstanceTypesArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AvailableInstanceTypes"
+          }
+        },
+        "nextLink": {
+          "type": "string"
+        }
+      }
+    },
+    "DebugInfoResponse": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "stackTrace": {
+          "type": "string"
+        },
+        "innerException": {
+          "$ref": "#/definitions/DebugInfoResponse"
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": { }
+        },
+        "errorResponse": {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      }
+    },
+    "DelegatedResourceIdentity": {
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "referralResource": {
+          "type": "string"
+        },
+        "delegatedIdentities": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/SourceResourceDelegatedIdentityRequest"
+          }
+        }
+      }
+    },
+    "ErrorAdditionalInfo": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "info": {
+          "readOnly": true
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/RootError"
+        },
+        "correlation": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "environment": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "time": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "componentName": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupPolicyProperties": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "provisioningState": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quotas": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InstanceTypeSeriesQuota"
+          }
+        },
+        "maxSharedStorageIOPs": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "maxSharedStorageBandwidth": {
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "GroupPolicyPropertiesResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/definitions/ResourceIdentityInArm"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "properties": {
+          "$ref": "#/definitions/GroupPolicyProperties"
+        },
+        "systemData": {
+          "$ref": "#/definitions/SystemData"
+        }
+      }
+    },
+    "GroupPolicyPropertiesResourceArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GroupPolicyPropertiesResource"
+          }
+        },
+        "nextLink": {
+          "type": "string"
+        }
+      }
+    },
+    "GroupPolicyPropertiesResourceLongRunningOperationResponse": {
+      "type": "object",
+      "properties": {
+        "completionResult": {
+          "$ref": "#/definitions/GroupPolicyPropertiesResource"
+        },
+        "location": {
+          "format": "uri",
+          "type": "string"
+        },
+        "operationResult": {
+          "format": "uri",
+          "type": "string"
+        }
+      }
+    },
+    "IdleResourcesHandlingPolicy": {
+      "type": "object",
+      "properties": {
+        "idleResourcesHandlingMode": {
+          "type": "string"
+        }
+      }
+    },
+    "InnerErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerErrorResponse"
+        }
+      }
+    },
+    "InstanceTypeSeriesQuota": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "slaTier": {
+          "enum": [
+            "Standard",
+            "Basic",
+            "Premium",
+            "Dedicated",
+            "LowPriority"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "SlaTier",
+            "modelAsString": false
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "limit": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "used": {
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "JObjectResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/definitions/ResourceIdentityInArm"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "properties": { },
+        "systemData": {
+          "$ref": "#/definitions/SystemData"
+        }
+      }
+    },
+    "JObjectResourceArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/JObjectResource"
+          }
+        },
+        "nextLink": {
+          "type": "string"
+        }
+      }
+    },
+    "ManagedComputeSettings": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "idleResourcesHandlingPolicy": {
+          "$ref": "#/definitions/IdleResourcesHandlingPolicy"
+        },
+        "quotas": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ResourceLimitsProperties"
+          }
+        },
+        "defaultGroupPolicyOverallQuotas": {
+          "$ref": "#/definitions/ResourceLimitsProperties"
+        },
+        "managedStorage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ManagedStorage"
+          }
+        }
+      }
+    },
+    "ManagedStorage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "MaximumGpusPerInteractiveJobPolicy": {
+      "type": "object",
+      "properties": {
+        "gpus": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "PolicyStatus",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "MaximumJobExecutionTimePolicy": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "format": "double",
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "PolicyStatus",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "MaximumJobSuspendOnIdleTimePolicy": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "format": "double",
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "PolicyStatus",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "MinimumGpusPerJobPolicy": {
+      "type": "object",
+      "properties": {
+        "gpus": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "PolicyStatus",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "Policies": {
+      "type": "object",
+      "properties": {
+        "maximumGpusPerInteractiveJobPolicy": {
+          "$ref": "#/definitions/MaximumGpusPerInteractiveJobPolicy"
+        },
+        "minimumGpusPerJobPolicy": {
+          "$ref": "#/definitions/MinimumGpusPerJobPolicy"
+        },
+        "maximumJobExecutionTimePolicy": {
+          "$ref": "#/definitions/MaximumJobExecutionTimePolicy"
+        },
+        "maximumJobSuspendOnIdleTimePolicy": {
+          "$ref": "#/definitions/MaximumJobSuspendOnIdleTimePolicy"
+        }
+      }
+    },
+    "ResourceIdentityInArm": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "principalId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "userAssignedIdentities": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/UserAssignedIdentityMeta"
+          }
+        },
+        "delegatedResources": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/DelegatedResourceIdentity"
+          }
+        }
+      }
+    },
+    "ResourceLimitsProperties": {
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InstanceTypeSeriesQuota"
+          }
+        }
+      }
+    },
+    "RootError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "messageFormat": {
+          "type": "string"
+        },
+        "messageParameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "referenceCode": {
+          "type": "string"
+        },
+        "detailsUri": {
+          "format": "uri",
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RootError"
+          }
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerErrorResponse"
+        },
+        "additionalInfo": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorAdditionalInfo"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "SourceResourceDelegatedIdentityRequest": {
+      "type": "object"
+    },
+    "StringStringDictionaryArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "nextLink": {
+          "type": "string"
+        }
+      }
+    },
+    "SystemData": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdByType": {
+          "enum": [
+            "User",
+            "Application",
+            "ManagedIdentity",
+            "Key"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "UserType",
+            "modelAsString": false
+          }
+        },
+        "lastModifiedAt": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "lastModifiedBy": {
+          "type": "string"
+        },
+        "lastModifiedByType": {
+          "enum": [
+            "User",
+            "Application",
+            "ManagedIdentity",
+            "Key"
+          ],
+          "type": "string",
+          "x-ms-enum": {
+            "name": "UserType",
+            "modelAsString": false
+          }
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "userObjectId": {
+          "type": "string"
+        },
+        "userPuId": {
+          "type": "string"
+        },
+        "userIdp": {
+          "type": "string"
+        },
+        "userAltSecId": {
+          "type": "string"
+        },
+        "userIss": {
+          "type": "string"
+        },
+        "userTenantId": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "upn": {
+          "type": "string"
+        }
+      }
+    },
+    "UserAssignedIdentityMeta": {
+      "type": "object",
+      "properties": {
+        "principalId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecretUrl": {
+          "type": "string"
+        },
+        "resourceId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        }
+      }
+    },
+    "VirtualClusterProperties": {
+      "type": "object",
+      "properties": {
+        "amlK8s": {
+          "$ref": "#/definitions/AttachedAmlK8sClusters"
+        },
+        "amlCompute": {
+          "$ref": "#/definitions/AttachedAmlComputeClusters"
+        },
+        "amlComputeCluster": {
+          "$ref": "#/definitions/AMLComputeClusters"
+        },
+        "managed": {
+          "$ref": "#/definitions/ManagedComputeSettings"
+        },
+        "policies": {
+          "$ref": "#/definitions/Policies"
+        }
+      }
+    },
+    "VirtualClusterPropertiesResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "identity": {
+          "$ref": "#/definitions/ResourceIdentityInArm"
+        },
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "type": {
+          "type": "string",
+          "readOnly": true
+        },
+        "properties": {
+          "$ref": "#/definitions/VirtualClusterProperties"
+        },
+        "systemData": {
+          "$ref": "#/definitions/SystemData"
+        }
+      }
+    },
+    "VirtualClusterPropertiesResourceArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VirtualClusterPropertiesResource"
+          }
+        },
+        "nextLink": {
+          "type": "string"
+        }
+      }
+    },
+    "VirtualClusterPropertiesResourceLongRunningOperationResponse": {
+      "type": "object",
+      "properties": {
+        "completionResult": {
+          "$ref": "#/definitions/VirtualClusterPropertiesResource"
+        },
+        "location": {
+          "format": "uri",
+          "type": "string"
+        },
+        "operationResult": {
+          "format": "uri",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      }
+    }
+  }
+}

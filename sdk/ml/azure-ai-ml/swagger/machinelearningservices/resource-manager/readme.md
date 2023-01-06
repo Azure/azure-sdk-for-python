@@ -110,6 +110,16 @@ input-file:
 output-folder: $(python-sdks-folder)/registry_discovery
 ```
 
+### Tag: virtualcluster
+
+These settings apply only when `--tag=virtualcluster` is specified on the command line.
+
+```yaml $(tag) == 'virtualcluster'
+input-file:
+  - Microsoft.MachineLearningServices/preview/virtualcluster/virtualcluster.json
+output-folder: $(python-sdks-folder)/virtualcluster
+```
+
 ### Tag: v2022-10-01-preview
 
 These settings apply only when `--tag=v2022-10-01-preview` is specified on the command line.
@@ -138,6 +148,7 @@ batch:
   - tag: v2020-09-01-dataplanepreview
   - tag: registry-discovery
   - tag: v2022-10-01-preview
+  - tag: virtualcluster
   #unstable tags
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true

@@ -11,11 +11,13 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils.reource_graph_utils import get_vitual_clusters_from_all_subscriptions
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import AmlComputeNodeInfo, Compute, Usage, VmSize
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -34,6 +36,7 @@ class ComputeOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient102022Preview,
+        credentials: TokenCredential,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
@@ -42,6 +45,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self._workspace_operations = service_client.workspaces
         self._vmsize_operations = service_client.virtual_machine_sizes
         self._usage_operations = service_client.usages
+        self._credentials = credentials
         self._init_kwargs = kwargs
 
     @distributed_trace
@@ -54,6 +58,9 @@ class ComputeOperations(_ScopeDependentOperations):
         :return: An iterator like instance of Compute objects
         :rtype: ~azure.core.paging.ItemPaged[Compute]
         """
+
+        if compute_type is not None and compute_type.lower() == "singularity":
+            return get_vitual_clusters_from_all_subscriptions(self._credentials)
 
         return self._operation.list(
             self._operation_scope.resource_group_name,
