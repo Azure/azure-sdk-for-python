@@ -161,7 +161,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
          properties.
         :paramtype select: List[str]
         :return: List of all the SearchIndexers.
-        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
+        :rtype: List[~azure.search.documents.indexes.models.SearchIndexer]
 
         .. admonition:: Example:
 
@@ -426,7 +426,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
          properties.
         :paramtype select: List[str]
         :return: List of all the data source connections.
-        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
+        :rtype: List[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
 
         .. admonition:: Example:
 

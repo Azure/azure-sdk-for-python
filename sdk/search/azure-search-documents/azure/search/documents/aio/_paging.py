@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, List
+from typing import Union, List, Dict, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from .._generated.models import AnswerResult
@@ -40,7 +40,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
             self._first_page_iterator_instance = self._page_iterator
         return self._first_page_iterator_instance
 
-    async def get_facets(self) -> Union[dict, None]:
+    async def get_facets(self) -> Optional[Dict]:
         """Return any facet results if faceting was requested."""
         return await self._first_iterator_instance().get_facets()
 
@@ -58,7 +58,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return await self._first_iterator_instance().get_count()
 
-    async def get_answers(self) -> Union[List[AnswerResult], None]:
+    async def get_answers(self) -> Optional[Union[List[AnswerResult]]:
         """Return answers."""
         return await self._first_iterator_instance().get_answers()
 

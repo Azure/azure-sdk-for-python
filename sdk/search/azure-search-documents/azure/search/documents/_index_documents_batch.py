@@ -40,7 +40,7 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Dict or List[Dict]
         :return: the added actions
         :rtype: List[IndexAction]
         """

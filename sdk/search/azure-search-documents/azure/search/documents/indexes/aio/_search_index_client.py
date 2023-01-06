@@ -161,7 +161,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param index_name: The name of the index to retrieve.
         :type index_name: str
         :return: Statistics for the given index, including a document count and storage usage.
-        :rtype: dict
+        :rtype: Dict
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -316,7 +316,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
          properties.
         :paramtype select: List[str]
         :return: List of synonym maps
-        :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
+        :rtype: List[~azure.search.documents.indexes.models.SynonymMap]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
