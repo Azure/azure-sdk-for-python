@@ -11,7 +11,6 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
-import six
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy, VERSION
 from azure.storage.queue.aio import QueueServiceClient
@@ -42,7 +41,7 @@ TEST_QUEUE_PREFIX = 'encryptionqueue'
 # ------------------------------------------------------------------------------
 
 def _decode_base64_to_bytes(data):
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode('utf-8')
         return b64decode(data)
 
