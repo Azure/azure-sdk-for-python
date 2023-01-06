@@ -6,7 +6,7 @@ import codecs
 import hashlib
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
@@ -32,7 +32,6 @@ from azure.keyvault.keys.crypto import (
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
-from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
 from azure.keyvault.keys._generated_models import KeySignParameters
@@ -580,7 +579,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                     assert substring in str(ex.value)
 
         # operations should not succeed with a key whose nbf is in the future
-        the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
+        the_year_3000 = datetime(3000, 1, 1, tzinfo=timezone.utc)
 
         rsa_wrap_algorithms = [algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")]
         rsa_encryption_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
@@ -591,14 +590,14 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
-        the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
+        the_year_2000 = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-expired")
         expired_key = self._create_rsa_key(key_client, key_name, expires_on=the_year_2000, hardware_protected=is_hsm)
         test_operations(expired_key, [str(the_year_2000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
-        the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
+        the_year_3001 = datetime(3001, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-valid")
         valid_key = self._create_rsa_key(
@@ -833,7 +832,7 @@ def test_prefers_local_provider():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -901,7 +900,7 @@ def test_encrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -924,7 +923,7 @@ def test_decrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
