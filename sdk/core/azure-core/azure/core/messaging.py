@@ -7,7 +7,7 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
-from typing import cast, Union, Any, Optional, Dict
+from typing import cast, Union, Any, Optional, Dict, TypeVar, Generic
 from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
@@ -16,7 +16,16 @@ from .serialization import NULL
 __all__ = ["CloudEvent"]
 
 
-class CloudEvent:  # pylint:disable=too-many-instance-attributes
+class _UnsetType:
+    """An internal class to represent an unset optional kwarg where None is valid"""
+
+
+_Unset = _UnsetType()
+
+DataType = TypeVar("DataType")
+
+
+class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attributes
     """Properties of the CloudEvent 1.0 Schema.
     All required parameters must be populated in order to send to Azure.
 
@@ -25,6 +34,8 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
+    :keyword specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
+    :type specversion: str
     :keyword data: Optional. Event data specific to the event type.
     :type data: object
     :keyword time: Optional. The time (in UTC) the event was generated.
@@ -36,8 +47,6 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
     :keyword subject: Optional. This describes the subject of the event in the context of the event producer
      (identified by source).
     :type subject: str
-    :keyword specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
-    :type specversion: str
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
     :type id: Optional[str]
@@ -45,32 +54,42 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
     :type extensions: Optional[dict]
-    :ivar source: Identifies the context in which an event happened. The combination of id and source must
-     be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name.
-    :vartype source: str
-    :ivar data: Event data specific to the event type.
-    :vartype data: object
-    :ivar type: Type of event related to the originating occurrence.
-    :vartype type: str
-    :ivar time: The time (in UTC) the event was generated.
-    :vartype time: ~datetime.datetime
-    :ivar dataschema: Identifies the schema that data adheres to.
-    :vartype dataschema: str
-    :ivar datacontenttype: Content type of data value.
-    :vartype datacontenttype: str
-    :ivar subject: This describes the subject of the event in the context of the event producer
-     (identified by source).
-    :vartype subject: str
-    :ivar specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
-    :vartype specversion: str
-    :ivar id: An identifier for the event. The combination of id and source must be
-     unique for each distinct event. If not provided, a random UUID will be generated and used.
-    :vartype id: str
-    :ivar extensions: A CloudEvent MAY include any number of additional context attributes
-     with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
-     and must not exceed the length of 20 characters.
-    :vartype extensions: dict
     """
+
+    source: str
+    """Identifies the context in which an event happened. The combination of id and source must
+       be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name."""
+
+    type: str  # pylint: disable=redefined-builtin
+    """Type of event related to the originating occurrence."""
+
+    specversion: str = "1.0"
+    """The version of the CloudEvent spec. Defaults to "1.0" """
+
+    id: str  # pylint: disable=redefined-builtin
+    """An identifier for the event. The combination of id and source must be
+       unique for each distinct event. If not provided, a random UUID will be generated and used."""
+
+    data: Optional[DataType]
+    """Event data specific to the event type."""
+
+    time: Optional[datetime]
+    """The time (in UTC) the event was generated."""
+
+    dataschema: Optional[str]
+    """Identifies the schema that data adheres to."""
+
+    datacontenttype: Optional[str]
+    """Content type of data value."""
+
+    subject: Optional[str]
+    """This describes the subject of the event in the context of the event producer
+       (identified by source)"""
+
+    extensions: Optional[Dict[str, Any]]
+    """A CloudEvent MAY include any number of additional context attributes
+       with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
+       and must not exceed the length of 20 characters."""
 
     def __init__(
         self,
@@ -79,24 +98,31 @@ class CloudEvent:  # pylint:disable=too-many-instance-attributes
         *,
         specversion: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        time: Optional[datetime] = None,
+        time: Optional[Union[datetime, _UnsetType]] = _Unset,
         datacontenttype: Optional[str] = None,
         dataschema: Optional[str] = None,
         subject: Optional[str] = None,
-        data: Optional[object] = None,
+        data: Optional[DataType] = None,
         extensions: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         self.source: str = source
         self.type: str = type
-        self.specversion: str = specversion or "1.0"
-        self.id: str = id or str(uuid.uuid4())
-        self.time: Optional[datetime] = time or datetime.now(TZ_UTC)
+
+        if specversion:
+            self.specversion: str = specversion
+        self.id: str = id if id else str(uuid.uuid4())
+
+        self.time: Optional[datetime]
+        if isinstance(time, _UnsetType):
+            self.time = datetime.now(TZ_UTC)
+        else:
+            self.time = time
 
         self.datacontenttype: Optional[str] = datacontenttype
         self.dataschema: Optional[str] = dataschema
         self.subject: Optional[str] = subject
-        self.data: Optional[object] = data
+        self.data: Optional[DataType] = data
 
         self.extensions: Optional[Dict[str, Any]] = extensions
         if self.extensions:
