@@ -47,21 +47,51 @@ class WorkspaceOutboundRuleOperations:
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
         self._all_operations = all_operations
+        # operations for workspaces from ServiceClient102022Preview, need managednetwork api instead
         self._operation = service_client.workspaces
         self._credentials = credentials
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    def get(
+    def show(
         self,
         name: str,
         outbound_rule_name: str,
         **kwargs) -> ManagedNetwork:
-        obj = self._operation.get(
+
+        print("SDK show method called")
+        return ManagedNetwork()
+        """obj = self._operation.get(
             workspace_name=self._workspace_name,
             outbound_rule_name=outbound_rule_name,
             **self._scope_kwargs,
             **kwargs,
         )
+        return ManagedNetwork._from_rest_object(rest_obj=obj)"""
 
-        return ManagedNetwork._from_rest_object(rest_obj=obj)
+
+    def list(
+        self,
+        name: str,
+        **kwargs) -> ManagedNetwork:
+        
+        print("SDK list method called")
+        return ManagedNetwork()
+
+    def set(
+        self,
+        name: str,
+        outbound_rule_name: str,
+        **kwargs) -> ManagedNetwork:
+        
+        print("SDK set method called")
+        return ManagedNetwork()
+
+    def remove(
+        self,
+        name: str,
+        outbound_rule_name: str,
+        **kwargs) -> ManagedNetwork:
+        
+        print("SDK remove method called")
+        return ManagedNetwork()

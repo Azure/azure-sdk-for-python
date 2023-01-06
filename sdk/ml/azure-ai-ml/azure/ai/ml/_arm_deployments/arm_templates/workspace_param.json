@@ -115,5 +115,8 @@
     },
     "primaryUserAssignedIdentity": {
         "value": ""
+    },
+    "managedNetwork": {
+        "value": {}
     }
 }

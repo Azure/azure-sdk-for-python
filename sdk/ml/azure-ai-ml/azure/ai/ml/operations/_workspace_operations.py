@@ -246,6 +246,7 @@ class WorkspaceOperations:
         existing_workspace = self.get(workspace.name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
+            print(identity)
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
             if existing_workspace and existing_workspace.identity and \
@@ -256,6 +257,13 @@ class WorkspaceOperations:
                     if uai.resource_id not in rest_user_assigned_identities:
                         rest_user_assigned_identities[uai.resource_id] = None
                 identity.user_assigned_identities = rest_user_assigned_identities
+
+        """this is where we will create the managed network as REST object
+        managed_network = kwargs.get("managed_network", workspace.managed_network)
+        existing_workspace = self.get(workspace.name, **kwargs)
+        if managed_network:
+            managed_network = managed_network._to_workspace_rest_object()
+            print(managed_network)"""
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -523,6 +531,16 @@ class WorkspaceOperations:
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+
+        # is this what I need to do here to add it to the workspace template deployment?
+        managed_network = None
+        if workspace.managed_network:
+            # managed_network = workspace.managed_network._to_workspace_rest_object()
+            managed_network = managed_network
+        else:
+            # managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_workspace_rest_object()
+            managed_network = managed_network
+        _set_val(param["managedNetwork"], managed_network)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

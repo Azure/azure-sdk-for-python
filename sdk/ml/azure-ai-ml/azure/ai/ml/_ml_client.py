@@ -71,6 +71,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    WorkspaceOutboundRuleOperations
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -280,6 +281,14 @@ class MLClient(object):
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
+        )
+
+        self._workspace_outbound_rule = WorkspaceOutboundRuleOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **kwargs,
         )
 
         # TODO make sure that at least one reviewer who understands operation initialization details reviews this
@@ -534,6 +543,15 @@ class MLClient(object):
         :rtype: WorkspaceOperations
         """
         return self._workspaces
+
+    @property
+    def workspace_outbound_rule(self) -> WorkspaceOutboundRuleOperations:
+        """A collection of workspace managed network outbound rule related operations.
+        
+        :return: Workspace Outbound Rule operations
+        :rtype: WorkspaceOutboundRuleOperations
+        """
+        return self._workspace_outbound_rule
 
     @property
     @experimental
