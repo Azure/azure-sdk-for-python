@@ -123,11 +123,13 @@ class ValidationResult(object):
         }
         """
         messages = {}
+        # TODO: validate when messages[diagnostic.yaml_path] is None
         for diagnostic in self._errors:
             if diagnostic.yaml_path not in messages:
                 messages[diagnostic.yaml_path] = diagnostic.message
             else:
-                messages[diagnostic.yaml_path] += "; " + diagnostic.message
+                # messages[diagnostic.yaml_path] = str(messages[diagnostic.yaml_path])
+                messages[diagnostic.yaml_path] = diagnostic.message
         return messages
 
     @property
