@@ -279,7 +279,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert str(ex.value.status_code) == "404"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
-     @recorded_by_proxy_async
+    @recorded_by_proxy_async
     async def test_update_phone_number_capabilities_with_invalid_number(self):
         if self.is_playback():
             phone_number = "invalid_phone_number"
