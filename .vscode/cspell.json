@@ -27,7 +27,7 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
     "**/assets.json",
-
+    "**/pyproject.toml",
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
