@@ -279,6 +279,41 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         assert str(ex.value.status_code) == "404"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
+     @recorded_by_proxy_async
+    async def test_update_phone_number_capabilities_with_invalid_number(self):
+        if self.is_playback():
+            phone_number = "invalid_phone_number"
+        else:
+            phone_number = "invalid_phone_number"
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling=True
+                )
+
+        assert str(ex.value.status_code) == "404"  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy_async
+    async def test_update_phone_number_capabilities_with_empty_number(self):
+        if self.is_playback():
+            phone_number = ""
+        else:
+            phone_number = ""
+
+        with pytest.raises(ValueError) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling=True
+                )    
+
     @recorded_by_proxy_async
     async def test_list_toll_free_area_codes_with_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
