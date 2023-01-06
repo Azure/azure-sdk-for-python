@@ -84,7 +84,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                         {"component_in_path": "test_path1"},
                         {"component_in_path": "test_path2", "component_in_number": 1}
                     ],
-                    "Items should to have same keys with body inputs, but got "
+                    "Items should have same keys with body inputs, but got "
             ),
             (
                     # item inputs not exist in body
@@ -97,7 +97,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                     # invalid JSON string items
 
                     '[{"component_in_number": 1}, {}]',
-                    "Items should to have same keys with body inputs"
+                    "Items should have same keys with body inputs"
             )
         ],
     )

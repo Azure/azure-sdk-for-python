@@ -256,11 +256,11 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
-# @pytest.mark.skipif(
-#     condition=is_live(),
-#     # TODO: reopen live test when parallel_for deployed to canary
-#     reason="parallel_for is not available in canary."
-# )
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary."
+)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(

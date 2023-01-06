@@ -194,7 +194,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         meta = item
                     else:
                         validation_result.append_error(
-                            f"Items should to have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
+                            f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
                         )
                 # items' keys should appear in body's inputs
                 body_component = self.body._component
