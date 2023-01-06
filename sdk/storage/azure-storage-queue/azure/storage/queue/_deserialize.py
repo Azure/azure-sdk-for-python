@@ -9,11 +9,7 @@ from azure.core.exceptions import ResourceExistsError
 
 from ._shared.models import StorageErrorCode
 from ._models import QueueProperties
-
-
-def deserialize_metadata(response, obj, headers):
-    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
+from ._shared.response_handlers import deserialize_metadata
 
 
 def deserialize_queue_properties(response, obj, headers):
