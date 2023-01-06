@@ -290,6 +290,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 deployment.job_definition.description = component.properties.description
             if not deployment.job_definition.tags and component.properties.tags:
                 deployment.job_definition.tags = component.properties.tags
+        # pylint: disable=line-too-long
         if isinstance(deployment.job_definition.job, str) or isinstance(deployment.job_definition.component, PipelineComponent):
             deployment.job_definition.component = None
             deployment.job_definition.job = None
