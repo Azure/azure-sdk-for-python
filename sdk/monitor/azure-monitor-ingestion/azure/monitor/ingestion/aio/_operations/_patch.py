@@ -43,11 +43,11 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :type stream: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON]
-        :param on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
+        :keyword on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
             This function should expect two arguments that correspond to the error encountered and
             the list of logs that failed to upload. If no function is provided, then the first exception
             encountered will be raised.
-        :type on_error: Optional[Callable[[Exception, List[JSON]], None]]
+        :paramtype on_error: Optional[Callable[[Exception, List[JSON]], None]]
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
