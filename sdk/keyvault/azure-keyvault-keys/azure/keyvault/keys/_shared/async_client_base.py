@@ -13,14 +13,10 @@ from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
 if TYPE_CHECKING:
-    try:
-        # pylint:disable=unused-import
-        from typing import Any
-        from azure.core.credentials_async import AsyncTokenCredential
-        from azure.core.rest import AsyncHttpResponse, HttpRequest
-    except ImportError:
-        # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
-        pass
+    # pylint:disable=unused-import
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 
 class AsyncKeyVaultClientBase(object):
@@ -65,8 +61,8 @@ class AsyncKeyVaultClientBase(object):
             self._models = _KeyVaultClient.models(api_version=self.api_version)
         except ValueError:
             raise NotImplementedError(
-                "This package doesn't support API version '{}'. ".format(self.api_version)
-                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+                f"This package doesn't support API version '{self.api_version}'. "
+                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
             )
 
     @property
