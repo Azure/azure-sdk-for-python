@@ -12,6 +12,7 @@ STORAGE_ACCOUNT_FAKE_KEY = "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
+
     :param str scopes: Lets you specify the type of access needed.
     """
 
