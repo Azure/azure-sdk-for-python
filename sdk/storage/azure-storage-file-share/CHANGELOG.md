@@ -1,6 +1,6 @@
 # Release History
 
-## 12.12.0 (Unreleased)
+## 12.12.0b1 (Unreleased)
 
 ### Features Added
 
