@@ -9,8 +9,11 @@ import datetime as dt
 import uuid
 from msrest.serialization import UTC
 from ._messaging_shared import _get_json_content
+from ._generated.models import (
+    EventGridEvent as InternalEventGridEvent,
+)
 
-class EventGridEvent():
+class EventGridEvent(InternalEventGridEvent):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.

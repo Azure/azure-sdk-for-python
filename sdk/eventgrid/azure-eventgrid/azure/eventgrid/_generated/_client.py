@@ -12,6 +12,7 @@ from typing import Any
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
+from . import models as _models
 from ._configuration import EventGridPublisherClientConfiguration
 from ._operations import EventGridPublisherClientOperationsMixin
 from ._serialization import Deserializer, Serializer
@@ -32,8 +33,9 @@ class EventGridPublisherClient(
         self._config = EventGridPublisherClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

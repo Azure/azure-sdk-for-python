@@ -17,5 +17,5 @@ input-file:
 
 python: true
 v3: true
-use: "@autorest/python@6.2.12"
+models-mode: "msrest"
 ```

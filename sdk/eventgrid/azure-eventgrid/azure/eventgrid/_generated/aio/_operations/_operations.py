@@ -23,6 +23,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
+from ... import models as _models
 from ..._operations._operations import (
     build_event_grid_publisher_publish_cloud_event_events_request,
     build_event_grid_publisher_publish_custom_event_events_request,
@@ -42,7 +43,12 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     @overload
     async def publish_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: List[JSON], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        topic_hostname: str,
+        events: List[_models.EventGridEvent],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -50,34 +56,13 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
          Required.
         :type topic_hostname: str
         :param events: An array of events to be published to Event Grid. Required.
-        :type events: list[JSON]
+        :type events: list[~event_grid_publisher_client.models.EventGridEvent]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                events = [
-                    {
-                        "data": {},  # Event data specific to the event type. Required.
-                        "dataVersion": "str",  # The schema version of the data object.
-                          Required.
-                        "eventTime": "2020-02-20 00:00:00",  # The time (in UTC) the event
-                          was generated. Required.
-                        "eventType": "str",  # The type of the event that occurred. Required.
-                        "id": "str",  # An unique identifier for the event. Required.
-                        "subject": "str",  # A resource path relative to the topic path.
-                          Required.
-                        "metadataVersion": "str",  # Optional. The schema version of the
-                          event metadata.
-                        "topic": "str"  # Optional. The resource path of the event source.
-                    }
-                ]
         """
 
     @overload
@@ -101,7 +86,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @distributed_trace_async
     async def publish_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: Union[List[JSON], IO], **kwargs: Any
+        self, topic_hostname: str, events: Union[List[_models.EventGridEvent], IO], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -110,7 +95,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :type topic_hostname: str
         :param events: An array of events to be published to Event Grid. Is either a list type or a IO
          type. Required.
-        :type events: list[JSON] or IO
+        :type events: list[~event_grid_publisher_client.models.EventGridEvent] or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -138,7 +123,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         if isinstance(events, (IO, bytes)):
             _content = events
         else:
-            _json = events
+            _json = self._serialize.body(events, "[EventGridEvent]")
 
         request = build_event_grid_publisher_publish_events_request(
             content_type=content_type,
@@ -168,7 +153,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
     @distributed_trace_async
     async def publish_cloud_event_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: List[JSON], **kwargs: Any
+        self, topic_hostname: str, events: List[_models.CloudEvent], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
@@ -176,38 +161,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
          Required.
         :type topic_hostname: str
         :param events: An array of events to be published to Event Grid. Required.
-        :type events: list[JSON]
+        :type events: list[~event_grid_publisher_client.models.CloudEvent]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                events = [
-                    {
-                        "id": "str",  # An identifier for the event. The combination of id
-                          and source must be unique for each distinct event. Required.
-                        "source": "str",  # Identifies the context in which an event
-                          happened. The combination of id and source must be unique for each distinct
-                          event. Required.
-                        "specversion": "str",  # The version of the CloudEvents specification
-                          which the event uses. Required.
-                        "type": "str",  # Type of event related to the originating
-                          occurrence. Required.
-                        "data": {},  # Optional. Event data specific to the event type.
-                        "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event
-                          data specific to the event type, encoded as a base64 string.
-                        "datacontenttype": "str",  # Optional. Content type of data value.
-                        "dataschema": "str",  # Optional. Identifies the schema that data
-                          adheres to.
-                        "subject": "str",  # Optional. This describes the subject of the
-                          event in the context of the event producer (identified by source).
-                        "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the
-                          event was generated, in RFC3339 format.
-                    }
-                ]
         """
         error_map = {
             401: ClientAuthenticationError,
@@ -225,7 +182,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _json = events
+        _json = self._serialize.body(events, "[CloudEvent]")
 
         request = build_event_grid_publisher_publish_cloud_event_events_request(
             content_type=content_type,
@@ -269,14 +226,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                events = [
-                    {}  # Optional.
-                ]
         """
 
     @overload
@@ -337,7 +286,7 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
         if isinstance(events, (IO, bytes)):
             _content = events
         else:
-            _json = events
+            _json = self._serialize.body(events, "[object]")
 
         request = build_event_grid_publisher_publish_custom_event_events_request(
             content_type=content_type,
