@@ -58,7 +58,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return await self._first_iterator_instance().get_count()
 
-    async def get_answers(self) -> Optional[Union[List[AnswerResult]]:
+    async def get_answers(self) -> Optional[Union[List[AnswerResult]]]:
         """Return answers."""
         return await self._first_iterator_instance().get_answers()
 
