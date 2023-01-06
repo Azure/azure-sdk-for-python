@@ -128,3 +128,6 @@ setup(
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
     assert result.folder == package_root
+    assert len(result.classifiers) > 0
+    assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
+    assert result.classifiers[5] == "Programming Language :: Python :: 3.8"

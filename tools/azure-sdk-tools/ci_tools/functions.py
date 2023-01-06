@@ -13,17 +13,6 @@ from pypi_tools.pypi import PyPIClient
 from typing import List
 import logging
 
-
-OMITTED_CI_PACKAGES = [
-    "azure-mgmt-documentdb",
-    "azure-servicemanagement-legacy",
-    "azure-mgmt-scheduler",
-    "azure",
-    "azure-mgmt",
-    "azure-storage",
-    "azure-monitor",
-    "azure-mgmt-regionmove",
-]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
@@ -33,7 +22,9 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-synapse",
     "azure-ai-anomalydetector",
 ]
+
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
+
 REGRESSION_EXCLUDED_PACKAGES = [
     "azure-common",
 ]
@@ -113,6 +104,22 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
+def glob_packages(glob_str: str, target_root_dir: str):
+    if glob_string:
+        individual_globs = glob_string.split(",")
+    else:
+        individual_globs = "azure-*"
+    collected_top_level_directories = []
+
+    for glob_string in individual_globs:
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
+            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
+        )
+        collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
+
+    # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
+    return list(set([collected_top_level_directories]))
+
 def discover_targeted_packages(
     glob_string: str,
     target_root_dir: str,
@@ -130,40 +137,27 @@ def discover_targeted_packages(
     :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
     :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
     """
-    if glob_string:
-        individual_globs = glob_string.split(",")
-    else:
-        individual_globs = "azure-*"
-    collected_top_level_directories = []
+    
+    # glob the starting package set
+    collected_packages = glob_packages(glob_string, target_root_dir)
 
-    for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
-            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
-        )
-        collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
+    # apply the additional contains filter
+    collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
 
-    # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    collected_directories = list(set([p for p in collected_top_level_directories if additional_contains_filter in p]))
-    pkg_set_ci_filtered = collected_directories
+    # filter for compatiblity
+    if compatibility_filter:
+        collected_packages = filter_for_compatibility(collected_packages)
 
-    # if we have individually queued this specific package, it's obvious that we want to build it specifically
-    # in this case, do not honor the omission list
-    if len(collected_directories) == 1:
-        if compatibility_filter:
-            pkg_set_ci_filtered = filter_for_compatibility(collected_directories)
-
-    # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
-    # packages
-    else:
-        allowed_package_set = remove_omitted_packages(collected_directories)
-        if compatibility_filter:
-            pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+    # apply package-specific exclusions only if we have gotten more than one
+    # todo: remove this after updating the pyproject exclusion
+    if len(collected_packages) > 1:
+        collected_packages = remove_omitted_packages(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
     logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
     logging.info(
-        "Package(s) omitted by CI filter: {}".format(list(set(collected_directories) - set(pkg_set_ci_filtered)))
+        "Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered)))
     )
     return sorted(pkg_set_ci_filtered)
 
@@ -217,7 +211,7 @@ def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
     return None
 
 
-def get_version_from_repo(pkg_name: str, repo_root: str = None):
+def get_version_from_repo(pkg_name: str, repo_root: str = None) -> str:
     pkg_info = get_package_from_repo(pkg_name, repo_root)
     if pkg_info:
         # Remove dev build part if version for this package is already updated to dev build
@@ -235,7 +229,7 @@ def get_version_from_repo(pkg_name: str, repo_root: str = None):
         exit(1)
 
 
-def get_base_version(pkg_name):
+def get_base_version(pkg_name: str) -> str:
     root_dir = discover_repo_root()
     # find version for the package from source. This logic should be revisited to find version from devops feed
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
