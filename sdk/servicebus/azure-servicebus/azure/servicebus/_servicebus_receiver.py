@@ -782,7 +782,7 @@ class ServiceBusReceiver(
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
-        
+
         For more information about message browsing see https://aka.ms/azsdk/servicebus/message-browsing
 
         :param int max_message_count: The maximum number of messages to try and peek. The actual number of messages
