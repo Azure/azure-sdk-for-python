@@ -312,7 +312,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     PhoneNumberCapabilityType.INBOUND_OUTBOUND,
                     PhoneNumberCapabilityType.INBOUND,
                     polling=True
-                )    
+                )
 
     @recorded_by_proxy_async
     async def test_list_toll_free_area_codes_with_managed_identity(self):
