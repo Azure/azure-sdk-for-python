@@ -154,6 +154,7 @@ PYRIGHT_OPT_OUT = [
     "azure-eventhub-checkpointstoreblob-aio",
     "azure-eventhub-checkpointstoretable",
     "azure-ai-formrecognizer",
+    "azure-identity",
     "azure-keyvault-administration",
     "azure-keyvault-certificates",
     "azure-keyvault-keys",
