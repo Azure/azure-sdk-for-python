@@ -152,6 +152,9 @@ def _run_command(command):
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
+        # Fallback check in case the executable is not found while executing subprocess.
+        if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
+            raise CredentialUnavailableError(message=CLI_NOT_FOUND)
         if "az login" in ex.stderr or "az account set" in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 

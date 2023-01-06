@@ -121,6 +121,10 @@ async def _run_command(command: str) -> str:
     if proc.returncode == 0:
         return output
 
+    # Fallback check in case the executable is not found while executing subprocess.
+    if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
+        raise CredentialUnavailableError(CLI_NOT_FOUND)
+
     if "az login" in stderr or "az account set" in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
