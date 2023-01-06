@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The deployment mode.
-    """
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The deployment mode."""
 
     INCREMENTAL = "Incremental"
     COMPLETE = "Complete"

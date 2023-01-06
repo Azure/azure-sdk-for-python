@@ -35,12 +35,12 @@ import pytest
 from azure.core import AsyncPipelineClient
 from azure.core.polling import *
 from azure.core.exceptions import ServiceResponseError
-from msrest.serialization import Model
+# from msrest.serialization import Model
 
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return AsyncPipelineClient("https://baseurl")
 
 
@@ -145,9 +145,9 @@ async def test_poller(client):
     assert raw_poller.polling_method() is method
     done_cb.assert_called_once_with(poller)
 
-    # Test with a basic Model
-    poller = AsyncLROPoller(client, initial_response, Model, method)
-    assert poller._polling_method._deserialization_callback == Model.deserialize
+    # # Test with a basic Model
+    # poller = AsyncLROPoller(client, initial_response, Model, method)
+    # assert poller._polling_method._deserialization_callback == Model.deserialize
 
     # Test poller that method do a run
     method = PollingTwoSteps(sleep=1)

@@ -1,0 +1,7 @@
+name: registry_name2
+location: WestCentralUS
+tags:
+  one: two
+  three: five
+replication_locations:
+  - location: WestCentralUS

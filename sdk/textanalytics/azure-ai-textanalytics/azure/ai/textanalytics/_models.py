@@ -3,74 +3,63 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=unused-argument
 import re
 from enum import Enum
+from typing import Optional, List, Dict, Any, Union
+from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
+    AgeResolution,
+    AreaResolution,
+    BooleanResolution,
+    CurrencyResolution,
+    DateTimeResolution,
+    InformationResolution,
+    LengthResolution,
+    NumberResolution,
+    NumericRangeResolution,
+    OrdinalResolution,
+    SpeedResolution,
+    TemperatureResolution,
+    TemporalSpanResolution,
+    VolumeResolution,
+    WeightResolution,
+    HealthcareDocumentType,
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
-from ._generated.v2022_05_01 import models as _v2022_05_01_models
+from ._generated.v2022_10_01_preview import models as _v2022_10_01_preview_models
 from ._check import is_language_api, string_index_type_compatibility
+from ._dict_mixin import DictMixin
 
+STRING_INDEX_TYPE_DEFAULT = "UnicodeCodePoint"
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
 
 
-class DictMixin:
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
+class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of supported Text Analysis kinds.
 
-    def __getitem__(self, key):
-        return self.__dict__[key]
+    .. versionadded:: 2022-05-01
+        The *TextAnalysisKind* enum.
+    """
 
-    def __repr__(self):
-        return str(self)
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __delitem__(self, key):
-        self.__dict__[key] = None
-
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
-        return not self.__eq__(other)
-
-    def __contains__(self, key):
-        return key in self.__dict__
-
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
-
-    def has_key(self, k):
-        return k in self.__dict__
-
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
-
-    def keys(self):
-        return [k for k in self.__dict__ if not k.startswith("_")]
-
-    def values(self):
-        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def items(self):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
-
-    def get(self, key, default=None):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
+    SENTIMENT_ANALYSIS = "SentimentAnalysis"
+    ENTITY_RECOGNITION = "EntityRecognition"
+    PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
+    KEY_PHRASE_EXTRACTION = "KeyPhraseExtraction"
+    ENTITY_LINKING = "EntityLinking"
+    HEALTHCARE = "Healthcare"
+    CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
+    CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
+    LANGUAGE_DETECTION = "LanguageDetection"
+    EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
+    ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
+    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -342,7 +331,7 @@ class PiiEntityDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The different domains of PII entities that users can filter by"""
 
     PROTECTED_HEALTH_INFORMATION = (
-        "phi"  # See https://aka.ms/tanerpii for more information.
+        "phi"  # See https://aka.ms/azsdk/language/pii for more information.
     )
 
 
@@ -359,25 +348,41 @@ class DetectedLanguage(DictMixin):
     :ivar confidence_score: A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true.
     :vartype confidence_score: float
+    :ivar Optional[str] script: Identifies the script of the input document. Possible values: "Latin".
+
+    .. versionadded:: 2022-10-01-preview
+        The *script* property.
     """
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.iso6391_name = kwargs.get("iso6391_name", None)
-        self.confidence_score = kwargs.get("confidence_score", None)
+    def __init__(
+        self,
+        *,
+        name: str,
+        iso6391_name: str,
+        confidence_score: float,
+        script: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.name = name
+        self.iso6391_name = iso6391_name
+        self.confidence_score = confidence_score
+        self.script = script
 
     @classmethod
     def _from_generated(cls, language):
+        script = language.script if hasattr(language, "script") else None
         return cls(
             name=language.name,
             iso6391_name=language.iso6391_name,
             confidence_score=language.confidence_score,
+            script=script
         )
 
-    def __repr__(self):
-        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})".format(
-            self.name, self.iso6391_name, self.confidence_score
-        )[:1024]
+    def __repr__(self) -> str:
+        return (
+            f"DetectedLanguage(name={self.name}, iso6391_name={self.iso6391_name}, "
+            f"confidence_score={self.confidence_score}, script={self.script})"[:1024]
+        )
 
 
 class RecognizeEntitiesResult(DictMixin):
@@ -397,28 +402,43 @@ class RecognizeEntitiesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeEntitiesResult.
+    :ivar str kind: The text analysis kind - "EntityRecognition".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["CategorizedEntity"],
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["EntityRecognition"] = "EntityRecognition"
 
-    def __repr__(self):
-        return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
-            self.id,
-            repr(self.entities),
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error,
-        )[
-            :1024
-        ]
+    def __repr__(self) -> str:
+        return (
+            f"RecognizeEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, "
+            f"kind={self.kind})"[:1024]
+        )
 
 
 class RecognizePiiEntitiesResult(DictMixin):
@@ -440,30 +460,44 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
+    :ivar str kind: The text analysis kind - "PiiEntityRecognition".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.redacted_text = kwargs.get("redacted_text", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["PiiEntity"],
+        redacted_text: str,
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.redacted_text = redacted_text
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "RecognizePiiEntitiesResult(id={}, entities={}, redacted_text={}, warnings={}, "
-            "statistics={}, is_error={})".format(
-                self.id,
-                repr(self.entities),
-                self.redacted_text,
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[:1024]
+            f"RecognizePiiEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"redacted_text={self.redacted_text}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, detected_language={repr(self.detected_language)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
         )
 
 
@@ -490,18 +524,43 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar fhir_bundle: If `fhir_version` is passed, this will contain a
+        FHIR compatible object for consumption in other Healthcare tools. For additional
+        information see https://www.hl7.org/fhir/overview.html.
+    :vartype fhir_bundle: Optional[dict[str, any]]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the detected language for the document.
+    :vartype detected_language: Optional[str]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
+    :ivar str kind: The text analysis kind - "Healthcare".
+
+    .. versionadded:: 2022-10-01-preview
+        The *fhir_bundle* and *detected_language* properties.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.entity_relations = kwargs.get("entity_relations", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["HealthcareEntity"],
+        entity_relations: List["HealthcareRelation"],
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        fhir_bundle: Optional[Dict[str, Any]] = None,
+        detected_language: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.entity_relations = entity_relations
+        self.warnings = warnings
+        self.statistics = statistics
+        self.fhir_bundle = fhir_bundle
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["Healthcare"] = "Healthcare"
 
     @classmethod
     def _from_generated(cls, healthcare_result):
@@ -515,7 +574,9 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             )
             for r in healthcare_result.relations
         ]
-
+        fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
+        detected_language = healthcare_result.detected_language \
+            if hasattr(healthcare_result, "detected_language") else None
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -529,19 +590,19 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 healthcare_result.statistics
             ),
+            fhir_bundle=fhir_bundle,
+            detected_language=detected_language  # https://github.com/Azure/azure-sdk-for-python/issues/27171
+            # detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            #     healthcare_result.detected_language
+            # ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "
-            "statistics={}, is_error={})".format(
-                self.id,
-                repr(self.entities),
-                repr(self.entity_relations),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[:1024]
+            f"AnalyzeHealthcareEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"entity_relations={repr(self.entity_relations)}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, fhir_bundle={self.fhir_bundle}, "
+            f"detected_language={self.detected_language}, is_error={self.is_error}, kind={self.kind})"[:1024]
         )
 
 
@@ -558,11 +619,24 @@ class HealthcareRelation(DictMixin):
     :ivar roles: The roles present in this relation. I.e., in the document
         "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted relation.
+    :vartype confidence_score: Optional[float]
+
+    .. versionadded:: 2022-10-01-preview
+        The *confidence_score* property.
     """
 
-    def __init__(self, **kwargs):
-        self.relation_type = kwargs.get("relation_type")
-        self.roles = kwargs.get("roles")
+    def __init__(
+        self,
+        *,
+        relation_type: str,
+        roles: List["HealthcareRelationRole"],
+        confidence_score: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        self.relation_type = relation_type
+        self.roles = roles
+        self.confidence_score = confidence_score
 
     @classmethod
     def _from_generated(cls, healthcare_relation_result, entities):
@@ -572,16 +646,17 @@ class HealthcareRelation(DictMixin):
             )
             for r in healthcare_relation_result.entities
         ]
+        confidence_score = healthcare_relation_result.confidence_score \
+            if hasattr(healthcare_relation_result, "confidence_score") else None
         return cls(
             relation_type=healthcare_relation_result.relation_type,
             roles=roles,
+            confidence_score=confidence_score,
         )
 
-    def __repr__(self):
-        return "HealthcareRelation(relation_type={}, roles={})".format(
-            self.relation_type,
-            repr(self.roles),
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"HealthcareRelation(relation_type={self.relation_type}, roles={repr(self.roles)}, " \
+               f"confidence_score={self.confidence_score})"[:1024]
 
 
 class HealthcareRelationRole(DictMixin):
@@ -601,9 +676,9 @@ class HealthcareRelationRole(DictMixin):
     :vartype entity: ~azure.ai.textanalytics.HealthcareEntity
     """
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name")
-        self.entity = kwargs.get("entity")
+    def __init__(self, *, name: str, entity: "HealthcareEntity", **kwargs: Any) -> None:
+        self.name = name
+        self.entity = entity
 
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
@@ -620,10 +695,8 @@ class HealthcareRelationRole(DictMixin):
             entity=HealthcareRelationRole._get_entity(healthcare_role_result, entities),
         )
 
-    def __repr__(self):
-        return "HealthcareRelationRole(name={}, entity={})".format(
-            self.name, repr(self.entity)
-        )
+    def __repr__(self) -> str:
+        return f"HealthcareRelationRole(name={self.name}, entity={repr(self.entity)})"[:1024]
 
 
 class DetectLanguageResult(DictMixin):
@@ -642,28 +715,33 @@ class DetectLanguageResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a DetectLanguageResult.
+    :ivar str kind: The text analysis kind - "LanguageDetection".
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.primary_language = kwargs.get("primary_language", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        primary_language: DetectedLanguage,
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.primary_language = primary_language
+        self.warnings = warnings
+        self.statistics = statistics
+        self.is_error: Literal[False] = False
+        self.kind: Literal["LanguageDetection"] = "LanguageDetection"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, "
-            "is_error={})".format(
-                self.id,
-                repr(self.primary_language),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[:1024]
+            f"DetectLanguageResult(id={self.id}, primary_language={repr(self.primary_language)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, is_error={self.is_error}, "
+            f"kind={self.kind})"[:1024]
         )
 
 
@@ -676,7 +754,7 @@ class CategorizedEntity(DictMixin):
     :ivar category: Entity category, such as Person/Location/Org/SSN etc
     :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
-    :vartype subcategory: str
+    :vartype subcategory: Optional[str]
     :ivar int length: The entity text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints
         by default.
@@ -686,18 +764,58 @@ class CategorizedEntity(DictMixin):
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
+    :ivar resolutions: The collection of entity resolution objects. More information can be found here:
+        https://aka.ms/azsdk/language/ner-resolutions
+    :vartype resolutions: Optional[list[AgeResolution or AreaResolution or BooleanResolution or
+        CurrencyResolution or DateTimeResolution or InformationResolution or LengthResolution or
+        NumberResolution or NumericRangeResolution or OrdinalResolution or SpeedResolution or
+        TemperatureResolution or TemporalSpanResolution or VolumeResolution or WeightResolution]]
 
     .. versionadded:: v3.1
         The *offset* and *length* properties.
+    .. versionadded:: 2022-10-01-preview
+        The *resolutions* property.
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.category = kwargs.get("category", None)
-        self.subcategory = kwargs.get("subcategory", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
-        self.confidence_score = kwargs.get("confidence_score", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        length: int,
+        offset: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        resolutions: Optional[
+            List[
+                Union[
+                    AgeResolution,
+                    AreaResolution,
+                    BooleanResolution,
+                    CurrencyResolution,
+                    DateTimeResolution,
+                    InformationResolution,
+                    LengthResolution,
+                    NumberResolution,
+                    NumericRangeResolution,
+                    OrdinalResolution,
+                    SpeedResolution,
+                    TemperatureResolution,
+                    TemporalSpanResolution,
+                    VolumeResolution,
+                    WeightResolution,
+                ]
+            ]
+        ],
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.category = category
+        self.subcategory = subcategory
+        self.length = length
+        self.offset = offset
+        self.confidence_score = confidence_score
+        self.resolutions = resolutions
 
     @classmethod
     def _from_generated(cls, entity):
@@ -715,19 +833,14 @@ class CategorizedEntity(DictMixin):
             length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
+            resolutions=entity.resolutions if hasattr(entity, "resolutions") else None
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "CategorizedEntity(text={}, category={}, subcategory={}, "
-            "length={}, offset={}, confidence_score={})".format(
-                self.text,
-                self.category,
-                self.subcategory,
-                self.length,
-                self.offset,
-                self.confidence_score,
-            )[:1024]
+            f"CategorizedEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score}, "
+            f"resolutions={repr(self.resolutions)})"[:1024]
         )
 
 
@@ -738,7 +851,7 @@ class PiiEntity(DictMixin):
     :ivar str text: Entity text as appears in the request.
     :ivar str category: Entity category, such as Financial Account
         Identification/Social Security Number/Phone Number, etc.
-    :ivar str subcategory: Entity subcategory, such as Credit Card/EU
+    :ivar Optional[str] subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
     :ivar int length: The PII entity text length.  This value depends on the value
         of the `string_index_type` parameter specified in the original request, which
@@ -750,13 +863,23 @@ class PiiEntity(DictMixin):
         entity.
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.category = kwargs.get("category", None)
-        self.subcategory = kwargs.get("subcategory", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
-        self.confidence_score = kwargs.get("confidence_score", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        length: int,
+        offset: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.category = category
+        self.subcategory = subcategory
+        self.length = length
+        self.offset = offset
+        self.confidence_score = confidence_score
 
     @classmethod
     def _from_generated(cls, entity):
@@ -769,17 +892,10 @@ class PiiEntity(DictMixin):
             confidence_score=entity.confidence_score,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "PiiEntity(text={}, category={}, subcategory={}, length={}, "
-            "offset={}, confidence_score={})".format(
-                self.text,
-                self.category,
-                self.subcategory,
-                self.length,
-                self.offset,
-                self.confidence_score,
-            )[:1024]
+            f"PiiEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score})"[:1024]
         )
 
 
@@ -787,16 +903,16 @@ class HealthcareEntity(DictMixin):
     """HealthcareEntity contains information about a Healthcare entity found in text.
 
     :ivar str text: Entity text as appears in the document.
-    :ivar str normalized_text: Optional. Normalized version of the raw `text` we extract
+    :ivar Optional[str] normalized_text: Normalized version of the raw `text` we extract
         from the document. Not all `text` will have a normalized version.
     :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
         type for possible healthcare entity categories.
-    :ivar str subcategory: Entity subcategory.
+    :ivar Optional[str] subcategory: Entity subcategory.
     :ivar assertion: Contains various assertions about this entity. For example, if
         an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
         Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
         with another diagnosis?
-    :vartype assertion: ~azure.ai.textanalytics.HealthcareEntityAssertion
+    :vartype assertion: Optional[~azure.ai.textanalytics.HealthcareEntityAssertion]
     :ivar int length: The entity text length.  This value depends on the value
         of the `string_index_type` parameter specified in the original request, which is
         UnicodeCodePoints by default.
@@ -806,19 +922,32 @@ class HealthcareEntity(DictMixin):
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :ivar data_sources: A collection of entity references in known data sources.
-    :vartype data_sources: list[~azure.ai.textanalytics.HealthcareEntityDataSource]
+    :vartype data_sources: Optional[list[~azure.ai.textanalytics.HealthcareEntityDataSource]]
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.normalized_text = kwargs.get("normalized_text", None)
-        self.category = kwargs.get("category", None)
-        self.subcategory = kwargs.get("subcategory", None)
-        self.assertion = kwargs.get("assertion", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
-        self.confidence_score = kwargs.get("confidence_score", None)
-        self.data_sources = kwargs.get("data_sources", [])
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        length: int,
+        offset: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        assertion: Optional["HealthcareEntityAssertion"] = None,
+        normalized_text: Optional[str] = None,
+        data_sources: Optional[List["HealthcareEntityDataSource"]],
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.normalized_text = normalized_text
+        self.category = category
+        self.subcategory = subcategory
+        self.assertion = assertion
+        self.length = length
+        self.offset = offset
+        self.confidence_score = confidence_score
+        self.data_sources = data_sources
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -848,23 +977,15 @@ class HealthcareEntity(DictMixin):
             else None,
         )
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(repr(self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "HealthcareEntity(text={}, normalized_text={}, category={}, subcategory={}, assertion={}, length={}, "
-            "offset={}, confidence_score={}, data_sources={})".format(
-                self.text,
-                self.normalized_text,
-                self.category,
-                self.subcategory,
-                repr(self.assertion),
-                self.length,
-                self.offset,
-                self.confidence_score,
-                repr(self.data_sources),
-            )[:1024]
+            f"HealthcareEntity(text={self.text}, normalized_text={self.normalized_text}, "
+            f"category={self.category}, subcategory={self.subcategory}, assertion={repr(self.assertion)}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score}, "
+            f"data_sources={repr(self.data_sources)})"[:1024]
         )
 
 
@@ -875,24 +996,31 @@ class HealthcareEntityAssertion(DictMixin):
     Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
     with another diagnosis?
 
-    :ivar str conditionality: Describes whether the healthcare entity it's on is conditional on another entity.
-        For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
+    :ivar Optional[str] conditionality: Describes whether the healthcare entity it's on is conditional
+        on another entity. For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
         is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
         "conditional".
-    :ivar str certainty: Describes how certain the healthcare entity it's on is. For example,
+    :ivar Optional[str] certainty: Describes how certain the healthcare entity it's on is. For example,
         in "The patient may have a fever", the fever entity is not 100% certain, but is instead
         "positivePossible". Possible values are "positive", "positivePossible", "neutralPossible",
         "negativePossible", and "negative".
-    :ivar str association: Describes whether the healthcare entity it's on is the subject of the document, or
+    :ivar Optional[str] association: Describes whether the healthcare entity it's on is the subject of the document, or
         if this entity describes someone else in the document. For example, in "The subject's mother has
         a fever", the "fever" entity is not associated with the subject themselves, but with the subject's
         mother. Possible values are "subject" and "other".
     """
 
-    def __init__(self, **kwargs):
-        self.conditionality = kwargs.get("conditionality", None)
-        self.certainty = kwargs.get("certainty", None)
-        self.association = kwargs.get("association", None)
+    def __init__(
+        self,
+        *,
+        conditionality: Optional[str] = None,
+        certainty: Optional[str] = None,
+        association: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.conditionality = conditionality
+        self.certainty = certainty
+        self.association = association
 
     @classmethod
     def _from_generated(cls, healthcare_assertion):
@@ -902,10 +1030,9 @@ class HealthcareEntityAssertion(DictMixin):
             association=healthcare_assertion.association,
         )
 
-    def __repr__(self):
-        return "HealthcareEntityAssertion(conditionality={}, certainty={}, association={})".format(
-            self.conditionality, self.certainty, self.association
-        )
+    def __repr__(self) -> str:
+        return f"HealthcareEntityAssertion(conditionality={self.conditionality}, certainty={self.certainty}, " \
+               f"association={self.association})"[:1024]
 
 
 class HealthcareEntityDataSource(DictMixin):
@@ -916,14 +1043,14 @@ class HealthcareEntityDataSource(DictMixin):
     :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
-    def __init__(self, **kwargs):
-        self.entity_id = kwargs.get("entity_id", None)
-        self.name = kwargs.get("name", None)
+    def __init__(self, *, entity_id: str, name: str, **kwargs: Any) -> None:
+        self.entity_id = entity_id
+        self.name = name
 
-    def __repr__(self):
-        return "HealthcareEntityDataSource(entity_id={}, name={})".format(
-            self.entity_id, self.name
-        )[:1024]
+    def __repr__(self) -> str:
+        return (
+            f"HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
+        )
 
 
 class TextAnalyticsError(DictMixin):
@@ -940,13 +1067,15 @@ class TextAnalyticsError(DictMixin):
     :ivar message: Error message.
     :vartype message: str
     :ivar target: Error target.
-    :vartype target: str
+    :vartype target: Optional[str]
     """
 
-    def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.target = kwargs.get("target", None)
+    def __init__(
+        self, *, code: str, message: str, target: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        self.code = code
+        self.message = message
+        self.target = target
 
     @classmethod
     def _from_generated(cls, err):
@@ -958,10 +1087,8 @@ class TextAnalyticsError(DictMixin):
             )
         return cls(code=err.code, message=err.message, target=err.target)
 
-    def __repr__(self):
-        return "TextAnalyticsError(code={}, message={}, target={})".format(
-            self.code, self.message, self.target
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"TextAnalyticsError(code={self.code}, message={self.message}, target={self.target})"[:1024]
 
 
 class TextAnalyticsWarning(DictMixin):
@@ -975,9 +1102,9 @@ class TextAnalyticsWarning(DictMixin):
     :vartype message: str
     """
 
-    def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
+        self.code = code
+        self.message = message
 
     @classmethod
     def _from_generated(cls, warning):
@@ -986,10 +1113,8 @@ class TextAnalyticsWarning(DictMixin):
             message=warning.message,
         )
 
-    def __repr__(self):
-        return "TextAnalyticsWarning(code={}, message={})".format(
-            self.code, self.message
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"TextAnalyticsWarning(code={self.code}, message={self.message})"[:1024]
 
 
 class ExtractKeyPhrasesResult(DictMixin):
@@ -1010,28 +1135,42 @@ class ExtractKeyPhrasesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ExtractKeyPhrasesResult.
+    :ivar str kind: The text analysis kind - "KeyPhraseExtraction".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.key_phrases = kwargs.get("key_phrases", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        key_phrases: List[str],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.key_phrases = key_phrases
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
 
-    def __repr__(self):
-        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})".format(
-            self.id,
-            self.key_phrases,
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error,
-        )[
-            :1024
-        ]
+    def __repr__(self) -> str:
+        return (
+            f"ExtractKeyPhrasesResult(id={self.id}, key_phrases={self.key_phrases}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
@@ -1051,28 +1190,42 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeLinkedEntitiesResult.
+    :ivar str kind: The text analysis kind - "EntityLinking".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["LinkedEntity"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["EntityLinking"] = "EntityLinking"
 
-    def __repr__(self):
-        return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
-            self.id,
-            repr(self.entities),
-            repr(self.warnings),
-            repr(self.statistics),
-            self.is_error,
-        )[
-            :1024
-        ]
+    def __repr__(self) -> str:
+        return (
+            f"RecognizeLinkedEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -1094,7 +1247,7 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
-        ~azure.ai.textanalytics.TextDocumentStatistics
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
     :vartype confidence_scores:
@@ -1102,31 +1255,45 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar sentences: Sentence level sentiment analysis.
     :vartype sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeSentimentResult.
+    :ivar str kind: The text analysis kind - "SentimentAnalysis".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.sentiment = kwargs.get("sentiment", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.sentences = kwargs.get("sentences", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        sentences: List["SentenceSentiment"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.sentiment = sentiment
+        self.warnings = warnings
+        self.statistics = statistics
+        self.confidence_scores = confidence_scores
+        self.sentences = sentences
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, "
-            "sentences={}, is_error={})".format(
-                self.id,
-                self.sentiment,
-                repr(self.warnings),
-                repr(self.statistics),
-                repr(self.confidence_scores),
-                repr(self.sentences),
-                self.is_error,
-            )[:1024]
+            f"AnalyzeSentimentResult(id={self.id}, sentiment={self.sentiment}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, confidence_scores={repr(self.confidence_scores)}, "
+            f"sentences={repr(self.sentences)}, detected_language={repr(self.detected_language)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
         )
 
 
@@ -1141,9 +1308,9 @@ class TextDocumentStatistics(DictMixin):
     :vartype transaction_count: int
     """
 
-    def __init__(self, **kwargs):
-        self.character_count = kwargs.get("character_count", None)
-        self.transaction_count = kwargs.get("transaction_count", None)
+    def __init__(self, *, character_count: int, transaction_count: int, **kwargs: Any) -> None:
+        self.character_count = character_count
+        self.transaction_count = transaction_count
 
     @classmethod
     def _from_generated(cls, stats):
@@ -1154,12 +1321,9 @@ class TextDocumentStatistics(DictMixin):
             transaction_count=stats.transactions_count,
         )
 
-    def __repr__(self):
-        return (
-            "TextDocumentStatistics(character_count={}, transaction_count={})".format(
-                self.character_count, self.transaction_count
-            )[:1024]
-        )
+    def __repr__(self) -> str:
+        return f"TextDocumentStatistics(character_count={self.character_count}, " \
+               f"transaction_count={self.transaction_count})"[:1024]
 
 
 class DocumentError(DictMixin):
@@ -1174,27 +1338,34 @@ class DocumentError(DictMixin):
     :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always True for an instance of a DocumentError.
+    :ivar str kind: Error kind - "DocumentError".
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.error = kwargs.get("error", None)
-        self.is_error = True
+    def __init__(
+            self, *, id: str, error: TextAnalyticsError, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
+        self.id = id
+        self.error = error
+        self.is_error: Literal[True] = True
+        self.kind: Literal["DocumentError"] = "DocumentError"
 
-    def __getattr__(self, attr):
-        result_set = set()
-        result_set.update(
-            RecognizeEntitiesResult().keys()
-            + RecognizePiiEntitiesResult().keys()
-            + DetectLanguageResult().keys()
-            + RecognizeLinkedEntitiesResult().keys()
-            + AnalyzeSentimentResult().keys()
-            + ExtractKeyPhrasesResult().keys()
-            + AnalyzeHealthcareEntitiesResult().keys()
-            + RecognizeCustomEntitiesResult().keys()
-            + ClassifyDocumentResult().keys()
-        )
-        result_attrs = result_set.difference(DocumentError().keys())
+    def __getattr__(self, attr: str) -> Any:
+        result_attrs = [
+            'key_phrases',
+            'warnings',
+            'primary_language',
+            'sentences',
+            'statistics',
+            'fhir_bundle',
+            'redacted_text',
+            'sentiment',
+            'entities',
+            'entity_relations',
+            'classifications',
+            'detected_language',
+            'confidence_scores',
+            'summaries'
+        ]
         if attr in result_attrs:
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
@@ -1213,13 +1384,11 @@ class DocumentError(DictMixin):
             error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
                 doc_err.error
             ),
-            is_error=True,
         )
 
-    def __repr__(self):
-        return "DocumentError(id={}, error={}, is_error={})".format(
-            self.id, repr(self.error), self.is_error
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"DocumentError(id={self.id}, error={repr(self.error)}, " \
+               f"is_error={self.is_error}, kind={self.kind})"[:1024]
 
 
 class DetectLanguageInput(LanguageInput):
@@ -1227,7 +1396,7 @@ class DetectLanguageInput(LanguageInput):
 
     :keyword str id: Required. Unique, non-empty document identifier.
     :keyword str text: Required. The input text to process.
-    :keyword str country_hint: A country hint to help better detect
+    :keyword Optional[str] country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
      in the string "none" to not use a country_hint.
@@ -1239,19 +1408,24 @@ class DetectLanguageInput(LanguageInput):
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
      in the string "none" to not use a country_hint.
-    :vartype country_hint: str
+    :vartype country_hint: Optional[str]
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.country_hint = kwargs.get("country_hint", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        country_hint: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(id=id, text=text, country_hint=country_hint)
+        self.id = id
+        self.text = text
+        self.country_hint = country_hint
 
-    def __repr__(self):
-        return "DetectLanguageInput(id={}, text={}, country_hint={})".format(
-            self.id, self.text, self.country_hint
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"DetectLanguageInput(id={self.id}, text={self.text}, country_hint={self.country_hint})"[:1024]
 
 
 class LinkedEntity(DictMixin):
@@ -1269,27 +1443,38 @@ class LinkedEntity(DictMixin):
     :vartype language: str
     :ivar data_source_entity_id: Unique identifier of the recognized entity from the data
         source.
-    :vartype data_source_entity_id: str
+    :vartype data_source_entity_id: Optional[str]
     :ivar url: URL to the entity's page from the data source.
     :vartype url: str
     :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
     :vartype data_source: str
-    :ivar str bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
+    :ivar Optional[str] bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
         Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
 
     .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.matches = kwargs.get("matches", None)
-        self.language = kwargs.get("language", None)
-        self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
-        self.url = kwargs.get("url", None)
-        self.data_source = kwargs.get("data_source", None)
-        self.bing_entity_search_api_id = kwargs.get("bing_entity_search_api_id", None)
+    def __init__(
+        self,
+        *,
+        name: str,
+        matches: List["LinkedEntityMatch"],
+        language: str,
+        url: str,
+        data_source: str,
+        data_source_entity_id: Optional[str] = None,
+        bing_entity_search_api_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.name = name
+        self.matches = matches
+        self.language = language
+        self.data_source_entity_id = data_source_entity_id
+        self.url = url
+        self.data_source = data_source
+        self.bing_entity_search_api_id = bing_entity_search_api_id
 
     @classmethod
     def _from_generated(cls, entity):
@@ -1309,18 +1494,11 @@ class LinkedEntity(DictMixin):
             bing_entity_search_api_id=bing_entity_search_api_id,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "LinkedEntity(name={}, matches={}, language={}, data_source_entity_id={}, url={}, "
-            "data_source={}, bing_entity_search_api_id={})".format(
-                self.name,
-                repr(self.matches),
-                self.language,
-                self.data_source_entity_id,
-                self.url,
-                self.data_source,
-                self.bing_entity_search_api_id,
-            )[:1024]
+            f"LinkedEntity(name={self.name}, matches={repr(self.matches)}, language={self.language}, "
+            f"data_source_entity_id={self.data_source_entity_id}, url={self.url}, "
+            f"data_source={self.data_source}, bing_entity_search_api_id={self.bing_entity_search_api_id})"[:1024]
         )
 
 
@@ -1333,23 +1511,24 @@ class LinkedEntityMatch(DictMixin):
         decimal number denoting the confidence level between 0 and 1 will be
         returned.
     :vartype confidence_score: float
-    :ivar text: Entity text as appears in the request.
+    :ivar str text: Entity text as appears in the request.
     :ivar int length: The linked entity match text length.  This value depends on the value of the
         `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
     :ivar int offset: The linked entity match text offset from the start of the document.
         The value depends on the value of the `string_index_type` parameter
         set in the original request, which is UnicodeCodePoints by default.
-    :vartype text: str
 
     .. versionadded:: v3.1
         The *offset* and *length* properties.
     """
 
-    def __init__(self, **kwargs):
-        self.confidence_score = kwargs.get("confidence_score", None)
-        self.text = kwargs.get("text", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
+    def __init__(
+        self, *, confidence_score: float, text: str, length: int, offset: int, **kwargs: Any
+    ) -> None:
+        self.confidence_score = confidence_score
+        self.text = text
+        self.length = length
+        self.offset = offset
 
     @classmethod
     def _from_generated(cls, match):
@@ -1367,12 +1546,9 @@ class LinkedEntityMatch(DictMixin):
             offset=offset,
         )
 
-    def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={}, length={}, offset={})".format(
-            self.confidence_score, self.text, self.length, self.offset
-        )[
-            :1024
-        ]
+    def __repr__(self) -> str:
+        return f"LinkedEntityMatch(confidence_score={self.confidence_score}, text={self.text}, " \
+               f"length={self.length}, offset={self.offset})"[:1024]
 
 
 class TextDocumentInput(DictMixin, MultiLanguageInput):
@@ -1381,28 +1557,40 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :keyword str id: Required. Unique, non-empty document identifier.
     :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
-     of a language. For example, use "en" for English; "es" for Spanish etc. If
+     of a language. For example, use "en" for English; "es" for Spanish etc.
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
      not set, uses "en" for English as default.
     :ivar id: Required. Unique, non-empty document identifier.
     :vartype id: str
     :ivar text: Required. The input text to process.
     :vartype text: str
     :ivar language: This is the 2 letter ISO 639-1 representation
-     of a language. For example, use "en" for English; "es" for Spanish etc. If
+     of a language. For example, use "en" for English; "es" for Spanish etc.
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
      not set, uses "en" for English as default.
-    :vartype language: str
+    :vartype language: Optional[str]
+
+    .. versionadded:: 2022-10-01-preview
+        The 'auto' option for language.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.language = kwargs.get("language", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        language: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(id=id, text=text, language=language)
+        self.id = id
+        self.text = text
+        self.language = language
 
-    def __repr__(self):
-        return "TextDocumentInput(id={}, text={}, language={})".format(
-            self.id, self.text, self.language
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"TextDocumentInput(id={self.id}, text={self.text}, language={self.language})"[:1024]
 
 
 class TextDocumentBatchStatistics(DictMixin):
@@ -1422,11 +1610,19 @@ class TextDocumentBatchStatistics(DictMixin):
     :vartype transaction_count: int
     """
 
-    def __init__(self, **kwargs):
-        self.document_count = kwargs.get("document_count", None)
-        self.valid_document_count = kwargs.get("valid_document_count", None)
-        self.erroneous_document_count = kwargs.get("erroneous_document_count", None)
-        self.transaction_count = kwargs.get("transaction_count", None)
+    def __init__(
+        self,
+        *,
+        document_count: int,
+        valid_document_count: int,
+        erroneous_document_count: int,
+        transaction_count: int,
+        **kwargs: Any
+    ) -> None:
+        self.document_count = document_count
+        self.valid_document_count = valid_document_count
+        self.erroneous_document_count = erroneous_document_count
+        self.transaction_count = transaction_count
 
     @classmethod
     def _from_generated(cls, statistics):
@@ -1439,15 +1635,12 @@ class TextDocumentBatchStatistics(DictMixin):
             transaction_count=statistics["transactionsCount"],
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "TextDocumentBatchStatistics(document_count={}, valid_document_count={}, erroneous_document_count={}, "
-            "transaction_count={})".format(
-                self.document_count,
-                self.valid_document_count,
-                self.erroneous_document_count,
-                self.transaction_count,
-            )[:1024]
+            f"TextDocumentBatchStatistics(document_count={self.document_count}, "
+            f"valid_document_count={self.valid_document_count}, "
+            f"erroneous_document_count={self.erroneous_document_count}, "
+            f"transaction_count={self.transaction_count})"[:1024]
         )
 
 
@@ -1476,19 +1669,29 @@ class SentenceSentiment(DictMixin):
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
         api version is v3.1 and up.
     :vartype mined_opinions:
-        list[~azure.ai.textanalytics.MinedOpinion]
+        Optional[list[~azure.ai.textanalytics.MinedOpinion]]
 
     .. versionadded:: v3.1
         The *offset*, *length*, and *mined_opinions* properties.
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.sentiment = kwargs.get("sentiment", None)
-        self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
-        self.mined_opinions = kwargs.get("mined_opinions", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+        mined_opinions: Optional[List["MinedOpinion"]] = None,
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.sentiment = sentiment
+        self.confidence_scores = confidence_scores
+        self.length = length
+        self.offset = offset
+        self.mined_opinions = mined_opinions
 
     @classmethod
     def _from_generated(cls, sentence, results, sentiment):
@@ -1523,17 +1726,11 @@ class SentenceSentiment(DictMixin):
             mined_opinions=mined_opinions,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "
-            "length={}, offset={}, mined_opinions={})".format(
-                self.text,
-                self.sentiment,
-                repr(self.confidence_scores),
-                self.length,
-                self.offset,
-                repr(self.mined_opinions),
-            )[:1024]
+            f"SentenceSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, length={self.length}, "
+            f"offset={self.offset}, mined_opinions={repr(self.mined_opinions)})"[:1024]
         )
 
 
@@ -1548,9 +1745,11 @@ class MinedOpinion(DictMixin):
     :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment]
     """
 
-    def __init__(self, **kwargs):
-        self.target = kwargs.get("target", None)
-        self.assessments = kwargs.get("assessments", None)
+    def __init__(
+        self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"], **kwargs: Any
+    ) -> None:
+        self.target = target
+        self.assessments = assessments
 
     @staticmethod
     def _get_assessments(
@@ -1587,10 +1786,8 @@ class MinedOpinion(DictMixin):
             ],
         )
 
-    def __repr__(self):
-        return "MinedOpinion(target={}, assessments={})".format(
-            repr(self.target), repr(self.assessments)
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"MinedOpinion(target={repr(self.target)}, assessments={repr(self.assessments)})"[:1024]
 
 
 class TargetSentiment(DictMixin):
@@ -1615,12 +1812,21 @@ class TargetSentiment(DictMixin):
         set in the original request, which is UnicodeCodePoints by default.
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.sentiment = kwargs.get("sentiment", None)
-        self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.sentiment = sentiment
+        self.confidence_scores = confidence_scores
+        self.length = length
+        self.offset = offset
 
     @classmethod
     def _from_generated(cls, target):
@@ -1634,16 +1840,11 @@ class TargetSentiment(DictMixin):
             offset=target.offset,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "TargetSentiment(text={}, sentiment={}, confidence_scores={}, "
-            "length={}, offset={})".format(
-                self.text,
-                self.sentiment,
-                repr(self.confidence_scores),
-                self.length,
-                self.offset,
-            )[:1024]
+            f"TargetSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, "
+            f"length={self.length}, offset={self.offset})"[:1024]
         )
 
 
@@ -1671,13 +1872,23 @@ class AssessmentSentiment(DictMixin):
         "The food is not good", the assessment "good" is negated.
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.sentiment = kwargs.get("sentiment", None)
-        self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.length = kwargs.get("length", None)
-        self.offset = kwargs.get("offset", None)
-        self.is_negated = kwargs.get("is_negated", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+        is_negated: bool,
+        **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.sentiment = sentiment
+        self.confidence_scores = confidence_scores
+        self.length = length
+        self.offset = offset
+        self.is_negated = is_negated
 
     @classmethod
     def _from_generated(cls, assessment):
@@ -1692,17 +1903,11 @@ class AssessmentSentiment(DictMixin):
             is_negated=assessment.is_negated,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "AssessmentSentiment(text={}, sentiment={}, confidence_scores={}, length={}, offset={}, "
-            "is_negated={})".format(
-                self.text,
-                self.sentiment,
-                repr(self.confidence_scores),
-                self.length,
-                self.offset,
-                self.is_negated,
-            )[:1024]
+            f"AssessmentSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, length={self.length}, "
+            f"offset={self.offset}, is_negated={self.is_negated})"[:1024]
         )
 
 
@@ -1718,10 +1923,10 @@ class SentimentConfidenceScores(DictMixin):
     :vartype negative: float
     """
 
-    def __init__(self, **kwargs):
-        self.positive = kwargs.get("positive", 0.0)
-        self.neutral = kwargs.get("neutral", 0.0)
-        self.negative = kwargs.get("negative", 0.0)
+    def __init__(self, *, positive: float, neutral: float, negative: float, **kwargs: Any) -> None:
+        self.positive = positive
+        self.neutral = neutral
+        self.negative = negative
 
     @classmethod
     def _from_generated(cls, score):
@@ -1731,10 +1936,9 @@ class SentimentConfidenceScores(DictMixin):
             negative=score.negative,
         )
 
-    def __repr__(self):
-        return "SentimentConfidenceScores(positive={}, neutral={}, negative={})".format(
-            self.positive, self.neutral, self.negative
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"SentimentConfidenceScores(positive={self.positive}, " \
+               f"neutral={self.neutral}, negative={self.negative})"[:1024]
 
 
 class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1753,12 +1957,14 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE_LABEL_CLASSIFY = "single_label_classify"
     MULTI_LABEL_CLASSIFY = "multi_label_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
+    EXTRACT_SUMMARY = "extract_summary"
+    ABSTRACT_SUMMARY = "abstract_summary"
 
 
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """v3.1 only"""
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
-    RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
+    RECOGNIZE_PII_ENTITIES = "piiEntityRecognitionTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
     RECOGNIZE_LINKED_ENTITIES = "entityLinkingTasks"
     ANALYZE_SENTIMENT = "sentimentAnalysisTasks"
@@ -1771,12 +1977,12 @@ class RecognizeEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_entities` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -1784,12 +1990,12 @@ class RecognizeEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -1799,23 +2005,28 @@ class RecognizeEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self, **kwargs):
-        return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
-            self.model_version, self.string_index_type, self.disable_service_logs
-        )[
-            :1024
-        ]
+    def __repr__(self) -> str:
+        return f"RecognizeEntitiesAction(model_version={self.model_version}, " \
+               f"string_index_type={self.string_index_type}, " \
+               f"disable_service_logs={self.disable_service_logs})"[:1024]
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.EntitiesLROTask(
+            return _v2022_10_01_preview_models.EntitiesLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.EntitiesTaskParameters(
+                parameters=_v2022_10_01_preview_models.EntitiesTaskParameters(
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
@@ -1840,17 +2051,17 @@ class AnalyzeSentimentAction(DictMixin):
     long running actions on the input of documents, call method `analyze_sentiment` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[bool] show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
         granular analysis around the aspects of a product or service (also known as
         aspect-based sentiment analysis). If set to true, the returned
         :class:`~azure.ai.textanalytics.SentenceSentiment` objects
         will have property `mined_opinions` containing the result of this analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -1858,17 +2069,17 @@ class AnalyzeSentimentAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[bool] show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
         granular analysis around the aspects of a product or service (also known as
         aspect-based sentiment analysis). If set to true, the returned
         :class:`~azure.ai.textanalytics.SentenceSentiment` objects
         will have property `mined_opinions` containing the result of this analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -1878,28 +2089,33 @@ class AnalyzeSentimentAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.show_opinion_mining = kwargs.get("show_opinion_mining", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        show_opinion_mining: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.show_opinion_mining = show_opinion_mining
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self, **kwargs):
+    def __repr__(self) -> str:
         return (
-            "AnalyzeSentimentAction(model_version={}, show_opinion_mining={}, string_index_type={}, "
-            "disable_service_logs={}".format(
-                self.model_version,
-                self.show_opinion_mining,
-                self.string_index_type,
-                self.disable_service_logs,
-            )[:1024]
+            f"AnalyzeSentimentAction(model_version={self.model_version}, "
+            f"show_opinion_mining={self.show_opinion_mining}, "
+            f"string_index_type={self.string_index_type}, "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.SentimentAnalysisLROTask(
+            return _v2022_10_01_preview_models.SentimentAnalysisLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.SentimentAnalysisTaskParameters(
+                parameters=_v2022_10_01_preview_models.SentimentAnalysisTaskParameters(
                     model_version=self.model_version,
                     opinion_mining=self.show_opinion_mining,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
@@ -1919,44 +2135,44 @@ class AnalyzeSentimentAction(DictMixin):
 
 class RecognizePiiEntitiesAction(DictMixin):
     """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
-    Entities Recognition operation.
+    Entities Recognition operation. See more information in the service docs: https://aka.ms/azsdk/language/pii
 
     If you just want to recognize pii entities in a list of documents, and not perform multiple
     long running actions on the input of documents, call method `recognize_pii_entities` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str domain_filter: An optional string to set the PII domain to include only a
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
     :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :paramtype categories_filter: Optional[list[str or ~azure.ai.textanalytics.PiiEntityCategory]]
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+    :keyword Optional[bool] disable_service_logs: Defaults to true, meaning that the Language service will not log your
         input text on the service side for troubleshooting. If set to False, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str domain_filter: An optional string to set the PII domain to include only a
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] domain_filter: An optional string to set the PII domain to include only a
         subset of the PII entity categories. Possible values include 'phi' or None.
     :ivar categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :vartype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :vartype categories_filter: Optional[list[str or ~azure.ai.textanalytics.PiiEntityCategory]]
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: Defaults to true, meaning that the Language service will not log your
+    :ivar Optional[bool] disable_service_logs: Defaults to true, meaning that the Language service will not log your
         input text on the service side for troubleshooting. If set to False, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Please see
@@ -1965,30 +2181,35 @@ class RecognizePiiEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.domain_filter = kwargs.get("domain_filter", None)
-        self.categories_filter = kwargs.get("categories_filter", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
+        domain_filter: Optional[str] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.domain_filter = domain_filter
+        self.categories_filter = categories_filter
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self, **kwargs):
+    def __repr__(self) -> str:
         return (
-            "RecognizePiiEntitiesAction(model_version={}, domain_filter={}, categories_filter={}, "
-            "string_index_type={}, disable_service_logs={}".format(
-                self.model_version,
-                self.domain_filter,
-                self.categories_filter,
-                self.string_index_type,
-                self.disable_service_logs,
-            )[:1024]
+            f"RecognizePiiEntitiesAction(model_version={self.model_version}, "
+            f"domain_filter={self.domain_filter}, categories_filter={self.categories_filter}, "
+            f"string_index_type={self.string_index_type}, "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.PiiLROTask(
+            return _v2022_10_01_preview_models.PiiLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.PiiTaskParameters(
+                parameters=_v2022_10_01_preview_models.PiiTaskParameters(
                     model_version=self.model_version,
                     domain=self.domain_filter,
                     pii_categories=self.categories_filter,
@@ -2017,8 +2238,8 @@ class ExtractKeyPhrasesAction(DictMixin):
     long running actions on the input of documents, call method `extract_key_phrases` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2026,8 +2247,8 @@ class ExtractKeyPhrasesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2037,22 +2258,25 @@ class ExtractKeyPhrasesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self, **kwargs):
-        return (
-            "ExtractKeyPhrasesAction(model_version={}, disable_service_logs={})".format(
-                self.model_version, self.disable_service_logs
-            )[:1024]
-        )
+    def __repr__(self) -> str:
+        return f"ExtractKeyPhrasesAction(model_version={self.model_version}, " \
+               f"disable_service_logs={self.disable_service_logs})"[:1024]
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.KeyPhraseLROTask(
+            return _v2022_10_01_preview_models.KeyPhraseLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.KeyPhraseTaskParameters(
+                parameters=_v2022_10_01_preview_models.KeyPhraseTaskParameters(
                     model_version=self.model_version,
                     logging_opt_out=self.disable_service_logs,
                 )
@@ -2075,12 +2299,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `recognize_linked_entities` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2088,12 +2312,12 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2103,24 +2327,30 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self, **kwargs):
+    def __repr__(self) -> str:
         return (
-            "RecognizeLinkedEntitiesAction(model_version={}, string_index_type={}), "
-            "disable_service_logs={}".format(
-                self.model_version, self.string_index_type, self.disable_service_logs
-            )[:1024]
+            f"RecognizeLinkedEntitiesAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}), "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
-            return _v2022_05_01_models.EntityLinkingLROTask(
+            return _v2022_10_01_preview_models.EntityLinkingLROTask(
                 task_name=task_id,
-                parameters=_v2022_05_01_models.EntityLinkingTaskParameters(
+                parameters=_v2022_10_01_preview_models.EntityLinkingTaskParameters(
                     model_version=self.model_version,
                     string_index_type=string_index_type_compatibility(self.string_index_type),
                     logging_opt_out=self.disable_service_logs,
@@ -2144,11 +2374,11 @@ class RecognizeCustomEntitiesAction(DictMixin):
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: This field indicates the deployment name for the model.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2158,11 +2388,11 @@ class RecognizeCustomEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     :ivar str project_name: This field indicates the project name for the model.
     :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2170,32 +2400,36 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *RecognizeCustomEntitiesAction* model.
     """
 
     def __init__(
         self,
         project_name: str,
         deployment_name: str,
-        **kwargs
+        *,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = kwargs.get('disable_service_logs', None)
-        self.string_index_type = kwargs.get('string_index_type', "UnicodeCodePoint")
+        self.disable_service_logs = disable_service_logs
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
 
-    def __repr__(self):
-        return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \
-               "string_index_type={})".format(
-            self.project_name,
-            self.deployment_name,
-            self.disable_service_logs,
-            self.string_index_type,
-        )[:1024]
+    def __repr__(self) -> str:
+        return (
+            f"RecognizeCustomEntitiesAction(project_name={self.project_name}, "
+            f"deployment_name={self.deployment_name}, disable_service_logs={self.disable_service_logs}, "
+            f"string_index_type={self.string_index_type})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomEntitiesLROTask(
+        return _v2022_10_01_preview_models.CustomEntitiesLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomEntitiesTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomEntitiesTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
@@ -2218,28 +2452,43 @@ class RecognizeCustomEntitiesResult(DictMixin):
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeCustomEntitiesResult.
+    :ivar str kind: The text analysis kind - "CustomEntityRecognition".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.entities = kwargs.get("entities", None)
-        self.warnings = kwargs.get("warnings", [])
-        self.statistics = kwargs.get("statistics", None)
-        self.is_error = False
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List[CategorizedEntity],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
 
-    def __repr__(self):
-        return "RecognizeCustomEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})".format(
-                self.id,
-                repr(self.entities),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[
-                :1024
-            ]
+    def __repr__(self) -> str:
+        return (
+            f"RecognizeCustomEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error},"
+            f" kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):
@@ -2258,6 +2507,9 @@ class RecognizeCustomEntitiesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 result.statistics
             ),
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                result.detected_language
+            ) if hasattr(result, "detected_language") and result.detected_language else None
         )
 
 
@@ -2268,7 +2520,7 @@ class MultiLabelClassifyAction(DictMixin):
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2278,7 +2530,7 @@ class MultiLabelClassifyAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     :ivar str project_name: This field indicates the project name for the model.
     :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2286,30 +2538,33 @@ class MultiLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *MultiLabelClassifyAction* model.
     """
 
     def __init__(
         self,
         project_name: str,
         deployment_name: str,
-        **kwargs
+        *,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self):
-        return "MultiLabelClassifyAction(project_name={}, deployment_name={}, " \
-               "disable_service_logs={})".format(
-            self.project_name,
-            self.deployment_name,
-            self.disable_service_logs,
-        )[:1024]
+    def __repr__(self) -> str:
+        return (
+            f"MultiLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomMultiLabelClassificationLROTask(
+        return _v2022_10_01_preview_models.CustomMultiLabelClassificationLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomMultiLabelClassificationTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomMultiLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
@@ -2328,32 +2583,43 @@ class ClassifyDocumentResult(DictMixin):
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.TextDocumentStatistics
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a MultiCategoryClassifyResult.
+        results. Always False for an instance of a ClassifyDocumentResult.
+    :ivar str kind: The text analysis kind - "CustomDocumentClassification".
+
+    .. versionadded:: 2022-10-01-preview
+        The *detected_language* property.
     """
 
     def __init__(
         self,
-        **kwargs
-    ):
-        self.id = kwargs.get('id', None)
-        self.classifications = kwargs.get('classifications', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error = False
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        classifications: List["ClassificationCategory"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.classifications = classifications
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
-    def __repr__(self):
-        return "ClassifyDocumentResult(id={}, classifications={}, warnings={}, statistics={}, " \
-               "is_error={})".format(
-                self.id,
-                repr(self.classifications),
-                repr(self.warnings),
-                repr(self.statistics),
-                self.is_error,
-            )[
-                :1024
-            ]
+    def __repr__(self) -> str:
+        return (
+            f"ClassifyDocumentResult(id={self.id}, classifications={repr(self.classifications)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)} "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):
@@ -2372,6 +2638,9 @@ class ClassifyDocumentResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 result.statistics
             ),
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                result.detected_language
+            ) if hasattr(result, "detected_language") and result.detected_language else None
         )
 
 
@@ -2382,7 +2651,7 @@ class SingleLabelClassifyAction(DictMixin):
 
     :param str project_name: Required. This field indicates the project name for the model.
     :param str deployment_name: Required. This field indicates the deployment name for the model.
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2392,7 +2661,7 @@ class SingleLabelClassifyAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     :ivar str project_name: This field indicates the project name for the model.
     :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2400,30 +2669,33 @@ class SingleLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-05-01
+        The *SingleLabelClassifyAction* model.
     """
 
     def __init__(
         self,
         project_name: str,
         deployment_name: str,
-        **kwargs
+        *,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+        self.disable_service_logs = disable_service_logs
 
-    def __repr__(self):
-        return "SingleLabelClassifyAction(project_name={}, deployment_name={}, " \
-               "disable_service_logs={})".format(
-            self.project_name,
-            self.deployment_name,
-            self.disable_service_logs,
-        )[:1024]
+    def __repr__(self) -> str:
+        return (
+            f"SingleLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.CustomSingleLabelClassificationLROTask(
+        return _v2022_10_01_preview_models.CustomSingleLabelClassificationLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.CustomSingleLabelClassificationTaskParameters(
+            parameters=_v2022_10_01_preview_models.CustomSingleLabelClassificationTaskParameters(
                 project_name=self.project_name,
                 deployment_name=self.deployment_name,
                 logging_opt_out=self.disable_service_logs,
@@ -2434,22 +2706,17 @@ class SingleLabelClassifyAction(DictMixin):
 class ClassificationCategory(DictMixin):
     """ClassificationCategory represents a classification of the input document.
 
-    :ivar str category: Custom classification category for the document.
+    :ivar str category: Classification category for the document.
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        self.category = kwargs.get('category', None)
-        self.confidence_score = kwargs.get('confidence_score', None)
+    def __init__(self, *, category: str, confidence_score: float, **kwargs: Any) -> None:
+        self.category = category
+        self.confidence_score = confidence_score
 
-    def __repr__(self):
-        return "ClassificationCategory(category={}, confidence_score={})".format(
-            self.category,
-            self.confidence_score,
-        )[:1024]
+    def __repr__(self) -> str:
+        return f"ClassificationCategory(category={self.category}, " \
+               f"confidence_score={self.confidence_score})"[:1024]
 
     @classmethod
     def _from_generated(cls, result):
@@ -2467,12 +2734,12 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     long running actions on the input of documents, call method `begin_analyze_healthcare_entities` instead
     of interfacing with this model.
 
-    :keyword str model_version: The model version to use for the analysis.
-    :keyword str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2480,12 +2747,20 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: Specifies the method used to interpret string offsets.
+    :keyword Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
+        have fhir_version provided when used. Behavior of using None enum is the same as not using the
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+    :paramtype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
-    :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
@@ -2493,28 +2768,519 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    :ivar document_type: Document type that can be provided as input for Fhir Documents. Expect to
+        have fhir_version provided when used. Behavior of using None enum is the same as not using the
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+    :vartype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
+
+    .. versionadded:: 2022-05-01
+        The *AnalyzeHealthcareEntitiesAction* model.
+    .. versionadded:: 2022-10-01-preview
+        The *fhir_version* and *document_type* keyword arguments.
     """
 
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        fhir_version: Optional[str] = None,
+        document_type: Optional[Union[str, HealthcareDocumentType]] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
+        self.fhir_version = fhir_version
+        self.document_type = document_type
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
-            "AnalyzeHealthcareEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
-                self.model_version,
-                self.string_index_type,
-                self.disable_service_logs,
-            )[:1024]
+            f"AnalyzeHealthcareEntitiesAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"fhir_version={self.fhir_version}, document_type={self.document_type})"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v2022_05_01_models.HealthcareLROTask(
+        return _v2022_10_01_preview_models.HealthcareLROTask(
             task_name=task_id,
-            parameters=_v2022_05_01_models.HealthcareTaskParameters(
+            parameters=_v2022_10_01_preview_models.HealthcareTaskParameters(
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
+                fhir_version=self.fhir_version,
+                document_type=self.document_type,
             )
+        )
+
+
+class ExtractSummaryAction(DictMixin):
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
+    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
+    https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
+
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+    :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[int] max_sentence_count: Number of sentences to return. Defaults to 3.
+    :ivar Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+
+    .. versionadded:: 2022-10-01-preview
+        The *ExtractSummaryAction* model.
+    """
+
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        max_sentence_count: Optional[int] = None,
+        order_by: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        self.model_version = model_version
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
+        self.max_sentence_count = max_sentence_count
+        self.order_by = order_by
+
+    def __repr__(self) -> str:
+        return (
+            f"ExtractSummaryAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"max_sentence_count={self.max_sentence_count}, order_by={self.order_by})"[:1024]
+        )
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_10_01_preview_models.ExtractiveSummarizationLROTask(  # pylint: disable=no-member
+            task_name=task_id,
+            parameters=_v2022_10_01_preview_models.ExtractiveSummarizationTaskParameters(  # pylint: disable=no-member
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+                sentence_count=self.max_sentence_count,
+                sort_by=self.order_by,
+            )
+        )
+
+
+class ExtractSummaryResult(DictMixin):
+    """ExtractSummaryResult is a result object which contains
+    the extractive text summarization from a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar sentences: A ranked list of sentences representing the extracted summary.
+    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult.
+    :ivar str kind: The text analysis kind - "ExtractiveSummarization".
+
+    .. versionadded:: 2022-10-01-preview
+        The *ExtractSummaryResult* model.
+    """
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        sentences: List["SummarySentence"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.sentences = sentences
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
+        self.is_error: Literal[False] = False
+        self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
+
+    def __repr__(self) -> str:
+        return (
+            f"ExtractSummaryResult(id={self.id}, sentences={repr(self.sentences)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)},"
+            f" is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, summary):
+        return cls(
+            id=summary.id,
+            sentences=[
+                SummarySentence._from_generated(  # pylint: disable=protected-access
+                    sentence
+                )
+                for sentence in summary.sentences
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in summary.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                summary.statistics
+            ),
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                summary.detected_language
+            ) if hasattr(summary, "detected_language") and summary.detected_language else None
+        )
+
+
+class SummarySentence(DictMixin):
+    """Represents a single sentence from the extractive text summarization.
+
+    :ivar str text: The extracted sentence text.
+    :ivar float rank_score: A float value representing the relevance of the sentence within
+        the summary. Higher values indicate higher importance.
+    :ivar int offset: The sentence offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoint by default.
+    :ivar int length: The length of the sentence. This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
+        by default.
+
+    .. versionadded:: 2022-10-01-preview
+        The *SummarySentence* model.
+    """
+
+    def __init__(
+        self, *, text: str, rank_score: float, offset: int, length: int, **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.rank_score = rank_score
+        self.offset = offset
+        self.length = length
+
+    def __repr__(self) -> str:
+        return f"SummarySentence(text={self.text}, rank_score={self.rank_score}, " \
+               f"offset={self.offset}, length={self.length})"[:1024]
+
+    @classmethod
+    def _from_generated(cls, sentence):
+        return cls(
+            text=sentence.text,
+            rank_score=sentence.rank_score,
+            offset=sentence.offset,
+            length=sentence.length,
+        )
+
+
+class AbstractSummaryResult(DictMixin):
+    """AbstractSummaryResult is a result object which contains
+    the summary generated for a particular document.
+
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics:
+        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar summaries: A list of abstractive summaries. Required.
+    :vartype summaries: list[~azure.ai.textanalytics.AbstractiveSummary]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AbstractSummaryResult.
+    :ivar str kind: The text analysis kind - "AbstractiveSummarization".
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractSummaryResult* model.
+    """
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        summaries: List["AbstractiveSummary"],
+        warnings: List[TextAnalyticsWarning],
+        detected_language: Optional[DetectedLanguage] = None,
+        statistics: Optional[TextDocumentStatistics] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.detected_language = detected_language
+        self.warnings = warnings
+        self.statistics = statistics
+        self.summaries = summaries
+        self.is_error: Literal[False] = False
+        self.kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
+
+    def __repr__(self) -> str:
+        return (
+            f"AbstractSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"summaries={repr(self.summaries)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                result.detected_language
+            ) if hasattr(result, "detected_language") and result.detected_language else None,
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
+            summaries=[
+                AbstractiveSummary._from_generated(summary)  # pylint: disable=protected-access
+                for summary in result.summaries
+            ],
+        )
+
+
+class AbstractiveSummary(DictMixin):
+    """An object representing a single summary with context for given document.
+
+    :ivar text: The text of the summary. Required.
+    :vartype text: str
+    :ivar contexts: The context list of the summary.
+    :vartype contexts: Optional[list[~azure.ai.textanalytics.SummaryContext]]
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractiveSummary* model.
+    """
+
+    def __init__(
+        self, *, text: str, contexts: Optional[List["SummaryContext"]] = None, **kwargs: Any
+    ) -> None:
+        self.text = text
+        self.contexts = contexts
+
+    def __repr__(self) -> str:
+        return f"AbstractiveSummary(text={self.text}, contexts={repr(self.contexts)})"[:1024]
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            text=result.text,
+            contexts=[
+                SummaryContext._from_generated(context)  # pylint: disable=protected-access
+                for context in result.contexts
+            ] if result.contexts else None
+        )
+
+
+class SummaryContext(DictMixin):
+    """The context of the summary.
+
+    :ivar offset: Start position for the context. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: The length of the context. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+
+    .. versionadded:: 2022-10-01-preview
+        The *SummaryContext* model.
+    """
+
+    def __init__(self, *, offset: int, length: int, **kwargs: Any) -> None:
+        self.offset = offset
+        self.length = length
+
+    def __repr__(self) -> str:
+        return f"SummaryContext(offset={self.offset}, length={self.length})"[:1024]
+
+    @classmethod
+    def _from_generated(cls, summary):
+        return cls(
+            offset=summary.offset,
+            length=summary.length
+        )
+
+
+class AbstractSummaryAction(DictMixin):
+    """AbstractSummaryAction encapsulates the parameters for starting a long-running
+    abstractive summarization operation. For a conceptual discussion of extractive summarization,
+    see the service documentation:
+    https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
+
+    Abstractive summarization generates a summary for the input documents. Abstractive summarization
+    is different from extractive summarization in that extractive summarization is the strategy of
+    concatenating extracted sentences from the input document into a summary, while abstractive
+    summarization involves paraphrasing the document using novel sentences.
+
+    .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+        https://aka.ms/applyforgatedsummarizationfeatures
+
+    :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractSummaryAction* model.
+    """
+
+    def __init__(
+        self,
+        *,
+        sentence_count: Optional[int] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        self.sentence_count = sentence_count
+        self.model_version = model_version
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.disable_service_logs = disable_service_logs
+
+    def __repr__(self) -> str:
+        return (
+            f"AbstractSummaryAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"sentence_count={self.sentence_count})"[:1024]
+        )
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_10_01_preview_models.AbstractiveSummarizationLROTask(
+            task_name=task_id,
+            parameters=_v2022_10_01_preview_models.AbstractiveSummarizationTaskParameters(
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+                sentence_count=self.sentence_count,
+            )
+        )
+
+
+class DynamicClassificationResult(DictMixin):
+    """DynamicClassificationResult is a result object which contains
+    the classifications for a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classifications: Recognized classification results in the document.
+    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a DynamicClassificationResult.
+    :ivar str kind: The text analysis kind - "DynamicClassification".
+
+    .. versionadded:: 2022-10-01-preview
+        The *DynamicClassificationResult* model.
+    """
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        classifications: List[ClassificationCategory],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        **kwargs: Any
+    ) -> None:
+        self.id = id
+        self.classifications = classifications
+        self.warnings = warnings
+        self.statistics = statistics
+        self.is_error: Literal[False] = False
+        self.kind: Literal["DynamicClassification"] = "DynamicClassification"
+
+    def __repr__(self) -> str:
+        return (
+            f"DynamicClassificationResult(id={self.id}, classifications={repr(self.classifications)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, result):
+        return cls(
+            id=result.id,
+            classifications=[
+                ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
+                for c in result.classifications
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
         )

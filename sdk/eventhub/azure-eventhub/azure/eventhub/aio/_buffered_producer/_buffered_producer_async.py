@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import asyncio
 import logging
 import queue
@@ -14,6 +15,7 @@ from ..._common import EventDataBatch
 from ...exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base_async import AmqpTransportAsync
     from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,8 +33,9 @@ class BufferedProducer:
         ],
         max_message_size_on_link: int,
         *,
-        max_wait_time: float = 1,
-        max_buffer_length: int
+        amqp_transport: AmqpTransportAsync,
+        max_buffer_length: int,
+        max_wait_time: float = 1
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -48,10 +51,11 @@ class BufferedProducer:
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
         self.partition_id = partition_id
+        self._amqp_transport = amqp_transport
 
     async def start(self):
         async with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
@@ -89,7 +93,6 @@ class BufferedProducer:
             new_events_len = len(events)
         except TypeError:
             new_events_len = 1
-
         if self._max_buffer_len - self._cur_buffered_len < new_events_len:
             _LOGGER.info(
                 "The buffer for partition %r is full. Attempting to flush before adding %r events.",
@@ -97,9 +100,7 @@ class BufferedProducer:
                 new_events_len,
             )
             # flush the buffer
-            async with self._lock:
-                await self._flush(timeout_time=timeout_time)
-
+            await self.flush(timeout_time=timeout_time)
         if timeout_time and time.time() > timeout_time:
             raise OperationTimeoutError(
                 "Failed to enqueue events into buffer due to timeout."
@@ -109,17 +110,20 @@ class BufferedProducer:
             self._cur_batch.add(events)
         except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
             # if there are events in cur_batch, enqueue cur_batch to the buffer
-            if self._cur_batch:
-                self._buffered_queue.put(self._cur_batch)
-            self._buffered_queue.put(events)
+            async with self._lock:
+                if self._cur_batch:
+                    self._buffered_queue.put(self._cur_batch)
+                self._buffered_queue.put(events)
             # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         except ValueError:
             # add single event exceeds the cur batch size, create new batch
-            self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            async with self._lock:
+                self._buffered_queue.put(self._cur_batch)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._cur_batch.add(events)
-        self._cur_buffered_len += new_events_len
+        async with self._lock:
+            self._cur_buffered_len += new_events_len
 
     def failsafe_callback(self, callback):
         async def wrapper_callback(*args, **kwargs):
@@ -145,11 +149,14 @@ class BufferedProducer:
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
         if self._cur_batch:  # if there is batch, enqueue it to the buffer first
             self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
-        while self._cur_buffered_len:
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+        while self._buffered_queue.qsize() > 0:
             remaining_time = timeout_time - time.time() if timeout_time else None
             if (remaining_time and remaining_time > 0) or remaining_time is None:
-                batch = self._buffered_queue.get()
+                try:
+                    batch = self._buffered_queue.get(block=False)
+                except queue.Empty:
+                    break
                 self._buffered_queue.task_done()
                 try:
                     _LOGGER.info("Partition %r is sending.", self.partition_id)
@@ -162,7 +169,10 @@ class BufferedProducer:
                         self.partition_id,
                         len(batch),
                     )
-                    await self._on_success(batch._internal_events, self.partition_id)
+                    try:
+                        await self._on_success(batch._internal_events, self.partition_id)
+                    except AttributeError:
+                        await self._on_success(batch, self.partition_id)
                 except Exception as exc:  # pylint: disable=broad-except
                     _LOGGER.info(
                         "Partition %r sending %r events failed due to exception: %r",
@@ -170,7 +180,10 @@ class BufferedProducer:
                         len(batch),
                         exc,
                     )
-                    await self._on_error(batch._internal_events, self.partition_id, exc)
+                    try:
+                        await self._on_error(batch._internal_events, self.partition_id, exc)
+                    except AttributeError:
+                        await self._on_error(batch, self.partition_id, exc)
                 finally:
                     self._cur_buffered_len -= len(batch)
             # If flush could not get the semaphore, we log and raise error if wanted
@@ -187,7 +200,9 @@ class BufferedProducer:
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
-        self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+        #reset curr_buffered
+        self._cur_buffered_len = 0
+        self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     async def check_max_wait_time_worker(self):

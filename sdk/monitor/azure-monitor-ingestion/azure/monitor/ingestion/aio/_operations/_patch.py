@@ -6,49 +6,67 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
-from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from ..._models import UploadLogsStatus, UploadLogsResult
+import logging
+import sys
+from typing import Callable, List, Any, Awaitable, Optional
+
+from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    async def upload( # pylint: disable=arguments-renamed, arguments-differ
-        self, rule_id: str, stream_name: str, logs: List[Any], **kwargs: Any
-    ) -> UploadLogsResult:
+
+_LOGGER = logging.getLogger(__name__)
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+class LogsIngestionClientOperationsMixin(GeneratedOps):
+    async def upload(  # pylint: disable=arguments-renamed, arguments-differ
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: List[JSON],
+        *,
+        on_error: Optional[Callable[[Exception, List[JSON]], Awaitable[None]]] = None,
+        **kwargs: Any
+    ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
-        See error response code and error response message for more detail.
+        Logs are divided into chunks of 1MB or less, then each chunk is gzip-compressed and uploaded.
 
-        :param rule_id: The immutable Id of the Data Collection Rule resource.
+        :param rule_id: The immutable ID of the Data Collection Rule resource.
         :type rule_id: str
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream.
-        :type body: list[any]
-        :return: UploadLogsResult
-        :rtype: UploadLogsResult
+        :param logs: An array of objects matching the schema defined by the provided stream.
+        :type logs: list[JSON]
+        :keyword on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
+            This function should expect two arguments that correspond to the error encountered and
+            the list of logs that failed to upload. If no function is provided, then the first exception
+            encountered will be raised.
+        :paramtype on_error: Optional[Callable[[Exception, List[JSON]], None]]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        requests = _create_gzip_requests(logs)
-        results = []
-        status = UploadLogsStatus.SUCCESS
-        for request in requests:
-            response = await super().upload(
-                rule_id,
-                stream=stream_name,
-                body=request,
-                content_encoding="gzip",
-                **kwargs
-            )
-            if response is not None:
-                results.append(request)
-                status = UploadLogsStatus.PARTIAL_FAILURE
-        return UploadLogsResult(failed_logs=results, status=status)
+        for gzip_data, log_chunk in _create_gzip_requests(logs):
+            try:
+                await super().upload(
+                    rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs
+                )
+            except Exception as err:  # pylint: disable=broad-except
+                if on_error:
+                    await on_error(err, log_chunk)
+                else:
+                    _LOGGER.error( "Failed to upload chunk containing %d log entries", len(log_chunk))
+                    raise err
 
 
 __all__: List[str] = [
-    "MonitorIngestionClientOperationsMixin"
+    "LogsIngestionClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

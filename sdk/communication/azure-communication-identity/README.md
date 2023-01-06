@@ -10,7 +10,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 # Getting started
 ### Prerequisites
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -55,7 +55,7 @@ The following section provides several code snippets covering some of the most c
 - [Creating a user and a token in a single request](#creating-a-user-and-a-token-in-a-single-request)
 - [Revoking a user's access tokens](#revoking-a-users-access-tokens)
 - [Deleting a user](#deleting-a-user)
-- [Exchanging Azure AD access token of a Teams User for a Communication Identity access token](#exchanging-aad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
+- [Exchanging Azure AD access token of a Teams User for a Communication Identity access token](#exchanging-azure-ad-access-token-of-a-teams-user-for-a-communication-identity-access-token)
 
 ### Creating a new user
 
@@ -76,11 +76,32 @@ Pass in the user object as a parameter, and a list of `CommunicationTokenScope`.
 tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 print("Token issued with value: " + tokenresponse.token)
 ```
+
+### Issuing or Refreshing an access token with custom expiration for a user
+
+You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
+
+```python
+token_expires_in = timedelta(hours=1)
+tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+print("Token issued with value: " + tokenresponse.token)
+```
+
 ### Creating a user and a token in a single request
 For convenience, use `create_user_and_token` to create a new user and issue a token with one function call. This translates into a single web request as opposed to creating a user first and then issuing a token.
 
 ```python
 user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
+print("User id:" + user.properties['id'])
+print("Token issued with value: " + tokenresponse.token)
+```
+
+### Creating a user and a token with custom expiration in a single request
+
+You can specify expiration time for the token. The token can be configured to expire in as little as one hour or as long as 24 hours. The default expiration time is 24 hours.
+```python
+token_expires_in = timedelta(hours=1)
+user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 print("User id:" + user.properties['id'])
 print("Token issued with value: " + tokenresponse.token)
 ```

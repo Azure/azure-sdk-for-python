@@ -10,8 +10,9 @@ import sys
 import argparse
 import logging
 import os
-from tox_helper_tasks import get_package_details
 from subprocess import check_call
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -41,16 +42,16 @@ if __name__ == "__main__":
 
     # get target package name from target package path
     pkg_dir = os.path.abspath(args.target_package)
-    package_name, namespace, _, _, _ = get_package_details(os.path.join(pkg_dir, 'setup.py'))
-
-    if should_run_import_all(package_name):
+    pkg_details = ParsedSetup.from_path(pkg_dir)
+    
+    if should_run_import_all(pkg_details.name):
         # import all modules from current package
         logging.info(
             "Importing all modules from namespace [{0}] to verify dependency".format(
-                namespace
+                pkg_details.namespace
             )
         )
-        import_script_all = "from {0} import *".format(namespace)
+        import_script_all = "from {0} import *".format(pkg_details.namespace)
         commands = [
             sys.executable,
             "-c",
@@ -61,4 +62,4 @@ if __name__ == "__main__":
         logging.info("Verified module dependency, no issues found")
     else:
         pass
-        logging.error("Package {} is excluded from dependency check".format(package_name))
+        logging.error("Package {} is excluded from dependency check".format(pkg_details.name))

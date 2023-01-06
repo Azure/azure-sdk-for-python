@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body:
+      hello: world!
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - text/plain
+      User-Agent:
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
+    method: POST
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:send?api-version=2022-11-01&filter=userId%20ne%20'user1'
+  response:
+    body:
+      string: ''
+    headers:
+      api-supported-versions: '2022-11-01'
+      connection: keep-alive
+      content-length: '0'
+      date: Mon, 21 Nov 2022 03:13:44 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
+    status:
+      code: 202
+      message: Accepted
+    url: https://some-wps.webpubsub.azure.com/api/hubs/hub/:send?api-version=2022-11-01&filter=userId%20ne%20'user1'
+version: 1

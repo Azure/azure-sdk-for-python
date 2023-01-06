@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import logging
 import json
-from typing import Dict, Any
-from azure.ai.ml.constants import JobComputePropertyFields, LOCAL_COMPUTE_TARGET
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
-    ComputeConfiguration as RestComputeConfiguration,
-)
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
+import logging
+from typing import Any, Dict, Optional
 
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import ComputeConfiguration as RestComputeConfiguration
+from azure.ai.ml.constants._common import LOCAL_COMPUTE_TARGET
+from azure.ai.ml.constants._job.job import JobComputePropertyFields
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
@@ -18,12 +17,13 @@ module_logger = logging.getLogger(__name__)
 class ComputeConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
-        target: str = None,
-        instance_count: int = None,
-        is_local: bool = None,
-        instance_type: str = None,
-        location: str = None,
-        properties: Dict[str, Any] = None,
+        *,
+        target: Optional[str] = None,
+        instance_count: Optional[int] = None,
+        is_local: Optional[bool] = None,
+        instance_type: Optional[str] = None,
+        location: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         deserialize_properties: bool = False,
     ):
         self.instance_count = instance_count
@@ -36,13 +36,13 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
             for key, value in self.properties.items():
                 try:
                     self.properties[key] = json.loads(value)
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     # keep serialized string if load fails
                     pass
 
     def _to_rest_object(self) -> RestComputeConfiguration:
-        serialized_properties = {} if self.properties else None
         if self.properties:
+            serialized_properties = {}
             for key, value in self.properties.items():
                 try:
                     if key.lower() == JobComputePropertyFields.SINGULARITY.lower():
@@ -52,8 +52,10 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
                     elif key.lower() == JobComputePropertyFields.AISUPERCOMPUTER.lower():
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     serialized_properties[key] = json.dumps(value)
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     pass
+        else:
+            serialized_properties = None
         return RestComputeConfiguration(
             target=self.target if not self.is_local else None,
             is_local=self.is_local,
@@ -64,14 +66,14 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeConfiguration) -> "ComputeConfiguration":
+    def _from_rest_object(cls, obj: RestComputeConfiguration) -> "ComputeConfiguration":
         return ComputeConfiguration(
-            target=rest_obj.target,
-            is_local=rest_obj.is_local,
-            instance_count=rest_obj.instance_count,
-            location=rest_obj.location,
-            instance_type=rest_obj.instance_type,
-            properties=rest_obj.properties,
+            target=obj.target,
+            is_local=obj.is_local,
+            instance_count=obj.instance_count,
+            location=obj.location,
+            instance_type=obj.instance_type,
+            properties=obj.properties,
             deserialize_properties=True,
         )
 

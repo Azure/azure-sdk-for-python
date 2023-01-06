@@ -55,11 +55,10 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -75,10 +74,16 @@ setup(
         'tests.blob',
         'tests.common'
     ]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.23.1",
-        "msrest>=0.6.21",
-        "cryptography>=2.1.4"
+        "azure-core<2.0.0,>=1.26.0",
+        "cryptography>=2.1.4",
+        "typing-extensions>=4.0.1",
+        "isodate>=0.6.1"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]<2.0.0,>=1.26.0",
+        ],
+    },
 )

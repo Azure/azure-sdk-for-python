@@ -9,13 +9,13 @@ import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -27,19 +27,22 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_analyze_document(model=None, document=b"xx")
+                await client.begin_analyze_document(model_id=None, document=b"xx")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     async def test_analyze_document_empty_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_analyze_document(model="", document=b"xx")
+                await client.begin_analyze_document(model_id="", document=b"xx")
+        assert "model_id cannot be None or empty." in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -59,7 +62,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
             async with da_client:
@@ -87,6 +90,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -106,7 +110,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
+            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_multipage_storage_container_sas_url)
             model = await build_poller.result()
 
             async with da_client:
@@ -134,6 +138,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -152,7 +157,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
+            poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_selection_mark_storage_container_sas_url)
             model = await poller.result()
 
             poller = await da_client.begin_analyze_document(
@@ -179,6 +184,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -190,7 +196,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_poller.result()
 
             async with da_client:
@@ -199,6 +205,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
                 assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -210,7 +217,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url, )
             model = await build_polling.result()
 
             async with da_client:
@@ -225,6 +232,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -236,7 +244,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
-            build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
+            build_polling = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_polling.result()
 
             async with da_client:

@@ -86,7 +86,7 @@ jobs:
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
-          runProxy: false
+          runProxy: true
 
       - template: ../steps/set-dev-build.yml
         parameters:
@@ -108,6 +108,10 @@ jobs:
             --whl-dir="${{ parameters.BuildStagingDirectory }}"
             --mark-arg="not cosmosEmulator"
 
+      - pwsh: |
+          Invoke-RestMethod -Method POST -Uri http://localhost:5000/Admin/Reset
+        displayName: "Reset Proxy Settings"
+
       - task: PythonScript@0
         displayName: 'Test Oldest Released Dependents'
         inputs:
@@ -119,3 +123,13 @@ jobs:
             --whl-dir="${{ parameters.BuildStagingDirectory }}"
             --verify-latest=False
             --mark-arg="not cosmosEmulator"
+
+      - pwsh: |
+          $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+          foreach($file in $files){
+              Write-Host "##[group]$file"
+              cat $file
+              Write-Host "##[endgroup]"
+          }
+        displayName: Dump Test-Proxy Logs
+        condition: always()

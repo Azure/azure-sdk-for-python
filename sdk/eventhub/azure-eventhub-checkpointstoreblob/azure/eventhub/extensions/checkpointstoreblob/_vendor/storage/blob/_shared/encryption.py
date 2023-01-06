@@ -459,7 +459,7 @@ def encrypt_queue_message(message, key_encryption_key):
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
     :param object message:
-        The plain text messge to be encrypted.
+        The plain text message to be encrypted.
     :param object key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.

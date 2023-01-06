@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-def sample_analyze_sentiment():
+def sample_analyze_sentiment() -> None:
     print(
         "In this sample we will be combing through reviews customers have left about their"
         "experience using our skydiving company, Contoso."

@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import CloudErrorBody
-from ._models_py3 import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import (
+    ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties,
+)
 from ._models_py3 import ImageTemplate
 from ._models_py3 import ImageTemplateCustomizer
 from ._models_py3 import ImageTemplateDistributor
@@ -45,61 +47,63 @@ from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import VirtualNetworkConfig
 
-
-from ._image_builder_client_enums import (
-    CreatedByType,
-    ProvisioningErrorCode,
-    ProvisioningState,
-    ResourceIdentityType,
-    RunState,
-    RunSubState,
-    SharedImageStorageAccountType,
-)
+from ._image_builder_client_enums import CreatedByType
+from ._image_builder_client_enums import ProvisioningErrorCode
+from ._image_builder_client_enums import ProvisioningState
+from ._image_builder_client_enums import ResourceIdentityType
+from ._image_builder_client_enums import RunState
+from ._image_builder_client_enums import RunSubState
+from ._image_builder_client_enums import SharedImageStorageAccountType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CloudErrorBody',
-    'ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties',
-    'ImageTemplate',
-    'ImageTemplateCustomizer',
-    'ImageTemplateDistributor',
-    'ImageTemplateFileCustomizer',
-    'ImageTemplateIdentity',
-    'ImageTemplateInVMValidator',
-    'ImageTemplateLastRunStatus',
-    'ImageTemplateListResult',
-    'ImageTemplateManagedImageDistributor',
-    'ImageTemplateManagedImageSource',
-    'ImageTemplatePlatformImageSource',
-    'ImageTemplatePowerShellCustomizer',
-    'ImageTemplatePowerShellValidator',
-    'ImageTemplatePropertiesValidate',
-    'ImageTemplateRestartCustomizer',
-    'ImageTemplateSharedImageDistributor',
-    'ImageTemplateSharedImageVersionSource',
-    'ImageTemplateShellCustomizer',
-    'ImageTemplateShellValidator',
-    'ImageTemplateSource',
-    'ImageTemplateUpdateParameters',
-    'ImageTemplateVhdDistributor',
-    'ImageTemplateVmProfile',
-    'ImageTemplateWindowsUpdateCustomizer',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PlatformImagePurchasePlan',
-    'ProvisioningError',
-    'ProxyResource',
-    'Resource',
-    'RunOutput',
-    'RunOutputCollection',
-    'SystemData',
-    'TrackedResource',
-    'VirtualNetworkConfig',
-    'CreatedByType',
-    'ProvisioningErrorCode',
-    'ProvisioningState',
-    'ResourceIdentityType',
-    'RunState',
-    'RunSubState',
-    'SharedImageStorageAccountType',
+    "CloudErrorBody",
+    "ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties",
+    "ImageTemplate",
+    "ImageTemplateCustomizer",
+    "ImageTemplateDistributor",
+    "ImageTemplateFileCustomizer",
+    "ImageTemplateIdentity",
+    "ImageTemplateInVMValidator",
+    "ImageTemplateLastRunStatus",
+    "ImageTemplateListResult",
+    "ImageTemplateManagedImageDistributor",
+    "ImageTemplateManagedImageSource",
+    "ImageTemplatePlatformImageSource",
+    "ImageTemplatePowerShellCustomizer",
+    "ImageTemplatePowerShellValidator",
+    "ImageTemplatePropertiesValidate",
+    "ImageTemplateRestartCustomizer",
+    "ImageTemplateSharedImageDistributor",
+    "ImageTemplateSharedImageVersionSource",
+    "ImageTemplateShellCustomizer",
+    "ImageTemplateShellValidator",
+    "ImageTemplateSource",
+    "ImageTemplateUpdateParameters",
+    "ImageTemplateVhdDistributor",
+    "ImageTemplateVmProfile",
+    "ImageTemplateWindowsUpdateCustomizer",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PlatformImagePurchasePlan",
+    "ProvisioningError",
+    "ProxyResource",
+    "Resource",
+    "RunOutput",
+    "RunOutputCollection",
+    "SystemData",
+    "TrackedResource",
+    "VirtualNetworkConfig",
+    "CreatedByType",
+    "ProvisioningErrorCode",
+    "ProvisioningState",
+    "ResourceIdentityType",
+    "RunState",
+    "RunSubState",
+    "SharedImageStorageAccountType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

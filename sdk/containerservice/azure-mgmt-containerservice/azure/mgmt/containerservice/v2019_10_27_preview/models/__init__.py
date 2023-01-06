@@ -23,31 +23,33 @@ from ._models_py3 import PurchasePlan
 from ._models_py3 import Resource
 from ._models_py3 import TagsObject
 
-
-from ._container_service_client_enums import (
-    OSType,
-    OpenShiftAgentPoolProfileRole,
-    OpenShiftContainerServiceVMSize,
-)
+from ._container_service_client_enums import OSType
+from ._container_service_client_enums import OpenShiftAgentPoolProfileRole
+from ._container_service_client_enums import OpenShiftContainerServiceVMSize
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'CloudErrorBody',
-    'NetworkProfile',
-    'OpenShiftAPIProperties',
-    'OpenShiftManagedCluster',
-    'OpenShiftManagedClusterAADIdentityProvider',
-    'OpenShiftManagedClusterAgentPoolProfile',
-    'OpenShiftManagedClusterAuthProfile',
-    'OpenShiftManagedClusterBaseIdentityProvider',
-    'OpenShiftManagedClusterIdentityProvider',
-    'OpenShiftManagedClusterListResult',
-    'OpenShiftManagedClusterMasterPoolProfile',
-    'OpenShiftManagedClusterMonitorProfile',
-    'OpenShiftRouterProfile',
-    'PurchasePlan',
-    'Resource',
-    'TagsObject',
-    'OSType',
-    'OpenShiftAgentPoolProfileRole',
-    'OpenShiftContainerServiceVMSize',
+    "CloudErrorBody",
+    "NetworkProfile",
+    "OpenShiftAPIProperties",
+    "OpenShiftManagedCluster",
+    "OpenShiftManagedClusterAADIdentityProvider",
+    "OpenShiftManagedClusterAgentPoolProfile",
+    "OpenShiftManagedClusterAuthProfile",
+    "OpenShiftManagedClusterBaseIdentityProvider",
+    "OpenShiftManagedClusterIdentityProvider",
+    "OpenShiftManagedClusterListResult",
+    "OpenShiftManagedClusterMasterPoolProfile",
+    "OpenShiftManagedClusterMonitorProfile",
+    "OpenShiftRouterProfile",
+    "PurchasePlan",
+    "Resource",
+    "TagsObject",
+    "OSType",
+    "OpenShiftAgentPoolProfileRole",
+    "OpenShiftContainerServiceVMSize",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

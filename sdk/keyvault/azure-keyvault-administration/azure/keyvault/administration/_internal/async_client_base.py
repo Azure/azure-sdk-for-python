@@ -31,6 +31,9 @@ class AsyncKeyVaultClientBase(object):
 
         try:
             api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            # If API version was provided as an enum value, need to make a plain string for 3.11 compatibility
+            if hasattr(api_version, "value"):
+                api_version = api_version.value
             self._vault_url = vault_url.strip(" /")
             client = kwargs.get("generated_client")
             if client:
@@ -40,8 +43,6 @@ class AsyncKeyVaultClientBase(object):
                 self._models = models or _KeyVaultClient.models(api_version=api_version)
                 return
 
-            pipeline = kwargs.pop("pipeline", None)
-            transport = kwargs.pop("transport", None)
             http_logging_policy = HttpLoggingPolicy(**kwargs)
             http_logging_policy.allowed_header_names.update(
                 {
@@ -51,15 +52,10 @@ class AsyncKeyVaultClientBase(object):
                 }
             )
 
-            if not transport and not pipeline:
-                from azure.core.pipeline.transport import AioHttpTransport
-                transport = AioHttpTransport(**kwargs)
-
+            verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
                 api_version=api_version,
-                pipeline=pipeline,
-                transport=transport,
-                authentication_policy=AsyncChallengeAuthPolicy(credential),
+                authentication_policy=AsyncChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
                 **kwargs

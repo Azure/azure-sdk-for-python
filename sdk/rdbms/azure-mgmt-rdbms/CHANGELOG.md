@@ -1,5 +1,88 @@
 # Release History
 
+## 10.2.0b6 (2023-01-04)
+
+### Features Added
+
+  - Model AuthConfig has a new parameter active_directory_auth
+  - Model AuthConfig has a new parameter password_auth
+
+### Breaking Changes
+
+  - Model AuthConfig no longer has parameter active_directory_auth_enabled
+  - Model AuthConfig no longer has parameter password_auth_enabled
+
+## 10.2.0b5 (2022-11-14)
+
+### Features Added
+
+  - Model ServerForUpdate has a new parameter replication_role
+
+## 10.2.0b4 (2022-11-02)
+
+### Features Added
+
+  - Added operation group AdministratorsOperations
+  - Added operation group CheckNameAvailabilityWithLocationOperations
+  - Model CapabilityProperties has a new parameter fast_provisioning_supported
+  - Model CapabilityProperties has a new parameter supported_fast_provisioning_editions
+  - Model ErrorResponse has a new parameter error
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model Server has a new parameter auth_config
+  - Model Server has a new parameter data_encryption
+  - Model Server has a new parameter identity
+  - Model Server has a new parameter replica_capacity
+  - Model Server has a new parameter replication_role
+  - Model ServerForUpdate has a new parameter auth_config
+  - Model ServerForUpdate has a new parameter data_encryption
+  - Model ServerForUpdate has a new parameter identity
+  - Model ServerForUpdate has a new parameter version
+  - Model ServerVersionCapability has a new parameter supported_versions_to_upgrade
+  - Model StorageMBCapability has a new parameter supported_upgradable_tier_list
+  - Model TrackedResource has a new parameter system_data
+  - Model UserAssignedIdentity has a new parameter user_assigned_identities
+
+### Breaking Changes
+
+  - Model DataEncryption no longer has parameter geo_backup_key_uri
+  - Model DataEncryption no longer has parameter geo_backup_user_assigned_identity_id
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter details
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter target
+  - Model ServerForUpdate no longer has parameter location
+  - Model UserAssignedIdentity has a new required parameter type
+  - Model UserAssignedIdentity no longer has parameter client_id
+  - Model UserAssignedIdentity no longer has parameter principal_id
+
+## 10.2.0b3 (2022-08-09)
+
+**Features**
+
+  - Added operation group AzureADAdministratorsOperations
+  - Added operation group CheckNameAvailabilityWithoutLocationOperations
+
+## 10.2.0b2 (2022-08-01)
+
+**Features**
+
+  - Model CapabilityProperties has a new parameter supported_ha_mode
+  - Model Configuration has a new parameter documentation_link
+  - Model Configuration has a new parameter is_config_pending_restart
+  - Model Configuration has a new parameter is_dynamic_config
+  - Model Configuration has a new parameter is_read_only
+  - Model Configuration has a new parameter unit
+  - Model NameAvailability has a new parameter reason
+  - Model VirtualNetworkSubnetUsageResult has a new parameter location
+  - Model VirtualNetworkSubnetUsageResult has a new parameter subscription_id
+
+**Breaking changes**
+
+  - Model Server no longer has parameter tags_properties_tags
+  - Removed operation BackupsOperations.put
+
 ## 10.2.0b1 (2022-07-13)
 
 **Features**

@@ -7,15 +7,15 @@
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Any, Dict, List, Optional,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
 from urllib.parse import urlparse, quote, unquote
 
-import six
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -31,6 +31,7 @@ from ._models import QueueMessage, AccessPolicy, MessagesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import QueueProperties
 
 
@@ -49,8 +50,12 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -73,12 +78,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Create the queue client with url and credential.
     """
     def __init__(
-            self, account_url,  # type: str
-            queue_name,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            queue_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -88,7 +92,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not queue_name:
             raise ValueError("Please specify a queue name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
+            raise ValueError(f"Invalid URL: {parsed_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -109,29 +113,30 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         mode hostname.
         """
         queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
+        if isinstance(queue_name, str):
             queue_name = queue_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(queue_name),
-            self._query_str)
+        return (
+            f"{self.scheme}://{hostname}"
+            f"/{quote(queue_name)}{self._query_str}")
 
     @classmethod
-    def from_queue_url(cls,
-                       queue_url,  # type: str
-                       credential=None,  # type: Optional[Any]
-                       **kwargs  # type: Any
-                       ):
-        # type: (...) -> QueueClient
+    def from_queue_url(
+            cls, queue_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """A client to interact with a specific Queue.
 
         :param str queue_url: The full URI to the queue, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
@@ -143,17 +148,15 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         parsed_url = urlparse(queue_url.rstrip('/'))
 
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(queue_url))
+            raise ValueError(f"Invalid URL: {queue_url}")
 
         queue_path = parsed_url.path.lstrip('/').split('/')
         account_path = ""
         if len(queue_path) > 1:
             account_path = "/" + "/".join(queue_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = (
+            f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
+            f"{account_path}?{parsed_url.query}")
         queue_name = unquote(queue_path[-1])
         if not queue_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
@@ -161,12 +164,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            queue_name,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-     ):
-        # type: (...) -> QueueClient
+            cls, conn_str: str,
+            queue_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+     ) -> Self:
         """Create QueueClient from a Connection String.
 
         :param str conn_str:
@@ -177,8 +179,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 

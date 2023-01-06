@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from pathlib import Path
 import os
+from pathlib import Path
 
 
 def get_root_path() -> str:
-    """
-    Gets the root directory for the drive.
+    """Gets the root directory for the drive.
+
     NOTE: On Windows, it returns 'C:\' or the path to the root dir for the drive.
           On Linux, it returns '/'.
     :return: Path to the root directory for the drive.
@@ -22,7 +22,7 @@ def traverse_up_path_and_find_file(path, file_name, directory_name=None, num_lev
     that the user does not have permissions to, or if we reach num_levels (if set by the user).
     NOTE: num_levels=2 would mean that we search the current directory and two levels above (inclusive).
     :param path: Path to traverse up from.
-    :type path: str
+    :type path: Optional[Union[PathLike, str]] = None
     :param file_name: The name of the file to look for, including the file extension.
     :type file_name: str
     :param directory_name: (optional)The name of the directory that the file should be in. ie) /aml_config/config.json

@@ -6,7 +6,6 @@ import logging
 import datetime
 import warnings
 from typing import Any, Union, Optional
-import six
 
 from .._servicebus_session import BaseSession
 from .._common.constants import (
@@ -74,12 +73,12 @@ class ServiceBusSession(BaseSession):
         return session_state
 
     async def set_state(
-        self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None, **kwargs: Any
+        self, state: Optional[Union[str, bytes, bytearray]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         """Set the session state.
 
-        :param state: The state value.
-        :type state: Union[str, bytes, bytearray]
+        :param state: The state value. Setting state to None will clear the current session.
+        :type state: Union[str, bytes, bytearray, None]
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
@@ -99,13 +98,13 @@ class ServiceBusSession(BaseSession):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         state = (
-            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+            state.encode(self._encoding) if isinstance(state, str) else state
         )
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {
                 MGMT_REQUEST_SESSION_ID: self._session_id,
-                MGMT_REQUEST_SESSION_STATE: bytearray(state),
+                MGMT_REQUEST_SESSION_STATE: bytearray(state) if state is not None else None,
             },
             mgmt_handlers.default,
             timeout=timeout,

@@ -6,7 +6,7 @@ FILE: sample_cascade_delete_async.py
 
 DESCRIPTION:
     This sample demonstrates 
-    - Getting a filterd list of farmers based on last modified timestamp
+    - Getting a filtered list of farmers based on last modified timestamp
     - Queuing a cascade delete job on a farmer, and polling for it to complete
 
 USAGE:
@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_cascade_delete_async())
+    asyncio.run(sample_cascade_delete_async())

@@ -23,7 +23,7 @@ import os
 import asyncio
 
 
-async def sample_alternative_document_input():
+async def sample_alternative_document_input() -> None:
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -44,12 +44,12 @@ async def sample_alternative_document_input():
         result = await text_analytics_client.detect_language(documents)
 
     for idx, doc in enumerate(result):
-        if not doc.is_error:
+        if doc.is_error is False:
             print(f"Document text: {documents[idx]}")
             print(f"Language detected: {doc.primary_language.name}")
             print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
             print(f"Confidence score: {doc.primary_language.confidence_score}\n")
-        if doc.is_error:
+        else:
             print(doc.id, doc.error)
 
 

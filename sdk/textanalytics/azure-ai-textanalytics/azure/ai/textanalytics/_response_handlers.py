@@ -36,6 +36,9 @@ from ._models import (
     RecognizeCustomEntitiesResult,
     ClassifyDocumentResult,
     ActionPointerKind,
+    ExtractSummaryResult,
+    AbstractSummaryResult,
+    DynamicClassificationResult,
 )
 
 
@@ -46,6 +49,7 @@ class CSODataV4Format(ODataV4Format):
                 super().__init__(
                     odata_error["error"]["innererror"]
                 )
+            self.details = odata_error["error"].get("details", [])
         except KeyError:
             super().__init__(odata_error)
 
@@ -130,6 +134,15 @@ def prepare_result(func):
 
 
 @prepare_result
+def abstract_summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return AbstractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
+    )
+
+
+@prepare_result
 def language_result(language, results):  # pylint: disable=unused-argument
     return DetectLanguageResult(
         id=language.id,
@@ -163,6 +176,9 @@ def entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -183,6 +199,9 @@ def linked_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -200,6 +219,9 @@ def key_phrases_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             phrases.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            phrases.detected_language
+        ) if hasattr(phrases, "detected_language") and phrases.detected_language else None
     )
 
 
@@ -226,6 +248,9 @@ def sentiment_result(
             )
             for s in sentiment.sentences
         ],
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            sentiment.detected_language
+        ) if hasattr(sentiment, "detected_language") and sentiment.detected_language else None
     )
 
 
@@ -249,6 +274,9 @@ def pii_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -258,6 +286,15 @@ def healthcare_result(
 ):  # pylint: disable=unused-argument
     return AnalyzeHealthcareEntitiesResult._from_generated(  # pylint: disable=protected-access
         health_result
+    )
+
+
+@prepare_result
+def summary_result(
+    summary, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return ExtractSummaryResult._from_generated(  # pylint: disable=protected-access
+        summary
     )
 
 
@@ -276,6 +313,15 @@ def classify_document_result(
 ):  # pylint: disable=unused-argument
     return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
+    )
+
+
+@prepare_result
+def dynamic_classification_result(
+    categories, results, *args, **kwargs
+):  # pylint: disable=unused-argument
+    return DynamicClassificationResult._from_generated(  # pylint: disable=protected-access
+        categories
     )
 
 
@@ -312,6 +358,10 @@ def _get_deserialization_callback_from_task_type(task_type):  # pylint: disable=
         return classify_document_result
     if task_type == _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES:
         return healthcare_result
+    if task_type == _AnalyzeActionsType.EXTRACT_SUMMARY:
+        return summary_result
+    if task_type == _AnalyzeActionsType.ABSTRACT_SUMMARY:
+        return abstract_summary_result
     return key_phrases_result
 
 
@@ -353,6 +403,18 @@ def resolve_action_pointer(pointer):
     raise ValueError(
         f"Unexpected response from service - action pointer '{pointer}' is not a valid action pointer."
     )
+
+
+def pad_result(tasks_obj, doc_id_order):
+    return [
+        DocumentError(
+            id=doc_id,
+            error=TextAnalyticsError(
+                code=None,  # type: ignore
+                message=f"No result for document. Action returned status '{tasks_obj.status}'."
+            )
+        ) for doc_id in doc_id_order
+    ]
 
 
 def get_ordered_errors(tasks_obj, task_name, doc_id_order):
@@ -400,6 +462,9 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
+    # if results obj present, but no document results or errors (likely a canceled scenario)
+    if not response_task_to_deserialize.results.documents and not response_task_to_deserialize.results.errors:
+        return pad_result(returned_tasks_object, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, {}, lro=True
     )

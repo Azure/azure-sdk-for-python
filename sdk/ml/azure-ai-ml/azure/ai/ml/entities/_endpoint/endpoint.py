@@ -3,58 +3,82 @@
 # ---------------------------------------------------------
 
 import logging
-from os import PathLike
 from abc import abstractmethod
-from typing import Any, Dict, Optional, Union
+from os import PathLike
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml.entities import Resource
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class Endpoint(Resource):
+class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     """Endpoint base class.
 
-    :param auth_mode: the authentication mode, defaults to None
-    :type auth_mode: str, optional
-    :param location: defaults to None
-    :type location: str, optional
-    :param traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: Dict[str, int], optional
+    :param auth_mode: The authentication mode, defaults to None
+    :type auth_mode: str
+    :param location: The location of the endpoint, defaults to None
+    :type location: str
     :param name: Name of the resource.
-    :type name: str, optional
+    :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: typing.Optional[typing.Dict[str, str]]
     :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param scoring_uri: str, Endpoint URI, readonly
-    :type scoring_uri: str, optional
-    :param swagger_uri: str, Endpoint Swagger URI, readonly
-    :type swagger_uri: str, optional
-    :param provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: str, optional
+    :type properties: typing.Optional[typing.Dict[str, str]]
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: typing.Optional[str]
+    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :keyword scoring_uri: str, Endpoint URI, readonly
+    :type scoring_uri: typing.Optional[str]
+    :keyword openapi_uri: str, Endpoint Open API URI, readonly
+    :type openapi_uri: typing.Optional[str]
+    :keyword provisioning_state: str, provisioning state, readonly
+    :type provisioning_state: typing.Optional[str]
     """
 
     def __init__(
         self,
-        base_path: Optional[str] = None,  # TODO: maybe delete this?
-        auth_mode: str = None,
-        location: str = None,
-        name: str = None,
-        tags: Dict[str, str] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
+        auth_mode: Optional[str] = None,
+        location: Optional[str] = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
         **kwargs,
     ):
+        """
+        Endpoint base class.
+
+        Constructor for Endpoint base class.
+
+        :param auth_mode: The authentication mode, defaults to None
+        :type auth_mode: str
+        :param location: The location of the endpoint, defaults to None
+        :type location: str
+        :param name: Name of the resource.
+        :type name: str
+        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :type tags: typing.Optional[typing.Dict[str, str]]
+        :param properties: The asset property dictionary.
+        :type properties: typing.Optional[typing.Dict[str, str]]
+        :param description: Description of the resource.
+        :type description: typing.Optional[str]
+        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
+        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :keyword scoring_uri: str, Endpoint URI, readonly
+        :type scoring_uri: typing.Optional[str]
+        :keyword openapi_uri: str, Endpoint Open API URI, readonly
+        :type openapi_uri: typing.Optional[str]
+        :keyword provisioning_state: str, provisioning state, readonly
+        :type provisioning_state: typing.Optional[str]
+        """
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         if name:
             name = name.lower()
         self._scoring_uri = kwargs.pop("scoring_uri", None)
-        self._swagger_uri = kwargs.pop("swagger_uri", None)
+        self._openapi_uri = kwargs.pop("openapi_uri", None)
         self._provisioning_state = kwargs.pop("provisioning_state", None)
         super().__init__(name, description, tags, properties, **kwargs)
         self.auth_mode = auth_mode
@@ -62,37 +86,37 @@ class Endpoint(Resource):
 
     @property
     def scoring_uri(self) -> Optional[str]:
-        """URI to use to perform a prediction, readonly
+        """URI to use to perform a prediction, readonly.
 
         :return: The scoring URI
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._scoring_uri
 
     @property
-    def swagger_uri(self) -> Optional[str]:
-        """URI to check the swagger definition of the endpoint.
+    def openapi_uri(self) -> Optional[str]:
+        """URI to check the open api definition of the endpoint.
 
-        :return: The swagger URI
-        :rtype: Optional[str]
+        :return: The open API URI
+        :rtype: typing.Optional[str]
         """
-        return self._swagger_uri
+        return self._openapi_uri
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Endpoint provisioning state, readonly
+        """Endpoint provisioning state, readonly.
 
         :return: Endpoint provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def _from_rest_object(self) -> Any:
+    def _from_rest_object(self, obj: Any) -> Any:
         pass
 
     def _merge_with(self, other: "Endpoint") -> None:
@@ -104,6 +128,7 @@ class Endpoint(Resource):
                     target=ErrorTarget.ENDPOINT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             self.description = other.description or self.description
             if other.tags:
@@ -112,8 +137,8 @@ class Endpoint(Resource):
                 self.properties = {**self.properties, **other.properties}
             self.auth_mode = other.auth_mode or self.auth_mode
             if hasattr(other, "traffic"):
-                self.traffic = other.traffic
+                self.traffic = other.traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "mirror_traffic"):
-                self.mirror_traffic = other.mirror_traffic
+                self.mirror_traffic = other.mirror_traffic  # pylint: disable=attribute-defined-outside-init
             if hasattr(other, "defaults"):
-                self.defaults = other.defaults
+                self.defaults = other.defaults  # pylint: disable=attribute-defined-outside-init

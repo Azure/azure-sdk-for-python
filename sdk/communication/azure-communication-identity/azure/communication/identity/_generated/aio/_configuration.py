@@ -20,9 +20,9 @@ class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disabl
     attributes.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com.
+     https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -31,9 +31,9 @@ class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disabl
         self,
         endpoint: str,
         **kwargs: Any
-    ) -> None:
+        ) -> None:
         super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
+        api_version = kwargs.pop("api_version", "2022-10-01")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -46,7 +46,7 @@ class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disabl
     def _configure(
         self,
         **kwargs: Any
-    ) -> None:
+        ) -> None:
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)

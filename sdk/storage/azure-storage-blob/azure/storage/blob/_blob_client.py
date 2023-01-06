@@ -8,21 +8,22 @@
 from functools import partial
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Type, TypeVar, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 import warnings
 
-import six
+from typing_extensions import Self
+
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.uploads import IterStreamer
+from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
@@ -66,6 +67,7 @@ from ._upload_helpers import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (
@@ -79,8 +81,6 @@ if TYPE_CHECKING:
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
-
-ClassType = TypeVar("ClassType")
 
 
 class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
@@ -104,10 +104,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -147,14 +149,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -189,7 +190,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _format_url(self, hostname):
         container_name = self.container_name
-        if isinstance(container_name, six.text_type):
+        if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -210,8 +211,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return '?'.join(result)
 
     @classmethod
-    def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
+    def from_blob_url(
+            cls, blob_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -222,10 +227,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -286,14 +293,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[str]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -309,9 +315,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -349,13 +357,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        ) -> Dict[str, Any]:
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
@@ -366,8 +373,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         }
 
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
+        if isinstance(data, str):
+            data = data.encode(encoding)
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -379,6 +386,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             stream = data
         elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
             stream = IterStreamer(data, encoding=encoding)
+        elif hasattr(data, '__aiter__'):
+            stream = AsyncIterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
@@ -580,14 +589,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def upload_blob(  # pylint: disable=too-many-locals
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+    def upload_blob(
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> Any
+        ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -1155,6 +1163,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
+
+        If blob versioning is enabled, the base blob cannot be restored using this
+        method. Instead use :func:`start_copy_from_url` with the URL of the blob version
+        you wish to promote to the current version.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
@@ -2336,7 +2348,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if length is None:
@@ -3325,7 +3337,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if isinstance(page, six.text_type):
+        if isinstance(page, str):
             page = page.encode(kwargs.pop('encoding', 'UTF-8'))
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -3752,7 +3764,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
         if length is None:
             length = get_length(data)

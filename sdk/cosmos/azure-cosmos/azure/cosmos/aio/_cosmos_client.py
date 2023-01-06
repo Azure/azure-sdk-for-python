@@ -31,7 +31,8 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options
+from .._base import build_options as _build_options, _set_throughput_options
+from ..offer import ThroughputProperties
 from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
@@ -196,7 +197,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -223,8 +225,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:

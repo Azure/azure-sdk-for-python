@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._subscription_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AcceptOwnershipRequest(msrest.serialization.Model):
+class AcceptOwnershipRequest(_serialization.Model):
     """The parameters required to accept subscription ownership.
 
     :ivar properties: Accept subscription ownership request properties.
@@ -23,44 +25,39 @@ class AcceptOwnershipRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AcceptOwnershipRequestProperties'},
+        "properties": {"key": "properties", "type": "AcceptOwnershipRequestProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AcceptOwnershipRequestProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.AcceptOwnershipRequestProperties"] = None, **kwargs):
         """
         :keyword properties: Accept subscription ownership request properties.
         :paramtype properties: ~azure.mgmt.subscription.models.AcceptOwnershipRequestProperties
         """
-        super(AcceptOwnershipRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AcceptOwnershipRequestProperties(msrest.serialization.Model):
+class AcceptOwnershipRequestProperties(_serialization.Model):
     """Accept subscription ownership request properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar display_name: Required. The friendly name of the subscription.
+    :ivar display_name: The friendly name of the subscription. Required.
     :vartype display_name: str
     :ivar management_group_id: Management group Id for the subscription.
     :vartype management_group_id: str
-    :ivar tags: A set of tags. Tags for the subscription.
+    :ivar tags: Tags for the subscription.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'display_name': {'required': True},
+        "display_name": {"required": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -72,52 +69,57 @@ class AcceptOwnershipRequestProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword display_name: Required. The friendly name of the subscription.
+        :keyword display_name: The friendly name of the subscription. Required.
         :paramtype display_name: str
         :keyword management_group_id: Management group Id for the subscription.
         :paramtype management_group_id: str
-        :keyword tags: A set of tags. Tags for the subscription.
+        :keyword tags: Tags for the subscription.
         :paramtype tags: dict[str, str]
         """
-        super(AcceptOwnershipRequestProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.management_group_id = management_group_id
         self.tags = tags
 
 
-class AcceptOwnershipStatusResponse(msrest.serialization.Model):
+class AcceptOwnershipStatusResponse(_serialization.Model):
     """Subscription Accept Ownership Response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar subscription_id: Newly created subscription Id.
     :vartype subscription_id: str
-    :ivar accept_ownership_state: The accept ownership state of the resource. Possible values
-     include: "Pending", "Completed", "Expired".
+    :ivar accept_ownership_state: The accept ownership state of the resource. Known values are:
+     "Pending", "Completed", and "Expired".
     :vartype accept_ownership_state: str or ~azure.mgmt.subscription.models.AcceptOwnership
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Pending",
+     "Accepted", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.subscription.models.Provisioning
     :ivar billing_owner: UPN of the billing owner.
     :vartype billing_owner: str
     :ivar subscription_tenant_id: Tenant Id of the subscription.
     :vartype subscription_tenant_id: str
     :ivar display_name: The display name of the subscription.
     :vartype display_name: str
-    :ivar tags: A set of tags. Tags for the subscription.
+    :ivar tags: Tags for the subscription.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
-        'accept_ownership_state': {'readonly': True},
-        'billing_owner': {'readonly': True},
+        "subscription_id": {"readonly": True},
+        "accept_ownership_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "billing_owner": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'accept_ownership_state': {'key': 'acceptOwnershipState', 'type': 'str'},
-        'billing_owner': {'key': 'billingOwner', 'type': 'str'},
-        'subscription_tenant_id': {'key': 'subscriptionTenantId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "accept_ownership_state": {"key": "acceptOwnershipState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "billing_owner": {"key": "billingOwner", "type": "str"},
+        "subscription_tenant_id": {"key": "subscriptionTenantId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -133,19 +135,20 @@ class AcceptOwnershipStatusResponse(msrest.serialization.Model):
         :paramtype subscription_tenant_id: str
         :keyword display_name: The display name of the subscription.
         :paramtype display_name: str
-        :keyword tags: A set of tags. Tags for the subscription.
+        :keyword tags: Tags for the subscription.
         :paramtype tags: dict[str, str]
         """
-        super(AcceptOwnershipStatusResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subscription_id = None
         self.accept_ownership_state = None
+        self.provisioning_state = None
         self.billing_owner = None
         self.subscription_tenant_id = subscription_tenant_id
         self.display_name = display_name
         self.tags = tags
 
 
-class BillingAccountPoliciesResponse(msrest.serialization.Model):
+class BillingAccountPoliciesResponse(_serialization.Model):
     """Billing account policies information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -163,31 +166,26 @@ class BillingAccountPoliciesResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BillingAccountPoliciesResponseProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "BillingAccountPoliciesResponseProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["BillingAccountPoliciesResponseProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.BillingAccountPoliciesResponseProperties"] = None, **kwargs):
         """
         :keyword properties: Billing account policies response properties.
         :paramtype properties: ~azure.mgmt.subscription.models.BillingAccountPoliciesResponseProperties
         """
-        super(BillingAccountPoliciesResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -195,7 +193,7 @@ class BillingAccountPoliciesResponse(msrest.serialization.Model):
         self.system_data = None
 
 
-class BillingAccountPoliciesResponseProperties(msrest.serialization.Model):
+class BillingAccountPoliciesResponseProperties(_serialization.Model):
     """Put billing account policies response properties.
 
     :ivar service_tenants: Service tenant for the billing account.
@@ -205,14 +203,14 @@ class BillingAccountPoliciesResponseProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_tenants': {'key': 'serviceTenants', 'type': '[ServiceTenantResponse]'},
-        'allow_transfers': {'key': 'allowTransfers', 'type': 'bool'},
+        "service_tenants": {"key": "serviceTenants", "type": "[ServiceTenantResponse]"},
+        "allow_transfers": {"key": "allowTransfers", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        service_tenants: Optional[List["ServiceTenantResponse"]] = None,
+        service_tenants: Optional[List["_models.ServiceTenantResponse"]] = None,
         allow_transfers: Optional[bool] = None,
         **kwargs
     ):
@@ -222,12 +220,12 @@ class BillingAccountPoliciesResponseProperties(msrest.serialization.Model):
         :keyword allow_transfers: Determine if the transfers are allowed for the billing account.
         :paramtype allow_transfers: bool
         """
-        super(BillingAccountPoliciesResponseProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_tenants = service_tenants
         self.allow_transfers = allow_transfers
 
 
-class CanceledSubscriptionId(msrest.serialization.Model):
+class CanceledSubscriptionId(_serialization.Model):
     """The ID of the canceled subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -237,24 +235,20 @@ class CanceledSubscriptionId(msrest.serialization.Model):
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
+        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CanceledSubscriptionId, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
 
 
-class EnabledSubscriptionId(msrest.serialization.Model):
+class EnabledSubscriptionId(_serialization.Model):
     """The ID of the subscriptions that is being enabled.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -264,24 +258,20 @@ class EnabledSubscriptionId(msrest.serialization.Model):
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
+        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnabledSubscriptionId, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -291,29 +281,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ErrorResponseBody(msrest.serialization.Model):
+class ErrorResponseBody(_serialization.Model):
     """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar error: The details of the error.
@@ -325,15 +309,15 @@ class ErrorResponseBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         code: Optional[str] = None,
         message: Optional[str] = None,
         **kwargs
@@ -346,13 +330,13 @@ class ErrorResponseBody(msrest.serialization.Model):
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponseBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
         self.code = code
         self.message = message
 
 
-class GetTenantPolicyListResponse(msrest.serialization.Model):
+class GetTenantPolicyListResponse(_serialization.Model):
     """Tenant policy information list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -364,27 +348,23 @@ class GetTenantPolicyListResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GetTenantPolicyResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GetTenantPolicyResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(GetTenantPolicyListResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class GetTenantPolicyResponse(msrest.serialization.Model):
+class GetTenantPolicyResponse(_serialization.Model):
     """Tenant policy Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -402,31 +382,26 @@ class GetTenantPolicyResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'TenantPolicy'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "TenantPolicy"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["TenantPolicy"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.TenantPolicy"] = None, **kwargs):
         """
         :keyword properties: Tenant policy properties.
         :paramtype properties: ~azure.mgmt.subscription.models.TenantPolicy
         """
-        super(GetTenantPolicyResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -434,7 +409,7 @@ class GetTenantPolicyResponse(msrest.serialization.Model):
         self.system_data = None
 
 
-class Location(msrest.serialization.Model):
+class Location(_serialization.Model):
     """Location information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -455,30 +430,26 @@ class Location(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'latitude': {'readonly': True},
-        'longitude': {'readonly': True},
+        "id": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "latitude": {"readonly": True},
+        "longitude": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'latitude': {'key': 'latitude', 'type': 'str'},
-        'longitude': {'key': 'longitude', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "latitude": {"key": "latitude", "type": "str"},
+        "longitude": {"key": "longitude", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Location, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.subscription_id = None
         self.name = None
@@ -487,7 +458,7 @@ class Location(msrest.serialization.Model):
         self.longitude = None
 
 
-class LocationListResult(msrest.serialization.Model):
+class LocationListResult(_serialization.Model):
     """Location list operation response.
 
     :ivar value: An array of locations.
@@ -495,24 +466,19 @@ class LocationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Location]'},
+        "value": {"key": "value", "type": "[Location]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Location"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Location"]] = None, **kwargs):
         """
         :keyword value: An array of locations.
         :paramtype value: list[~azure.mgmt.subscription.models.Location]
         """
-        super(LocationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -524,9 +490,9 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
     def __init__(
@@ -534,7 +500,7 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         **kwargs
     ):
         """
@@ -545,13 +511,13 @@ class Operation(msrest.serialization.Model):
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.subscription.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Subscription.
@@ -565,10 +531,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -590,14 +556,14 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: Localized friendly description for the operation.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar value: List of operations.
@@ -607,29 +573,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: List of operations.
         :paramtype value: list[~azure.mgmt.subscription.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PutAliasRequest(msrest.serialization.Model):
+class PutAliasRequest(_serialization.Model):
     """The parameters required to create a new subscription.
 
     :ivar properties: Put alias request properties.
@@ -637,24 +597,19 @@ class PutAliasRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'PutAliasRequestProperties'},
+        "properties": {"key": "properties", "type": "PutAliasRequestProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["PutAliasRequestProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.PutAliasRequestProperties"] = None, **kwargs):
         """
         :keyword properties: Put alias request properties.
         :paramtype properties: ~azure.mgmt.subscription.models.PutAliasRequestProperties
         """
-        super(PutAliasRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class PutAliasRequestAdditionalProperties(msrest.serialization.Model):
+class PutAliasRequestAdditionalProperties(_serialization.Model):
     """Put subscription additional properties.
 
     :ivar management_group_id: Management group Id for the subscription.
@@ -663,15 +618,15 @@ class PutAliasRequestAdditionalProperties(msrest.serialization.Model):
     :vartype subscription_tenant_id: str
     :ivar subscription_owner_id: Owner Id of the subscription.
     :vartype subscription_owner_id: str
-    :ivar tags: A set of tags. Tags for the subscription.
+    :ivar tags: Tags for the subscription.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
-        'subscription_tenant_id': {'key': 'subscriptionTenantId', 'type': 'str'},
-        'subscription_owner_id': {'key': 'subscriptionOwnerId', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "subscription_tenant_id": {"key": "subscriptionTenantId", "type": "str"},
+        "subscription_owner_id": {"key": "subscriptionOwnerId", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -690,23 +645,23 @@ class PutAliasRequestAdditionalProperties(msrest.serialization.Model):
         :paramtype subscription_tenant_id: str
         :keyword subscription_owner_id: Owner Id of the subscription.
         :paramtype subscription_owner_id: str
-        :keyword tags: A set of tags. Tags for the subscription.
+        :keyword tags: Tags for the subscription.
         :paramtype tags: dict[str, str]
         """
-        super(PutAliasRequestAdditionalProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.management_group_id = management_group_id
         self.subscription_tenant_id = subscription_tenant_id
         self.subscription_owner_id = subscription_owner_id
         self.tags = tags
 
 
-class PutAliasRequestProperties(msrest.serialization.Model):
+class PutAliasRequestProperties(_serialization.Model):
     """Put subscription properties.
 
     :ivar display_name: The friendly name of the subscription.
     :vartype display_name: str
     :ivar workload: The workload type of the subscription. It can be either Production or DevTest.
-     Possible values include: "Production", "DevTest".
+     Known values are: "Production" and "DevTest".
     :vartype workload: str or ~azure.mgmt.subscription.models.Workload
     :ivar billing_scope: Billing scope of the subscription.
      For CustomerLed and FieldLed -
@@ -725,30 +680,30 @@ class PutAliasRequestProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'workload': {'key': 'workload', 'type': 'str'},
-        'billing_scope': {'key': 'billingScope', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'reseller_id': {'key': 'resellerId', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'PutAliasRequestAdditionalProperties'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "workload": {"key": "workload", "type": "str"},
+        "billing_scope": {"key": "billingScope", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "reseller_id": {"key": "resellerId", "type": "str"},
+        "additional_properties": {"key": "additionalProperties", "type": "PutAliasRequestAdditionalProperties"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        workload: Optional[Union[str, "Workload"]] = None,
+        workload: Optional[Union[str, "_models.Workload"]] = None,
         billing_scope: Optional[str] = None,
         subscription_id: Optional[str] = None,
         reseller_id: Optional[str] = None,
-        additional_properties: Optional["PutAliasRequestAdditionalProperties"] = None,
+        additional_properties: Optional["_models.PutAliasRequestAdditionalProperties"] = None,
         **kwargs
     ):
         """
         :keyword display_name: The friendly name of the subscription.
         :paramtype display_name: str
         :keyword workload: The workload type of the subscription. It can be either Production or
-         DevTest. Possible values include: "Production", "DevTest".
+         DevTest. Known values are: "Production" and "DevTest".
         :paramtype workload: str or ~azure.mgmt.subscription.models.Workload
         :keyword billing_scope: Billing scope of the subscription.
          For CustomerLed and FieldLed -
@@ -766,7 +721,7 @@ class PutAliasRequestProperties(msrest.serialization.Model):
         :paramtype additional_properties:
          ~azure.mgmt.subscription.models.PutAliasRequestAdditionalProperties
         """
-        super(PutAliasRequestProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.workload = workload
         self.billing_scope = billing_scope
@@ -775,7 +730,7 @@ class PutAliasRequestProperties(msrest.serialization.Model):
         self.additional_properties = additional_properties
 
 
-class PutTenantPolicyRequestProperties(msrest.serialization.Model):
+class PutTenantPolicyRequestProperties(_serialization.Model):
     """Put tenant policy request properties.
 
     :ivar block_subscriptions_leaving_tenant: Blocks the leaving of subscriptions from user's
@@ -789,9 +744,9 @@ class PutTenantPolicyRequestProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'block_subscriptions_leaving_tenant': {'key': 'blockSubscriptionsLeavingTenant', 'type': 'bool'},
-        'block_subscriptions_into_tenant': {'key': 'blockSubscriptionsIntoTenant', 'type': 'bool'},
-        'exempted_principals': {'key': 'exemptedPrincipals', 'type': '[str]'},
+        "block_subscriptions_leaving_tenant": {"key": "blockSubscriptionsLeavingTenant", "type": "bool"},
+        "block_subscriptions_into_tenant": {"key": "blockSubscriptionsIntoTenant", "type": "bool"},
+        "exempted_principals": {"key": "exemptedPrincipals", "type": "[str]"},
     }
 
     def __init__(
@@ -813,13 +768,13 @@ class PutTenantPolicyRequestProperties(msrest.serialization.Model):
          subscription tenant policies for the user's tenant.
         :paramtype exempted_principals: list[str]
         """
-        super(PutTenantPolicyRequestProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.block_subscriptions_leaving_tenant = block_subscriptions_leaving_tenant
         self.block_subscriptions_into_tenant = block_subscriptions_into_tenant
         self.exempted_principals = exempted_principals
 
 
-class RenamedSubscriptionId(msrest.serialization.Model):
+class RenamedSubscriptionId(_serialization.Model):
     """The ID of the subscriptions that is being renamed.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -829,24 +784,20 @@ class RenamedSubscriptionId(msrest.serialization.Model):
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
+        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RenamedSubscriptionId, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
 
 
-class ServiceTenantResponse(msrest.serialization.Model):
+class ServiceTenantResponse(_serialization.Model):
     """Billing account service tenant.
 
     :ivar tenant_id: Service tenant id.
@@ -856,29 +807,23 @@ class ServiceTenantResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'tenant_name': {'key': 'tenantName', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "tenant_name": {"key": "tenantName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        tenant_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tenant_id: Optional[str] = None, tenant_name: Optional[str] = None, **kwargs):
         """
         :keyword tenant_id: Service tenant id.
         :paramtype tenant_id: str
         :keyword tenant_name: Service tenant name.
         :paramtype tenant_name: str
         """
-        super(ServiceTenantResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tenant_id = tenant_id
         self.tenant_name = tenant_name
 
 
-class Subscription(msrest.serialization.Model):
+class Subscription(_serialization.Model):
     """Subscription information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -891,8 +836,12 @@ class Subscription(msrest.serialization.Model):
     :ivar display_name: The subscription display name.
     :vartype display_name: str
     :ivar state: The subscription state. Possible values are Enabled, Warned, PastDue, Disabled,
-     and Deleted. Possible values include: "Enabled", "Warned", "PastDue", "Disabled", "Deleted".
+     and Deleted. Known values are: "Enabled", "Warned", "PastDue", "Disabled", and "Deleted".
     :vartype state: str or ~azure.mgmt.subscription.models.SubscriptionState
+    :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
+    :vartype tenant_id: str
+    :ivar tags: Tags for the subscription.
+    :vartype tags: dict[str, str]
     :ivar subscription_policies: The subscription policies.
     :vartype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
     :ivar authorization_source: The authorization source of the request. Valid values are one or
@@ -902,29 +851,35 @@ class Subscription(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'subscription_id': {'readonly': True},
-        'display_name': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "subscription_id": {"readonly": True},
+        "display_name": {"readonly": True},
+        "state": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
-        'authorization_source': {'key': 'authorizationSource', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "subscription_policies": {"key": "subscriptionPolicies", "type": "SubscriptionPolicies"},
+        "authorization_source": {"key": "authorizationSource", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        subscription_policies: Optional["SubscriptionPolicies"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        subscription_policies: Optional["_models.SubscriptionPolicies"] = None,
         authorization_source: Optional[str] = None,
         **kwargs
     ):
         """
+        :keyword tags: Tags for the subscription.
+        :paramtype tags: dict[str, str]
         :keyword subscription_policies: The subscription policies.
         :paramtype subscription_policies: ~azure.mgmt.subscription.models.SubscriptionPolicies
         :keyword authorization_source: The authorization source of the request. Valid values are one or
@@ -932,16 +887,18 @@ class Subscription(msrest.serialization.Model):
          RoleBased'.
         :paramtype authorization_source: str
         """
-        super(Subscription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.subscription_id = None
         self.display_name = None
         self.state = None
+        self.tenant_id = None
+        self.tags = tags
         self.subscription_policies = subscription_policies
         self.authorization_source = authorization_source
 
 
-class SubscriptionAliasListResult(msrest.serialization.Model):
+class SubscriptionAliasListResult(_serialization.Model):
     """The list of aliases.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -953,27 +910,23 @@ class SubscriptionAliasListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubscriptionAliasResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SubscriptionAliasResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubscriptionAliasListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SubscriptionAliasResponse(msrest.serialization.Model):
+class SubscriptionAliasResponse(_serialization.Model):
     """Subscription Information with the alias.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -991,31 +944,26 @@ class SubscriptionAliasResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'SubscriptionAliasResponseProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "SubscriptionAliasResponseProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["SubscriptionAliasResponseProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.SubscriptionAliasResponseProperties"] = None, **kwargs):
         """
         :keyword properties: Subscription Alias response properties.
         :paramtype properties: ~azure.mgmt.subscription.models.SubscriptionAliasResponseProperties
         """
-        super(SubscriptionAliasResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1023,7 +971,7 @@ class SubscriptionAliasResponse(msrest.serialization.Model):
         self.system_data = None
 
 
-class SubscriptionAliasResponseProperties(msrest.serialization.Model):
+class SubscriptionAliasResponseProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Put subscription creation result properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1032,13 +980,13 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
     :vartype subscription_id: str
     :ivar display_name: The display name of the subscription.
     :vartype display_name: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible values include:
-     "Accepted", "Succeeded", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.subscription.models.ProvisioningState
     :ivar accept_ownership_url: Url to accept ownership of the subscription.
     :vartype accept_ownership_url: str
-    :ivar accept_ownership_state: The accept ownership state of the resource. Possible values
-     include: "Pending", "Completed", "Expired".
+    :ivar accept_ownership_state: The accept ownership state of the resource. Known values are:
+     "Pending", "Completed", and "Expired".
     :vartype accept_ownership_state: str or ~azure.mgmt.subscription.models.AcceptOwnership
     :ivar billing_scope: Billing scope of the subscription.
      For CustomerLed and FieldLed -
@@ -1048,7 +996,7 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
      /billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}.
     :vartype billing_scope: str
     :ivar workload: The workload type of the subscription. It can be either Production or DevTest.
-     Possible values include: "Production", "DevTest".
+     Known values are: "Production" and "DevTest".
     :vartype workload: str or ~azure.mgmt.subscription.models.Workload
     :ivar reseller_id: Reseller Id.
     :vartype reseller_id: str
@@ -1058,38 +1006,38 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
     :vartype management_group_id: str
     :ivar created_time: Created Time.
     :vartype created_time: str
-    :ivar tags: A set of tags. Tags for the subscription.
+    :ivar tags: Tags for the subscription.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
-        'accept_ownership_url': {'readonly': True},
-        'accept_ownership_state': {'readonly': True},
+        "subscription_id": {"readonly": True},
+        "accept_ownership_url": {"readonly": True},
+        "accept_ownership_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'accept_ownership_url': {'key': 'acceptOwnershipUrl', 'type': 'str'},
-        'accept_ownership_state': {'key': 'acceptOwnershipState', 'type': 'str'},
-        'billing_scope': {'key': 'billingScope', 'type': 'str'},
-        'workload': {'key': 'workload', 'type': 'str'},
-        'reseller_id': {'key': 'resellerId', 'type': 'str'},
-        'subscription_owner_id': {'key': 'subscriptionOwnerId', 'type': 'str'},
-        'management_group_id': {'key': 'managementGroupId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "accept_ownership_url": {"key": "acceptOwnershipUrl", "type": "str"},
+        "accept_ownership_state": {"key": "acceptOwnershipState", "type": "str"},
+        "billing_scope": {"key": "billingScope", "type": "str"},
+        "workload": {"key": "workload", "type": "str"},
+        "reseller_id": {"key": "resellerId", "type": "str"},
+        "subscription_owner_id": {"key": "subscriptionOwnerId", "type": "str"},
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         billing_scope: Optional[str] = None,
-        workload: Optional[Union[str, "Workload"]] = None,
+        workload: Optional[Union[str, "_models.Workload"]] = None,
         reseller_id: Optional[str] = None,
         subscription_owner_id: Optional[str] = None,
         management_group_id: Optional[str] = None,
@@ -1100,8 +1048,8 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
         """
         :keyword display_name: The display name of the subscription.
         :paramtype display_name: str
-        :keyword provisioning_state: The provisioning state of the resource. Possible values include:
-         "Accepted", "Succeeded", "Failed".
+        :keyword provisioning_state: The provisioning state of the resource. Known values are:
+         "Accepted", "Succeeded", and "Failed".
         :paramtype provisioning_state: str or ~azure.mgmt.subscription.models.ProvisioningState
         :keyword billing_scope: Billing scope of the subscription.
          For CustomerLed and FieldLed -
@@ -1111,7 +1059,7 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
          /billingAccounts/{billingAccountName}/enrollmentAccounts/{enrollmentAccountName}.
         :paramtype billing_scope: str
         :keyword workload: The workload type of the subscription. It can be either Production or
-         DevTest. Possible values include: "Production", "DevTest".
+         DevTest. Known values are: "Production" and "DevTest".
         :paramtype workload: str or ~azure.mgmt.subscription.models.Workload
         :keyword reseller_id: Reseller Id.
         :paramtype reseller_id: str
@@ -1121,10 +1069,10 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
         :paramtype management_group_id: str
         :keyword created_time: Created Time.
         :paramtype created_time: str
-        :keyword tags: A set of tags. Tags for the subscription.
+        :keyword tags: Tags for the subscription.
         :paramtype tags: dict[str, str]
         """
-        super(SubscriptionAliasResponseProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subscription_id = None
         self.display_name = display_name
         self.provisioning_state = provisioning_state
@@ -1139,45 +1087,35 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
         self.tags = tags
 
 
-class SubscriptionListResult(msrest.serialization.Model):
+class SubscriptionListResult(_serialization.Model):
     """Subscription list operation response.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar value: An array of subscriptions.
     :vartype value: list[~azure.mgmt.subscription.models.Subscription]
-    :ivar next_link: Required. The URL to get the next set of results.
+    :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
 
-    _validation = {
-        'next_link': {'required': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Subscription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Subscription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: str,
-        value: Optional[List["Subscription"]] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Subscription"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: An array of subscriptions.
         :paramtype value: list[~azure.mgmt.subscription.models.Subscription]
-        :keyword next_link: Required. The URL to get the next set of results.
+        :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(SubscriptionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SubscriptionName(msrest.serialization.Model):
+class SubscriptionName(_serialization.Model):
     """The new name of the subscription.
 
     :ivar subscription_name: New subscription name.
@@ -1185,24 +1123,19 @@ class SubscriptionName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subscription_name': {'key': 'subscriptionName', 'type': 'str'},
+        "subscription_name": {"key": "subscriptionName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        subscription_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, subscription_name: Optional[str] = None, **kwargs):
         """
         :keyword subscription_name: New subscription name.
         :paramtype subscription_name: str
         """
-        super(SubscriptionName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subscription_name = subscription_name
 
 
-class SubscriptionPolicies(msrest.serialization.Model):
+class SubscriptionPolicies(_serialization.Model):
     """Subscription policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1213,91 +1146,87 @@ class SubscriptionPolicies(msrest.serialization.Model):
     :vartype location_placement_id: str
     :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
-    :ivar spending_limit: The subscription spending limit. Possible values include: "On", "Off",
+    :ivar spending_limit: The subscription spending limit. Known values are: "On", "Off", and
      "CurrentPeriodOff".
     :vartype spending_limit: str or ~azure.mgmt.subscription.models.SpendingLimit
     """
 
     _validation = {
-        'location_placement_id': {'readonly': True},
-        'quota_id': {'readonly': True},
-        'spending_limit': {'readonly': True},
+        "location_placement_id": {"readonly": True},
+        "quota_id": {"readonly": True},
+        "spending_limit": {"readonly": True},
     }
 
     _attribute_map = {
-        'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
-        'quota_id': {'key': 'quotaId', 'type': 'str'},
-        'spending_limit': {'key': 'spendingLimit', 'type': 'str'},
+        "location_placement_id": {"key": "locationPlacementId", "type": "str"},
+        "quota_id": {"key": "quotaId", "type": "str"},
+        "spending_limit": {"key": "spendingLimit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubscriptionPolicies, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.location_placement_id = None
         self.quota_id = None
         self.spending_limit = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.subscription.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.subscription.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.subscription.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.subscription.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1306,7 +1235,7 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TenantIdDescription(msrest.serialization.Model):
+class TenantIdDescription(_serialization.Model):
     """Tenant Id information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1316,68 +1245,94 @@ class TenantIdDescription(msrest.serialization.Model):
     :vartype id: str
     :ivar tenant_id: The tenant ID. For example, 00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
+    :ivar tenant_category: The category of the tenant. Possible values are
+     TenantCategoryHome,TenantCategoryProjectedBy,TenantCategoryManagedBy.
+    :vartype tenant_category: str
+    :ivar country: The country/region name of the address for the tenant.
+    :vartype country: str
+    :ivar country_code: The Country/region abbreviation for the tenant.
+    :vartype country_code: str
+    :ivar display_name: The display name of the tenant.
+    :vartype display_name: str
+    :ivar domains: The list of domains for the tenant.
+    :vartype domains: str
+    :ivar default_domain: The default domain for the tenant.
+    :vartype default_domain: str
+    :ivar tenant_type: The tenant type. Only available for Home tenant category.
+    :vartype tenant_type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "tenant_category": {"readonly": True},
+        "country": {"readonly": True},
+        "country_code": {"readonly": True},
+        "display_name": {"readonly": True},
+        "domains": {"readonly": True},
+        "default_domain": {"readonly": True},
+        "tenant_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "tenant_category": {"key": "tenantCategory", "type": "str"},
+        "country": {"key": "country", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "domains": {"key": "domains", "type": "str"},
+        "default_domain": {"key": "defaultDomain", "type": "str"},
+        "tenant_type": {"key": "tenantType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TenantIdDescription, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.tenant_id = None
+        self.tenant_category = None
+        self.country = None
+        self.country_code = None
+        self.display_name = None
+        self.domains = None
+        self.default_domain = None
+        self.tenant_type = None
 
 
-class TenantListResult(msrest.serialization.Model):
+class TenantListResult(_serialization.Model):
     """Tenant Ids information.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar value: An array of tenants.
     :vartype value: list[~azure.mgmt.subscription.models.TenantIdDescription]
-    :ivar next_link: Required. The URL to use for getting the next set of results.
+    :ivar next_link: The URL to use for getting the next set of results. Required.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'required': True},
+        "next_link": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TenantIdDescription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TenantIdDescription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: str,
-        value: Optional[List["TenantIdDescription"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: str, value: Optional[List["_models.TenantIdDescription"]] = None, **kwargs):
         """
         :keyword value: An array of tenants.
         :paramtype value: list[~azure.mgmt.subscription.models.TenantIdDescription]
-        :keyword next_link: Required. The URL to use for getting the next set of results.
+        :keyword next_link: The URL to use for getting the next set of results. Required.
         :paramtype next_link: str
         """
-        super(TenantListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class TenantPolicy(msrest.serialization.Model):
+class TenantPolicy(_serialization.Model):
     """Tenant policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1395,14 +1350,14 @@ class TenantPolicy(msrest.serialization.Model):
     """
 
     _validation = {
-        'policy_id': {'readonly': True},
+        "policy_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'block_subscriptions_leaving_tenant': {'key': 'blockSubscriptionsLeavingTenant', 'type': 'bool'},
-        'block_subscriptions_into_tenant': {'key': 'blockSubscriptionsIntoTenant', 'type': 'bool'},
-        'exempted_principals': {'key': 'exemptedPrincipals', 'type': '[str]'},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "block_subscriptions_leaving_tenant": {"key": "blockSubscriptionsLeavingTenant", "type": "bool"},
+        "block_subscriptions_into_tenant": {"key": "blockSubscriptionsIntoTenant", "type": "bool"},
+        "exempted_principals": {"key": "exemptedPrincipals", "type": "[str]"},
     }
 
     def __init__(
@@ -1424,7 +1379,7 @@ class TenantPolicy(msrest.serialization.Model):
          subscription tenant policies for the user's tenant.
         :paramtype exempted_principals: list[str]
         """
-        super(TenantPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.policy_id = None
         self.block_subscriptions_leaving_tenant = block_subscriptions_leaving_tenant
         self.block_subscriptions_into_tenant = block_subscriptions_into_tenant

@@ -25,7 +25,7 @@ Check that you are running pylint version >=2.5.2 and astroid version >=2.4.1.
     ```
 4. Run pylint at the package level using tox and it will find the pylintrc file:
     ```bash
-    C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox -c ../../../eng/tox/tox.ini -e lint
+    C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox -c ../../../eng/tox/tox.ini -e pylint
     ```
 5. If you use the pylint extension for VS code or Pycharm it *should* find the pylintrc automatically.
 

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -14,20 +14,24 @@ from ._generated._communication_network_traversal_client\
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
 from ._generated.models import CommunicationRelayConfiguration
+from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.communication.identity import CommunicationUserIdentifier
     from azure.communication.networktraversal import RouteType
 
-class CommunicationRelayClient(object): # pylint: disable=client-accepts-api-version-keyword
+class CommunicationRelayClient(object):
     """Azure Communication Services Relay client.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The TokenCredential we use to authenticate against the service.
-
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
+    :keyword api_version: Azure Communication Network Traversal API version.
+        Default value is "2022-03-01-preview".
+        Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/network_traversal_samples.py
@@ -37,7 +41,7 @@ class CommunicationRelayClient(object): # pylint: disable=client-accepts-api-ver
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: TokenCredential
+            credential, # type: Union[TokenCredential, AzureKeyCredential]
             **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -53,8 +57,10 @@ class CommunicationRelayClient(object): # pylint: disable=client-accepts-api-ver
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._network_traversal_service_client = CommunicationNetworkTraversalClientGen(
             self._endpoint,
+            api_version=self._api_version,
             authentication_policy=get_authentication_policy(endpoint, credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)

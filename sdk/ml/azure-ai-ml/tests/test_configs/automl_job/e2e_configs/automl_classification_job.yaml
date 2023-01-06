@@ -7,11 +7,6 @@ log_verbosity: debug
 task: classification
 primary_metric: accuracy
 
-properties:
-  _automl_internal_enable_mltable_quick_profile: "true"
-  _automl_internal_label: "latest"
-  _automl_internal_save_mlflow: "true"
-
 limits:
   timeout_minutes: 180
   trial_timeout_minutes: 20
@@ -22,10 +17,10 @@ limits:
 
 target_column_name: y
 training_data:
-  path: tests/test_configs/automl_job/test_datasets/bank_marketing/train
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/bank_marketing/train
   type: mltable
 validation_data:
-  path: tests/test_configs/automl_job/test_datasets/bank_marketing/valid
+  path: src/azure-ai-ml/tests/test_configs/automl_job/test_datasets/bank_marketing/valid
   type: mltable
 
 featurization:
@@ -33,7 +28,7 @@ featurization:
   transformer_params:
     imputer:
     - fields: ["job"]
-      parameters: 
+      parameters:
         strategy: most_frequent
   blocked_transformers:
     - one_hot_encoder
@@ -44,3 +39,5 @@ training:
     - logistic_regression
   blocked_training_algorithms:
     - xg_boost_classifier
+  enable_stack_ensemble: False
+  enable_vote_ensemble: False

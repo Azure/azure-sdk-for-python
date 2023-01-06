@@ -35,10 +35,9 @@ class CaseInsensitiveEnumMeta(EnumMeta):
     .. code-block:: python
 
         from enum import Enum
-        from six import with_metaclass
         from azure.core import CaseInsensitiveEnumMeta
 
-        class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+        class MyCustomEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
             FOO = 'foo'
             BAR = 'bar'
 
@@ -46,7 +45,9 @@ class CaseInsensitiveEnumMeta(EnumMeta):
 
     def __getitem__(cls, name):
         # disabling pylint bc of pylint bug https://github.com/PyCQA/astroid/issues/713
-        return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())  # pylint: disable=no-value-for-parameter
+        return super(  # pylint: disable=no-value-for-parameter
+            CaseInsensitiveEnumMeta, cls
+        ).__getitem__(name.upper())
 
     def __getattr__(cls, name):
         """Return the enum member matching `name`

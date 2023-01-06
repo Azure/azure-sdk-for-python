@@ -4,7 +4,9 @@
 # ------------------------------------
 import logging
 import os
+from typing import List, TYPE_CHECKING, Any
 
+from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
 from .azure_powershell import AzurePowerShellCredential
@@ -16,15 +18,8 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .vscode import VisualStudioCodeCredential
 
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, List
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,9 +36,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    4. The user currently signed in to Visual Studio Code.
-    5. The identity currently logged in to the Azure CLI.
-    6. The identity currently logged in to Azure PowerShell.
+    4. The identity currently logged in to the Azure CLI.
+    5. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
@@ -57,7 +51,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to **False**.
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
-        Defaults to **False**.
+        Defaults to **True**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
@@ -79,8 +73,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -114,7 +107,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
-        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
+        exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
@@ -151,13 +144,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`

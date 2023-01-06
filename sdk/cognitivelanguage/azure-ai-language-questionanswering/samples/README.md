@@ -31,16 +31,16 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 ### Prerequisites
 
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-* An existing Question Answering resource
+* A [Language Service][language_service] resource
 
 
 ## Setup
 
 1. Install the Azure QuestionAnswering client library for Python with [pip][pip]:
 ```bash
-pip install --pre azure-ai-language-questionanswering
+pip install azure-ai-language-questionanswering
 ```
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.
@@ -66,5 +66,6 @@ pip install --pre azure-ai-language-questionanswering
 [add_knowledge_sources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_update_knowledge_sources.py
 [add_knowledge_sources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_update_knowledge_sources_async.py
 
+[language_service]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/

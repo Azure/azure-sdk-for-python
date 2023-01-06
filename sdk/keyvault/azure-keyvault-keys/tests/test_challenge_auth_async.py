@@ -28,7 +28,7 @@ from _async_test_case import AsyncKeysClientPreparer, get_decorator
 from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
-from test_challenge_auth import empty_challenge_cache, get_random_url
+from test_challenge_auth import empty_challenge_cache, get_random_url, add_url_port
 
 only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 
@@ -49,7 +49,9 @@ class TestChallengeAuth(KeyVaultTestCase):
 
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
+        credential = ClientSecretCredential(
+            tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret, additionally_allowed_tenants="*"
+        )
         managed_hsm_url = kwargs.pop("managed_hsm_url", None)
         keyvault_url = kwargs.pop("vault_url", None)
         vault_url = managed_hsm_url if is_hsm else keyvault_url
@@ -126,7 +128,7 @@ async def test_scope():
     endpoint = "https://authority.net/tenant"
 
     # an AADv1 resource becomes an AADv2 scope with the addition of '/.default'
-    resource = "https://challenge.resource"
+    resource = "https://vault.azure.net"
     scope = resource + "/.default"
 
     challenge_with_resource = Mock(
@@ -186,10 +188,11 @@ async def test_tenant():
 
     tenant = "tenant-id"
     endpoint = "https://authority.net/{}".format(tenant)
+    resource = "https://vault.azure.net"
 
     challenge = Mock(
         status_code=401,
-        headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=https://challenge.resource'.format(endpoint)},
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
     )
 
     await test_with_challenge(challenge, tenant)
@@ -204,9 +207,9 @@ async def test_policy_updates_cache():
     """
 
     url = get_random_url()
-    first_scope = "https://first-scope"
+    first_scope = "https://vault.azure.net/first-scope"
     first_token = "first-scope-token"
-    second_scope = "https://second-scope"
+    second_scope = "https://vault.azure.net/second-scope"
     second_token = "second-scope-token"
     challenge_fmt = 'Bearer authorization="https://login.authority.net/tenant", resource={}'
 
@@ -266,6 +269,7 @@ async def test_token_expiration():
     expires_on = time.time() + 3600
     first_token = "*"
     second_token = "**"
+    resource = "https://vault.azure.net"
 
     token = AccessToken(first_token, expires_on)
 
@@ -282,7 +286,7 @@ async def test_token_expiration():
         ],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             )
         ]
         + [mock_response()] * 3,
@@ -305,8 +309,8 @@ async def test_preserves_options_and_headers():
     """After a challenge, the policy should send the original request with its options and headers preserved"""
 
     url = get_random_url()
-
     token = "**"
+    resource = "https://vault.azure.net"
 
     async def get_token(*_, **__):
         return AccessToken(token, 0)
@@ -317,7 +321,7 @@ async def test_preserves_options_and_headers():
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
         responses=[
             mock_response(
-                status_code=401, headers={"WWW-Authenticate": 'Bearer authorization="{}", resource=foo'.format(url)}
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             )
         ]
         + [mock_response()] * 2,
@@ -349,3 +353,93 @@ async def test_preserves_options_and_headers():
     # ensure the mock sans I/O policies were called
     assert adder.on_request.called, "mock policy wasn't invoked"
     assert verifier.on_request.called, "mock policy wasn't invoked"
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_verify_challenge_resource_matches(verify_challenge_resource):
+    """The auth policy should raise if the challenge resource doesn't match the request URL unless check is disabled"""
+
+    url = get_random_url()
+    url_with_port = add_url_port(url)
+    token = "**"
+    resource = "https://myvault.azure.net"  # Doesn't match a "".vault.azure.net" resource because of the "my" prefix
+
+    async def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
+    transport_2 = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
+
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+    client_with_port = KeyClient(
+        url_with_port, credential, transport=transport_2, verify_challenge_resource=verify_challenge_resource
+    )
+
+    if verify_challenge_resource:
+        with pytest.raises(ValueError) as e:
+            await client.get_key("key-name")
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
+        with pytest.raises(ValueError) as e:
+            await client_with_port.get_key("key-name")
+        assert f"The challenge resource 'myvault.azure.net' does not match the requested domain" in str(e.value)
+    else:
+        key = await client.get_key("key-name")
+        assert key.name == "key-name"
+        key = await client_with_port.get_key("key-name")
+        assert key.name == "key-name"
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+@pytest.mark.parametrize("verify_challenge_resource", [True, False])
+async def test_verify_challenge_resource_valid(verify_challenge_resource):
+    """The auth policy should raise if the challenge resource isn't a valid URL unless check is disabled"""
+
+    url = get_random_url()
+    token = "**"
+    resource = "bad-resource"
+
+    async def get_token(*_, **__):
+        return AccessToken(token, 0)
+
+    credential = Mock(get_token=Mock(wraps=get_token))
+
+    transport = async_validating_transport(
+        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+        responses=[
+            mock_response(
+                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+            ),
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+        ]
+    )
+
+    client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
+
+    if verify_challenge_resource:
+        with pytest.raises(ValueError) as e:
+            await client.get_key("key-name")
+        assert "The challenge contains invalid scope" in str(e.value)
+    else:
+        key = await client.get_key("key-name")
+        assert key.name == "key-name"

@@ -17,6 +17,11 @@ cd <swagger-folder>
 autorest
 ```
 
+After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
+
 ### Settings
 
 ```yaml
@@ -26,10 +31,9 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-tag: release_2022_05_15_preview
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.1.0b2
+package-version: 1.1.0b4
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -50,7 +54,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e7f37e4e43b1d12fd1988fda3ed39624c4b23303/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
@@ -60,7 +64,7 @@ title: ConversationAnalysisClient
 These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e7f37e4e43b1d12fd1988fda3ed39624c4b23303/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -70,6 +74,49 @@ title: ConversationAuthoringClient
 Customizations that should eventually be added to central autorest configuration.
 
 ### General customizations
+
+#### Add rest api docs to operations
+
+```yaml
+directive:
+- from: analyzeconversations-authoring.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + operationId + " for more information.";
+
+- where-operation: AnalyzeConversation_SubmitJob
+  transform: |
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/submit-job for more information.";
+- where-operation: ConversationAnalysis_AnalyzeConversation
+  transform: |
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis/analyze-conversation for more information.";
+
+# Work around https://github.com/Azure/azure-sdk-for-net/issues/29141
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationResultsKind
+  transform: >
+    $["enum"] = [
+      "conversationalPIIResults",
+      "conversationalSummarizationResults",
+      "conversationalSentimentResults"
+    ];
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationConversationPIIResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalPIIResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSummarizationResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSummarizationResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSentimentResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSentimentResults";
+```
 
 ```yaml
 directive:
@@ -88,6 +135,12 @@ directive:
           "AzureKey": []
         }
     ];
+
+# Fix too long of link in description.
+- from: swagger-document
+  where: $.info
+  transform: |
+    $["description"] = "The language service conversations API is a suite of natural language processing (NLP) skills that can be used to analyze structured conversations (textual or spoken). Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.";
 
 # Fix Endpoint parameter description and format.
 - from: swagger-document
@@ -137,7 +190,7 @@ directive:
   - where-operation: AnalyzeConversation_SubmitJob
     transform: >
       $["responses"]["200"] = {
-          "description": "dummy schema to get poller response when calling .result()",
+          "description": "mock schema to get poller response when calling .result()",
           "schema": {
               "$ref": "#/definitions/AnalyzeConversationJobState"
           }
@@ -204,7 +257,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_CancelTrainingJob
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
@@ -212,7 +265,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteDeployment
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -220,7 +273,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeletionJobState"
         }
@@ -228,7 +281,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeployment"
         }
@@ -236,7 +289,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Export
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringExportProjectJobState"
         }
@@ -244,7 +297,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Import
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringImportProjectJobState"
         }
@@ -252,7 +305,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_SwapDeployments
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -260,9 +313,33 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Train
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_AssignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_LoadSnapshot
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringLoadSnapshotJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_UnassignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
       };
 ```
@@ -374,4 +451,34 @@ directive:
   - rename-operation:
       from: ConversationalAnalysisAuthoring_ListTrainingConfigVersions
       to: ListTrainingConfigVersions
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_DeleteDeploymentFromResources
+      to: DeleteDeploymentFromResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetDeploymentDeleteFromResourcesStatus
+      to: GetDeploymentDeleteFromResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_LoadSnapshot
+      to: LoadSnapshot
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetLoadSnapshotStatus
+      to: GetLoadSnapshotStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_ListDeploymentResources
+      to: ListDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_AssignDeploymentResources
+      to: AssignDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetAssignDeploymentResourcesStatus
+      to: GetAssignDeploymentResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_UnassignDeploymentResources
+      to: UnassignDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetUnassignDeploymentResourcesStatus
+      to: GetUnassignDeploymentResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_ListAssignedResourceDeployments
+      to: ListAssignedResourceDeployments
 ```

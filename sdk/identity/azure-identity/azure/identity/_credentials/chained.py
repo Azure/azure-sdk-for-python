@@ -3,21 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-
+from typing import Any, Optional, TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
+from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +29,7 @@ Attempted credentials:\n\t{}""".format(
     )
 
 
-class ChainedTokenCredential(object):
+class ChainedTokenCredential:
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
@@ -55,25 +49,25 @@ class ChainedTokenCredential(object):
 
     def __enter__(self):
         for credential in self.credentials:
-            credential.__enter__()
+            credential.__enter__()  # type: ignore
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any):
         for credential in self.credentials:
-            credential.__exit__(*args)
+            credential.__exit__(*args)  # type: ignore
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the transport session of each credential in the chain."""
         self.__exit__()
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """Request a token from each chained credential, in order, returning the first token received.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)

@@ -24,7 +24,7 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 
 
-async def sample_analyze_healthcare_entities_with_cancellation_async():
+async def sample_analyze_healthcare_entities_with_cancellation_async() -> None:
     # [START analyze_healthcare_entities_with_cancellation_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -57,9 +57,7 @@ async def sample_analyze_healthcare_entities_with_cancellation_async():
         poller = await text_analytics_client.begin_analyze_healthcare_entities(documents)
 
         try:
-            cancellation_poller = await poller.cancel()
-            await cancellation_poller.wait()
-
+            await poller.cancel()
         except HttpResponseError as e:
             # If the operation has already reached a terminal state it cannot be cancelled.
             print(e)

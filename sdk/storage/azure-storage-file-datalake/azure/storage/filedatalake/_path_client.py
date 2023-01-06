@@ -6,15 +6,9 @@
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
-    TYPE_CHECKING)
-
-try:
-    from urllib.parse import urlparse, quote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
-
-import six
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
@@ -30,6 +24,7 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ContentSettings, FileProperties
 
 
@@ -47,23 +42,23 @@ class PathClient(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     """
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            path_name,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-
+            self, account_url: str,
+            file_system_name: str,
+            path_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -132,7 +127,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
+        if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -756,7 +751,7 @@ class PathClient(StorageAccountHostsMixin):
             ContentSettings object used to set path properties.
         :keyword source_lease:
             A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword lease:
@@ -912,7 +907,7 @@ class PathClient(StorageAccountHostsMixin):
         # type: (...) -> Dict[str, Any]
         """Sets system properties on the file or directory.
 
-        If one property is set for the content_settings, all properties will be overriden.
+        If one property is set for the content_settings, all properties will be overridden.
 
         :param ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set file/directory properties.

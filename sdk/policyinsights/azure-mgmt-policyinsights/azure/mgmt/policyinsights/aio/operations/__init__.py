@@ -10,18 +10,26 @@ from ._policy_tracked_resources_operations import PolicyTrackedResourcesOperatio
 from ._remediations_operations import RemediationsOperations
 from ._policy_events_operations import PolicyEventsOperations
 from ._policy_states_operations import PolicyStatesOperations
-from ._operations import Operations
 from ._policy_metadata_operations import PolicyMetadataOperations
 from ._policy_restrictions_operations import PolicyRestrictionsOperations
+from ._component_policy_states_operations import ComponentPolicyStatesOperations
+from ._operations import Operations
 from ._attestations_operations import AttestationsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'PolicyTrackedResourcesOperations',
-    'RemediationsOperations',
-    'PolicyEventsOperations',
-    'PolicyStatesOperations',
-    'Operations',
-    'PolicyMetadataOperations',
-    'PolicyRestrictionsOperations',
-    'AttestationsOperations',
+    "PolicyTrackedResourcesOperations",
+    "RemediationsOperations",
+    "PolicyEventsOperations",
+    "PolicyStatesOperations",
+    "PolicyMetadataOperations",
+    "PolicyRestrictionsOperations",
+    "ComponentPolicyStatesOperations",
+    "Operations",
+    "AttestationsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

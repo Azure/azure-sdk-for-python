@@ -3,70 +3,69 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
+
 import pytest
-
 from azure.storage.blob import BlobServiceClient
-from devtools_testutils.storage import StorageTestCase
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
-
-SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
-                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
-                                '></StorageServiceStats> '
 
 # --Test Class -----------------------------------------------------------------
-class ServiceStatsTest(StorageTestCase):
+class TestServiceStats(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'live')
-        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'live'
+        assert stats['geo_replication']['last_sync_time'] is not None
 
     def _assert_stats_unavailable(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
-        self.assertIsNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'unavailable'
+        assert stats['geo_replication']['last_sync_time'] is None
+    # --------------------------------------------------------------------------
 
-    @staticmethod
-    def override_response_body_with_live_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_LIVE_RESP_BODY
-
-    @staticmethod
-    def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda encoding=None: SERVICE_UNAVAILABLE_RESP_BODY
-
-    # --Test cases per service ---------------------------------------
+    @pytest.mark.playback_test_only
     @BlobPreparer()
-    def test_blob_service_stats(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_blob_service_stats(self, **kwargs):
+        # The accounts created in the Live test pipeline do not have time to finish
+        # setting up GRS by the time this test runs so this test will return a different
+        # response. Therefore can only run in playback.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        url = self.account_url(storage_account_name, "blob")
-        bs = BlobServiceClient(url, credential=storage_account_key)
+        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+
         # Act
-        stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
+        stats = bs.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
-    def test_blob_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_blob_service_stats_when_unavailable(self, **kwargs):
+        # It's difficult to get an unavailable response from the service, so this test
+        # was recorded and the recording was manually modified to have the unavailable
+        # response. Therefore, can only run in playback mode.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
-        url = self.account_url(storage_account_name, "blob")
-        bs = BlobServiceClient(url, credential=storage_account_key)
+        bs = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
 
         # Act
-        stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = bs.get_service_stats()
 
         # Assert
         self._assert_stats_unavailable(stats)
-
 
 # ------------------------------------------------------------------------------

@@ -32,7 +32,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
@@ -65,7 +65,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()

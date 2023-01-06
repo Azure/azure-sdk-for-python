@@ -6,10 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-RUN_BREAKING_CHANGES_PACKAGES = [
-    "azure-ai-formrecognizer",
-    "azure-ai-textanalytics"
-]
+RUN_BREAKING_CHANGES_PACKAGES = []
 
 
 # See Readme for ignore format

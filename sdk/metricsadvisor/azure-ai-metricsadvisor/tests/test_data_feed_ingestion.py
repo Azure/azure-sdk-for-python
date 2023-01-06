@@ -11,13 +11,13 @@ from dateutil.tz import tzutc
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids, API_KEY
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. Error: (ERROR_PRIVILEGE_FAILED) You have no permission to do it.
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_get_data_feed_ingestion_progress(self, client):
@@ -28,7 +28,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         assert ingestion.latest_success_timestamp is not None
         assert ingestion.latest_active_timestamp is not None
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. Error: (ERROR_PRIVILEGE_FAILED) You have no permission to do it.
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feed_ingestion_status(self, client):
@@ -40,7 +40,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         )
         assert len(list(ingestions)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. Error: (ERROR_PRIVILEGE_FAILED) You have no permission to do it.
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feed_ingest_status_skip(self, client):
@@ -61,13 +61,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         ingestions_with_skips_list = list(ingestions_with_skips)
         assert len(ingestions_list) == len(ingestions_with_skips_list) + 5
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. Error: (ERROR_PRIVILEGE_FAILED) You have no permission to do it.
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_refresh_data_feed_ingestion(self, client):
         client.refresh_data_feed_ingestion(
             self.data_feed_id,
-            start_time=datetime.datetime(2021, 10, 1, tzinfo=tzutc()),
-            end_time=datetime.datetime(2021, 10, 2, tzinfo=tzutc()),
+            start_time=datetime.datetime(2022, 2, 28, tzinfo=tzutc()),
+            end_time=datetime.datetime(2022, 3, 1, tzinfo=tzutc()),
         )
 

@@ -1,5 +1,31 @@
 # Release History
 
+## 3.2.0b1 (2022-12-27)
+
+### Features Added
+
+  - Model Subscription has a new parameter tags
+  - Model Subscription has a new parameter tenant_id
+  - Model TenantIdDescription has a new parameter country
+  - Model TenantIdDescription has a new parameter country_code
+  - Model TenantIdDescription has a new parameter default_domain
+  - Model TenantIdDescription has a new parameter display_name
+  - Model TenantIdDescription has a new parameter domains
+  - Model TenantIdDescription has a new parameter tenant_category
+  - Model TenantIdDescription has a new parameter tenant_type
+
+## 3.1.1 (2022-09-05)
+
+### Bugs Fixed
+
+  - Fix error about `api_version` in operation
+
+## 3.1.0 (2022-08-30)
+
+### Features Added
+
+  - Model AcceptOwnershipStatusResponse has a new parameter provisioning_state
+
 ## 3.0.0 (2022-01-21)
 
 **Features**

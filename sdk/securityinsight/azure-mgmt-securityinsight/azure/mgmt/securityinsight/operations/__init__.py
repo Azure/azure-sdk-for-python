@@ -22,11 +22,17 @@ from ._entities_relations_operations import EntitiesRelationsOperations
 from ._entity_relations_operations import EntityRelationsOperations
 from ._entity_queries_operations import EntityQueriesOperations
 from ._entity_query_templates_operations import EntityQueryTemplatesOperations
+from ._file_imports_operations import FileImportsOperations
 from ._incident_comments_operations import IncidentCommentsOperations
 from ._incident_relations_operations import IncidentRelationsOperations
+from ._incident_tasks_operations import IncidentTasksOperations
 from ._metadata_operations import MetadataOperations
 from ._office_consents_operations import OfficeConsentsOperations
 from ._sentinel_onboarding_states_operations import SentinelOnboardingStatesOperations
+from ._get_recommendations_operations import GetRecommendationsOperations
+from ._get_operations import GetOperations
+from ._update_operations import UpdateOperations
+from ._security_ml_analytics_settings_operations import SecurityMLAnalyticsSettingsOperations
 from ._product_settings_operations import ProductSettingsOperations
 from ._source_control_operations import SourceControlOperations
 from ._source_controls_operations import SourceControlsOperations
@@ -39,37 +45,49 @@ from ._data_connectors_operations import DataConnectorsOperations
 from ._data_connectors_check_requirements_operations import DataConnectorsCheckRequirementsOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AlertRulesOperations',
-    'ActionsOperations',
-    'AlertRuleTemplatesOperations',
-    'AutomationRulesOperations',
-    'IncidentsOperations',
-    'BookmarksOperations',
-    'BookmarkRelationsOperations',
-    'BookmarkOperations',
-    'IPGeodataOperations',
-    'DomainWhoisOperations',
-    'EntitiesOperations',
-    'EntitiesGetTimelineOperations',
-    'EntitiesRelationsOperations',
-    'EntityRelationsOperations',
-    'EntityQueriesOperations',
-    'EntityQueryTemplatesOperations',
-    'IncidentCommentsOperations',
-    'IncidentRelationsOperations',
-    'MetadataOperations',
-    'OfficeConsentsOperations',
-    'SentinelOnboardingStatesOperations',
-    'ProductSettingsOperations',
-    'SourceControlOperations',
-    'SourceControlsOperations',
-    'ThreatIntelligenceIndicatorOperations',
-    'ThreatIntelligenceIndicatorsOperations',
-    'ThreatIntelligenceIndicatorMetricsOperations',
-    'WatchlistsOperations',
-    'WatchlistItemsOperations',
-    'DataConnectorsOperations',
-    'DataConnectorsCheckRequirementsOperations',
-    'Operations',
+    "AlertRulesOperations",
+    "ActionsOperations",
+    "AlertRuleTemplatesOperations",
+    "AutomationRulesOperations",
+    "IncidentsOperations",
+    "BookmarksOperations",
+    "BookmarkRelationsOperations",
+    "BookmarkOperations",
+    "IPGeodataOperations",
+    "DomainWhoisOperations",
+    "EntitiesOperations",
+    "EntitiesGetTimelineOperations",
+    "EntitiesRelationsOperations",
+    "EntityRelationsOperations",
+    "EntityQueriesOperations",
+    "EntityQueryTemplatesOperations",
+    "FileImportsOperations",
+    "IncidentCommentsOperations",
+    "IncidentRelationsOperations",
+    "IncidentTasksOperations",
+    "MetadataOperations",
+    "OfficeConsentsOperations",
+    "SentinelOnboardingStatesOperations",
+    "GetRecommendationsOperations",
+    "GetOperations",
+    "UpdateOperations",
+    "SecurityMLAnalyticsSettingsOperations",
+    "ProductSettingsOperations",
+    "SourceControlOperations",
+    "SourceControlsOperations",
+    "ThreatIntelligenceIndicatorOperations",
+    "ThreatIntelligenceIndicatorsOperations",
+    "ThreatIntelligenceIndicatorMetricsOperations",
+    "WatchlistsOperations",
+    "WatchlistItemsOperations",
+    "DataConnectorsOperations",
+    "DataConnectorsCheckRequirementsOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

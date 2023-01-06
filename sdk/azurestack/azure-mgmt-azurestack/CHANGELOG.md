@@ -1,5 +1,23 @@
 # Release History
 
+## 2.0.0b1 (2022-11-17)
+
+### Features Added
+
+  - Added operation ProductsOperations.list_products
+  - Added operation RegistrationsOperations.list_by_subscription
+  - Added operation group DeploymentLicenseOperations
+
+### Breaking Changes
+
+  - Model CustomerSubscription no longer has parameter system_data
+  - Model Product no longer has parameter system_data
+  - Model Registration no longer has parameter kind
+  - Model Registration no longer has parameter system_data
+  - Model TrackedResource no longer has parameter kind
+  - Model TrackedResource no longer has parameter system_data
+  - Removed operation group LinkedSubscriptionsOperations
+
 ## 1.0.0 (2021-04-08)
 
 **Features**

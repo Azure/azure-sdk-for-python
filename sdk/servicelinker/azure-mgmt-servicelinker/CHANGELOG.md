@@ -1,5 +1,32 @@
 # Release History
 
+## 1.2.0b1 (2022-12-02)
+
+### Features Added
+
+  - Added operation group ConfigurationNamesOperations
+  - Added operation group ConnectorOperations
+  - Added operation group LinkersOperations
+  - Model LinkerPatch has a new parameter configuration_info
+  - Model LinkerPatch has a new parameter public_network_solution
+  - Model LinkerResource has a new parameter configuration_info
+  - Model LinkerResource has a new parameter public_network_solution
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model SecretStore has a new parameter key_vault_secret_name
+  - Model ServicePrincipalCertificateAuthInfo has a new parameter delete_or_update_behavior
+  - Model ServicePrincipalCertificateAuthInfo has a new parameter roles
+  - Model ServicePrincipalSecretAuthInfo has a new parameter delete_or_update_behavior
+  - Model ServicePrincipalSecretAuthInfo has a new parameter roles
+  - Model ServicePrincipalSecretAuthInfo has a new parameter user_name
+  - Model SystemAssignedIdentityAuthInfo has a new parameter delete_or_update_behavior
+  - Model SystemAssignedIdentityAuthInfo has a new parameter roles
+  - Model SystemAssignedIdentityAuthInfo has a new parameter user_name
+  - Model UserAssignedIdentityAuthInfo has a new parameter delete_or_update_behavior
+  - Model UserAssignedIdentityAuthInfo has a new parameter roles
+  - Model UserAssignedIdentityAuthInfo has a new parameter user_name
+  - Model VNetSolution has a new parameter delete_or_update_behavior
+
 ## 1.1.0 (2022-05-16)
 
 **Features**

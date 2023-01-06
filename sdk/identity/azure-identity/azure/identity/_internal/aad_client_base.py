@@ -7,32 +7,21 @@ import base64
 import json
 import time
 from uuid import uuid4
+from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
 import six
 from msal import TokenCache
 
+from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from . import get_default_authority, normalize_authority
-from .._internal import resolve_tenant
-from .._internal.aadclient_certificate import AadClientCertificate
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .aadclient_certificate import AadClientCertificate
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Optional, Union
-    from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
+    from azure.core.pipeline import AsyncPipeline, Pipeline
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
 
@@ -43,24 +32,34 @@ if TYPE_CHECKING:
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
-class AadClientBase(ABC):
+class AadClientBase(abc.ABC):
     _POST = ["POST"]
 
     def __init__(
-        self, tenant_id, client_id, authority=None, cache=None, **kwargs
-    ):
-        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
+            self,
+            tenant_id: str,
+            client_id: str,
+            authority: str = None,
+            cache: TokenCache = None,
+            *,
+            additionally_allowed_tenants: List[str] = None,
+            **kwargs: Any
+    ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
-    def get_cached_access_token(self, scopes, **kwargs):
-        # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        tenant = resolve_tenant(self._tenant_id, **kwargs)
+    def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessToken]:
+        tenant = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         tokens = self._cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
@@ -72,8 +71,7 @@ class AadClientBase(ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_cached_refresh_tokens(self, scopes):
-        # type: (Iterable[str]) -> List[dict]
+    def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
@@ -105,8 +103,7 @@ class AadClientBase(ABC):
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response, request_time):
-        # type: (PipelineResponse, int) -> AccessToken
+    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessToken:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
@@ -159,8 +156,14 @@ class AadClientBase(ABC):
 
         return token
 
-    def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
-        # type: (Iterable[str], str, str, Optional[str], **Any) -> HttpRequest
+    def _get_auth_code_request(
+            self,
+            scopes: Iterable[str],
+            code: str,
+            redirect_uri: str,
+            client_secret: Optional[str] = None,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "client_id": self._client_id,
             "code": code,
@@ -174,8 +177,12 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_jwt_assertion_request(self, scopes, assertion, **kwargs):
-        # type: (Iterable[str], str, **Any) -> HttpRequest
+    def _get_jwt_assertion_request(
+            self,
+            scopes: Iterable[str],
+            assertion: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "client_assertion": assertion,
             "client_assertion_type": JWT_BEARER_ASSERTION,
@@ -187,8 +194,7 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_client_certificate_assertion(self, certificate, **kwargs):
-        # type: (AadClientCertificate, **Any) -> str
+    def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
         header = six.ensure_binary(
             json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}), encoding="utf-8"
@@ -211,13 +217,16 @@ class AadClientBase(ABC):
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
         return jwt_bytes.decode("utf-8")
 
-    def _get_client_certificate_request(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> HttpRequest
+    def _get_client_certificate_request(
+            self,
+            scopes: Iterable[str],
+            certificate: AadClientCertificate,
+            **kwargs: Any
+    ) -> HttpRequest:
         assertion = self._get_client_certificate_assertion(certificate, **kwargs)
         return self._get_jwt_assertion_request(scopes, assertion, **kwargs)
 
-    def _get_client_secret_request(self, scopes, secret, **kwargs):
-        # type: (Iterable[str], str, **Any) -> HttpRequest
+    def _get_client_secret_request(self, scopes: Iterable[str], secret: str, **kwargs: Any) -> HttpRequest:
         data = {
             "client_id": self._client_id,
             "client_secret": secret,
@@ -227,8 +236,13 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_on_behalf_of_request(self, scopes, client_credential, user_assertion, **kwargs):
-        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> HttpRequest
+    def _get_on_behalf_of_request(
+            self,
+            scopes: Iterable[str],
+            client_credential: Union[str, AadClientCertificate],
+            user_assertion: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
             "client_id": self._client_id,
@@ -245,8 +259,12 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_refresh_token_request(self, scopes, refresh_token, **kwargs):
-        # type: (Iterable[str], str, **Any) -> HttpRequest
+    def _get_refresh_token_request(
+            self,
+            scopes: Iterable[str],
+            refresh_token: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -257,8 +275,13 @@ class AadClientBase(ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_refresh_token_on_behalf_of_request(self, scopes, client_credential, refresh_token, **kwargs):
-        # type: (Iterable[str], Union[str, AadClientCertificate], str, **Any) -> HttpRequest
+    def _get_refresh_token_on_behalf_of_request(
+            self,
+            scopes: Iterable[str],
+            client_credential: Union[str, AadClientCertificate],
+            refresh_token: str,
+            **kwargs: Any
+    ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
@@ -276,24 +299,25 @@ class AadClientBase(ABC):
 
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
-        tenant = resolve_tenant(self._tenant_id, **kwargs)
+        tenant = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
-    def _post(self, data, **kwargs):
-        # type: (dict, **Any) -> HttpRequest
+    def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
 
 
-def _scrub_secrets(response):
-    # type: (dict) -> None
+def _scrub_secrets(response: Dict) -> None:
     for secret in ("access_token", "refresh_token"):
         if secret in response:
             response[secret] = "***"
 
 
-def _raise_for_error(response, content):
-    # type: (PipelineResponse, dict) -> None
+def _raise_for_error(response: PipelineResponse, content: Dict) -> None:
     if "error" not in content:
         return
 

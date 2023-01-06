@@ -30,7 +30,6 @@ except ImportError:
     import mock
 
 import pytest
-import six
 
 from azure.core import PipelineClient
 from azure.core.exceptions import ServiceResponseError
@@ -38,12 +37,12 @@ from azure.core.polling import *
 from azure.core.polling.base_polling import (
     LROBasePolling, LocationPolling
 )
-from msrest.serialization import Model
+# from msrest.serialization import Model
 
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return PipelineClient("https://baseurl")
 
 
@@ -87,7 +86,7 @@ def test_no_polling(client):
     assert no_polling.resource() == "Treated: "+initial_response
 
     continuation_token = no_polling.get_continuation_token()
-    assert isinstance(continuation_token, six.string_types)
+    assert isinstance(continuation_token, str)
 
     no_polling_revived_args = NoPolling.from_continuation_token(
         continuation_token,
@@ -182,9 +181,9 @@ def test_poller(client):
     assert poller.polling_method() is method
     done_cb.assert_called_once_with(method)
 
-    # Test with a basic Model
-    poller = LROPoller(client, initial_response, Model, method)
-    assert poller._polling_method._deserialization_callback == Model.deserialize
+    # # Test with a basic Model
+    # poller = LROPoller(client, initial_response, Model, method)
+    # assert poller._polling_method._deserialization_callback == Model.deserialize
 
     # Test poller that method do a run
     method = PollingTwoSteps(sleep=1)

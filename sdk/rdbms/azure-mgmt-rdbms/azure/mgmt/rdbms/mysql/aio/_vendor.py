@@ -14,13 +14,14 @@ from ._configuration import MySQLManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from msrest import Deserializer, Serializer
-
     from azure.core import AsyncPipelineClient
 
+    from .._serialization import Deserializer, Serializer
 
-class MixinABC(ABC):
+
+class MySQLManagementClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
+
     _client: "AsyncPipelineClient"
     _config: MySQLManagementClientConfiguration
     _serialize: "Serializer"

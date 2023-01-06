@@ -14,7 +14,9 @@ from ._workflow_trigger_histories_operations import WorkflowTriggerHistoriesOper
 from ._workflow_runs_operations import WorkflowRunsOperations
 from ._workflow_run_actions_operations import WorkflowRunActionsOperations
 from ._workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
-from ._workflow_run_action_repetitions_request_histories_operations import WorkflowRunActionRepetitionsRequestHistoriesOperations
+from ._workflow_run_action_repetitions_request_histories_operations import (
+    WorkflowRunActionRepetitionsRequestHistoriesOperations,
+)
 from ._workflow_run_action_request_histories_operations import WorkflowRunActionRequestHistoriesOperations
 from ._workflow_run_action_scope_repetitions_operations import WorkflowRunActionScopeRepetitionsOperations
 from ._workflow_run_operations_operations import WorkflowRunOperationsOperations
@@ -29,37 +31,47 @@ from ._integration_account_certificates_operations import IntegrationAccountCert
 from ._integration_account_sessions_operations import IntegrationAccountSessionsOperations
 from ._integration_service_environments_operations import IntegrationServiceEnvironmentsOperations
 from ._integration_service_environment_skus_operations import IntegrationServiceEnvironmentSkusOperations
-from ._integration_service_environment_network_health_operations import IntegrationServiceEnvironmentNetworkHealthOperations
+from ._integration_service_environment_network_health_operations import (
+    IntegrationServiceEnvironmentNetworkHealthOperations,
+)
 from ._integration_service_environment_managed_apis_operations import IntegrationServiceEnvironmentManagedApisOperations
-from ._integration_service_environment_managed_api_operations_operations import IntegrationServiceEnvironmentManagedApiOperationsOperations
+from ._integration_service_environment_managed_api_operations_operations import (
+    IntegrationServiceEnvironmentManagedApiOperationsOperations,
+)
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'WorkflowsOperations',
-    'WorkflowVersionsOperations',
-    'WorkflowTriggersOperations',
-    'WorkflowVersionTriggersOperations',
-    'WorkflowTriggerHistoriesOperations',
-    'WorkflowRunsOperations',
-    'WorkflowRunActionsOperations',
-    'WorkflowRunActionRepetitionsOperations',
-    'WorkflowRunActionRepetitionsRequestHistoriesOperations',
-    'WorkflowRunActionRequestHistoriesOperations',
-    'WorkflowRunActionScopeRepetitionsOperations',
-    'WorkflowRunOperationsOperations',
-    'IntegrationAccountsOperations',
-    'IntegrationAccountAssembliesOperations',
-    'IntegrationAccountBatchConfigurationsOperations',
-    'IntegrationAccountSchemasOperations',
-    'IntegrationAccountMapsOperations',
-    'IntegrationAccountPartnersOperations',
-    'IntegrationAccountAgreementsOperations',
-    'IntegrationAccountCertificatesOperations',
-    'IntegrationAccountSessionsOperations',
-    'IntegrationServiceEnvironmentsOperations',
-    'IntegrationServiceEnvironmentSkusOperations',
-    'IntegrationServiceEnvironmentNetworkHealthOperations',
-    'IntegrationServiceEnvironmentManagedApisOperations',
-    'IntegrationServiceEnvironmentManagedApiOperationsOperations',
-    'Operations',
+    "WorkflowsOperations",
+    "WorkflowVersionsOperations",
+    "WorkflowTriggersOperations",
+    "WorkflowVersionTriggersOperations",
+    "WorkflowTriggerHistoriesOperations",
+    "WorkflowRunsOperations",
+    "WorkflowRunActionsOperations",
+    "WorkflowRunActionRepetitionsOperations",
+    "WorkflowRunActionRepetitionsRequestHistoriesOperations",
+    "WorkflowRunActionRequestHistoriesOperations",
+    "WorkflowRunActionScopeRepetitionsOperations",
+    "WorkflowRunOperationsOperations",
+    "IntegrationAccountsOperations",
+    "IntegrationAccountAssembliesOperations",
+    "IntegrationAccountBatchConfigurationsOperations",
+    "IntegrationAccountSchemasOperations",
+    "IntegrationAccountMapsOperations",
+    "IntegrationAccountPartnersOperations",
+    "IntegrationAccountAgreementsOperations",
+    "IntegrationAccountCertificatesOperations",
+    "IntegrationAccountSessionsOperations",
+    "IntegrationServiceEnvironmentsOperations",
+    "IntegrationServiceEnvironmentSkusOperations",
+    "IntegrationServiceEnvironmentNetworkHealthOperations",
+    "IntegrationServiceEnvironmentManagedApisOperations",
+    "IntegrationServiceEnvironmentManagedApiOperationsOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

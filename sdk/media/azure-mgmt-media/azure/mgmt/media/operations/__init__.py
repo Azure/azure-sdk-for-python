@@ -29,30 +29,31 @@ from ._live_outputs_operations import LiveOutputsOperations
 from ._streaming_endpoints_operations import StreamingEndpointsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountFiltersOperations',
-    'Operations',
-    'MediaservicesOperations',
-    'PrivateLinkResourcesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'LocationsOperations',
-    'MediaServicesOperationStatusesOperations',
-    'MediaServicesOperationResultsOperations',
-    'AssetsOperations',
-    'AssetFiltersOperations',
-    'TracksOperations',
-    'OperationStatusesOperations',
-    'OperationResultsOperations',
-    'ContentKeyPoliciesOperations',
-    'TransformsOperations',
-    'JobsOperations',
-    'StreamingPoliciesOperations',
-    'StreamingLocatorsOperations',
-    'LiveEventsOperations',
-    'LiveOutputsOperations',
-    'StreamingEndpointsOperations',
+    "AccountFiltersOperations",
+    "Operations",
+    "MediaservicesOperations",
+    "PrivateLinkResourcesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "LocationsOperations",
+    "MediaServicesOperationStatusesOperations",
+    "MediaServicesOperationResultsOperations",
+    "AssetsOperations",
+    "AssetFiltersOperations",
+    "TracksOperations",
+    "OperationStatusesOperations",
+    "OperationResultsOperations",
+    "ContentKeyPoliciesOperations",
+    "TransformsOperations",
+    "JobsOperations",
+    "StreamingPoliciesOperations",
+    "StreamingLocatorsOperations",
+    "LiveEventsOperations",
+    "LiveOutputsOperations",
+    "StreamingEndpointsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

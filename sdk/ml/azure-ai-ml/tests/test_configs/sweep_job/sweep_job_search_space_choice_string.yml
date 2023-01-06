@@ -6,7 +6,7 @@ description: Run a hyperparameter sweep job for LightGBM on Iris dataset.
 trial:
   code: azureml:testCode:1
   command: >-
-    python ./sweep_script_search.py 
+    python ./sweep_script_search.py
     --iris-csv ${{inputs.iris_csv}}
     --learning-rate ${{search_space.learning_rate}}
     --boosting ${{search_space.boosting}}
@@ -16,7 +16,7 @@ trial:
 compute: azureml:testCompute
 inputs:
   iris_csv:
-    type: uri_file 
+    type: uri_file
     path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
 sampling_algorithm: random
 search_space:

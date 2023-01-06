@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._confluent_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ConfluentAgreementResource(msrest.serialization.Model):
+class ConfluentAgreementResource(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Agreement Terms definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28,45 +30,45 @@ class ConfluentAgreementResource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    :param publisher: Publisher identifier string.
-    :type publisher: str
-    :param product: Product identifier string.
-    :type product: str
-    :param plan: Plan identifier string.
-    :type plan: str
-    :param license_text_link: Link to HTML with Microsoft and Publisher terms.
-    :type license_text_link: str
-    :param privacy_policy_link: Link to the privacy policy of the publisher.
-    :type privacy_policy_link: str
-    :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
-     if Accepted is false.
-    :type retrieve_datetime: ~datetime.datetime
-    :param signature: Terms signature.
-    :type signature: str
-    :param accepted: If any version of the terms have been accepted, otherwise false.
-    :type accepted: bool
+    :ivar publisher: Publisher identifier string.
+    :vartype publisher: str
+    :ivar product: Product identifier string.
+    :vartype product: str
+    :ivar plan: Plan identifier string.
+    :vartype plan: str
+    :ivar license_text_link: Link to HTML with Microsoft and Publisher terms.
+    :vartype license_text_link: str
+    :ivar privacy_policy_link: Link to the privacy policy of the publisher.
+    :vartype privacy_policy_link: str
+    :ivar retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty if
+     Accepted is false.
+    :vartype retrieve_datetime: ~datetime.datetime
+    :ivar signature: Terms signature.
+    :vartype signature: str
+    :ivar accepted: If any version of the terms have been accepted, otherwise false.
+    :vartype accepted: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'product': {'key': 'properties.product', 'type': 'str'},
-        'plan': {'key': 'properties.plan', 'type': 'str'},
-        'license_text_link': {'key': 'properties.licenseTextLink', 'type': 'str'},
-        'privacy_policy_link': {'key': 'properties.privacyPolicyLink', 'type': 'str'},
-        'retrieve_datetime': {'key': 'properties.retrieveDatetime', 'type': 'iso-8601'},
-        'signature': {'key': 'properties.signature', 'type': 'str'},
-        'accepted': {'key': 'properties.accepted', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "product": {"key": "properties.product", "type": "str"},
+        "plan": {"key": "properties.plan", "type": "str"},
+        "license_text_link": {"key": "properties.licenseTextLink", "type": "str"},
+        "privacy_policy_link": {"key": "properties.privacyPolicyLink", "type": "str"},
+        "retrieve_datetime": {"key": "properties.retrieveDatetime", "type": "iso-8601"},
+        "signature": {"key": "properties.signature", "type": "str"},
+        "accepted": {"key": "properties.accepted", "type": "bool"},
     }
 
     def __init__(
@@ -82,7 +84,26 @@ class ConfluentAgreementResource(msrest.serialization.Model):
         accepted: Optional[bool] = None,
         **kwargs
     ):
-        super(ConfluentAgreementResource, self).__init__(**kwargs)
+        """
+        :keyword publisher: Publisher identifier string.
+        :paramtype publisher: str
+        :keyword product: Product identifier string.
+        :paramtype product: str
+        :keyword plan: Plan identifier string.
+        :paramtype plan: str
+        :keyword license_text_link: Link to HTML with Microsoft and Publisher terms.
+        :paramtype license_text_link: str
+        :keyword privacy_policy_link: Link to the privacy policy of the publisher.
+        :paramtype privacy_policy_link: str
+        :keyword retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
+         if Accepted is false.
+        :paramtype retrieve_datetime: ~datetime.datetime
+        :keyword signature: Terms signature.
+        :paramtype signature: str
+        :keyword accepted: If any version of the terms have been accepted, otherwise false.
+        :paramtype accepted: bool
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -97,33 +118,39 @@ class ConfluentAgreementResource(msrest.serialization.Model):
         self.accepted = accepted
 
 
-class ConfluentAgreementResourceListResponse(msrest.serialization.Model):
+class ConfluentAgreementResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConfluentAgreementResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConfluentAgreementResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ConfluentAgreementResource"]] = None,
+        value: Optional[List["_models.ConfluentAgreementResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(ConfluentAgreementResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.confluent.models.ConfluentAgreementResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ErrorResponseBody(msrest.serialization.Model):
+class ErrorResponseBody(_serialization.Model):
     """Response body of Error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -139,106 +166,118 @@ class ErrorResponseBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseBody]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseBody, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
         self.details = None
 
 
-class OfferDetail(msrest.serialization.Model):
+class OfferDetail(_serialization.Model):
     """Confluent Offer detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param publisher_id: Required. Publisher Id.
-    :type publisher_id: str
-    :param id: Required. Offer Id.
-    :type id: str
-    :param plan_id: Required. Offer Plan Id.
-    :type plan_id: str
-    :param plan_name: Required. Offer Plan Name.
-    :type plan_name: str
-    :param term_unit: Required. Offer Plan Term unit.
-    :type term_unit: str
-    :param status: SaaS Offer Status. Possible values include: "Started",
-     "PendingFulfillmentStart", "InProgress", "Subscribed", "Suspended", "Reinstated", "Succeeded",
-     "Failed", "Unsubscribed", "Updating".
-    :type status: str or ~azure.mgmt.confluent.models.SaaSOfferStatus
+    :ivar publisher_id: Publisher Id. Required.
+    :vartype publisher_id: str
+    :ivar id: Offer Id. Required.
+    :vartype id: str
+    :ivar plan_id: Offer Plan Id. Required.
+    :vartype plan_id: str
+    :ivar plan_name: Offer Plan Name. Required.
+    :vartype plan_name: str
+    :ivar term_unit: Offer Plan Term unit. Required.
+    :vartype term_unit: str
+    :ivar status: SaaS Offer Status. Known values are: "Started", "PendingFulfillmentStart",
+     "InProgress", "Subscribed", "Suspended", "Reinstated", "Succeeded", "Failed", "Unsubscribed",
+     and "Updating".
+    :vartype status: str or ~azure.mgmt.confluent.models.SaaSOfferStatus
     """
 
     _validation = {
-        'publisher_id': {'required': True, 'max_length': 50, 'min_length': 0},
-        'id': {'required': True, 'max_length': 50, 'min_length': 0},
-        'plan_id': {'required': True, 'max_length': 50, 'min_length': 0},
-        'plan_name': {'required': True, 'max_length': 50, 'min_length': 0},
-        'term_unit': {'required': True, 'max_length': 25, 'min_length': 0},
+        "publisher_id": {"required": True, "max_length": 50},
+        "id": {"required": True, "max_length": 50},
+        "plan_id": {"required": True, "max_length": 50},
+        "plan_name": {"required": True, "max_length": 50},
+        "term_unit": {"required": True, "max_length": 25},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher_id': {'key': 'publisherId', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'plan_id': {'key': 'planId', 'type': 'str'},
-        'plan_name': {'key': 'planName', 'type': 'str'},
-        'term_unit': {'key': 'termUnit', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "publisher_id": {"key": "publisherId", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "plan_id": {"key": "planId", "type": "str"},
+        "plan_name": {"key": "planName", "type": "str"},
+        "term_unit": {"key": "termUnit", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         publisher_id: str,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         plan_id: str,
         plan_name: str,
         term_unit: str,
-        status: Optional[Union[str, "SaaSOfferStatus"]] = None,
         **kwargs
     ):
-        super(OfferDetail, self).__init__(**kwargs)
+        """
+        :keyword publisher_id: Publisher Id. Required.
+        :paramtype publisher_id: str
+        :keyword id: Offer Id. Required.
+        :paramtype id: str
+        :keyword plan_id: Offer Plan Id. Required.
+        :paramtype plan_id: str
+        :keyword plan_name: Offer Plan Name. Required.
+        :paramtype plan_name: str
+        :keyword term_unit: Offer Plan Term unit. Required.
+        :paramtype term_unit: str
+        """
+        super().__init__(**kwargs)
         self.publisher_id = publisher_id
         self.id = id
         self.plan_id = plan_id
         self.plan_name = plan_name
         self.term_unit = term_unit
-        self.status = status
+        self.status = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Confluent.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'clusters'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write confluent'.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.Confluent.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'clusters'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write confluent'.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -250,71 +289,91 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Service provider: Microsoft.Confluent.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'clusters'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write confluent'.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of GET request to list Confluent operations.
 
-    :param value: List of Confluent operations supported by the Microsoft.Confluent provider.
-    :type value: list[~azure.mgmt.confluent.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Confluent operations supported by the Microsoft.Confluent provider.
+    :vartype value: list[~azure.mgmt.confluent.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OperationListResult, self).__init__(**kwargs)
+        """
+        :keyword value: List of Confluent operations supported by the Microsoft.Confluent provider.
+        :paramtype value: list[~azure.mgmt.confluent.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """An Confluent REST API operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.confluent.models.OperationDisplay
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.confluent.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
-        super(OperationResult, self).__init__(**kwargs)
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.confluent.models.OperationDisplay
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.is_data_action = is_data_action
 
 
-class OrganizationResource(msrest.serialization.Model):
+class OrganizationResource(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Organization resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -329,64 +388,74 @@ class OrganizationResource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    :param tags: A set of tags. Organization resource tags.
-    :type tags: dict[str, str]
-    :param location: Location of Organization resource.
-    :type location: str
+    :ivar tags: Organization resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: Location of Organization resource.
+    :vartype location: str
     :ivar created_time: The creation time of the resource.
     :vartype created_time: ~datetime.datetime
-    :ivar provisioning_state: Provision states for confluent RP. Possible values include:
-     "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
+    :ivar provisioning_state: Provision states for confluent RP. Known values are: "Accepted",
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
     :vartype provisioning_state: str or ~azure.mgmt.confluent.models.ProvisionState
     :ivar organization_id: Id of the Confluent organization.
     :vartype organization_id: str
     :ivar sso_url: SSO url for the Confluent organization.
     :vartype sso_url: str
-    :param offer_detail: Required. Confluent offer detail.
-    :type offer_detail: ~azure.mgmt.confluent.models.OfferDetail
-    :param user_detail: Required. Subscriber detail.
-    :type user_detail: ~azure.mgmt.confluent.models.UserDetail
+    :ivar offer_detail: Confluent offer detail. Required.
+    :vartype offer_detail: ~azure.mgmt.confluent.models.OfferDetail
+    :ivar user_detail: Subscriber detail. Required.
+    :vartype user_detail: ~azure.mgmt.confluent.models.UserDetail
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'organization_id': {'readonly': True},
-        'sso_url': {'readonly': True},
-        'offer_detail': {'required': True},
-        'user_detail': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "organization_id": {"readonly": True},
+        "sso_url": {"readonly": True},
+        "offer_detail": {"required": True},
+        "user_detail": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'organization_id': {'key': 'properties.organizationId', 'type': 'str'},
-        'sso_url': {'key': 'properties.ssoUrl', 'type': 'str'},
-        'offer_detail': {'key': 'properties.offerDetail', 'type': 'OfferDetail'},
-        'user_detail': {'key': 'properties.userDetail', 'type': 'UserDetail'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "organization_id": {"key": "properties.organizationId", "type": "str"},
+        "sso_url": {"key": "properties.ssoUrl", "type": "str"},
+        "offer_detail": {"key": "properties.offerDetail", "type": "OfferDetail"},
+        "user_detail": {"key": "properties.userDetail", "type": "UserDetail"},
     }
 
     def __init__(
         self,
         *,
-        offer_detail: "OfferDetail",
-        user_detail: "UserDetail",
+        offer_detail: "_models.OfferDetail",
+        user_detail: "_models.UserDetail",
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs
     ):
-        super(OrganizationResource, self).__init__(**kwargs)
+        """
+        :keyword tags: Organization resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: Location of Organization resource.
+        :paramtype location: str
+        :keyword offer_detail: Confluent offer detail. Required.
+        :paramtype offer_detail: ~azure.mgmt.confluent.models.OfferDetail
+        :keyword user_detail: Subscriber detail. Required.
+        :paramtype user_detail: ~azure.mgmt.confluent.models.UserDetail
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -401,54 +470,55 @@ class OrganizationResource(msrest.serialization.Model):
         self.user_detail = user_detail
 
 
-class OrganizationResourceListResult(msrest.serialization.Model):
+class OrganizationResourceListResult(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Result of a list operation.
-    :type value: list[~azure.mgmt.confluent.models.OrganizationResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Result of a list operation.
+    :vartype value: list[~azure.mgmt.confluent.models.OrganizationResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OrganizationResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OrganizationResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OrganizationResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OrganizationResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OrganizationResourceListResult, self).__init__(**kwargs)
+        """
+        :keyword value: Result of a list operation.
+        :paramtype value: list[~azure.mgmt.confluent.models.OrganizationResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OrganizationResourceUpdate(msrest.serialization.Model):
+class OrganizationResourceUpdate(_serialization.Model):
     """Organization Resource update.
 
-    :param tags: A set of tags. ARM resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: ARM resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(OrganizationResourceUpdate, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: ARM resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
+class ResourceProviderDefaultErrorResponse(_serialization.Model):
     """Default error response for resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -458,61 +528,75 @@ class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+        "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceProviderDefaultErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.error = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.confluent.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -521,40 +605,43 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UserDetail(msrest.serialization.Model):
+class UserDetail(_serialization.Model):
     """Subscriber detail.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param first_name: First name.
-    :type first_name: str
-    :param last_name: Last name.
-    :type last_name: str
-    :param email_address: Required. Email address.
-    :type email_address: str
+    :ivar first_name: First name.
+    :vartype first_name: str
+    :ivar last_name: Last name.
+    :vartype last_name: str
+    :ivar email_address: Email address. Required.
+    :vartype email_address: str
     """
 
     _validation = {
-        'first_name': {'max_length': 50, 'min_length': 0},
-        'last_name': {'max_length': 50, 'min_length': 0},
-        'email_address': {'required': True, 'pattern': r'^\S+@\S+\.\S+$'},
+        "first_name": {"max_length": 50},
+        "last_name": {"max_length": 50},
+        "email_address": {"required": True, "pattern": r"^\S+@\S+\.\S+$"},
     }
 
     _attribute_map = {
-        'first_name': {'key': 'firstName', 'type': 'str'},
-        'last_name': {'key': 'lastName', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        "first_name": {"key": "firstName", "type": "str"},
+        "last_name": {"key": "lastName", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        email_address: str,
-        first_name: Optional[str] = None,
-        last_name: Optional[str] = None,
-        **kwargs
+        self, *, email_address: str, first_name: Optional[str] = None, last_name: Optional[str] = None, **kwargs
     ):
-        super(UserDetail, self).__init__(**kwargs)
+        """
+        :keyword first_name: First name.
+        :paramtype first_name: str
+        :keyword last_name: Last name.
+        :paramtype last_name: str
+        :keyword email_address: Email address. Required.
+        :paramtype email_address: str
+        """
+        super().__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
         self.email_address = email_address

@@ -7,23 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import AzureQueueStorageConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import MessageIdOperations, MessagesOperations, QueueOperations, ServiceOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class AzureQueueStorage(object):
+class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
     """AzureQueueStorage.
 
     :ivar service: ServiceOperations operations
@@ -35,22 +30,18 @@ class AzureQueueStorage(object):
     :ivar message_id: MessageIdOperations operations
     :vartype message_id: azure.storage.queue.operations.MessageIdOperations
     :param url: The URL of the service account, queue or message that is the target of the desired
-     operation.
+     operation. Required.
     :type url: str
-    :param base_url: Service URL. Default value is "".
+    :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2018-03-28". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url,  # type: str
-        base_url="",  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, url: str, base_url: str = "", **kwargs: Any
+    ) -> None:
         self._config = AzureQueueStorageConfiguration(url=url, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
@@ -63,13 +54,7 @@ class AzureQueueStorage(object):
         self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.message_id = MessageIdOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -78,7 +63,7 @@ class AzureQueueStorage(object):
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

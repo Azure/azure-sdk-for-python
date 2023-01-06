@@ -1,7 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: command
 name: atestcomponent
 version: 1
-code: ../python
+code: ../../python
 command: >-
   echo ${{outputs.output_path}}
 outputs:

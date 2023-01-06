@@ -27,7 +27,7 @@ import os
 import asyncio
 
 
-async def sample_analyze_sentiment_async():
+async def sample_analyze_sentiment_async() -> None:
     print(
         "In this sample we will be combing through reviews customers have left about their"
         "experience using our skydiving company, Contoso."

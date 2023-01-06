@@ -58,7 +58,7 @@ class FarmBeatsTest(AzureTestCase):
                 )
             )
         except Exception as e:
-            print("!!! Unhandlable error in boundary creation")
+            print("!!! Unhandleable error in boundary creation")
             print(e)
             print(dir(e))
             print(e.response.body())

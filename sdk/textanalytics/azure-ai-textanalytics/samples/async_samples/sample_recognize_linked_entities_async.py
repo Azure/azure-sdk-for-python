@@ -28,7 +28,7 @@ import os
 import asyncio
 
 
-async def sample_recognize_linked_entities_async():
+async def sample_recognize_linked_entities_async() -> None:
     print(
         "In this sample, we are students conducting research for a class project. We will extract "
         "links to Wikipedia articles for all entities listed in our research documents, so we have "
@@ -72,9 +72,9 @@ async def sample_recognize_linked_entities_async():
     # [END recognize_linked_entities_async]
 
     print("\nNow let's see all of the Wikipedia articles we've extracted from our research documents")
-    for entity, url in entity_to_url.items():
+    for entity_name, url in entity_to_url.items():
         print("Link to Wikipedia article for '{}': {}".format(
-                entity, url
+                entity_name, url
         ))
 
 

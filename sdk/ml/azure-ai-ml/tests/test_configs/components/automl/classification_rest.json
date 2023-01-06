@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+    "properties": {},
+    "tags": {},
+    "isAnonymous": false,
+    "isArchived": false,
+    "componentSpec": {
+      "name": "test_470779015770",
+      "description": "Component that executes an AutoML Classification task model training in a pipeline.",
+      "tags": {},
+      "version": "1.0",
+      "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
+      "display_name": "AutoML Classification",
+      "type": "automl",
+      "task": "classification"
+    }
+  }
+}

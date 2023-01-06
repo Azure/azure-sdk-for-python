@@ -13,7 +13,7 @@ import re
 import isodate
 from json import JSONEncoder
 import typing
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time, timedelta, timezone
 from .utils._utils import _FixedOffset
 from collections.abc import MutableMapping
 from azure.core.exceptions import DeserializationError
@@ -22,6 +22,7 @@ import copy
 _LOGGER = logging.getLogger(__name__)
 
 __all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+TZ_UTC = timezone.utc  # type: ignore
 
 
 class _Null(object):

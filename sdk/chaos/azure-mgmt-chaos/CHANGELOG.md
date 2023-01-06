@@ -1,5 +1,25 @@
 # Release History
 
+## 1.0.0b6 (2022-12-14)
+
+### Features Added
+
+  - Model Selector has a new parameter filter
+
+## 1.0.0b5 (2022-08-01)
+
+**Features**
+
+  - Added operation ExperimentsOperations.cancel
+  - Added operation ExperimentsOperations.create_or_update
+  - Model CapabilityType has a new parameter kind
+  - Model CapabilityType has a new parameter runtime_properties
+
+**Breaking changes**
+
+  - Removed operation ExperimentsOperations.begin_cancel
+  - Removed operation ExperimentsOperations.begin_create_or_update
+
 ## 1.0.0b4 (2022-06-28)
 
 **Features**

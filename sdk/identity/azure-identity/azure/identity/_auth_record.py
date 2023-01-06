@@ -8,7 +8,7 @@ import json
 SUPPORTED_VERSIONS = {"1.0"}
 
 
-class AuthenticationRecord(object):
+class AuthenticationRecord:
     """Non-secret account information for an authenticated user
 
     This class enables :class:`DeviceCodeCredential` and :class:`InteractiveBrowserCredential` to access
@@ -17,8 +17,14 @@ class AuthenticationRecord(object):
     :func:`InteractiveBrowserCredential.authenticate`. See the user_authentication sample for more details.
     """
 
-    def __init__(self, tenant_id, client_id, authority, home_account_id, username):
-        # type: (str, str, str, str, str) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            authority: str,
+            home_account_id: str,
+            username: str
+    ) -> None:
         self._authority = authority
         self._client_id = client_id
         self._home_account_id = home_account_id
@@ -26,34 +32,28 @@ class AuthenticationRecord(object):
         self._username = username
 
     @property
-    def authority(self):
-        # type: () -> str
+    def authority(self) -> str:
         return self._authority
 
     @property
-    def client_id(self):
-        # type: () -> str
+    def client_id(self)  -> str:
         return self._client_id
 
     @property
-    def home_account_id(self):
-        # type: () -> str
+    def home_account_id(self) -> str:
         return self._home_account_id
 
     @property
-    def tenant_id(self):
-        # type: () -> str
+    def tenant_id(self) -> str:
         return self._tenant_id
 
     @property
-    def username(self):
-        # type: () -> str
+    def username(self) -> str:
         """The authenticated user's username"""
         return self._username
 
     @classmethod
-    def deserialize(cls, data):
-        # type: (str) -> AuthenticationRecord
+    def deserialize(cls, data: str) -> "AuthenticationRecord":
         """Deserialize a record.
 
         :param str data: a serialized record
@@ -75,8 +75,7 @@ class AuthenticationRecord(object):
             username=deserialized["username"],
         )
 
-    def serialize(self):
-        # type: () -> str
+    def serialize(self) -> str:
         """Serialize the record.
 
         :rtype: str

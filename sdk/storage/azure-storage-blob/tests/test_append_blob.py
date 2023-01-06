@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import tempfile
 import uuid
 from datetime import datetime, timedelta
 from os import path, remove
@@ -44,13 +45,6 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 pass
             try:
                 bsc.create_container(self.source_container_name)
-            except:
-                pass
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
             except:
                 pass
 
@@ -1121,13 +1115,12 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'from_path_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = blob.upload_blob(stream, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
 
         blob_properties = blob.get_blob_properties()
 
@@ -1135,7 +1128,6 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self.assertBlobEqual(blob, data)
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1147,9 +1139,6 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'progress_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1166,14 +1155,15 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 yield chunk
                 current += len(chunk)
 
-        with open(FILE_PATH, 'rb') as stream:
-            upload_data = progress_gen(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            upload_data = progress_gen(temp_file)
             blob.upload_blob(upload_data, blob_type=BlobType.AppendBlob)
 
         # Assert
         self.assertBlobEqual(blob, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1185,20 +1175,18 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = blob.upload_blob(stream, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
         blob_properties = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(blob, data)
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1210,19 +1198,17 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_known_size.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
         blob_size = len(data) - 66
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1234,18 +1220,16 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_unk_size.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             blob.upload_blob(non_seekable_file, blob_type=BlobType.AppendBlob)
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1257,22 +1241,20 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'multiple_appends.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream1:
-            stream1.write(data)
-        with open(FILE_PATH, 'wb') as stream2:
-            stream2.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream1:
-            blob.upload_blob(stream1, blob_type=BlobType.AppendBlob)
-        with open(FILE_PATH, 'rb') as stream2:
-            blob.upload_blob(stream2, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file2:
+            temp_file2.write(data)
+            temp_file2.seek(0)
+            blob.upload_blob(temp_file2, blob_type=BlobType.AppendBlob)
 
         # Assert
         data = data * 2
         self.assertBlobEqual(blob, data)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1284,18 +1266,16 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1308,21 +1288,19 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_with_count_parallel.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = blob.upload_blob(stream, length=blob_size, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.AppendBlob)
         blob_properties = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1526,10 +1504,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
-
         variables = kwargs.pop("variables", {})
-        expiry_time = datetime.utcnow() + timedelta(seconds=10)
-        expiry_time_string = variables.setdefault("expiry_time", expiry_time.isoformat())
 
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key, max_block_size=4 * 1024)
         self._setup(bsc)
@@ -1547,8 +1522,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         blob_name = self.get_resource_name('vlwblob')
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        expires = datetime.strptime(expiry_time_string, "%Y-%m-%dT%H:%M:%S.%f")
-        immutability_policy = ImmutabilityPolicy(expiry_time=expires, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=10))
+        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         blob.create_append_blob(immutability_policy=immutability_policy,
                                 legal_hold=True)
 

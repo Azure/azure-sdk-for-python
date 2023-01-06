@@ -2,8 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 import logging
-from azure.ai.ml._restclient.v2021_10_01.models import ContainerResourceRequirements
+from typing import Optional
+
+from azure.ai.ml._restclient.v2022_05_01.models import ContainerResourceRequirements
 from azure.ai.ml.entities._deployment.container_resource_settings import ResourceSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -13,8 +17,8 @@ module_logger = logging.getLogger(__name__)
 class ResourceRequirementsSettings(RestTranslatableMixin):
     def __init__(
         self,
-        requests: ResourceSettings = None,
-        limits: ResourceSettings = None,
+        requests: Optional[ResourceSettings] = None,
+        limits: Optional[ResourceSettings] = None,
     ):
         self.requests = requests
         self.limits = limits
@@ -26,12 +30,15 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceRequirements) -> "ResourceRequirementsSettings":
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, settings: ContainerResourceRequirements
+    ) -> "ResourceRequirementsSettings":
         requests = settings.container_resource_requests
         limits = settings.container_resource_limits
         return (
             ResourceRequirementsSettings(
-                requests=ResourceSettings._from_rest_object(requests), limits=ResourceSettings._from_rest_object(limits)
+                requests=ResourceSettings._from_rest_object(requests),
+                limits=ResourceSettings._from_rest_object(limits),
             )
             if settings
             else None

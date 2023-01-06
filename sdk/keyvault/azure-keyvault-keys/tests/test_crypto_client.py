@@ -18,14 +18,25 @@ except ImportError:
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (JsonWebKey, KeyCurveName, KeyOperation,
-                                 KeyVaultKey)
-from azure.keyvault.keys.crypto import (CryptographyClient,
-                                        EncryptionAlgorithm, KeyWrapAlgorithm,
-                                        SignatureAlgorithm)
+from azure.core.rest import HttpRequest
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyCurveName,
+    KeyOperation,
+    KeyVaultKey,
+)
+from azure.keyvault.keys.crypto import (
+    CryptographyClient,
+    EncryptionAlgorithm,
+    KeyWrapAlgorithm,
+    SignatureAlgorithm,
+)
 from azure.keyvault.keys.crypto._key_validity import _UTC
-from azure.keyvault.keys.crypto._providers import (
-    NoLocalCryptography, get_local_cryptography_provider)
+from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
+from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated_models import KeySignParameters
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 
 from _shared.test_case import KeyVaultTestCase
@@ -36,7 +47,9 @@ from _keys_test_case import KeysTestCase
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
+only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
 only_hsm = get_decorator(only_hsm=True)
+only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 no_get = get_decorator(permissions=NO_GET)
 
 
@@ -208,6 +221,28 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         verified = crypto_client.verify(result.algorithm, digest, result.signature)
         assert result.key_id == imported_key.id
         assert result.algorithm == SignatureAlgorithm.rs256
+        assert verified.is_valid
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_hsm)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_sign_and_verify_okp(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        md = hashlib.sha256()
+        md.update(self.plaintext)
+        digest = md.digest()
+
+        # Local crypto isn't supported for OKP, so operations will be remote even without explicit NO_GET permissions
+        key = key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519)
+        crypto_client = self.create_crypto_client(key.id, api_version=key_client.api_version)
+
+        result = crypto_client.sign(SignatureAlgorithm.eddsa, digest)
+        assert result.key_id == key.id
+
+        verified = crypto_client.verify(result.algorithm, digest, result.signature)
+        assert result.key_id == key.id
+        assert result.algorithm == SignatureAlgorithm.eddsa
         assert verified.is_valid
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
@@ -573,6 +608,38 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             valid_key, (str(the_year_3000), str(the_year_3001)), rsa_encryption_algorithms, rsa_wrap_algorithms
         )
 
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_send_request(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        md = hashlib.sha256()
+        md.update(self.plaintext)
+        digest = md.digest()
+
+        imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
+        json = Serializer().body(parameters, "KeySignParameters")
+
+        # sign using a custom request
+        request = HttpRequest(
+            method="POST",
+            url=f"keys/{key_name}/{imported_key.properties.version}/sign",
+            headers={"Accept": "application/json"},
+            json=json
+        )
+        response = crypto_client.send_request(request)
+        result = response.json()
+        signature = Deserializer().deserialize_base64(result["value"])
+        assert result["kid"] == imported_key.id
+
+        # verify that the operation round-trips
+        verified = crypto_client.verify(SignatureAlgorithm.rs256, digest, signature)
+        assert verified.is_valid
+
 
 def test_custom_hook_policy():
     class CustomHookPolicy(SansIOHTTPPolicy):
@@ -725,36 +792,37 @@ def test_local_only_mode_raise():
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.decrypt(EncryptionAlgorithm.a256_gcm, b"...", iv=b"...", authentication_tag=b"...")
-    assert EncryptionAlgorithm.a256_gcm in str(ex.value)
-    assert KeyOperation.decrypt in str(ex.value)
+    # Look for f-string or .format-ed occurrence of enum value, to account for differences in 3.11+
+    assert f"{EncryptionAlgorithm.a256_gcm}" in str(ex.value)
+    assert f"{KeyOperation.decrypt}" in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.encrypt in str(ex.value)
+    assert f"{KeyOperation.encrypt}" in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.verify(SignatureAlgorithm.es256, b"...", b"...")
-    assert SignatureAlgorithm.es256 in str(ex.value)
-    assert KeyOperation.verify in str(ex.value)
+    assert f"{SignatureAlgorithm.es256}" in str(ex.value)
+    assert f"{KeyOperation.verify}" in str(ex.value)
 
     # Algorithm not supported locally, and operation not included in JWK permissions
     with pytest.raises(NotImplementedError) as ex:
         client.sign(SignatureAlgorithm.rs256, b"...")
-    assert SignatureAlgorithm.rs256 in str(ex.value)
-    assert KeyOperation.sign in str(ex.value)
+    assert f"{SignatureAlgorithm.rs256}" in str(ex.value)
+    assert f"{KeyOperation.sign}" in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.unwrap_key(KeyWrapAlgorithm.aes_256, b"...")
-    assert KeyWrapAlgorithm.aes_256 in str(ex.value)
-    assert KeyOperation.unwrap_key in str(ex.value)
+    assert f"{KeyWrapAlgorithm.aes_256}" in str(ex.value)
+    assert f"{KeyOperation.unwrap_key}" in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.wrap_key in str(ex.value)
+    assert f"{KeyOperation.wrap_key}" in str(ex.value)
 
 
 def test_prefers_local_provider():

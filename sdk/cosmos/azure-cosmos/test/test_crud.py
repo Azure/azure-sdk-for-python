@@ -1378,7 +1378,7 @@ class CRUDTests(unittest.TestCase):
                         'error reading documents')
         self.assertEqual(len(success_documents),
                          1,
-                         'Expected 1 Document to be succesfully read')
+                         'Expected 1 Document to be successfully read')
         # 4. Success-- Use Col Permission to Read Doc
 
         docId = entities['doc']['id']
@@ -2418,7 +2418,7 @@ class CRUDTests(unittest.TestCase):
         created_db = self.databaseForTest
 
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'
+        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' # cspell:disable-line
 
         # Special chars for Id
         collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"

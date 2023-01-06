@@ -70,7 +70,7 @@ class UserProxy(object):
     @distributed_trace
     def read(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
-        """Read user propertes.
+        """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dictionary of the retrieved user properties.

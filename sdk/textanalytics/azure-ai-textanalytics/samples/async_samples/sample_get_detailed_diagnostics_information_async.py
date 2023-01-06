@@ -27,7 +27,7 @@ import json
 _LOGGER = logging.getLogger(__name__)
 
 
-async def sample_get_detailed_diagnostics_information_async():
+async def sample_get_detailed_diagnostics_information_async() -> None:
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

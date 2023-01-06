@@ -43,16 +43,14 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
-__all__ = [
-    "AsyncPageIterator",
-    "AsyncItemPaged"
-]
+__all__ = ["AsyncPageIterator", "AsyncItemPaged"]
+
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
         """Change an iterable into a fake async iterator.
 
-        Coul be useful to fill the async iterator contract when you get a list.
+        Could be useful to fill the async iterator contract when you get a list.
 
         :param iterable: A sync iterable of T
         """
@@ -70,9 +68,7 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        get_next: Callable[
-            [Optional[str]], Awaitable[ResponseType]
-        ],
+        get_next: Callable[[Optional[str]], Awaitable[ResponseType]],
         extract_data: Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
         ],

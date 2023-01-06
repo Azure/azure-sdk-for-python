@@ -7,8 +7,7 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
-from six import raise_from
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
@@ -30,8 +29,16 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     """Performs Key Vault backup and restore operations.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
-    :param credential: an object which can provide an access token for the vault, such as a credential from
+        You should validate that this URL references a valid Key Vault or Managed HSM resource.
+        See https://aka.ms/azsdk/blog/vault-uri for details.
+    :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
+    :type credential: :class:`~azure.core.credentials.TokenCredential`
+
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault or Managed HSM domain. Defaults to True.
     """
 
     # pylint:disable=protected-access
@@ -65,13 +72,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.full_backup_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
@@ -130,13 +134,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.restore_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response

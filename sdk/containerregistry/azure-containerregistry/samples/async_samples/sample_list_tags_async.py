@@ -40,13 +40,12 @@ class ListTagsAsync(object):
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(endpoint, credential, audience=audience)
-
-        manifest = await client.get_manifest_properties("library/hello-world", "latest")
-        print(manifest.repository_name + ": ")
-        # Iterate through all the tags
-        for tag in manifest.tags:
-            print(tag + "\n")
+        async with ContainerRegistryClient(endpoint, credential, audience=audience) as client:
+            manifest = await client.get_manifest_properties("library/hello-world", "latest")
+            print(manifest.repository_name + ": ")
+            # Iterate through all the tags
+            for tag in manifest.tags:
+                print(tag + "\n")
 
 
 async def main():
@@ -55,5 +54,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

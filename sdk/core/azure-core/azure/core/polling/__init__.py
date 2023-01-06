@@ -23,13 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
-
 from ._poller import LROPoller, NoPolling, PollingMethod
-__all__ = ['LROPoller', 'NoPolling', 'PollingMethod']
+from ._async_poller import (
+    AsyncNoPolling,
+    AsyncPollingMethod,
+    async_poller,
+    AsyncLROPoller,
+)
 
-#pylint: disable=unused-import
-if sys.version_info >= (3, 5, 2):
-    # Not executed on old Python, no syntax error
-    from ._async_poller import AsyncNoPolling, AsyncPollingMethod, async_poller, AsyncLROPoller
-    __all__ += ['AsyncNoPolling', 'AsyncPollingMethod', 'async_poller', 'AsyncLROPoller']
+__all__ = [
+    "LROPoller",
+    "NoPolling",
+    "PollingMethod",
+    "AsyncNoPolling",
+    "AsyncPollingMethod",
+    "async_poller",
+    "AsyncLROPoller",
+]

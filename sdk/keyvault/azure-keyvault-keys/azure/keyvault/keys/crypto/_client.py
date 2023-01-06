@@ -5,11 +5,10 @@
 import logging
 from typing import TYPE_CHECKING, cast
 
-import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
-    from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from . import KeyWrapAlgorithm, SignatureAlgorithm
     from .._shared import KeyVaultResourceId
 
 _LOGGER = logging.getLogger(__name__)
@@ -91,10 +90,12 @@ class CryptographyClient(KeyVaultClientBase):
     :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :type credential: :class:`~azure.core.credentials.TokenCredential`
+
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion
-    :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
-    :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault or Managed HSM domain. Defaults to True.
 
     .. literalinclude:: ../tests/test_examples_crypto.py
         :start-after: [START create_client]
@@ -103,6 +104,8 @@ class CryptographyClient(KeyVaultClientBase):
         :language: python
         :dedent: 8
     """
+
+    # pylint:disable=protected-access
 
     def __init__(self, key, credential, **kwargs):
         # type: (Union[KeyVaultKey, str], TokenCredential, **Any) -> None
@@ -114,10 +117,10 @@ class CryptographyClient(KeyVaultClientBase):
         if isinstance(key, KeyVaultKey):
             self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
             self._key_id = parse_key_vault_id(key.id)
-            if key.properties._attributes:  # pylint:disable=protected-access
+            if key.properties._attributes:
                 self._not_before = key.properties.not_before
                 self._expires_on = key.properties.expires_on
-        elif isinstance(key, six.string_types):
+        elif isinstance(key, str):
             self._key = None
             self._key_id = parse_key_vault_id(key)
             if self._key_id.version is None:
@@ -133,7 +136,7 @@ class CryptographyClient(KeyVaultClientBase):
                 self._local_provider = get_local_cryptography_provider(cast(JsonWebKey, self._key))
                 self._initialized = True
             except Exception as ex:  # pylint:disable=broad-except
-                six.raise_from(ValueError("The provided jwk is not valid for local cryptography"), ex)
+                raise ValueError("The provided jwk is not valid for local cryptography") from ex
         else:
             self._local_provider = NoLocalCryptography()
             self._initialized = False
@@ -195,7 +198,7 @@ class CryptographyClient(KeyVaultClientBase):
                     self._key_id.version if self._key_id else None,
                     **kwargs
                 )
-                key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
                 self._key_id = parse_key_vault_id(key.id)  # update the key ID in case we didn't have the version before
             except HttpResponseError as ex:
@@ -219,14 +222,18 @@ class CryptographyClient(KeyVaultClientBase):
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
-        :param algorithm: encryption algorithm to use
+        :param algorithm: Encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
-        :param bytes plaintext: bytes to encrypt
-        :keyword bytes iv: initialization vector. Required for only AES-CBC(PAD) encryption.
-        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+        :param bytes plaintext: Bytes to encrypt
+        :keyword bytes iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
+            make sure you use a cryptographically random, non-repeating IV. If omitted, an attempt will be made to
+            generate an IV via `os.urandom <https://docs.python.org/library/os.html#os.urandom>`_ for local
+            cryptography; for remote cryptography, Key Vault will generate an IV.
+        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
-        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
+            generating an IV fails on the current platform.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START encrypt]
@@ -250,7 +257,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.encrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.encrypt(
@@ -286,16 +293,18 @@ class CryptographyClient(KeyVaultClientBase):
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
         the key and encryption algorithm.
 
-        :param algorithm: encryption algorithm to use
+        :param algorithm: Encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
-        :param bytes ciphertext: encrypted bytes to decrypt
-        :keyword bytes iv: the initialization vector used during encryption. Required for AES decryption.
-        :keyword bytes authentication_tag: the authentication tag generated during encryption. Required for only AES-GCM
+        :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
+            the integrity of the ciphertext using, for example, an HMAC. See
+            https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+        :keyword bytes iv: The initialization vector used during encryption. Required for AES decryption.
+        :keyword bytes authentication_tag: The authentication tag generated during encryption. Required for only AES-GCM
             decryption.
-        :keyword bytes additional_authenticated_data: optional data that is authenticated but not encrypted. For use
+        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM decryption.
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
-        :raises ValueError: if parameters that are incompatible with the specified algorithm are provided.
+        :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto.py
             :start-after: [START decrypt]
@@ -319,7 +328,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.decrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.decrypt(
@@ -364,7 +373,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.wrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.wrap_key(
@@ -406,7 +415,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.unwrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.unwrap_key(
@@ -448,7 +457,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.sign}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.sign(
@@ -492,7 +501,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.verify}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.verify(

@@ -42,11 +42,11 @@ class TestPrioritizedSetting(object):
         with pytest.raises(RuntimeError):
             ps()
 
-    def test_implict_default(self):
+    def test_implicit_default(self):
         ps = m.PrioritizedSetting("foo", default=10)
         assert ps() == 10
 
-    def test_implict_default_converts(self):
+    def test_implicit_default_converts(self):
         ps = m.PrioritizedSetting("foo", convert=int, default="10")
         assert ps() == 10
 

@@ -69,8 +69,8 @@ jobs:
             Location: 'eastus2euap'
           Python_37_Windows (AzureCloud):
             PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-win-2019-general"
-            OSVmImage: "MMS2019"
+            Pool: "azsdk-pool-mms-win-2022-general"
+            OSVmImage: "MMS2022"
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Windows (AzureCloud):
@@ -82,13 +82,13 @@ jobs:
           Python_37_Mac (AzureCloud):
             PythonVersion: '3.7'
             Pool: Azure Pipelines
-            OSVmImage: macOS-10.15
+            OSVmImage: macos-11
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Mac (AzureCloud):
             PythonVersion: '3.8'
             Pool: Azure Pipelines
-            OSVmImage: macOS-10.15
+            OSVmImage: macos-11
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Linux (AzureUSGovernment):

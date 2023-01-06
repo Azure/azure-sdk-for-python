@@ -1,20 +1,19 @@
+import json
+from pathlib import Path
 from unittest import mock
 
-import json
 import pydash
-import yaml
-from pathlib import Path
 import pytest
+import yaml
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.operations._component_operations import COMPONENT_PLACEHOLDER
-from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
-
-from azure.ai.ml.entities import ParallelComponent
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -39,6 +38,7 @@ def load_component_entity_from_yaml(
         data["name"] = None
         data["version"] = None
     internal_representation: ParallelComponent = ParallelComponent(**data)
+    internal_representation._base_path = context[BASE_PATH_CONTEXT_KEY]
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
@@ -58,7 +58,7 @@ def load_component_entity_from_yaml(
         "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
         side_effect=mock_get_asset_arm_id,
     ):
-        mock_machinelearning_client.components._upload_dependencies(internal_representation)
+        mock_machinelearning_client.components._resolve_arm_id_or_upload_dependencies(internal_representation)
     rest_component = internal_representation._to_rest_object()
     # set arm id before deserialize
     mock_workspace_scope = mock_machinelearning_client._operation_scope
@@ -85,6 +85,7 @@ def load_component_entity_from_rest_json(path) -> ParallelComponent:
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestParallelComponent:
     def test_serialize_deserialize_basic(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/basic_parallel_component_score.yml"
@@ -108,6 +109,32 @@ class TestParallelComponent:
         )
 
         assert component_dict == expected_dict
+        assert component_dict["logging_level"] == "INFO"
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
+
+    def test_serialize_deserialize_partition_keys(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/parallel_component_with_partition_keys.yml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
+        rest_path = "./tests/test_configs/components/parallel_component_with_partition_keys_rest.json"
+        target_entity = load_component_entity_from_rest_json(rest_path)
+
+        # skip check code and environment
+        component_dict = component_entity._to_dict()
+        assert component_dict["id"]
+        component_dict = pydash.omit(
+            dict(component_dict),
+            "task.code",
+            "id",
+        )
+        expected_dict = pydash.omit(
+            dict(target_entity._to_dict()),
+            "task.code",
+            "creation_context",
+            "id",
+        )
+
+        assert component_dict == expected_dict
+        assert component_dict["partition_keys"] == ["foo", "bar"]
+
+        assert component_entity.code

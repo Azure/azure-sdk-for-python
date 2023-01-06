@@ -1,10 +1,41 @@
 # Release History
 
-## 12.9.0b1 (Unreleased)
+## 12.10.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-12-02.
+- Added ability to perform leasing actions on file append and flush. See new keyword `lease_action` for details.
+- Added support for `AsyncIterable` as data type for async file upload.
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-datalake[aio]` to install.
+
+## 12.9.1 (2022-10-18)
 
 ### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
+
+## 12.9.0 (2022-10-11)
+
+### Features Added
+- Stable release of features from 12.9.0b1.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.9.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added support for `flush` to `append_data` API, allowing for append and flush in one operation.
+- Encryption Scope is now supported for both `create_file_system` APIs (`FileSystemClient`, `DataLakeServiceClient`).
+- Encryption Scope is now supported as a SAS permission.
+- Added standard `read` method to `StorageStreamDownloader`.
 
 ## 12.8.0 (2022-07-07)
 

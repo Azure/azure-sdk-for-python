@@ -36,52 +36,54 @@ from ._models_py3 import Resource
 from ._models_py3 import SubResource
 from ._models_py3 import TagsObject
 
-
-from ._container_service_client_enums import (
-    AgentPoolType,
-    ContainerServiceStorageProfileTypes,
-    ContainerServiceVMSizeTypes,
-    Count,
-    NetworkPlugin,
-    NetworkPolicy,
-    OSType,
-)
+from ._container_service_client_enums import AgentPoolType
+from ._container_service_client_enums import ContainerServiceStorageProfileTypes
+from ._container_service_client_enums import ContainerServiceVMSizeTypes
+from ._container_service_client_enums import Count
+from ._container_service_client_enums import NetworkPlugin
+from ._container_service_client_enums import NetworkPolicy
+from ._container_service_client_enums import OSType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AgentPool',
-    'AgentPoolListResult',
-    'CloudErrorBody',
-    'ContainerServiceDiagnosticsProfile',
-    'ContainerServiceLinuxProfile',
-    'ContainerServiceMasterProfile',
-    'ContainerServiceNetworkProfile',
-    'ContainerServiceSshConfiguration',
-    'ContainerServiceSshPublicKey',
-    'ContainerServiceVMDiagnostics',
-    'ContainerServiceWindowsProfile',
-    'CredentialResult',
-    'CredentialResults',
-    'ManagedCluster',
-    'ManagedClusterAADProfile',
-    'ManagedClusterAccessProfile',
-    'ManagedClusterAddonProfile',
-    'ManagedClusterAgentPoolProfile',
-    'ManagedClusterAgentPoolProfileProperties',
-    'ManagedClusterListResult',
-    'ManagedClusterPoolUpgradeProfile',
-    'ManagedClusterServicePrincipalProfile',
-    'ManagedClusterUpgradeProfile',
-    'OperationListResult',
-    'OperationValue',
-    'OrchestratorProfile',
-    'Resource',
-    'SubResource',
-    'TagsObject',
-    'AgentPoolType',
-    'ContainerServiceStorageProfileTypes',
-    'ContainerServiceVMSizeTypes',
-    'Count',
-    'NetworkPlugin',
-    'NetworkPolicy',
-    'OSType',
+    "AgentPool",
+    "AgentPoolListResult",
+    "CloudErrorBody",
+    "ContainerServiceDiagnosticsProfile",
+    "ContainerServiceLinuxProfile",
+    "ContainerServiceMasterProfile",
+    "ContainerServiceNetworkProfile",
+    "ContainerServiceSshConfiguration",
+    "ContainerServiceSshPublicKey",
+    "ContainerServiceVMDiagnostics",
+    "ContainerServiceWindowsProfile",
+    "CredentialResult",
+    "CredentialResults",
+    "ManagedCluster",
+    "ManagedClusterAADProfile",
+    "ManagedClusterAccessProfile",
+    "ManagedClusterAddonProfile",
+    "ManagedClusterAgentPoolProfile",
+    "ManagedClusterAgentPoolProfileProperties",
+    "ManagedClusterListResult",
+    "ManagedClusterPoolUpgradeProfile",
+    "ManagedClusterServicePrincipalProfile",
+    "ManagedClusterUpgradeProfile",
+    "OperationListResult",
+    "OperationValue",
+    "OrchestratorProfile",
+    "Resource",
+    "SubResource",
+    "TagsObject",
+    "AgentPoolType",
+    "ContainerServiceStorageProfileTypes",
+    "ContainerServiceVMSizeTypes",
+    "Count",
+    "NetworkPlugin",
+    "NetworkPolicy",
+    "OSType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

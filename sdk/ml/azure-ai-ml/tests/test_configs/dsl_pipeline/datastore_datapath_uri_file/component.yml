@@ -19,7 +19,7 @@ code: ./src
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 
 command: >-
-  python hello.py  
+  python hello.py
   --input_data ${{inputs.sample_input_data}}
   --input_string ${{inputs.sample_input_string}}
   --output_data ${{outputs.sample_output_data}}

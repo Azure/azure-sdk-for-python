@@ -4,18 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
+from urllib.parse import urlparse, quote, unquote
 
+from typing_extensions import Self
 
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
-
-import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -39,6 +34,7 @@ from ._models import ShareProtocols
 
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ShareProperties, AccessPolicy
 
 
@@ -62,10 +58,14 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         An optional share snapshot on which to operate. This can be the snapshot ID string
         or the response returned from :func:`create_snapshot`.
     :param credential:
-        The credential with which to authenticate. This is optional if the
+        The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials or an account
-        shared access key.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -76,14 +76,13 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+    def __init__(
+            self, account_url: str,
+            share_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -118,22 +117,26 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
-    def from_share_url(cls, share_url,  # type: str
-                       snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-                       credential=None,  # type: Optional[Any]
-                       **kwargs  # type: Any
-                       ):
-        # type: (...) -> ShareClient
+    def from_share_url(
+            cls, share_url: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """
         :param str share_url: The full URI to the share.
         :param str snapshot:
             An optional share snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`.
         :param credential:
-            The credential with which to authenticate. This is optional if the
+            The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials or an account
-            shared access key.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
         """
@@ -176,7 +179,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         mode hostname.
         """
         share_name = self.share_name
-        if isinstance(share_name, six.text_type):
+        if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,
@@ -186,13 +189,12 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            share_name, # type: str
-            snapshot=None,  # type: Optional[str]
-            credential=None, # type: Optional[Any]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareClient
+            cls, conn_str: str,
+            share_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ShareClient from a Connection String.
 
         :param str conn_str:
@@ -203,10 +205,14 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             The optional share snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`.
         :param credential:
-            The credential with which to authenticate. This is optional if the
+            The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials or an account
-            shared access key.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
 

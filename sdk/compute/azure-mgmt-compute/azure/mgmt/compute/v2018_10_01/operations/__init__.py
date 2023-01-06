@@ -26,23 +26,24 @@ from ._virtual_machine_run_commands_operations import VirtualMachineRunCommandsO
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'AvailabilitySetsOperations',
-    'ProximityPlacementGroupsOperations',
-    'VirtualMachineExtensionImagesOperations',
-    'VirtualMachineExtensionsOperations',
-    'VirtualMachineImagesOperations',
-    'UsageOperations',
-    'VirtualMachinesOperations',
-    'VirtualMachineSizesOperations',
-    'ImagesOperations',
-    'VirtualMachineScaleSetsOperations',
-    'VirtualMachineScaleSetExtensionsOperations',
-    'VirtualMachineScaleSetRollingUpgradesOperations',
-    'VirtualMachineScaleSetVMsOperations',
-    'LogAnalyticsOperations',
-    'VirtualMachineRunCommandsOperations',
+    "Operations",
+    "AvailabilitySetsOperations",
+    "ProximityPlacementGroupsOperations",
+    "VirtualMachineExtensionImagesOperations",
+    "VirtualMachineExtensionsOperations",
+    "VirtualMachineImagesOperations",
+    "UsageOperations",
+    "VirtualMachinesOperations",
+    "VirtualMachineSizesOperations",
+    "ImagesOperations",
+    "VirtualMachineScaleSetsOperations",
+    "VirtualMachineScaleSetExtensionsOperations",
+    "VirtualMachineScaleSetRollingUpgradesOperations",
+    "VirtualMachineScaleSetVMsOperations",
+    "LogAnalyticsOperations",
+    "VirtualMachineRunCommandsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

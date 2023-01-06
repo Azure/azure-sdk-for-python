@@ -32,9 +32,6 @@ class AsyncFakeTokenCredential(object):
 
 
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
-    def __init__(self, method_name):
-        super(AsyncContainerRegistryTestClass, self).__init__(method_name)
-
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
             if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:

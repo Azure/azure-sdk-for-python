@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -18,8 +25,10 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._big_data_pools_operations import build_get_request, build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class BigDataPoolsOperations:
     """
@@ -40,51 +49,45 @@ class BigDataPoolsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
-    async def list(
-        self,
-        **kwargs: Any
-    ) -> _models.BigDataPoolResourceInfoListResult:
+    async def list(self, **kwargs: Any) -> _models.BigDataPoolResourceInfoListResult:
         """List Big Data Pools.
 
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BigDataPoolResourceInfoListResult, or the result of cls(response)
+        :return: BigDataPoolResourceInfoListResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfoListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BigDataPoolResourceInfoListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BigDataPoolResourceInfoListResult]
 
-        
         request = build_list_request(
             api_version=api_version,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -92,64 +95,57 @@ class BigDataPoolsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('BigDataPoolResourceInfoListResult', pipeline_response)
+        deserialized = self._deserialize("BigDataPoolResourceInfoListResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': "/bigDataPools"}  # type: ignore
-
+    list.metadata = {"url": "/bigDataPools"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        big_data_pool_name: str,
-        **kwargs: Any
-    ) -> _models.BigDataPoolResourceInfo:
+    async def get(self, big_data_pool_name: str, **kwargs: Any) -> _models.BigDataPoolResourceInfo:
         """Get Big Data Pool.
 
-        :param big_data_pool_name: The Big Data Pool name.
+        :param big_data_pool_name: The Big Data Pool name. Required.
         :type big_data_pool_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BigDataPoolResourceInfo, or the result of cls(response)
+        :return: BigDataPoolResourceInfo or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfo
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BigDataPoolResourceInfo]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BigDataPoolResourceInfo]
 
-        
         request = build_get_request(
             big_data_pool_name=big_data_pool_name,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -157,12 +153,11 @@ class BigDataPoolsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorContract, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('BigDataPoolResourceInfo', pipeline_response)
+        deserialized = self._deserialize("BigDataPoolResourceInfo", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/bigDataPools/{bigDataPoolName}"}  # type: ignore
-
+    get.metadata = {"url": "/bigDataPools/{bigDataPoolName}"}  # type: ignore

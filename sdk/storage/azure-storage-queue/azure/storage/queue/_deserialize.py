@@ -9,11 +9,7 @@ from azure.core.exceptions import ResourceExistsError
 
 from ._shared.models import StorageErrorCode
 from ._models import QueueProperties
-
-
-def deserialize_metadata(response, obj, headers):
-    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
+from ._shared.response_handlers import deserialize_metadata
 
 
 def deserialize_queue_properties(response, obj, headers):
@@ -30,11 +26,11 @@ def deserialize_queue_creation(response, obj, headers):
     if response.status_code == 204:
         error_code = StorageErrorCode.queue_already_exists
         error = ResourceExistsError(
-            message="Queue already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
-                headers['x-ms-request-id'],
-                headers['Date'],
-                error_code
-            ),
+            message=(
+                "Queue already exists\n"
+                f"RequestId:{headers['x-ms-request-id']}\n"
+                f"Time:{headers['Date']}\n"
+                f"ErrorCode:{error_code}"),
             response=response)
         error.error_code = error_code
         error.additional_info = {}

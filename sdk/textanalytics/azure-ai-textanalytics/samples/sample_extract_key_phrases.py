@@ -24,7 +24,7 @@ USAGE:
 import os
 
 
-def sample_extract_key_phrases():
+def sample_extract_key_phrases() -> None:
     print(
         "In this sample, we want to find the articles that mention Microsoft to read."
     )

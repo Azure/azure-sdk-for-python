@@ -195,11 +195,11 @@ MatchConditions is an enum to describe match conditions.
 
 ```python
 class MatchConditions(Enum):
-    Unconditionally = 1
-    IfNotModified = 2
-    IfModified = 3
-    IfPresent = 4
-    IfMissing = 5
+    Unconditionally = 1  # Matches any condition
+    IfNotModified = 2  # If the target object is not modified. Usually it maps to etag=<specific etag>
+    IfModified = 3  # Only if the target object is modified. Usually it maps to etag!=<specific etag>
+    IfPresent = 4   # If the target object exists. Usually it maps to etag='*'
+    IfMissing = 5   # If the target object does not exist. Usually it maps to etag!='*'
 ```
 
 #### CaseInsensitiveEnumMeta
@@ -208,11 +208,10 @@ A metaclass to support case-insensitive enums.
 
 ```python
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 
-class MyCustomEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MyCustomEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FOO = 'foo'
     BAR = 'bar'
 ```

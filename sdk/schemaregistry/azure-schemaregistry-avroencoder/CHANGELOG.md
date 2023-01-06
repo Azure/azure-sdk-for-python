@@ -2,13 +2,9 @@
 
 ## 1.0.1 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
+This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.
 
 ### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0 (2022-05-10)
 

@@ -39,7 +39,7 @@ class AsyncTablesRetryPolicy(AsyncRetryPolicy):
 
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
-     In fixed mode, retry policy will alwasy sleep for {backoff factor}.
+     In fixed mode, retry policy will always sleep for {backoff factor}.
      In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.

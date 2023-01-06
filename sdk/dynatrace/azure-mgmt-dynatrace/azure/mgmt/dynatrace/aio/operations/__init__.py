@@ -11,9 +11,15 @@ from ._operations import Operations
 from ._tag_rules_operations import TagRulesOperations
 from ._single_sign_on_operations import SingleSignOnOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'MonitorsOperations',
-    'Operations',
-    'TagRulesOperations',
-    'SingleSignOnOperations',
+    "MonitorsOperations",
+    "Operations",
+    "TagRulesOperations",
+    "SingleSignOnOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

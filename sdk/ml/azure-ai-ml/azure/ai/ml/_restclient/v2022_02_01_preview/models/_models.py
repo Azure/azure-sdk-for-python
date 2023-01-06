@@ -1414,7 +1414,8 @@ class AzureFileDatastore(DatastoreDetails):
     :vartype account_name: str
     :ivar endpoint: Azure cloud endpoint for the storage account.
     :vartype endpoint: str
-    :ivar file_share_name: Required. [Required] TODO - File share name.
+    :ivar file_share_name: Required. [Required] The name of the Azure file share that the datastore
+     points to.
     :vartype file_share_name: str
     :ivar protocol: Protocol used to communicate with the storage account.
     :vartype protocol: str
@@ -1464,7 +1465,8 @@ class AzureFileDatastore(DatastoreDetails):
         :paramtype account_name: str
         :keyword endpoint: Azure cloud endpoint for the storage account.
         :paramtype endpoint: str
-        :keyword file_share_name: Required. [Required] TODO - File share name.
+        :keyword file_share_name: Required. [Required] The name of the Azure file share that the
+         datastore points to.
         :paramtype file_share_name: str
         :keyword protocol: Protocol used to communicate with the storage account.
         :paramtype protocol: str

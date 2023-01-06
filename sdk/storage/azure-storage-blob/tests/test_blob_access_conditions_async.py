@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -67,10 +65,6 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
         resp = await blob.create_append_blob()
         return container, blob
-
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -157,7 +151,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
@@ -179,7 +173,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -201,9 +195,9 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -228,9 +222,9 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -255,9 +249,9 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -283,9 +277,9 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -311,7 +305,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         lease = await container.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
@@ -330,7 +324,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -352,7 +346,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         lease = await container.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
@@ -371,7 +365,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container = await self._create_container(self.container_name, bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -392,7 +386,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         deleted = await container.delete_container(if_modified_since=test_datetime)
 
@@ -413,7 +407,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             await container.delete_container(if_modified_since=test_datetime)
@@ -433,7 +427,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         await container.delete_container(if_unmodified_since=test_datetime)
 
@@ -453,7 +447,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = await self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             await container.delete_container(if_unmodified_since=test_datetime)
@@ -500,7 +494,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         resp = await blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
@@ -522,7 +516,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -545,7 +539,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         resp = await blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
@@ -567,7 +561,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         data = b'hello world'
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -667,7 +661,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         content = await blob.download_blob(if_modified_since=test_datetime)
@@ -689,7 +683,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -711,7 +705,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         content = await blob.download_blob(if_unmodified_since=test_datetime)
@@ -733,7 +727,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         container, blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -829,7 +823,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -855,7 +849,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -880,7 +874,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -906,7 +900,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -1078,7 +1072,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = await blob.get_blob_properties(if_modified_since=test_datetime)
@@ -1102,7 +1096,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1124,7 +1118,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = await blob.get_blob_properties(if_unmodified_since=test_datetime)
@@ -1148,7 +1142,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1252,7 +1246,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1274,7 +1268,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1297,7 +1291,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1319,7 +1313,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1418,7 +1412,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1442,7 +1436,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1466,7 +1460,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1490,7 +1484,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1594,7 +1588,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1616,7 +1610,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1639,7 +1633,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1661,7 +1655,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1763,7 +1757,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1786,7 +1780,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1809,7 +1803,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1832,7 +1826,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1934,7 +1928,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1962,7 +1956,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1986,7 +1980,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -2014,7 +2008,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -2140,7 +2134,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -2193,7 +2187,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2221,7 +2215,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -2249,7 +2243,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             blob.stage_block('1', b'AAA'),
             blob.stage_block('2', b'BBB'),
             blob.stage_block('3', b'CCC')])
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2370,7 +2364,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2390,7 +2384,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2414,7 +2408,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2434,7 +2428,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         await self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2537,7 +2531,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2562,7 +2556,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2586,7 +2580,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2611,7 +2605,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
 
         # Act
@@ -2718,7 +2712,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = await blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
@@ -2741,7 +2735,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2762,7 +2756,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = await blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
@@ -2785,7 +2779,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2882,7 +2876,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2906,7 +2900,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2928,7 +2922,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2952,7 +2946,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -3042,5 +3036,60 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_header_metadata_sort_in_upload_blob_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup()
+        data = b'hello world'
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        try:
+            container_client = await bsc.create_container(self.container_name)
+        except:
+            container_client = bsc.get_container_client(self.container_name)
+        blob_client = container_client.get_blob_client('blob1')
+
+        # Relevant ASCII characters (excluding 'Bad Request' values)
+        ascii_subset = "!#$%&*+.-^_~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
+
+        # Build out metadata
+        metadata = dict()
+        for c in ascii_subset:
+            metadata[c] = 'a'
+
+        # Act
+        # If we hit invalid metadata error, that means we have successfully sorted headers properly to pass auth error
+        with pytest.raises(HttpResponseError) as e:
+            await blob_client.upload_blob(data, length=len(data), metadata=metadata)
+
+        # Assert
+        assert StorageErrorCode.invalid_metadata == e.value.error_code
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_header_metadata_sort_in_upload_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup()
+        data = b'hello world'
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        try:
+            container_client = await bsc.create_container(self.container_name)
+        except:
+            container_client = bsc.get_container_client(self.container_name)
+        blob_client = container_client.get_blob_client('blob1')
+
+        # Hand-picked metadata examples as Python & service don't sort '_' with the same weight
+        metadata = {'a0': 'a', 'a1': 'a', 'a2': 'a', 'a3': 'a', 'a4': 'a', 'a5': 'a', 'a6': 'a', 'a7': 'a', 'a8': 'a',
+                    'a9': 'a', '_': 'a', '_a': 'a', 'a_': 'a', '__': 'a', '_a_': 'a', 'b': 'a', 'c': 'a', 'y': 'a',
+                    'z': 'z_', '_z': 'a', '_F': 'a', 'F': 'a', 'F_': 'a', '_F_': 'a', '__F': 'a', '__a': 'a', 'a__': 'a'
+                    }
+
+        # Act
+        await blob_client.upload_blob(data, length=len(data), metadata=metadata)
 
 # ------------------------------------------------------------------------------

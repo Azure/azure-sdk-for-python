@@ -1,5 +1,31 @@
 # Release History
 
+## 2.2.0 (2022-11-30)
+
+### Features Added
+
+  - Added operation RecoveryServicesOperations.capabilities
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model VaultProperties has a new parameter public_network_access
+  - Model VaultProperties has a new parameter security_settings
+
+## 2.1.0 (2022-07-28)
+
+**Features**
+
+  - Model PrivateEndpointConnectionVaultProperties has a new parameter location
+  - Model PrivateEndpointConnectionVaultProperties has a new parameter name
+  - Model PrivateEndpointConnectionVaultProperties has a new parameter type
+  - Model ResourceCertificateAndAadDetails has a new parameter aad_audience
+  - Model Sku has a new parameter capacity
+  - Model Sku has a new parameter family
+  - Model Sku has a new parameter size
+  - Model VaultProperties has a new parameter backup_storage_version
+  - Model VaultProperties has a new parameter monitoring_settings
+  - Model VaultProperties has a new parameter move_details
+  - Model VaultProperties has a new parameter move_state
+  - Model VaultProperties has a new parameter redundancy_settings
+
 ## 2.0.0 (2021-07-12)
 
 **Features**

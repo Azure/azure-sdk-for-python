@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 """This module simulate run() which can specify succeed every n items from argument."""
 import argparse
-
 from pathlib import Path
 
 
@@ -16,7 +15,6 @@ def init():
     args, _ = parser.parse_known_args()
     OUTPUT_PATH = args.job_output_path
     print("Pass through init done")
-
 
 
 def run(mini_batch):

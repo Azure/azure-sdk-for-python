@@ -2,26 +2,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access,arguments-renamed
+
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import Any, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
+from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
+from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
+from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .code_configuration import CodeConfiguration
-from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    OnlineDeploymentData,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    BatchDeploymentData,
-)
-from azure.ai.ml.entities import Resource
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._assets import Code
-
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -29,43 +31,82 @@ module_logger = logging.getLogger(__name__)
 class Deployment(Resource, RestTranslatableMixin):
     """Endpoint Deployment base class.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param description: Description of the resource.
-    :type description: str, optional
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param model: the Model entity, defaults to None
-    :type model: Union[str, Model], optional
-    :param code_configuration: the CodeConfiguration entity, defaults to None
-    :type code_configuration: CodeConfiguration, optional
-    :param environment: the Environment entity, defaults to None
-    :type environment: Union[str, Environment], optional
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
-    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path.
-    :type code_path: Union[str, PathLike], optional
-    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :param name: Name of the deployment resource, defaults to None
+    :type name: typing.Optional[str]
+    :param endpoint_name: Name of the Endpoint resource, defaults to None
+    :type endpoint_name: typing.Optional[str]
+    :param description: Description of the deployment resource, defaults to None
+    :type description: typing.Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :param model: The Model entity, defaults to None
+    :type model: typing.Optional[Union[str, ~azure.ai.ml.entities.Model]]
+    :param code_configuration: Code Configuration, defaults to None
+    :type code_configuration: typing.Optional[CodeConfiguration]
+    :param environment: The Environment entity, defaults to None
+    :type environment: typing.Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :param environment_variables: Environment variables that will be set in deployment, defaults to None
+    :type environment_variables: typing.Optional[typing.Dict[str, str]]
+    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+        , defaults to None
+    :type code_path: typing.Optional[Union[str, PathLike]]
+    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+        , defaults to None
+    :type scoring_script: typing.Optional[Union[str, PathLike]]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
+        Exception details will be provided in the error message.
     """
 
     def __init__(
         self,
-        name: str = None,
-        endpoint_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
-        model: Union[str, "Model"] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, "Environment"] = None,
-        environment_variables: Dict[str, str] = None,
-        code_path: Union[str, PathLike] = None,
-        scoring_script: Union[str, PathLike] = None,
+        name: Optional[str] = None,
+        *,
+        endpoint_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        code_path: Optional[Union[str, PathLike]] = None,
+        scoring_script: Optional[Union[str, PathLike]] = None,
         **kwargs,
     ):
+        """
+        Endpoint Deployment base class.
+
+        Constructor of Endpoint Deployment base class.
+
+        :param name: Name of the deployment resource, defaults to None
+        :type name: typing.Optional[str]
+        :param endpoint_name: Name of the Endpoint resource, defaults to None
+        :type endpoint_name: typing.Optional[str]
+        :param description: Description of the deployment resource, defaults to None
+        :type description: typing.Optional[str]
+        :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :param properties: The asset property dictionary, defaults to None
+        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :param model: The Model entity, defaults to None
+        :type model: typing.Optional[Union[str, ~azure.ai.ml.entities.Model]]
+        :param code_configuration: Code Configuration, defaults to None
+        :type code_configuration: typing.Optional[CodeConfiguration]
+        :param environment: The Environment entity, defaults to None
+        :type environment: typing.Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+        :param environment_variables: Environment variables that will be set in deployment, defaults to None
+        :type environment_variables: typing.Optional[typing.Dict[str, str]]
+        :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+            , defaults to None
+        :type code_path: typing.Optional[Union[str, PathLike]]
+        :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+            , defaults to None
+        :type scoring_script: typing.Optional[Union[str, PathLike]]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
+            Exception details will be provided in the error message.
+        """
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         name = name.lower() if name else None
         self.endpoint_name = endpoint_name
@@ -78,6 +119,7 @@ class Deployment(Resource, RestTranslatableMixin):
                 target=ErrorTarget.DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         super().__init__(name, description, tags, properties, **kwargs)
@@ -116,14 +158,20 @@ class Deployment(Resource, RestTranslatableMixin):
 
         self.code_configuration.scoring_script = value
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the deployment content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this deployment's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: typing.Union[typing.PathLike, str, typing.IO[typing.AnyStr]]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @abstractmethod
     def _to_dict(self) -> Dict:
@@ -131,20 +179,21 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, deployment_rest_object: Union[OnlineDeploymentData, BatchDeploymentData]):
-        from azure.ai.ml.entities import OnlineDeployment, BatchDeployment
+        from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+        from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 
-        if type(deployment_rest_object) is OnlineDeploymentData:
+        if isinstance(deployment_rest_object, OnlineDeploymentData):
             return OnlineDeployment._from_rest_object(deployment_rest_object)
-        elif type(deployment_rest_object) is BatchDeploymentData:
-            return BatchDeployment._from_rest_object(deployment_rest_object)  # TODO: fix the name here
-        else:
-            msg = f"Unsupported deployment type {type(deployment_rest_object)}"
-            raise DeploymentException(
-                message=msg,
-                target=ErrorTarget.DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        if isinstance(deployment_rest_object, BatchDeploymentData):
+            return BatchDeployment._from_rest_object(deployment_rest_object)
+
+        msg = f"Unsupported deployment type {type(deployment_rest_object)}"
+        raise DeploymentException(
+            message=msg,
+            target=ErrorTarget.DEPLOYMENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def _to_rest_object(self) -> Any:
         pass
@@ -158,13 +207,17 @@ class Deployment(Resource, RestTranslatableMixin):
                     target=ErrorTarget.DEPLOYMENT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             if other.tags:
                 self.tags = {**self.tags, **other.tags}
             if other.properties:
                 self.properties = {**self.properties, **other.properties}
             if other.environment_variables:
-                self.environment_variables = {**self.environment_variables, **other.environment_variables}
+                self.environment_variables = {
+                    **self.environment_variables,
+                    **other.environment_variables,
+                }
             self.code_configuration = other.code_configuration or self.code_configuration
             self.model = other.model or self.model
             self.environment = other.environment or self.environment

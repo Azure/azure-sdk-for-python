@@ -84,8 +84,8 @@
         "parts": [ "[]", "fine!", "*" ]
     },
     {
-        "path": "/\"this is a long key with speicial characters (*)(*)__)((*&*(&*&'*(&)()(*_)()(_(_)*!@#$%^ and numbers 132654890\"/*",
-        "parts": [ "this is a long key with speicial characters (*)(*)__)((*&*(&*&'*(&)()(*_)()(_(_)*!@#$%^ and numbers 132654890", "*" ]
+        "path": "/\"this is a long key with special characters (*)(*)__)((*&*(&*&'*(&)()(*_)()(_(_)*!@#$%^ and numbers 132654890\"/*",
+        "parts": [ "this is a long key with special characters (*)(*)__)((*&*(&*&'*(&)()(*_)()(_(_)*!@#$%^ and numbers 132654890", "*" ]
     },
     {
         "path": "/ Key 1 / Key 2 ",

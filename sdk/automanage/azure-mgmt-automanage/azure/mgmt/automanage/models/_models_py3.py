@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,136 +7,288 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+import datetime
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._automanage_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
-    """Resource.
+class AssignmentReportProperties(_serialization.Model):
+    """Data related to the report detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar start_time: Start time of the configuration profile assignment processing.
+    :vartype start_time: str
+    :ivar end_time: End time of the configuration profile assignment processing.
+    :vartype end_time: str
+    :ivar last_modified_time: Last modified time of the configuration profile assignment
+     processing.
+    :vartype last_modified_time: str
+    :ivar duration: Duration of the configuration profile assignment processing.
+    :vartype duration: ~datetime.timedelta
+    :ivar type: Type of the configuration profile assignment processing (Initial/Consistency).
+    :vartype type: str
+    :ivar status: The status of the configuration profile assignment.
+    :vartype status: str
+    :ivar configuration_profile: The configurationProfile linked to the assignment.
+    :vartype configuration_profile: str
+    :ivar resources: List of resources processed by the configuration profile assignment.
+    :vartype resources: list[~azure.mgmt.automanage.models.ReportResource]
+    :ivar error: Error message, if any, returned by the configuration profile assignment
+     processing.
+    :vartype error: ~azure.mgmt.automanage.models.ErrorDetail
+    :ivar report_format_version: Version of the report format.
+    :vartype report_format_version: str
+    """
+
+    _validation = {
+        "last_modified_time": {"readonly": True},
+        "duration": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "configuration_profile": {"readonly": True},
+        "resources": {"readonly": True},
+        "error": {"readonly": True},
+        "report_format_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "configuration_profile": {"key": "configurationProfile", "type": "str"},
+        "resources": {"key": "resources", "type": "[ReportResource]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "report_format_version": {"key": "reportFormatVersion", "type": "str"},
+    }
+
+    def __init__(self, *, start_time: Optional[str] = None, end_time: Optional[str] = None, **kwargs):
+        """
+        :keyword start_time: Start time of the configuration profile assignment processing.
+        :paramtype start_time: str
+        :keyword end_time: End time of the configuration profile assignment processing.
+        :paramtype end_time: str
+        """
+        super().__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.last_modified_time = None
+        self.duration = None
+        self.type = None
+        self.status = None
+        self.configuration_profile = None
+        self.resources = None
+        self.error = None
+        self.report_format_version = None
+
+
+class BestPractice(_serialization.Model):
+    """Definition of the Automanage best practice.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The fully qualified ID for the best practice.  For example,
+     /providers/Microsoft.Automanage/bestPractices/azureBestPracticesProduction.
+    :vartype id: str
+    :ivar type: The type of the resource.  For example, Microsoft.Automanage/bestPractices.
+    :vartype type: str
+    :ivar name: The name of the best practice. For example, azureBestPracticesProduction.
+    :vartype name: str
+    :ivar properties: Properties of the best practice.
+    :vartype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.automanage.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "ConfigurationProfileProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ConfigurationProfileProperties"] = None, **kwargs):
+        """
+        :keyword properties: Properties of the best practice.
+        :paramtype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.properties = properties
+        self.system_data = None
+
+
+class BestPracticeList(_serialization.Model):
+    """The response of the list best practice operation.
+
+    :ivar value: Result of the list best practice operation.
+    :vartype value: list[~azure.mgmt.automanage.models.BestPractice]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[BestPractice]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.BestPractice"]] = None, **kwargs):
+        """
+        :keyword value: Result of the list best practice operation.
+        :paramtype value: list[~azure.mgmt.automanage.models.BestPractice]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Account(TrackedResource):
-    """Definition of the Automanage account.
+class ConfigurationProfile(TrackedResource):
+    """Definition of the configuration profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The identity of the Automanage account.
-    :type identity: ~automanage_client.models.AccountIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of the configuration profile.
+    :vartype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.automanage.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'AccountIdentity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "ConfigurationProfileProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -143,468 +296,252 @@ class Account(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["AccountIdentity"] = None,
+        properties: Optional["_models.ConfigurationProfileProperties"] = None,
         **kwargs
     ):
-        super(Account, self).__init__(tags=tags, location=location, **kwargs)
-        self.identity = identity
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Properties of the configuration profile.
+        :paramtype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+        self.system_data = None
 
 
-class AccountIdentity(msrest.serialization.Model):
-    """Identity for the Automanage account.
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar principal_id: The principal id of Automanage account identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id associated with the Automanage account.
-    :vartype tenant_id: str
-    :param type: The type of identity used for the Automanage account. Currently, the only
-     supported type is 'SystemAssigned', which implicitly creates an identity. Possible values
-     include: "SystemAssigned", "None".
-    :type type: str or ~automanage_client.models.ResourceIdentityType
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        **kwargs
-    ):
-        super(AccountIdentity, self).__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class AccountList(msrest.serialization.Model):
-    """The response of the list Account operation.
-
-    :param value: Result of the list Account operation.
-    :type value: list[~automanage_client.models.Account]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[Account]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Account"]] = None,
-        **kwargs
-    ):
-        super(AccountList, self).__init__(**kwargs)
-        self.value = value
-
-
-class UpdateResource(msrest.serialization.Model):
-    """Represents an update resource.
-
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(UpdateResource, self).__init__(**kwargs)
-        self.tags = tags
-
-
-class AccountUpdate(UpdateResource):
-    """Definition of the Automanage account.
-
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param identity: The identity of the Automanage account.
-    :type identity: ~automanage_client.models.AccountIdentity
-    """
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'AccountIdentity'},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        identity: Optional["AccountIdentity"] = None,
-        **kwargs
-    ):
-        super(AccountUpdate, self).__init__(tags=tags, **kwargs)
-        self.identity = identity
-
-
-class ConfigurationProfileAssignment(Resource):
+class ConfigurationProfileAssignment(ProxyResource):
     """Configuration profile assignment is an association between a VM and automanage profile configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: Properties of the configuration profile assignment.
-    :type properties: ~automanage_client.models.ConfigurationProfileAssignmentProperties
+    :ivar properties: Properties of the configuration profile assignment.
+    :vartype properties: ~azure.mgmt.automanage.models.ConfigurationProfileAssignmentProperties
+    :ivar managed_by: Azure resource id. Indicates if this resource is managed by another Azure
+     resource.
+    :vartype managed_by: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.automanage.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "managed_by": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfigurationProfileAssignmentProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ConfigurationProfileAssignmentProperties"},
+        "managed_by": {"key": "managedBy", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ConfigurationProfileAssignmentProperties"] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfileAssignment, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.ConfigurationProfileAssignmentProperties"] = None, **kwargs):
+        """
+        :keyword properties: Properties of the configuration profile assignment.
+        :paramtype properties: ~azure.mgmt.automanage.models.ConfigurationProfileAssignmentProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
+        self.managed_by = None
+        self.system_data = None
 
 
-class ConfigurationProfileAssignmentCompliance(msrest.serialization.Model):
-    """The compliance status for the configuration profile assignment.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar update_status: The state of compliance, which only appears in the response. Possible
-     values include: "Succeeded", "Failed", "Created".
-    :vartype update_status: str or ~automanage_client.models.UpdateStatus
-    """
-
-    _validation = {
-        'update_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'update_status': {'key': 'updateStatus', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ConfigurationProfileAssignmentCompliance, self).__init__(**kwargs)
-        self.update_status = None
-
-
-class ConfigurationProfileAssignmentList(msrest.serialization.Model):
+class ConfigurationProfileAssignmentList(_serialization.Model):
     """The response of the list configuration profile assignment operation.
 
-    :param value: Result of the list configuration profile assignment operation.
-    :type value: list[~automanage_client.models.ConfigurationProfileAssignment]
+    :ivar value: Result of the list configuration profile assignment operation.
+    :vartype value: list[~azure.mgmt.automanage.models.ConfigurationProfileAssignment]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConfigurationProfileAssignment]'},
+        "value": {"key": "value", "type": "[ConfigurationProfileAssignment]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ConfigurationProfileAssignment"]] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfileAssignmentList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ConfigurationProfileAssignment"]] = None, **kwargs):
+        """
+        :keyword value: Result of the list configuration profile assignment operation.
+        :paramtype value: list[~azure.mgmt.automanage.models.ConfigurationProfileAssignment]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ConfigurationProfileAssignmentProperties(msrest.serialization.Model):
+class ConfigurationProfileAssignmentProperties(_serialization.Model):
     """Automanage configuration profile assignment properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param configuration_profile: A value indicating configuration profile. Possible values
-     include: "Azure virtual machine best practices – Dev/Test", "Azure virtual machine best
-     practices – Production".
-    :type configuration_profile: str or ~automanage_client.models.ConfigurationProfile
-    :param target_id: The target VM resource URI.
-    :type target_id: str
-    :param account_id: The Automanage account ARM Resource URI.
-    :type account_id: str
-    :param configuration_profile_preference_id: The configuration profile custom preferences ARM
-     resource URI.
-    :type configuration_profile_preference_id: str
-    :ivar provisioning_status: The state of onboarding, which only appears in the response.
-     Possible values include: "Succeeded", "Failed", "Created".
-    :vartype provisioning_status: str or ~automanage_client.models.ProvisioningStatus
-    :param compliance: The configuration setting for the configuration profile.
-    :type compliance: ~automanage_client.models.ConfigurationProfileAssignmentCompliance
+    :ivar configuration_profile: The Automanage configurationProfile ARM Resource URI.
+    :vartype configuration_profile: str
+    :ivar target_id: The target VM resource URI.
+    :vartype target_id: str
+    :ivar status: The status of onboarding, which only appears in the response.
+    :vartype status: str
     """
 
     _validation = {
-        'provisioning_status': {'readonly': True},
+        "target_id": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'configuration_profile': {'key': 'configurationProfile', 'type': 'str'},
-        'target_id': {'key': 'targetId', 'type': 'str'},
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'configuration_profile_preference_id': {'key': 'configurationProfilePreferenceId', 'type': 'str'},
-        'provisioning_status': {'key': 'provisioningStatus', 'type': 'str'},
-        'compliance': {'key': 'compliance', 'type': 'ConfigurationProfileAssignmentCompliance'},
+        "configuration_profile": {"key": "configurationProfile", "type": "str"},
+        "target_id": {"key": "targetId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        configuration_profile: Optional[Union[str, "ConfigurationProfile"]] = None,
-        target_id: Optional[str] = None,
-        account_id: Optional[str] = None,
-        configuration_profile_preference_id: Optional[str] = None,
-        compliance: Optional["ConfigurationProfileAssignmentCompliance"] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfileAssignmentProperties, self).__init__(**kwargs)
+    def __init__(self, *, configuration_profile: Optional[str] = None, **kwargs):
+        """
+        :keyword configuration_profile: The Automanage configurationProfile ARM Resource URI.
+        :paramtype configuration_profile: str
+        """
+        super().__init__(**kwargs)
         self.configuration_profile = configuration_profile
-        self.target_id = target_id
-        self.account_id = account_id
-        self.configuration_profile_preference_id = configuration_profile_preference_id
-        self.provisioning_status = None
-        self.compliance = compliance
+        self.target_id = None
+        self.status = None
 
 
-class ConfigurationProfilePreference(TrackedResource):
-    """Definition of the configuration profile preference.
+class ConfigurationProfileList(_serialization.Model):
+    """The response of the list configuration profile operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param properties: Properties of the configuration profile preference.
-    :type properties: ~automanage_client.models.ConfigurationProfilePreferenceProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ConfigurationProfilePreferenceProperties'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ConfigurationProfilePreferenceProperties"] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfilePreference, self).__init__(tags=tags, location=location, **kwargs)
-        self.properties = properties
-
-
-class ConfigurationProfilePreferenceAntiMalware(msrest.serialization.Model):
-    """Automanage configuration profile Antimalware preferences.
-
-    :param enable_real_time_protection: Enables or disables Real Time Protection. Possible values
-     include: "True", "False".
-    :type enable_real_time_protection: str or ~automanage_client.models.EnableRealTimeProtection
-    :param exclusions: Extensions, Paths and Processes that must be excluded from scan.
-    :type exclusions: object
-    :param run_scheduled_scan: Enables or disables a periodic scan for antimalware. Possible values
-     include: "True", "False".
-    :type run_scheduled_scan: str or ~automanage_client.models.RunScheduledScan
-    :param scan_type: Type of scheduled scan. Possible values include: "Quick", "Full".
-    :type scan_type: str or ~automanage_client.models.ScanType
-    :param scan_day: Schedule scan settings day.
-    :type scan_day: str
-    :param scan_time_in_minutes: Schedule scan settings time.
-    :type scan_time_in_minutes: str
+    :ivar value: Result of the list ConfigurationProfile operation.
+    :vartype value: list[~azure.mgmt.automanage.models.ConfigurationProfile]
     """
 
     _attribute_map = {
-        'enable_real_time_protection': {'key': 'enableRealTimeProtection', 'type': 'str'},
-        'exclusions': {'key': 'exclusions', 'type': 'object'},
-        'run_scheduled_scan': {'key': 'runScheduledScan', 'type': 'str'},
-        'scan_type': {'key': 'scanType', 'type': 'str'},
-        'scan_day': {'key': 'scanDay', 'type': 'str'},
-        'scan_time_in_minutes': {'key': 'scanTimeInMinutes', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConfigurationProfile]"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable_real_time_protection: Optional[Union[str, "EnableRealTimeProtection"]] = None,
-        exclusions: Optional[object] = None,
-        run_scheduled_scan: Optional[Union[str, "RunScheduledScan"]] = None,
-        scan_type: Optional[Union[str, "ScanType"]] = None,
-        scan_day: Optional[str] = None,
-        scan_time_in_minutes: Optional[str] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfilePreferenceAntiMalware, self).__init__(**kwargs)
-        self.enable_real_time_protection = enable_real_time_protection
-        self.exclusions = exclusions
-        self.run_scheduled_scan = run_scheduled_scan
-        self.scan_type = scan_type
-        self.scan_day = scan_day
-        self.scan_time_in_minutes = scan_time_in_minutes
-
-
-class ConfigurationProfilePreferenceList(msrest.serialization.Model):
-    """The response of the list ConfigurationProfilePreference operation.
-
-    :param value: Result of the list ConfigurationProfilePreference operation.
-    :type value: list[~automanage_client.models.ConfigurationProfilePreference]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConfigurationProfilePreference]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ConfigurationProfilePreference"]] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfilePreferenceList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ConfigurationProfile"]] = None, **kwargs):
+        """
+        :keyword value: Result of the list ConfigurationProfile operation.
+        :paramtype value: list[~azure.mgmt.automanage.models.ConfigurationProfile]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ConfigurationProfilePreferenceProperties(msrest.serialization.Model):
-    """Automanage configuration profile preference properties.
+class ConfigurationProfileProperties(_serialization.Model):
+    """Automanage configuration profile properties.
 
-    :param vm_backup: The custom preferences for Azure VM Backup.
-    :type vm_backup: ~automanage_client.models.ConfigurationProfilePreferenceVmBackup
-    :param anti_malware: The custom preferences for Azure Antimalware.
-    :type anti_malware: ~automanage_client.models.ConfigurationProfilePreferenceAntiMalware
+    :ivar configuration: configuration dictionary of the configuration profile.
+    :vartype configuration: JSON
     """
 
     _attribute_map = {
-        'vm_backup': {'key': 'vmBackup', 'type': 'ConfigurationProfilePreferenceVmBackup'},
-        'anti_malware': {'key': 'antiMalware', 'type': 'ConfigurationProfilePreferenceAntiMalware'},
+        "configuration": {"key": "configuration", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_backup: Optional["ConfigurationProfilePreferenceVmBackup"] = None,
-        anti_malware: Optional["ConfigurationProfilePreferenceAntiMalware"] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfilePreferenceProperties, self).__init__(**kwargs)
-        self.vm_backup = vm_backup
-        self.anti_malware = anti_malware
+    def __init__(self, *, configuration: Optional[JSON] = None, **kwargs):
+        """
+        :keyword configuration: configuration dictionary of the configuration profile.
+        :paramtype configuration: JSON
+        """
+        super().__init__(**kwargs)
+        self.configuration = configuration
 
 
-class ConfigurationProfilePreferenceUpdate(UpdateResource):
-    """Definition of the configuration profile preference.
+class UpdateResource(_serialization.Model):
+    """Represents an update resource.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param properties: Properties of the configuration profile preference.
-    :type properties: ~automanage_client.models.ConfigurationProfilePreferenceProperties
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ConfigurationProfilePreferenceProperties'},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class ConfigurationProfileUpdate(UpdateResource):
+    """Definition of the configuration profile.
+
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the configuration profile.
+    :vartype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "ConfigurationProfileProperties"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ConfigurationProfilePreferenceProperties"] = None,
+        properties: Optional["_models.ConfigurationProfileProperties"] = None,
         **kwargs
     ):
-        super(ConfigurationProfilePreferenceUpdate, self).__init__(tags=tags, **kwargs)
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of the configuration profile.
+        :paramtype properties: ~azure.mgmt.automanage.models.ConfigurationProfileProperties
+        """
+        super().__init__(tags=tags, **kwargs)
         self.properties = properties
 
 
-class ConfigurationProfilePreferenceVmBackup(msrest.serialization.Model):
-    """Automanage configuration profile VM Backup preferences.
-
-    :param time_zone: TimeZone optional input as string. For example: Pacific Standard Time.
-    :type time_zone: str
-    :param instant_rp_retention_range_in_days: Instant RP retention policy range in days.
-    :type instant_rp_retention_range_in_days: int
-    :param retention_policy: Retention policy with the details on backup copy retention ranges.
-    :type retention_policy: str
-    :param schedule_policy: Backup schedule specified as part of backup policy.
-    :type schedule_policy: str
-    """
-
-    _attribute_map = {
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'instant_rp_retention_range_in_days': {'key': 'instantRpRetentionRangeInDays', 'type': 'int'},
-        'retention_policy': {'key': 'retentionPolicy', 'type': 'str'},
-        'schedule_policy': {'key': 'schedulePolicy', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        time_zone: Optional[str] = None,
-        instant_rp_retention_range_in_days: Optional[int] = None,
-        retention_policy: Optional[str] = None,
-        schedule_policy: Optional[str] = None,
-        **kwargs
-    ):
-        super(ConfigurationProfilePreferenceVmBackup, self).__init__(**kwargs)
-        self.time_zone = time_zone
-        self.instant_rp_retention_range_in_days = instant_rp_retention_range_in_days
-        self.retention_policy = retention_policy
-        self.schedule_policy = schedule_policy
-
-
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -612,51 +549,28 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
-
-    :param error: The error object.
-    :type error: ~automanage_client.models.ErrorResponseError
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseError'},
-    }
-
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseError"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseError(msrest.serialization.Model):
-    """The error object.
+class ErrorDetail(_serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -667,32 +581,30 @@ class ErrorResponseError(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~automanage_client.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.automanage.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~automanage_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.automanage.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -700,129 +612,407 @@ class ErrorResponseError(msrest.serialization.Model):
         self.additional_info = None
 
 
-class Operation(msrest.serialization.Model):
-    """Automanage REST API operation.
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param name: Operation name: For ex.
-     providers/Microsoft.Automanage/configurationProfileAssignments/write or read.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: str
-    :param display: Provider, Resource, Operation and description values.
-    :type display: ~automanage_client.models.OperationDisplay
-    :param status_code: Service provider: Microsoft.Automanage.
-    :type status_code: str
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.automanage.models.ErrorDetail
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'status_code': {'key': 'properties.statusCode', 'type': 'str'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        is_data_action: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        status_code: Optional[str] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
-        self.name = name
-        self.is_data_action = is_data_action
-        self.display = display
-        self.status_code = status_code
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.automanage.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class OperationDisplay(msrest.serialization.Model):
-    """Provider, Resource, Operation and description values.
-
-    :param provider: Service provider: Microsoft.Automanage.
-    :type provider: str
-    :param resource: Resource on which the operation is performed:  For ex.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Description about operation.
-    :type description: str
-    """
-
-    _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
-
-
-class OperationList(msrest.serialization.Model):
-    """The response model for the list of Automanage operations.
-
-    :param value: List of Automanage operations supported by the Automanage resource provider.
-    :type value: list[~automanage_client.models.Operation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
-        self.value = value
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+class Operation(_serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.automanage.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.automanage.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.automanage.models.ActionType
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
+    }
+
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.automanage.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
+        self.display = display
+        self.origin = None
+        self.action_type = None
+
+
+class OperationDisplay(_serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.automanage.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class Report(ProxyResource):
+    """Definition of the report.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource. Ex- Microsoft.Compute/virtualMachines or
-     Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar properties: The properties for the report.
+    :vartype properties: ~azure.mgmt.automanage.models.AssignmentReportProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.automanage.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "AssignmentReportProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.AssignmentReportProperties"] = None, **kwargs):
+        """
+        :keyword properties: The properties for the report.
+        :paramtype properties: ~azure.mgmt.automanage.models.AssignmentReportProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+        self.system_data = None
+
+
+class ReportList(_serialization.Model):
+    """The response of the list report operation.
+
+    :ivar value: Result of the list report operation.
+    :vartype value: list[~azure.mgmt.automanage.models.Report]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Report]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.Report"]] = None, **kwargs):
+        """
+        :keyword value: Result of the list report operation.
+        :paramtype value: list[~azure.mgmt.automanage.models.Report]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class ReportResource(_serialization.Model):
+    """Details about the resource processed by the configuration profile assignment.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar id: ARM id of the resource.
+    :vartype id: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    :ivar status: Status of the resource.
+    :vartype status: str
+    :ivar error: Error message, if any, returned when deploying the resource.
+    :vartype error: ~azure.mgmt.automanage.models.ErrorDetail
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "error": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.id = None
+        self.type = None
+        self.status = None
+        self.error = None
+
+
+class ServicePrincipal(ProxyResource):
+    """The Service Principal Id for the subscription.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar properties: The Service Principal properties for the subscription.
+    :vartype properties: ~azure.mgmt.automanage.models.ServicePrincipalProperties
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.automanage.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ServicePrincipalProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ServicePrincipalProperties"] = None, **kwargs):
+        """
+        :keyword properties: The Service Principal properties for the subscription.
+        :paramtype properties: ~azure.mgmt.automanage.models.ServicePrincipalProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+        self.system_data = None
+
+
+class ServicePrincipalListResult(_serialization.Model):
+    """The list of ServicePrincipals.
+
+    :ivar value: The list of servicePrincipals.
+    :vartype value: list[~azure.mgmt.automanage.models.ServicePrincipal]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServicePrincipal]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.ServicePrincipal"]] = None, **kwargs):
+        """
+        :keyword value: The list of servicePrincipals.
+        :paramtype value: list[~azure.mgmt.automanage.models.ServicePrincipal]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class ServicePrincipalProperties(_serialization.Model):
+    """The Service Principal properties for the subscription.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar service_principal_id: The Service Principal Id for the subscription.
+    :vartype service_principal_id: str
+    :ivar authorization_set: Returns the contributor RBAC Role exist or not for the Service
+     Principal Id.
+    :vartype authorization_set: bool
+    """
+
+    _validation = {
+        "service_principal_id": {"readonly": True},
+        "authorization_set": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "service_principal_id": {"key": "servicePrincipalId", "type": "str"},
+        "authorization_set": {"key": "authorizationSet", "type": "bool"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.service_principal_id = None
+        self.authorization_set = None
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.automanage.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.automanage.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(ProxyResource, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.automanage.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.automanage.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

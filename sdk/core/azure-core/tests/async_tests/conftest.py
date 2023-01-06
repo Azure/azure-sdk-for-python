@@ -30,7 +30,7 @@ import os
 import subprocess
 import sys
 import random
-from six.moves import urllib
+import urllib
 from rest_client_async import AsyncTestRestClient
 
 def is_port_available(port_num):

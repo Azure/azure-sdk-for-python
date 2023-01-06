@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import copy
 import codecs
-import cgi
+import email.message
 from json import dumps
 from typing import (
     Optional,
@@ -38,16 +38,11 @@ from typing import (
     Dict,
     Iterable,
     MutableMapping,
-    AsyncIterable
+    AsyncIterable,
+    cast,
 )
 import xml.etree.ElementTree as ET
-import six
-try:
-    binary_type = str
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    binary_type = bytes  # type: ignore
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 from azure.core.serialization import AzureJSONEncoder
 from ..utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -59,37 +54,36 @@ from ..utils._pipeline_transport_rest_shared import (
 
 ################################### TYPES SECTION #########################
 
+binary_type = str
 PrimitiveData = Optional[Union[str, int, float, bool]]
-
 
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
 FileType = Tuple[Optional[str], FileContent]
 
-FilesType = Union[
-    Mapping[str, FileType],
-    Sequence[Tuple[str, FileType]]
-]
+FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ########################### HELPER SECTION #################################
 
+
 def _verify_data_object(name, value):
-    if not isinstance(name, six.string_types):
+    if not isinstance(name, str):
         raise TypeError(
             "Invalid type for data name. Expected str, got {}: {}".format(
                 type(name), name
             )
         )
-    if value is not None and not isinstance(value, (six.string_types, bytes, int, float)):
+    if value is not None and not isinstance(value, (str, bytes, int, float)):
         raise TypeError(
             "Invalid type for data value. Expected primitive type, got {}: {}".format(
                 type(name), name
             )
         )
+
 
 def set_urlencoded_body(data, has_files):
     body = {}
@@ -109,11 +103,13 @@ def set_urlencoded_body(data, has_files):
         default_headers["Content-Type"] = "application/x-www-form-urlencoded"
     return default_headers, body
 
+
 def set_multipart_body(files):
     formatted_files = {
         f: _format_data_helper(d) for f, d in files.items() if d is not None
     }
     return {}, formatted_files
+
 
 def set_xml_body(content):
     headers = {}
@@ -123,16 +119,19 @@ def set_xml_body(content):
         headers["Content-Length"] = str(len(body))
     return headers, body
 
-def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]:
+
+def set_content_body(
+    content: Any,
+) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]:
     headers: MutableMapping[str, str] = {}
 
     if isinstance(content, ET.Element):
         # XML body
         return set_xml_body(content)
-    if isinstance(content, (six.string_types, bytes)):
+    if isinstance(content, (str, bytes)):
         headers = {}
         body = content
-        if isinstance(content, six.string_types):
+        if isinstance(content, str):
             headers["Content-Type"] = "text/plain"
         if body:
             headers["Content-Length"] = str(len(body))
@@ -140,12 +139,12 @@ def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[C
     if any(hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]):
         return headers, content
     raise TypeError(
-        "Unexpected type for 'content': '{}'. ".format(type(content)) +
-        "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
+        "Unexpected type for 'content': '{}'. ".format(type(content))
+        + "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
     )
 
-def set_json_body(json):
-    # type: (Any) -> Tuple[Dict[str, str], Any]
+
+def set_json_body(json: Any) -> Tuple[Dict[str, str], Any]:
     headers = {"Content-Type": "application/json"}
     if hasattr(json, "read"):
         content_headers, body = set_content_body(json)
@@ -155,8 +154,8 @@ def set_json_body(json):
         headers.update({"Content-Length": str(len(body))})
     return headers, body
 
-def lookup_encoding(encoding):
-    # type: (str) -> bool
+
+def lookup_encoding(encoding: str) -> bool:
     # including check for whether encoding is known taken from httpx
     try:
         codecs.lookup(encoding)
@@ -164,20 +163,22 @@ def lookup_encoding(encoding):
     except LookupError:
         return False
 
-def get_charset_encoding(response):
-    # type: (...) -> Optional[str]
+
+def get_charset_encoding(response) -> Optional[str]:
     content_type = response.headers.get("Content-Type")
 
     if not content_type:
         return None
-    _, params = cgi.parse_header(content_type)
-    encoding = params.get('charset') # -> utf-8
+    # https://peps.python.org/pep-0594/#cgi
+    m = email.message.Message()
+    m["content-type"] = content_type
+    encoding = cast(str, m.get_param("charset"))  # -> utf-8
     if encoding is None or not lookup_encoding(encoding):
         return None
     return encoding
 
-def decode_to_text(encoding, content):
-    # type: (Optional[str], bytes) -> str
+
+def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     if not content:
         return ""
     if encoding == "utf-8":
@@ -186,8 +187,8 @@ def decode_to_text(encoding, content):
         return content.decode(encoding)
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
 
-class HttpRequestBackcompatMixin(object):
 
+class HttpRequestBackcompatMixin(object):
     def __getattr__(self, attr):
         backcompat_attrs = [
             "files",
@@ -348,7 +349,7 @@ class HttpRequestBackcompatMixin(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
-            kwargs
+            kwargs,
         )
 
     def _prepare_multipart_body(self, content_index=0):
@@ -366,4 +367,6 @@ class HttpRequestBackcompatMixin(object):
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = copy.deepcopy(self._multipart_mixed_info, memo)  # pylint: disable=protected-access
+        request._multipart_mixed_info = (  # pylint: disable=protected-access
+            copy.deepcopy(self._multipart_mixed_info, memo)
+        )
