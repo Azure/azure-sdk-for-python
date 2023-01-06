@@ -7,21 +7,18 @@
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from azure.core.exceptions import ResourceNotFoundError
 from ._settingselector import SettingSelector
-from ._azure_appconfiguration_provider_error import KeyVaultReferenceError
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
 
 from ._user_agent import USER_AGENT
 
-
 class AzureAppConfigurationProvider:
+
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration
     keys. Enables resolution of Key Vault references in configuration settings.
     """
-
     def __init__(self):
         # type: () -> None
         self._dict = {}
@@ -130,19 +127,12 @@ class AzureAppConfigurationProvider:
             secret_clients[key_vault_identifier.vault_url] = referenced_client
 
         if referenced_client:
-            try:
-                return referenced_client.get_secret(
-                    key_vault_identifier.name, version=key_vault_identifier.version
-                ).value
-            except ResourceNotFoundError:
-                raise KeyVaultReferenceError(
-                    "Key Vault %s does not contain secret %s"
-                    % (key_vault_identifier.vault_url, key_vault_identifier.name)
-                )
+            return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
 
         if key_vault_options.secret_resolver is not None:
             return key_vault_options.secret_resolver(config.secret_id)
-        raise KeyVaultReferenceError(
+
+        raise AttributeError(
             "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
         )
 
@@ -169,21 +159,17 @@ class AzureAppConfigurationProvider:
         return False
 
     def __getitem__(self, key):
+        """
+        Returns the value of the specified key.
+        type: (str) -> object
+        """
         return self._dict[key]
 
-    def __repr__(self):
-        return repr(self._dict)
+    def __iter__(self):
+        return self._dict.__iter__()
 
     def __len__(self):
         return len(self._dict)
-
-    def copy(self):
-        """
-        Returns a copy of the configuration settings
-
-        type: () -> dict
-        """
-        return self._dict.copy()
 
     def __contains__(self, __x: object):
         """
@@ -201,6 +187,15 @@ class AzureAppConfigurationProvider:
         """
         return self._dict.keys()
 
+    def items(self):
+        """
+        Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
+        will be resolved.
+
+        type: () -> list
+        """
+        return self._dict.items()
+
     def values(self):
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
@@ -209,3 +204,25 @@ class AzureAppConfigurationProvider:
         type: () -> list
         """
         return self._dict.values()
+
+    def get(self, key, default=None):
+        """
+        Returns the value of the specified key. If the key does not exist, returns the default value.
+
+        type: (str, object) -> object
+        """
+        return self._dict.get(key, default)
+
+    def __eq__(self, other):
+        if not isinstance(other, AzureAppConfigurationProvider):
+            return False
+        if self._dict != other._dict:
+            return False
+        if self._trim_prefixes != other._trim_prefixes:
+            return False
+        if self._client != other._client:
+            return False
+        return True
+
+    def __ne__(self, other):
+        return not self == other

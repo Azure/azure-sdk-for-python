@@ -6,6 +6,7 @@
 
 
 class AzureAppConfigurationKeyVaultOptions:
+
     """
     Options for connecting to Key Vault.
 
@@ -16,11 +17,10 @@ class AzureAppConfigurationKeyVaultOptions:
      provided.
     :type secret_clients: list[~azure.keyvault.secrets.SecretClient]
     :param secret_resolver: A function that takes a URI and returns a value.
-    :type secret_resolver: callable
+    :type secret_resolver: Callable[[str], str]
     """
-
-    def __init__(self, credential=None, secret_clients=None, secret_resolver=None):
-        # type: (TokenCredential, List[SecretClient], Callable) -> None
+    def __init__(self, *, credential=None, secret_clients=None, secret_resolver=None):
+        # type: (TokenCredential, List[SecretClient], Callable[[str], str]) -> None
         self.credential = credential
         self.secret_clients = secret_clients
         self.secret_resolver = secret_resolver
