@@ -82,7 +82,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
             count += 1
 
     def create_fully_qualified_reference(self, registry, repository, digest):
-        return f"{registry}/{repository}{':' if _is_tag(self._digest) else '@'}{digest.split(':')[-1]}"
+        return f"{registry}/{repository}{':' if _is_tag(digest) else '@'}{digest.split(':')[-1]}"
 
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
