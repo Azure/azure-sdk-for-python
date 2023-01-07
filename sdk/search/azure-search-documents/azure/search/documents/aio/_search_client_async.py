@@ -167,7 +167,8 @@ class SearchClient(HeadersMixin):
             top: Optional[int] = None,
             scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
             session_id: Optional[str] = None,
-            **kwargs) -> AsyncSearchItemPaged[Dict]: # pylint:disable=too-many-locals
+            **kwargs) -> AsyncSearchItemPaged[Dict]:
+        # pylint:disable=too-many-locals, disable=redefined-builtin
         """Search the Azure search index for documents.
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
@@ -354,6 +355,7 @@ class SearchClient(HeadersMixin):
             select: Optional[List[str]] = None,
             top: Optional[int] = None,
             **kwargs) -> List[Dict]:
+        # pylint:disable=disable=redefined-builtin
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -436,6 +438,7 @@ class SearchClient(HeadersMixin):
             search_fields: Optional[List[str]] = None,
             top: Optional[int] = None,
             **kwargs) -> List[Dict]:
+        # pylint:disable=disable=redefined-builtin
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.

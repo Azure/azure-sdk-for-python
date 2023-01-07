@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Type, Union
+from typing import Type, Union
 from ._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
 
 

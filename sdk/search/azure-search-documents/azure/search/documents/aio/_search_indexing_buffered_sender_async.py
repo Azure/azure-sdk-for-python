@@ -245,7 +245,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def merge_or_upload_documents(
         self, documents: List[Dict], **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
+        # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
         :type documents: List[Dict]
