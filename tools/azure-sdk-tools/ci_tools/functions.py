@@ -128,6 +128,7 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
 
     logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
     logging.info("Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered))))
+
     return pkg_set_ci_filtered
 
 
@@ -160,7 +161,6 @@ def discover_targeted_packages(
         collected_packages = apply_compatibility_filter(collected_packages)
 
     # apply package-specific exclusions only if we have gotten more than one
-    # todo: remove this after updating the pyproject exclusion
     if len(collected_packages) > 1:
         collected_packages = apply_inactive_filter(collected_packages)
 
@@ -170,8 +170,19 @@ def discover_targeted_packages(
     return sorted(collected_packages)
 
 
+def is_package_active(package_path: str):
+    disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
+
+    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper()}", None)
+
+    if override_value:
+        return str_to_bool(override_value)
+    else:
+        return disabled
+
+
 def apply_inactive_filter(collected_directories: List[str]) -> List[str]:
-    packages = [pkg for pkg in packages if INACTIVE_CLASSIFIER not in ParsedSetup.from_path(pkg).classifiers]
+    packages = [pkg for pkg in packages if is_package_active(pkg)]
 
     return packages
 
