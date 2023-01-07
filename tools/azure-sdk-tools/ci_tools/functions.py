@@ -74,7 +74,12 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
+        try:
+            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)    
+        except RuntimeError as e:
+            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
+            continue
+
         pkg_specs_override = TEST_COMPATIBILITY_MAP.get(os.path.basename(pkg), None)
 
         if pkg_specs_override:
@@ -125,7 +130,7 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
 
 
 def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
-    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
+    pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
 
     logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
     logging.info("Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered))))
@@ -185,8 +190,8 @@ def is_package_active(package_path: str):
         return disabled
 
 
-def apply_inactive_filter(collected_directories: List[str]) -> List[str]:
-    packages = [pkg for pkg in packages if is_package_active(pkg)]
+def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
+    packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
 
     return packages
 
