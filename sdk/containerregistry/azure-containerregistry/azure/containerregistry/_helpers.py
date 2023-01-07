@@ -18,10 +18,10 @@ except ImportError:
     from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
-from ._generated.models import OCIManifest
-
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+
+from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
     from typing import Dict, IO
