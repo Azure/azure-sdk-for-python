@@ -1214,7 +1214,7 @@ class RecognizedForm:
     """
     form_type: str
     """The type of form the model identified the submitted form to be."""
-    form_type_confidence: str
+    form_type_confidence: int
     """Confidence of the type of form the model identified the submitted form to be."""
     model_id: str
     """Model identifier of model used to analyze form if not using a prebuilt
