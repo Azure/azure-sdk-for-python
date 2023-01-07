@@ -45,7 +45,7 @@ class DeleteTags(object):
                 for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                     tag_count += 1
                     if tag_count > 3:
-                        print("Deleting {}:{}".format(repository, tag.name))
+                        print(f"Deleting {repository}:{tag.name}")
                         client.delete_tag(repository, tag.name)
 
 
