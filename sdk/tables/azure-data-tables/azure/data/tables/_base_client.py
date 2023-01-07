@@ -6,7 +6,8 @@
 import os
 import sys
 
-from typing import Dict, Optional, Any, List, Mapping, Union
+from typing import Any, Dict, List, Optional, Mapping, Union
+from uuid import uuid4
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
@@ -18,8 +19,6 @@ except ImportError:
     from urlparse import parse_qs, urlparse  # type: ignore
     from urllib2 import quote  # type: ignore
 
-#pylint: disable=wrong-import-position
-from uuid import uuid4
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
@@ -62,7 +61,6 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
-#pylint: enable=wrong-import-position
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line

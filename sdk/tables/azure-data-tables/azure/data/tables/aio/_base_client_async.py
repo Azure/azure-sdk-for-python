@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
@@ -35,7 +34,7 @@ from .._error import (
     RequestTooLargeError,
     TableTransactionError,
     _decode_error,
-    _validate_tablename_error
+    _validate_tablename_error,
 )
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
