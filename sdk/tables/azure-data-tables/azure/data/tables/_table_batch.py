@@ -99,7 +99,7 @@ class TableBatchOperations(object):
         except AttributeError:
             raise ValueError("Unrecognized operation: {}".format(operation))
 
-    def create(self, entity: EntityType, **kwargs: Any) -> None:
+    def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -134,7 +134,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
         format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """
         Adds an insert operation to the batch. See
@@ -223,7 +223,7 @@ class TableBatchOperations(object):
 
     _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
 
-    def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs: Any) -> None:
+    def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -296,7 +296,7 @@ class TableBatchOperations(object):
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
         format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Update entity in a table.
 
@@ -400,7 +400,7 @@ class TableBatchOperations(object):
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
         format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Merge entity in a table.
 
@@ -495,7 +495,7 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def delete(self, entity: EntityType, **kwargs: Any) -> None:
+    def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
         :param partition_key: The partition key of the entity.
@@ -629,7 +629,7 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs: Any) -> None:
+    def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.

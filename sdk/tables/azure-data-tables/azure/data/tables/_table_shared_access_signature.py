@@ -23,7 +23,7 @@ def generate_account_sas(
     resource_types: ResourceTypes,
     permission: Union[str, AccountSasPermissions],
     expiry: Union[datetime, str],
-    **kwargs: Any
+    **kwargs
 ) -> str:
     """
     Generates a shared access signature for the table service.
@@ -84,7 +84,7 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs: Any) -> str:
+def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.

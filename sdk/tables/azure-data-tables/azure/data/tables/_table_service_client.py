@@ -75,7 +75,7 @@ class TableServiceClient(TablesBaseClient):
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> 'TableServiceClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> 'TableServiceClient':
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
@@ -97,7 +97,7 @@ class TableServiceClient(TablesBaseClient):
         return cls(endpoint, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs: Any) -> Dict[str, object]:
+    def get_service_stats(self, **kwargs) -> Dict[str, object]:
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
@@ -115,7 +115,7 @@ class TableServiceClient(TablesBaseClient):
         return service_stats_deserialize(stats)
 
     @distributed_trace
-    def get_service_properties(self, **kwargs: Any) -> Dict[str, object]:
+    def get_service_properties(self, **kwargs) -> Dict[str, object]:
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -135,7 +135,7 @@ class TableServiceClient(TablesBaseClient):
         return service_properties_deserialize(service_props)
 
     @distributed_trace
-    def set_service_properties(self, **kwargs: Any) -> None:
+    def set_service_properties(self, **kwargs) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -170,7 +170,7 @@ class TableServiceClient(TablesBaseClient):
                 raise
 
     @distributed_trace
-    def create_table(self, table_name: str, **kwargs: Any) -> TableClient:
+    def create_table(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table under the current account.
 
         :param table_name: The Table name.
@@ -193,7 +193,7 @@ class TableServiceClient(TablesBaseClient):
         return table
 
     @distributed_trace
-    def create_table_if_not_exists(self, table_name: str, **kwargs: Any) -> TableClient:
+    def create_table_if_not_exists(self, table_name: str, **kwargs) -> TableClient:
         """Creates a new table if it does not currently exist.
         If the table currently exists, the current table is
         returned.
@@ -221,7 +221,7 @@ class TableServiceClient(TablesBaseClient):
         return table
 
     @distributed_trace
-    def delete_table(self, table_name: str, **kwargs: Any) -> None:
+    def delete_table(self, table_name: str, **kwargs) -> None:
         """Deletes the table under the current account. No error will be raised
         if the given table is not found.
 
@@ -244,7 +244,7 @@ class TableServiceClient(TablesBaseClient):
         table.delete_table(**kwargs)
 
     @distributed_trace
-    def query_tables(self, query_filter: str, **kwargs: Any) -> ItemPaged[TableItem]:
+    def query_tables(self, query_filter: str, **kwargs) -> ItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :param str query_filter: Specify a filter to return certain tables.
@@ -279,7 +279,7 @@ class TableServiceClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def list_tables(self, **kwargs: Any) -> ItemPaged[TableItem]:
+    def list_tables(self, **kwargs) -> ItemPaged[TableItem]:
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in returned ItemPaged
@@ -305,7 +305,7 @@ class TableServiceClient(TablesBaseClient):
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
+    def get_table_client(self, table_name: str, **kwargs) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.

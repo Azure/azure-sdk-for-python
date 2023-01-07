@@ -114,7 +114,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
         format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """
         Adds an insert operation to the batch. See
@@ -207,7 +207,7 @@ class TableBatchOperations(object):
         self,
         entity: EntityType,
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Adds an update operation to the current batch.
 
@@ -280,7 +280,7 @@ class TableBatchOperations(object):
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
         format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Update entity in a table.
 

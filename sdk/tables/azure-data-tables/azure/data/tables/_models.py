@@ -91,7 +91,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self.version = kwargs.get("version", u"1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
@@ -131,7 +131,7 @@ class TableMetrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self.version = kwargs.get("version", u"1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
@@ -161,7 +161,7 @@ class TableMetrics(GeneratedMetrics):
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -228,7 +228,7 @@ class TableCorsRule(object):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs) -> None:
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
         self.allowed_headers = kwargs.get("allowed_headers", [])
@@ -361,7 +361,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
 
 class TableSasPermissions(object):
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         """
         :keyword bool read:
             Get entities and query entities.
@@ -474,7 +474,7 @@ class TableItem(object):
 
     # TODO: TableQueryResponse is not the correct type
     @classmethod
-    def _from_generated(cls, generated: TableQueryResponse, **kwargs: Any) -> 'TableItem':  # pylint: disable=unused-argument
+    def _from_generated(cls, generated: TableQueryResponse, **kwargs) -> 'TableItem':  # pylint: disable=unused-argument
         return cls(generated.table_name)  # type: ignore
 
     def __repr__(self) -> str:
@@ -538,7 +538,7 @@ class ResourceTypes(object):
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         self.service = kwargs.get('service', False)
         self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")

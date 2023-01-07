@@ -86,7 +86,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self,
         account_url: Any,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         try:
             if not account_url.lower().startswith("http"):
@@ -217,7 +217,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs) # type: ignore
@@ -268,7 +268,7 @@ class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(self, table_name: str, *reqs: List[HttpRequest], **kwargs: Any) -> List[Mapping[str, Any]]:
+    def _batch_send(self, table_name: str, *reqs: List[HttpRequest], **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]

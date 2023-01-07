@@ -285,15 +285,15 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 raise
 
     @overload
-    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs) -> None:
         ...
 
     @overload
-    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs) -> None:
         ...
 
     @distributed_trace_async
-    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 

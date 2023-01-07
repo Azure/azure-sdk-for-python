@@ -49,7 +49,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(

@@ -33,7 +33,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
