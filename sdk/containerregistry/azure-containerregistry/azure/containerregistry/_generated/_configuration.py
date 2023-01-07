@@ -42,7 +42,7 @@ class ContainerRegistryConfiguration(Configuration):  # pylint: disable=too-many
 
         self.url = url
         self.api_version = api_version
-        kwargs.setdefault('sdk_moniker', 'containerregistry/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', f'containerregistry/{VERSION}')
         self._configure(**kwargs)
 
     def _configure(
