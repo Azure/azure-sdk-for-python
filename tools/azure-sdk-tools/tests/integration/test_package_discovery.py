@@ -64,7 +64,24 @@ def test_discovery_single_package():
     ]
 
 def test_discovery_omit_regression():
-    pass
+    results = discover_targeted_packages("azure*", core_service_root, filter_type="Regression")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-core",
+        "azure-core-experimental",
+        "azure-core-tracing-opencensus",
+        "azure-core-tracing-opentelemetry"
+    ]
+
+    storage_results = discover_targeted_packages("azure*", storage_service_root, filter_type="Regression")
+
+    assert [os.path.basename(result) for result in storage_results] == [
+        "azure-storage-blob",
+        "azure-storage-blob-changefeed",
+        "azure-storage-file-datalake",
+        "azure-storage-file-share",
+        "azure-storage-queue"
+    ]
 
 
 def test_discovery_honors_contains_filter():
@@ -75,4 +92,13 @@ def test_discovery_honors_override():
     os.environ["ENABLE_AZURE-COMMON"] = "true"
     os.environ["ENABLE_AZURE-SERVICEMANAGEMENT-LEGACY"] = "false"
 
-    results = discover_targeted_packages("azure*", repo_root)
+    results = discover_targeted_packages("azure*", core_service_root)
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-common",
+        "azure-core",
+        "azure-core-experimental",
+        "azure-core-tracing-opencensus",
+        "azure-core-tracing-opentelemetry",
+        "azure-mgmt-core",
+    ]

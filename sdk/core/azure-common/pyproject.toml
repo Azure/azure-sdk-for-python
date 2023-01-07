@@ -5,3 +5,4 @@ pyright = false
 mypy = false
 pylint = false
 regression = false
+black = false

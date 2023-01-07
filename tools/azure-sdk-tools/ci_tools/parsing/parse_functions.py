@@ -107,6 +107,7 @@ def get_build_config(package: str) -> Dict[str, Any]:
         except:
                 return {}
 
+
 def read_setup_py_content(setup_filename: str) -> str:
     """
     Get setup.py content, returns a string.

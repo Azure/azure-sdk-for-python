@@ -6,3 +6,4 @@ mypy = false
 pylint = false
 regression = false
 sphinx = false
+black = false
