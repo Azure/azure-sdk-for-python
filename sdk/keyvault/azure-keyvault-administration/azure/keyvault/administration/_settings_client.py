@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
-
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 

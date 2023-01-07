@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
-
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator_async import distributed_trace_async
 

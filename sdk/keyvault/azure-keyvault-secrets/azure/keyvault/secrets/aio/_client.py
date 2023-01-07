@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Optional
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
