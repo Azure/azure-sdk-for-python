@@ -50,10 +50,11 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
+        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs
     ) -> None:
@@ -61,7 +62,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
             AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
@@ -115,13 +116,12 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
     def from_table_url(
         cls,
         table_url: str,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
         **kwargs
     ) -> "TableClient":
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
             table URL already has a SAS token. The value can be one of AzureNamedKeyCredential
             or AzureSasCredential from azure-core.
@@ -158,7 +158,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             raise ValueError(
                 "Invalid URL. Please provide a URL with a valid table name"
             )
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(endpoint, table_name=table_name, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, Optional[TableAccessPolicy]]:

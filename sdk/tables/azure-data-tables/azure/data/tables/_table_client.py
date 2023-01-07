@@ -39,10 +39,11 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
     :ivar str url: The full URL to the Tables account.
     """
 
-    def __init__(
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         table_name: str,
+        *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs: Any
     ) -> None:
@@ -50,7 +51,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
 
         :param str endpoint: A URL to an Azure Tables account.
         :param str table_name: The table name.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
             AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
@@ -63,7 +64,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name = table_name
-        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
+        super(TableClient, self).__init__(endpoint, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

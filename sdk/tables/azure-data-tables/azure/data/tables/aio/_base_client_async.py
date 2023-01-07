@@ -44,9 +44,10 @@ from ._policies_async import AsyncTablesRetryPolicy
 
 class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
 
-    def __init__(
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
+        *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         **kwargs: Any
     ) -> None:
@@ -72,7 +73,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
         """
         await self._client.close()
 
-    def _configure_credential(self, credential: Any) -> None:
+    def _configure_credential(
+        self, credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]
+    ) -> None:
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenChallengePolicy(  # type: ignore
                 credential, STORAGE_OAUTH_SCOPE
