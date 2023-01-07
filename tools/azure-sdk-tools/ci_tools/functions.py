@@ -175,9 +175,6 @@ def discover_targeted_packages(
 
     return sorted(collected_packages)
 
-def is_package_check_enabled(package_path: str, check: str) -> bool:
-    pass # todo
-
 
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
@@ -187,7 +184,7 @@ def is_package_active(package_path: str):
     if override_value:
         return str_to_bool(override_value)
     else:
-        return disabled
+        return not disabled
 
 
 def apply_inactive_filter(collected_packages: List[str]) -> List[str]:

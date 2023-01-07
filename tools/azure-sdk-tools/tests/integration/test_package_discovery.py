@@ -6,10 +6,12 @@ from ci_tools.functions import discover_targeted_packages
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 core_service_root = os.path.join(repo_root, "sdk", "core")
+storage_service_root = os.path.join(repo_root, "sdk", "storage")
+
 
 def test_toml_result():
     package_with_toml = os.path.join(core_service_root, "azure-core")
-    
+
     parsed_setup = ParsedSetup.from_path(package_with_toml)
     result = parsed_setup.get_build_config()
 
@@ -19,34 +21,58 @@ def test_toml_result():
         "pyright": False,
     }
 
-    assert(expected == result)
+    assert expected == result
+
 
 def test_discovery():
-   results = discover_targeted_packages("azure*", core_service_root)
-   
-   # if in a set, this should be empty
-   non_empty_results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root)
+    results = discover_targeted_packages("azure*", core_service_root)
 
-   assert len(results) > 1
-   assert len(non_empty_results) == 1
+    # if in a set, this should be empty
+    non_empty_results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root)
+
+    assert len(results) > 1
+    assert len(non_empty_results) == 1
 
 
 def test_discovery_omit_mgmt():
-   pass
+    results = discover_targeted_packages("azure*", storage_service_root, filter_type="Omit_management")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-storage-blob",
+        "azure-storage-blob-changefeed",
+        "azure-storage-file-datalake",
+        "azure-storage-file-share",
+        "azure-storage-queue"
+    ]
 
 def test_discovery_omit_build():
-   pass
+    results = discover_targeted_packages("azure*", core_service_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-core",
+        "azure-core-experimental",
+        "azure-core-tracing-opencensus",
+        "azure-core-tracing-opentelemetry",
+        "azure-mgmt-core",
+    ]
+
+def test_discovery_single_package():
+    results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-servicemanagement-legacy",
+    ]
 
 def test_discovery_omit_regression():
-   pass
+    pass
+
 
 def test_discovery_honors_contains_filter():
-   pass
+    pass
+
 
 def test_discovery_honors_override():
-   os.environ["ENABLE_AZURE-COMMON"] = "true"
-   os.environ["ENABLE_AZURE-SERVICEMANAGEMENT-LEGACY"] = "false"
+    os.environ["ENABLE_AZURE-COMMON"] = "true"
+    os.environ["ENABLE_AZURE-SERVICEMANAGEMENT-LEGACY"] = "false"
 
-   results = discover_targeted_packages("azure*", repo_root)
-
-
+    results = discover_targeted_packages("azure*", repo_root)
