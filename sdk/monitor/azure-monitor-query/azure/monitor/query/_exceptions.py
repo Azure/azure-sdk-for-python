@@ -18,24 +18,23 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class LogsQueryError(object):
-    """The code and message for an error.
+class LogsQueryError:
+    """The code and message for an error."""
 
-    :ivar code: A machine readable error code.
-    :vartype code: str
-    :ivar message: A human readable error message.
-    :vartype message: str
-    :ivar details: A list of additional details about the error.
-    :vartype details: list[JSON]
-    :ivar status: status for error item when iterating over list of
-        results. Always "Failure" for an instance of a LogsQueryError.
-    :vartype status: ~azure.monitor.query.LogsQueryStatus
-    """
+    code: str
+    """A machine readable error code."""
+    message: str
+    """A human readable error message."""
+    details: Optional[List[JSON]] = None
+    """A list of additional details about the error."""
+    status: LogsQueryStatus
+    """Status for error item when iterating over list of results. Always "Failure" for an instance of a
+    LogsQueryError."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.code: Optional[str] = kwargs.get("code", None)
-        self.message: Optional[str] = kwargs.get("message", None)
-        self.details: Optional[List[JSON]] = kwargs.get("details", None)
+        self.code = kwargs.get("code", "")
+        self.message = kwargs.get("message", "")
+        self.details = kwargs.get("details", None)
         self.status = LogsQueryStatus.FAILURE
 
     def __str__(self) -> str:

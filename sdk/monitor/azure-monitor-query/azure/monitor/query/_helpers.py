@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -16,7 +16,7 @@ from ._generated._serialization import Serializer, Deserializer
 
 def get_authentication_policy(
     credential: TokenCredential,
-    audience: str = None
+    audience: Optional[str] = None
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
@@ -34,7 +34,7 @@ def get_authentication_policy(
 
 def get_metrics_authentication_policy(
     credential: TokenCredential,
-    audience: str = None
+    audience: Optional[str] = None
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
@@ -68,7 +68,7 @@ def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -
                     res = partial_err._from_generated(  # pylint: disable=protected-access
                         item["body"], kwargs.get("raise_with")
                     )
-                results.append(res)
+                    results.append(res)
             else:
                 err = kwargs.get("err")
                 if err:
@@ -78,11 +78,11 @@ def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -
     return results
 
 
-def construct_iso8601(timespan=None):
+def construct_iso8601(timespan=None) -> Optional[str]:
     if not timespan:
         return None
+    start, end, duration = None, None, None
     try:
-        start, end, duration = None, None, None
         if isinstance(timespan[1], datetime):  # we treat thi as start_time, end_time
             start, end = timespan[0], timespan[1]
         elif isinstance(
@@ -95,9 +95,10 @@ def construct_iso8601(timespan=None):
             )
     except TypeError:
         duration = timespan  # it means only duration (timedelta) is provideds
+    duration_str = ""
     if duration:
         try:
-            duration = "PT{}S".format(duration.total_seconds())
+            duration_str = "PT{}S".format(duration.total_seconds())
         except AttributeError:
             raise ValueError("timespan must be a timedelta or a tuple.")
     iso_str = None
@@ -105,15 +106,15 @@ def construct_iso8601(timespan=None):
         start = Serializer.serialize_iso(start)
         if end is not None:
             end = Serializer.serialize_iso(end)
-            iso_str = start + "/" + end
-        elif duration is not None:
-            iso_str = start + "/" + duration
+            iso_str = f"{start}/{end}"
+        elif duration_str:
+            iso_str = f"{start}/{duration_str}"
         else:  # means that an invalid value None that is provided with start_time
             raise ValueError(
                 "Duration or end_time cannot be None when provided with start_time."
             )
     else:
-        iso_str = duration
+        iso_str = duration_str
     return iso_str
 
 
@@ -130,7 +131,7 @@ def native_col_type(col_type, value):
     return value
 
 
-def process_row(col_types, row):
+def process_row(col_types, row) -> List[Any]:
     return [native_col_type(col_types[ind], val) for ind, val in enumerate(row)]
 
 

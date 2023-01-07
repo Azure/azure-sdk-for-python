@@ -107,7 +107,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -119,7 +119,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         body = {
             "query": query,
-            "timespan": timespan,
+            "timespan": timespan_iso,
             "workspaces": additional_workspaces
         }
 

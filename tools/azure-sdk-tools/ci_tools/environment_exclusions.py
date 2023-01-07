@@ -169,7 +169,6 @@ PYRIGHT_OPT_OUT = [
     "azure-iot-modelsrepository",
     "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
-    "azure-monitor-query",
     "azure-ai-personalizer",
     "azure-purview-administration",
     "azure-purview-catalog",
