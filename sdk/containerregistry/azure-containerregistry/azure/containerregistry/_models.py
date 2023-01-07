@@ -136,7 +136,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     @property
     def fully_qualified_reference(self):
         # type: () -> str
-        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
     def _to_generated(self):
         # type: () -> ManifestWriteableProperties
