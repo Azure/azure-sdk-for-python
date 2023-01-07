@@ -475,7 +475,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         )
 
     @distributed_trace
-    def query_entities(self, query_filter: str, **kwargs: Dict[str, Any]) -> ItemPaged[TableEntity]:
+    def query_entities(self, query_filter: str, **kwargs) -> ItemPaged[TableEntity]:
         # pylint: disable=line-too-long
         """Lists entities in a table.
 

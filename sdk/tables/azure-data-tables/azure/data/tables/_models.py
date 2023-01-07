@@ -179,7 +179,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedRetentionPolicy, **kwargs: Dict[str, Any]) -> 'TableRetentionPolicy':  # pylint: disable=unused-argument
+    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> 'TableRetentionPolicy':
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -406,7 +406,7 @@ class TableSasPermissions(object):
         )[1024:]
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs: Dict[str, Any]) -> 'TableSasPermissions':
+    def from_string(cls, permission: str, **kwargs) -> 'TableSasPermissions':
         """Create TableSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -617,7 +617,7 @@ class AccountSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs: Dict[str, Any]) -> 'AccountSasPermissions':
+    def from_string(cls, permission: str, **kwargs) -> 'AccountSasPermissions':
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

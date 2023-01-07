@@ -41,7 +41,7 @@ class TableBatchOperations(object):
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,
-        **kwargs: Dict[str, Any]
+        **kwargs
     ) -> None:
         self._client = client
         self._serialize = serializer

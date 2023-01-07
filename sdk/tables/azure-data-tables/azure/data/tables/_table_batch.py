@@ -50,7 +50,7 @@ class TableBatchOperations(object):
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,
-        **kwargs: Dict[str, Any]
+        **kwargs
     ):
         """Create TableClient from a Credential.
 
