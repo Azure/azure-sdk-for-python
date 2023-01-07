@@ -187,9 +187,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        max_trials: Optional[int] = 1,
-        max_concurrent_trials: Optional[int] = 1,
-        max_nodes: Optional[int] = 1,
+        max_trials: int = 1,
+        max_concurrent_trials: int = 1,
+        max_nodes: int = 1,
         timeout_minutes: Optional[int] = None,
         trial_timeout_minutes: Optional[int] = None,
     ) -> None:

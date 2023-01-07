@@ -29,6 +29,7 @@ class TestQueryExceptions(AzureRecordedTestCase):
         assert response.__class__ == LogsQueryPartialResult
         assert response.partial_error is not None
         assert response.partial_data is not None
+        assert response.partial_error.details is not None
         assert response.partial_error.code == 'PartialError'
         assert response.partial_error.__class__ == LogsQueryError
 

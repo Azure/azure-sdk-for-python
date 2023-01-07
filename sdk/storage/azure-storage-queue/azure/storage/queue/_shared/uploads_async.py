@@ -13,8 +13,6 @@ from itertools import islice
 from math import ceil
 from typing import AsyncGenerator, Union
 
-import six
-
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
@@ -192,7 +190,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                     temp = await self.stream.read(read_size)
                 else:
                     temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                if not isinstance(temp, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 
@@ -296,7 +294,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f'BlockId{index/self.chunk_size:05d}'
+            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),

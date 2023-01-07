@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+* Error details are now propagated inside the `LogsQueryError` object. ([#25137](https://github.com/Azure/azure-sdk-for-python/issues/25137))
+
 ### Other Changes
 
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).

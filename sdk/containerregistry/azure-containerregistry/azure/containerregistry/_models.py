@@ -8,6 +8,8 @@ import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
+from azure.core import CaseInsensitiveEnumMeta
+
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
@@ -337,7 +339,7 @@ class DownloadManifestResult(object):
         self.digest = kwargs.get("digest")
 
 
-class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -354,7 +356,7 @@ class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AIX = "aix"
     ANDROID = "android"

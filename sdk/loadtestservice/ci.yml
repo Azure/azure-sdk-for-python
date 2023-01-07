@@ -32,3 +32,5 @@ extends:
     Artifacts:
     - name: azure-developer-loadtesting
       safeName: azuredeveloperloadtesting
+    - name: azure-mgmt-loadtesting
+      safeName: azuremgmtloadtesting
