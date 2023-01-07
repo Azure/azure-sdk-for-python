@@ -122,14 +122,14 @@ def glob_packages(glob_str: str, target_root_dir: str) -> List[str]:
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set([collected_top_level_directories]))
 
+
 def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), pkg_set_ci_filtered))
 
     logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
-    logging.info(
-        "Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered)))
-    )
+    logging.info("Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered))))
     return pkg_set_ci_filtered
+
 
 def discover_targeted_packages(
     glob_string: str,
@@ -148,7 +148,7 @@ def discover_targeted_packages(
     :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
     :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
     """
-    
+
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
 
@@ -162,7 +162,7 @@ def discover_targeted_packages(
     # apply package-specific exclusions only if we have gotten more than one
     # todo: remove this after updating the pyproject exclusion
     if len(collected_packages) > 1:
-        collected_packages = remove_omitted_packages(collected_packages)
+        collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
@@ -170,10 +170,8 @@ def discover_targeted_packages(
     return sorted(collected_packages)
 
 
-def remove_omitted_packages(collected_directories):
-    packages = [
-        pkg for pkg in packages if INACTIVE_CLASSIFIER not in ParsedSetup.from_path(pkg).classifiers
-    ]
+def apply_inactive_filter(collected_directories: List[str]) -> List[str]:
+    packages = [pkg for pkg in packages if INACTIVE_CLASSIFIER not in ParsedSetup.from_path(pkg).classifiers]
 
     return packages
 
