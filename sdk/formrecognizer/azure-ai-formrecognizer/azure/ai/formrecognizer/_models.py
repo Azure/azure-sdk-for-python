@@ -2255,124 +2255,34 @@ class DocumentLanguage:
         )
 
 
-class AnalyzedDocument:
-    """An object describing the location and semantic content of a document."""
+class DocumentField:
+    """An object representing the content and location of a document field value."""
 
-    doc_type: str
-    """The type of document that was analyzed."""
+    value_type: str
+    """The type of `value` found on DocumentField. Possible types include:
+     "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
+     "signature", "currency", "address", "list", "dictionary"."""
+    value: Optional[Union[str, int, float, datetime.date, datetime.time,
+        CurrencyValue, AddressValue, Dict[str, "DocumentField"], List["DocumentField"]]]
+    """The value for the recognized field. Its semantic data type is described by `value_type`.
+        If the value is extracted from the document, but cannot be normalized to its type,
+        then access the `content` property for a textual representation of the value."""
+    content: Optional[str]
+    """The field's content."""
     bounding_regions: Optional[List[BoundingRegion]]
-    """Bounding regions covering the document."""
-    spans: List[DocumentSpan]
-    """The location of the document in the reading order concatenated content."""
-    fields: Optional[Dict[str, DocumentField]]
-    """A dictionary of named field values."""
+    """Bounding regions covering the field."""
+    spans: Optional[List[DocumentSpan]]
+    """Location of the field in the reading order concatenated content."""
     confidence: float
-    """Confidence of correctly extracting the document."""
+    """The confidence of correctly extracting the field."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.doc_type = kwargs.get("doc_type", None)
+        self.value_type = kwargs.get("value_type", None)
+        self.value = kwargs.get("value", None)
+        self.content = kwargs.get("content", None)
         self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
         self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.fields = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
         self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, document):
-        return cls(
-            doc_type=document.doc_type,
-            bounding_regions=prepare_bounding_regions(document.bounding_regions),
-            spans=prepare_document_spans(document.spans),
-            fields={
-                key: DocumentField._from_generated(field)
-                for key, field in document.fields.items()
-            }
-            if document.fields
-            else {},
-            confidence=document.confidence,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"AnalyzedDocument(doc_type={self.doc_type}, bounding_regions={repr(self.bounding_regions)}, "
-            f"spans={repr(self.spans)}, fields={repr(self.fields)}, confidence={self.confidence})"
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of AnalyzedDocument.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "doc_type": self.doc_type,
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-            "fields": {k: v.to_dict() for k, v in self.fields.items()}
-            if self.fields
-            else {},
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "AnalyzedDocument":
-        """Converts a dict in the shape of a AnalyzedDocument to the model itself.
-
-        :param dict data: A dictionary in the shape of AnalyzedDocument.
-        :return: AnalyzedDocument
-        :rtype: AnalyzedDocument
-        """
-        return cls(
-            doc_type=data.get("doc_type", None),
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-            fields={k: DocumentField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
-            if data.get("fields")
-            else {},
-            confidence=data.get("confidence", None),
-        )
-
-
-class DocumentField:
-    """An object representing the content and location of a document field value.
-
-    :ivar str value_type: The type of `value` found on DocumentField. Possible types include:
-     "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
-     "signature", "currency", "address", "list", "dictionary".
-    :ivar value:
-        The value for the recognized field. Its semantic data type is described by `value_type`.
-        If the value is extracted from the document, but cannot be normalized to its type,
-        then access the `content` property for a textual representation of the value.
-    :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        :class:`~azure.ai.formrecognizer.CurrencyValue`, :class:`~azure.ai.formrecognizer.AddressValue`,
-        dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
-        list[:class:`~azure.ai.formrecognizer.DocumentField`], or None
-    :ivar content: The field's content.
-    :vartype content: Optional[str]
-    :ivar bounding_regions: Bounding regions covering the field.
-    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
-    :ivar spans: Location of the field in the reading order concatenated content.
-    :vartype spans: Optional[list[~azure.ai.formrecognizer.DocumentSpan]]
-    :ivar confidence: The confidence of correctly extracting the field.
-    :vartype confidence: float
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.value_type: str = kwargs.get("value_type", None)
-        self.value: Optional[Union[str, int, float, datetime.date, datetime.time,
-        CurrencyValue, AddressValue, dict[str, DocumentField], list[DocumentField]]  # pylint: disable=unsubscriptable-object
-        ] = kwargs.get("value", None)
-        self.content: Optional[str] = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans: Optional[list[DocumentSpan]] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, field):
@@ -2479,22 +2389,106 @@ class DocumentField:
         )
 
 
-class DocumentKeyValueElement:
-    """An object representing the field key or value in a key-value pair.
+class AnalyzedDocument:
+    """An object describing the location and semantic content of a document."""
 
-    :ivar content: Concatenated content of the key-value element in reading order.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the key-value element.
-    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
-    :ivar spans: Location of the key-value element in the reading order of the concatenated
-     content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
+    doc_type: str
+    """The type of document that was analyzed."""
+    bounding_regions: Optional[List[BoundingRegion]]
+    """Bounding regions covering the document."""
+    spans: List[DocumentSpan]
+    """The location of the document in the reading order concatenated content."""
+    fields: Optional[Dict[str, DocumentField]]
+    """A dictionary of named field values."""
+    confidence: float
+    """Confidence of correctly extracting the document."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.doc_type = kwargs.get("doc_type", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.fields = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, document):
+        return cls(
+            doc_type=document.doc_type,
+            bounding_regions=prepare_bounding_regions(document.bounding_regions),
+            spans=prepare_document_spans(document.spans),
+            fields={
+                key: DocumentField._from_generated(field)
+                for key, field in document.fields.items()
+            }
+            if document.fields
+            else {},
+            confidence=document.confidence,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"AnalyzedDocument(doc_type={self.doc_type}, bounding_regions={repr(self.bounding_regions)}, "
+            f"spans={repr(self.spans)}, fields={repr(self.fields)}, confidence={self.confidence})"
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of AnalyzedDocument.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "doc_type": self.doc_type,
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
+            if self.bounding_regions
+            else [],
+            "spans": [f.to_dict() for f in self.spans]
+            if self.spans
+            else [],
+            "fields": {k: v.to_dict() for k, v in self.fields.items()}
+            if self.fields
+            else {},
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AnalyzedDocument":
+        """Converts a dict in the shape of a AnalyzedDocument to the model itself.
+
+        :param dict data: A dictionary in the shape of AnalyzedDocument.
+        :return: AnalyzedDocument
+        :rtype: AnalyzedDocument
+        """
+        return cls(
+            doc_type=data.get("doc_type", None),
+            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+            if len(data.get("bounding_regions", [])) > 0
+            else [],
+            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+            if len(data.get("spans", [])) > 0
+            else [],
+            fields={k: DocumentField.from_dict(v) for k, v in data.get("fields").items()}  # type: ignore
+            if data.get("fields")
+            else {},
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentKeyValueElement:
+    """An object representing the field key or value in a key-value pair."""
+
+    content: str
+    """Concatenated content of the key-value element in reading order."""
+    bounding_regions: Optional[List[BoundingRegion]]
+    """Bounding regions covering the key-value element."""
+    spans: List[DocumentSpan]
+    """Location of the key-value element in the reading order of the concatenated
+     content."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.content = kwargs.get("content", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, element):
@@ -2553,20 +2547,19 @@ class DocumentKeyValueElement:
 
 
 class DocumentKeyValuePair:
-    """An object representing a document field with distinct field label (key) and field value (may be empty).
+    """An object representing a document field with distinct field label (key) and field value (may be empty)."""
 
-    :ivar key: Field label of the key-value pair.
-    :vartype key: ~azure.ai.formrecognizer.DocumentKeyValueElement
-    :ivar value: Field value of the key-value pair.
-    :vartype value: Optional[~azure.ai.formrecognizer.DocumentKeyValueElement]
-    :ivar confidence: Confidence of correctly extracting the key-value pair.
-    :vartype confidence: float
-    """
+    key: DocumentKeyValueElement
+    """Field label of the key-value pair."""
+    value: Optional[DocumentKeyValueElement]
+    """Field value of the key-value pair."""
+    confidence: float
+    """Confidence of correctly extracting the key-value pair."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.key: DocumentKeyValueElement = kwargs.get("key", None)
-        self.value: Optional[DocumentKeyValueElement] = kwargs.get("value", None)
-        self.confidence: float = kwargs.get("confidence", None)
+        self.key = kwargs.get("key", None)
+        self.value = kwargs.get("value", None)
+        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, key_value_pair):
@@ -2617,22 +2610,160 @@ class DocumentKeyValuePair:
         )
 
 
-class DocumentLine:
-    """A content line object representing the content found on a single line of the document.
-
-    :ivar content: Concatenated content of the contained elements in reading order.
-    :vartype content: str
-    :ivar polygon: Bounding polygon of the line.
-    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
-    :ivar spans: Location of the line in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
+class DocumentWord:
+    """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
+    such as Chinese, Japanese, and Korean, each character is represented as its own word.
     """
+    content: str
+    """Text content of the word."""
+    polygon: Optional[Sequence[Point]]
+    """Bounding polygon of the word."""
+    span: DocumentSpan
+    """Location of the word in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the word."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.content = kwargs.get("content", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, word):
+        return cls(
+            content=word.content,
+            polygon=get_polygon(word),
+            span=DocumentSpan._from_generated(word.span)
+            if word.span
+            else None,
+            confidence=word.confidence,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentWord(content={self.content}, polygon={self.polygon}, "
+            f"span={repr(self.span)}, confidence={self.confidence})"
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentWord.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "content": self.content,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentWord":
+        """Converts a dict in the shape of a DocumentWord to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentWord.
+        :return: DocumentWord
+        :rtype: DocumentWord
+        """
+        return cls(
+            content=data.get("content", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentSelectionMark:
+    """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection."""
+
+    state: str
+    """State of the selection mark. Possible values include: "selected",
+     "unselected"."""
+    polygon: Optional[Sequence[Point]]
+    """Bounding polygon of the selection mark."""
+    span: DocumentSpan
+    """Location of the selection mark in the reading order concatenated
+     content."""
+    confidence: float
+    """Confidence of correctly extracting the selection mark."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+        self.state = kwargs.get("state", None)
+
+    @classmethod
+    def _from_generated(cls, mark):
+        return cls(
+            state=mark.state,
+            polygon=get_polygon(mark),
+            span=DocumentSpan._from_generated(mark.span)
+            if mark.span
+            else None,
+            confidence=mark.confidence,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentSelectionMark(state={self.state}, span={repr(self.span)}, "
+            f"confidence={self.confidence}, polygon={self.polygon})"
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentSelectionMark.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "state": self.state,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "span": self.span.to_dict() if self.span else None,
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentSelectionMark":
+        """Converts a dict in the shape of a DocumentSelectionMark to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentSelectionMark.
+        :return: DocumentSelectionMark
+        :rtype: DocumentSelectionMark
+        """
+        return cls(
+            state=data.get("state", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentLine:
+    """A content line object representing the content found on a single line of the document."""
+
+    content: str
+    """Concatenated content of the contained elements in reading order."""
+    polygon: Optional[Sequence[Point]]
+    """Bounding polygon of the line."""
+    spans: List[DocumentSpan]
+    """Location of the line in the reading order concatenated content."""
 
     def __init__(self, **kwargs: Any) -> None:
         self._parent = kwargs.get("_parent", None)
-        self.content: str = kwargs.get("content", None)
-        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.content = kwargs.get("content", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, line, document_page):
@@ -2699,24 +2830,23 @@ class DocumentLine:
 
 
 class DocumentParagraph:
-    """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
+    """A paragraph object generally consisting of contiguous lines with common alignment and spacing."""
 
-    :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
-     "pageNumber", "title", "sectionHeading", "footnote".
-    :vartype role: Optional[str]
-    :ivar content: Concatenated content of the paragraph in reading order.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the paragraph.
-    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
-    :ivar spans: Location of the paragraph in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
+    role: Optional[str]
+    """Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
+     "pageNumber", "title", "sectionHeading", "footnote"."""
+    content: str
+    """Concatenated content of the paragraph in reading order."""
+    bounding_regions: Optional[List[BoundingRegion]]
+    """Bounding regions covering the paragraph."""
+    spans: List[DocumentSpan]
+    """Location of the paragraph in the reading order concatenated content."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.role: Optional[str] = kwargs.get("role", None)
-        self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.role = kwargs.get("role", None)
+        self.content = kwargs.get("content", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, paragraph):
@@ -2771,43 +2901,41 @@ class DocumentParagraph:
 
 
 class DocumentPage:
-    """Content and layout elements extracted from a page of the input.
+    """Content and layout elements extracted from a page of the input."""
 
-    :ivar page_number: 1-based page number in the input document.
-    :vartype page_number: int
-    :ivar angle: The general orientation of the content in clockwise direction, measured
-     in degrees between (-180, 180].
-    :vartype angle: Optional[float]
-    :ivar width: The width of the image/PDF in pixels/inches, respectively.
-    :vartype width: Optional[float]
-    :ivar height: The height of the image/PDF in pixels/inches, respectively.
-    :vartype height: Optional[float]
-    :ivar unit: The unit used by the width, height, and bounding polygon properties. For
+    page_number: int
+    """1-based page number in the input document."""
+    angle: Optional[float]
+    """The general orientation of the content in clockwise direction, measured
+     in degrees between (-180, 180]."""
+    width: Optional[float]
+    """The width of the image/PDF in pixels/inches, respectively."""
+    height: Optional[float]
+    """The height of the image/PDF in pixels/inches, respectively."""
+    unit: Optional[str]
+    """The unit used by the width, height, and bounding polygon properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
-     "inch".
-    :vartype unit: Optional[str]
-    :ivar spans: Location of the page in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    :ivar words: Extracted words from the page.
-    :vartype words: Optional[list[~azure.ai.formrecognizer.DocumentWord]]
-    :ivar selection_marks: Extracted selection marks from the page.
-    :vartype selection_marks:
-     Optional[list[~azure.ai.formrecognizer.DocumentSelectionMark]]
-    :ivar lines: Extracted lines from the page, potentially containing both textual and
-     visual elements.
-    :vartype lines: Optional[list[~azure.ai.formrecognizer.DocumentLine]]
-    """
+     "inch"."""
+    spans: List[DocumentSpan]
+    """Location of the page in the reading order concatenated content."""
+    words: Optional[List[DocumentWord]]
+    """Extracted words from the page."""
+    selection_marks: Optional[List[DocumentSelectionMark]]
+    """Extracted selection marks from the page."""
+    lines: Optional[List[DocumentLine]]
+    """Extracted lines from the page, potentially containing both textual and
+     visual elements."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.page_number: int = kwargs.get("page_number", None)
-        self.angle: Optional[float] = kwargs.get("angle", None)
-        self.width: Optional[float] = kwargs.get("width", None)
-        self.height: Optional[float] = kwargs.get("height", None)
-        self.unit: Optional[str] = kwargs.get("unit", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.words: Optional[list[DocumentWord]] = kwargs.get("words", None)  # pylint: disable=unsubscriptable-object
-        self.selection_marks: Optional[list[DocumentSelectionMark]] = kwargs.get("selection_marks", None)  # pylint: disable=unsubscriptable-object
-        self.lines: Optional[list[DocumentLine]] = kwargs.get("lines", None)  # pylint: disable=unsubscriptable-object
+        self.page_number = kwargs.get("page_number", None)
+        self.angle = kwargs.get("angle", None)
+        self.width = kwargs.get("width", None)
+        self.height = kwargs.get("height", None)
+        self.unit = kwargs.get("unit", None)
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.words = kwargs.get("words", None)  # pylint: disable=unsubscriptable-object
+        self.selection_marks = kwargs.get("selection_marks", None)  # pylint: disable=unsubscriptable-object
+        self.lines = kwargs.get("lines", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, page):
@@ -2896,93 +3024,21 @@ class DocumentPage:
         )
 
 
-class DocumentSelectionMark:
-    """A selection mark object representing check boxes, radio buttons, and other elements indicating a selection.
-
-    :ivar state: State of the selection mark. Possible values include: "selected",
-     "unselected".
-    :vartype state: str
-    :ivar polygon: Bounding polygon of the selection mark.
-    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
-    :ivar span: Location of the selection mark in the reading order concatenated
-     content.
-    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
-    :ivar confidence: Confidence of correctly extracting the selection mark.
-    :vartype confidence: float
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
-        self.span: DocumentSpan = kwargs.get("span", None)
-        self.confidence: float = kwargs.get("confidence", None)
-        self.state: str = kwargs.get("state", None)
-
-    @classmethod
-    def _from_generated(cls, mark):
-        return cls(
-            state=mark.state,
-            polygon=get_polygon(mark),
-            span=DocumentSpan._from_generated(mark.span)
-            if mark.span
-            else None,
-            confidence=mark.confidence,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentSelectionMark(state={self.state}, span={repr(self.span)}, "
-            f"confidence={self.confidence}, polygon={self.polygon})"
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentSelectionMark.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "state": self.state,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "span": self.span.to_dict() if self.span else None,
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentSelectionMark":
-        """Converts a dict in the shape of a DocumentSelectionMark to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentSelectionMark.
-        :return: DocumentSelectionMark
-        :rtype: DocumentSelectionMark
-        """
-        return cls(
-            state=data.get("state", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
-            confidence=data.get("confidence", None),
-        )
-
-
 class DocumentStyle:
-    """An object representing observed text styles.
+    """An object representing observed text styles."""
 
-    :ivar is_handwritten: Indicates if the content is handwritten.
-    :vartype is_handwritten: Optional[bool]
-    :ivar spans: Location of the text elements in the concatenated content the style
-     applies to.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    :ivar confidence: Confidence of correctly identifying the style.
-    :vartype confidence: float
-    """
+    is_handwritten: Optional[bool]
+    """Indicates if the content is handwritten."""
+    spans: List[DocumentSpan]
+    """Location of the text elements in the concatenated content the style
+     applies to."""
+    confidence: float
+    """Confidence of correctly identifying the style."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.is_handwritten: Optional[bool] = kwargs.get("is_handwritten", None)
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.confidence: float = kwargs.get("confidence", None)
+        self.is_handwritten = kwargs.get("is_handwritten", None)
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, style):
@@ -3031,121 +3087,36 @@ class DocumentStyle:
         )
 
 
-class DocumentTable:
-    """A table object consisting of table cells arranged in a rectangular layout.
-
-    :ivar row_count: Number of rows in the table.
-    :vartype row_count: int
-    :ivar column_count: Number of columns in the table.
-    :vartype column_count: int
-    :ivar cells: Cells contained within the table.
-    :vartype cells: list[~azure.ai.formrecognizer.DocumentTableCell]
-    :ivar bounding_regions: Bounding regions covering the table.
-    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
-    :ivar spans: Location of the table in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.row_count: int = kwargs.get("row_count", None)
-        self.column_count: int = kwargs.get("column_count", None)
-        self.cells: list[DocumentTableCell] = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-
-    @classmethod
-    def _from_generated(cls, table):
-        return cls(
-            row_count=table.row_count,
-            column_count=table.column_count,
-            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
-            if table.cells
-            else [],
-            bounding_regions=prepare_bounding_regions(table.bounding_regions),
-            spans=prepare_document_spans(table.spans),
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentTable(row_count={self.row_count}, column_count={self.column_count}, "
-            f"cells={repr(self.cells)}, bounding_regions={repr(self.bounding_regions)}, "
-            f"spans={repr(self.spans)})"
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentTable.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "row_count": self.row_count,
-            "column_count": self.column_count,
-            "cells": [f.to_dict() for f in self.cells]
-            if self.cells
-            else [],
-            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
-            if self.bounding_regions
-            else [],
-            "spans": [f.to_dict() for f in self.spans]
-            if self.spans
-            else [],
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentTable":
-        """Converts a dict in the shape of a DocumentTable to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentTable.
-        :return: DocumentTable
-        :rtype: DocumentTable
-        """
-        return cls(
-            row_count=data.get("row_count", None),
-            column_count=data.get("column_count", None),
-            cells=[DocumentTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
-            if len(data.get("cells", [])) > 0
-            else [],
-            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
-            if len(data.get("bounding_regions", [])) > 0
-            else [],
-            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
-            if len(data.get("spans", [])) > 0
-            else [],
-        )
-
-
 class DocumentTableCell:
-    """An object representing the location and content of a table cell.
+    """An object representing the location and content of a table cell."""
 
-    :ivar kind: Table cell kind. Possible values include: "content", "rowHeader", "columnHeader",
-     "stubHead", "description". Default value: "content".
-    :vartype kind: Optional[str]
-    :ivar row_index: Row index of the cell.
-    :vartype row_index: int
-    :ivar column_index: Column index of the cell.
-    :vartype column_index: int
-    :ivar row_span: Number of rows spanned by this cell.
-    :vartype row_span: Optional[int]
-    :ivar column_span: Number of columns spanned by this cell.
-    :vartype column_span: Optional[int]
-    :ivar content: Concatenated content of the table cell in reading order.
-    :vartype content: str
-    :ivar bounding_regions: Bounding regions covering the table cell.
-    :vartype bounding_regions: Optional[list[~azure.ai.formrecognizer.BoundingRegion]]
-    :ivar spans: Location of the table cell in the reading order concatenated content.
-    :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
-    """
+    kind: Optional[str]
+    """Table cell kind. Possible values include: "content", "rowHeader", "columnHeader",
+     "stubHead", "description". Default value: "content"."""
+    row_index: int
+    """Row index of the cell."""
+    column_index: int
+    """Column index of the cell."""
+    row_span: Optional[int]
+    """Number of rows spanned by this cell."""
+    column_span: Optional[int]
+    """Number of columns spanned by this cell."""
+    content: str
+    """Concatenated content of the table cell in reading order."""
+    bounding_regions: Optional[List[BoundingRegion]]
+    """Bounding regions covering the table cell."""
+    spans: List[DocumentSpan]
+    """Location of the table cell in the reading order concatenated content."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.kind: Optional[str] = kwargs.get("kind", "content")
-        self.row_index: int = kwargs.get("row_index", None)
-        self.column_index: int = kwargs.get("column_index", None)
-        self.row_span: Optional[int] = kwargs.get("row_span", 1)
-        self.column_span: Optional[int] = kwargs.get("column_span", 1)
-        self.content: str = kwargs.get("content", None)
-        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans: list[DocumentSpan] = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.kind = kwargs.get("kind", "content")
+        self.row_index = kwargs.get("row_index", None)
+        self.column_index = kwargs.get("column_index", None)
+        self.row_span = kwargs.get("row_span", 1)
+        self.column_span = kwargs.get("column_span", 1)
+        self.content = kwargs.get("content", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, cell):
@@ -3220,6 +3191,440 @@ class DocumentTableCell:
         )
 
 
+class DocumentTable:
+    """A table object consisting of table cells arranged in a rectangular layout."""
+
+    row_count: int
+    """Number of rows in the table."""
+    column_count: int
+    """Number of columns in the table."""
+    cells: List[DocumentTableCell]
+    """Cells contained within the table."""
+    bounding_regions: Optional[List[BoundingRegion]]
+    """Bounding regions covering the table."""
+    spans: List[DocumentSpan]
+    """Location of the table in the reading order concatenated content."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.row_count = kwargs.get("row_count", None)
+        self.column_count = kwargs.get("column_count", None)
+        self.cells = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+
+    @classmethod
+    def _from_generated(cls, table):
+        return cls(
+            row_count=table.row_count,
+            column_count=table.column_count,
+            cells=[DocumentTableCell._from_generated(cell) for cell in table.cells]
+            if table.cells
+            else [],
+            bounding_regions=prepare_bounding_regions(table.bounding_regions),
+            spans=prepare_document_spans(table.spans),
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentTable(row_count={self.row_count}, column_count={self.column_count}, "
+            f"cells={repr(self.cells)}, bounding_regions={repr(self.bounding_regions)}, "
+            f"spans={repr(self.spans)})"
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentTable.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "row_count": self.row_count,
+            "column_count": self.column_count,
+            "cells": [f.to_dict() for f in self.cells]
+            if self.cells
+            else [],
+            "bounding_regions": [f.to_dict() for f in self.bounding_regions]
+            if self.bounding_regions
+            else [],
+            "spans": [f.to_dict() for f in self.spans]
+            if self.spans
+            else [],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentTable":
+        """Converts a dict in the shape of a DocumentTable to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentTable.
+        :return: DocumentTable
+        :rtype: DocumentTable
+        """
+        return cls(
+            row_count=data.get("row_count", None),
+            column_count=data.get("column_count", None),
+            cells=[DocumentTableCell.from_dict(v) for v in data.get("cells")]  # type: ignore
+            if len(data.get("cells", [])) > 0
+            else [],
+            bounding_regions=[BoundingRegion.from_dict(v) for v in data.get("bounding_regions")]  # type: ignore
+            if len(data.get("bounding_regions", [])) > 0
+            else [],
+            spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
+            if len(data.get("spans", [])) > 0
+            else [],
+        )
+
+
+class DocumentTypeDetails:
+    """DocumentTypeDetails represents a document type that a model can recognize, including its
+    fields and types, and the confidence for those fields.
+    """
+    description: Optional[str]
+    """A description for the model."""
+    build_mode: Optional[str]
+    """The build mode used when building the custom model.
+     Possible values include: "template", "neural"."""
+    field_schema: Dict[str, Any]
+    """Description of the document semantic schema."""
+    field_confidence: Optional[Dict[str, float]]
+    """Estimated confidence for each field."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.description = kwargs.get("description", None)
+        self.build_mode = kwargs.get("build_mode", None)
+        self.field_schema = kwargs.get("field_schema", None)  # pylint: disable=unsubscriptable-object
+        self.field_confidence = kwargs.get("field_confidence", None)  # pylint: disable=unsubscriptable-object
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentTypeDetails(description={self.description}, build_mode={self.build_mode}, "
+            f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
+        )
+
+    @classmethod
+    def _from_generated(cls, doc_type):
+        return cls(
+            description=doc_type.description,
+            build_mode=doc_type.build_mode,
+            field_schema={name: field.serialize() for name, field in doc_type.field_schema.items()}
+            if doc_type.field_schema else {},
+            field_confidence=doc_type.field_confidence
+            if doc_type.field_confidence else {},
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentTypeDetails.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "description": self.description,
+            "build_mode": self.build_mode,
+            "field_schema": self.field_schema,
+            "field_confidence": self.field_confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentTypeDetails":
+        """Converts a dict in the shape of a DocumentTypeDetails to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentTypeDetails.
+        :return: DocumentTypeDetails
+        :rtype: DocumentTypeDetails
+        """
+        return cls(
+            description=data.get("description", None),
+            build_mode=data.get("build_mode", None),
+            field_schema=data.get("field_schema", {}),
+            field_confidence=data.get("field_confidence", {}),
+        )
+
+
+class DocumentModelSummary:
+    """A summary of document model information including the model ID,
+    its description, and when the model was created.
+    """
+    model_id: str
+    """Unique model id."""
+    description: Optional[str]
+    """A description for the model."""
+    created_on: datetime.datetime
+    """Date and time (UTC) when the model was created."""
+    api_version: Optional[str]
+    """API version used to create this model."""
+    tags: Optional[Dict[str, str]]
+    """List of user defined key-value tag attributes associated with the model."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.model_id = kwargs.get("model_id", None)
+        self.description = kwargs.get("description", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.api_version = kwargs.get("api_version", None)
+        self.tags = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentModelSummary(model_id={self.model_id}, description={self.description}, "
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            model_id=model.model_id,
+            description=model.description,
+            created_on=model.created_date_time,
+            api_version=model.api_version,
+            tags=model.tags if model.tags else {},
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentModelSummary.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "model_id": self.model_id,
+            "description": self.description,
+            "created_on": self.created_on,
+            "api_version": self.api_version,
+            "tags": self.tags if self.tags else {},
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentModelSummary":
+        """Converts a dict in the shape of a DocumentModelSummary to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentModelSummary.
+        :return: DocumentModelSummary
+        :rtype: DocumentModelSummary
+        """
+        return cls(
+            model_id=data.get("model_id", None),
+            description=data.get("description", None),
+            created_on=data.get("created_on", None),
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {})
+        )
+
+
+class DocumentModelDetails(DocumentModelSummary):
+    """Document model information. Includes the doc types that the model can analyze."""
+
+    model_id: str
+    """Unique model id."""
+    description: Optional[str]
+    """A description for the model."""
+    created_on: datetime.datetime
+    """Date and time (UTC) when the model was created."""
+    api_version: Optional[str]
+    """API version used to create this model."""
+    tags: Optional[Dict[str, str]]
+    """List of user defined key-value tag attributes associated with the model."""
+    doc_types: Optional[Dict[str, DocumentTypeDetails]]
+    """Supported document types, including the fields for each document and their types."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(**kwargs)
+        self.doc_types = kwargs.get("doc_types", None)  # pylint: disable=unsubscriptable-object
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
+            f"doc_types={repr(self.doc_types)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            model_id=model.model_id,
+            description=model.description,
+            created_on=model.created_date_time,
+            api_version=model.api_version,
+            tags=model.tags if model.tags else {},
+            doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
+            if model.doc_types else {}
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentModelDetails.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "model_id": self.model_id,
+            "description": self.description,
+            "created_on": self.created_on,
+            "api_version": self.api_version,
+            "tags": self.tags if self.tags else {},
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentModelDetails":
+        """Converts a dict in the shape of a DocumentModelDetails to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentModelDetails.
+        :return: DocumentModelDetails
+        :rtype: DocumentModelDetails
+        """
+        return cls(
+            model_id=data.get("model_id", None),
+            description=data.get("description", None),
+            created_on=data.get("created_on", None),
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {}),
+            doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
+            if data.get("doc_types")
+            else {},
+        )
+
+
+class DocumentAnalysisInnerError:
+    """Inner error details for the DocumentAnalysisError."""
+
+    code: str
+    """Error code."""
+    message: Optional[str]
+    """Error message."""
+    innererror: Optional["DocumentAnalysisInnerError"]
+    """Detailed error."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.innererror = kwargs.get("innererror", None)
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentAnalysisInnerError(code={self.code}, message={self.message}, "
+            f"innererror={repr(self.innererror)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, ierr):
+        return cls(
+            code=ierr.code,
+            message=ierr.message,
+            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentAnalysisInnerError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentAnalysisInnerError":
+        """Converts a dict in the shape of a DocumentAnalysisInnerError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisInnerError.
+        :return: DocumentAnalysisInnerError
+        :rtype: DocumentAnalysisInnerError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
+        )
+
+
+class DocumentAnalysisError:
+    """DocumentAnalysisError contains the details of the error returned by the service."""
+
+    code: str
+    """Error code."""
+    message: str
+    """Error message."""
+    target: Optional[str]
+    """Target of the error."""
+    details: Optional[List["DocumentAnalysisError"]]
+    """List of detailed errors."""
+    innererror: Optional[DocumentAnalysisInnerError]
+    """Detailed error."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
+        self.details = kwargs.get("details", None)  # pylint: disable=unsubscriptable-object
+        self.innererror = kwargs.get("innererror", None)
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentAnalysisError(code={self.code}, message={self.message}, target={self.target}, "
+            f"details={repr(self.details)}, innererror={repr(self.innererror)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, err):
+        return cls(
+            code=err.code,
+            message=err.message,
+            target=err.target,
+            details=[DocumentAnalysisError._from_generated(e) for e in err.details] if err.details else [],
+            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None
+        )
+
+    def to_dict(self) -> dict:
+        """Returns a dict representation of DocumentAnalysisError.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "code": self.code,
+            "message": self.message,
+            "target": self.target,
+            "details": [detail.to_dict() for detail in self.details] if self.details else [],
+            "innererror": self.innererror.to_dict() if self.innererror else None
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "DocumentAnalysisError":
+        """Converts a dict in the shape of a DocumentAnalysisError to the model itself.
+
+        :param dict data: A dictionary in the shape of DocumentAnalysisError.
+        :return: DocumentAnalysisError
+        :rtype: DocumentAnalysisError
+        """
+        return cls(
+            code=data.get("code", None),
+            message=data.get("message", None),
+            target=data.get("target", None),
+            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
+            if data.get("details") else [],
+            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
+            if data.get("innererror") else None
+        )
+
+
 class OperationSummary:
     """Model operation information, including the kind and status of the operation, when it was
     created, and more.
@@ -3227,39 +3632,38 @@ class OperationSummary:
     Note that operation information only persists for 24 hours. If the operation was successful,
     the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
-
-    :ivar operation_id: Operation ID.
-    :vartype operation_id: str
-    :ivar status: Operation status. Possible values include: "notStarted", "running",
-        "failed", "succeeded", "canceled".
-    :vartype status: str
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: Optional[int]
-    :ivar created_on: Date and time (UTC) when the operation was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Date and time (UTC) when the operation was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar kind: Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str
-    :ivar resource_location: URL of the resource targeted by this operation.
-    :vartype resource_location: str
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: Optional[str]
-    :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: Optional[dict[str, str]]
     """
+    operation_id: str
+    """Operation ID."""
+    status: str
+    """Operation status. Possible values include: "notStarted", "running",
+        "failed", "succeeded", "canceled"."""
+    percent_completed: Optional[int]
+    """Operation progress (0-100)."""
+    created_on: datetime.datetime
+    """Date and time (UTC) when the operation was created."""
+    last_updated_on: datetime.datetime
+    """Date and time (UTC) when the operation was last updated."""
+    kind: str
+    """Type of operation. Possible values include: "documentModelBuild",
+        "documentModelCompose", "documentModelCopyTo"."""
+    resource_location: str
+    """URL of the resource targeted by this operation."""
+    api_version: Optional[str]
+    """API version used to create this operation."""
+    tags: Optional[Dict[str, str]]
+    """List of user defined key-value tag attributes associated with the model."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.operation_id: str = kwargs.get("operation_id", None)
-        self.status: str = kwargs.get("status", None)
-        self.percent_completed: Optional[int] = kwargs.get("percent_completed", 0)
-        self.created_on: datetime.datetime = kwargs.get("created_on", None)
-        self.last_updated_on: datetime.datetime = kwargs.get("last_updated_on", None)
-        self.kind: str = kwargs.get("kind", None)
-        self.resource_location: str = kwargs.get("resource_location", None)
-        self.api_version: Optional[str] = kwargs.get("api_version", None)
-        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
+        self.operation_id = kwargs.get("operation_id", None)
+        self.status = kwargs.get("status", None)
+        self.percent_completed = kwargs.get("percent_completed", 0)
+        self.created_on = kwargs.get("created_on", None)
+        self.last_updated_on = kwargs.get("last_updated_on", None)
+        self.kind = kwargs.get("kind", None)
+        self.resource_location = kwargs.get("resource_location", None)
+        self.api_version = kwargs.get("api_version", None)
+        self.tags = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
 
     def __repr__(self) -> str:
         return (
@@ -3328,40 +3732,39 @@ class OperationDetails(OperationSummary):
 
     Note that operation information only persists for 24 hours. If the operation was successful,
     the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
-
-    :ivar operation_id: Operation ID.
-    :vartype operation_id: str
-    :ivar status: Operation status. Possible values include: "notStarted", "running",
-        "failed", "succeeded", "canceled".
-    :vartype status: str
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: Optional[int]
-    :ivar created_on: Date and time (UTC) when the operation was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Date and time (UTC) when the operation was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar kind: Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo".
-    :vartype kind: str
-    :ivar resource_location: URL of the resource targeted by this operation.
-    :vartype resource_location: str
-    :ivar error: Encountered error, includes the error code, message, and details for why
-        the operation failed.
-    :vartype error: Optional[~azure.ai.formrecognizer.DocumentAnalysisError]
-    :ivar result: Operation result upon success. Returns a DocumentModelDetails which contains
-        all information about the model including the doc types
-        and fields it can analyze from documents.
-    :vartype result: Optional[~azure.ai.formrecognizer.DocumentModelDetails]
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: Optional[str]
-    :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: Optional[dict[str, str]]
     """
+    operation_id: str
+    """Operation ID."""
+    status: str
+    """Operation status. Possible values include: "notStarted", "running",
+        "failed", "succeeded", "canceled"."""
+    percent_completed: Optional[int]
+    """Operation progress (0-100)."""
+    created_on: datetime.datetime
+    """Date and time (UTC) when the operation was created."""
+    last_updated_on: datetime.datetime
+    """Date and time (UTC) when the operation was last updated."""
+    kind: str
+    """Type of operation. Possible values include: "documentModelBuild",
+        "documentModelCompose", "documentModelCopyTo"."""
+    resource_location: str
+    """URL of the resource targeted by this operation."""
+    error: Optional[DocumentAnalysisError]
+    """Encountered error, includes the error code, message, and details for why
+        the operation failed."""
+    result: Optional[DocumentModelDetails]
+    """Operation result upon success. Returns a DocumentModelDetails which contains
+        all information about the model including the doc types
+        and fields it can analyze from documents."""
+    api_version: Optional[str]
+    """API version used to create this operation."""
+    tags: Optional[Dict[str, str]]
+    """List of user defined key-value tag attributes associated with the model."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self.error: Optional[DocumentAnalysisError] = kwargs.get("error", None)
-        self.result: Optional[DocumentModelDetails] = kwargs.get("result", None)
+        self.error = kwargs.get("error", None)
+        self.result = kwargs.get("result", None)
 
     def __repr__(self) -> str:
         return (
@@ -3434,114 +3837,43 @@ class OperationDetails(OperationSummary):
         )
 
 
-class DocumentWord:
-    """A word object consisting of a contiguous sequence of characters.  For non-space delimited languages,
-    such as Chinese, Japanese, and Korean, each character is represented as its own word.
-
-    :ivar content: Text content of the word.
-    :vartype content: str
-    :ivar polygon: Bounding polygon of the word.
-    :vartype polygon: Optional[Sequence[~azure.ai.formrecognizer.Point]]
-    :ivar span: Location of the word in the reading order concatenated content.
-    :vartype span: ~azure.ai.formrecognizer.DocumentSpan
-    :ivar confidence: Confidence of correctly extracting the word.
-    :vartype confidence: float
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.content: str = kwargs.get("content", None)
-        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
-        self.span: DocumentSpan = kwargs.get("span", None)
-        self.confidence: float = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, word):
-        return cls(
-            content=word.content,
-            polygon=get_polygon(word),
-            span=DocumentSpan._from_generated(word.span)
-            if word.span
-            else None,
-            confidence=word.confidence,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentWord(content={self.content}, polygon={self.polygon}, "
-            f"span={repr(self.span)}, confidence={self.confidence})"
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentWord.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "content": self.content,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "span": self.span.to_dict() if self.span else None,
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentWord":
-        """Converts a dict in the shape of a DocumentWord to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentWord.
-        :return: DocumentWord
-        :rtype: DocumentWord
-        """
-        return cls(
-            content=data.get("content", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
-            confidence=data.get("confidence", None),
-        )
-
-
 class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
-    """Document analysis result.
+    """Document analysis result."""
 
-    :ivar api_version: API version used to produce this result. Possible values include:
-     "2022-08-31".
-    :vartype api_version: str
-    :ivar model_id: Model ID used to produce this result.
-    :vartype model_id: str
-    :ivar content: Concatenate string representation of all textual and visual elements
-     in reading order.
-    :vartype content: str
-    :ivar pages: Analyzed pages.
-    :vartype pages: list[~azure.ai.formrecognizer.DocumentPage]
-    :ivar languages: Detected languages in the document.
-    :vartype languages: Optional[list[~azure.ai.formrecognizer.DocumentLanguage]]
-    :ivar paragraphs: Extracted paragraphs.
-    :vartype paragraphs: Optional[list[~azure.ai.formrecognizer.DocumentParagraph]]
-    :ivar tables: Extracted tables.
-    :vartype tables: Optional[list[~azure.ai.formrecognizer.DocumentTable]]
-    :ivar key_value_pairs: Extracted key-value pairs.
-    :vartype key_value_pairs: Optional[list[~azure.ai.formrecognizer.DocumentKeyValuePair]]
-    :ivar styles: Extracted font styles.
-    :vartype styles: Optional[list[~azure.ai.formrecognizer.DocumentStyle]]
-    :ivar documents: Extracted documents.
-    :vartype documents: Optional[list[~azure.ai.formrecognizer.AnalyzedDocument]]
-    """
+    api_version: str
+    """API version used to produce this result. Possible values include:
+     "2022-08-31"."""
+    model_id: str
+    """Model ID used to produce this result."""
+    content: str
+    """Concatenate string representation of all textual and visual elements
+     in reading order."""
+    pages: List[DocumentPage]
+    """Analyzed pages."""
+    languages: Optional[List[DocumentLanguage]]
+    """Detected languages in the document."""
+    paragraphs: Optional[List[DocumentParagraph]]
+    """Extracted paragraphs."""
+    tables: Optional[List[DocumentTable]]
+    """Extracted tables."""
+    key_value_pairs: Optional[List[DocumentKeyValuePair]]
+    """Extracted key-value pairs."""
+    styles: Optional[List[DocumentStyle]]
+    """Extracted font styles."""
+    documents: Optional[List[AnalyzedDocument]]
+    """Extracted documents."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.api_version: str = kwargs.get("api_version", None)
-        self.model_id: str = kwargs.get("model_id", None)
-        self.content: str = kwargs.get("content", None)
-        self.languages: Optional[list[DocumentLanguage]] = kwargs.get("languages", None)  # pylint: disable=unsubscriptable-object
-        self.pages: list[DocumentPage] = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
-        self.paragraphs: Optional[list[DocumentParagraph]] = kwargs.get("paragraphs", None)  # pylint: disable=unsubscriptable-object
-        self.tables: Optional[list[DocumentTable]] = kwargs.get("tables", None)  # pylint: disable=unsubscriptable-object
-        self.key_value_pairs: Optional[list[DocumentKeyValuePair]] = kwargs.get("key_value_pairs", None)  # pylint: disable=unsubscriptable-object
-        self.styles: Optional[list[DocumentStyle]] = kwargs.get("styles", None)  # pylint: disable=unsubscriptable-object
-        self.documents: Optional[list[AnalyzedDocument]] = kwargs.get("documents", None)  # pylint: disable=unsubscriptable-object
+        self.api_version = kwargs.get("api_version", None)
+        self.model_id = kwargs.get("model_id", None)
+        self.content = kwargs.get("content", None)
+        self.languages = kwargs.get("languages", None)  # pylint: disable=unsubscriptable-object
+        self.pages = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
+        self.paragraphs = kwargs.get("paragraphs", None)  # pylint: disable=unsubscriptable-object
+        self.tables = kwargs.get("tables", None)  # pylint: disable=unsubscriptable-object
+        self.key_value_pairs = kwargs.get("key_value_pairs", None)  # pylint: disable=unsubscriptable-object
+        self.styles = kwargs.get("styles", None)  # pylint: disable=unsubscriptable-object
+        self.documents = kwargs.get("documents", None)  # pylint: disable=unsubscriptable-object
 
     @classmethod
     def _from_generated(cls, response):
@@ -3656,235 +3988,20 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         )
 
 
-class DocumentModelSummary:
-    """A summary of document model information including the model ID,
-    its description, and when the model was created.
-
-    :ivar str model_id: Unique model id.
-    :ivar Optional[str] description: A description for the model.
-    :ivar created_on: Date and time (UTC) when the model was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar api_version: API version used to create this model.
-    :vartype api_version: Optional[str]
-    :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: Optional[dict[str, str]]
-    """
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.model_id: str = kwargs.get("model_id", None)
-        self.description: Optional[str] = kwargs.get("description", None)
-        self.created_on: datetime.datetime = kwargs.get("created_on", None)
-        self.api_version: Optional[str] = kwargs.get("api_version", None)
-        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentModelSummary(model_id={self.model_id}, description={self.description}, "
-            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
-        )
-
-    @classmethod
-    def _from_generated(cls, model):
-        return cls(
-            model_id=model.model_id,
-            description=model.description,
-            created_on=model.created_date_time,
-            api_version=model.api_version,
-            tags=model.tags if model.tags else {},
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelSummary.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "model_id": self.model_id,
-            "description": self.description,
-            "created_on": self.created_on,
-            "api_version": self.api_version,
-            "tags": self.tags if self.tags else {},
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelSummary":
-        """Converts a dict in the shape of a DocumentModelSummary to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentModelSummary.
-        :return: DocumentModelSummary
-        :rtype: DocumentModelSummary
-        """
-        return cls(
-            model_id=data.get("model_id", None),
-            description=data.get("description", None),
-            created_on=data.get("created_on", None),
-            api_version=data.get("api_version", None),
-            tags=data.get("tags", {})
-        )
-
-
-class DocumentModelDetails(DocumentModelSummary):
-    """Document model information. Includes the doc types that the model can analyze.
-
-    :ivar str model_id: Unique model id.
-    :ivar Optional[str] description: A description for the model.
-    :ivar created_on: Date and time (UTC) when the model was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar api_version: API version used to create this model.
-    :vartype api_version: Optional[str]
-    :ivar tags: List of user defined key-value tag attributes associated with the model.
-    :vartype tags: Optional[dict[str, str]]
-    :ivar doc_types: Supported document types, including the fields for each document and their types.
-    :vartype doc_types: Optional[dict[str, ~azure.ai.formrecognizer.DocumentTypeDetails]]
-    """
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        super().__init__(**kwargs)
-        self.doc_types: Optional[dict[str, DocumentTypeDetails]] = kwargs.get("doc_types", None)  # pylint: disable=unsubscriptable-object
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
-            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
-            f"doc_types={repr(self.doc_types)})"
-        )
-
-    @classmethod
-    def _from_generated(cls, model):
-        return cls(
-            model_id=model.model_id,
-            description=model.description,
-            created_on=model.created_date_time,
-            api_version=model.api_version,
-            tags=model.tags if model.tags else {},
-            doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
-            if model.doc_types else {}
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentModelDetails.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "model_id": self.model_id,
-            "description": self.description,
-            "created_on": self.created_on,
-            "api_version": self.api_version,
-            "tags": self.tags if self.tags else {},
-            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentModelDetails":
-        """Converts a dict in the shape of a DocumentModelDetails to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentModelDetails.
-        :return: DocumentModelDetails
-        :rtype: DocumentModelDetails
-        """
-        return cls(
-            model_id=data.get("model_id", None),
-            description=data.get("description", None),
-            created_on=data.get("created_on", None),
-            api_version=data.get("api_version", None),
-            tags=data.get("tags", {}),
-            doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
-            if data.get("doc_types")
-            else {},
-        )
-
-
-class DocumentTypeDetails:
-    """DocumentTypeDetails represents a document type that a model can recognize, including its
-    fields and types, and the confidence for those fields.
-
-    :ivar Optional[str] description: A description for the model.
-    :ivar build_mode: The build mode used when building the custom model.
-     Possible values include: "template", "neural".
-    :vartype build_mode: Optional[str]
-    :ivar field_schema: Description of the document semantic schema.
-    :vartype field_schema: dict[str, Any]
-    :ivar field_confidence: Estimated confidence for each field.
-    :vartype field_confidence: Optional[dict[str, float]]
-    """
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.description: Optional[str] = kwargs.get("description", None)
-        self.build_mode: Optional[str] = kwargs.get("build_mode", None)
-        self.field_schema: dict[str, Any] = kwargs.get("field_schema", None)  # pylint: disable=unsubscriptable-object
-        self.field_confidence: Optional[dict[str, float]] = kwargs.get("field_confidence", None)  # pylint: disable=unsubscriptable-object
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentTypeDetails(description={self.description}, build_mode={self.build_mode}, "
-            f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
-        )
-
-    @classmethod
-    def _from_generated(cls, doc_type):
-        return cls(
-            description=doc_type.description,
-            build_mode=doc_type.build_mode,
-            field_schema={name: field.serialize() for name, field in doc_type.field_schema.items()}
-            if doc_type.field_schema else {},
-            field_confidence=doc_type.field_confidence
-            if doc_type.field_confidence else {},
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentTypeDetails.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "description": self.description,
-            "build_mode": self.build_mode,
-            "field_schema": self.field_schema,
-            "field_confidence": self.field_confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentTypeDetails":
-        """Converts a dict in the shape of a DocumentTypeDetails to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentTypeDetails.
-        :return: DocumentTypeDetails
-        :rtype: DocumentTypeDetails
-        """
-        return cls(
-            description=data.get("description", None),
-            build_mode=data.get("build_mode", None),
-            field_schema=data.get("field_schema", {}),
-            field_confidence=data.get("field_confidence", {}),
-        )
-
-
 class CustomDocumentModelsDetails:
-    """Details regarding the custom models under the Form Recognizer resource.
+    """Details regarding the custom models under the Form Recognizer resource."""
 
-    :ivar int count: Number of custom models in the current resource.
-    :ivar int limit: Maximum number of custom models supported in the current resource.
-    """
+    count: int
+    """Number of custom models in the current resource."""
+    limit: int
+    """Maximum number of custom models supported in the current resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
-        self.count: int = kwargs.get("count", None)
-        self.limit: int = kwargs.get("limit", None)
+        self.count = kwargs.get("count", None)
+        self.limit = kwargs.get("limit", None)
 
     def __repr__(self) -> str:
         return f"CustomDocumentModelsDetails(count={self.count}, limit={self.limit})"
@@ -3923,17 +4040,16 @@ class CustomDocumentModelsDetails:
 
 
 class ResourceDetails:
-    """Details regarding the Form Recognizer resource.
+    """Details regarding the Form Recognizer resource."""
 
-    :ivar CustomDocumentModelsDetails custom_document_models: Details regarding the custom models
-    under the Form Recognizer resource.
-    """
+    custom_document_models: CustomDocumentModelsDetails
+    """Details regarding the custom models under the Form Recognizer resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
-        self.custom_document_models: CustomDocumentModelsDetails = kwargs.get("custom_document_models", None)
+        self.custom_document_models = kwargs.get("custom_document_models", None)
 
     def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
@@ -3970,140 +4086,6 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
-        )
-
-
-class DocumentAnalysisError:
-    """DocumentAnalysisError contains the details of the error returned by the service.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message.
-    :vartype message: str
-    :ivar target: Target of the error.
-    :vartype target: Optional[str]
-    :ivar details: List of detailed errors.
-    :vartype details: Optional[list[~azure.ai.formrecognizer.DocumentAnalysisError]]
-    :ivar innererror: Detailed error.
-    :vartype innererror: Optional[~azure.ai.formrecognizer.DocumentAnalysisInnerError]
-    """
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.code: str = kwargs.get("code", None)
-        self.message: str = kwargs.get("message", None)
-        self.target: Optional[str] = kwargs.get("target", None)
-        self.details: Optional[list[DocumentAnalysisError]] = kwargs.get("details", None)  # pylint: disable=unsubscriptable-object
-        self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentAnalysisError(code={self.code}, message={self.message}, target={self.target}, "
-            f"details={repr(self.details)}, innererror={repr(self.innererror)})"
-        )
-
-    @classmethod
-    def _from_generated(cls, err):
-        return cls(
-            code=err.code,
-            message=err.message,
-            target=err.target,
-            details=[DocumentAnalysisError._from_generated(e) for e in err.details] if err.details else [],
-            innererror=DocumentAnalysisInnerError._from_generated(err.innererror) if err.innererror else None
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentAnalysisError.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "code": self.code,
-            "message": self.message,
-            "target": self.target,
-            "details": [detail.to_dict() for detail in self.details] if self.details else [],
-            "innererror": self.innererror.to_dict() if self.innererror else None
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentAnalysisError":
-        """Converts a dict in the shape of a DocumentAnalysisError to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentAnalysisError.
-        :return: DocumentAnalysisError
-        :rtype: DocumentAnalysisError
-        """
-        return cls(
-            code=data.get("code", None),
-            message=data.get("message", None),
-            target=data.get("target", None),
-            details=[DocumentAnalysisError.from_dict(e) for e in data.get("details")]  # type: ignore
-            if data.get("details") else [],
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
-            if data.get("innererror") else None
-        )
-
-
-class DocumentAnalysisInnerError:
-    """Inner error details for the DocumentAnalysisError.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar Optional[str] message: Error message.
-    :ivar innererror: Detailed error.
-    :vartype innererror: Optional[~azure.ai.formrecognizer.DocumentAnalysisInnerError]
-    """
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.code: str = kwargs.get("code", None)
-        self.message: Optional[str] = kwargs.get("message", None)
-        self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentAnalysisInnerError(code={self.code}, message={self.message}, "
-            f"innererror={repr(self.innererror)})"
-        )
-
-    @classmethod
-    def _from_generated(cls, ierr):
-        return cls(
-            code=ierr.code,
-            message=ierr.message,
-            innererror=DocumentAnalysisInnerError._from_generated(ierr.innererror) if ierr.innererror else None
-        )
-
-    def to_dict(self) -> dict:
-        """Returns a dict representation of DocumentAnalysisInnerError.
-
-        :return: dict
-        :rtype: dict
-        """
-        return {
-            "code": self.code,
-            "message": self.message,
-            "innererror": self.innererror.to_dict() if self.innererror else None
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "DocumentAnalysisInnerError":
-        """Converts a dict in the shape of a DocumentAnalysisInnerError to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentAnalysisInnerError.
-        :return: DocumentAnalysisInnerError
-        :rtype: DocumentAnalysisInnerError
-        """
-        return cls(
-            code=data.get("code", None),
-            message=data.get("message", None),
-            innererror=DocumentAnalysisInnerError.from_dict(data.get("innererror"))  # type: ignore
-            if data.get("innererror") else None
         )
 
 
