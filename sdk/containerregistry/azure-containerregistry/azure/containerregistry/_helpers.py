@@ -20,8 +20,6 @@ except ImportError:
 from azure.core.exceptions import ServiceRequestError
 from ._generated.models import OCIManifest
 
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
