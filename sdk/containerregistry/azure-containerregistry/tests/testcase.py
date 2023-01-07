@@ -34,9 +34,9 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         if self.is_live:
             if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
                 return ClientSecretCredential(
-                    tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-                    client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-                    client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+                    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+                    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+                    client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
                     authority=authority
                 )
             return DefaultAzureCredential(**kwargs)
@@ -146,20 +146,20 @@ def get_audience(authority):
 def import_image(authority, repository, tags, registry_name):
     logger.warning("Import image authority: {}".format(authority))
     credential = ClientSecretCredential(
-        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
-    sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
     audience = get_audience(authority)
     scope = [audience + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
         credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
     )
-    logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
+    logger.warning("LOGGING: {}{}".format(os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID"), os.environ.get("CONTAINERREGISTRY_TENANT_ID")))
     registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
 
     import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
@@ -180,8 +180,8 @@ def load_registry():
         return
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
     authority_anon = get_authority(os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"))
-    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-    registry_name_anon = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
+    registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
+    registry_name_anon = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_NAME")
     repos = [
         "library/hello-world",
         "library/alpine",
