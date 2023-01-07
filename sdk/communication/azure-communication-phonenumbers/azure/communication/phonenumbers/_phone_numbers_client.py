@@ -235,7 +235,7 @@ class PhoneNumbersClient(object):
 
         polling_interval = kwargs.pop(
             'polling_interval', _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
-       
+
         if not phone_number:
             raise ValueError("phone_number can't be empty")
 
