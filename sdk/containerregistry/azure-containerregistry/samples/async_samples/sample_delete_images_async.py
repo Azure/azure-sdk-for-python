@@ -21,14 +21,26 @@ USAGE:
     This sample assumes your registry has at least four repositories.
 """
 import asyncio
+import os
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from sample_base_async import SampleBaseAsync
+from azure.containerregistry._helpers import _get_authority, _get_audience, _get_credential
+from samples.load_registry import load_registry
 
 
-class DeleteImagesAsync(SampleBaseAsync):
+class DeleteImagesAsync(object):
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.authority = _get_authority(self.endpoint)
+        self.audience = _get_audience(self.authority)
+        self.credential = _get_credential(
+            self.authority, exclude_environment_credential=True, is_async=True
+        )
+
     async def delete_images(self):
-        self._set_up()
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             async for repository in client.list_repository_names():

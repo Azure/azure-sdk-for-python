@@ -23,13 +23,25 @@ USAGE:
     This sample assumes your registry has a repository "library/hello-world".
 """
 import asyncio
+import os
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from sample_base_async import SampleBaseAsync
+from azure.containerregistry._helpers import _get_authority, _get_audience, _get_credential
+from samples.load_registry import load_registry
 
 
-class ListTagsAsync(SampleBaseAsync):
+class ListTagsAsync(object):
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.authority = _get_authority(self.endpoint)
+        self.audience = _get_audience(self.authority)
+        self.credential = _get_credential(
+            self.authority, exclude_environment_credential=True, is_async=True
+        )
+
     async def list_tags(self):
-        self._set_up()
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient    
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             manifest = await client.get_manifest_properties("library/hello-world", "latest")

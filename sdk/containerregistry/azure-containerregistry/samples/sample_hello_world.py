@@ -21,13 +21,24 @@ USAGE:
 
     This sample assumes your registry has a repository "library/hello-world".
 """
+import os
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from sample_base import SampleBase
+from tests.testcase import ContainerRegistryTestClass, load_registry, get_audience, get_authority
 
 
-class HelloWorld(SampleBase):
+class HelloWorld(object):
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = ContainerRegistryTestClass.get_credential(
+            self.authority, exclude_environment_credential=True
+        )
+
     def basic_sample(self):
-        self._set_up()
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:

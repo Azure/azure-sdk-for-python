@@ -21,13 +21,24 @@ USAGE:
     
     This sample assumes your registry has a repository "library/hello-world" with image tagged "v1".
 """
+import os
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from sample_base import SampleBase
+from tests.testcase import ContainerRegistryTestClass, load_registry, get_audience, get_authority
 
 
-class SetImageProperties(SampleBase):
+class SetImageProperties(object):
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = ContainerRegistryTestClass.get_credential(
+            self.authority, exclude_environment_credential=True
+        )
+
     def set_image_properties(self):
-        self._set_up()
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Set permissions on the v1 image's "latest" tag
@@ -37,10 +48,10 @@ class SetImageProperties(SampleBase):
                 can_write=False,
                 can_delete=False
             )
-            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`, it would fail.
-            # It's worth noting that if this image also had another tag, such as `latest`, and that tag did not have
-            # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
-            # if someone were to push an update to `<registry endpoint>\hello-world:latest`
+            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
+            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
+            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
+            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
             # (which references the same image), it would succeed.
 
 

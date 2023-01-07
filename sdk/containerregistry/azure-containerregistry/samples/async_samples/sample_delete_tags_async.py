@@ -21,13 +21,26 @@ USAGE:
     This sample assumes your registry has at least one repository with more than three tags.
 """
 import asyncio
+import os
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ArtifactTagOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from sample_base_async import SampleBaseAsync
+from azure.containerregistry._helpers import _get_authority, _get_audience, _get_credential
+from samples.load_registry import load_registry
 
-class DeleteTagsAsync(SampleBaseAsync):
+
+class DeleteTagsAsync(object):
+    def __init__(self):
+        load_dotenv(find_dotenv())
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.authority = _get_authority(self.endpoint)
+        self.audience = _get_audience(self.authority)
+        self.credential = _get_credential(
+            self.authority, exclude_environment_credential=True, is_async=True
+        )
+
     async def delete_tags(self):
-        self._set_up()
+        load_registry()
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # [START list_repository_names]
             async for repository in client.list_repository_names():
