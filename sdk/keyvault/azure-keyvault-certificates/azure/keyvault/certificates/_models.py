@@ -136,7 +136,7 @@ class CertificateOperationError(object):
 class CertificateProperties(object):
     """Certificate properties consists of a certificates metadata."""
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
         self._vault_id = KeyVaultCertificateIdentifier(self._id)
@@ -281,7 +281,7 @@ class KeyVaultCertificate(object):
         policy: "Optional[CertificatePolicy]" = None,
         properties: "Optional[CertificateProperties]" = None,
         cer: "Optional[bytes]" = None,
-        **kwargs: "Any",
+        **kwargs,
     ) -> None:
         self._properties = properties
         self._key_id = kwargs.get("key_id", None)
@@ -615,7 +615,7 @@ class CertificatePolicy(object):
     def __init__(
         self,
         issuer_name: "Optional[str]" = None,
-        **kwargs: "Any",
+        **kwargs,
     ) -> None:
         self._issuer_name = issuer_name
         self._subject = kwargs.pop("subject", None)
@@ -1025,7 +1025,7 @@ class IssuerProperties(object):
     :param str provider: The issuer provider.
     """
 
-    def __init__(self, provider: "Optional[str]" = None, **kwargs: "Any") -> None:
+    def __init__(self, provider: "Optional[str]" = None, **kwargs) -> None:
         self._id = kwargs.pop("issuer_id", None)
         self._vault_id = parse_key_vault_id(self._id)
         self._provider = provider
@@ -1076,7 +1076,7 @@ class CertificateIssuer(object):
         password: "Optional[str]" = None,
         organization_id: "Optional[str]" = None,
         admin_contacts: "Optional[List[AdministratorContact]]" = None,
-        **kwargs: "Any",
+        **kwargs,
     ) -> None:
         self._provider = provider
         self._attributes = attributes
@@ -1256,7 +1256,7 @@ class DeletedCertificate(KeyVaultCertificate):
         properties: "Optional[CertificateProperties]" = None,
         policy: "Optional[CertificatePolicy]" = None,
         cer: "Optional[bytes]" = None,
-        **kwargs: "Any",
+        **kwargs,
     ) -> None:
         super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
         self._deleted_on = kwargs.get("deleted_on", None)

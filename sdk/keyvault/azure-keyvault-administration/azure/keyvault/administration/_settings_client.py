@@ -30,7 +30,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_setting(self, name: str, **kwargs: Any) -> KeyVaultSetting:
+    def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
         :param str name: The name of the account setting.
@@ -43,7 +43,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
-    def list_settings(self, **kwargs: Any) -> ItemPaged[KeyVaultSetting]:
+    def list_settings(self, **kwargs) -> ItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
         :returns: A paged object containing the account's settings.
@@ -63,7 +63,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_setting(self, name: str, value: str, **kwargs: Any) -> KeyVaultSetting:
+    def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 
         :param str name: The name of the account setting to update.

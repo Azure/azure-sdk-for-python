@@ -57,7 +57,7 @@ def _update_challenge(request: PipelineRequest, challenger: "PipelineResponse") 
 class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
     """Policy for handling HTTP authentication challenges"""
 
-    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs: "Any") -> None:
+    def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]

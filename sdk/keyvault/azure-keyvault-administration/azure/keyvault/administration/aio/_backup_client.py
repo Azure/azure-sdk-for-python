@@ -37,7 +37,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
     async def begin_backup(
-        self, blob_storage_url: str, sas_token: str, **kwargs: "Any"
+        self, blob_storage_url: str, sas_token: str, **kwargs
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
         """Begin a full backup of the Key Vault.
 
@@ -91,7 +91,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs: "Any") -> "AsyncLROPoller":
+    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "AsyncLROPoller":
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.

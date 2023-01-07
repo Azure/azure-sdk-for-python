@@ -71,7 +71,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key_name: str, **kwargs: "Any") -> CryptographyClient:
+    def get_cryptography_client(self, key_name: str, **kwargs) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -90,7 +90,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs: "Any") -> KeyVaultKey:
+    async def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -163,7 +163,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def create_rsa_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def create_rsa_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
 
         Requires the keys/create permission.
@@ -202,7 +202,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace_async
-    async def create_ec_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def create_ec_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -241,7 +241,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace_async
-    async def create_oct_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def create_oct_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -279,7 +279,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace_async
-    async def create_okp_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def create_okp_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new octet key pair or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -318,7 +318,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="OKP-HSM" if hsm else "OKP", **kwargs)
 
     @distributed_trace_async
-    async def delete_key(self, name: str, **kwargs: "Any") -> DeletedKey:
+    async def delete_key(self, name: str, **kwargs) -> DeletedKey:
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. If the vault has soft-delete enabled, deletion may take several seconds to
@@ -360,7 +360,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
+    async def get_key(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
         """Get a key's attributes and, if it's an asymmetric key, its public material.
 
         Requires keys/get permission.
@@ -390,7 +390,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_deleted_key(self, name: str, **kwargs: "Any") -> DeletedKey:
+    async def get_deleted_key(self, name: str, **kwargs) -> DeletedKey:
         """Get a deleted key. Possible only in a vault with soft-delete enabled.
 
         Requires keys/get permission.
@@ -416,7 +416,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs: "Any") -> "AsyncItemPaged[DeletedKey]":
+    def list_deleted_keys(self, **kwargs) -> "AsyncItemPaged[DeletedKey]":
         """List all deleted keys, including the public part of each. Possible only in a vault with soft-delete enabled.
 
         Requires keys/list permission.
@@ -441,7 +441,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_keys(self, **kwargs: "Any") -> "AsyncItemPaged[KeyProperties]":
+    def list_properties_of_keys(self, **kwargs) -> "AsyncItemPaged[KeyProperties]":
         """List identifiers and properties of all keys in the vault.
 
         Requires keys/list permission.
@@ -466,7 +466,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_key_versions(self, name: str, **kwargs: "Any") -> "AsyncItemPaged[KeyProperties]":
+    def list_properties_of_key_versions(self, name: str, **kwargs) -> "AsyncItemPaged[KeyProperties]":
         """List the identifiers and properties of a key's versions.
 
         Requires keys/list permission.
@@ -494,7 +494,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_key(self, name: str, **kwargs: "Any") -> None:
+    async def purge_deleted_key(self, name: str, **kwargs) -> None:
         """Permanently deletes a deleted key. Only possible in a vault with soft-delete enabled.
 
         Performs an irreversible deletion of the specified key, without possibility for recovery. The operation is not
@@ -521,7 +521,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_key(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def recover_deleted_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires keys/recover permission. If the vault does not have soft-delete enabled, :func:`delete_key` is
@@ -559,7 +559,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultKey:
+    async def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
         """Change a key's properties (not its cryptographic material).
 
         Requires keys/update permission.
@@ -620,7 +620,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def backup_key(self, name: str, **kwargs: "Any") -> bytes:
+    async def backup_key(self, name: str, **kwargs) -> bytes:
         """Back up a key in a protected form useable only by Azure Key Vault.
 
         Requires key/backup permission. This is intended to allow copying a key from one vault to another. Both vaults
@@ -647,7 +647,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key_backup(self, backup: bytes, **kwargs: "Any") -> KeyVaultKey:
+    async def restore_key_backup(self, backup: bytes, **kwargs) -> KeyVaultKey:
         """Restore a key backup to the vault.
 
         Requires keys/restore permission. This imports all versions of the key, with its name, attributes, and access
@@ -680,7 +680,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def import_key(self, name: str, key: JsonWebKey, **kwargs: "Any") -> KeyVaultKey:
+    async def import_key(self, name: str, key: JsonWebKey, **kwargs) -> KeyVaultKey:
         """Import a key created externally.
 
         Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
@@ -731,7 +731,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def release_key(self, name: str, target_attestation_token: str, **kwargs: "Any") -> ReleaseKeyResult:
+    async def release_key(self, name: str, target_attestation_token: str, **kwargs) -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -765,7 +765,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return ReleaseKeyResult(result.value)
 
     @distributed_trace_async
-    async def get_random_bytes(self, count: int, **kwargs: "Any") -> bytes:
+    async def get_random_bytes(self, count: int, **kwargs) -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
@@ -792,7 +792,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return result.value
 
     @distributed_trace_async
-    async def get_key_rotation_policy(self, key_name: str, **kwargs: "Any") -> "KeyRotationPolicy":
+    async def get_key_rotation_policy(self, key_name: str, **kwargs) -> "KeyRotationPolicy":
         """Get the rotation policy of a Key Vault key.
 
         :param str key_name: The name of the key.
@@ -806,7 +806,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace_async
-    async def rotate_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
+    async def rotate_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Rotate the key based on the key policy by generating a new version of the key.
 
         This operation requires the keys/rotate permission.
@@ -823,7 +823,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_key_rotation_policy(
-        self, key_name: str, policy: KeyRotationPolicy, **kwargs: "Any"
+        self, key_name: str, policy: KeyRotationPolicy, **kwargs
     ) -> KeyRotationPolicy:
         """Updates the rotation policy of a Key Vault key.
 

@@ -31,7 +31,7 @@ class KeyVaultPermission(object):
      other role definitions assigned to a principal.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.actions = kwargs.get("actions")
         self.not_actions = kwargs.get("not_actions")
         self.data_actions = kwargs.get("data_actions")
@@ -56,7 +56,7 @@ class KeyVaultRoleAssignment(object):
     :ivar str type: type of the assignment
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.name = kwargs.get("name")
         self.properties = kwargs.get("properties")
         self.role_assignment_id = kwargs.get("role_assignment_id")
@@ -87,7 +87,7 @@ class KeyVaultRoleAssignmentProperties(object):
     :ivar str scope: the scope of the assignment
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.principal_id = kwargs.get("principal_id")
         self.role_definition_id = kwargs.get("role_definition_id")
         self.scope = kwargs.get("scope")
@@ -125,7 +125,7 @@ class KeyVaultRoleDefinition(object):
     :ivar str type: type of the role definition
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.assignable_scopes = kwargs.get("assignable_scopes")
         self.description = kwargs.get("description")
         self.id = kwargs.get("id")
@@ -161,7 +161,7 @@ class KeyVaultBackupResult(object):
 
     # pylint:disable=unused-argument
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.folder_url = kwargs.get("folder_url")
 
     @classmethod
@@ -179,7 +179,7 @@ class KeyVaultSetting(object):
     :ivar SettingType type: The type specifier of the value.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.name = kwargs.get("name")
         self.value = kwargs.get("value")
         self.type = kwargs.get("type")

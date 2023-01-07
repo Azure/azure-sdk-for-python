@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 class AsyncKeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the AsyncTokenCredential protocol, "
@@ -84,7 +84,7 @@ class AsyncKeyVaultClientBase(object):
         await self._client.close()
 
     @distributed_trace_async
-    async def send_request(self, request: "HttpRequest", **kwargs: "Any") -> "AsyncHttpResponse":
+    async def send_request(self, request: "HttpRequest", **kwargs) -> "AsyncHttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as

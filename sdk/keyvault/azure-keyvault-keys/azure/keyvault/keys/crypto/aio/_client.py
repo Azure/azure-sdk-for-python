@@ -57,7 +57,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs) -> None:
         self._jwk = kwargs.pop("_jwk", False)
         self._not_before = None  # type: Optional[datetime]
         self._expires_on = None  # type: Optional[datetime]
@@ -129,7 +129,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return cls(jwk, object(), _jwk=True)  # type: ignore
 
     @distributed_trace_async
-    async def _initialize(self, **kwargs: "Any") -> None:
+    async def _initialize(self, **kwargs) -> None:
         if self._initialized:
             return
 
@@ -159,7 +159,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             self._initialized = self._keys_get_forbidden
 
     @distributed_trace_async
-    async def encrypt(self, algorithm: EncryptionAlgorithm, plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+    async def encrypt(self, algorithm: EncryptionAlgorithm, plaintext: bytes, **kwargs) -> EncryptResult:
         """Encrypt bytes using the client's key.
 
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
@@ -232,7 +232,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def decrypt(self, algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
+    async def decrypt(self, algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key.
 
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
@@ -292,7 +292,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace_async
-    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapResult:
+    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs) -> WrapResult:
         """Wrap a key with the client's key.
 
         Requires the keys/wrapKey permission.
@@ -335,7 +335,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace_async
-    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
+    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs) -> UnwrapResult:
         """Unwrap a key previously wrapped with the client's key.
 
         Requires the keys/unwrapKey permission.
@@ -377,7 +377,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace_async
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs) -> SignResult:
         """Create a signature from a digest using the client's key.
 
         Requires the keys/sign permission.
@@ -421,7 +421,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def verify(
-        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any"
+        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs
     ) -> VerifyResult:
         """Verify a signature using the client's key.
 

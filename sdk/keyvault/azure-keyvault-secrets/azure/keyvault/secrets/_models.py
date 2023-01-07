@@ -20,7 +20,7 @@ class SecretProperties(object):
     """A secret's id and attributes."""
 
     def __init__(
-        self, attributes: "Optional[_models.SecretAttributes]", vault_id: "Optional[str]", **kwargs: "Any"
+        self, attributes: "Optional[_models.SecretAttributes]", vault_id: "Optional[str]", **kwargs
     ) -> None:
         self._attributes = attributes
         self._id = vault_id

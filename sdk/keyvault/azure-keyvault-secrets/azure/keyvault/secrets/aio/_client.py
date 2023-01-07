@@ -42,7 +42,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultSecret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -66,7 +66,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(self, name: str, value: str, **kwargs: Any) -> KeyVaultSecret:
+    async def set_secret(self, name: str, value: str, **kwargs) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
@@ -120,7 +120,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_secret_properties(
-        self, name: str, version: Optional[str] = None, **kwargs: Any
+        self, name: str, version: Optional[str] = None, **kwargs
     ) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
@@ -177,7 +177,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_properties_of_secrets(self, **kwargs: Any) -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secrets(self, **kwargs) -> AsyncItemPaged[SecretProperties]:
         """List identifiers and attributes of all secrets in the vault. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -201,7 +201,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_secret_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secret_versions(self, name: str, **kwargs) -> AsyncItemPaged[SecretProperties]:
         """List properties of all versions of a secret, excluding their values. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -228,7 +228,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def backup_secret(self, name: str, **kwargs: Any) -> bytes:
+    async def backup_secret(self, name: str, **kwargs) -> bytes:
         """Back up a secret in a protected form useable only by Azure Key Vault. Requires secrets/backup permission.
 
         :param str name: Name of the secret to back up
@@ -251,7 +251,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_secret_backup(self, backup: bytes, **kwargs: Any) -> SecretProperties:
+    async def restore_secret_backup(self, backup: bytes, **kwargs) -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: A secret backup as returned by :func:`backup_secret`
@@ -280,7 +280,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def delete_secret(self, name: str, **kwargs: Any) -> DeletedSecret:
+    async def delete_secret(self, name: str, **kwargs) -> DeletedSecret:
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         If the vault has soft-delete enabled, deletion may take several seconds to complete.
@@ -320,7 +320,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def get_deleted_secret(self, name: str, **kwargs: Any) -> DeletedSecret:
+    async def get_deleted_secret(self, name: str, **kwargs) -> DeletedSecret:
         """Get a deleted secret. Possible only in vaults with soft-delete enabled. Requires secrets/get permission.
 
         :param str name: Name of the deleted secret
@@ -343,7 +343,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_secrets(self, **kwargs: Any) -> AsyncItemPaged[DeletedSecret]:
+    def list_deleted_secrets(self, **kwargs) -> AsyncItemPaged[DeletedSecret]:
         """Lists all deleted secrets. Possible only in vaults with soft-delete enabled.
 
         Requires secrets/list permission.
@@ -367,7 +367,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_secret(self, name: str, **kwargs: Any) -> None:
+    async def purge_deleted_secret(self, name: str, **kwargs) -> None:
         """Permanently delete a deleted secret. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified secret, without possibility for recovery. The operation is
@@ -394,7 +394,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_secret(self, name: str, **kwargs: Any) -> SecretProperties:
+    async def recover_deleted_secret(self, name: str, **kwargs) -> SecretProperties:
         """Recover a deleted secret to its latest version. This is possible only in vaults with soft-delete enabled.
 
         Requires the secrets/recover permission. If the vault does not have soft-delete enabled, :func:`delete_secret`

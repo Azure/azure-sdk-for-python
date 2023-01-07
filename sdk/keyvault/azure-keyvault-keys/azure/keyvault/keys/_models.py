@@ -48,7 +48,7 @@ class JsonWebKey(object):
 
     _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
@@ -62,7 +62,7 @@ class JsonWebKey(object):
 class KeyProperties(object):
     """A key's id and attributes."""
 
-    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs: "Any") -> None:
+    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs) -> None:
         self._attributes = attributes
         self._id = key_id
         self._vault_id = KeyVaultKeyIdentifier(key_id)
@@ -246,7 +246,7 @@ class KeyReleasePolicy(object):
         updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, encoded_policy: bytes, **kwargs: "Any") -> None:
+    def __init__(self, encoded_policy: bytes, **kwargs) -> None:
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
         self.immutable = kwargs.get("immutable", None)
@@ -278,7 +278,7 @@ class KeyRotationLifetimeAction(object):
     :paramtype time_before_expiry: Optional[str]
     """
 
-    def __init__(self, action: "Union[KeyRotationPolicyAction, str]", **kwargs: "Any") -> None:
+    def __init__(self, action: "Union[KeyRotationPolicyAction, str]", **kwargs) -> None:
         self.action = action
         self.time_after_create = kwargs.get("time_after_create", None)  # type: Optional[str]
         self.time_before_expiry = kwargs.get("time_before_expiry", None)  # type: Optional[str]
@@ -313,7 +313,7 @@ class KeyRotationPolicy(object):
     :vartype updated_on: Optional[~datetime.datetime]
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self.id = kwargs.get("policy_id", None)
         self.lifetime_actions = kwargs.get("lifetime_actions", [])  # type: List[KeyRotationLifetimeAction]
         self.expires_in = kwargs.get("expires_in", None)
@@ -371,7 +371,7 @@ class KeyVaultKey(object):
 
     """
 
-    def __init__(self, key_id: str, jwk: "Optional[Dict[str, Any]]" = None, **kwargs: "Any") -> None:
+    def __init__(self, key_id: str, jwk: "Optional[Dict[str, Any]]" = None, **kwargs) -> None:
         self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)  # type: KeyProperties
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
@@ -494,7 +494,7 @@ class DeletedKey(KeyVaultKey):
         deleted_date: "Optional[datetime]" = None,
         recovery_id: "Optional[str]" = None,
         scheduled_purge_date: "Optional[datetime]" = None,
-        **kwargs: "Any",
+        **kwargs,
     ) -> None:
         super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date

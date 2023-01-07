@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def _validate_arguments(operation: KeyOperation, algorithm: EncryptionAlgorithm, **kwargs: "Any") -> None:
+def _validate_arguments(operation: KeyOperation, algorithm: EncryptionAlgorithm, **kwargs) -> None:
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
     :param KeyOperation operation: the type of operation being requested
@@ -105,7 +105,7 @@ class CryptographyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "TokenCredential", **kwargs) -> None:
         self._jwk = kwargs.pop("_jwk", False)
         self._not_before = None  # type: Optional[datetime]
         self._expires_on = None  # type: Optional[datetime]
@@ -179,7 +179,7 @@ class CryptographyClient(KeyVaultClientBase):
         return cls(jwk, object(), _jwk=True)  # type: ignore
 
     @distributed_trace
-    def _initialize(self, **kwargs: "Any") -> None:
+    def _initialize(self, **kwargs) -> None:
         if self._initialized:
             return
 
@@ -209,7 +209,7 @@ class CryptographyClient(KeyVaultClientBase):
             self._initialized = self._keys_get_forbidden
 
     @distributed_trace
-    def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+    def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs) -> EncryptResult:
         """Encrypt bytes using the client's key.
 
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
@@ -282,7 +282,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
+    def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key.
 
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
@@ -342,7 +342,7 @@ class CryptographyClient(KeyVaultClientBase):
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace
-    def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapResult:
+    def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs) -> WrapResult:
         """Wrap a key with the client's key.
 
         Requires the keys/wrapKey permission.
@@ -385,7 +385,7 @@ class CryptographyClient(KeyVaultClientBase):
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace
-    def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
+    def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs) -> UnwrapResult:
         """Unwrap a key previously wrapped with the client's key.
 
         Requires the keys/unwrapKey permission.
@@ -426,7 +426,7 @@ class CryptographyClient(KeyVaultClientBase):
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
-    def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
+    def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs) -> SignResult:
         """Create a signature from a digest using the client's key.
 
         Requires the keys/sign permission.
@@ -469,7 +469,7 @@ class CryptographyClient(KeyVaultClientBase):
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
 
     @distributed_trace
-    def verify(self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any") -> VerifyResult:
+    def verify(self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs) -> VerifyResult:
         """Verify a signature using the client's key.
 
         Requires the keys/verify permission.

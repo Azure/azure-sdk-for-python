@@ -49,7 +49,7 @@ class SecretClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace
-    def get_secret(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> KeyVaultSecret:
+    def get_secret(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -79,7 +79,7 @@ class SecretClient(KeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def set_secret(self, name: str, value: str, **kwargs: "Any") -> KeyVaultSecret:
+    def set_secret(self, name: str, value: str, **kwargs) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
@@ -135,7 +135,7 @@ class SecretClient(KeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret_properties(self, name: str, version: "Optional[str]" = None, **kwargs: "Any") -> SecretProperties:
+    def update_secret_properties(self, name: str, version: "Optional[str]" = None, **kwargs) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
         This method updates properties of the secret, such as whether it's enabled, but can't change the secret's
@@ -194,7 +194,7 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_properties_of_secrets(self, **kwargs: "Any") -> "ItemPaged[SecretProperties]":
+    def list_properties_of_secrets(self, **kwargs) -> "ItemPaged[SecretProperties]":
         """List identifiers and attributes of all secrets in the vault. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -220,7 +220,7 @@ class SecretClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_secret_versions(self, name: str, **kwargs: "Any") -> "ItemPaged[SecretProperties]":
+    def list_properties_of_secret_versions(self, name: str, **kwargs) -> "ItemPaged[SecretProperties]":
         """List properties of all versions of a secret, excluding their values. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -249,7 +249,7 @@ class SecretClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def backup_secret(self, name: str, **kwargs: "Any") -> bytes:
+    def backup_secret(self, name: str, **kwargs) -> bytes:
         """Back up a secret in a protected form useable only by Azure Key Vault. Requires secrets/backup permission.
 
         :param str name: Name of the secret to back up
@@ -273,7 +273,7 @@ class SecretClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_secret_backup(self, backup: bytes, **kwargs: "Any") -> SecretProperties:
+    def restore_secret_backup(self, backup: bytes, **kwargs) -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: A secret backup as returned by :func:`backup_secret`
@@ -303,7 +303,7 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def begin_delete_secret(self, name: str, **kwargs: "Any") -> "LROPoller[DeletedSecret]":
+    def begin_delete_secret(self, name: str, **kwargs) -> "LROPoller[DeletedSecret]":
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
@@ -349,7 +349,7 @@ class SecretClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def get_deleted_secret(self, name: str, **kwargs: "Any") -> DeletedSecret:
+    def get_deleted_secret(self, name: str, **kwargs) -> DeletedSecret:
         """Get a deleted secret. Possible only in vaults with soft-delete enabled. Requires secrets/get permission.
 
         :param str name: Name of the deleted secret
@@ -373,7 +373,7 @@ class SecretClient(KeyVaultClientBase):
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_secrets(self, **kwargs: "Any") -> "ItemPaged[DeletedSecret]":
+    def list_deleted_secrets(self, **kwargs) -> "ItemPaged[DeletedSecret]":
         """Lists all deleted secrets. Possible only in vaults with soft-delete enabled.
 
         Requires secrets/list permission.
@@ -399,7 +399,7 @@ class SecretClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def purge_deleted_secret(self, name: str, **kwargs: "Any") -> None:
+    def purge_deleted_secret(self, name: str, **kwargs) -> None:
         """Permanently deletes a deleted secret. Possible only in vaults with soft-delete enabled.
 
         Performs an irreversible deletion of the specified secret, without possibility for recovery. The operation is
@@ -426,7 +426,7 @@ class SecretClient(KeyVaultClientBase):
         self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace
-    def begin_recover_deleted_secret(self, name: str, **kwargs: "Any") -> "LROPoller[SecretProperties]":
+    def begin_recover_deleted_secret(self, name: str, **kwargs) -> "LROPoller[SecretProperties]":
         """Recover a deleted secret to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires the secrets/recover permission. If the vault does not have soft-delete enabled,

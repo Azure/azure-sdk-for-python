@@ -40,7 +40,7 @@ class EncryptResult:
     """
 
     def __init__(
-        self, key_id: "Optional[str]", algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any"
+        self, key_id: "Optional[str]", algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs
     ) -> None:
         self.key_id = key_id
         self.algorithm = algorithm

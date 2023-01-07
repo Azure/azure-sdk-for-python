@@ -63,7 +63,7 @@ def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpReques
 
 class KeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -126,7 +126,7 @@ class KeyVaultClientBase(object):
         self._client.close()
 
     @distributed_trace
-    def send_request(self, request: "HttpRequest", **kwargs: "Any") -> "HttpResponse":
+    def send_request(self, request: "HttpRequest", **kwargs) -> "HttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as

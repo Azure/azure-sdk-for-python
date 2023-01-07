@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 class AsyncKeyVaultClientBase(object):
-    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the AsyncTokenCredential protocol, "

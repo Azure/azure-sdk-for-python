@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """policy for handling HTTP authentication challenges"""
 
-    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any") -> None:
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs) -> None:
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]

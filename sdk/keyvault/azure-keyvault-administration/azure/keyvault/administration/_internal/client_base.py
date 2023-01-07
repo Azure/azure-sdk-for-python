@@ -32,7 +32,7 @@ DEFAULT_VERSION = ApiVersion.V7_4_PREVIEW_1
 
 
 class KeyVaultClientBase(object):
-    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
