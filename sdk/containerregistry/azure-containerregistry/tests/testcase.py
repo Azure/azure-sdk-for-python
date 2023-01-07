@@ -8,8 +8,12 @@ import os
 import pytest
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, _import_image, _get_audience, _get_authority, _get_credential
+from azure.containerregistry._helpers import _is_tag, _get_audience, _get_authority, _get_credential
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
+
+from azure.mgmt.containerregistry import ContainerRegistryManagementClient
+from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from azure.identity import ClientSecretCredential
 
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, is_live_and_not_recording
 
@@ -30,7 +34,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         if not self.is_live:
             return
         authority = _get_authority(endpoint)
-        _import_image(authority, repository, tags)
+        import_image(authority, repository, tags)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
@@ -113,6 +117,39 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def get_test_directory(self):
         return os.path.join(os.getcwd(), "tests")
 
+
+def import_image(authority, repository, tags):
+    logger.warning("Import image authority: {}".format(authority))
+    credential = ClientSecretCredential(
+        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
+        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
+        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
+        authority=authority
+    )
+    sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
+    audience = _get_audience(authority)
+    scope = [audience + "/.default"]
+    mgmt_client = ContainerRegistryManagementClient(
+        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
+    )
+    logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
+    registry_uri = "registry.hub.docker.com"
+    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
+    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+
+    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
+
+    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
+
+    result = mgmt_client.registries.begin_import_image(
+        rg_name,
+        registry_name,
+        parameters=import_params,
+    )
+
+    while not result.done():
+        pass
+
 @pytest.fixture(scope="session")
 def load_registry():
     if not is_live():
@@ -136,7 +173,7 @@ def load_registry():
     ]
     for repo, tag in zip(repos, tags):
         try:
-            _import_image(authority, repo, tag)
+            import_image(authority, repo, tag)
         except Exception as e:
             print(e)
 

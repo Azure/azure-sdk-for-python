@@ -159,38 +159,6 @@ def _validate_digest(data, digest):
     data_digest = _compute_digest(data)
     return data_digest == digest
 
-def _import_image(authority: str, repository: str, tags: Optional[List[str]]) -> None:
-    logger.warning("Import image authority: {}".format(authority))
-    credential = ClientSecretCredential(
-        tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-        client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-        client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-        authority=authority
-    )
-    sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
-    audience = _get_audience(authority)
-    scope = [audience + "/.default"]
-    mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
-    )
-    logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
-    registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
-
-    while not result.done():
-        pass
-
 def _get_authority(endpoint: str) -> str:
     if ".azurecr.io" in endpoint:
         logger.warning("Public cloud Authority")
