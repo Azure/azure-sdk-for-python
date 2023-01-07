@@ -88,19 +88,24 @@ class ParsedSetup:
         )
 
     def get_build_config(self) -> Dict[str, Any]:
-        toml_file = os.path.join(self.folder, "pyproject.toml")
+        return get_build_config(self.folder)
 
-        if os.path.exists(toml_file):
-            try:
-                with open(toml_file, "rb") as f:
-                    toml_dict = toml.load(f)
-                    if "tool" in toml_dict:
-                        tool_configs = toml_dict["tool"]
-                        if "azure-sdk-build" in tool_configs:
-                            return tool_configs["azure-sdk-build"]
-            except:
+def get_build_config(package: str) -> Dict[str, Any]:
+    if package.lower().endswith("setup.py"):
+        package = os.path.dirname(package)
+
+    toml_file = os.path.join(package, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        try:
+            with open(toml_file, "rb") as f:
+                toml_dict = toml.load(f)
+                if "tool" in toml_dict:
+                    tool_configs = toml_dict["tool"]
+                    if "azure-sdk-build" in tool_configs:
+                        return tool_configs["azure-sdk-build"]
+        except:
                 return {}
-
 
 def read_setup_py_content(setup_filename: str) -> str:
     """

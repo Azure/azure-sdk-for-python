@@ -107,7 +107,7 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
-def glob_packages(glob_str: str, target_root_dir: str) -> List[str]:
+def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
         individual_globs = glob_string.split(",")
     else:
@@ -121,7 +121,7 @@ def glob_packages(glob_str: str, target_root_dir: str) -> List[str]:
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    return list(set([collected_top_level_directories]))
+    return list(set(collected_top_level_directories))
 
 
 def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
@@ -172,6 +172,7 @@ def discover_targeted_packages(
 
 def is_package_check_enabled(package_path: str, check: str) -> bool:
     pass # todo
+
 
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers

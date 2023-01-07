@@ -22,7 +22,14 @@ def test_toml_result():
     assert(expected == result)
 
 def test_discovery():
-   pass
+   results = discover_targeted_packages("azure-core", core_service_root)
+   
+   # if in a set, this should be empty
+   non_empty_results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root)
+
+   assert len(results) > 1
+   assert len(non_empty_results) == 1
+
 
 def test_discovery_omit_mgmt():
    pass
