@@ -17,9 +17,9 @@ INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
+    "nspkg",
     "azure-cognitiveservices",
     "azure-servicefabric",
-    "nspkg",
     "azure-keyvault",
     "azure-synapse",
     "azure-ai-anomalydetector",
@@ -44,6 +44,7 @@ omit_regression = (
     and os.path.basename(x) not in META_PACKAGES
     and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
 )
+
 omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKAGES
 omit_build = lambda x: x  # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
@@ -169,6 +170,8 @@ def discover_targeted_packages(
 
     return sorted(collected_packages)
 
+def is_package_check_enabled(package_path: str, check: str) -> bool:
+    pass # todo
 
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
