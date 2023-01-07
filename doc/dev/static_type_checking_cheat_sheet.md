@@ -59,6 +59,7 @@ class Tree:
 
     :param str location: The location for the tree.
     :param int num_branches: The number of branches on the tree
+    :param str kind: The kind of tree.
     
     Note: :ivar: docstrings are redundant since these vars/types are captured below
     """
