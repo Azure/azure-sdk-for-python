@@ -345,7 +345,7 @@ class SearchClient(HeadersMixin):
             search_text: str,
             suggester_name: str,
             *,
-            filter: Optional[str] = None,
+            filter: Optional[str] = None,   # pylint:disable=disable=redefined-builtin
             use_fuzzy_matching: Optional[bool] = None,
             highlight_post_tag: Optional[str] = None,
             highlight_pre_tag: Optional[str] = None,
@@ -355,7 +355,6 @@ class SearchClient(HeadersMixin):
             select: Optional[List[str]] = None,
             top: Optional[int] = None,
             **kwargs) -> List[Dict]:
-        # pylint:disable=disable=redefined-builtin
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -430,7 +429,7 @@ class SearchClient(HeadersMixin):
             suggester_name: str,
             *,
             mode: Optional[Union[str, AutocompleteMode]] = None,
-            filter: Optional[str] = None,
+            filter: Optional[str] = None,   # pylint:disable=disable=redefined-builtin
             use_fuzzy_matching: Optional[bool] = None,
             highlight_post_tag: Optional[str] = None,
             highlight_pre_tag: Optional[str] = None,
@@ -438,7 +437,6 @@ class SearchClient(HeadersMixin):
             search_fields: Optional[List[str]] = None,
             top: Optional[int] = None,
             **kwargs) -> List[Dict]:
-        # pylint:disable=disable=redefined-builtin
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
