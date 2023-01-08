@@ -34,3 +34,18 @@ steps:
         --filter-type="Omit_management"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
+  
+  - task: PythonScript@0
+    displayName: 'Run Pylint Next'
+    continueOnError: true
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)" 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="next-pylint"
+        --disablecov
+        --filter-type="Omit_management"
+    env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
