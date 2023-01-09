@@ -351,20 +351,20 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     # update config file
     cadl_python = "@azure-tools/cadl-python"
     autorest_python = "@autorest/python"
-    project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
-    with open(project_yaml_path, "r") as file_in:
-        project_yaml = yaml.safe_load(file_in)
-    if not project_yaml.get("emitters", {}).get(cadl_python):
-        return
-    if not project_yaml["emitters"][cadl_python].get("sdk-folder"):
-        raise Exception("no sdk-folder is defined")
-    output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
-    if not output_path.exists():
-        os.makedirs(output_path)
+    # project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
+    # with open(project_yaml_path, "r") as file_in:
+    #     project_yaml = yaml.safe_load(file_in)
+    # if not project_yaml.get("emitters", {}).get(cadl_python):
+    #     return
+    # if not project_yaml["emitters"][cadl_python].get("sdk-folder"):
+    #     raise Exception("no sdk-folder is defined")
+    # output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
+    # if not output_path.exists():
+    #     os.makedirs(output_path)
 
-    project_yaml["emitters"][cadl_python].pop("sdk-folder")
-    with open(project_yaml_path, "w") as file_out:
-        yaml.safe_dump(project_yaml, file_out)
+    # project_yaml["emitters"][cadl_python].pop("sdk-folder")
+    # with open(project_yaml_path, "w") as file_out:
+    #     yaml.safe_dump(project_yaml, file_out)
 
     # npm install tool
     origin_path = os.getcwd()
@@ -383,12 +383,10 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # generate code
     cadl_file = "client.cadl" if Path("client.cadl").exists() else "."
-    check_call(f"npx cadl compile {cadl_file} --emit {cadl_python} --output-path={str(output_path)}", shell=True)
-    if (output_path / "output.yaml").exists():
-        os.remove(output_path / "output.yaml")
-    if not (output_path / "sdk_packaging.toml").exists():
-        with open(output_path / "sdk_packaging.toml", "w") as file_out:
-            file_out.write("[packaging]\nauto_update = false")
+    check_call(f"npx cadl compile {cadl_file} --emit {cadl_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
+    # if not (output_path / "sdk_packaging.toml").exists():
+    #     with open(output_path / "sdk_packaging.toml", "w") as file_out:
+    #         file_out.write("[packaging]\nauto_update = false")
 
     # get version of codegen used in generation
     npm_package_verstion = get_npm_package_version(autorest_python)
