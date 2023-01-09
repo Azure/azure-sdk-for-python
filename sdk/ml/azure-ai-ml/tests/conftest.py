@@ -570,6 +570,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     """
     # do nothing if in live mode and not recording
     if is_live_and_not_recording():
+        yield
         return
 
     if is_live():

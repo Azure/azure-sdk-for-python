@@ -1,5 +1,4 @@
 import re
-import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
