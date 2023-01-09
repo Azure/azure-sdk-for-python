@@ -1,5 +1,4 @@
 import argparse
-from pathlib import Path
 
 parser = argparse.ArgumentParser("score")
 parser.add_argument("--model_input", type=str, help="Path of input model")

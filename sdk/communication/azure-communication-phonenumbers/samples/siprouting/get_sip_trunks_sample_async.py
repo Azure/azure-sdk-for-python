@@ -25,7 +25,7 @@ client = SipRoutingClient.from_connection_string(connection_string)
 
 async def get_sip_trunks_sample():
     async with client:
-        sip_trunks = await client.get_trunks()
+        sip_trunks = await client.list_trunks()
 
     for trunk in sip_trunks:
         print(trunk.fqdn)

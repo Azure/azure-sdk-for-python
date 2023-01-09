@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import sys
 import os
-from typing import List
+import shutil
+import sys
+from typing import List, Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -16,6 +17,7 @@ from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
     CLI_NOT_FOUND,
     COMMAND_LINE,
+    EXECUTABLE_NAME,
     get_safe_working_dir,
     NOT_LOGGED_IN,
     parse_token,
@@ -34,13 +36,18 @@ class AzureCliCredential(AsyncContextManager):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -81,11 +88,15 @@ class AzureCliCredential(AsyncContextManager):
 
         return token
 
-    async def close(self):
+    async def close(self) -> None:
         """Calling this method is unnecessary"""
 
 
 async def _run_command(command: str) -> str:
+    # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
+    if shutil.which(EXECUTABLE_NAME) is None:
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:
@@ -105,7 +116,7 @@ async def _run_command(command: str) -> str:
         output = stdout_b.decode()
         stderr = stderr_b.decode()
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
+        # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
@@ -115,6 +126,7 @@ async def _run_command(command: str) -> str:
     if proc.returncode == 0:
         return output
 
+    # Fallback check in case the executable is not found while executing subprocess.
     if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 

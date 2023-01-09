@@ -189,11 +189,11 @@ poller = self.phone_number_client.begin_update_phone_number_capabilities(
 Get the list of currently configured trunks or routes.
 
 ```python
-trunks = sip_routing_client.get_trunks()
+trunks = sip_routing_client.list_trunks()
 for trunk in trunks:
     print(trunk.fqdn)
     print(trunk.sip_signaling_port)
-routes = sip_routing_client.get_routes()
+routes = sip_routing_client.list_routes()
 for route in routes:
     print(route.name)
     print(route.description)
