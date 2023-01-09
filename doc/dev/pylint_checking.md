@@ -6,8 +6,8 @@ Cheat sheet for pylint general guidelines in the Python client SDK library.
   - [General Guidance](#general-guidance)
   - [What is Pylint?](#what-is-pylint)
   - [How to run Pylint?](#how-to-run-pylint)
-  - [Ignoring Pylint Checkers](#ignore-pylint-checkers)
-  - [Updating Pylint Checker Plugin Steps](#updating-pylint-checker-plugin-steps)
+  - [Ignoring Pylint Checkers](#ignoring-pylint-checkers)
+  - [Updating Pylint Checker Plugin](#updating-pylint-checker-plugin)
   - [Next Pylint](#next-pylint)
   - [Updating Pylint](#updating-pylint)
 
@@ -22,7 +22,7 @@ In the Azure SDK for Python repository, in addition to the standard pylint libra
 
 #### How to run Pylint?
 
-One way to run pylint is to run it at the package level with tox:
+One way to run pylint is to run at the package level with tox:
 
     .../azure-sdk-for-python/sdk/eventgrid/azure-eventgrid>tox -e pylint -c ../../../eng/tox/tox.ini
 
@@ -43,14 +43,13 @@ If you don't want to use tox you can also install and run pylint on its own:
 
 ## Ignoring Pylint Checkers
 
-<!-- how and when to ignore pylint checkers, status for ignoring really bad custom checkers versus specific ones add to pylintrc file -->
 There are three ways to ignore pylint checkers:
 - If there is a pylint checker within your SDK that you do not think applies, or that you wish to ignore for that specific scenario (i.e protected-access) you can locally ignore on either the specific line of the warning with a comment `# pylint:disable=protected-access`, or if it appears multiple times within a file you can ignore all related warnings in that file by putting the disable comment at the top of the file.
 - Another way to disable a pylint checker is by putting in under the `disable` list in the `pylintrc` file. This should only happen if the checker is giving too many false positives, or is not applicable to our general library. Any additions to the pylintrc file should be discussed beforehand. 
 - (Not Recommended) The last way to disable a checker is by ignoring the entire package in the [environment_exclusions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/ci_tools/environment_exclusions.py) or as a temporary fix ignoring parts of the package via the pylintrc `ignore-paths` option. 
         
 
-### Updating Pylint Checker Plugin Steps
+### Updating Pylint Checker Plugin
 
 Info on the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/pylint-guidelines-checker)
 
