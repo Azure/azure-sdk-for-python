@@ -5,14 +5,9 @@
 # --------------------------------------------------------------------------
 
 import logging
-import sys
+import re
 from typing import List, Tuple
-
-try:
-    from urllib.parse import urlparse, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import unquote # type: ignore
+from urllib.parse import unquote, urlparse
 
 try:
     from yarl import URL
@@ -29,9 +24,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from . import sign_string
 
-
 logger = logging.getLogger(__name__)
-
 
 
 # wraps a given exception with the desired exception type
@@ -39,14 +32,7 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if ex.args:
         msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
-    # TODO: In the future we will log the trace
-    return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+    return desired_type(msg)
 
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
@@ -164,4 +150,39 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
-        #logger.debug("String_to_sign=%s", string_to_sign)
+        # logger.debug("String_to_sign=%s", string_to_sign)
+
+
+class StorageHttpChallenge(object):
+    def __init__(self, challenge):
+        """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
+        self._parameters = {}
+        self.scheme, trimmed_challenge = challenge.strip().split(" ", 1)
+
+        # name=value pairs either comma or space separated with values possibly being
+        # enclosed in quotes
+        for item in re.split('[, ]', trimmed_challenge):
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    self._parameters[key] = value
+
+        # Extract and verify required parameters
+        self.authorization_uri = self._parameters.get('authorization_uri')
+        if not self.authorization_uri:
+            raise ValueError("Authorization Uri not found")
+
+        self.resource_id = self._parameters.get('resource_id')
+        if not self.resource_id:
+            raise ValueError("Resource id not found")
+
+        uri_path = urlparse(self.authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0]
+
+    def get_value(self, key):
+        return self._parameters.get(key)

@@ -378,6 +378,17 @@ to the process of updating recordings.
 
 #### Update test recordings
 
+##### Environment prerequisites
+
+- The targeted library is already migrated to use the test proxy.
+- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
+- [Docker][docker_install] or [Podman][podman] is installed.
+- Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
+  - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
+- The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user (in your environment or your local `.env` file).
+  - This token is necessary for authenticating git requests made in a Docker/Podman container.
+- Membership in the `azure-sdk-write` GitHub group.
+
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
 `AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
 `azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
@@ -709,6 +720,8 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
 [generate_sas_example]: https://github.com/Azure/azure-sdk-for-python/blob/3e3fbe818eb3c80ffdf6f9f1a86affd7e879b6ce/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1691
+[git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
+[git_token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255

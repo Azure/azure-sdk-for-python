@@ -17,6 +17,8 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MODIFY_PROPERTIES = "ModifyProperties"
     #: Run a playbook on an object
     RUN_PLAYBOOK = "RunPlaybook"
+    #: Add a task to an incident object
+    ADD_INCIDENT_TASK = "AddIncidentTask"
 
 
 class AlertDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -26,6 +28,29 @@ class AlertDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISPLAY_NAME = "DisplayName"
     #: Alert severity
     SEVERITY = "Severity"
+
+
+class AlertProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The V3 alert property."""
+
+    #: Alert's link
+    ALERT_LINK = "AlertLink"
+    #: Confidence level property
+    CONFIDENCE_LEVEL = "ConfidenceLevel"
+    #: Confidence score
+    CONFIDENCE_SCORE = "ConfidenceScore"
+    #: Extended links to the alert
+    EXTENDED_LINKS = "ExtendedLinks"
+    #: Product name alert property
+    PRODUCT_NAME = "ProductName"
+    #: Provider name alert property
+    PROVIDER_NAME = "ProviderName"
+    #: Product component name alert property
+    PRODUCT_COMPONENT_NAME = "ProductComponentName"
+    #: Remediation steps alert property
+    REMEDIATION_STEPS = "RemediationSteps"
+    #: Techniques alert property
+    TECHNIQUES = "Techniques"
 
 
 class AlertRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -309,6 +334,21 @@ class AutomationRulePropertyConditionSupportedProperty(str, Enum, metaclass=Case
     URL = "Url"
 
 
+class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Categories of recommendations."""
+
+    #: Onboarding recommendation.
+    ONBOARDING = "Onboarding"
+    #: New feature recommendation.
+    NEW_FEATURE = "NewFeature"
+    #: Soc Efficiency recommendation.
+    SOC_EFFICIENCY = "SocEfficiency"
+    #: Cost optimization recommendation.
+    COST_OPTIMIZATION = "CostOptimization"
+    #: Demo recommendation.
+    DEMO = "Demo"
+
+
 class ConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ConditionType."""
 
@@ -370,6 +410,19 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ANALYTIC_RULE = "AnalyticRule"
     WORKBOOK = "Workbook"
+
+
+class Context(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Context of recommendation."""
+
+    #: Analytics context.
+    ANALYTICS = "Analytics"
+    #: Incidents context.
+    INCIDENTS = "Incidents"
+    #: Overview context.
+    OVERVIEW = "Overview"
+    #: No context.
+    NONE = "None"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -854,6 +907,15 @@ class IncidentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLOSED = "Closed"
 
 
+class IncidentTaskStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IncidentTaskStatus."""
+
+    #: A new task
+    NEW = "New"
+    #: A completed task
+    COMPLETED = "Completed"
+
+
 class IngestionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes how to ingest the records in the file."""
 
@@ -866,7 +928,7 @@ class IngestionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class KillChainIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Holds the alert intent stage(s) mapping for this alert."""
+    """The intent of the alert."""
 
     #: The default value.
     UNKNOWN = "Unknown"
@@ -1047,6 +1109,17 @@ class PollingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ONCE_A_DAY = "OnceADay"
 
 
+class Priority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Priority of recommendation."""
+
+    #: Low priority for recommendation.
+    LOW = "Low"
+    #: Medium priority for recommendation.
+    MEDIUM = "Medium"
+    #: High priority for recommendation.
+    HIGH = "High"
+
+
 class ProviderName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provider name."""
 
@@ -1159,6 +1232,21 @@ class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCAL_FILE = "Local file"
     REMOTE_STORAGE = "Remote storage"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of recommendation."""
+
+    #: Recommendation is active.
+    ACTIVE = "Active"
+    #: Recommendation is disabled.
+    DISABLED = "Disabled"
+    #: Recommendation has been completed by user.
+    COMPLETED_BY_USER = "CompletedByUser"
+    #: Recommendation has been completed by action.
+    COMPLETED_BY_ACTION = "CompletedByAction"
+    #: Recommendation is hidden.
+    HIDDEN = "Hidden"
 
 
 class SupportTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):

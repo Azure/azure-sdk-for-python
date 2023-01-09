@@ -1,14 +1,12 @@
 from typing import Callable
 
-from devtools_testutils import is_live
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities._compute.aml_compute import AmlCompute
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.e2etest
@@ -31,6 +29,7 @@ class TestCompute(AzureRecordedTestCase):
         compute_resource_get: AmlCompute = client.compute.get(name=compute_name)
         assert compute_resource_get.name == compute_name
         assert compute_resource_get.tier == "dedicated"
+        assert compute_resource_get.location == compute.location
 
         compute_resource_get.idle_time_before_scale_down = 200
         compute_update_poller = client.compute.begin_update(compute_resource_get)

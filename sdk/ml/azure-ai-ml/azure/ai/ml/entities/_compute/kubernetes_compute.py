@@ -11,8 +11,8 @@ from azure.ai.ml._schema.compute.kubernetes_compute import KubernetesComputeSche
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._util import load_from_dict
 
 
 class KubernetesCompute(Compute):
@@ -41,9 +41,9 @@ class KubernetesCompute(Compute):
     def __init__(
         self,
         *,
-        namespace: Optional[str] = "default",
+        namespace: str = "default",
         properties: Optional[Dict[str, Any]] = None,
-        identity: IdentityConfiguration = None,
+        identity: Optional[IdentityConfiguration] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.KUBERNETES

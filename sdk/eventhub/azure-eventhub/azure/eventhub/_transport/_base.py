@@ -21,6 +21,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple
+    TRANSPORT_IDENTIFIER: str
 
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
@@ -52,6 +53,17 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param uamqp.Message or pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
         :rtype: uamqp.Message or pyamqp.Message
         """
 

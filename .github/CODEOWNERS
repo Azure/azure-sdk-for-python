@@ -44,7 +44,7 @@
 
 # PRLabel: %App Configuration Provider
 /sdk/appconfiguration/azure-appconfiguration-provider/
-@mametcal @albertofori @avanigupta
+@mametcal @albertofori @avanigupta @mrm9084
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
@@ -725,7 +725,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @derek1ee
 
 # ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @brjohnstmsft @bleroy @tjacobhi @markheff @miwelsh
+#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
 
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav

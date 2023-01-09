@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class TokenCachePersistenceOptions(object):
+class TokenCachePersistenceOptions:
     """Options for persistent token caching.
 
     Most credentials accept an instance of this class to configure persistent token caching. The default values
@@ -46,10 +46,16 @@ class TokenCachePersistenceOptions(object):
         always try to encrypt its data.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        self.allow_unencrypted_storage = kwargs.get("allow_unencrypted_storage", False)
-        self.name = kwargs.get("name", "msal.cache")
+    def __init__(
+            self,
+            *,
+            allow_unencrypted_storage: bool = False,
+            name: str = "msal.cache",
+            **kwargs: Any
+    ) -> None:
+        # pylint:disable=unused-argument
+        self.allow_unencrypted_storage = allow_unencrypted_storage
+        self.name = name
 
 
 def _load_persistent_cache(options):

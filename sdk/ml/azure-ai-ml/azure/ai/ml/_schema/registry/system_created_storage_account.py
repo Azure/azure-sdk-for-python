@@ -6,11 +6,11 @@
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-
 from azure.ai.ml._schema import StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._registry import StorageAccountType
+
 
 @experimental
 class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
@@ -18,9 +18,10 @@ class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
     storage_account_hns = fields.Bool(load_default=False)
     storage_account_type = StringTransformedEnum(
         load_default=StorageAccountType.STANDARD_LRS,
-        allowed_values=[accountType.value for accountType in StorageAccountType], casing_transform=lambda x: x.lower()
+        allowed_values=[accountType.value for accountType in StorageAccountType],
+        casing_transform=lambda x: x.lower(),
     )
-    replication_count = fields.Int(load_default=1, validate=lambda count : count > 0)
+    replication_count = fields.Int(load_default=1, validate=lambda count: count > 0)
     replicated_ids = fields.List(fields.Str(), dump_only=True)
 
     @post_load

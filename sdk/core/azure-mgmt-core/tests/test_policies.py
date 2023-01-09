@@ -25,14 +25,8 @@
 
 import json
 import time
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from unittest import mock
 import pytest
-
-import requests
 import httpretty
 
 from azure.core.configuration import Configuration
