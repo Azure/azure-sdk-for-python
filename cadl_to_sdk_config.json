@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@azure-tools/cadl-python": "0.4.15",
-    "@autorest/python": "6.2.14"
+    "@azure-tools/cadl-python": "latest"
   }
 }
