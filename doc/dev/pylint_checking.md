@@ -14,9 +14,6 @@ Cheat sheet for pylint general guidelines in the Python client SDK library.
 
 ## General Guidance 
 
-
-<!-- How pylint works, how to run it, how to install , what pylint warnings look like -- what do the different types mean  -->
-
 #### What is pylint?
 
 Pylint is a set of (mostly) [astroid](https://pylint.pycqa.org/projects/astroid/en/latest/index.html) based checkers that run static analysis on your code and check that your formatting aligns with Python's style guide (i.e [PEPs](https://peps.python.org/)). 
@@ -54,17 +51,11 @@ There are three ways to ignore pylint checkers:
         
 
 ### Updating Pylint Checker Plugin Steps
-<!-- 
-Explain the custom checkers here, or the process of how to create a custom checker and add it to the custom plugin and how the custom plugin works on apiview and how to add it to the ci etc. 
-
-how to implement updates to the checkers  -->
 
 Info on the custom pylint checkers [here](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/pylint-guidelines-checker)
 
 The custom pylint checkers in addition to being a part of the CI pipeline are also integrated into ApiView and will show as warnings there. 
 
-
-<!-- when there is a version bump how will that be handled by the CI and how to deal with it , next-pylint and what to do in next-pylint -->
 ### Next Pylint
 
 There is now a new step on the CI pipeline called `Run Pylint Next`. This is merely a duplicate of the `Run Pylint` step with the exception that `Run Pylint Next` has the newer version of pylint and the newer version of the custom pylint checkers. 
