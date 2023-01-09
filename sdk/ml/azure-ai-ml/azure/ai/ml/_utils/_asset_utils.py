@@ -318,7 +318,6 @@ def get_local_paths(
     """
     local_paths = []
     symlink_dict = {}
-    symlinks = []
 
     def walk_directory_including_symlinks(source: Union[str, os.PathLike]) -> List[Tuple[str, str]]:
         """
@@ -339,7 +338,6 @@ def get_local_paths(
                     # Follow the symlink and add the target to the list of directories to walk
                     target = os.readlink(filename)
                     target = os.path.abspath(target)
-                    symlinks.append(file)
                     if os.path.isdir(target):
                         dirs.append(target)
 
@@ -351,7 +349,6 @@ def get_local_paths(
                         "directory": False
                     }
                     if os.path.isdir(target):
-                        symlinks.remove(file)
                         symlink_dict[file]["directory"] = True
                     else:
                         yield root, file
