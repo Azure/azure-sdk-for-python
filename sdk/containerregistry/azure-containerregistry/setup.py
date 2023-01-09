@@ -25,7 +25,7 @@ setup(
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
-    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
+    description=f"Microsoft Azure {PACKAGE_PPRINT_NAME} Client Library for Python",
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -37,14 +37,16 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
     # pylint:disable=protected-access
     async def begin_backup(
-        self, blob_storage_url: str, sas_token: str, **kwargs: "Any"
+        self, blob_storage_url: str, sas_token: str, **kwargs
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
             https://<account>.blob.core.windows.net/backup
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
+
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
 
@@ -89,7 +91,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs: "Any") -> "AsyncLROPoller":
+    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "AsyncLROPoller":
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -99,8 +101,10 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
+
         :rtype: ~azure.core.polling.AsyncLROPoller
 
         Examples:
