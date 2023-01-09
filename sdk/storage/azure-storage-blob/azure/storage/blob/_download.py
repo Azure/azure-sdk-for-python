@@ -14,6 +14,7 @@ from typing import Generic, IO, Iterator, Optional, TypeVar
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
+from ._shared.checksum import verify_download_checksum
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from ._deserialize import deserialize_blob_properties, get_page_ranges_result
@@ -40,11 +41,15 @@ def process_range_and_offset(start_range, end_range, length, encryption_options,
     return (start_range, end_range), (start_offset, end_offset)
 
 
-def process_content(data, start_offset, end_offset, encryption):
+def process_content(data, start_offset, end_offset, encryption, checksum):
     if data is None:
         raise ValueError("Response cannot be None.")
 
     content = b"".join(list(data))
+
+    # Verify download checksum if specified. Do this before decryption.
+    if checksum:
+        verify_download_checksum(data.response, content, checksum)
 
     if content and encryption.get("key") is not None or encryption.get("resolver") is not None:
         try:
@@ -75,6 +80,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         stream=None,
         parallel=None,
         validate_content=None,
+        checksum=None,
         encryption_options=None,
         encryption_data=None,
         progress_hook=None,
@@ -108,6 +114,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
         # Parameters for each get operation
         self.validate_content = validate_content
+        self.checksum = checksum
         self.request_options = kwargs
 
     def _calculate_range(self, chunk_start):
@@ -188,10 +195,10 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         if self._do_optimize(download_range[0], download_range[1]):
             chunk_data = b"\x00" * self.chunk_size
         else:
-            range_header, range_validation = validate_and_format_range_headers(
+            range_header = validate_and_format_range_headers(
                 download_range[0],
                 download_range[1],
-                check_content_md5=self.validate_content
+                validate_content=self.validate_content or self.checksum
             )
 
             retry_active = True
@@ -200,7 +207,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     _, response = self.client.download(
                         range=range_header,
-                        range_get_content_md5=range_validation,
+                        range_get_content_md5=self.validate_content or self.checksum == 'md5' or None,
+                        range_get_content_crc64=self.checksum == 'crc64' or None,
                         validate_content=self.validate_content,
                         data_stream_total=self.total_size,
                         download_stream_current=self.progress_total,
@@ -210,7 +218,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                     process_storage_error(error)
 
                 try:
-                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+                    chunk_data = process_content(response, offset[0], offset[1], self.encryption_options, self.checksum)
                     retry_active = False
                 except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
@@ -326,6 +334,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
+        self._checksum = kwargs.pop('checksum', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -343,12 +352,13 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             self._get_encryption_data_request()
 
+        self._first_get_size = self._config.max_single_get_size
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
-        self._first_get_size = (
-            self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
-        )
+        if self._validate_content or self._checksum:
+            self._first_get_size = self._config.max_chunk_get_size
+
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -403,12 +413,12 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._request_options['cls'] = download_cls
 
     def _initial_request(self):
-        range_header, range_validation = validate_and_format_range_headers(
+        range_header = validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content
+            validate_content=self._validate_content or self._checksum
         )
 
         retry_active = True
@@ -417,7 +427,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             try:
                 location_mode, response = self._clients.blob.download(
                     range=range_header,
-                    range_get_content_md5=range_validation,
+                    range_get_content_md5=self._validate_content or self._checksum == 'md5' or None,
+                    range_get_content_crc64=self._checksum == 'crc64' or None,
                     validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
@@ -445,6 +456,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self.size = self._file_size
 
             except HttpResponseError as error:
+                # TODO: Handle empty blob
                 if self._start_range is None and error.response and error.response.status_code == 416:
                     # Get range will fail on an empty file. If the user did not
                     # request a range, do a regular get request in order to get
@@ -473,7 +485,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         response,
                         self._initial_offset[0],
                         self._initial_offset[1],
-                        self._encryption_options
+                        self._encryption_options,
+                        self._checksum
                     )
                 retry_active = False
             except (IncompleteReadError, HttpResponseError, DecodeError) as error:
@@ -621,6 +634,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 stream=stream,
                 parallel=parallel,
                 validate_content=self._validate_content,
+                checksum=self._checksum,
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
@@ -753,6 +767,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             stream=stream,
             parallel=parallel,
             validate_content=self._validate_content,
+            checksum=self._checksum,
             encryption_options=self._encryption_options,
             encryption_data=self._encryption_data,
             use_location=self._location_mode,

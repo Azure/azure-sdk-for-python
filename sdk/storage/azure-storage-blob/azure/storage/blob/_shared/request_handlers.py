@@ -111,8 +111,12 @@ def read_length(data):
 
 
 def validate_and_format_range_headers(
-        start_range, end_range, start_range_required=True,
-        end_range_required=True, check_content_md5=False, align_to_page=False):
+        start_range,
+        end_range,
+        start_range_required=True,
+        end_range_required=True,
+        validate_content=False,
+        align_to_page=False):
     # If end range is provided, start range must be provided
     if (start_range_required or end_range is not None) and start_range is None:
         raise ValueError("start_range value cannot be None.")
@@ -135,16 +139,14 @@ def validate_and_format_range_headers(
     elif start_range is not None:
         range_header = "bytes={0}-".format(start_range)
 
-    # Content MD5 can only be provided for a complete range less than 4MB in size
-    range_validation = None
-    if check_content_md5:
+    # Content validation can only be provided for a complete range less than 4MB in size
+    if validate_content:
         if start_range is None or end_range is None:
-            raise ValueError("Both start and end range required for MD5 content validation.")
+            raise ValueError("Both start and end range required for content validation.")
         if end_range - start_range > 4 * 1024 * 1024:
-            raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
-        range_validation = 'true'
+            raise ValueError("Getting content MD5/CRC64 for a range greater than 4MB is not supported.")
 
-    return range_header, range_validation
+    return range_header
 
 
 def add_metadata_headers(metadata=None):

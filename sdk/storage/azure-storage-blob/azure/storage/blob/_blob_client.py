@@ -2462,7 +2462,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         range_header = None
         if source_offset is not None:
-            range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+            range_header = validate_and_format_range_headers(source_offset, source_length)
 
         cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
@@ -2928,7 +2928,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
             length = offset + length - 1  # Reformat to an inclusive range index
-        page_range, _ = validate_and_format_range_headers(
+        page_range = validate_and_format_range_headers(
             offset, length, start_range_required=False, end_range_required=False, align_to_page=True
         )
         options = {

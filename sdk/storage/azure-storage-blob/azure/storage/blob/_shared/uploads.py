@@ -5,46 +5,23 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-import hashlib
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import Optional, Tuple
 
 import six
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
+from .checksum import get_content_checksum
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-
-from ..crc64 import compute_crc64
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
-
-
-def calculate_content_md5(data: bytes) -> bytes:
-    md5 = hashlib.md5()
-    md5.update(data)
-    return md5.digest()
-
-
-def calculate_content_crc64(data: bytes) -> bytes:
-    crc64 = compute_crc64(data, 0)
-    return crc64.to_bytes(8, 'little')
-
-
-def get_content_checksum(checksum: str, data: bytes) -> Tuple[Optional[bytes], Optional[bytes]]:
-    content_md5, content_crc64 = None, None
-    if checksum == 'md5':
-        content_md5 = calculate_content_md5(data)
-    elif checksum == 'crc64':
-        content_crc64 = calculate_content_crc64(data)
-    return content_md5, content_crc64
 
 
 def _parallel_uploads(executor, uploader, pending, running):

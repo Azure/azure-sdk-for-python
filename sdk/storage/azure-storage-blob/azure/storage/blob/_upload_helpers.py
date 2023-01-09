@@ -5,17 +5,16 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
-import hashlib
 from io import SEEK_SET, UnsupportedOperation
 from typing import TypeVar, TYPE_CHECKING
 
 import six
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 
+from ._shared.checksum import get_content_checksum
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.models import StorageErrorCode
 from ._shared.uploads import (
-    get_content_checksum,
     upload_data_chunks,
     upload_substream_blocks,
     BlockBlobChunkUploader,

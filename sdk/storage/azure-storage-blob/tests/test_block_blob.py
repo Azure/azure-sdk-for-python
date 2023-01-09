@@ -1880,4 +1880,43 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True, checksum='crc64')
         assert blob_client.download_blob().readall() == data
 
-#------------------------------------------------------------------------------
+    @BlobPreparer()
+    def test_download_blob_checksum(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        data = b'Hello World Checksum!'
+        blob_client = self._create_blob(data=data)
+
+        result = blob_client.download_blob(checksum='md5').readall()
+        assert result == data
+
+        result = blob_client.download_blob(checksum='crc64').readall()
+        assert result == data
+
+    @BlobPreparer()
+    def test_download_blob_checksum_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self._get_blob_reference()
+        data = b'12345' * 1024
+
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_get_size=1024, max_chunk_get_size=1024)
+        blob_client.upload_blob(data, overwrite=True)
+
+        result = blob_client.download_blob(checksum='md5').readall()
+        assert result == data
+
+        result = blob_client.download_blob(checksum='crc64').readall()
+        assert result == data
+
+# ------------------------------------------------------------------------------
