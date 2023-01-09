@@ -91,15 +91,15 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         self, credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]
     ) -> None:
         if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenChallengePolicy(  # type: ignore
-                credential, STORAGE_OAUTH_SCOPE
+            self._credential_policy = AsyncBearerTokenChallengePolicy(
+                credential, STORAGE_OAUTH_SCOPE # type: ignore
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = AzureSasCredentialPolicy(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = SharedKeyCredentialPolicy(credential) # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 

@@ -7,12 +7,11 @@ import os
 import sys
 
 from typing import Any, Dict, List, Optional, Mapping, Union
-from uuid import uuid4
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
+from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
@@ -269,15 +268,15 @@ class TablesBaseClient(AccountHostsMixin):
         self, credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]
     ) -> None:
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenChallengePolicy(  # type: ignore
-                credential, STORAGE_OAUTH_SCOPE
+            self._credential_policy = BearerTokenChallengePolicy(
+                credential, STORAGE_OAUTH_SCOPE # type: ignore
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = AzureSasCredentialPolicy(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = SharedKeyCredentialPolicy(credential) # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 

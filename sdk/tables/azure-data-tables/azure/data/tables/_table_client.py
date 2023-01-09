@@ -14,7 +14,7 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
