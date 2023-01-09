@@ -31,7 +31,7 @@ from ._table_batch import TableBatchOperations, EntityType, TransactionOperation
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
 
 
-class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(TablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -57,6 +57,10 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential` or
             :class:`~azure.core.credentials.TokenCredential`
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
+
         :returns: None
         """
         if not table_name:

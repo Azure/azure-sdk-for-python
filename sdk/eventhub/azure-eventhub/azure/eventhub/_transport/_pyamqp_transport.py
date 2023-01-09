@@ -141,6 +141,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return Message(**message_dict)
 
     @staticmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
+        :rtype: pyamqp.Message
+        """
+        if not message.application_properties:
+            message = message._replace(application_properties={})
+        message.application_properties.setdefault(key, value)
+        return message
+
+    @staticmethod
     def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.

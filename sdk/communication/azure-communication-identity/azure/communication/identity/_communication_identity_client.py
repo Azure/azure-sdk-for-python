@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, Tuple
+from typing import TYPE_CHECKING, Any, Tuple, Union
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
@@ -18,7 +18,7 @@ from ._api_versions import DEFAULT_VERSION
 from ._utils import convert_timedelta_to_mins
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from ._generated.models import CommunicationTokenScope
 
 
@@ -27,8 +27,8 @@ class CommunicationIdentityClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The TokenCredential we use to authenticate against the service.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Identity API version.
         Default value is "2022-06-01". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -43,7 +43,7 @@ class CommunicationIdentityClient(object):
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: TokenCredential
+            credential, # type: Union[TokenCredential, AzureKeyCredential]
             **kwargs # type: Any
         ):
         # type: (...) -> None

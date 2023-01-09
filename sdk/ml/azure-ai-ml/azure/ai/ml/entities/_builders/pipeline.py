@@ -133,7 +133,10 @@ class Pipeline(BaseNode):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            inputs=self._job_inputs,
+            # Filter None out to avoid case below failed with conflict keys check:
+            # group: None (user not specified)
+            # group.xx: 1 (user specified
+            inputs={k: v for k, v in self._job_inputs.items() if v},
             outputs=self._job_outputs,
             component=self.component,
             settings=self.settings,

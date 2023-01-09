@@ -1,12 +1,15 @@
 import os
 import shutil
 import sys
+import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
 import pydash
 import pytest
+
+from conftest import normalized_arm_id_in_object
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
@@ -498,16 +501,16 @@ class TestCommandComponentEntity:
         assert validation_result.passed
 
     def test_component_code_asset_ignoring_pycache(self) -> None:
-        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
         component = load_component(component_yaml)
-        # create some files/folders expected to ignore
-        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
-        try:
-            if not pycache.is_dir():
-                pycache.mkdir()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # create some files/folders expected to ignore
+            pycache = Path(temp_dir) / "__pycache__"
+            pycache.mkdir()
             expected_exclude = pycache / "a.pyc"
             expected_exclude.touch()
             # resolve and test for ignore_file's is_file_excluded
+            component.code = temp_dir
             with component._resolve_local_code() as code:
                 excluded = []
                 for root, _, files in os.walk(code.path):
@@ -516,6 +519,16 @@ class TestCommandComponentEntity:
                         if code._ignore_file.is_file_excluded(path):
                             excluded.append(path)
                 assert excluded == [str(expected_exclude.absolute())]
-        finally:
-            if pycache.is_dir():
-                shutil.rmtree(pycache)
+
+    def test_normalized_arm_id_in_component_dict(self):
+        component_dict = {
+            "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx"
+        }
+        normalized_arm_id_in_object(component_dict)
+
+        expected_dict = {
+            'code': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx',
+            'environment': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx'
+        }
+        assert component_dict == expected_dict
