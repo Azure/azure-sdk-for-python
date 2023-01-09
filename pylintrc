@@ -16,7 +16,7 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,inconsistent-return-statements
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,bad-continuation,check-docstrings,import-outside-toplevel,super-with-arguments,inconsistent-return-statements, raise-missing-from
 
 [FORMAT]
 max-line-length=120
