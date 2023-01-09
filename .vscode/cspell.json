@@ -279,6 +279,8 @@
     "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pylintrc",
+    "PYLTINRC",
     "pyodide",
     "pyright",
     "pyrightconfig",
