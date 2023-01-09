@@ -345,10 +345,18 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     return None
                 return _input_output_data._data_binding()
 
+            def _is_group_input(_input_obj) -> bool:
+                # exclude group input for now as it only comes from pipeline input now
+                # TODO: update validate init/finalize logic after supporting group as output
+                return not hasattr(_input_obj, "_data")
+
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name]._data)
+                _input = _validate_job.inputs[_input_name]
+                if _is_group_input(_input):
+                    continue
+                _data_binding = _try_get_data_binding(_input._data)
                 if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
@@ -357,7 +365,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 if _is_control_flow_node(_job_name):
                     continue
                 for _input_name in _job.inputs:
-                    _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
+                    _input = _job.inputs[_input_name]
+                    if _is_group_input(_input):
+                        continue
+                    _data_binding = _try_get_data_binding(_input._data)
                     if _data_binding is not None and is_data_binding_expression(
                         _data_binding, ["parent", "jobs", _validate_job_name]
                     ):
