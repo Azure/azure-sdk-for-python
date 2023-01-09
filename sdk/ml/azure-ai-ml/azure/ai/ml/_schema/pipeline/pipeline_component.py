@@ -237,6 +237,7 @@ class PipelineSchema(BaseNodeSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference
             PipelineComponentFileRefField(),
+            PipelineComponentSchema(dump_only=True),
         ],
         required=True,
     )
