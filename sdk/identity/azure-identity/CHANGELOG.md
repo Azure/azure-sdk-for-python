@@ -16,8 +16,6 @@
 
 - Fixed an issue where `AzureCliCredential` would return the wrong error message when the Azure CLI was not installed on non-English consoles. ([#27965](https://github.com/Azure/azure-sdk-for-python/issues/27965))
 
-### Other Changes
-
 ## 1.12.0 (2022-11-08)
 
 ### Bugs Fixed
