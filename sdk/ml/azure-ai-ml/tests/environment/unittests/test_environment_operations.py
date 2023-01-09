@@ -12,11 +12,10 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     EnvironmentVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, OrderString
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.core.paging import ItemPaged
 
 
 @pytest.fixture
@@ -63,9 +62,7 @@ class TestEnvironmentOperations:
         mock_environment_operation.list(name="name")
         mock_environment_operation._version_operations.list.assert_called_once()
 
-    def test_list_versions_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_list_versions_with_azureml_prefix(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
             mock_environment_operation.list(name=ARM_ID_PREFIX + name)
@@ -78,9 +75,7 @@ class TestEnvironmentOperations:
             mock_environment_operation.get("random_name", "1")
         mock_environment_operation._version_operations.get.assert_called_once()
 
-    def test_get_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_get_with_azureml_prefix(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
             mock_environment_operation.get(ARM_ID_PREFIX + name, "random_name")
@@ -88,9 +83,7 @@ class TestEnvironmentOperations:
         args, kwargs = mock_environment_operation._version_operations.get.call_args
         assert name == kwargs.get("name")
 
-    def test_get_no_version(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_get_no_version(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with pytest.raises(Exception):
             mock_environment_operation.get(name=name)
@@ -109,8 +102,11 @@ class TestEnvironmentOperations:
         env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
         assert env._auto_increment_version
         env.version = None
-        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None), patch(
-            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version") as mock_nextver:
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version"
+        ) as mock_nextver:
             mock_environment_operation.create_or_update(env)
             mock_nextver.assert_called_once()
 
