@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "yyc-test": "0.0.1"
+    "@azure-tools/cadl-python": "0.4.15",
+    "@autorest/python": "6.2.14"
   }
 }
