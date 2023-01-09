@@ -412,12 +412,44 @@ Reference documentation is available [here](https://azuresdkdocs.blob.core.windo
 The EventHubs SDK integrates nicely with the [Schema Registry][schemaregistry_service] service and [Avro][avro].
 For more information, please refer to [Schema Registry SDK][schemaregistry_repo] and [Schema Registry Avro Encoder SDK][schemaregistry_avroencoder_repo].
 
+### Pure Python AMQP Transport and Backward Compatibility Support
+
+The Azure Event Hubs client library is now based on a pure Python AMQP implementation. `uAMQP` has been removed as required dependency.
+
+To use `uAMQP` as the underlying transport:
+
+1. Install `uamqp` with pip.
+
+```
+$ pip install uamqp 
+```
+
+2. Pass `uamqp_transport=True` during client construction.
+
+```python
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+consumer_group = '<< CONSUMER GROUP >>'
+eventhub_name = '<< NAME OF THE EVENT HUB >>'
+
+client = EventHubProducerClient.from_connection_string(
+    connection_str, eventhub_name=eventhub_name, uamqp_transport=True
+)
+client = EventHubConsumerClient.from_connection_string(
+    connection_str, consumer_group, eventhub_name=eventhub_name, uamqp_transport=True
+)
+```
+
+Note: The `message` attribute on `EventData`/`EventDataBatch`, which previously exposed the `uamqp.Message`, has been deprecated.
+ The "Legacy" objects returned by `EventData.message`/`EventDataBatch.message` have been introduced to help facilitate the transition.
+
 ### Building uAMQP wheel from source
 
-`azure-eventhub` depends on the [uAMQP](https://pypi.org/project/uamqp/) for the AMQP protocol implementation.
-uAMQP wheels are provided for most major operating systems and will be installed automatically when installing `azure-eventhub`.
+If [uAMQP](https://pypi.org/project/uamqp/) is intended to be used as the underlying AMQP protocol implementation for `azure-eventhub`,
+uAMQP wheels can be found for most major operating systems.
 
-If you're running on a platform for which uAMQP wheels are not provided, please follow
+If you intend to use `uAMQP` and you're running on a platform for which uAMQP wheels are not provided, please follow
  the [uAMQP Installation](https://github.com/Azure/azure-uamqp-python#installation) guidance to install from source.
 
 ### Provide Feedback

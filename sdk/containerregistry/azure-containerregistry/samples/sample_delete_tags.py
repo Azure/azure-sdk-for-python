@@ -51,7 +51,7 @@ class DeleteTags(object):
                 ):
                     tag_count += 1
                     if tag_count > 3:
-                        print("Deleting {}:{}".format(repository, tag.name))
+                        print(f"Deleting {repository}:{tag.name}")
                         client.delete_tag(repository, tag.name)
 
 

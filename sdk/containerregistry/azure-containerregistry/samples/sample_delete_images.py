@@ -58,7 +58,7 @@ class DeleteImages(object):
                             can_write=True,
                             can_delete=True
                         )
-                        print("Deleting {}:{}".format(repository, manifest.digest))
+                        print(f"Deleting {repository}:{manifest.digest}")
                         client.delete_manifest(repository, manifest.digest)
 
 

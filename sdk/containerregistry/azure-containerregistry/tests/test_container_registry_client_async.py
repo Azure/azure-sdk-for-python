@@ -95,7 +95,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_properties(self, containerregistry_endpoint):
         repository = self.get_resource_name("repo")
         tag_identifier = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repository, tag_identifier)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repository}:{tag_identifier}"])
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_repository_properties(repository)
 
@@ -128,7 +128,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_repository_properties(repo)
@@ -259,7 +259,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_get_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_manifest_properties(repo, tag)
@@ -280,7 +280,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_manifest_properties(repo, tag)
@@ -313,7 +313,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_manifest_properties(repo, tag)
@@ -343,7 +343,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_get_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_tag_properties(repo, tag)
@@ -363,7 +363,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_tag_properties(repo, tag)
@@ -395,7 +395,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             properties = await client.get_tag_properties(repo, tag)
@@ -425,13 +425,13 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
             async for tag in client.list_tag_properties(repo):
-                assert "{}:{}".format(repo, tag.name) in tags
+                assert f"{repo}:{tag.name}" in tags
                 count += 1
             assert count == 4
 
@@ -440,14 +440,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
             async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
-                assert "{}:{}".format(repo, tag.name) in tags
+                assert f"{repo}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
@@ -457,7 +457,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev_last_updated_on = None
             count = 0
             async for tag in client.list_tag_properties(repo, order_by="timedesc"):
-                assert "{}:{}".format(repo, tag.name) in tags
+                assert f"{repo}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
@@ -469,14 +469,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
             async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
-                assert "{}:{}".format(repo, tag.name) in tags
+                assert f"{repo}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
@@ -486,7 +486,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev_last_updated_on = None
             count = 0
             async for tag in client.list_tag_properties(repo, order_by="timeasc"):
-                assert "{}:{}".format(repo, tag.name) in tags
+                assert f"{repo}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
@@ -498,7 +498,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        tags = ["{}:{}".format(repo, tag + str(i)) for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
@@ -506,7 +506,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
             count = 0
             async for tag in client.list_tag_properties(repo):
-                assert "{}:{}".format(repo, tag.name) in tags[1:]
+                assert f"{repo}:{tag.name}" in tags[1:]
                 count += 1
             assert count == 3
 
@@ -521,7 +521,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_manifest(repo, tag)
@@ -535,7 +535,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, ["{}:{}".format(repo, tag)])
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             manifest = await client.get_manifest_properties(repo, tag)
