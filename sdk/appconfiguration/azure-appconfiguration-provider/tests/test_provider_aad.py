@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider import (
-    AzureAppConfigurationProvider,
+    loadProvider,
     SettingSelector
 )
 from devtools_testutils import (
@@ -18,7 +18,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
 
     def build_provider_aad(self, endpoint, trimmed_key_prefixes=[], selects={SettingSelector("*", "\0")}):
         cred = self.get_credential(AzureAppConfigurationClient)
-        return AzureAppConfigurationProvider.load(credential=cred, endpoint=endpoint, trimmed_key_prefixes=trimmed_key_prefixes, selects=selects)
+        return loadProvider(credential=cred, endpoint=endpoint, trimmed_key_prefixes=trimmed_key_prefixes, selects=selects)
 
     # method: provider_creation_aad
     @recorded_by_proxy
