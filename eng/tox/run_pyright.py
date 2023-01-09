@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if is_check_enabled(args.target_package, "pyright") or is_ignored_package(package_name):
+    if not is_check_enabled(args.target_package, "pyright") or is_ignored_package(package_name):
         logging.info(
             f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
         )
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         os.path.join(args.target_package, "azure"),
         os.path.join(args.target_package, "samples"),
     ]
-    if is_check_enabled(args.target_package, "type_check_samples"):
+    if not is_check_enabled(args.target_package, "type_check_samples"):
         logging.info(
             f"Package {package_name} opts-out of pyright check on samples."
         )
