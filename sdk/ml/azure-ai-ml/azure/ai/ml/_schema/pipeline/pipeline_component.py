@@ -232,7 +232,7 @@ class PipelineSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference
