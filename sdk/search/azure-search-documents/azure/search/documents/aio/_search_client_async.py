@@ -345,7 +345,6 @@ class SearchClient(HeadersMixin):
             search_text: str,
             suggester_name: str,
             *,
-            filter: Optional[str] = None,   # pylint:disable=disable=redefined-builtin
             use_fuzzy_matching: Optional[bool] = None,
             highlight_post_tag: Optional[str] = None,
             highlight_pre_tag: Optional[str] = None,
@@ -398,7 +397,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter_arg = filter
+        filter_arg = kwargs.pop("filter", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = SuggestQuery(
             search_text=search_text,
@@ -429,7 +428,6 @@ class SearchClient(HeadersMixin):
             suggester_name: str,
             *,
             mode: Optional[Union[str, AutocompleteMode]] = None,
-            filter: Optional[str] = None,   # pylint:disable=disable=redefined-builtin
             use_fuzzy_matching: Optional[bool] = None,
             highlight_post_tag: Optional[str] = None,
             highlight_pre_tag: Optional[str] = None,
@@ -477,7 +475,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a auto-completions.
         """
         autocomplete_mode = mode
-        filter_arg = filter
+        filter_arg = kwargs.pop("filter", None)
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = AutocompleteQuery(
             search_text=search_text,
