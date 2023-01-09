@@ -1191,7 +1191,7 @@ class LifetimeAction(object):
     """Action and its trigger that will be performed by certificate Vault over the lifetime of a certificate.
 
     :param action: The type of the action. For valid values, see CertificatePolicyAction
-    :type action: str or ~azure.keyvault.certificates.CertificatePolicyAction
+    :type action: Optional[Union[str, ~azure.keyvault.certificates.CertificatePolicyAction]]
     :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between 1 and 99.
     :param int days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
         `validity_in_months` multiplied by 27. I.e., if validity_in_months is 36, then value should be between 1 and 972
@@ -1200,7 +1200,7 @@ class LifetimeAction(object):
 
     def __init__(
         self,
-        action: "Optional[CertificatePolicyAction]",
+        action: "Optional[Union[str, CertificatePolicyAction]]",
         lifetime_percentage: "Optional[int]" = None,
         days_before_expiry: "Optional[int]" = None,
     ) -> None:
