@@ -3062,7 +3062,7 @@ class DocumentTable:
         self.column_count = kwargs.get("column_count", None)
         self.cells = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
         self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, table):
