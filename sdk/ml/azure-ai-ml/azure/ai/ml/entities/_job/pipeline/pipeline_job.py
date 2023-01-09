@@ -33,7 +33,7 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
+from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
@@ -341,7 +341,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             def _try_get_data_binding(_input_output_data) -> Union[str, None]:
                 """Try to get data binding from input/output data, return None if not found."""
                 # handle group, flatten and use first item for data binding
-                if isinstance(_input_output_data, _GroupAttrDict):
+                if GroupInput._is_group_attr_dict(_input_output_data):
                     # flatten to avoid nested cases
                     flattened_values = list(_input_output_data.flatten("").values())
                     # handle invalid empty group
