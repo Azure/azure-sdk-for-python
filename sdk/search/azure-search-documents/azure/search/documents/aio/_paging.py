@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, List, Dict, Optional
+from typing import List, Dict, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
 from .._generated.models import AnswerResult
