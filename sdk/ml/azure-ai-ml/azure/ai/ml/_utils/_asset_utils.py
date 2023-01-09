@@ -32,8 +32,8 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    DatasetVersionData,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
@@ -109,9 +109,11 @@ class IgnoreFile(object):
         file_path = Path(file_path)
         if file_path.is_absolute():
             ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
+            try:
+                file_path = os.path.relpath(file_path, ignore_dirname)
+            except ValueError:
+                # 2 paths are on different drives
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -756,7 +758,7 @@ def _get_latest(
     registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersionData, DatasetVersionData]:
+) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most

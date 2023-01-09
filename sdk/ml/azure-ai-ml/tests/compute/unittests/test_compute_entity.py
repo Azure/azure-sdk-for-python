@@ -59,6 +59,7 @@ class TestComputeEntity:
             self._test_loaded_compute,
             "tests/test_configs/compute/compute-aml.yaml",
         )[0]
+        assert compute.location == "eastus"
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
@@ -67,6 +68,7 @@ class TestComputeEntity:
             == "azureuser"
         )
         assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.location == compute.location
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -74,6 +76,7 @@ class TestComputeEntity:
         assert body["identity"]["userAssignedIdentities"] == self._uai_list_to_dict(
             compute.identity.user_assigned_identities
         )
+        assert body["location"] == compute.location
 
     def test_compute_vm_from_yaml(self):
         resource_id = "/subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm"
@@ -146,13 +149,15 @@ class TestComputeEntity:
         compute_instance: ComputeInstance = load_compute(
             "tests/test_configs/compute/compute-ci-unit.yaml"
         )
+       
         compute_instance._set_full_subnet_name("subscription_id", "resource_group_name")
         compute_resource = compute_instance._to_rest_object()
+
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(
             compute_resource
         )
-        assert compute_instance.last_operation == compute_instance2.last_operation
-        assert compute_instance.services == compute_instance2.services
+        assert compute_instance2.last_operation == compute_instance.last_operation
+        assert compute_instance2.services == compute_instance.services
 
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(
@@ -331,6 +336,25 @@ class TestComputeEntity:
         compute_from_rest = Compute._from_rest_object(compute_resource)
         assert compute_from_rest.type == "computeinstance"
         assert compute_from_rest.identity.type == "system_assigned"
+
+    def test_compute_no_public_ip_from_yaml(self):
+        compute_instance: ComputeInstance = load_compute(
+            "tests/test_configs/compute/compute-ci-no-public-ip.yaml"
+        )
+
+        aml_compute: AmlCompute = load_compute(
+            "tests/test_configs/compute/compute-aml-no-public-ip.yaml"
+        )
+
+        def validate_no_public_ip(compute: Compute):
+            assert compute.enable_node_public_ip == False
+            compute_resource = compute._to_rest_object()
+            assert compute_resource.properties.properties.enable_node_public_ip == False
+            compute_from_rest = Compute._from_rest_object(compute_resource)
+            assert compute.enable_node_public_ip == False
+
+        validate_no_public_ip(compute=compute_instance)
+        validate_no_public_ip(compute=aml_compute)
 
     def test_synapse_compute_from_rest(self):
         with open("tests/test_configs/compute/compute-synapsespark.yaml", "r") as f:

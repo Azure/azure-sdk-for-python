@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerAppsAPIClientConfiguration
 from .operations import (
@@ -49,6 +49,25 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar container_apps_auth_configs: ContainerAppsAuthConfigsOperations operations
     :vartype container_apps_auth_configs:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsAuthConfigsOperations
+    :ivar available_workload_profiles: AvailableWorkloadProfilesOperations operations
+    :vartype available_workload_profiles:
+     azure.mgmt.appcontainers.aio.operations.AvailableWorkloadProfilesOperations
+    :ivar billing_meters: BillingMetersOperations operations
+    :vartype billing_meters: azure.mgmt.appcontainers.aio.operations.BillingMetersOperations
+    :ivar connected_environments: ConnectedEnvironmentsOperations operations
+    :vartype connected_environments:
+     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsOperations
+    :ivar connected_environments_certificates: ConnectedEnvironmentsCertificatesOperations
+     operations
+    :vartype connected_environments_certificates:
+     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsCertificatesOperations
+    :ivar connected_environments_dapr_components: ConnectedEnvironmentsDaprComponentsOperations
+     operations
+    :vartype connected_environments_dapr_components:
+     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsDaprComponentsOperations
+    :ivar connected_environments_storages: ConnectedEnvironmentsStoragesOperations operations
+    :vartype connected_environments_storages:
+     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsStoragesOperations
     :ivar container_apps: ContainerAppsOperations operations
     :vartype container_apps: azure.mgmt.appcontainers.aio.operations.ContainerAppsOperations
     :ivar container_apps_revisions: ContainerAppsRevisionsOperations operations
@@ -57,8 +76,6 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar container_apps_revision_replicas: ContainerAppsRevisionReplicasOperations operations
     :vartype container_apps_revision_replicas:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsRevisionReplicasOperations
-    :ivar dapr_components: DaprComponentsOperations operations
-    :vartype dapr_components: azure.mgmt.appcontainers.aio.operations.DaprComponentsOperations
     :ivar container_apps_diagnostics: ContainerAppsDiagnosticsOperations operations
     :vartype container_apps_diagnostics:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsDiagnosticsOperations
@@ -77,39 +94,22 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype certificates: azure.mgmt.appcontainers.aio.operations.CertificatesOperations
     :ivar namespaces: NamespacesOperations operations
     :vartype namespaces: azure.mgmt.appcontainers.aio.operations.NamespacesOperations
+    :ivar dapr_components: DaprComponentsOperations operations
+    :vartype dapr_components: azure.mgmt.appcontainers.aio.operations.DaprComponentsOperations
     :ivar managed_environments_storages: ManagedEnvironmentsStoragesOperations operations
     :vartype managed_environments_storages:
      azure.mgmt.appcontainers.aio.operations.ManagedEnvironmentsStoragesOperations
     :ivar container_apps_source_controls: ContainerAppsSourceControlsOperations operations
     :vartype container_apps_source_controls:
      azure.mgmt.appcontainers.aio.operations.ContainerAppsSourceControlsOperations
-    :ivar connected_environments: ConnectedEnvironmentsOperations operations
-    :vartype connected_environments:
-     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsOperations
-    :ivar connected_environments_certificates: ConnectedEnvironmentsCertificatesOperations
-     operations
-    :vartype connected_environments_certificates:
-     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsCertificatesOperations
-    :ivar connected_environments_dapr_components: ConnectedEnvironmentsDaprComponentsOperations
-     operations
-    :vartype connected_environments_dapr_components:
-     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsDaprComponentsOperations
-    :ivar connected_environments_storages: ConnectedEnvironmentsStoragesOperations operations
-    :vartype connected_environments_storages:
-     azure.mgmt.appcontainers.aio.operations.ConnectedEnvironmentsStoragesOperations
-    :ivar available_workload_profiles: AvailableWorkloadProfilesOperations operations
-    :vartype available_workload_profiles:
-     azure.mgmt.appcontainers.aio.operations.AvailableWorkloadProfilesOperations
-    :ivar billing_meters: BillingMetersOperations operations
-    :vartype billing_meters: azure.mgmt.appcontainers.aio.operations.BillingMetersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -127,11 +127,27 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
         )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.container_apps_auth_configs = ContainerAppsAuthConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_workload_profiles = AvailableWorkloadProfilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.billing_meters = BillingMetersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connected_environments = ConnectedEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.connected_environments_certificates = ConnectedEnvironmentsCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.connected_environments_dapr_components = ConnectedEnvironmentsDaprComponentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.connected_environments_storages = ConnectedEnvironmentsStoragesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.container_apps = ContainerAppsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -141,7 +157,6 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
         self.container_apps_revision_replicas = ContainerAppsRevisionReplicasOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.container_apps_diagnostics = ContainerAppsDiagnosticsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -157,28 +172,13 @@ class ContainerAppsAPIClient:  # pylint: disable=client-accepts-api-version-keyw
         )
         self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_environments_storages = ManagedEnvironmentsStoragesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.container_apps_source_controls = ContainerAppsSourceControlsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.connected_environments = ConnectedEnvironmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.connected_environments_certificates = ConnectedEnvironmentsCertificatesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.connected_environments_dapr_components = ConnectedEnvironmentsDaprComponentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.connected_environments_storages = ConnectedEnvironmentsStoragesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.available_workload_profiles = AvailableWorkloadProfilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.billing_meters = BillingMetersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

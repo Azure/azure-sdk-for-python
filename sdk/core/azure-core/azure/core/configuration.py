@@ -113,8 +113,8 @@ class ConnectionConfiguration(object):
     """
 
     def __init__(self, **kwargs):
-        self.timeout = kwargs.pop('connection_timeout', 300)
-        self.read_timeout = kwargs.pop('read_timeout', 300)
-        self.verify = kwargs.pop('connection_verify', True)
-        self.cert = kwargs.pop('connection_cert', None)
-        self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
+        self.timeout = kwargs.pop("connection_timeout", 300)
+        self.read_timeout = kwargs.pop("read_timeout", 300)
+        self.verify = kwargs.pop("connection_verify", True)
+        self.cert = kwargs.pop("connection_cert", None)
+        self.data_block_size = kwargs.pop("connection_data_block_size", 4096)

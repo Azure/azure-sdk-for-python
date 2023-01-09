@@ -8,7 +8,7 @@ import logging
 import typing
 from functools import partial
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
@@ -33,6 +33,7 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
@@ -144,7 +145,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component = component
+        self.component: Union[PipelineComponent, str] = component
         if "type" not in kwargs.keys():
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
@@ -330,36 +331,52 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         if len(set(self.jobs.keys()) - {on_init, on_finalize}) == 0:
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
-        def _is_isolated_job(_validate_job_name: str) -> bool:
-            def _try_get_data_binding(_input_output_data) -> Union[str, None]:
-                """Try to get data binding from input/output data, return None if not found."""
-                if isinstance(_input_output_data, str):
-                    return _input_output_data
-                if not hasattr(_input_output_data, "_data_binding"):
-                    return None
-                return _input_output_data._data_binding()
-
-            _validate_job = self.jobs[_validate_job_name]
-            # no input to validate job
-            for _input_name in _validate_job.inputs:
-                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name]._data)
-                if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
-                    return False
-            # no output from validate job
-            for _job_name, _job in self.jobs.items():
-                for _input_name in _job.inputs:
-                    _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
-                    if _data_binding is not None and is_data_binding_expression(
-                        _data_binding, ["parent", "jobs", _validate_job_name]
-                    ):
-                        return False
-            return True
-
         def _is_control_flow_node(_validate_job_name: str) -> bool:
             from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 
             _validate_job = self.jobs[_validate_job_name]
             return issubclass(type(_validate_job), ControlFlowNode)
+
+        def _is_isolated_job(_validate_job_name: str) -> bool:
+            def _try_get_data_bindings(_name: str, _input_output_data) -> Union[List[str], None]:
+                """Try to get data bindings from input/output data, return None if not found."""
+                # handle group input
+                if GroupInput._is_group_attr_dict(_input_output_data):
+                    # flatten to avoid nested cases
+                    flattened_values = list(_input_output_data.flatten(_name).values())
+                    # handle invalid empty group
+                    if len(flattened_values) == 0:
+                        return None
+                    return [_value.path for _value in flattened_values]
+                _input_output_data = _input_output_data._data
+                if isinstance(_input_output_data, str):
+                    return [_input_output_data]
+                if not hasattr(_input_output_data, "_data_binding"):
+                    return None
+                return [_input_output_data._data_binding()]
+
+            _validate_job = self.jobs[_validate_job_name]
+            # no input to validate job
+            for _input_name in _validate_job.inputs:
+                _data_bindings = _try_get_data_bindings(_input_name, _validate_job.inputs[_input_name])
+                if _data_bindings is None:
+                    continue
+                for _data_binding in _data_bindings:
+                    if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
+                        return False
+            # no output from validate job - iterate other jobs input(s) to validate
+            for _job_name, _job in self.jobs.items():
+                # exclude control flow node as it does not have inputs
+                if _is_control_flow_node(_job_name):
+                    continue
+                for _input_name in _job.inputs:
+                    _data_bindings = _try_get_data_bindings(_input_name, _job.inputs[_input_name])
+                    if _data_bindings is None:
+                        continue
+                    for _data_binding in _data_bindings:
+                        if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                            return False
+            return True
 
         # validate on_init
         if on_init is not None:
@@ -403,9 +420,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             )
             # check has not supported nodes
             for _, node in self.jobs.items():
-                if isinstance(node, PipelineJob):
-                    msg = error_msg.format("Pipeline job in pipeline")
-                    raise UserErrorException(message=msg, no_personal_data_message=msg)
                 # TODO: Remove in PuP
                 if isinstance(node, (ImportJob, Import)):
                     msg = error_msg.format("Import job in pipeline")

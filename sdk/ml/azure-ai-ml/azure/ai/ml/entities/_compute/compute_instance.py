@@ -12,7 +12,9 @@ from typing import Dict, List, Optional
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeInstanceSshSettings as CiSShSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
@@ -136,6 +138,11 @@ class ComputeInstance(Compute):
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
+        True - Indicates that the compute nodes will have public IPs provisioned.
+        False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+        Default Value: True.
+    :type enable_node_public_ip: Optional[bool], optional
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
     """
@@ -155,6 +162,7 @@ class ComputeInstance(Compute):
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
+        enable_node_public_ip: bool = True,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -179,6 +187,7 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
+        self.enable_node_public_ip = enable_node_public_ip
         self.subnet = None
 
     @property
@@ -267,6 +276,7 @@ class ComputeInstance(Compute):
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=idle_time_before_shutdown,
+            enable_node_public_ip=self.enable_node_public_ip,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -390,6 +400,9 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown=idle_time_before_shutdown,
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
             os_image_metadata=os_image_metadata,
+            enable_node_public_ip=prop.properties.enable_node_public_ip
+            if (prop.properties and prop.properties.enable_node_public_ip)
+            else True,
         )
         return response
 

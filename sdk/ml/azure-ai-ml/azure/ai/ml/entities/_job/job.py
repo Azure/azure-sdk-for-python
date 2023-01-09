@@ -157,7 +157,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
 
-        return studio_url_from_job_id(self.id)
+        return studio_url_from_job_id(self.id) if self.id else None
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the job content into a file in yaml format.

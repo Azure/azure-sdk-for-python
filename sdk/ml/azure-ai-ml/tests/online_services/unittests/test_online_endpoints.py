@@ -7,7 +7,7 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_online_endpoint
-from azure.ai.ml._restclient.v2021_10_01.models import EndpointAuthKeys
+from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )

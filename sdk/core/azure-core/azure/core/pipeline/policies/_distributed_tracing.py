@@ -27,7 +27,12 @@
 import logging
 import sys
 import urllib
-from typing import TYPE_CHECKING, Optional, Union, Tuple  # pylint: disable=ungrouped-imports
+from typing import (
+    TYPE_CHECKING,
+    Optional,
+    Union,
+    Tuple,
+)  # pylint: disable=ungrouped-imports
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
@@ -35,10 +40,18 @@ from azure.core.tracing import SpanKind
 
 if TYPE_CHECKING:
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse, \
-        AsyncHttpResponse  # pylint: disable=ungrouped-imports
-    from azure.core.tracing._abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
-    from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import (
+        HttpRequest,
+        HttpResponse,
+        AsyncHttpResponse,
+    )  # pylint: disable=ungrouped-imports
+    from azure.core.tracing._abstract_span import (
+        AbstractSpan,
+    )  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline import (
+        PipelineRequest,
+        PipelineResponse,
+    )  # pylint: disable=ungrouped-imports
 
     HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
@@ -68,13 +81,16 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     :keyword tracing_attributes: Attributes to set on all created spans
     :type tracing_attributes: dict[str, str]
     """
+
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _REQUEST_ID = "x-ms-client-request-id"
     _RESPONSE_ID = "x-ms-request-id"
 
     def __init__(self, **kwargs):
-        self._network_span_namer = kwargs.get('network_span_namer', _default_network_span_namer)
-        self._tracing_attributes = kwargs.get('tracing_attributes', {})
+        self._network_span_namer = kwargs.get(
+            "network_span_namer", _default_network_span_namer
+        )
+        self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -84,7 +100,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             if span_impl_type is None:
                 return
 
-            namer = ctxt.pop('network_span_namer', self._network_span_namer)
+            namer = ctxt.pop("network_span_namer", self._network_span_namer)
             span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
@@ -113,7 +129,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             if request_id is not None:
                 span.add_attribute(self._REQUEST_ID, request_id)
             if response and self._RESPONSE_ID in response.headers:
-                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
+                span.add_attribute(
+                    self._RESPONSE_ID, response.headers[self._RESPONSE_ID]
+                )
             if exc_info:
                 span.__exit__(*exc_info)
             else:

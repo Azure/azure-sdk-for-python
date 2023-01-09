@@ -14,6 +14,7 @@ from .._pyamqp import (
     constants,
     AMQPClient,
     ReceiveClient,
+    __version__,
 )
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
@@ -25,6 +26,7 @@ from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
     CUSTOM_CONDITION_BACKOFF,
+    PYAMQP_LIBRARY,
 )
 
 from ..exceptions import (
@@ -51,6 +53,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     )  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
+    TRANSPORT_IDENTIFIER = f"{PYAMQP_LIBRARY}/{__version__}"
 
     # define symbols
     PRODUCT_SYMBOL = "product"
@@ -136,6 +139,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         }
 
         return Message(**message_dict)
+
+    @staticmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
+        :rtype: pyamqp.Message
+        """
+        if not message.application_properties:
+            message = message._replace(application_properties={})
+        message.application_properties.setdefault(key, value)
+        return message
 
     @staticmethod
     def get_batch_message_encoded_size(message):

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Iterable, Union
+from typing import Iterable, Union, Optional, Any
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
@@ -29,8 +29,8 @@ class AadClient(AadClientBase):
             scopes: Iterable[str],
             code: str,
             redirect_uri: str,
-            client_secret: str = None,
-            **kwargs
+            client_secret: Optional[str] = None,
+            **kwargs: Any
     ) -> AccessToken:
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
@@ -41,7 +41,7 @@ class AadClient(AadClientBase):
             self,
             scopes: Iterable[str],
             certificate: AadClientCertificate,
-            **kwargs
+            **kwargs: Any
     ) -> AccessToken:
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         return self._run_pipeline(request, **kwargs)
@@ -50,7 +50,7 @@ class AadClient(AadClientBase):
             self,
             scopes: Iterable[str],
             secret: str,
-            **kwargs
+            **kwargs: Any
     ) -> AccessToken:
         request = self._get_client_secret_request(scopes, secret, **kwargs)
         return self._run_pipeline(request, **kwargs)
@@ -59,7 +59,7 @@ class AadClient(AadClientBase):
             self,
             scopes: Iterable[str],
             assertion: str,
-            **kwargs
+            **kwargs: Any
     ) -> AccessToken:
         request = self._get_jwt_assertion_request(scopes, assertion)
         return self._run_pipeline(request, **kwargs)
@@ -68,7 +68,7 @@ class AadClient(AadClientBase):
             self,
             scopes: Iterable[str],
             refresh_token: str,
-            **kwargs
+            **kwargs: Any
     ) -> AccessToken:
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         return self._run_pipeline(request, **kwargs)
@@ -78,16 +78,16 @@ class AadClient(AadClientBase):
             scopes: Iterable[str],
             client_credential: Union[str, AadClientCertificate],
             user_assertion: str,
-            **kwargs
+            **kwargs: Any
     ) -> AccessToken:
         # no need for an implementation, non-async OnBehalfOfCredential acquires tokens through MSAL
         raise NotImplementedError()
 
     # pylint:disable=no-self-use
-    def _build_pipeline(self, **kwargs) -> Pipeline:
+    def _build_pipeline(self, **kwargs: Any) -> Pipeline:
         return build_pipeline(**kwargs)
 
-    def _run_pipeline(self, request: HttpRequest, **kwargs) -> AccessToken:
+    def _run_pipeline(self, request: HttpRequest, **kwargs: Any) -> AccessToken:
         # remove tenant_id and claims kwarg that could have been passed from credential's get_token method
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
