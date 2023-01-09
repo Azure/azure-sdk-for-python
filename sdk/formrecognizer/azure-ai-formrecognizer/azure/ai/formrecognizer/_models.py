@@ -575,7 +575,7 @@ class FormLine(FormElement):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="line", **kwargs)
-        self.words = kwargs.get("words", None)  # pylint: disable=unsubscriptable-object
+        self.words = kwargs.get("words", None)
         self.appearance = kwargs.get("appearance", None)
 
     @classmethod
@@ -679,12 +679,12 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         self.column_index = kwargs.get("column_index", None)
         self.row_span = kwargs.get("row_span", 1)
         self.column_span = kwargs.get("column_span", 1)
-        self.bounding_box = kwargs.get("bounding_box", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_box = kwargs.get("bounding_box", None)
         self.confidence = kwargs.get("confidence", None)
         self.is_header = kwargs.get("is_header", False)
         self.is_footer = kwargs.get("is_footer", False)
         self.page_number = kwargs.get("page_number", None)
-        self.field_elements = kwargs.get("field_elements", None)  # pylint: disable=unsubscriptable-object
+        self.field_elements = kwargs.get("field_elements", None)
 
     @classmethod
     def _from_generated(cls, cell, page, read_result):
@@ -792,10 +792,10 @@ class FormTable:
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
-        self.cells = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
+        self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
-        self.bounding_box = kwargs.get("bounding_box", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self) -> str:
         return (
@@ -877,9 +877,9 @@ class FormPage:
         self.width = kwargs.get("width", None)
         self.height = kwargs.get("height", None)
         self.unit = kwargs.get("unit", None)
-        self.tables = kwargs.get("tables", None)  # pylint: disable=unsubscriptable-object
-        self.lines = kwargs.get("lines", None)  # pylint: disable=unsubscriptable-object
-        self.selection_marks = kwargs.get("selection_marks", None)  # pylint: disable=unsubscriptable-object
+        self.tables = kwargs.get("tables", None)
+        self.lines = kwargs.get("lines", None)
+        self.selection_marks = kwargs.get("selection_marks", None)
 
     def __repr__(self) -> str:
         return (
@@ -1184,10 +1184,10 @@ class RecognizedForm:
 
 
     def __init__(self, **kwargs: Any) -> None:
-        self.fields = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
+        self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
         self.page_range = kwargs.get("page_range", None)
-        self.pages = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
+        self.pages = kwargs.get("pages", None)
         self.model_id = kwargs.get("model_id", None)
         self.form_type_confidence = kwargs.get("form_type_confidence", None)
 
@@ -1357,7 +1357,7 @@ class TrainingDocumentInfo:
         self.name = kwargs.get("name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)  # pylint: disable=unsubscriptable-object
+        self.errors = kwargs.get("errors", None)
         self.model_id = kwargs.get("model_id", None)
 
     @classmethod
@@ -1628,7 +1628,7 @@ class CustomFormSubmodel:
     def __init__(self, **kwargs: Any) -> None:
         self.model_id = kwargs.get("model_id", None)
         self.accuracy = kwargs.get("accuracy", None)
-        self.fields = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
+        self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
 
     @classmethod
@@ -1759,9 +1759,9 @@ class CustomFormModel:
         self.status = kwargs.get("status", None)
         self.training_started_on = kwargs.get("training_started_on", None)
         self.training_completed_on = kwargs.get("training_completed_on", None)
-        self.submodels = kwargs.get("submodels", None)  # pylint: disable=unsubscriptable-object
-        self.errors = kwargs.get("errors", None)  # pylint: disable=unsubscriptable-object
-        self.training_documents = kwargs.get("training_documents", None)  # pylint: disable=unsubscriptable-object
+        self.submodels = kwargs.get("submodels", None)
+        self.errors = kwargs.get("errors", None)
+        self.training_documents = kwargs.get("training_documents", None)
         self.model_name = kwargs.get("model_name", None)
         self.properties = kwargs.get("properties", None)
 
@@ -2110,7 +2110,7 @@ class DocumentLanguage:
 
     def __init__(self, **kwargs: Any) -> None:
         self.locale = kwargs.get("locale", None)
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -2176,8 +2176,8 @@ class DocumentField:
         self.value_type = kwargs.get("value_type", None)
         self.value = kwargs.get("value", None)
         self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -2297,9 +2297,9 @@ class AnalyzedDocument:
 
     def __init__(self, **kwargs: Any) -> None:
         self.doc_type = kwargs.get("doc_type", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.fields = kwargs.get("fields", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
+        self.fields = kwargs.get("fields", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -2375,8 +2375,8 @@ class DocumentKeyValueElement:
 
     def __init__(self, **kwargs: Any) -> None:
         self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, element):
@@ -2635,7 +2635,7 @@ class DocumentLine:
         self._parent = kwargs.get("_parent", None)
         self.content = kwargs.get("content", None)
         self.polygon = kwargs.get("polygon", None)
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, line, document_page):
@@ -2713,8 +2713,8 @@ class DocumentParagraph:
     def __init__(self, **kwargs: Any) -> None:
         self.role = kwargs.get("role", None)
         self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, paragraph):
@@ -2796,10 +2796,10 @@ class DocumentPage:
         self.width = kwargs.get("width", None)
         self.height = kwargs.get("height", None)
         self.unit = kwargs.get("unit", None)
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
-        self.words = kwargs.get("words", None)  # pylint: disable=unsubscriptable-object
-        self.selection_marks = kwargs.get("selection_marks", None)  # pylint: disable=unsubscriptable-object
-        self.lines = kwargs.get("lines", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)
+        self.words = kwargs.get("words", None)
+        self.selection_marks = kwargs.get("selection_marks", None)
+        self.lines = kwargs.get("lines", None)
 
     @classmethod
     def _from_generated(cls, page):
@@ -2897,7 +2897,7 @@ class DocumentStyle:
 
     def __init__(self, **kwargs: Any) -> None:
         self.is_handwritten = kwargs.get("is_handwritten", None)
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -2971,8 +2971,8 @@ class DocumentTableCell:
         self.row_span = kwargs.get("row_span", 1)
         self.column_span = kwargs.get("column_span", 1)
         self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
-        self.spans = kwargs.get("spans", None)  # pylint: disable=unsubscriptable-object
+        self.bounding_regions = kwargs.get("bounding_regions", None)
+        self.spans = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, cell):
@@ -3060,8 +3060,8 @@ class DocumentTable:
     def __init__(self, **kwargs: Any) -> None:
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
-        self.cells = kwargs.get("cells", None)  # pylint: disable=unsubscriptable-object
-        self.bounding_regions = kwargs.get("bounding_regions", None)  # pylint: disable=unsubscriptable-object
+        self.cells = kwargs.get("cells", None)
+        self.bounding_regions = kwargs.get("bounding_regions", None)
         self.spans = kwargs.get("spans", None)
 
     @classmethod
@@ -3142,8 +3142,8 @@ class DocumentTypeDetails:
     ) -> None:
         self.description = kwargs.get("description", None)
         self.build_mode = kwargs.get("build_mode", None)
-        self.field_schema = kwargs.get("field_schema", None)  # pylint: disable=unsubscriptable-object
-        self.field_confidence = kwargs.get("field_confidence", None)  # pylint: disable=unsubscriptable-object
+        self.field_schema = kwargs.get("field_schema", None)
+        self.field_confidence = kwargs.get("field_confidence", None)
 
     def __repr__(self) -> str:
         return (
@@ -3210,7 +3210,7 @@ class DocumentModelSummary:
         self.description = kwargs.get("description", None)
         self.created_on = kwargs.get("created_on", None)
         self.api_version = kwargs.get("api_version", None)
-        self.tags = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
+        self.tags = kwargs.get("tags", None)
 
     def __repr__(self) -> str:
         return (
@@ -3276,7 +3276,7 @@ class DocumentModelDetails(DocumentModelSummary):
         **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
-        self.doc_types = kwargs.get("doc_types", None)  # pylint: disable=unsubscriptable-object
+        self.doc_types = kwargs.get("doc_types", None)
 
     def __repr__(self) -> str:
         return (
@@ -3405,7 +3405,7 @@ class DocumentAnalysisError:
         self.code = kwargs.get("code", None)
         self.message = kwargs.get("message", None)
         self.target = kwargs.get("target", None)
-        self.details = kwargs.get("details", None)  # pylint: disable=unsubscriptable-object
+        self.details = kwargs.get("details", None)
         self.innererror = kwargs.get("innererror", None)
 
     def __repr__(self) -> str:
@@ -3491,7 +3491,7 @@ class OperationSummary:
         self.kind = kwargs.get("kind", None)
         self.resource_location = kwargs.get("resource_location", None)
         self.api_version = kwargs.get("api_version", None)
-        self.tags = kwargs.get("tags", None)  # pylint: disable=unsubscriptable-object
+        self.tags = kwargs.get("tags", None)
 
     def __repr__(self) -> str:
         return (
@@ -3687,13 +3687,13 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
         self.api_version = kwargs.get("api_version", None)
         self.model_id = kwargs.get("model_id", None)
         self.content = kwargs.get("content", None)
-        self.languages = kwargs.get("languages", None)  # pylint: disable=unsubscriptable-object
-        self.pages = kwargs.get("pages", None)  # pylint: disable=unsubscriptable-object
-        self.paragraphs = kwargs.get("paragraphs", None)  # pylint: disable=unsubscriptable-object
-        self.tables = kwargs.get("tables", None)  # pylint: disable=unsubscriptable-object
-        self.key_value_pairs = kwargs.get("key_value_pairs", None)  # pylint: disable=unsubscriptable-object
-        self.styles = kwargs.get("styles", None)  # pylint: disable=unsubscriptable-object
-        self.documents = kwargs.get("documents", None)  # pylint: disable=unsubscriptable-object
+        self.languages = kwargs.get("languages", None)
+        self.pages = kwargs.get("pages", None)
+        self.paragraphs = kwargs.get("paragraphs", None)
+        self.tables = kwargs.get("tables", None)
+        self.key_value_pairs = kwargs.get("key_value_pairs", None)
+        self.styles = kwargs.get("styles", None)
+        self.documents = kwargs.get("documents", None)
 
     @classmethod
     def _from_generated(cls, response):
