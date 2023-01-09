@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-t",
         "--target",
-        "--next"=False,
+        "--next",
         dest="target_package",
         help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
         required=True,
