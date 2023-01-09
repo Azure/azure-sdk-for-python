@@ -12,7 +12,7 @@ class HeadersMixin:
     def _headers(self) -> Dict[str, Any]:
         return {"api-key": self._credential.key, "Accept": self._ODATA_ACCEPT}
 
-    def _merge_client_headers(self, headers: Optional[Dict]) -> Dict[str, Any]:
+    def _merge_client_headers(self, headers: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         if self._aad:
             return headers
         headers = headers or {}
