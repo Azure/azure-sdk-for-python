@@ -109,9 +109,11 @@ class IgnoreFile(object):
         file_path = Path(file_path)
         if file_path.is_absolute():
             ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
+            try:
+                file_path = os.path.relpath(file_path, ignore_dirname)
+            except ValueError:
+                # 2 paths are on different drives
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)

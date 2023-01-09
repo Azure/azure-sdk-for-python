@@ -47,7 +47,7 @@ class EndpointYamlFields(object):
     BATCH_JOB_NAME = "job_name"
 
 
-class OnlineEndpointConfigurations:
+class EndpointConfigurations:
     MIN_NAME_LENGTH = 3
     MAX_NAME_LENGTH = 32
     NAME_REGEX_PATTERN = r"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$"

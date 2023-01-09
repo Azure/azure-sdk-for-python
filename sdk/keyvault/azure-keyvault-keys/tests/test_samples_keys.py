@@ -166,10 +166,10 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             key_client.create_ec_key(key_name)
         for i in range(4):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             key_client.create_rsa_key(key_name)
 
         # [START list_keys]

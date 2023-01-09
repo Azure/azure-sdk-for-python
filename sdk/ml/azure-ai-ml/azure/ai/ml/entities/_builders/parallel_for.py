@@ -38,6 +38,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         AssetTypes.URI_FILE: AssetTypes.MLTABLE,
         AssetTypes.URI_FOLDER: AssetTypes.MLTABLE,
         AssetTypes.MLTABLE: AssetTypes.MLTABLE,
+        AssetTypes.MLFLOW_MODEL: AssetTypes.MLTABLE,
+        AssetTypes.TRITON_MODEL: AssetTypes.MLTABLE,
+        AssetTypes.CUSTOM_MODEL: AssetTypes.MLTABLE,
+        # legacy path support
+        "path": AssetTypes.MLTABLE,
         ComponentParameterTypes.NUMBER: ComponentParameterTypes.STRING,
         ComponentParameterTypes.STRING: ComponentParameterTypes.STRING,
         ComponentParameterTypes.BOOLEAN: ComponentParameterTypes.STRING,
@@ -129,6 +134,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
             if output.type in self.OUT_TYPE_MAPPING:
                 new_type = self.OUT_TYPE_MAPPING[output.type]
             else:
+                # when loop body introduces some new output type, this will be raised as a reminder to support is in
+                # parallel for
                 raise UserErrorException(
                     "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
                 )
@@ -182,9 +189,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # all items have to be dict and have matched meta
         for item in items:
             # item has to be dict
-            if not isinstance(item, dict) or item == {}:
+            # Note: item can be empty dict when loop_body don't have foreach inputs.
+            if not isinstance(item, dict):
                 validation_result.append_error(
-                    f"Items has to be list/dict of non-empty dict as value, " f"but got {type(item)} for {item}."
+                    f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}."
                 )
             else:
                 # item has to have matched meta
@@ -193,7 +201,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         meta = item
                     else:
                         validation_result.append_error(
-                            f"Items should to have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
+                            f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
                         )
                 # items' keys should appear in body's inputs
                 body_component = self.body._component
