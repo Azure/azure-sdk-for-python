@@ -38,6 +38,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         AssetTypes.URI_FILE: AssetTypes.MLTABLE,
         AssetTypes.URI_FOLDER: AssetTypes.MLTABLE,
         AssetTypes.MLTABLE: AssetTypes.MLTABLE,
+        AssetTypes.MLFLOW_MODEL: AssetTypes.MLTABLE,
+        AssetTypes.TRITON_MODEL: AssetTypes.MLTABLE,
+        AssetTypes.CUSTOM_MODEL: AssetTypes.MLTABLE,
+        # legacy path support
+        "path": AssetTypes.MLTABLE,
         ComponentParameterTypes.NUMBER: ComponentParameterTypes.STRING,
         ComponentParameterTypes.STRING: ComponentParameterTypes.STRING,
         ComponentParameterTypes.BOOLEAN: ComponentParameterTypes.STRING,
@@ -129,6 +134,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
             if output.type in self.OUT_TYPE_MAPPING:
                 new_type = self.OUT_TYPE_MAPPING[output.type]
             else:
+                # when loop body introduces some new output type, this will be raised as a reminder to support is in
+                # parallel for
                 raise UserErrorException(
                     "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
                 )
