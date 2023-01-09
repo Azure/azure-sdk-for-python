@@ -43,8 +43,6 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         self,
         endpoint: str,
         table_name: str,
-        *,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
