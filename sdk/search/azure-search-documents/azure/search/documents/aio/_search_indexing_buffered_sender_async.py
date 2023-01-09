@@ -351,7 +351,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if self._on_error:
             await self._on_error(action)
 
-    async def _callback_new(self, actions: IndexAction) -> None:
+    async def _callback_new(self, actions: List[IndexAction]) -> None:
         if self._on_new:
             for action in actions:
                 await self._on_new(action)
