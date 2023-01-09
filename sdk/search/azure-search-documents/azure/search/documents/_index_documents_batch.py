@@ -49,7 +49,6 @@ class IndexDocumentsBatch:
     def add_delete_actions(
         self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
     ) -> List[IndexAction]:
-        # pylint: disable=unused-argument
         """Add documents to delete to the Azure search index.
 
         Delete removes the specified document from the index. Any field you
@@ -72,7 +71,6 @@ class IndexDocumentsBatch:
     def add_merge_actions(
         self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
     ) -> List[IndexAction]:
-        # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
 
@@ -92,7 +90,6 @@ class IndexDocumentsBatch:
     def add_merge_or_upload_actions(
         self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
     ) -> List[IndexAction]:
-        # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index, or upload if they do not yet exist.
 
@@ -117,7 +114,7 @@ class IndexDocumentsBatch:
         """
         return list(self._actions)
 
-    def dequeue_actions(self, **kwargs) -> List[IndexAction]:  # pylint: disable=unused-argument
+    def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:
         """Get the list of currently configured index actions and clear it.
 
         :rtype: List[IndexAction]
@@ -128,9 +125,8 @@ class IndexDocumentsBatch:
         return result
 
     def enqueue_actions(
-            self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs
+            self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any
     ) -> None:
-        # pylint: disable=unused-argument
         """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             with self._lock:
