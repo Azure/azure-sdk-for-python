@@ -22,13 +22,13 @@ def run_black(service_dir):
     results = []
     logging.info("Running black for {}".format(service_dir))
 
-    discover_targeted_packages("azure*", os.path.join(root_dir, "sdk", service_dir))
+    discovered_packages = discover_targeted_packages("azure*", os.path.join(root_dir, "sdk", service_dir))
 
-    for package in discover_targeted_packages:
+    for package in discovered_packages:
         package_name = os.path.basename(package)
-        
+
         if is_check_enabled(package, "black", True):
-            out = subprocess.Popen([sys.executable, "-m", "black", "-l", "120", "sdk/{}/{}".format(service_dir)],
+            out = subprocess.Popen([sys.executable, "-m", "black", "-l", "120", "sdk/{}/{}".format(service_dir, package_name)],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd = root_dir

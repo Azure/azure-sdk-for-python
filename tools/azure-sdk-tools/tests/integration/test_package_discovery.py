@@ -96,8 +96,8 @@ def test_discovery_honors_contains_filter():
 
 
 def test_discovery_honors_override():
-    os.environ["ENABLE_AZURE-COMMON"] = "true"
-    os.environ["ENABLE_AZURE-SERVICEMANAGEMENT-LEGACY"] = "false"
+    os.environ["ENABLE_AZURE_COMMON"] = "true"
+    os.environ["ENABLE_AZURE_SERVICEMANAGEMENT_LEGACY"] = "false"
 
     results = discover_targeted_packages("azure*", core_service_root)
 
