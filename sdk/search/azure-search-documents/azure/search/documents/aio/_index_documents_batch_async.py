@@ -118,7 +118,7 @@ class IndexDocumentsBatch:
             self._actions = []
         return result
 
-    async def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]]):
+    async def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]]) -> None:
         """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             async with self._lock:

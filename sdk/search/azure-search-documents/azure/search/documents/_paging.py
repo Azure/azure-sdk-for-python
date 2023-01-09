@@ -67,7 +67,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return self._first_iterator_instance().get_coverage()
 
-    def get_count(self) -> float:
+    def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
         set for the query.
 

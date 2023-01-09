@@ -116,7 +116,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         )
 
     @distributed_trace
-    def list_index_names(self, **kwargs) -> AsyncItemPaged[str]:
+    def list_index_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """List the index names in an Azure Search service.
 
         :return: List of index names
