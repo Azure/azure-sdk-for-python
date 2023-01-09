@@ -33,6 +33,7 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
 
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
@@ -339,24 +340,26 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_binding(_input_output_data) -> Union[str, None]:
                 """Try to get data binding from input/output data, return None if not found."""
+                # handle group, flatten and use first item for data binding
+                if isinstance(_input_output_data, _GroupAttrDict):
+                    # flatten to avoid nested cases
+                    flattened_values = list(_input_output_data.flatten("").values())
+                    # handle invalid empty group
+                    if len(flattened_values) == 0:
+                        return None
+                    _input_output_data = flattened_values[0].path
+                else:
+                    _input_output_data = _input_output_data._data
                 if isinstance(_input_output_data, str):
                     return _input_output_data
                 if not hasattr(_input_output_data, "_data_binding"):
                     return None
                 return _input_output_data._data_binding()
 
-            def _is_group_input(_input_obj) -> bool:
-                # exclude group input for now as it only comes from pipeline input now
-                # TODO: update validate init/finalize logic after supporting group as output
-                return not hasattr(_input_obj, "_data")
-
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                _input = _validate_job.inputs[_input_name]
-                if _is_group_input(_input):
-                    continue
-                _data_binding = _try_get_data_binding(_input._data)
+                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name])
                 if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job - iterate other jobs input to validate
@@ -365,10 +368,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 if _is_control_flow_node(_job_name):
                     continue
                 for _input_name in _job.inputs:
-                    _input = _job.inputs[_input_name]
-                    if _is_group_input(_input):
-                        continue
-                    _data_binding = _try_get_data_binding(_input._data)
+                    _data_binding = _try_get_data_binding(_job.inputs[_input_name])
                     if _data_binding is not None and is_data_binding_expression(
                         _data_binding, ["parent", "jobs", _validate_job_name]
                     ):
