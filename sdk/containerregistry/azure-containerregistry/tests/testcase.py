@@ -123,7 +123,7 @@ def get_authority(endpoint: str) -> str:
     if ".azurecr.us" in endpoint:
         logger.warning("US Gov Authority")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
-    raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
+    raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
 def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -137,7 +137,7 @@ def get_audience(authority: str) -> str:
         return "https://management.usgovcloudapi.net"
 
 def import_image(authority, repository, tags, registry_name):
-    logger.warning("Import image authority: {}".format(authority))
+    logger.warning(f"Import image authority: {authority}")
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
     tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
     client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
@@ -164,8 +164,7 @@ def import_image(authority, repository, tags, registry_name):
         parameters=import_params,
     )
 
-    while not result.done():
-        pass
+    result.wait()
 
 @pytest.fixture(scope="session")
 def load_registry():

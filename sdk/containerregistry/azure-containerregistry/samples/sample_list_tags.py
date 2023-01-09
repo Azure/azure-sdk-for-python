@@ -25,16 +25,16 @@ USAGE:
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from tests.testcase import ContainerRegistryTestClass, load_registry, get_audience, get_authority
+from sample_utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class ListTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = ContainerRegistryTestClass.get_credential(
+        self.credential = get_credential(
             self.authority, exclude_environment_credential=True
         )
 
