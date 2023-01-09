@@ -353,7 +353,7 @@ class DetectedLanguage(DictMixin):
     """A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true."""
     script: Optional[str] = None
-    """Identifies the script of the input document. Possible values: "Latin"."""
+    """Identifies the script of the input document. Possible value is 'Latin'."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get("name", None)
@@ -986,7 +986,7 @@ class TextAnalyticsError(DictMixin):
     """
 
     code: str
-    """Error code. Possible values include:
+    """Error code. Possible values include
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable', 'invalidParameterValue', 'invalidRequestBodyFormat',
      'emptyRequest', 'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
@@ -1021,7 +1021,7 @@ class TextAnalyticsWarning(DictMixin):
     """
 
     code: str
-    """Warning code. Possible values include: 'LongWordsInDocument',
+    """Warning code. Possible values include 'LongWordsInDocument',
      'DocumentTruncated'."""
     message: str
     """Warning message."""
@@ -1150,7 +1150,7 @@ class AnalyzeSentimentResult(DictMixin):
         in the request, an id is assigned for the document."""
     sentiment: str
     """Predicted sentiment for document (Negative,
-        Neutral, Positive, or Mixed). Possible values include: 'positive',
+        Neutral, Positive, or Mixed). Possible values include 'positive',
         'neutral', 'negative', 'mixed'"""
     confidence_scores: "SentimentConfidenceScores"
     """Document level sentiment confidence
@@ -1521,8 +1521,7 @@ class SentenceSentiment(DictMixin):
     """The sentence text."""
     sentiment: str
     """The predicted Sentiment for the sentence.
-        Possible values include: 'positive', 'neutral', 'negative'
-    :vartype sentiment: str"""
+        Possible values include 'positive', 'neutral', 'negative'"""
     confidence_scores: "SentimentConfidenceScores"
     """The sentiment confidence score between 0
         and 1 for the sentence for all labels."""
@@ -2650,7 +2649,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     document_type: Optional[Union[str, HealthcareDocumentType]] = None
     """Document type that can be provided as input for Fhir Documents. Expect to
         have fhir_version provided when used. Behavior of using None enum is the same as not using the
-        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        document_type parameter. Known values are "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote"."""
 
     def __init__(
@@ -2733,7 +2732,7 @@ class ExtractSummaryAction(DictMixin):
     max_sentence_count: Optional[int] = None
     """Number of sentences to return. Defaults to 3."""
     order_by: Optional[str] = None
-    """Possible values include: "Offset", "Rank". Default value: "Offset"."""
+    """Possible values include "Offset", "Rank". Default value is "Offset"."""
 
     def __init__(
         self,
