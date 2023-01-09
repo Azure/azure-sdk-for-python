@@ -85,7 +85,14 @@ def test_discovery_omit_regression():
 
 
 def test_discovery_honors_contains_filter():
-    pass
+    
+    storage_results = discover_targeted_packages("azure*", storage_service_root, "file", filter_type="Regression")
+
+    assert [os.path.basename(result) for result in storage_results] == [
+        "azure-storage-file-datalake",
+        "azure-storage-file-share",
+    ]
+
 
 
 def test_discovery_honors_override():
