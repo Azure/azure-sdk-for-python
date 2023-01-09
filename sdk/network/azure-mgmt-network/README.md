@@ -8,6 +8,9 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
+_azure.mgmt.network.v2021\_02\_01\_preview is deprecated for azure virtual network manager operations. Please use [azure.mgmt.network.v2022_07_01](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network/azure/mgmt/network/v2022_07_01) instead. See change log for suggested operation usage._
+
+
 # Usage
 
 
