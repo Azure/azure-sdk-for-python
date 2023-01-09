@@ -619,8 +619,6 @@ class TestDSLGroup:
                 }
         assert "Nested group annotation is not supported in pipeline output." in str(e.value)
 
-
-
         with pytest.raises(UserErrorException) as e:
             @group
             class GroupOutputs:
