@@ -84,9 +84,7 @@ setup(
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
-        "opencensus-ext-azure<2.0.0",
-        # Used in pipeline_component_builder
-        'bytecode<0.15.0,>=0.13.0',
+        # "opencensus-ext-azure<2.0.0", disabled until SDK logging re-activated
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

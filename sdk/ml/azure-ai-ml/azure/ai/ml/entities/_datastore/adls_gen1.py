@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-member
 
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
@@ -42,10 +42,10 @@ class AzureDataLakeGen1Datastore(Datastore):
         *,
         name: str,
         store_name: str,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        credentials: Union[CertificateConfiguration, ServicePrincipalConfiguration] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[CertificateConfiguration, ServicePrincipalConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN1

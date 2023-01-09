@@ -26,9 +26,7 @@ class ConditionNode(ControlFlowNode):
         self.false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(
-        cls, context
-    ) -> PathAwareSchema:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)

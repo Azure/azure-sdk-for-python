@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
@@ -16,30 +16,30 @@ from .parallel import Parallel
 
 def parallel_run_function(
     *,
-    name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    properties: Dict = None,
-    display_name: str = None,
-    experiment_name: str = None,
-    compute: str = None,
-    retry_settings: BatchRetrySettings = None,
-    environment_variables: Dict = None,
-    logging_level: str = None,
-    max_concurrency_per_instance: int = None,
-    error_threshold: int = None,
-    mini_batch_error_threshold: int = None,
-    task: RunFunction = None,
-    mini_batch_size: str = None,
-    partition_keys: List = None,
-    input_data: str = None,
-    inputs: Dict = None,
-    outputs: Dict = None,
-    instance_count: int = None,
-    instance_type: str = None,
-    docker_args: str = None,
-    shm_size: str = None,
-    identity: Union[ManagedIdentity, AmlToken] = None,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    properties: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    compute: Optional[str] = None,
+    retry_settings: Optional[BatchRetrySettings] = None,
+    environment_variables: Optional[Dict] = None,
+    logging_level: Optional[str] = None,
+    max_concurrency_per_instance: Optional[int] = None,
+    error_threshold: Optional[int] = None,
+    mini_batch_error_threshold: Optional[int] = None,
+    task: Optional[RunFunction] = None,
+    mini_batch_size: Optional[str] = None,
+    partition_keys: Optional[List] = None,
+    input_data: Optional[str] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    instance_count: Optional[int] = None,
+    instance_type: Optional[str] = None,
+    docker_args: Optional[str] = None,
+    shm_size: Optional[str] = None,
+    identity: Optional[Union[ManagedIdentity, AmlToken]] = None,
     is_deterministic: bool = True,
     **kwargs,
 ) -> Parallel:

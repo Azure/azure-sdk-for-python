@@ -5,12 +5,11 @@
 # pylint: disable=unused-argument,no-self-use,protected-access
 
 import logging
-from pathlib import Path
 
-from marshmallow import fields, post_load, pre_dump, post_dump
+from marshmallow import fields, post_dump, post_load, pre_dump
 
-from .schema import YamlFileSchema
 from ...constants._common import BASE_PATH_CONTEXT_KEY
+from .schema import YamlFileSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -40,10 +39,8 @@ class ResourceSchema(YamlFileSchema):
     def update_base_path_pre_dump(self, data, **kwargs):
         # inherit from parent if base_path is not set
         if data.base_path:
-            cur_base_path: Path = Path(data.base_path).resolve()
-            if not cur_base_path.samefile(self.context[BASE_PATH_CONTEXT_KEY]):
-                self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-                self.context[BASE_PATH_CONTEXT_KEY] = cur_base_path
+            self._previous_base_path = self.context[BASE_PATH_CONTEXT_KEY]
+            self.context[BASE_PATH_CONTEXT_KEY] = data.base_path
         return data
 
     @post_dump

@@ -25,15 +25,8 @@ class ConversationAnalysisClient(
     ConversationAnalysisClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service conversations API is a suite of natural language processing (NLP) skills
-    that can be used to analyze structured conversations (textual or spoken). The synchronous API
-    in this suite accepts a request and mediates among multiple language projects, such as LUIS
-    Generally Available, Question Answering, Conversational Language Understanding, and then calls
-    the best candidate service to handle the request. At last, it returns a response with the
-    candidate service's response as a payload.
-
-     In some cases, this API needs to forward requests and responses between the caller and an
-    upstream service. The asynchronous APIs in this suite enable tasks like Conversation
-    Summarization and Conversational PII detection.
+    that can be used to analyze structured conversations (textual or spoken). Further documentation
+    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
@@ -82,15 +75,12 @@ class ConversationAnalysisClient(
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ConversationAnalysisClient
+    def __enter__(self) -> "ConversationAnalysisClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

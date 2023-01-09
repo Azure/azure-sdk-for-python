@@ -37,7 +37,7 @@ async def logs_query():
         if response.status == LogsQueryStatus.PARTIAL:
             error = response.partial_error
             data = response.partial_data
-            print(error.message)
+            print(error)
         elif response.status == LogsQueryStatus.SUCCESS:
             data = response.tables
         for table in data:

@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 import copy
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Dict
 from zipfile import ZipFile
@@ -13,18 +13,16 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities._additional_includes import ADDITIONAL_INCLUDES_SUFFIX
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
-from test_utilities.utils import parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -78,7 +76,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},
+            "inputs": {"train_data": {"type": "path", "optional": False}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -93,7 +91,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
+            "inputs": {"train_data": {"type": "path", "optional": False}},  # optional will be drop if False
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -138,10 +136,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
+                    'optional': False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
+                    'optional': False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -163,12 +163,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -203,9 +203,6 @@ class TestComponent:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
                     input_port["default"] = str(input_port["default"])
-            # optional will be dropped if it's False
-            if "optional" in input_port and input_port["optional"] is False:
-                del input_port["optional"]
 
         # code will be dumped as absolute path
         if "code" in expected_dict:

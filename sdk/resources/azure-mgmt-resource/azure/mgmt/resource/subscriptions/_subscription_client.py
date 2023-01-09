@@ -64,10 +64,10 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     def __init__(
         self,
         credential: "TokenCredential",
-        api_version=None, # type: Optional[str]
+        api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = SubscriptionClientConfiguration(credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)

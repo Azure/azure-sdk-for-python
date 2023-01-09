@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 import re
+from enum import auto, Enum
 from devtools_testutils import AzureTestCase
 from azure.communication.chat._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
@@ -77,19 +78,32 @@ class BodyReplacerProcessor(RecordingProcessor):
 
         return json.dumps(body)
 
+class CommunicationTestResourceType(Enum):
+    """Type of ACS resource used for livetests."""
+    UNSPECIFIED = auto()
+    DYNAMIC = auto()
+    STATIC = auto()
+
 class CommunicationTestCase(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['x-azure-ref', 'x-ms-content-sha256', 'location']
 
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
 
-    def setUp(self):
+    def setUp(self, resource_type=CommunicationTestResourceType.UNSPECIFIED):
         super(CommunicationTestCase, self).setUp()
+        self.connection_str = self._get_connection_str(resource_type)
+        endpoint, _ = parse_connection_str(self.connection_str)
+        self._resource_name = endpoint.split(".")[0]
+        self.scrubber.register_name_pair(self._resource_name, "sanitized")
+
+    def _get_connection_str(self, resource_type):
         if self.is_playback():
-            self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
-        else:
-            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
-                                  os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-            endpoint, _ = parse_connection_str(self.connection_str)
-            self._resource_name = endpoint.split(".")[0]
-            self.scrubber.register_name_pair(self._resource_name, "sanitized")
+            return "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
+        if resource_type == CommunicationTestResourceType.UNSPECIFIED:
+            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
+                   os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+        if resource_type == CommunicationTestResourceType.DYNAMIC:
+            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+        if resource_type == CommunicationTestResourceType.STATIC:
+            return os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')

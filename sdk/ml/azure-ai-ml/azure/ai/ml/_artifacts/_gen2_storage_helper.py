@@ -10,7 +10,7 @@ import sys
 import time
 import uuid
 from pathlib import Path, PurePosixPath
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from colorama import Fore
 
@@ -24,7 +24,7 @@ from azure.ai.ml._utils._asset_utils import (
     upload_file,
 )
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -56,7 +56,7 @@ class Gen2StorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
         """Upload a file or directory to a path inside the filesystem."""
@@ -179,7 +179,7 @@ class Gen2StorageClient:
             raise ex
         except Exception as e:
             msg = "Saving output with prefix {} was unsuccessful. exception={}"
-            raise MLException(
+            raise MlException(
                 message=msg.format(starts_with, e),
                 no_personal_data_message=msg.format("[starts_with]", "[exception]"),
                 target=ErrorTarget.ARTIFACT,

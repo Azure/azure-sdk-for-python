@@ -299,6 +299,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("autoUpgradePolicy"):
         headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
+    if options.get("correlatedActivityId"):
+        headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
     return headers
 
 

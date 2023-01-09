@@ -20,7 +20,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: str = None, runtime_version: str = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 

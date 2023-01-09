@@ -61,6 +61,7 @@ PYLINT_OPT_OUT = [
     "azure-agrifood-farming",
     "azure-developer-loadtesting",
     "azure-developer-devcenter",
+    "azure-messaging-webpubsubservice",
 ]
 
 # omit package from running mypy checks
@@ -128,8 +129,6 @@ PYRIGHT_OPT_OUT = [
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
@@ -205,8 +204,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
@@ -232,7 +229,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-eventhub-checkpointstoreblob-aio",
     "azure-eventhub-checkpointstoretable",
     "azure-ai-formrecognizer",
-    "azure-identity",
     "azure-keyvault-administration",
     "azure-keyvault-certificates",
     "azure-keyvault-keys",
@@ -270,7 +266,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-synapse-spark",
     "azure-data-tables",
     "azure-messaging-webpubsubservice",
-    "azure-ai-textanalytics",
 ]
 
 # omit package from running type checkers on samples
@@ -280,12 +275,9 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-ai-personalizer",
     "azure-agrifood-farming",
     "azure-ai-anomalydetector",
-    "azure-appconfiguration",
     "azure-appconfiguration-provider",
     "azure-security-attestation",
     "azure-batch",
-    "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
@@ -310,7 +302,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-eventhub-checkpointstoreblob",
     "azure-eventhub-checkpointstoreblob-aio",
     "azure-eventhub-checkpointstoretable",
-    "azure-ai-formrecognizer",
     "azure-keyvault-administration",
     "azure-keyvault-certificates",
     "azure-keyvault-keys",

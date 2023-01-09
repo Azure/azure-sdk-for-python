@@ -85,21 +85,19 @@ class NlpParameterSubspaceSchema(metaclass=PatchedSchemaMeta):
 
     @post_dump
     def conversion(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
             # AutoML job inside pipeline does load(dump) instead of calling to_rest_object
             # explicitly for creating the autoRest Object from sdk job.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in text_classification_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.search_space_utils import (
-                _convert_sweep_dist_dict_to_str_dict,
-            )
+            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 
             data = _convert_sweep_dist_dict_to_str_dict(data)
         return data
 
     @pre_load
     def before_make(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
             from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.

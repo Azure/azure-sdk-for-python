@@ -46,8 +46,11 @@ from ._models_py3 import MeterDetails
 from ._models_py3 import MeterDetailsResponse
 from ._models_py3 import ModernChargeSummary
 from ._models_py3 import ModernReservationRecommendation
+from ._models_py3 import ModernReservationRecommendationProperties
 from ._models_py3 import ModernReservationTransaction
 from ._models_py3 import ModernReservationTransactionsListResult
+from ._models_py3 import ModernSharedScopeReservationRecommendationProperties
+from ._models_py3 import ModernSingleScopeReservationRecommendationProperties
 from ._models_py3 import ModernUsageDetail
 from ._models_py3 import Notification
 from ._models_py3 import Operation
@@ -143,8 +146,11 @@ __all__ = [
     "MeterDetailsResponse",
     "ModernChargeSummary",
     "ModernReservationRecommendation",
+    "ModernReservationRecommendationProperties",
     "ModernReservationTransaction",
     "ModernReservationTransactionsListResult",
+    "ModernSharedScopeReservationRecommendationProperties",
+    "ModernSingleScopeReservationRecommendationProperties",
     "ModernUsageDetail",
     "Notification",
     "Operation",

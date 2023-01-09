@@ -41,7 +41,7 @@ def build_set_properties_request(
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_get_properties_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -111,7 +111,7 @@ def build_get_statistics_request(
 
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "stats"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -152,7 +152,7 @@ def build_list_containers_segment_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -194,7 +194,7 @@ def build_get_user_delegation_key_request(
     restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -228,7 +228,7 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
 
     restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
     comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -266,7 +266,7 @@ def build_submit_batch_request(
     multipart_content_type = kwargs.pop(
         "multipart_content_type", _headers.pop("Content-Type", None)
     )  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -309,7 +309,7 @@ def build_filter_blobs_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp = kwargs.pop("comp", _params.pop("comp", "blobs"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-08-06"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL

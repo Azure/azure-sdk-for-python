@@ -1,23 +1,20 @@
+import os
+import sys
 from pathlib import Path
-import os, sys
 
 os.environ['AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED'] = 'true'
 os.environ['AZURE_ML_INTERNAL_COMPONENTS_ENABLED'] = 'true'
 
-# from azure.ai.ml import dsl, load_component
-from azure.ai.ml import Output, Input
-from azure.ai.ml.entities import PipelineJob
-from mldesigner.dsl import do_while
-# from common.do_while_body import do_while_body_component, primitive_output_component_with_normal_input_output_v2
-from azure.ai.ml import MLClient
-from azure.identity import DefaultAzureCredential
 from mldesigner import command_component
-
-from azure.ai.ml import Input, dsl, load_component
-from azure.ai.ml.entities import PipelineJob
-from mldesigner._component_executor import ExecutorBase
 from mldesigner import dsl as designerdsl
+from mldesigner._component_executor import ExecutorBase
+from mldesigner.dsl import do_while
 
+# from common.do_while_body import do_while_body_component, primitive_output_component_with_normal_input_output_v2
+# from azure.ai.ml import dsl, load_component
+from azure.ai.ml import Input, MLClient, Output, dsl, load_component
+from azure.ai.ml.entities import PipelineJob
+from azure.identity import DefaultAzureCredential
 
 ENVIRONMENT_DICT = dict(
         image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
