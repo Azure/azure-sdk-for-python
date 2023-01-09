@@ -359,7 +359,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 _data_binding = _try_get_data_binding(_input._data)
                 if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
-            # no output from validate job
+            # no output from validate job - iterate other jobs input to validate
             for _job_name, _job in self.jobs.items():
                 # exclude control flow node as it does not have inputs
                 if _is_control_flow_node(_job_name):
