@@ -5,12 +5,10 @@
 # ------------------------------------
 import base64
 import hashlib
-import os
 import re
 import time
 import json
-import logging
-from typing import TYPE_CHECKING, Optional, List, Any, Union
+from typing import TYPE_CHECKING
 from io import BytesIO
 try:
     from urllib.parse import urlparse
@@ -18,13 +16,10 @@ except ImportError:
     from urlparse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
-from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-
 from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
-    from typing import Dict, IO
+    from typing import List, Dict, IO
     from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
@@ -38,7 +33,6 @@ OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 # Supported audiences
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
 
-logger = logging.getLogger()
 
 def _is_tag(tag_or_digest):
     # type: (str) -> bool
@@ -156,41 +150,3 @@ def _validate_digest(data, digest):
     # type: (IO, str) -> bool
     data_digest = _compute_digest(data)
     return data_digest == digest
-
-def _get_authority(endpoint: str) -> str:
-    if ".azurecr.io" in endpoint:
-        logger.warning("Public cloud Authority")
-        return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-    if ".azurecr.cn" in endpoint:
-        logger.warning("China Authority")
-        return AzureAuthorityHosts.AZURE_CHINA
-    if ".azurecr.us" in endpoint:
-        logger.warning("US Gov Authority")
-        return AzureAuthorityHosts.AZURE_GOVERNMENT
-    raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
-
-def _get_audience(authority: str) -> str:
-    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        logger.warning("Public cloud auth audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_CHINA:
-        logger.warning("China cloud auth audience")
-        return "https://management.chinacloudapi.cn"
-    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-        logger.warning("US Gov cloud auth audience")
-        return "https://management.usgovcloudapi.net"
-
-def _get_credential(
-    authority: Optional[str]=None, **kwargs: Any
-) -> Union[ClientSecretCredential, DefaultAzureCredential]:
-    if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        return ClientSecretCredential(
-            tenant_id=os.environ["CONTAINERREGISTRY_TENANT_ID"],
-            client_id=os.environ["CONTAINERREGISTRY_CLIENT_ID"],
-            client_secret=os.environ["CONTAINERREGISTRY_CLIENT_SECRET"],
-            authority=authority
-        )
-    is_async = kwargs.pop("is_async", False)
-    if is_async:
-        return AsyncDefaultAzureCredential(**kwargs)
-    return DefaultAzureCredential(**kwargs)

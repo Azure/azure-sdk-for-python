@@ -15,11 +15,10 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.containerregistry._helpers import _get_authority, _get_audience
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 from azure.identity import AzureAuthorityHosts
-from asynctestcase import AsyncContainerRegistryTestClass
+from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -570,7 +569,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     async def test_construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
-        authority = _get_authority(containerregistry_endpoint)
+        authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
         
         async with ContainerRegistryClient(
@@ -593,9 +592,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_set_audience(self, containerregistry_endpoint):
-        authority = _get_authority(containerregistry_endpoint)
+        authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
-        valid_audience = _get_audience(authority)
+        valid_audience = get_audience(authority)
 
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
@@ -604,11 +603,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 pass
         
         async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
-            if valid_audience == _get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
                 async for repo in client.list_repository_names():
                     pass
 
-                invalid_audience = _get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+                invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
                 invalid_client = ContainerRegistryClient(
                     endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
                 )
