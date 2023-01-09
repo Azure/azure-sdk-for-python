@@ -187,7 +187,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
         assert_job_cancel(dsl_pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="unknown recording error to further investigate")
     def test_pipeline_with_setting_node_output(self, client: MLClient) -> None:
         component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
         tsv_func = load_component(component_dir / "command-linux/one-line-tsv/component.yaml")
@@ -223,8 +222,8 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
         # get dataset
-        training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
-        test_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+        _training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+        _test_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
 
         component_dir = (
             Path(__file__).parent.parent.parent / "test_configs" / "internal" / "get_started_train_score_eval"
@@ -240,11 +239,11 @@ class TestPipelineJob(AzureRecordedTestCase):
             train = train_component_func(training_data=input_data, max_epochs=5, learning_rate=learning_rate)
             train.outputs.model_output.mode = InputOutputModes.UPLOAD
             score = score_component_func(model_input=train.outputs.model_output, test_data=test_data)
-            eval = eval_component_func(scoring_result=score.outputs.score_output)
-            eval.outputs.eval_output.mode = InputOutputModes.UPLOAD
+            evaluate = eval_component_func(scoring_result=score.outputs.score_output)
+            evaluate.outputs.eval_output.mode = InputOutputModes.UPLOAD
 
         pipeline_job = training_pipeline_with_components_in_registry(
-            input_data=training_data, test_data=test_data, learning_rate=0.1
+            input_data=_training_data, test_data=_test_data, learning_rate=0.1
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
