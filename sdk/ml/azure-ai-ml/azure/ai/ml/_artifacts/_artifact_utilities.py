@@ -441,16 +441,17 @@ def _check_and_upload_env_build_context(
     show_progress: bool = True,
 ) -> Environment:
     if environment.path:
-        uploaded_artifact = _upload_snapshot_to_datastore(
-            operation_scope=operations._operation_scope,
-            datastore_operation=operations._datastore_operation,
-            path=environment.path,
-            datastore_name=environment.datastore,
+        uploaded_artifact = _upload_to_datastore(
+            operations._operation_scope,
+            operations._datastore_operation,
+            environment.path,
             asset_name=environment.name,
             asset_version=str(environment.version),
             asset_hash=environment._upload_hash,
-            show_progress=show_progress,
             sas_uri=sas_uri,
+            artifact_type=ErrorTarget.ENVIRONMENT,
+            datastore_name=environment.datastore,
+            show_progress=show_progress,
         )
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"
@@ -498,7 +499,6 @@ def get_temporary_data_reference(
     request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
-        print("status code: ", response.status_code)
         raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
@@ -606,11 +606,7 @@ def _upload_snapshot_to_datastore(
     asset_hash: str = None,
     ignore_file: IgnoreFile = None,
     sas_uri: str = None,  # contains registry sas url
-    artifact_type = ErrorTarget.ARTIFACT,
 ) -> ArtifactStorageInfo:
-
-    # _validate_path(path, _type=artifact_type)
-
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
