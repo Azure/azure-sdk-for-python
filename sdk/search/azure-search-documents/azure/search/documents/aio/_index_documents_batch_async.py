@@ -9,12 +9,6 @@ import asyncio
 from .._generated.models import IndexAction
 
 
-def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
-    if len(args) == 1 and isinstance(args[0], (List, Tuple)):
-        return args[0]
-    return args
-
-
 class IndexDocumentsBatch:
     """Represent a batch of update operations for documents in an Azure
     Search index.
@@ -44,7 +38,7 @@ class IndexDocumentsBatch:
         :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(_flatten_args(documents), "upload")
+        return await self._extend_batch(documents, "upload")
 
     async def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
         """Add documents to delete to the Azure search index.
@@ -64,7 +58,7 @@ class IndexDocumentsBatch:
         :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(_flatten_args(documents), "delete")
+        return await self._extend_batch(documents, "delete")
 
     async def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
         """Add documents to merge in to existing documents in the Azure search
@@ -81,7 +75,7 @@ class IndexDocumentsBatch:
         :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(_flatten_args(documents), "merge")
+        return await self._extend_batch(documents, "merge")
 
     async def add_merge_or_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
         """Add documents to merge in to existing documents in the Azure search
@@ -98,7 +92,7 @@ class IndexDocumentsBatch:
         :return: the added actions
         :rtype: List[IndexAction]
         """
-        return await self._extend_batch(_flatten_args(documents), "mergeOrUpload")
+        return await self._extend_batch(documents, "mergeOrUpload")
 
     @property
     def actions(self) -> List[IndexAction]:
