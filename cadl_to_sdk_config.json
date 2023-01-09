@@ -1,15 +1,5 @@
 {
   "dependencies": {
-    "@azure-tools/cadl-python": "latest",
-    "@azure-tools/cadl-autorest": "latest",
-    "@azure-tools/cadl-azure-core": "latest",
-    "@azure-tools/cadl-dpg": "latest",
-    "@cadl-lang/compiler": "latest",
-    "@cadl-lang/openapi": "latest",
-    "@cadl-lang/openapi3": "latest",
-    "@cadl-lang/prettier-plugin-cadl": "latest",
-    "@cadl-lang/versioning": "latest",
-    "@cadl-lang/rest": "latest",
-    "prettier": "latest"
+    "yyc-test": "0.0.1"
   }
 }

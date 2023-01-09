@@ -368,10 +368,17 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # npm install tool
     origin_path = os.getcwd()
-    cadl_to_sdk_config = Path(origin_path) / "cadl_to_sdk_config.json"
+    with open("cadl_to_sdk_config.json", "r") as file_in:
+        cadl_python_tool = json.load(file_in)
     os.chdir(Path(spec_folder) / cadl_relative_path)
-    if not Path("package.json").exists():
-        shutil.copy(cadl_to_sdk_config, "package.json")
+    if Path("package.json").exists():
+        with open("package.json", "r") as file_in:
+            cadl_tools = json.load(file_in)
+    else:
+        cadl_tools = {"dependencies:{}"}
+    cadl_tools["dependencies"].update(cadl_python_tool["dependencies"])
+    with open("package.json", "w") as file_out:
+        json.dump(cadl_tools, file_out)
     check_call("npm install", shell=True)
 
     # generate code
