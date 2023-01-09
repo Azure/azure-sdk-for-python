@@ -7,6 +7,7 @@
 * Made load method properties unordered.
 
 ### Breaking Changes
+* Changes how load works. Moves if from AzureAppConfigurationProvider.load to loadProvider.
 * Removed custom Key Vault Error
 * Removed unneeded __repr__ and copy methods.
 
