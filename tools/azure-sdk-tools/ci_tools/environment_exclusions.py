@@ -350,7 +350,7 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
     enabled = default
     package_name = os.path.basename(package_path)
 
-    # check the original exclusion list for the basename
+    # check the original exclusion lists for the package name
     exclusions_for_env = []
     try:
         exclusions_for_env = globals()[f"{check.strip().upper()}_OPT_OUT"]
