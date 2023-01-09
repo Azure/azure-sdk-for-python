@@ -357,7 +357,7 @@ class FormElement:
     """
     text: str
     """The text content of the element."""
-    bounding_box: list[Point]
+    bounding_box: List[Point]
     """A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
@@ -413,7 +413,7 @@ class FormWord(FormElement):
     """
     text: str
     """The text content of the word."""
-    bounding_box: list[Point]
+    bounding_box: List[Point]
     """A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
@@ -483,7 +483,7 @@ class FormSelectionMark(FormElement):
     """
     text: str
     """The text content - not returned for FormSelectionMark."""
-    bounding_box: list[Point]
+    bounding_box: List[Point]
     """A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
@@ -558,12 +558,12 @@ class FormLine(FormElement):
     """
     text: str
     """The text content of the line."""
-    bounding_box: list[Point]
+    bounding_box: List[Point]
     """A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF."""
-    words: list[FormWord]
+    words: List[FormWord]
     """A list of the words that make up the line."""
     page_number: int
     """The 1-based number of the page in which this content is present."""
@@ -856,9 +856,9 @@ class FormPage:
     """The :class:`~azure.ai.formrecognizer.LengthUnit` used by the width,
         height, and bounding box properties. For images, the unit is "pixel".
         For PDF, the unit is "inch"."""
-    tables: list[FormTable]
+    tables: List[FormTable]
     """A list of extracted tables contained in a page."""
-    lines: list[FormLine]
+    lines: List[FormLine]
     """When `include_field_elements` is set to true, a list of recognized text lines is returned.
         For calls to recognize content, this list is always populated. The maximum number of lines
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
@@ -867,7 +867,7 @@ class FormPage:
         logic should be built upon the actual line location instead of order. The reading order
         of lines can be specified by the `reading_order` keyword argument (Note: `reading_order`
         only supported in `begin_recognize_content` and `begin_recognize_content_from_url`)."""
-    selection_marks: list[FormSelectionMark]
+    selection_marks: List[FormSelectionMark]
     """List of selection marks extracted from the page."""
 
 
@@ -944,7 +944,7 @@ class FieldData:
     """The 1-based number of the page in which this content is present."""
     text: str
     """The string representation of the field or value."""
-    bounding_box: list[Point]
+    bounding_box: List[Point]
     """A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
@@ -1178,7 +1178,7 @@ class RecognizedForm:
         without labels, a unique name is generated for each field."""
     page_range: FormPageRange
     """The first and last page number of the input form."""
-    pages: list[FormPage]
+    pages: List[FormPage]
     """A list of pages recognized from the input document. Contains lines,
         words, selection marks, tables and page metadata."""
 
