@@ -35,19 +35,7 @@ def get_package_names(sdk_folder):
 
 
 def init_new_service(package_name, folder_name, is_cadl = False):
-    if is_cadl:
-        output_path = Path(folder_name) / package_name
-        if not (output_path / "sdk_packaging.toml").exists():
-            with open(output_path / "sdk_packaging.toml", "w") as file_out:
-                file_out.write("[packaging]\nauto_update = false")
-
-        # add ci.yaml
-        generate_ci(
-            template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
-            folder_path=Path(folder_name),
-            package_name=package_name
-        )
-    else:
+    if not is_cadl:
         setup = Path(folder_name, package_name, "setup.py")
         if not setup.exists():
             check_call(
@@ -62,6 +50,18 @@ def init_new_service(package_name, folder_name, is_cadl = False):
                 content = [line.replace("MyService", name) for line in content]
                 with open(str(ci), "w") as file_out:
                     file_out.writelines(content)
+    else:
+        output_path = Path(folder_name) / package_name
+        if not (output_path / "sdk_packaging.toml").exists():
+            with open(output_path / "sdk_packaging.toml", "w") as file_out:
+                file_out.write("[packaging]\nauto_update = false")
+
+        # add ci.yaml
+        generate_ci(
+            template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+            folder_path=Path(folder_name),
+            package_name=package_name
+        )
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
