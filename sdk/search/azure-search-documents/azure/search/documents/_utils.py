@@ -24,7 +24,7 @@ def get_authentication_policy(credential, *, is_async: bool = False, **kwargs):
     return authentication_policy
 
 
-def odata(statement, **kwargs):
+def odata(statement: str, **kwargs: Any) -> str:
     """Escape an OData query string.
 
     The statement to prepare should include fields to substitute given inside
