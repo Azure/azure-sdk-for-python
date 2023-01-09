@@ -7,14 +7,14 @@ transaction receipts."""
 
 from base64 import b64decode
 from hashlib import sha256
-from typing import Dict, List, Any, cast
+from typing import Union, Dict, List, Any, cast
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, utils
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from azure.confidentialledger.receiptverification.models import (
+from azure.confidentialledger.receiptverification._models import (
     LeafComponents,
     ProofElement,
     Receipt,
@@ -25,46 +25,29 @@ from azure.confidentialledger.receiptverification._utils import (
 )
 
 
-def verify_receipt_from_dict(
-    receipt_dict: Dict[str, Any], service_cert_str: str
-) -> None:
+def verify_receipt(receipt: Union[Receipt, Dict[str, Any]], service_cert: str) -> None:
     """Verify that a given Azure Confidential Ledger write transaction receipt
     is valid from its content and the Confidential Ledger service identity
     certificate.
 
-    :param receipt: JSON object containing the content of an Azure
+    :param receipt: Receipt object or dictionary containing the content of an Azure
     Confidential Ledger write transaction receipt.
-    :type receipt: Dict[str, Any]
-    :param service_cert_str: String containing the PEM-encoded
+    :type receipt: Union[~azure.confidentialledgertools.receiptverification.models.Receipt, Dict[str, Any]]
+    :param service_cert: String containing the PEM-encoded
     certificate of the Confidential Ledger service identity.
-    :type service_cert_str: str
+    :type service_cert: str
     """
 
-    # Convert any key in the receipt dictionary to camel case
-    # to match the model fields (we do this because customers may
-    # provide receipts with snake case keys since they were returned
-    # by older ACL instances)
-    receipt_dict = _convert_dict_to_camel_case(receipt_dict)
+    if isinstance(receipt, dict):
 
-    # Convert receipt JSON object to Receipt model
-    receipt = Receipt.from_dict(receipt_dict)
+        # Convert any key in the receipt dictionary to camel case
+        # to match the model fields (we do this because customers may
+        # provide receipts with snake case keys since they were returned
+        # by older ACL instances)
+        receipt = _convert_dict_to_camel_case(receipt)
 
-    # Call the main verify receipt function
-    verify_receipt(receipt, service_cert_str)
-
-
-def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
-    """Verify that a given Azure Confidential Ledger write transaction receipt
-    is valid from its content and the Confidential Ledger service identity
-    certificate.
-
-    :param receipt: Receipt object containing the content of an Azure
-    Confidential Ledger write transaction receipt.
-    :type receipt: ~azure.confidentialledgertools.receiptverification.models.Receipt
-    :param service_cert_str: String containing the PEM-encoded
-    certificate of the Confidential Ledger service identity.
-    :type service_cert_str: str
-    """
+        # Convert receipt JSON object to Receipt model
+        receipt = Receipt.from_dict(receipt)
 
     # Load node PEM certificate
     node_cert = _load_and_verify_pem_certificate(receipt.cert)
@@ -72,7 +55,7 @@ def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
     # Verify node certificate is endorsed by the service certificate
     # through endorsements certificates
     _verify_node_cert_endorsed_by_service_cert(
-        node_cert, service_cert_str, receipt.serviceEndorsements
+        node_cert, service_cert, receipt.serviceEndorsements
     )
 
     # Compute hash of the leaf node in the Merkle Tree corresponding

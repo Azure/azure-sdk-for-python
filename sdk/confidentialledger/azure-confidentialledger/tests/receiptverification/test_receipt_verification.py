@@ -9,7 +9,6 @@ import pytest
 
 from azure.confidentialledger.receiptverification import (
     verify_receipt,
-    verify_receipt_from_dict,
     LeafComponents,
     ProofElement,
 )
@@ -59,10 +58,10 @@ def test_receipt_verification_from_dict_returns_successfully(
     # Check that verify_receipt does not throw any exception
     # with a valid receipt and service certificate
     try:
-        verify_receipt_from_dict(input_receipt_dict, input_service_cert)
+        verify_receipt(input_receipt_dict, input_service_cert)
     except Exception as e:
         pytest.fail(
-            f"verify_receipt_from_dict threw an exception with a valid receipt dictionary and service certificate {e}"
+            f"verify_receipt threw an exception with a valid receipt dictionary and service certificate {e}"
         )
 
 
