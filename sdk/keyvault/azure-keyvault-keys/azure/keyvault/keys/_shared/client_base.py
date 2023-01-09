@@ -63,8 +63,7 @@ def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpReques
 
 class KeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url, credential, **kwargs):
-        # type: (str, TokenCredential, **Any) -> None
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -104,26 +103,22 @@ class KeyVaultClientBase(object):
             self._models = _KeyVaultClient.models(api_version=self.api_version)
         except ValueError:
             raise NotImplementedError(
-                "This package doesn't support API version '{}'. ".format(self.api_version)
-                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+                f"This package doesn't support API version '{self.api_version}'. "
+                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
             )
 
     @property
-    def vault_url(self):
-        # type: () -> str
+    def vault_url(self) -> str:
         return self._vault_url
 
-    def __enter__(self):
-        # type: () -> KeyVaultClientBase
+    def __enter__(self) -> "KeyVaultClientBase":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: "Any") -> None:
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
 
         Calling this method is unnecessary when using the client as a context manager.
@@ -131,7 +126,7 @@ class KeyVaultClientBase(object):
         self._client.close()
 
     @distributed_trace
-    def send_request(self, request: "HttpRequest", **kwargs: "Any") -> "HttpResponse":
+    def send_request(self, request: "HttpRequest", **kwargs) -> "HttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as

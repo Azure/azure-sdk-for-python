@@ -182,9 +182,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # all items have to be dict and have matched meta
         for item in items:
             # item has to be dict
-            if not isinstance(item, dict) or item == {}:
+            # Note: item can be empty dict when loop_body don't have foreach inputs.
+            if not isinstance(item, dict):
                 validation_result.append_error(
-                    f"Items has to be list/dict of non-empty dict as value, " f"but got {type(item)} for {item}."
+                    f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}."
                 )
             else:
                 # item has to have matched meta
@@ -193,7 +194,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         meta = item
                     else:
                         validation_result.append_error(
-                            f"Items should to have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
+                            f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
                         )
                 # items' keys should appear in body's inputs
                 body_component = self.body._component

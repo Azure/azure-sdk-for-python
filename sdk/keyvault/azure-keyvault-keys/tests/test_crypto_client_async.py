@@ -6,7 +6,7 @@ import asyncio
 import codecs
 import hashlib
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest import mock
 
 import pytest
@@ -20,7 +20,6 @@ from azure.keyvault.keys import (
     KeyOperation,
     KeyVaultKey,
 )
-from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
@@ -79,10 +78,10 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
         
 
@@ -91,14 +90,14 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     async def _import_test_key(self, client, name, hardware_protected=False):
         def _to_bytes(hex):
             if len(hex) % 2:
-                hex = "0{}".format(hex)
+                hex = f"0{hex}"
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
@@ -475,7 +474,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     async def test_rsa_verify_local(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             for signature_algorithm, hash_function in (
@@ -501,7 +500,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     async def test_rsa_verify_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Sign with Key Vault, verify locally"""
         for size in (2048, 3072, 4096):
-            key_name = self.get_resource_name("rsa-verify-{}".format(size))
+            key_name = self.get_resource_name(f"rsa-verify-{size}")
             key = await self._create_rsa_key(key_client, key_name, size=size, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
@@ -535,7 +534,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = await self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
 
@@ -561,7 +560,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         }
 
         for curve, (signature_algorithm, hash_function) in sorted(matrix.items()):
-            key_name = self.get_resource_name("ec-verify-{}".format(curve.value))
+            key_name = self.get_resource_name(f"ec-verify-{curve.value}")
             key = await self._create_ec_key(key_client, key_name, curve=curve, hardware_protected=is_hsm)
             crypto_client = self.create_crypto_client(key, is_async=True, api_version=key_client.api_version)
             local_client = CryptographyClient.from_jwk(key.key)
@@ -594,7 +593,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
                     assert substring in str(ex.value)
 
         # operations should not succeed with a key whose nbf is in the future
-        the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
+        the_year_3000 = datetime(3000, 1, 1, tzinfo=timezone.utc)
 
         rsa_wrap_algorithms = [algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")]
         rsa_encryption_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
@@ -605,7 +604,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         await test_operations(not_yet_valid_key, [str(the_year_3000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # nor should they succeed with a key whose exp has passed
-        the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
+        the_year_2000 = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-expired")
         expired_key = await self._create_rsa_key(
@@ -614,7 +613,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         await test_operations(expired_key, [str(the_year_2000)], rsa_encryption_algorithms, rsa_wrap_algorithms)
 
         # when exp and nbf are set, error messages should contain both
-        the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
+        the_year_3001 = datetime(3001, 1, 1, tzinfo=timezone.utc)
 
         key_name = self.get_resource_name("rsa-valid")
         valid_key = await self._create_rsa_key(
@@ -880,7 +879,7 @@ async def test_prefers_local_provider():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -951,7 +950,7 @@ async def test_encrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())
@@ -975,7 +974,7 @@ async def test_decrypt_argument_validation():
         spec=KeyVaultKey,
         id="https://localhost/fake/key/version",
         properties=mock.Mock(
-            not_before=datetime(2000, 1, 1, tzinfo=_UTC), expires_on=datetime(3000, 1, 1, tzinfo=_UTC)
+            not_before=datetime(2000, 1, 1, tzinfo=timezone.utc), expires_on=datetime(3000, 1, 1, tzinfo=timezone.utc)
         ),
     )
     client = CryptographyClient(key, mock.Mock())

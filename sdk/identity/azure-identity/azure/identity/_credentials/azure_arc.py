@@ -35,7 +35,7 @@ class AzureArcCredential(ManagedIdentityBase):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
     def get_unavailable_message(self) -> str:

@@ -297,6 +297,12 @@ def assert_job_cancel(
     return created_job
 
 
+def submit_and_cancel_new_dsl_pipeline(pipeline_func, client, default_compute="cpu-cluster", **kwargs):
+    pipeline_job: PipelineJob = pipeline_func(**kwargs)
+    pipeline_job.settings.default_compute = default_compute
+    return assert_job_cancel(pipeline_job, client)
+
+
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
