@@ -16,7 +16,7 @@ import os
 import logging
 import sys
 
-from ci_tools.environment_exclusions import is_ignored_package, VERIFYTYPES_OPT_OUT
+from ci_tools.environment_exclusions import is_ignored_package, is_check_enabled
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     module = package_name.replace("-", ".")
     setup_path = os.path.abspath(args.target_package)
 
-    if package_name in VERIFYTYPES_OPT_OUT or is_ignored_package(package_name):
+    if is_check_enabled(args.target_package, "type_check_samples") or is_ignored_package(package_name):
         logging.info(
             f"{package_name} opts-out of verifytypes check. See https://aka.ms/python/typing-guide for information."
         )

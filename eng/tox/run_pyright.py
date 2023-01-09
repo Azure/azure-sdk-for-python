@@ -15,8 +15,7 @@ import sys
 
 from ci_tools.environment_exclusions import (
     is_ignored_package,
-    PYRIGHT_OPT_OUT,
-    TYPE_CHECK_SAMPLES_OPT_OUT,
+    is_check_enabled,
 )
 
 logging.getLogger().setLevel(logging.INFO)
@@ -36,7 +35,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if package_name in PYRIGHT_OPT_OUT or is_ignored_package(package_name):
+    if is_check_enabled(args.target_package, "pyright") or is_ignored_package(package_name):
         logging.info(
             f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
         )
@@ -46,7 +45,7 @@ if __name__ == "__main__":
         os.path.join(args.target_package, "azure"),
         os.path.join(args.target_package, "samples"),
     ]
-    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+    if is_check_enabled(args.target_package, "type_check_samples"):
         logging.info(
             f"Package {package_name} opts-out of pyright check on samples."
         )
