@@ -260,7 +260,7 @@ class EventData(object):
         return str(decode_with_recurse(seq_list, encoding))
 
     @property
-    def message(self) -> LegacyMessage:
+    def message(self) -> Union["Message", LegacyMessage]:
         """DEPRECATED: Get the underlying LegacyMessage.
          This is deprecated and will be removed in a later release.
 
