@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Union, Any
+from typing import Union
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._models import AccountSasPermissions, ResourceTypes
