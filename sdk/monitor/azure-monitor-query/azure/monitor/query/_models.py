@@ -548,7 +548,7 @@ class MetricDefinition:  # pylint: disable=too-many-instance-attributes
     "NanoCores", "BitsPerSecond"."""
     primary_aggregation_type: Optional[Union[str, MetricAggregationType]] = None
     """The primary aggregation type value defining how to use the values for display. Possible values
-    include: "None", "Average", "Count", "Minimum", "Maximum", "Total"."""
+    include "None", "Average", "Count", "Minimum", "Maximum", "Total"."""
     metric_class: Optional[Union[str, MetricClass]] = None
     """The class of the metric. Possible values include "Availability", "Transactions", "Errors",
     "Latency", "Saturation"."""
