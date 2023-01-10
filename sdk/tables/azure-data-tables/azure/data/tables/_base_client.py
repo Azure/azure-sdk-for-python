@@ -4,9 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import sys
 
-from typing import Any, Dict, List,  Literal, Optional, Mapping, Union
+from typing import Any, Dict, List, Optional, Mapping, Union
+from typing_extensions import Literal
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
