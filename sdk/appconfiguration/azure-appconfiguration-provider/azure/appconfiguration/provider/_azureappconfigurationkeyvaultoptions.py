@@ -4,13 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import overload, List, Optional, Callable
-from azure.core.credentials import TokenCredential
 from azure.keyvault.secrets import SecretClient
 
 class AzureAppConfigurationKeyVaultOptions:
 
     @overload
-    def __init__(self,  credential: TokenCredential, *, secret_clients: Optional[List[SecretClient]] = None):
+    def __init__(self,  credential, *, secret_clients: Optional[List[SecretClient]] = None):
         """
         Options for connecting to Key Vault.
 

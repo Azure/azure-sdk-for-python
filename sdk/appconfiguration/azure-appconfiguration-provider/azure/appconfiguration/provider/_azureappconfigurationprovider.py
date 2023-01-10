@@ -7,7 +7,6 @@ import json
 from typing import overload, List, Tuple
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from azure.core.credentials import TokenCredential
 from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from ._settingselector import SettingSelector
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
@@ -107,7 +106,7 @@ def load_provider(**kwargs):
                 provider._dict[trimmed_key] = config.value
     return provider
 
-def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential,
+def __buildprovider(connection_string:str, endpoint:str, credential,
         key_vault_options:AzureAppConfigurationKeyVaultOptions):
     provider = AzureAppConfigurationProvider()
     headers = {}
