@@ -45,16 +45,16 @@ min-similarity-lines=10
 # The invalid-name checker must be **enabled** for these hints to be used.
 include-naming-hint=yes
 
-module-name-hint=lowercase (keep short; underscores are discouraged)
-const-name-hint=UPPER_CASE_WITH_UNDERSCORES
-class-name-hint=CapitalizedWords
-class-attribute-name-hint=lower_case_with_underscores
-attr-name-hint=lower_case_with_underscores
-method-name-hint=lower_case_with_underscores
-function-name-hint=lower_case_with_underscores
-argument-name-hint=lower_case_with_underscores
-variable-name-hint=lower_case_with_underscores
-inlinevar-name-hint=lower_case_with_underscores (short is OK)
+module-naming-style=snake_case
+const-naming-style=UPPER_CASE
+class-naming-style=PascalCase
+class-attribute-naming-style=snake_case
+attr-naming-style=snake_case
+method-naming-style=snake_case
+function-naming-style=snake_case
+argument-naming-style=snake_case
+variable-naming-style=snake_case
+inlinevar-naming-style=snake_case
 
 [TYPECHECK]
 generated-members=js.*
