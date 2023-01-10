@@ -89,6 +89,9 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
         if running_major_version in spec_set:
             collected_packages.append(pkg)
 
+    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
+    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(package_set, collected_packages)))
+
     return collected_packages
 
 
@@ -112,6 +115,8 @@ def str_to_bool(input_string: str) -> bool:
     else:
         return False
 
+def generate_difference(original_packages: List[str], filtered_packages: List[str]):
+    return list(set(original_packages) - set(filtered_packages))
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
@@ -133,9 +138,9 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
 def apply_business_filter(collected_packages: List[str], filter_type: str) -> List[str]:
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
 
-    logging.info("Target packages after filtering by CI Type: {}".format(pkg_set_ci_filtered))
-    logging.info("Package(s) omitted by CI filter: {}".format(list(set(collected_packages) - set(pkg_set_ci_filtered))))
-
+    logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
+    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered)))
+    
     return pkg_set_ci_filtered
 
 
@@ -206,6 +211,9 @@ def is_package_active(package_path: str):
 
 def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
     packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
+
+    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
+    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, packages)))
 
     return packages
 
