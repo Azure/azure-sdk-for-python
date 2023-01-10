@@ -261,10 +261,10 @@ class EventData(object):
 
     @property
     def message(self) -> Union["Message", LegacyMessage]:
-        """DEPRECATED: Get the underlying LegacyMessage.
+        """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
          This is deprecated and will be removed in a later release.
 
-        :rtype: LegacyMessage
+        :rtype: uamqp.Message or LegacyMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
