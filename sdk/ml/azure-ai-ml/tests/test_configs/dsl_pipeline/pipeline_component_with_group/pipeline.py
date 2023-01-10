@@ -22,7 +22,7 @@ def pipeline_func(pg: ParameterGroup):
         component_in_string=pg.str_param,
     )
     # finalize job consume parameter group
-    finalize_job = pipeline_component_func(pg)  # noqa: F841
+    finalize_job = pipeline_component_func(pg=pg)  # noqa: F841
     # execution jobs
     take = command_component_func(  # noqa: F841
         component_in_number=pg.int_param,
@@ -31,5 +31,6 @@ def pipeline_func(pg: ParameterGroup):
 
 
 pipeline_job = pipeline_func(pg=ParameterGroup(int_param=1, str_param="a"))
+pipeline_job.settings.default_compute = "cpu-cluster"
 pipeline_job.settings.on_init = "init_job"
 pipeline_job.settings.on_finalize = "finalize_job"
