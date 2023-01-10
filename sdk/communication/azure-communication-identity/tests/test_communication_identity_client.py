@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from datetime import timedelta
+import jwt
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
@@ -15,11 +16,11 @@ from utils import is_token_expiration_within_allowed_deviation
 from azure.identity import DefaultAzureCredential
 from acs_identity_test_case import ACSIdentityTestCase
 
-
 class ArgumentPasser:
     def __call__(self, fn):
         def _wrapper(test_class, _, value, **kwargs):
             fn(test_class, _, value, **kwargs)
+
         return _wrapper
 
 class TestClient(ACSIdentityTestCase):
@@ -51,13 +52,17 @@ class TestClient(ACSIdentityTestCase):
 
         assert user.properties.get('id') is not None
 
+    @pytest.mark.parametrize("_, value", [("chat", [CommunicationTokenScope.CHAT]),
+                                          ("voip", [CommunicationTokenScope.VOIP]),
+                                          ("chat&voip", [CommunicationTokenScope.VOIP, CommunicationTokenScope.CHAT])])
+    @ArgumentPasser()
     @recorded_by_proxy
-    def test_create_user_and_token(self):
+    def test_create_user_and_token(self, _, scopes):
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
+        user, token_response = identity_client.create_user_and_token(scopes=scopes)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
@@ -92,13 +97,18 @@ class TestClient(ACSIdentityTestCase):
         token_expires_in = timedelta(minutes=invalid_mins)
 
         with pytest.raises(Exception) as ex:
-            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT],
+                                                  token_expires_in=token_expires_in)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
+    @pytest.mark.parametrize("_, value", [("chat", [CommunicationTokenScope.CHAT]),
+                                          ("voip", [CommunicationTokenScope.VOIP]),
+                                          ("chat&voip", [CommunicationTokenScope.VOIP, CommunicationTokenScope.CHAT])])
+    @ArgumentPasser()
     @recorded_by_proxy
-    def test_get_token_from_managed_identity(self):
+    def test_get_token_from_managed_identity(self, _, scopes):
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -110,10 +120,12 @@ class TestClient(ACSIdentityTestCase):
         )
         user = identity_client.create_user()
 
-        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
+        token_response = identity_client.get_token(user, scopes=scopes)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
+        # payload = jwt.decode(token_response.token, options={"verify_signature": False})
+        # assert payload['acsScope'] == ",".join(scopes)
 
     @recorded_by_proxy
     def test_get_token(self):
@@ -343,7 +355,7 @@ class TestClient(ACSIdentityTestCase):
         _, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_client_id,
-                                                                      user_object_id)
+                                                     user_object_id)
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
