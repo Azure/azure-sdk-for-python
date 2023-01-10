@@ -4,7 +4,17 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Union,
+    Dict,
+    Tuple,
+    Callable,
+    List,
+    Optional,
+)
+import datetime
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -14,16 +24,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    import datetime
-    from typing import (  # pylint: disable=ungrouped-imports
-        Any,
-        Union,
-        Dict,
-        Tuple,
-        Callable,
-        List,
-        Optional,
-    )
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
     from ._client_base import CredentialTypes
@@ -144,7 +144,7 @@ class EventHubConsumerClient(
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: CredentialTypes,
+        credential: "CredentialTypes",
         **kwargs: Any
     ) -> None:
 
@@ -188,7 +188,7 @@ class EventHubConsumerClient(
         consumer_group: str,
         partition_id: str,
         event_position: Union[str, int, datetime.datetime],
-        on_event_received: Callable[[PartitionContext, EventData], None],
+        on_event_received: Callable[["PartitionContext", "EventData"], None],
         **kwargs: Any
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")

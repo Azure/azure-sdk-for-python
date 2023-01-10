@@ -66,23 +66,31 @@ class EventProcessor(
         self._batch = kwargs.get("batch") or False
         self._max_batch_size = kwargs.get("max_batch_size") or 300
         self._max_wait_time = kwargs.get("max_wait_time")
-        self._partition_id = kwargs.get("partition_id", None)  # type: Optional[str]
-        self._error_handler = kwargs.get(
+        self._partition_id: Optional[str] = kwargs.get("partition_id", None)
+        self._error_handler: Optional[
+            Callable[[PartitionContext, Exception], None]
+        ] = kwargs.get(
             "on_error", None
-        )  # type: Optional[Callable[[PartitionContext, Exception], None]]
-        self._partition_initialize_handler = kwargs.get(
+        )
+        self._partition_initialize_handler: Optional[
+            Callable[[PartitionContext], None]
+        ] = kwargs.get(
             "on_partition_initialize", None
-        )  # type: Optional[Callable[[PartitionContext], None]]
-        self._partition_close_handler = kwargs.get(
+        )
+        self._partition_close_handler: Optional[
+            Callable[[PartitionContext, CloseReason], None]
+        ] = kwargs.get(
             "on_partition_close", None
-        )  # type: Optional[Callable[[PartitionContext, CloseReason], None]]
-        checkpoint_store = kwargs.get(
+        )
+        checkpoint_store: Optional[CheckpointStore] = kwargs.get(
             "checkpoint_store"
-        )  # type: Optional[CheckpointStore]
+        )
         self._checkpoint_store = checkpoint_store or InMemoryCheckpointStore()
-        self._initial_event_position = kwargs.get(
+        self._initial_event_position: Union[
+            str, int, datetime, Dict[str, Any]
+        ] = kwargs.get(
             "initial_event_position", "@latest"
-        )  # type: Union[str, int, datetime, Dict[str, Any]]
+        )
         self._initial_event_position_inclusive = kwargs.get(
             "initial_event_position_inclusive", False
         )  # type: Union[bool, Dict[str, bool]]

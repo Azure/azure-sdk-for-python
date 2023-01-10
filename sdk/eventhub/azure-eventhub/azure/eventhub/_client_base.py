@@ -317,7 +317,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = EventhubAzureNamedKeyTokenCredential(credential)
         else:
             self._credential = credential
-        
+
         self._keep_alive = kwargs.get("keep_alive", 30)
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"

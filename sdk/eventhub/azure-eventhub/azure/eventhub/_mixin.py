@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import (
-    Any,
-    Optional,
     List
 )
 

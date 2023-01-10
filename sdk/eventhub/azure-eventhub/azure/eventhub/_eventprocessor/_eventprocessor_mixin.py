@@ -63,7 +63,7 @@ class EventProcessorMixin(object):
         elif isinstance(self._initial_event_position_inclusive, bool):
             event_position_inclusive = self._initial_event_position_inclusive
 
-        event_position: Union[int, str, datetime] = "-1" 
+        event_position: Union[int, str, datetime] = "-1"
         if checkpoint_offset:
             event_position = checkpoint_offset
         elif isinstance(self._initial_event_position, dict):
