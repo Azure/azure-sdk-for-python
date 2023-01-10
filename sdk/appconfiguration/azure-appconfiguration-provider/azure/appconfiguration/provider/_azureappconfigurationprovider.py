@@ -6,8 +6,8 @@
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from _azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from azure.core.credentials import TokenCredential
+from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from ._settingselector import SettingSelector
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
 from typing import overload, List, Tuple
