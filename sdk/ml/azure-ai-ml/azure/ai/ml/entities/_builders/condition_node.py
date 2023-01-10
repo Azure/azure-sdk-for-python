@@ -35,6 +35,11 @@ class ConditionNode(ControlFlowNode):
     def _from_rest_object(cls, obj: dict) -> "ConditionNode":
         return cls(**obj)
 
+    @classmethod
+    def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ConditionNode":
+        """Create a condition node instance from schema parsed dict."""
+        return cls(**loaded_data)
+
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
 
@@ -63,15 +68,19 @@ class ConditionNode(ControlFlowNode):
                     f"with value 'True', got {output_definition.is_control}",
                 )
 
-        error_msg = "{!r} of dsl.condition node must be an instance of " f"{BaseNode} or {AutoMLJob}," "got {!r}."
-        if self.true_block is not None and not isinstance(self.true_block, (BaseNode, AutoMLJob)):
+        error_msg = "{!r} of dsl.condition node must be an instance of " \
+                    f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
+        if self.true_block is not None and not isinstance(self.true_block, (BaseNode, AutoMLJob, str)):
             validation_result.append_error(
                 yaml_path="true_block", message=error_msg.format("true_block", type(self.true_block))
             )
-        if self.false_block is not None and not isinstance(self.false_block, (BaseNode, AutoMLJob)):
+        if self.false_block is not None and not isinstance(self.false_block, (BaseNode, AutoMLJob, str)):
             validation_result.append_error(
                 yaml_path="false_block", message=error_msg.format("false_block", type(self.false_block))
             )
+
+        # TODO: add validation for invalid binding
+        # TODO: check how CLI bindings are processed in command node
 
         if self.true_block is None and self.false_block is None:
             validation_result.append_error(

@@ -6,13 +6,13 @@ from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._schema.pipeline import pipeline_job
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 from .test_pipeline_job import assert_job_cancel
+from test_utilities.utils import omit_with_wildcard
 
 
 @pytest.fixture()
@@ -42,6 +42,47 @@ def update_pipeline_schema():
 @pytest.mark.pipeline_test
 class TestConditionalNodeInPipeline(AzureRecordedTestCase):
     pass
+
+
+class TestIfElse(TestConditionalNodeInPipeline):
+    def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        params_override = [{"name": randstr('name')}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/simple_pipeline.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+        omit_fields = [
+            "name",
+            "properties.display_name",
+            "properties.settings",
+            "properties.jobs.*._source",
+            "properties.jobs.*.componentId",
+        ]
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["properties"]["jobs"] == {
+            'conditionnode': {'condition': '${{parent.jobs.result.outputs.output}}',
+                              'false_block': '${{parent.jobs.node1}}',
+                              'true_block': '${{parent.jobs.node2}}',
+                              'type': 'if_else'},
+            'node1': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'}},
+                      'name': 'node1',
+                      'type': 'command'},
+            'node2': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '2'}},
+                      'name': 'node2',
+                      'type': 'command'},
+            'result': {'name': 'result', 'type': 'command'}
+        }
+
+    def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        pass
+
+    def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        pass
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):
