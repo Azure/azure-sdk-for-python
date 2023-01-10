@@ -107,7 +107,7 @@ def load_provider(**kwargs):
                 provider._dict[trimmed_key] = config.value
     return provider
 
-def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential, 
+def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential,
         key_vault_options:AzureAppConfigurationKeyVaultOptions):
     provider = AzureAppConfigurationProvider()
     headers = {}
@@ -134,7 +134,7 @@ def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredent
     provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
     return provider
 
-def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, 
+def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions,
         secret_clients: List[SecretClient]) -> str:
     if key_vault_options is None:
         raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
