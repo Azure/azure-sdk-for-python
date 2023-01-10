@@ -803,7 +803,6 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
-    @pytest.mark.skip("Running fine locally but failing in pipeline, the recording looks good")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
