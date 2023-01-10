@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import (
-    loadProvider,
+    load_provider,
     AzureAppConfigurationKeyVaultOptions,
     SettingSelector
 )
@@ -22,6 +22,6 @@ secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
 selects = {SettingSelector("*", "prod")}
 key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_clients=[
                                                          secret_client])
-config = loadProvider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+config = load_provider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
 print(config["secret"])

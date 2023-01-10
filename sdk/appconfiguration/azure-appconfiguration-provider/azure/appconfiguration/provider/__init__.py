@@ -4,11 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from ._azureappconfigurationprovider import loadProvider
+from ._azureappconfigurationprovider import load_provider
 from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from ._settingselector import SettingSelector
 
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ["loadProvider", "AzureAppConfigurationKeyVaultOptions", "SettingSelector"]
+__all__ = ["load_provider", "AzureAppConfigurationKeyVaultOptions", "SettingSelector"]

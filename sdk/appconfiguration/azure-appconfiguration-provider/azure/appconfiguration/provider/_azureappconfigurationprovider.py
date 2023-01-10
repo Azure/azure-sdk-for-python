@@ -3,17 +3,52 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
+from _azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
+from azure.core.credentials import TokenCredential
 from ._settingselector import SettingSelector
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
+from typing import overload, List, Tuple
 
 from ._user_agent import USER_AGENT
 
-#pylint:disable=protected-access
-def loadProvider(*, connection_string=None, endpoint=None, credential=None, **kwargs):
+@overload
+def load_provider(endpoint: str, credential: str, **kwargs):
+    """
+    Loads configuration settings from Azure App Configuration into a Python application.
+
+    :keyword endpoint: Endpoint (one of connection_string or endpoint and credential must be set)
+    :type endpoint: str
+    :keyword credential: Credential (one of connection_string or endpoint and credential must be set)
+    :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
+    :keyword selects: List of setting selectors to filter configuration settings
+    :type selects: list[~azure.appconfigurationprovider.SettingSelector]
+    :keyword trim_prefixes: List of prefixes to trim from configuration keys
+    :type trim_prefixes: list[str]
+    :keyword key_vault_options: Options for resolving Key Vault references
+    :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
+    """
+    ...
+
+@overload
+def load_provider(connection_string: str, **kwargs):
+    """
+    Loads configuration settings from Azure App Configuration into a Python application.
+
+    :keyword connection_string: Connection string (one of connection_string or endpoint and credential must be set)
+    :type connection_string: str
+    :keyword selects: List of setting selectors to filter configuration settings
+    :type selects: list[~azure.appconfigurationprovider.SettingSelector]
+    :keyword trim_prefixes: List of prefixes to trim from configuration keys
+    :type trim_prefixes: list[str]
+    :keyword key_vault_options: Options for resolving Key Vault references
+    :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
+    """
+    ...
+
+def load_provider(*args, **kwargs):
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -30,7 +65,12 @@ def loadProvider(*, connection_string=None, endpoint=None, credential=None, **kw
     :keyword key_vault_options: Options for resolving Key Vault references
     :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
     """
+    #pylint:disable=protected-access
     key_vault_options = kwargs.pop("key_vault_options", None)
+
+    connection_string = kwargs.pop("connection_string", None)
+    endpoint = kwargs.pop("endpoint", None)
+    credential = kwargs.pop("credential", None)
 
     provider = __buildprovider(connection_string, endpoint, credential, key_vault_options)
 
@@ -67,7 +107,7 @@ def loadProvider(*, connection_string=None, endpoint=None, credential=None, **kw
                 provider._dict[trimmed_key] = config.value
     return provider
 
-def __buildprovider(connection_string, endpoint, credential, key_vault_options):
+def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential, key_vault_options:AzureAppConfigurationKeyVaultOptions):
     provider = AzureAppConfigurationProvider()
     headers = {}
     correlation_context = "RequestType=Startup"
@@ -93,7 +133,7 @@ def __buildprovider(connection_string, endpoint, credential, key_vault_options):
     provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
     return provider
 
-def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
+def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, secret_clients: List[SecretClient]) -> str:
     if key_vault_options is None:
         raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
 
@@ -122,7 +162,7 @@ def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
         "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
     )
 
-def __is_json_content_type(content_type):
+def __is_json_content_type(content_type: str) -> bool:
     if not content_type:
         return False
 
@@ -151,15 +191,13 @@ class AzureAppConfigurationProvider:
     keys. Enables resolution of Key Vault references in configuration settings.
     """
     def __init__(self):
-        # type: () -> None
         self._dict = {}
         self._trim_prefixes = []
         self._client = None
 
-    def __getitem__(self, key):
+    def __getitem__(self, key:str) -> str:
         """
         Returns the value of the specified key.
-        type: (str) -> object
         """
         return self._dict[key]
 
@@ -169,45 +207,35 @@ class AzureAppConfigurationProvider:
     def __len__(self):
         return len(self._dict)
 
-    def __contains__(self, __x: object):
+    def __contains__(self, __x: object) -> bool:
         """
-        Returns True if the configuration settings contains the specified key
-
-        type: (object) -> bool
+        Returns True if the configuration settings contains the specified key.
         """
         return self._dict.__contains__(__x)
 
-    def keys(self):
+    def keys(self) -> List[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
-
-        type: () -> list
         """
         return self._dict.keys()
 
-    def items(self):
+    def items(self) -> List[Tuple[str, str]]:
         """
         Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
         will be resolved.
-
-        type: () -> list
         """
         return self._dict.items()
 
-    def values(self):
+    def values(self) -> List[str]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
-
-        type: () -> list
         """
         return self._dict.values()
 
-    def get(self, key, default=None):
+    def get(self, key:str, default:str=None) -> str:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
-
-        type: (str, object) -> object
         """
         return self._dict.get(key, default)
 

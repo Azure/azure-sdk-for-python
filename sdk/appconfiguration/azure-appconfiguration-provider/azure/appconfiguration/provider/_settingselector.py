@@ -15,7 +15,6 @@ class SettingSelector:
     :type label_filter: str
     """
 
-    def __init__(self, key_filter, label_filter="\0"):
-        # type: (str, str) -> None
+    def __init__(self, key_filter: str, label_filter:str="\0"):
         self.key_filter = key_filter
         self.label_filter = label_filter

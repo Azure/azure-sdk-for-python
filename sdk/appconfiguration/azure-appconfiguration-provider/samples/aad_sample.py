@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import (
-    loadProvider,
+    load_provider,
     SettingSelector
 )
 from azure.identity import DefaultAzureCredential
@@ -15,19 +15,19 @@ endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
 credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using AAD
-config = loadProvider(endpoint=endpoint, credential=credential)
+config = load_provider(endpoint=endpoint, credential=credential)
 
 print(config["message"])
 
 # Connecting to Azure App Configuration using AAD and trimmed key prefixes
 trimmed = {"test."}
-config = loadProvider(endpoint=endpoint, credential=credential, trimmed_key_prefixes=trimmed)
+config = load_provider(endpoint=endpoint, credential=credential, trimmed_key_prefixes=trimmed)
 
 print(config["message"])
 
 # Connection to Azure App Configuration using SettingSelector
 selects = {SettingSelector("message*", "\0")}
-config = loadProvider(endpoint=endpoint, credential=credential, selects=selects)
+config = load_provider(endpoint=endpoint, credential=credential, selects=selects)
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
