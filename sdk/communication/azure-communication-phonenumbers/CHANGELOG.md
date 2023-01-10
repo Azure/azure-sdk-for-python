@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0b3 (2023-01-10)
 - Users can now manage SIP configuration for Direct routing.
 - Adds support for Azure Communication Services Phone Numbers Browse API Methods.
