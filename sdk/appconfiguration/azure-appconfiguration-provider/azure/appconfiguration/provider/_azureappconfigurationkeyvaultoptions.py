@@ -36,7 +36,7 @@ class AzureAppConfigurationKeyVaultOptions:
         """
         ...
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, **kwargs):
         """
         Options for connecting to Key Vault.
 

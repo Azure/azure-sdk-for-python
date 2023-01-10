@@ -4,13 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
+from typing import overload, List, Tuple
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from azure.core.credentials import TokenCredential
 from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from ._settingselector import SettingSelector
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
-from typing import overload, List, Tuple
 
 from ._user_agent import USER_AGENT
 
@@ -48,7 +48,7 @@ def load_provider(connection_string: str, **kwargs):
     """
     ...
 
-def load_provider(*args, **kwargs):
+def load_provider(**kwargs):
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -107,7 +107,8 @@ def load_provider(*args, **kwargs):
                 provider._dict[trimmed_key] = config.value
     return provider
 
-def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential, key_vault_options:AzureAppConfigurationKeyVaultOptions):
+def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredential, 
+        key_vault_options:AzureAppConfigurationKeyVaultOptions):
     provider = AzureAppConfigurationProvider()
     headers = {}
     correlation_context = "RequestType=Startup"
@@ -133,7 +134,8 @@ def __buildprovider(connection_string:str, endpoint:str, credential:TokenCredent
     provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
     return provider
 
-def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, secret_clients: List[SecretClient]) -> str:
+def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, 
+        secret_clients: List[SecretClient]) -> str:
     if key_vault_options is None:
         raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
 
