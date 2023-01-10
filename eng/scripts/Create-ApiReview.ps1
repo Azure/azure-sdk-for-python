@@ -99,7 +99,7 @@ function ProcessPackage($PackageName)
                 return 1
             }
 
-            $revisionLabel = "$($pkgInfo.Version) - Source Branch:$($SourceBranch)"
+            $revisionLabel = "$($pkgInfo.Version) - Source Branch:${SourceBranch}"
             Write-Host "Version: $($version)"
             Write-Host "SDK Type: $($pkgInfo.SdkType)"
             Write-Host "Release Status: $($pkgInfo.ReleaseStatus)"
