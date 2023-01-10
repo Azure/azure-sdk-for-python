@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Callable, Optional
+from typing import Callable, Optional, Any
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient
@@ -34,7 +34,7 @@ class ClientAssertionCredential(GetTokenMixin):
             tenant_id: str,
             client_id: str,
             func: Callable[[], str],
-            **kwargs
+            **kwargs: Any
     ) -> None:
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
@@ -47,14 +47,13 @@ class ClientAssertionCredential(GetTokenMixin):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs)  -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         assertion = self._func()
         token = self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token

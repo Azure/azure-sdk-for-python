@@ -5,3 +5,4 @@ package_pprint_name = "Iot Central Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "IotCentralClient"

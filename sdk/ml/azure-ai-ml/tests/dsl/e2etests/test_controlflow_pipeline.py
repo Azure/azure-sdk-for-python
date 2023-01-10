@@ -609,3 +609,43 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         # parallel for pipeline component is correctly generated
         with include_private_preview_nodes_in_pipeline():
             assert_job_cancel(pipeline_job, client)
+
+    def test_parallel_for_pipeline_with_empty_inputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_inputs.yml",
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component()
+            foreach_config = {}
+            for i in range(10):
+                foreach_config[f"silo_{i}"] = {}
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=foreach_config
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+            }
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'parallel_body': {'_source': 'YAML.COMPONENT',
+                              'name': 'parallel_body',
+                              'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '{"silo_0": {}, "silo_1": {}, "silo_2": {}, '
+                                       '"silo_3": {}, "silo_4": {}, "silo_5": {}, '
+                                       '"silo_6": {}, "silo_7": {}, "silo_8": {}, '
+                                       '"silo_9": {}}',
+                              'outputs': {'component_out_path': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_path}}'}},
+                              'type': 'parallel_for'}
+        }

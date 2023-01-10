@@ -40,15 +40,15 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 print("\n.. Create Secret")
 bank_secret = client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
 storage_secret = client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
-print("Secret with name '{0}' was created.".format(bank_secret.name))
-print("Secret with name '{0}' was created.".format(storage_secret.name))
+print(f"Secret with name '{bank_secret.name}' was created.")
+print(f"Secret with name '{storage_secret.name}' was created.")
 
 # The storage account was closed, so we need to delete its credentials from the Key Vault.
 print("\n.. Delete a Secret")
 delete_secret_poller = client.begin_delete_secret(bank_secret.name)
 secret = delete_secret_poller.result()
 delete_secret_poller.wait()
-print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
+print(f"Secret with name '{secret.name}' was deleted on date {secret.deleted_date}.")
 
 # We accidentally deleted the bank account secret. Let's recover it.
 # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
@@ -58,7 +58,7 @@ recovered_secret = recover_secret_poller.result()
 
 # This wait is just to ensure recovery is complete before we delete the secret again
 recover_secret_poller.wait()
-print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
+print(f"Recovered Secret with name '{recovered_secret.name}'.")
 
 # Let's delete the storage secret now.
 # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.
