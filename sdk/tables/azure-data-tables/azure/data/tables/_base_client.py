@@ -7,10 +7,6 @@ import os
 import sys
 
 from typing import Any, Dict, List, Optional, Mapping, Union
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
@@ -60,6 +56,10 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
