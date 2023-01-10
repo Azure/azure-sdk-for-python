@@ -10,7 +10,7 @@ import json
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from .._settingselector import SettingSelector
 from .._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
@@ -23,7 +23,7 @@ from .._user_agent import USER_AGENT
 @overload
 async def load_provider(
         endpoint: str,
-        credential: TokenCredential,
+        credential: AsyncTokenCredential,
         *,
         selects: Optional[SettingSelector] = None,
         trim_prefixes: Optional[List[str]] = None,
