@@ -95,7 +95,6 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                     # invalid JSON string items
-
                     '[{"component_in_number": 1}, {}]',
                     "Items should have same keys with body inputs"
             )
@@ -117,6 +116,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         with pytest.raises(ValidationException) as e:
             invalid_pipeline()
         assert error_message in str(e.value)
+
     @pytest.mark.parametrize(
         "items",
         (
