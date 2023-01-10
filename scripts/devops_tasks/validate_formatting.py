@@ -38,12 +38,12 @@ def run_black(service_dir):
 
             if stderr:
                 results.append((package_name, stderr))
-                raise RuntimeError("black ran into some trouble during its invocation: " + stderr)
 
             if stdout:
                 if "reformatted" in stdout.decode('utf-8'):
                     results.append((package_name, False))
-                    return False
+            else:
+                print(f"black succeeded against {package_name}")
 
     return results
 
