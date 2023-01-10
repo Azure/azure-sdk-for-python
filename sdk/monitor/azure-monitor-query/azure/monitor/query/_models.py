@@ -388,7 +388,7 @@ class LogsQueryResult:
     status: LogsQueryStatus
     """The status of the result. Always 'Success' for an instance of a LogsQueryResult."""
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, **kwargs: Any) -> None:
         self.tables = kwargs.get("tables", [])
         self.statistics = kwargs.get("statistics", None)
         self.visualization = kwargs.get("visualization", None)
