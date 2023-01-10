@@ -7,5 +7,5 @@ is_stable = false
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
-sample_link = "appconfiguration"
+sample_link = ""
 title = "AppConfigurationManagementClient"
