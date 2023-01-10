@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "14",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -26,7 +26,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "189ms"
+        "X-Processing-Time": "205ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -34,7 +34,7 @@
             "sipSignalingPort": 1122
           },
           "sbs2.sanitized.com": {
-            "sipSignalingPort": 1123
+            "sipSignalingPort": 7777
           }
         },
         "routes": []
@@ -47,7 +47,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -63,7 +63,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "112ms"
+        "X-Processing-Time": "114ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -71,7 +71,7 @@
             "sipSignalingPort": 1122
           },
           "sbs2.sanitized.com": {
-            "sipSignalingPort": 1123
+            "sipSignalingPort": 7777
           }
         },
         "routes": []
@@ -85,7 +85,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "168",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -110,7 +110,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "653ms"
+        "X-Processing-Time": "669ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -131,7 +131,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -147,7 +147,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "105ms"
+        "X-Processing-Time": "122ms"
       },
       "ResponseBody": {
         "trunks": {
