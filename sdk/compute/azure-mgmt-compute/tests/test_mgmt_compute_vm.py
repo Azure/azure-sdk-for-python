@@ -21,6 +21,7 @@ import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils.fake_credentials import FAKE_LOGIN_PASSWORD
 
 AZURE_LOCATION = 'eastus'
 
@@ -135,7 +136,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
           "os_profile": {
             "admin_username": "testuser",
             "computer_name": "myVM",
-            "admin_password": "Aa1!zyx_",
+            "admin_password": FAKE_LOGIN_PASSWORD,
             "windows_configuration": {
               "enable_automatic_updates": True  # need automatic update for reimage
             }
@@ -332,7 +333,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
           "os_profile": {
             "admin_username": "testuser",
             "computer_name": "myVM",
-            "admin_password": "Aa1!zyx_",
+            "admin_password": FAKE_LOGIN_PASSWORD,
             "windows_configuration": {
               "enable_automatic_updates": True  # need automatic update for reimage
             }
