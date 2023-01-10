@@ -14,7 +14,7 @@ from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import Data, PipelineJob
+from azure.ai.ml.entities import Data, PipelineJob, Pipeline
 from azure.core.exceptions import HttpResponseError
 
 from .._utils import (
@@ -247,3 +247,20 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
+
+    def test_submit_remote_pipeline_component_directly(self, client):
+        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[3]
+        component_func = load_component(yaml_path)
+
+        @pipeline()
+        def sub_pipeline_func():
+            node = component_func(**inputs)
+            set_run_settings(node, runsettings_dict)
+            return node.outputs
+
+        created_pipeline_func = client.components.create_or_update(sub_pipeline_func)
+
+        dsl_pipeline: Pipeline = created_pipeline_func()
+        dsl_pipeline.compute = "cpu-cluster"
+        assert_job_cancel(dsl_pipeline, client)
+        # do run setting check after backend returns jobs
