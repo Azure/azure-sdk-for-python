@@ -1,6 +1,8 @@
 from typing import Callable
 
 import pytest
+
+from azure.ai.ml.exceptions import ValidationException
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
@@ -13,6 +15,14 @@ from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 from .test_pipeline_job import assert_job_cancel
 from test_utilities.utils import omit_with_wildcard
+
+omit_fields = [
+    "name",
+    "properties.display_name",
+    "properties.settings",
+    "properties.jobs.*._source",
+    "properties.jobs.*.componentId",
+]
 
 
 @pytest.fixture()
@@ -54,13 +64,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
         created_pipeline = assert_job_cancel(my_job, client)
 
         pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
-        omit_fields = [
-            "name",
-            "properties.display_name",
-            "properties.settings",
-            "properties.jobs.*._source",
-            "properties.jobs.*.componentId",
-        ]
+
         pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
         assert pipeline_job_dict["properties"]["jobs"] == {
             'conditionnode': {'condition': '${{parent.jobs.result.outputs.output}}',
@@ -79,11 +83,56 @@ class TestIfElse(TestConditionalNodeInPipeline):
         }
 
     def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        pass
+        params_override = [{"name": randstr('name')}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/one_branch.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["properties"]["jobs"] == {
+            'conditionnode': {'condition': '${{parent.jobs.result.outputs.output}}',
+                              'true_block': '${{parent.jobs.node1}}',
+                              'type': 'if_else'},
+            'node1': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'}},
+                      'name': 'node1',
+                      'type': 'command'},
+            'result': {'name': 'result', 'type': 'command'}
+        }
 
     def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        pass
+        params_override = [{"name": randstr('name')}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/literal_condition.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
 
+        pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["properties"]["jobs"] == {
+            'conditionnode': {'condition': True,
+                              'true_block': '${{parent.jobs.node1}}',
+                              'type': 'if_else'},
+            'node1': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'}},
+                      'name': 'node1',
+                      'type': 'command'}
+        }
+
+    def test_if_else_invalid_case(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/invalid_binding.yml",
+        )
+        with pytest.raises(ValidationException) as e:
+            my_job._validate(raise_error=True)
+        assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
+        assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
 class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
