@@ -126,8 +126,8 @@ class CommandComponent(Component, ParameterizedCommand):
         :keyword properties: Properties of the component. Contents inside will pass through to backend as a dictionary
             , defaults to None
         :type properties: Optional[typing.Dict]
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
-            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully
+             validated. Details will be provided in the error message.
         """
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
