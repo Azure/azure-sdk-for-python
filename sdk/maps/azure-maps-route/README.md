@@ -36,7 +36,6 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.maps.route import 
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
