@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
