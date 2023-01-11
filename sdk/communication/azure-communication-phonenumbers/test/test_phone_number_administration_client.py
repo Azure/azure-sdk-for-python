@@ -14,6 +14,7 @@ from azure.communication.phonenumbers import (
     PhoneNumberCapabilityType,
     PhoneNumberType,
 )
+from azure.communication.phonenumbers._api_versions import DEFAULT_VERSION
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer, PhoneNumberResponseReplacerProcessor
@@ -53,7 +54,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            headers_policy=get_header_policy(),
+            api_version=DEFAULT_VERSION
         )
 
     def _get_managed_identity_phone_number_client(self):
@@ -63,7 +65,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             endpoint,
             credential,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            headers_policy=get_header_policy(),
+            api_version=DEFAULT_VERSION
         )
 
     @recorded_by_proxy
