@@ -18,6 +18,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._restclient.v2022_05_01.models import Workspace
 from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
@@ -465,30 +466,20 @@ def _check_and_upload_env_build_context(
     max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
 )
 def get_temporary_data_reference(
-    operations: "DatastoreOperations",
     asset_name: str,
     asset_version: str,
     request_headers: Dict[str, str],
+    workspace: Workspace,
     asset_type: str = "codes",
     ) -> Tuple[str, str]:
+    """Make a temporary data reference for an asset and return SAS uri and blob storage uri."""
+
     # create temporary data reference
     temporary_data_reference_id = str(uuid.uuid4())
 
-    # get workspace credentials
-    resource_group_name = operations._resource_group_name
-    workspace_name = operations._workspace_name
-    workspace = operations._service_client.workspaces.get(
-        resource_group_name=resource_group_name,
-        workspace_name=workspace_name
-    )
-    workspace_id = workspace.workspace_id
-    workspace_location = workspace.location
-
-    # build asset id
-    asset_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/"\
-        f"{asset_type}/{asset_name}/versions/{asset_version}"
-
     # build and send request
+    asset_id = f"azureml://locations/{workspace.location}/workspaces/{workspace.workspace_id}/"\
+        f"{asset_type}/{asset_name}/versions/{asset_version}"
     data = {
         "assetId": asset_id,
         "temporaryDataReferenceId": temporary_data_reference_id,
@@ -496,7 +487,7 @@ def get_temporary_data_reference(
     }
     data_encoded = json.dumps(data).encode('utf-8')
     s = requests.Session()
-    request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
+    request_url = f"{SERVICE_URL.format(workspace.location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
         raise HttpResponseError(response=response)
@@ -513,27 +504,22 @@ def get_temporary_data_reference(
 def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
-    request_headers: Dict[str, str]) -> Dict[str, str]:
+    request_headers: Dict[str, str],
+    workspace: Workspace) -> Dict[str, str]:
     existing_asset = {}
     hash_version = get_content_hash_version()
 
     # get workspace credentials
     subscription_id = operations._subscription_id
     resource_group_name = operations._resource_group_name
-    workspace_name = operations._workspace_name
-    workspace = operations._service_client.workspaces.get(
-        resource_group_name=resource_group_name,
-        workspace_name=workspace_name
-    )
-    workspace_location = workspace.location
 
     # build request to API (API route is implemented at
     # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
     # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
     # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
-    request_url = f"{SERVICE_URL.format(workspace_location)}/content/v2.0/subscriptions/{subscription_id}/"\
+    request_url = f"{SERVICE_URL.format(workspace.location)}/content/v2.0/subscriptions/{subscription_id}/"\
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
-        f"{workspace_name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
+        f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
 
     s = requests.Session()
 
@@ -580,7 +566,11 @@ def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
     return path, ignore_file, asset_hash
 
 
-def _get_existing_snapshot_by_hash(datastore_operation, asset_hash):
+def _get_existing_snapshot_by_hash(
+    datastore_operation,
+    asset_hash,
+    workspace: Workspace
+):
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
@@ -590,6 +580,7 @@ def _get_existing_snapshot_by_hash(datastore_operation, asset_hash):
         operations=datastore_operation,
         hash_str=asset_hash,
         request_headers=request_headers,
+        workspace=workspace,
     )
 
     return existing_asset
@@ -599,6 +590,7 @@ def _upload_snapshot_to_datastore(
     operation_scope: OperationScope,
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
+    workspace: Workspace,
     datastore_name: str = None,
     show_progress: bool = True,
     asset_name: str = None,
@@ -614,10 +606,10 @@ def _upload_snapshot_to_datastore(
 
     if not sas_uri:
         sas_uri, blob_uri = get_temporary_data_reference(
-            operations=datastore_operation,
             asset_name=asset_name,
             asset_version=asset_version,
             request_headers=request_headers,
+            workspace=workspace,
         )
 
     artifact = upload_artifact(
@@ -641,6 +633,7 @@ def _check_and_upload_snapshot(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     path: Union[str, Path, os.PathLike],
+    workspace: Workspace,
     ignore_file: IgnoreFile = None,
     datastore_name: str = WORKSPACE_BLOB_STORE,
     sas_uri: str = None,
@@ -659,6 +652,7 @@ def _check_and_upload_snapshot(
         operation_scope=asset_operations._operation_scope,
         datastore_operation=asset_operations._datastore_operation,
         path=path,
+        workspace=workspace,
         datastore_name=datastore_name,
         asset_name=artifact.name,
         asset_version=str(artifact.version),

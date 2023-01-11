@@ -87,6 +87,10 @@ class CodeOperations(_ScopeDependentOperations):
             version = code.version
             sas_uri = None
             path, ignore_file, asset_hash = _get_snapshot_path_info(code)
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name
+            )
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -98,13 +102,13 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
             else:
-                existing_asset = _get_existing_snapshot_by_hash(self._datastore_operation, asset_hash)
+                existing_asset = _get_existing_snapshot_by_hash(self._datastore_operation, asset_hash, workspace_info)
                 if existing_asset:
                     return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
 
 
             code = _check_and_upload_snapshot(
-                artifact=code, path=path, ignore_file=ignore_file, asset_operations=self, sas_uri=sas_uri,
+                artifact=code, path=path, ignore_file=ignore_file, asset_operations=self, sas_uri=sas_uri, workspace=workspace_info
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
