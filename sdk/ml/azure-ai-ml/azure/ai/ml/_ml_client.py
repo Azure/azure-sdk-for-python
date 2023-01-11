@@ -309,7 +309,7 @@ class MLClient(object):
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2022_05_01=self._service_client_05_2022,
+            serviceclient_2022_10_01=self._service_client_10_2022,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -385,7 +385,7 @@ class MLClient(object):
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
