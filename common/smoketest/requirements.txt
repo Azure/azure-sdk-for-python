@@ -1,7 +1,7 @@
 azure-core
 azure-identity
 azure-cosmos>=4.0.0b5
-azure-eventhub
+azure-eventhub==5.10.1
 azure-keyvault-certificates
 azure-keyvault-keys
 azure-keyvault-secrets
