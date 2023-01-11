@@ -68,7 +68,7 @@ class Deployment(Resource, RestTranslatableMixin):
         tags: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, Any]] = None,
         model: Optional[Union[str, "Model"]] = None,
-        code_configuration: Optional[CodeConfiguration] = None,
+        code_configuration: Optional["CodeConfiguration"] = None,
         environment: Optional[Union[str, "Environment"]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         code_path: Optional[Union[str, PathLike]] = None,
