@@ -16,11 +16,7 @@ from .serialization import NULL
 __all__ = ["CloudEvent"]
 
 
-class _UnsetType:
-    """An internal class to represent an unset optional kwarg where None is valid"""
-
-
-_Unset = _UnsetType()
+_Unset: Any = object()
 
 DataType = TypeVar("DataType")
 
@@ -98,7 +94,7 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
         *,
         specversion: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        time: Optional[Union[datetime, _UnsetType]] = _Unset,
+        time: Optional[datetime] = _Unset,
         datacontenttype: Optional[str] = None,
         dataschema: Optional[str] = None,
         subject: Optional[str] = None,
@@ -114,7 +110,7 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
         self.id: str = id if id else str(uuid.uuid4())
 
         self.time: Optional[datetime]
-        if isinstance(time, _UnsetType):
+        if time is _Unset:
             self.time = datetime.now(TZ_UTC)
         else:
             self.time = time
