@@ -372,7 +372,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :keyword app_insights_enabled: Is appinsights enabled, defaults to False
     :type app_insights_enabled: bool
     :keyword scale_settings: How the online deployment will scale, defaults to None
-    :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings, ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+    :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+        , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
     :keyword request_settings: Online Request Settings, defaults to None
     :type request_settings: typing.Optional[OnlineRequestSettings]
     :keyword liveness_probe: Liveness probe settings, defaults to None
@@ -445,7 +446,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         :keyword app_insights_enabled: Is appinsights enabled, defaults to False
         :type app_insights_enabled: bool
         :keyword scale_settings: How the online deployment will scale, defaults to None
-        :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings, ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+        :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+            , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
         :keyword request_settings: Online Request Settings, defaults to None
         :type request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
         :keyword liveness_probe: Liveness probe settings, defaults to None
@@ -608,7 +610,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :keyword app_insights_enabled: Is appinsights enabled, defaults to False
     :type app_insights_enabled: bool
     :keyword scale_settings: How the online deployment will scale, defaults to None
-    :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings, ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+    :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+        , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
     :keyword request_settings: Online Request Settings, defaults to None
     :type request_settings: typing.Optional[OnlineRequestSettings]
     :keyword liveness_probe: Liveness probe settings, defaults to None
@@ -679,7 +682,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
         :keyword app_insights_enabled: Is appinsights enabled, defaults to False
         :type app_insights_enabled: bool
         :keyword scale_settings: How the online deployment will scale, defaults to None
-        :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings, ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+        :type scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+            , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
         :keyword request_settings: Online Request Settings, defaults to None
         :type request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
         :keyword liveness_probe: Liveness probe settings, defaults to None
