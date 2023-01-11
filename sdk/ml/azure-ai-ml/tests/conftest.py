@@ -568,12 +568,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
-    # do nothing if in live mode and not recording
-    if is_live_and_not_recording():
-        yield
-        return
-
-    if is_live():
+    if is_live() and not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
