@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=anomalous-backslash-in-string
-from typing import Any, List
+from typing import Any, cast, List
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -127,7 +127,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         start_time = kwargs.pop("start_time", None)
         if start_time:
             start_time = Serializer.serialize_iso(start_time)
-        return self._namespace_op.list(
+        res = self._namespace_op.list(
             resource_uri,
             start_time=start_time,
             cls=kwargs.pop(
@@ -139,6 +139,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             ),
             **kwargs
         )
+        return cast(AsyncItemPaged[MetricNamespace], res)
 
     @distributed_trace
     def list_metric_definitions(
@@ -155,7 +156,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         metric_namespace = kwargs.pop("namespace", None)
-        return self._definitions_op.list(
+        res = self._definitions_op.list(
             resource_uri,
             metricnamespace=metric_namespace,
             cls=kwargs.pop(
@@ -167,6 +168,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             ),
             **kwargs
         )
+        return cast(AsyncItemPaged[MetricDefinition], res)
 
     async def __aenter__(self) -> "MetricsQueryClient":
         await self._client.__aenter__()
