@@ -1,4 +1,4 @@
-## Azure Appconfiguration for Python
+## Azure Container Registry for Python
 
 ### Settings
 ``` yaml

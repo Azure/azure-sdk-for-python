@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import socket
-from typing import Dict
+from typing import Dict, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -46,7 +46,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :raises ValueError: invalid **redirect_uri**
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         redirect_uri = kwargs.pop("redirect_uri", None)
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
@@ -61,7 +61,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs) -> Dict:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
         app = self._get_app(**kwargs)

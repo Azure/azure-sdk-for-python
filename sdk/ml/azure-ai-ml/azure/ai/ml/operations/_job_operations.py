@@ -83,7 +83,7 @@ from azure.ai.ml.exceptions import (
     ErrorTarget,
     JobException,
     JobParsingError,
-    MLException,
+    MlException,
     PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
@@ -641,7 +641,7 @@ class JobOperations(_ScopeDependentOperations):
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MLException: Raised if logs and outputs cannot be successfully downloaded.
+        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
             Details will be provided in the error message.
         """
         job_details = self.get(name)
@@ -996,7 +996,12 @@ class JobOperations(_ScopeDependentOperations):
 
                 entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
-                local_path = Path(base_path, entry.path).resolve()
+                # Base path will be None for dsl pipeline component for now. We have 2 choices if the dsl pipeline
+                # function is imported from another file:
+                # 1) Use cwd as default base path;
+                # 2) Use the file path of the dsl pipeline function as default base path.
+                # Pick solution 1 for now as defining input path in the script to submit is a more common scenario.
+                local_path = Path(base_path or Path.cwd(), entry.path).resolve()
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
@@ -1007,7 +1012,7 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ValidationException(
