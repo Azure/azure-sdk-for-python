@@ -1,0 +1,27 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+type: CommandComponent
+
+name: hello_program_on_linux
+display_name: CommandComponentBasic
+description: This is the basic command component
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+version: 0.0.1
+
+inputs:
+  name:
+    description: A string
+    type: string
+
+outputs:
+  output:
+    type: uri_folder
+
+# Write some output to work around a bug when pipeline node failed to run with empty dataset as input
+command: >-
+  echo Hello World &
+  echo ${{inputs.name}} > ${{outputs.output}}/name
+
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1

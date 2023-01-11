@@ -1,8 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=unused-import
-from ._util import enable_internal_components_in_pipeline
+from .utils.setup_utils import enable_internal_components_in_pipeline
 from .entities import (
     Ae365exepool,
     AISuperComputerConfiguration,
