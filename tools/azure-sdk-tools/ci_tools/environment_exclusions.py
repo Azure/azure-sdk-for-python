@@ -107,6 +107,7 @@ MYPY_OPT_OUT = [
     "azure-purview-scanning",
     "azure-schemaregistry",
     "azure-schemaregistry-avroencoder",
+    "azure-search-documents",
     "azure-storage-blob",
     "azure-storage-blob-changefeed",
     "azure-storage-file-datalake",
