@@ -908,7 +908,7 @@ class ReceiveClient(AMQPClient):
         :rtype: generator[~uamqp.message.Message]
         """
         self.open()
-        auto_complete = self.auto_complete
+        # auto_complete = self.auto_complete
         self.auto_complete = False
         self._timeout_reached = False
         self._last_activity_timestamp = None
@@ -922,17 +922,19 @@ class ReceiveClient(AMQPClient):
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
-                    self._complete_message(message, auto_complete)
+                    # self.settle_messages(message[1],"accepted")
+                    # self._complete_message(message, auto_complete)
         finally:
-            self._complete_message(message, auto_complete)
-            self.auto_complete = auto_complete
-            if self._shutdown_after_timeout:
+            # self.settle_messages(message[1],"accepted")
+            # self._complete_message(message, auto_complete)
+            # self.auto_complete = auto_complete
+            if self._shutdown:
                 self.close()
 
-    def _complete_message(self, message, auto):  # pylint: disable=no-self-use
-        if not message or not auto:
-            return
-        message.accept()
+    # def _complete_message(self, message, auto):  # pylint: disable=no-self-use
+    #     if not message or not auto:
+    #         return
+    #     message.accept()
 
     @overload
     def settle_messages(
