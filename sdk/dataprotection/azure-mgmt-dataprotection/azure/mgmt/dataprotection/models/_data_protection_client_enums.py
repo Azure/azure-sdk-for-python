@@ -36,14 +36,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CrossSubscriptionRestore state."""
-
-    DISABLED = "Disabled"
-    PERMANENTLY_DISABLED = "PermanentlyDisabled"
-    ENABLED = "Enabled"
-
-
 class CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the current protection state of the resource."""
 
@@ -79,6 +71,15 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THURSDAY = "Thursday"
     TUESDAY = "Tuesday"
     WEDNESDAY = "Wednesday"
+
+
+class ExistingResourcePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the Conflict Policy property. This property sets policy during conflict of
+    resources during restore.
+    """
+
+    SKIP = "Skip"
+    PATCH = "Patch"
 
 
 class FeatureSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -124,6 +125,15 @@ class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SEPTEMBER = "September"
 
 
+class PersistentVolumeRestoreMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the PV Restore Mode property. This property sets whether volumes needs to be
+    restored.
+    """
+
+    RESTORE_WITH_VOLUME_DATA = "RestoreWithVolumeData"
+    RESTORE_WITHOUT_VOLUME_DATA = "RestoreWithoutVolumeData"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the BackupVault resource."""
 
@@ -156,6 +166,16 @@ class RehydrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS"
     DELETED = "DELETED"
     FAILED = "FAILED"
+
+
+class ResourceGuardProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the BackupVault resource."""
+
+    FAILED = "Failed"
+    PROVISIONING = "Provisioning"
+    SUCCEEDED = "Succeeded"
+    UNKNOWN = "Unknown"
+    UPDATING = "Updating"
 
 
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -215,7 +235,6 @@ class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ARCHIVE_STORE = "ArchiveStore"
     SNAPSHOT_STORE = "SnapshotStore"
-    OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
 
 
@@ -234,7 +253,7 @@ class StorageSettingStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the datastore."""
 
     ARCHIVE_STORE = "ArchiveStore"
-    OPERATIONAL_STORE = "OperationalStore"
+    SNAPSHOT_STORE = "SnapshotStore"
     VAULT_STORE = "VaultStore"
 
 

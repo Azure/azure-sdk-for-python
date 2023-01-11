@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b4 (2023-01-11)
+
+### Features Added
+
+  - Added operation group BackupInstancesExtensionRoutingOperations
+  - Added operation group DppResourceGuardProxyOperations
+  - Model PolicyParameters has a new parameter backup_datasource_parameters_list
+  - Model ResourceGuardResource has a new parameter identity
+
+### Breaking Changes
+
+  - Model AzureBackupDiscreteRecoveryPoint no longer has parameter expiry_time
+  - Model BackupVault no longer has parameter feature_settings
+  - Model PatchBackupVaultInput no longer has parameter feature_settings
+  - Model TargetDetails no longer has parameter target_resource_arm_id
+
 ## 1.0.0b3 (2022-12-29)
 
 ### Features Added
