@@ -2011,9 +2011,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         max_sentence_count: Optional[int] = None,
         **kwargs: Any,
     ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractSummaryResult, DocumentError]]]:
-        """Start a long-running extractive summarization operation.
+        """Start a long-running abstractive summarization operation.
 
-        For a conceptual discussion of extractive summarization, see the service documentation:
+        For a conceptual discussion of abstractive summarization, see the service documentation:
         https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
         .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
