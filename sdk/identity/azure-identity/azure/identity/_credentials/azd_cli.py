@@ -26,7 +26,7 @@ COMMAND_LINE = "azd auth token --output json --scope {}"
 NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate before using this credential."
 
 
-class AzureDeveloperCliCredential(object):
+class AzureDeveloperCliCredential:
     """Authenticates by requesting a token from the Azure Developer CLI.
 
     This requires previously logging in to Azure via "azd login", and will use the CLI's currently logged in identity.
@@ -36,7 +36,7 @@ class AzureDeveloperCliCredential(object):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
