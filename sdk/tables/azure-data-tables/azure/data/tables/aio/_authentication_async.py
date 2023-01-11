@@ -19,7 +19,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     authentication challenges.
 
     :param credential: The credential.
-    :type credential: ~azure.core.TokenCredential
+    :type credential: ~azure.core.AsyncTokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
     :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token

@@ -416,7 +416,6 @@ class TableSasPermissions(object):
 
         :param str permission: Specify permissions in
             the string with the first letter of the word.
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An TableSasPermissions object
         :rtype: :class:`~azure.data.tables.TableSasPermissions`
         """

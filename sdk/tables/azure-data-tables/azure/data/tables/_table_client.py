@@ -14,7 +14,7 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -43,6 +43,8 @@ class TableClient(TablesBaseClient):
         self,
         endpoint: str,
         table_name: str,
+        *,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs
     ) -> None:
         """Create TableClient from a Credential.
@@ -66,7 +68,7 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name = table_name
-        super(TableClient, self).__init__(endpoint, **kwargs)
+        super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -99,13 +101,14 @@ class TableClient(TablesBaseClient):
     def from_table_url(
         cls,
         table_url: str,
+        *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
         **kwargs
     ) -> "TableClient":
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :param credential:
+        :keyword credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be one of AzureNamedKeyCredential
             or AzureSasCredential from azure-core.

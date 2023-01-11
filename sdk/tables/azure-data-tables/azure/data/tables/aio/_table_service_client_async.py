@@ -40,11 +40,11 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
     :paramtype credential:
         :class:`~azure.core.credentials.AzureNamedKeyCredential` or
         :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+        :class:`~azure.core.credentials.AsyncTokenCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.

@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import os
 
+from uuid import uuid4
 from typing import Any, Dict, List, Optional, Mapping, Union
 from typing_extensions import Literal
-from uuid import uuid4
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
@@ -62,7 +62,7 @@ _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
-def get_api_version(kwargs: Dict[str, Any], default: Literal["2019-02-02"]) -> Literal["2019-02-02"]:
+def get_api_version(kwargs: Dict[str, Any], default: Literal["2019-02-02"]) -> str:
     api_version = kwargs.pop("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
@@ -225,9 +225,10 @@ class TablesBaseClient(AccountHostsMixin):
     def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
+        *,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs
     ) -> None:
-        credential = kwargs.pop('credential', None)
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs) # type: ignore
         self._client = AzureTable(
             self.url,

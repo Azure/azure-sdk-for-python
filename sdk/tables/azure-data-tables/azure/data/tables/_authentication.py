@@ -3,9 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import Any
-
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -145,7 +142,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
     def on_request(self, request: PipelineRequest) -> None:
         self.sign_request(request)
 
-    def sign_request(self, request):
+    def sign_request(self, request: PipelineRequest) -> None:
         string_to_sign = (
             self._get_verb(request.http_request)
             + self._get_headers(
