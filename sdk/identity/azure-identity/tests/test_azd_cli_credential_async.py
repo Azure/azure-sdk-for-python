@@ -184,7 +184,7 @@ async def test_multitenant_authentication():
     second_token = first_token * 2
 
     async def fake_exec(*args, **_):
-        match = re.search("--tenant (.*)", args[-1])
+        match = re.search("--tenant-id (.*)", args[-1])
         tenant = match[1] if match else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         output = json.dumps(
@@ -218,7 +218,7 @@ async def test_multitenant_authentication_not_allowed():
     expected_token = "***"
 
     async def fake_exec(*args, **_):
-        match = re.search("--tenant (.*)", args[-1])
+        match = re.search("--tenant-id (.*)", args[-1])
         assert match is None or match[1] == expected_tenant
         output = json.dumps(
             {
