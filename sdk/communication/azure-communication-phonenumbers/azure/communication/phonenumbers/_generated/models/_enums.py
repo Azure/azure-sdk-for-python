@@ -17,9 +17,7 @@ class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The assignment type of the phone numbers to search for. A phone number can be assigned to a
-    person, or to an application.
-    """
+    """Represents the assignment type of the offering."""
 
     PERSON = "person"
     APPLICATION = "application"
@@ -53,7 +51,7 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of phone numbers to search for, e.g. geographic, or tollFree."""
+    """Represents the number type of the offering."""
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
