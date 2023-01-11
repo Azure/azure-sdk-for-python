@@ -55,7 +55,7 @@ class TestIfElse(TestControlFlowPipeline):
             compute="cpu-cluster",
         )
         def condition_pipeline():
-            result = basic_component(str_param="abc", int_param=1)
+            result = basic_component()
 
             node1 = hello_world_component_no_paths(component_in_number=1)
             node2 = hello_world_component_no_paths(component_in_number=2)
@@ -89,10 +89,6 @@ class TestIfElse(TestControlFlowPipeline):
             },
             "result": {
                 "_source": "REMOTE.WORKSPACE.COMPONENT",
-                "inputs": {
-                    "int_param": {"job_input_type": "literal", "value": "1"},
-                    "str_param": {"job_input_type": "literal", "value": "abc"},
-                },
                 "name": "result",
                 "type": "command",
             },
