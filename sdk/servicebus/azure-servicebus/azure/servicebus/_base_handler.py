@@ -8,19 +8,17 @@ import time
 import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
-
-try:
-    from urllib.parse import quote_plus, urlparse
-except ImportError:
-    from urllib import quote_plus  # type: ignore
-    from urlparse import urlparse  # type: ignore
-
-import uamqp
-from uamqp import utils, compat
-from uamqp.message import MessageProperties
-
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import RetryMode
+
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
+from ._pyamqp.utils import generate_sas_token, amqp_string_value
+from ._pyamqp.message import Message, Properties
+from ._pyamqp.client import AMQPClient as AMQPClientSync
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -146,11 +144,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    encoded_uri = quote_plus(uri).encode("utf-8")  # pylint: disable=no-member
-    encoded_policy = quote_plus(policy).encode("utf-8")  # pylint: disable=no-member
-    encoded_key = key.encode("utf-8")
-
-    token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
+    token = generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -266,7 +260,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClient
+        self._handler = cast(AMQPClientSync, None)  # type: AMQPClientSync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = threading.Event()
@@ -457,7 +451,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> uamqp.Message
+        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> Message
         """
         Execute an amqp management operation.
 
@@ -480,29 +474,27 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
                 }
             except AttributeError:
                 pass
 
-        mgmt_msg = uamqp.Message(
-            body=message,
-            properties=MessageProperties(
-                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
-            ),
+        mgmt_msg = Message( # type: ignore # TODO: fix mypy error
+            value=message,
+            properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,
         )
         try:
-            return self._handler.mgmt_request(
+            status, description, response = self._handler.mgmt_request(
                 mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=amqp_string_value(mgmt_operation),
+                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000 if timeout else None,
-                callback=callback,
+                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )
+            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
                 raise OperationTimeoutError(error=exp)
             raise
 
@@ -512,7 +504,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation,
+            mgmt_operation=mgmt_operation.decode("UTF-8"),
             message=message,
             callback=callback,
             timeout=timeout,

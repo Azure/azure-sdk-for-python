@@ -4,9 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 from enum import Enum
-
-from uamqp import constants, types
 from azure.core import CaseInsensitiveEnumMeta
+from .._pyamqp import constants
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -162,6 +161,7 @@ TRACE_PARENT_PROPERTY = b"Diagnostic-Id"
 TRACE_PROPERTY_ENCODING = "ascii"
 
 
+MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024  # Backcompat with uAMQP
 MESSAGE_PROPERTY_MAX_LENGTH = 128
 # .NET TimeSpan.MaxValue: 10675199.02:48:05.4775807
 MAX_DURATION_VALUE = 922337203685477
@@ -180,8 +180,8 @@ class ServiceBusMessageState(int, Enum):
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {
-    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.PeekLock,
-    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.ReceiveAndDelete,
+    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.Second,
+    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.First,
 }
 
 
@@ -192,19 +192,6 @@ class ServiceBusSessionFilter(Enum):
 class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEAD_LETTER = "deadletter"
     TRANSFER_DEAD_LETTER = "transferdeadletter"
-
-
-ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
-ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
-ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
-)
-
-ANNOTATION_SYMBOL_KEY_MAP = {
-    _X_OPT_PARTITION_KEY: ANNOTATION_SYMBOL_PARTITION_KEY,
-    _X_OPT_VIA_PARTITION_KEY: ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME: ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-}
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
