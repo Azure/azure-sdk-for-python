@@ -124,8 +124,6 @@ class TestClient(ACSIdentityTestCase):
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
-        # payload = jwt.decode(token_response.token, options={"verify_signature": False})
-        # assert payload['acsScope'] == ",".join(scopes)
 
     @recorded_by_proxy
     def test_get_token(self):
