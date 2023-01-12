@@ -11,7 +11,9 @@
 ### Other Changes
 
 - Loosen instrumentation key validation strictness
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+    ([#28316](https://github.com/Azure/azure-sdk-for-python/pull/28316))
+- Disable storage for statsbeat if storage is disabled for exporter
+    ([#28316](https://github.com/Azure/azure-sdk-for-python/pull/28316))
 
 ## 1.0.0b11 (2022-12-15)
 
