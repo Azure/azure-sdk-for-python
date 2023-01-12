@@ -14,14 +14,15 @@ from typing import List, IO, Optional, Any, Union
 from azure.core.polling import NoPolling, PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
-from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
+from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
+from ._operations import TestRunOperations as TestRunOperationsGenerated
 from .._serialization import Serializer
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 logger = logging.getLogger(__name__)
+
 
 class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
@@ -43,7 +44,6 @@ class LoadTestingPollingMethod(PollingMethod):
     def finished(self) -> bool:
         return self._status in self._termination_statuses
 
-
     def resource(self) -> JSON:
         return self._resource
 
@@ -55,13 +55,14 @@ class LoadTestingPollingMethod(PollingMethod):
 
                 if not self.finished():
                     time.sleep(self._polling_interval)
-
         except Exception as e:
             logger.error(e)
             raise e
 
+
 class ValidationCheckPoller(LoadTestingPollingMethod):
     """polling method for long-running validation check operation."""
+
     def __init__(self, interval=5) -> None:
         self._resource = None
         self._command = None
@@ -75,7 +76,6 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
 
 
 class TestRunStatusPoller(LoadTestingPollingMethod):
-
     def __init__(self, interval=5) -> None:
         self._resource = None
         self._command = None
@@ -101,6 +101,7 @@ class LoadTestingLROPoller(LROPoller):
     :param polling_method: The polling strategy to adopt
     :type polling_method: ~azure.core.polling.PollingMethod
     """
+
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
         # type: (Any, Any, Callable, PollingMethod[PollingReturnType]) -> None
         self._initial_response = initial_response
@@ -114,13 +115,14 @@ class LoadTestingLROPoller(LROPoller):
         """
         return self._initial_response
 
-class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
+
+class AdministrationOperations(AdministrationOperationsGenerated):
     """
-    for performing the operations on the LoadTestAdministration Subclient
+    for performing the operations on the Administration Subclient
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestAdministrationOperations, self).__init__(*args, **kwargs)
+        super(AdministrationOperations, self).__init__(*args, **kwargs)
 
     @distributed_trace
     def begin_upload_test_file(
@@ -155,7 +157,6 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-
         upload_test_file_operation = self.upload_test_file(
             test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
         )
@@ -167,18 +168,17 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
             return LoadTestingLROPoller(
                 command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
             )
-
         else:
             return LoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, NoPolling())
 
 
-class LoadTestRunOperations(LoadTestRunOperationsGenerated):
+class TestRunOperations(TestRunOperationsGenerated):
     """
-    class to perform operations on LoadTestRun
+    class to perform operations on TestRun
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestRunOperations, self).__init__(*args, **kwargs)
+        super(TestRunOperations, self).__init__(*args, **kwargs)
 
     @distributed_trace
     def begin_test_run(
@@ -218,12 +218,8 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-
         create_or_update_test_run_operation = self.create_or_update_test_run(
-            test_run_id,
-            body,
-            old_test_run_id=old_test_run_id,
-            **kwargs
+            test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
 
         command = partial(self.get_test_run, test_run_id=test_run_id)
@@ -237,7 +233,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
             return LoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
 
 
-__all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations", "LoadTestingLROPoller"]
+__all__: List[str] = ["AdministrationOperations", "TestRunOperations", "LoadTestingLROPoller"]
 
 
 # Add all objects you want publicly available to users at this package level

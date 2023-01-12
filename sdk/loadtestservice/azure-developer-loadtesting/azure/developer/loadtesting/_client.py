@@ -14,7 +14,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import LoadTestingClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import LoadTestAdministrationOperations, LoadTestRunOperations
+from .operations import AdministrationOperations, TestRunOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -24,11 +24,10 @@ if TYPE_CHECKING:
 class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
-    :ivar load_test_administration: LoadTestAdministrationOperations operations
-    :vartype load_test_administration:
-     azure.developer.loadtesting.operations.LoadTestAdministrationOperations
-    :ivar load_test_run: LoadTestRunOperations operations
-    :vartype load_test_run: azure.developer.loadtesting.operations.LoadTestRunOperations
+    :ivar administration: AdministrationOperations operations
+    :vartype administration: azure.developer.loadtesting.operations.AdministrationOperations
+    :ivar test_run: TestRunOperations operations
+    :vartype test_run: azure.developer.loadtesting.operations.TestRunOperations
     :param endpoint: URL to perform data plane API operations on the resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -46,10 +45,8 @@ class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.load_test_administration = LoadTestAdministrationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.load_test_run = LoadTestRunOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.administration = AdministrationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

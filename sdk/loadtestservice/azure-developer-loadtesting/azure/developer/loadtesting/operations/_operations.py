@@ -45,7 +45,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_load_test_administration_create_or_update_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_create_or_update_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -72,7 +72,7 @@ def build_load_test_administration_create_or_update_test_request(test_id: str, *
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_delete_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_delete_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -96,7 +96,7 @@ def build_load_test_administration_delete_test_request(test_id: str, **kwargs: A
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_get_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_get_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -120,7 +120,7 @@ def build_load_test_administration_get_test_request(test_id: str, **kwargs: Any)
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_list_tests_request(
+def build_administration_list_tests_request(
     *,
     orderby: Optional[str] = None,
     search: Optional[str] = None,
@@ -161,7 +161,7 @@ def build_load_test_administration_list_tests_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_upload_test_file_request(
+def build_administration_upload_test_file_request(
     test_id: str, file_name: str, *, content: IO, file_type: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -193,7 +193,7 @@ def build_load_test_administration_upload_test_file_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_load_test_administration_get_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_administration_get_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -218,7 +218,7 @@ def build_load_test_administration_get_test_file_request(test_id: str, file_name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_delete_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_administration_delete_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -243,7 +243,7 @@ def build_load_test_administration_delete_test_file_request(test_id: str, file_n
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_list_test_files_request(
+def build_administration_list_test_files_request(
     test_id: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -273,7 +273,7 @@ def build_load_test_administration_list_test_files_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_create_or_update_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_create_or_update_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -300,7 +300,7 @@ def build_load_test_administration_create_or_update_app_components_request(test_
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_get_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_get_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -324,9 +324,7 @@ def build_load_test_administration_get_app_components_request(test_id: str, **kw
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_create_or_update_server_metrics_config_request(
-    test_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_administration_create_or_update_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -353,7 +351,7 @@ def build_load_test_administration_create_or_update_server_metrics_config_reques
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_get_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
+def build_administration_get_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -377,7 +375,7 @@ def build_load_test_administration_get_server_metrics_config_request(test_id: st
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_create_or_update_test_run_request(
+def build_test_run_create_or_update_test_run_request(
     test_run_id: str, *, old_test_run_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -410,7 +408,7 @@ def build_load_test_run_create_or_update_test_run_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -436,7 +434,7 @@ def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -462,7 +460,7 @@ def build_load_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any)
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_test_run_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_get_test_run_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -489,7 +487,7 @@ def build_load_test_run_get_test_run_file_request(test_run_id: str, file_name: s
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_test_runs_request(
+def build_test_run_list_test_runs_request(
     *,
     orderby: Optional[str] = None,
     continuation_token_parameter: Optional[str] = None,
@@ -534,7 +532,7 @@ def build_load_test_run_list_test_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_stop_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_stop_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -560,7 +558,7 @@ def build_load_test_run_stop_test_run_request(test_run_id: str, **kwargs: Any) -
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_metric_namespaces_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_list_metric_namespaces_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -586,7 +584,7 @@ def build_load_test_run_list_metric_namespaces_request(test_run_id: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_metric_definitions_request(
+def build_test_run_list_metric_definitions_request(
     test_run_id: str, *, metric_namespace: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -615,7 +613,7 @@ def build_load_test_run_list_metric_definitions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_metrics_request(
+def build_test_run_list_metrics_request(
     test_run_id: str,
     *,
     metricname: str,
@@ -660,7 +658,7 @@ def build_load_test_run_list_metrics_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_list_metric_dimension_values_request(
+def build_test_run_list_metric_dimension_values_request(
     test_run_id: str,
     name: str,
     *,
@@ -701,7 +699,7 @@ def build_load_test_run_list_metric_dimension_values_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_create_or_update_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_create_or_update_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -730,7 +728,7 @@ def build_load_test_run_create_or_update_app_components_request(test_run_id: str
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_get_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -756,7 +754,7 @@ def build_load_test_run_get_app_components_request(test_run_id: str, **kwargs: A
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_create_or_update_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_create_or_update_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -785,7 +783,7 @@ def build_load_test_run_create_or_update_server_metrics_config_request(test_run_
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_get_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -811,14 +809,14 @@ def build_load_test_run_get_server_metrics_config_request(test_run_id: str, **kw
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class LoadTestAdministrationOperations:
+class AdministrationOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.developer.loadtesting.LoadTestingClient`'s
-        :attr:`load_test_administration` attribute.
+        :attr:`administration` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -1583,7 +1581,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_test_request(
+        request = build_administration_create_or_update_test_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1650,7 +1648,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_test_request(
+        request = build_administration_delete_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1869,7 +1867,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_test_request(
+        request = build_administration_get_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2122,7 +2120,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_tests_request(
+                request = build_administration_list_tests_request(
                     orderby=orderby,
                     search=search,
                     last_modified_start_time=last_modified_start_time,
@@ -2244,7 +2242,7 @@ class LoadTestAdministrationOperations:
 
         _content = body
 
-        request = build_load_test_administration_upload_test_file_request(
+        request = build_administration_upload_test_file_request(
             test_id=test_id,
             file_name=file_name,
             file_type=file_type,
@@ -2325,7 +2323,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_test_file_request(
+        request = build_administration_get_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -2387,7 +2385,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_test_file_request(
+        request = build_administration_delete_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -2464,7 +2462,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_test_files_request(
+                request = build_administration_list_test_files_request(
                     test_id=test_id,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
@@ -2730,7 +2728,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_app_components_request(
+        request = build_administration_create_or_update_app_components_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2829,7 +2827,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_app_components_request(
+        request = build_administration_get_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3047,7 +3045,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_server_metrics_config_request(
+        request = build_administration_create_or_update_server_metrics_config_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3141,7 +3139,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_server_metrics_config_request(
+        request = build_administration_get_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3173,14 +3171,14 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
 
-class LoadTestRunOperations:
+class TestRunOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.developer.loadtesting.LoadTestingClient`'s
-        :attr:`load_test_run` attribute.
+        :attr:`test_run` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -4286,7 +4284,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_test_run_request(
+        request = build_test_run_create_or_update_test_run_request(
             test_run_id=test_run_id,
             old_test_run_id=old_test_run_id,
             content_type=content_type,
@@ -4601,7 +4599,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_test_run_request(
+        request = build_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4660,7 +4658,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_run_delete_test_run_request(
+        request = build_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4730,7 +4728,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_test_run_file_request(
+        request = build_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -5066,7 +5064,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_test_runs_request(
+                request = build_test_run_list_test_runs_request(
                     orderby=orderby,
                     continuation_token_parameter=continuation_token_parameter,
                     search=search,
@@ -5403,7 +5401,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_stop_test_run_request(
+        request = build_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5473,7 +5471,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_metric_namespaces_request(
+        request = build_test_run_list_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5573,7 +5571,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_metric_definitions_request(
+        request = build_test_run_list_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
             api_version=self._config.api_version,
@@ -5833,7 +5831,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_metrics_request(
+                request = build_test_run_list_metrics_request(
                     test_run_id=test_run_id,
                     metricname=metricname,
                     metric_namespace=metric_namespace,
@@ -5956,7 +5954,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_metric_dimension_values_request(
+                request = build_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
                     metricname=metricname,
@@ -6226,7 +6224,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_app_components_request(
+        request = build_test_run_create_or_update_app_components_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6325,7 +6323,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_app_components_request(
+        request = build_test_run_get_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6543,7 +6541,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_server_metrics_config_request(
+        request = build_test_run_create_or_update_server_metrics_config_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6637,7 +6635,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_server_metrics_config_request(
+        request = build_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,

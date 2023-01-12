@@ -28,32 +28,32 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ...operations._operations import (
-    build_load_test_administration_create_or_update_app_components_request,
-    build_load_test_administration_create_or_update_server_metrics_config_request,
-    build_load_test_administration_create_or_update_test_request,
-    build_load_test_administration_delete_test_file_request,
-    build_load_test_administration_delete_test_request,
-    build_load_test_administration_get_app_components_request,
-    build_load_test_administration_get_server_metrics_config_request,
-    build_load_test_administration_get_test_file_request,
-    build_load_test_administration_get_test_request,
-    build_load_test_administration_list_test_files_request,
-    build_load_test_administration_list_tests_request,
-    build_load_test_administration_upload_test_file_request,
-    build_load_test_run_create_or_update_app_components_request,
-    build_load_test_run_create_or_update_server_metrics_config_request,
-    build_load_test_run_create_or_update_test_run_request,
-    build_load_test_run_delete_test_run_request,
-    build_load_test_run_get_app_components_request,
-    build_load_test_run_get_server_metrics_config_request,
-    build_load_test_run_get_test_run_file_request,
-    build_load_test_run_get_test_run_request,
-    build_load_test_run_list_metric_definitions_request,
-    build_load_test_run_list_metric_dimension_values_request,
-    build_load_test_run_list_metric_namespaces_request,
-    build_load_test_run_list_metrics_request,
-    build_load_test_run_list_test_runs_request,
-    build_load_test_run_stop_test_run_request,
+    build_administration_create_or_update_app_components_request,
+    build_administration_create_or_update_server_metrics_config_request,
+    build_administration_create_or_update_test_request,
+    build_administration_delete_test_file_request,
+    build_administration_delete_test_request,
+    build_administration_get_app_components_request,
+    build_administration_get_server_metrics_config_request,
+    build_administration_get_test_file_request,
+    build_administration_get_test_request,
+    build_administration_list_test_files_request,
+    build_administration_list_tests_request,
+    build_administration_upload_test_file_request,
+    build_test_run_create_or_update_app_components_request,
+    build_test_run_create_or_update_server_metrics_config_request,
+    build_test_run_create_or_update_test_run_request,
+    build_test_run_delete_test_run_request,
+    build_test_run_get_app_components_request,
+    build_test_run_get_server_metrics_config_request,
+    build_test_run_get_test_run_file_request,
+    build_test_run_get_test_run_request,
+    build_test_run_list_metric_definitions_request,
+    build_test_run_list_metric_dimension_values_request,
+    build_test_run_list_metric_namespaces_request,
+    build_test_run_list_metrics_request,
+    build_test_run_list_test_runs_request,
+    build_test_run_stop_test_run_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -65,14 +65,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LoadTestAdministrationOperations:
+class AdministrationOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.developer.loadtesting.aio.LoadTestingClient`'s
-        :attr:`load_test_administration` attribute.
+        :attr:`administration` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -837,7 +837,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_test_request(
+        request = build_administration_create_or_update_test_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -904,7 +904,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_test_request(
+        request = build_administration_delete_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1123,7 +1123,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_test_request(
+        request = build_administration_get_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1376,7 +1376,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_tests_request(
+                request = build_administration_list_tests_request(
                     orderby=orderby,
                     search=search,
                     last_modified_start_time=last_modified_start_time,
@@ -1498,7 +1498,7 @@ class LoadTestAdministrationOperations:
 
         _content = body
 
-        request = build_load_test_administration_upload_test_file_request(
+        request = build_administration_upload_test_file_request(
             test_id=test_id,
             file_name=file_name,
             file_type=file_type,
@@ -1579,7 +1579,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_test_file_request(
+        request = build_administration_get_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -1641,7 +1641,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_test_file_request(
+        request = build_administration_delete_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -1718,7 +1718,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_test_files_request(
+                request = build_administration_list_test_files_request(
                     test_id=test_id,
                     continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
@@ -1984,7 +1984,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_app_components_request(
+        request = build_administration_create_or_update_app_components_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2083,7 +2083,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_app_components_request(
+        request = build_administration_get_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2301,7 +2301,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_server_metrics_config_request(
+        request = build_administration_create_or_update_server_metrics_config_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2395,7 +2395,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_server_metrics_config_request(
+        request = build_administration_get_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2427,14 +2427,14 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
 
-class LoadTestRunOperations:
+class TestRunOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.developer.loadtesting.aio.LoadTestingClient`'s
-        :attr:`load_test_run` attribute.
+        :attr:`test_run` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3540,7 +3540,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_test_run_request(
+        request = build_test_run_create_or_update_test_run_request(
             test_run_id=test_run_id,
             old_test_run_id=old_test_run_id,
             content_type=content_type,
@@ -3855,7 +3855,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_test_run_request(
+        request = build_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3914,7 +3914,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_run_delete_test_run_request(
+        request = build_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3984,7 +3984,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_test_run_file_request(
+        request = build_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -4320,7 +4320,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_test_runs_request(
+                request = build_test_run_list_test_runs_request(
                     orderby=orderby,
                     continuation_token_parameter=continuation_token_parameter,
                     search=search,
@@ -4657,7 +4657,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_stop_test_run_request(
+        request = build_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4727,7 +4727,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_metric_namespaces_request(
+        request = build_test_run_list_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4827,7 +4827,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_list_metric_definitions_request(
+        request = build_test_run_list_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
             api_version=self._config.api_version,
@@ -5087,7 +5087,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_metrics_request(
+                request = build_test_run_list_metrics_request(
                     test_run_id=test_run_id,
                     metricname=metricname,
                     metric_namespace=metric_namespace,
@@ -5210,7 +5210,7 @@ class LoadTestRunOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_run_list_metric_dimension_values_request(
+                request = build_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
                     metricname=metricname,
@@ -5480,7 +5480,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_app_components_request(
+        request = build_test_run_create_or_update_app_components_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5579,7 +5579,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_app_components_request(
+        request = build_test_run_get_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5799,7 +5799,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_server_metrics_config_request(
+        request = build_test_run_create_or_update_server_metrics_config_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5893,7 +5893,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_server_metrics_config_request(
+        request = build_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,

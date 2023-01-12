@@ -20,7 +20,7 @@ USAGE:
 
     Please ensure that correct jmx file and path is used
 """
-from azure.developer.loadtesting import LoadTestAdministrationClient
+from azure.developer.loadtesting import LoadTestingClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
 # -loadtesting/README.md
@@ -32,13 +32,13 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
 FILE_NAME = "my-file-id.jmx"
 
 # uploading .jmx file to a test
-resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"), poll_for_validation_status=True)
+resultPoller = client.administration.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"), poll_for_validation_status=True)
 fileUploadResponse = resultPoller.get_initial_response()
 print(fileUploadResponse)
 

@@ -20,7 +20,7 @@ USAGE:
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 # main library import
-from azure.developer.loadtesting import LoadTestAdministrationClient
+from azure.developer.loadtesting import LoadTestingClient
 
 # for managing authentication and authorization can be installed from pypi, follow:
 # https://pypi.org/project/azure-identity/ using DefaultAzureCredentials, read more at:
@@ -41,6 +41,6 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 TEST_ID = "my-new-sdk-test-id"
 
 # Build a client through AAD and resource endpoint
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-client.delete_test(TEST_ID)
+client.administration.delete_test(TEST_ID)

@@ -15,17 +15,14 @@ from azure.core.polling import NoPolling, AsyncNoPolling, AsyncPollingMethod, As
 from azure.core.polling._async_poller import PollingReturnType
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON
-from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
+from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
+from ._operations import TestRunOperations as TestRunOperationsGenerated
 
 logger = logging.getLogger(__name__)
 
 
-
-
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
-
 
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
@@ -44,7 +41,6 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     def finished(self) -> bool:
         return self._status in self._termination_statuses
 
-
     def resource(self) -> JSON:
         return self._resource
 
@@ -56,13 +52,12 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
 
                 if not self.finished():
                     await asyncio.sleep(self._polling_interval)
-
         except Exception as e:
             logger.error(e)
             raise e
 
-class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
 
+class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
     def __init__(self, interval=5) -> None:
         self._resource = None
         self._command = None
@@ -76,7 +71,6 @@ class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
 
 
 class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
-
     def __init__(self, interval=5) -> None:
         self._resource = None
         self._command = None
@@ -84,10 +78,9 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._polling_interval = interval
         self._status = None
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
+
     def _update_status(self) -> None:
         self._status = self._resource["status"]
-
-
 
 
 class AsyncLoadTestingLROPoller(AsyncLROPoller):
@@ -105,14 +98,16 @@ class AsyncLoadTestingLROPoller(AsyncLROPoller):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: Any,
-            deserialization_callback: Callable,
-            polling_method: AsyncPollingMethod[PollingReturnType]
-        ):
+        self,
+        client: Any,
+        initial_response: Any,
+        deserialization_callback: Callable,
+        polling_method: AsyncPollingMethod[PollingReturnType],
+    ):
         self._initial_response = initial_response
-        super(AsyncLoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
+        super(AsyncLoadTestingLROPoller, self).__init__(
+            client, initial_response, deserialization_callback, polling_method
+        )
 
     def get_initial_response(self) -> Any:
         """Return the result of the initial operation.
@@ -123,13 +118,13 @@ class AsyncLoadTestingLROPoller(AsyncLROPoller):
         return self._initial_response
 
 
-class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
+class AdministrationOperations(AdministrationOperationsGenerated):
     """
     for performing the operations on test
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestAdministrationOperations, self).__init__(*args, **kwargs)
+        super(AdministrationOperations, self).__init__(*args, **kwargs)
 
     @distributed_trace
     async def begin_upload_test_file(
@@ -164,7 +159,6 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-
         upload_test_file_operation = await self.upload_test_file(
             test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
         )
@@ -176,18 +170,17 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
             return AsyncLoadTestingLROPoller(
                 command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
             )
-
         else:
             return AsyncLoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, AsyncNoPolling())
 
 
-class LoadTestRunOperations(LoadTestRunOperationsGenerated):
+class TestRunOperations(TestRunOperationsGenerated):
     """
-    class to perform operations on LoadTestRun
+    class to perform operations on TestRun
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestRunOperations, self).__init__(*args, **kwargs)
+        super(TestRunOperations, self).__init__(*args, **kwargs)
 
     @distributed_trace
     async def begin_test_run(
@@ -227,12 +220,8 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-
         create_or_update_test_run_operation = await self.create_or_update_test_run(
-            test_run_id,
-            body,
-            old_test_run_id=old_test_run_id,
-            **kwargs
+            test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
 
         command = partial(self.get_test_run, test_run_id=test_run_id)
@@ -246,7 +235,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
             return AsyncLoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
 
 
-__all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations", "AsyncLoadTestingLROPoller"]
+__all__: List[str] = ["AdministrationOperations", "TestRunOperations", "AsyncLoadTestingLROPoller"]
 
 
 # Add all objects you want publicly available to users at this package level

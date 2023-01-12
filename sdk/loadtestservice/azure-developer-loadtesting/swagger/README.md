@@ -12,4 +12,13 @@ package-mode: dataplane
 package-pprint-name: Azure Developer LoadTesting
 security: AADToken
 security-scopes: https://cnt-prod.loadtesting.azure.com/.default
+directive:
+  - from: swagger-document
+    where: '$.paths.*[?(@.tags=="Test")]'
+    transform: >
+     $["operationId"] = $["operationId"].replace("LoadTestAdministration_", "Administration_");
+  - from: swagger-document
+    where: '$.paths.*[?(@.tags=="TestRun")]'
+    transform: >
+     $["operationId"] = $["operationId"].replace("LoadTestRun_", "TestRun_");
 ```
