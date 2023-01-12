@@ -41,14 +41,14 @@ class RedirectPolicyBase(object):
     REDIRECT_HEADERS_BLACKLIST = frozenset(["Authorization"])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get('permit_redirects', True)
-        self.max_redirects = kwargs.get('redirect_max', 30)
+        self.allow = kwargs.get("permit_redirects", True)
+        self.max_redirects = kwargs.get("redirect_max", 30)
         self._original_domain = None
-        self._always_adding_header = kwargs.pop('always_adding_header', False)
+        self._always_adding_header = kwargs.pop("always_adding_header", False)
 
-        remove_headers = set(kwargs.get('redirect_remove_headers', []))
+        remove_headers = set(kwargs.get("redirect_remove_headers", []))
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
-        redirect_status = set(kwargs.get('redirect_on_status_codes', []))
+        redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
         super(RedirectPolicyBase, self).__init__()
 
