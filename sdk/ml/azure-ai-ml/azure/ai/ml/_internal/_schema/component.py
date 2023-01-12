@@ -112,7 +112,12 @@ class InternalComponentSchema(ComponentSchema):
 
     @pre_load()
     def convert_input_value_to_str(self, data: dict, **kwargs) -> dict:
-        """Convert the non-str value in input to str."""
+        """
+        Convert the non-str value in input to str.
+
+        When load the v1.5 component yaml, true/false will be converted to bool type and yyyy-mm-dd will be
+        converted to date type. In order to be consistent with before, it needs to be converted to str type.
+        """
         def convert_to_str(value):
             if isinstance(value, bool):
                 return str(value).lower()
