@@ -30,7 +30,6 @@ SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
     "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
-API_VERSION = "2022-01-11-preview2"
 
 def _get_test_phone_number():
     if SKIP_UPDATE_CAPABILITIES_TESTS:
@@ -54,8 +53,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy(),
-            api_version=API_VERSION
+            headers_policy=get_header_policy()
         )
 
     def _get_managed_identity_phone_number_client(self):
@@ -65,8 +63,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             endpoint,
             credential,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy(),
-            api_version=API_VERSION
+            headers_policy=get_header_policy()
         )
 
     @recorded_by_proxy
@@ -290,3 +287,81 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 PhoneNumberCapabilityType.INBOUND,
                 polling=True
             )
+
+    @recorded_by_proxy
+    def test_list_toll_free_area_codes_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        area_codes = phone_number_client.list_available_area_codes(
+            "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+        assert area_codes.next()
+
+    @recorded_by_proxy
+    def test_list_toll_free_area_codes(self):
+        area_codes = self.phone_number_client.list_available_area_codes(
+            "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+        assert area_codes.next()
+
+    @recorded_by_proxy
+    def test_list_geographic_area_codes_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        first_locality = phone_number_client.list_available_localities("US")
+        area_codes = self.phone_number_client.list_available_area_codes(
+            "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
+        assert area_codes.next()
+
+    @recorded_by_proxy
+    def test_list_geographic_area_codes(self):
+        first_locality = self.phone_number_client.list_available_localities(
+            "US")
+        area_codes = self.phone_number_client.list_available_area_codes(
+            "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
+        assert area_codes.next()
+
+    @recorded_by_proxy
+    def test_list_countries_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        countries = phone_number_client.list_available_countries()
+        assert countries.next()
+
+    @recorded_by_proxy
+    def test_list_countries(self):
+        countries = self.phone_number_client.list_available_countries()
+        assert countries.next()
+
+    @recorded_by_proxy
+    def test_list_localities_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        localities = phone_number_client.list_available_localities("US")
+        assert localities.next()
+
+    @recorded_by_proxy
+    def test_list_localities(self):
+        localities = self.phone_number_client.list_available_localities("US")
+        assert localities.next()
+
+    @recorded_by_proxy
+    def test_list_localities_with_ad_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        first_locality = phone_number_client.list_available_localities("US")
+        localities = phone_number_client.list_available_localities(
+            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+        assert localities.next()
+
+    @recorded_by_proxy
+    def test_list_localities_with_ad(self):
+        first_locality = self.phone_number_client.list_available_localities(
+            "US")
+        localities = self.phone_number_client.list_available_localities(
+            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+        assert localities.next()
+
+    @recorded_by_proxy
+    def test_list_offerings_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        offerings = phone_number_client.list_available_offerings("US")
+        assert offerings.next()
+
+    @recorded_by_proxy
+    def test_list_offerings(self):
+        offerings = self.phone_number_client.list_available_offerings("US")
+        assert offerings.next()
