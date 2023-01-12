@@ -118,7 +118,7 @@ class JWTTokenAuth(_CBSAuth):
         :type token_type: str
 
         """
-        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("kwargs", TOKEN_TYPE_JWT), get_token)
+        super(JWTTokenAuth, self).__init__(uri, audience, kwargs.pop("token_type", TOKEN_TYPE_JWT), get_token)
         self.get_token = get_token
 
 

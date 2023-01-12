@@ -255,7 +255,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuthAsync(auth_uri, auth_uri, get_token)
+            return JWTTokenAuthAsync(auth_uri, auth_uri, get_token, token_type=token_type)
         return JWTTokenAuthAsync(
             auth_uri,
             auth_uri,
@@ -294,7 +294,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return await mgmt_auth.get_token()
+        return (await mgmt_auth.get_token()).token.decode()
 
     @staticmethod
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
