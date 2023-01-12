@@ -294,7 +294,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return (await mgmt_auth.get_token()).token.decode()
+        return await mgmt_auth.get_token()
 
     @staticmethod
     async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):

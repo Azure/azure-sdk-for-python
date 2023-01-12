@@ -487,7 +487,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return mgmt_auth.get_token().token.decode()
+        return mgmt_auth.get_token().token
 
     @staticmethod
     def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
