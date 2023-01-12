@@ -65,7 +65,7 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
     def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
-        client = self.create_administration_client(loadtesting_endpoint)
+        client = self.create_client(loadtesting_endpoint)
         result = client.administration.create_or_update_test(
             loadtesting_test_id,
             {
