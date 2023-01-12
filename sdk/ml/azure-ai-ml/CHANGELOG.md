@@ -9,7 +9,8 @@
 -
 
 ### Other Changes
-- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights. 
+- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
+- Upgraded minimum azure-core version to 1.23.0.
 
 ## 1.3.0 (2023-01-10)
 
