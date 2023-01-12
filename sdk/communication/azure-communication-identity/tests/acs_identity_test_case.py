@@ -4,14 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from azure.communication.identity.aio import CommunicationIdentityClient as AsyncCommunicationIdentityClient
-from azure.communication.identity import CommunicationIdentityClient
-from _shared.utils import get_http_logging_policy
 from devtools_testutils import AzureRecordedTestCase, is_live
-from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from devtools_testutils.fake_credentials import FakeTokenCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-from azure.identity import DefaultAzureCredential
+
+
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
 
@@ -59,28 +54,3 @@ class ACSIdentityTestCase(AzureRecordedTestCase):
 
     def skip_get_token_for_teams_user_test(self):
         return str(self.skip_get_token_for_teams_user_tests).lower() == 'true'
-
-    def get_async_client(self):
-        return AsyncCommunicationIdentityClient.from_connection_string(self.connection_str,
-                                                                       http_logging_policy=get_http_logging_policy())
-
-    def get_client(self):
-        return CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
-    def get_async_client_from_managed_identity(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = AsyncDefaultAzureCredential()
-        return AsyncCommunicationIdentityClient(self.endpoint, credential,
-                                                http_logging_policy=get_http_logging_policy())
-
-    def get_client_from_managed_identity(self):
-        if not is_live():
-            credential = FakeTokenCredential()
-        else:
-            credential = DefaultAzureCredential()
-        return CommunicationIdentityClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
