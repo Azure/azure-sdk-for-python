@@ -49,7 +49,7 @@ class TestRunOps(LoadtestingTest):
     def setup_test_run(self, endpoint, test_id, test_run_id):
         self.setup_loadtest(endpoint, test_id)
 
-        run_client = self.create_run_client(endpoint)
+        run_client = self.create_client(endpoint)
 
         run_poller = run_client.test_run.begin_test_run(
             test_run_id,
@@ -67,7 +67,7 @@ class TestRunOps(LoadtestingTest):
 
         self.setup_loadtest(loadtesting_endpoint, loadtesting_test_id)
 
-        run_client = self.create_run_client(loadtesting_endpoint)
+        run_client = self.create_client(loadtesting_endpoint)
 
         run_poller = run_client.test_run.begin_test_run(
             loadtesting_test_run_id,
@@ -90,7 +90,7 @@ class TestRunOps(LoadtestingTest):
     def test_get_test_run(self, loadtesting_endpoint, loadtesting_test_run_id):
         set_bodiless_matcher()
 
-        run_client = self.create_run_client(loadtesting_endpoint)
+        run_client = self.create_client(loadtesting_endpoint)
 
         result = run_client.test_run.get_test_run(loadtesting_test_run_id)
         assert result is not None
@@ -105,7 +105,7 @@ class TestRunOps(LoadtestingTest):
 
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
-        run_client = self.create_run_client(loadtesting_endpoint)
+        run_client = self.create_client(loadtesting_endpoint)
 
         result = run_client.test_run.delete_test_run(loadtesting_test_run_id)
         assert result is None
@@ -121,7 +121,7 @@ class TestRunOps(LoadtestingTest):
 
         self.setup_test_run(loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id)
 
-        run_client = self.create_run_client(loadtesting_endpoint)
+        run_client = self.create_client(loadtesting_endpoint)
 
         result = run_client.test_run.get_test_run_file(loadtesting_test_run_id, "sample.jmx")
         assert result is not None
