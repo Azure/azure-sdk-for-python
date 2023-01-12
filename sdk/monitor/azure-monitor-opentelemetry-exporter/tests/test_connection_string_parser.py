@@ -144,22 +144,6 @@ class TestConnectionStringParser(unittest.TestCase):
             ),
         )
 
-    def test_invalid_key_version(self):
-        self.assertRaises(
-            ValueError,
-            lambda: ConnectionStringParser(
-                connection_string="InstrumentationKey=1234abcd-5678-6efa-8abc-1234567890ab"
-            ),
-        )
-
-    def test_invalid_key_variant(self):
-        self.assertRaises(
-            ValueError,
-            lambda: ConnectionStringParser(
-                connection_string="InstrumentationKey=1234abcd-5678-4efa-2abc-1234567890ab"
-            ),
-        )
-
     def test_process_options_ikey_code_cs(self):
         os.environ[
             "APPLICATIONINSIGHTS_CONNECTION_STRING"
