@@ -124,10 +124,11 @@ class InternalComponentSchema(ComponentSchema):
             return str(value)
 
         for input_port in data.get("inputs", {}).values():
-            if not isinstance(input_port.get("default", ""), str):
-                input_port["default"] = convert_to_str(input_port["default"])
-            if "enum" in input_port and any([not isinstance(item, str) for item in input_port["enum"]]):
-                input_port["enum"] = [convert_to_str(item) for item in input_port["enum"]]
+            if input_port["type"] in ["String", "Enum"]:
+                if not isinstance(input_port.get("default", ""), str):
+                    input_port["default"] = convert_to_str(input_port["default"])
+                if "enum" in input_port and any([not isinstance(item, str) for item in input_port["enum"]]):
+                    input_port["enum"] = [convert_to_str(item) for item in input_port["enum"]]
         return data
 
     @post_dump(pass_original=True)
