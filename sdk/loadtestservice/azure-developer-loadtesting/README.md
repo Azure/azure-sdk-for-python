@@ -39,27 +39,17 @@ Use the returned token credential to authenticate the client.
 
 #### Create the client
 
-Azure Developer LoadTesting SDK has 2 clients to interact with the service, 'LoadTestRunClient' and 'LoadTestAdministrationClient'.
+Azure Developer LoadTesting SDK has 2 sub-clients of the main client (`LoadTestingClient`) to interact with the service, 'administration' and 'test_run'.
 
 ```python
-from azure.developer.loadtesting import LoadTestAdministrationClient
+from azure.developer.loadtesting import LoadTestingClient
 
 # for managing authentication and authorization
 # can be installed from pypi, follow: https://pypi.org/project/azure-identity/
 # using DefaultAzureCredentials, read more at: https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
 from azure.identity import DefaultAzureCredential
 
-client = LoadTestAdministrationClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
-```
-```python
-from azure.developer.loadtesting import LoadTestRunClient
-
-# for managing authentication and authorization
-# can be installed from pypi, follow: https://pypi.org/project/azure-identity/
-# using DefaultAzureCredentials, read more at: https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
-from azure.identity import DefaultAzureCredential
-
-client = LoadTestRunClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 `<endpoint>` refers to the data-plane endpoint/URL of the resource.
@@ -68,12 +58,12 @@ client = LoadTestRunClient(endpoint='<endpoint>', credential=DefaultAzureCredent
 
 The following components make up the Azure Load Testing service. The Azure Load Test client library for python allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library
 
-- `LoadTestRunClient` (`azure.developer.loadtesting.LoadTestRunClient`)
-- `LoadTestAdministrationClient` (`azure.developer.loadtesting.LoadTestAdministrationClient`)
+- `LoadTestingClient.administration` (`azure.developer.loadtesting.LoadTestingClient.administration`)
+- `LoadTestingClient.test_run` (`azure.developer.loadtesting.LoadTestingClient.test_run`)
 
 These two clients also have there asynchronous counterparts, which are 
-- `LoadTestRunClient` (`azure.developer.loadtesting.aio.LoadTestRunClient`)
-- `LoadTestAdministrationClient` (`azure.developer.loadtesting.aio.LoadTestAdministrationClient`)
+- `LoadTestingClient.administration` (`azure.developer.loadtesting.aio.LoadTestingClient.administration`)
+- `LoadTestingClient.test_run` (`azure.developer.loadtesting.aio.LoadTestingClient.test_run`)
 
 ### Load Test Administration Client
 
@@ -97,7 +87,7 @@ During a load test, Azure Load Testing collects metrics about the test execution
 
 ### Test Run Client
 
-The `LoadTestRunClient` client is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
+The `LoadTestingClient.test_run`  is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
 
 ### Data-Plane Endpoint
 
@@ -117,7 +107,7 @@ In the above example, `eus` represents the Azure region `East US`.
 
 ### Creating a load test 
 ```python
-from azure.developer.loadtesting import LoadTestAdministrationClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 import os
@@ -128,10 +118,10 @@ DISPLAY_NAME = "my-load-test"
 # set SUBSCRIPTION_ID as an environment variable
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
-client = LoadTestAdministrationClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
-    result = client.create_or_update_test(
+    result = client.administration.create_or_update_test(
         TEST_ID,
         {
             "description": "",
@@ -153,18 +143,18 @@ except HttpResponseError as e:
 
 ### Uploading .jmx file to a Test
 ```python
-from azure.developer.loadtesting import LoadTestAdministrationClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 TEST_ID = "some-test-id"  
 FILE_NAME = "some-file-name.jmx"  
 
-client = LoadTestAdministrationClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
 
-    result = client.load_test_administration.upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
+    result = client.administration.upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
     print(result)
 except HttpResponseError as e:
     print("Failed with error: {}".format(e.response.json()))
@@ -172,7 +162,7 @@ except HttpResponseError as e:
 
 ### Running a Test
 ```python
-from azure.developer.loadtesting import LoadTestRunClient
+from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -180,10 +170,10 @@ TEST_ID = "some-test-id"
 TEST_RUN_ID = "some-testrun-id" 
 DISPLAY_NAME = "my-load-test-run"  
 
-client = LoadTestRunClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
-    testRunPoller = client.begin_create_or_update_test_run(
+    testRunPoller = client.test_run.begin_test_run(
     TEST_RUN_ID,
     {
         "testId": TEST_ID,

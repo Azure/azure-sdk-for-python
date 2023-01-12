@@ -27,7 +27,7 @@
 
 
 ### Breaking Changes
-- Changed single SDK pattern from single client to two client pattern, LoadTestAdminstrationClient: For administration functionality for a LoadTest, LoadTestRunClient: For load test run and various related settings/triggers for the same.
+- Changed subclients `load_test_runs` and `load_test_adminsitration` to `test_run` and `adminsitrative` respectively
 
 ### Other Changes
 - Updated README
