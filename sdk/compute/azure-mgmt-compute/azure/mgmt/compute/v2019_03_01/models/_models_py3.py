@@ -13,13 +13,18 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -40,7 +45,7 @@ class AccessUri(_serialization.Model):
         "access_sas": {"key": "accessSAS", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.access_sas = None
@@ -60,7 +65,7 @@ class AdditionalCapabilities(_serialization.Model):
         "ultra_ssd_enabled": {"key": "ultraSSDEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, ultra_ssd_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, ultra_ssd_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
          managed data disks with UltraSSD_LRS storage account type on the VM or VMSS. Managed disks with
@@ -73,7 +78,9 @@ class AdditionalCapabilities(_serialization.Model):
 
 
 class AdditionalUnattendContent(_serialization.Model):
-    """Specifies additional XML formatted information that can be included in the Unattend.xml file, which is used by Windows Setup. Contents are defined by setting name, component name, and the pass in which the content is applied.
+    """Specifies additional XML formatted information that can be included in the Unattend.xml file,
+    which is used by Windows Setup. Contents are defined by setting name, component name, and the
+    pass in which the content is applied.
 
     :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
      value is "OobeSystem".
@@ -101,12 +108,12 @@ class AdditionalUnattendContent(_serialization.Model):
     def __init__(
         self,
         *,
-        pass_name: Optional[str] = None,
-        component_name: Optional[str] = None,
+        pass_name: Optional[Literal["OobeSystem"]] = None,
+        component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = None,
         setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
          value is "OobeSystem".
@@ -142,7 +149,7 @@ class ApiEntityReference(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The ARM resource id in the form of
          /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/...
@@ -183,8 +190,8 @@ class ApiError(_serialization.Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword details: The Api error details.
         :paramtype details: list[~azure.mgmt.compute.v2019_03_01.models.ApiErrorBase]
@@ -223,8 +230,8 @@ class ApiErrorBase(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -264,8 +271,8 @@ class AutomaticOSUpgradePolicy(_serialization.Model):
         *,
         enable_automatic_os_upgrade: Optional[bool] = None,
         disable_automatic_rollback: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable_automatic_os_upgrade: Indicates whether OS upgrades should automatically be
          applied to scale set instances in a rolling fashion when a newer version of the OS image
@@ -301,7 +308,7 @@ class AutomaticOSUpgradeProperties(_serialization.Model):
         "automatic_os_upgrade_supported": {"key": "automaticOSUpgradeSupported", "type": "bool"},
     }
 
-    def __init__(self, *, automatic_os_upgrade_supported: bool, **kwargs):
+    def __init__(self, *, automatic_os_upgrade_supported: bool, **kwargs: Any) -> None:
         """
         :keyword automatic_os_upgrade_supported: Specifies whether automatic OS upgrade is supported on
          the image. Required.
@@ -330,7 +337,7 @@ class AutomaticRepairsPolicy(_serialization.Model):
         "grace_period": {"key": "gracePeriod", "type": "str"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, grace_period: Optional[str] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, grace_period: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Specifies whether automatic repairs should be enabled on the virtual machine
          scale set. The default value is false.
@@ -381,7 +388,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -397,7 +404,16 @@ class Resource(_serialization.Model):
 
 
 class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
-    """Specifies information about the availability set that the virtual machine should be assigned to. Virtual machines specified in the same availability set are allocated to different nodes to maximize availability. For more information about availability sets, see `Manage the availability of virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_. :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned maintenance for virtual machines in Azure <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_ :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation time. An existing VM cannot be added to an availability set.
+    """Specifies information about the availability set that the virtual machine should be assigned
+    to. Virtual machines specified in the same availability set are allocated to different nodes to
+    maximize availability. For more information about availability sets, see `Manage the
+    availability of virtual machines
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+    :code:`<br>`:code:`<br>` For more information on Azure planned maintenance, see `Planned
+    maintenance for virtual machines in Azure
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_
+    :code:`<br>`:code:`<br>` Currently, a VM can only be added to availability set at creation
+    time. An existing VM cannot be added to an availability set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -464,8 +480,8 @@ class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
         platform_fault_domain_count: Optional[int] = None,
         virtual_machines: Optional[List["_models.SubResource"]] = None,
         proximity_placement_group: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -518,7 +534,9 @@ class AvailabilitySetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AvailabilitySet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.AvailabilitySet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of availability sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.AvailabilitySet]
@@ -542,7 +560,7 @@ class UpdateResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -552,7 +570,8 @@ class UpdateResource(_serialization.Model):
 
 
 class AvailabilitySetUpdate(UpdateResource):
-    """Specifies information about the availability set that the virtual machine should be assigned to. Only tags may be updated.
+    """Specifies information about the availability set that the virtual machine should be assigned
+    to. Only tags may be updated.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -597,8 +616,8 @@ class AvailabilitySetUpdate(UpdateResource):
         platform_fault_domain_count: Optional[int] = None,
         virtual_machines: Optional[List["_models.SubResource"]] = None,
         proximity_placement_group: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -626,7 +645,8 @@ class AvailabilitySetUpdate(UpdateResource):
 
 
 class BillingProfile(_serialization.Model):
-    """Specifies the billing related details of a Azure Spot VM or VMSS. :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
+    """Specifies the billing related details of a Azure Spot VM or VMSS.
+    :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
 
     :ivar max_price: Specifies the maximum price you are willing to pay for a Azure Spot VM/VMSS.
      This price is in US Dollars. :code:`<br>`:code:`<br>` This price will be compared with the
@@ -647,7 +667,7 @@ class BillingProfile(_serialization.Model):
         "max_price": {"key": "maxPrice", "type": "float"},
     }
 
-    def __init__(self, *, max_price: Optional[float] = None, **kwargs):
+    def __init__(self, *, max_price: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword max_price: Specifies the maximum price you are willing to pay for a Azure Spot
          VM/VMSS. This price is in US Dollars. :code:`<br>`:code:`<br>` This price will be compared with
@@ -668,7 +688,10 @@ class BillingProfile(_serialization.Model):
 
 
 class BootDiagnostics(_serialization.Model):
-    """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily view the output of your console log. :code:`<br>`:code:`<br>` Azure also enables you to see a screenshot of the VM from the hypervisor.
+    """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
+    to diagnose VM status. :code:`<br>`:code:`<br>` You can easily view the output of your console
+    log. :code:`<br>`:code:`<br>` Azure also enables you to see a screenshot of the VM from the
+    hypervisor.
 
     :ivar enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
     :vartype enabled: bool
@@ -682,7 +705,7 @@ class BootDiagnostics(_serialization.Model):
         "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, storage_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, storage_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
         :paramtype enabled: bool
@@ -721,7 +744,7 @@ class BootDiagnosticsInstanceView(_serialization.Model):
         "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.console_screenshot_blob_uri = None
@@ -746,7 +769,7 @@ class ComputeOperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ComputeOperationValue]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -789,7 +812,7 @@ class ComputeOperationValue(_serialization.Model):
         "provider": {"key": "display.provider", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.origin = None
@@ -855,8 +878,8 @@ class CreationData(_serialization.Model):
         source_uri: Optional[str] = None,
         source_resource_id: Optional[str] = None,
         upload_size_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
          Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Upload".
@@ -964,8 +987,8 @@ class DataDisk(_serialization.Model):
         disk_size_gb: Optional[int] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         to_be_detached: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lun: Specifies the logical unit number of the data disk. This value is used to
          identify data disks within the VM and therefore must be unique for each data disk attached to a
@@ -1037,7 +1060,7 @@ class DataDiskImage(_serialization.Model):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.lun = None
@@ -1127,8 +1150,8 @@ class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1178,7 +1201,7 @@ class DedicatedHostAllocatableVM(_serialization.Model):
         "count": {"key": "count", "type": "float"},
     }
 
-    def __init__(self, *, vm_size: Optional[str] = None, count: Optional[float] = None, **kwargs):
+    def __init__(self, *, vm_size: Optional[str] = None, count: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword vm_size: VM size in terms of which the unutilized capacity is represented.
         :paramtype vm_size: str
@@ -1204,7 +1227,9 @@ class DedicatedHostAvailableCapacity(_serialization.Model):
         "allocatable_v_ms": {"key": "allocatableVMs", "type": "[DedicatedHostAllocatableVM]"},
     }
 
-    def __init__(self, *, allocatable_v_ms: Optional[List["_models.DedicatedHostAllocatableVM"]] = None, **kwargs):
+    def __init__(
+        self, *, allocatable_v_ms: Optional[List["_models.DedicatedHostAllocatableVM"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword allocatable_v_ms: The unutilized capacity of the dedicated host represented in terms
          of each VM size that is allowed to be deployed to the dedicated host.
@@ -1216,7 +1241,10 @@ class DedicatedHostAvailableCapacity(_serialization.Model):
 
 
 class DedicatedHostGroup(Resource):
-    """Specifies information about the dedicated host group that the dedicated hosts should be assigned to. :code:`<br>`:code:`<br>` Currently, a dedicated host can only be added to a dedicated host group at creation time. An existing dedicated host cannot be added to another dedicated host group.
+    """Specifies information about the dedicated host group that the dedicated hosts should be
+    assigned to. :code:`<br>`:code:`<br>` Currently, a dedicated host can only be added to a
+    dedicated host group at creation time. An existing dedicated host cannot be added to another
+    dedicated host group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1269,8 +1297,8 @@ class DedicatedHostGroup(Resource):
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
         platform_fault_domain_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1310,7 +1338,9 @@ class DedicatedHostGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DedicatedHostGroup"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DedicatedHostGroup"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of dedicated host groups. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.DedicatedHostGroup]
@@ -1324,7 +1354,8 @@ class DedicatedHostGroupListResult(_serialization.Model):
 
 
 class DedicatedHostGroupUpdate(UpdateResource):
-    """Specifies information about the dedicated host group that the dedicated host should be assigned to. Only tags may be updated.
+    """Specifies information about the dedicated host group that the dedicated host should be assigned
+    to. Only tags may be updated.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1358,8 +1389,8 @@ class DedicatedHostGroupUpdate(UpdateResource):
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
         platform_fault_domain_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1406,8 +1437,8 @@ class DedicatedHostInstanceView(_serialization.Model):
         *,
         available_capacity: Optional["_models.DedicatedHostAvailableCapacity"] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword available_capacity: Unutilized capacity of the dedicated host.
         :paramtype available_capacity:
@@ -1442,7 +1473,7 @@ class DedicatedHostListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DedicatedHost"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.DedicatedHost"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of dedicated hosts. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.DedicatedHost]
@@ -1456,7 +1487,8 @@ class DedicatedHostListResult(_serialization.Model):
 
 
 class DedicatedHostUpdate(UpdateResource):
-    """Specifies information about the dedicated host. Only tags, autoReplaceOnFailure and licenseType may be updated.
+    """Specifies information about the dedicated host. Only tags, autoReplaceOnFailure and licenseType
+    may be updated.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1514,8 +1546,8 @@ class DedicatedHostUpdate(UpdateResource):
         platform_fault_domain: Optional[int] = None,
         auto_replace_on_failure: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.DedicatedHostLicenseTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1545,7 +1577,8 @@ class DedicatedHostUpdate(UpdateResource):
 
 
 class DiagnosticsProfile(_serialization.Model):
-    """Specifies the boot diagnostic settings state. :code:`<br>`:code:`<br>`Minimum api-version: 2015-06-15.
+    """Specifies the boot diagnostic settings state. :code:`<br>`:code:`<br>`Minimum api-version:
+    2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
      Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
@@ -1558,7 +1591,7 @@ class DiagnosticsProfile(_serialization.Model):
         "boot_diagnostics": {"key": "bootDiagnostics", "type": "BootDiagnostics"},
     }
 
-    def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs):
+    def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs: Any) -> None:
         """
         :keyword boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
          Console Output and Screenshot to diagnose VM status. :code:`<br>`:code:`<br>` You can easily
@@ -1571,7 +1604,9 @@ class DiagnosticsProfile(_serialization.Model):
 
 
 class DiffDiskSettings(_serialization.Model):
-    """Describes the parameters of ephemeral disk settings that can be specified for operating system disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for managed disk.
+    """Describes the parameters of ephemeral disk settings that can be specified for operating system
+    disk. :code:`<br>`:code:`<br>` NOTE: The ephemeral disk settings can only be specified for
+    managed disk.
 
     :ivar option: Specifies the ephemeral disk settings for operating system disk. "Local"
     :vartype option: str or ~azure.mgmt.compute.v2019_03_01.models.DiffDiskOptions
@@ -1581,7 +1616,7 @@ class DiffDiskSettings(_serialization.Model):
         "option": {"key": "option", "type": "str"},
     }
 
-    def __init__(self, *, option: Optional[Union[str, "_models.DiffDiskOptions"]] = None, **kwargs):
+    def __init__(self, *, option: Optional[Union[str, "_models.DiffDiskOptions"]] = None, **kwargs: Any) -> None:
         """
         :keyword option: Specifies the ephemeral disk settings for operating system disk. "Local"
         :paramtype option: str or ~azure.mgmt.compute.v2019_03_01.models.DiffDiskOptions
@@ -1601,7 +1636,7 @@ class Disallowed(_serialization.Model):
         "disk_types": {"key": "diskTypes", "type": "[str]"},
     }
 
-    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword disk_types: A list of disk types.
         :paramtype disk_types: list[str]
@@ -1724,8 +1759,8 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1803,8 +1838,8 @@ class DiskEncryptionSettings(_serialization.Model):
         disk_encryption_key: Optional["_models.KeyVaultSecretReference"] = None,
         key_encryption_key: Optional["_models.KeyVaultKeyReference"] = None,
         enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_key: Specifies the location of the disk encryption key, which is a Key
          Vault Secret.
@@ -1845,8 +1880,8 @@ class DiskInstanceView(_serialization.Model):
         name: Optional[str] = None,
         encryption_settings: Optional[List["_models.DiskEncryptionSettings"]] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The disk name.
         :paramtype name: str
@@ -1884,7 +1919,7 @@ class DiskList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of disks. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.Disk]
@@ -1918,7 +1953,7 @@ class DiskSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
          "StandardSSD_LRS", and "UltraSSD_LRS".
@@ -1980,8 +2015,8 @@ class DiskUpdate(_serialization.Model):
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2052,8 +2087,8 @@ class EncryptionSettingsCollection(_serialization.Model):
         enabled: bool,
         encryption_settings: Optional[List["_models.EncryptionSettingsElement"]] = None,
         encryption_settings_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Set this flag to true and provide DiskEncryptionKey and optional
          KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
@@ -2094,8 +2129,8 @@ class EncryptionSettingsElement(_serialization.Model):
         *,
         disk_encryption_key: Optional["_models.KeyVaultAndSecretReference"] = None,
         key_encryption_key: Optional["_models.KeyVaultAndKeyReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_key: Key Vault Secret Url and vault id of the disk encryption key.
         :paramtype disk_encryption_key:
@@ -2163,8 +2198,8 @@ class Gallery(Resource):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         identifier: Optional["_models.GalleryIdentifier"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2183,7 +2218,8 @@ class Gallery(Resource):
 
 
 class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
-    """Specifies information about the gallery Application Definition that you want to create or update.
+    """Specifies information about the gallery Application Definition that you want to create or
+    update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2250,8 +2286,8 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2306,7 +2342,9 @@ class GalleryApplicationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Gallery Applications. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.GalleryApplication]
@@ -2377,8 +2415,8 @@ class GalleryApplicationVersion(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2415,7 +2453,9 @@ class GalleryApplicationVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery Application Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersion]
@@ -2474,8 +2514,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -2565,8 +2605,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         manage_actions: Optional["_models.UserArtifactManage"] = None,
         enable_health_check: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -2623,7 +2663,7 @@ class GalleryArtifactSource(_serialization.Model):
         "managed_image": {"key": "managedImage", "type": "ManagedArtifact"},
     }
 
-    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs):
+    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs: Any) -> None:
         """
         :keyword managed_image: The managed artifact. Required.
         :paramtype managed_image: ~azure.mgmt.compute.v2019_03_01.models.ManagedArtifact
@@ -2654,7 +2694,7 @@ class GalleryDiskImage(_serialization.Model):
         "host_caching": {"key": "hostCaching", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.size_in_gb = None
@@ -2689,7 +2729,7 @@ class GalleryDataDiskImage(GalleryDiskImage):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.lun = None
@@ -2713,7 +2753,7 @@ class GalleryIdentifier(_serialization.Model):
         "unique_name": {"key": "uniqueName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unique_name = None
@@ -2817,8 +2857,8 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
         disallowed: Optional["_models.Disallowed"] = None,
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2896,7 +2936,7 @@ class GalleryImageIdentifier(_serialization.Model):
         "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs: Any) -> None:
         """
         :keyword publisher: The name of the gallery Image Definition publisher. Required.
         :paramtype publisher: str
@@ -2932,7 +2972,7 @@ class GalleryImageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Shared Image Gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.GalleryImage]
@@ -3004,8 +3044,8 @@ class GalleryImageVersion(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -3043,7 +3083,9 @@ class GalleryImageVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery Image Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.GalleryImageVersion]
@@ -3109,8 +3151,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -3165,7 +3207,7 @@ class GalleryImageVersionStorageProfile(_serialization.Model):
         "data_disk_images": {"key": "dataDiskImages", "type": "[GalleryDataDiskImage]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.os_disk_image = None
@@ -3193,7 +3235,7 @@ class GalleryList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.Gallery]
@@ -3228,7 +3270,7 @@ class GalleryOSDiskImage(GalleryDiskImage):
         "host_caching": {"key": "hostCaching", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -3254,7 +3296,7 @@ class GrantAccessData(_serialization.Model):
         "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs):
+    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs: Any) -> None:
         """
         :keyword access: Required. Known values are: "None", "Read", and "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2019_03_01.models.AccessLevel
@@ -3322,7 +3364,9 @@ class HardwareProfile(_serialization.Model):
         "vm_size": {"key": "vmSize", "type": "str"},
     }
 
-    def __init__(self, *, vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, vm_size: Optional[Union[str, "_models.VirtualMachineSizeTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword vm_size: Specifies the size of the virtual machine. For more information about virtual
          machine sizes, see `Sizes for virtual machines
@@ -3377,7 +3421,9 @@ class HardwareProfile(_serialization.Model):
 
 
 class Image(Resource):
-    """The source user image virtual hard disk. The virtual hard disk will be copied before being attached to the virtual machine. If SourceImage is provided, the destination virtual hard drive must not exist.
+    """The source user image virtual hard disk. The virtual hard disk will be copied before being
+    attached to the virtual machine. If SourceImage is provided, the destination virtual hard drive
+    must not exist.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3433,8 +3479,8 @@ class Image(Resource):
         source_virtual_machine: Optional["_models.SubResource"] = None,
         storage_profile: Optional["_models.ImageStorageProfile"] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -3511,8 +3557,8 @@ class ImageDataDisk(_serialization.Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lun: Specifies the logical unit number of the data disk. This value is used to
          identify data disks within the VM and therefore must be unique for each data disk attached to a
@@ -3571,7 +3617,9 @@ class ImageDiskReference(_serialization.Model):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, *, id: str, lun: Optional[int] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, lun: Optional[int] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: A relative uri containing either a Platform Image Repository or user image
          reference. Required.
@@ -3606,7 +3654,7 @@ class ImageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Image"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Image"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of Images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.Image]
@@ -3680,8 +3728,8 @@ class ImageOSDisk(_serialization.Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         disk_size_gb: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from a custom image. :code:`<br>`:code:`<br>` Possible values are:
@@ -3740,8 +3788,13 @@ class ImagePurchasePlan(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, publisher: Optional[str] = None, product: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        publisher: Optional[str] = None,
+        product: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -3767,7 +3820,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -3777,7 +3830,11 @@ class SubResource(_serialization.Model):
 
 
 class ImageReference(SubResource):
-    """Specifies information about the image to use. You can specify information about platform images, marketplace images, or virtual machine images. This element is required when you want to use a platform image, marketplace image, or virtual machine image, but is not used in other creation operations. NOTE: Image reference publisher and offer can only be set when you create the scale set.
+    """Specifies information about the image to use. You can specify information about platform
+    images, marketplace images, or virtual machine images. This element is required when you want
+    to use a platform image, marketplace image, or virtual machine image, but is not used in other
+    creation operations. NOTE: Image reference publisher and offer can only be set when you create
+    the scale set.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -3812,8 +3869,8 @@ class ImageReference(SubResource):
         offer: Optional[str] = None,
         sku: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -3868,8 +3925,8 @@ class ImageStorageProfile(_serialization.Model):
         os_disk: Optional["_models.ImageOSDisk"] = None,
         data_disks: Optional[List["_models.ImageDataDisk"]] = None,
         zone_resilient: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_disk: Specifies information about the operating system disk used by the virtual
          machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
@@ -3929,8 +3986,8 @@ class ImageUpdate(UpdateResource):
         source_virtual_machine: Optional["_models.SubResource"] = None,
         storage_profile: Optional["_models.ImageStorageProfile"] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3964,7 +4021,9 @@ class InnerError(_serialization.Model):
         "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
@@ -4007,8 +4066,8 @@ class InstanceViewStatus(_serialization.Model):
         display_status: Optional[str] = None,
         message: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The status code.
         :paramtype code: str
@@ -4030,7 +4089,8 @@ class InstanceViewStatus(_serialization.Model):
 
 
 class KeyVaultAndKeyReference(_serialization.Model):
-    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey.
+    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the
+    encryptionKey.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4050,7 +4110,7 @@ class KeyVaultAndKeyReference(_serialization.Model):
         "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2019_03_01.models.SourceVault
@@ -4083,7 +4143,7 @@ class KeyVaultAndSecretReference(_serialization.Model):
         "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2019_03_01.models.SourceVault
@@ -4116,7 +4176,7 @@ class KeyVaultKeyReference(_serialization.Model):
         "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(self, *, key_url: str, source_vault: "_models.SubResource", **kwargs):
+    def __init__(self, *, key_url: str, source_vault: "_models.SubResource", **kwargs: Any) -> None:
         """
         :keyword key_url: The URL referencing a key encryption key in Key Vault. Required.
         :paramtype key_url: str
@@ -4149,7 +4209,7 @@ class KeyVaultSecretReference(_serialization.Model):
         "source_vault": {"key": "sourceVault", "type": "SubResource"},
     }
 
-    def __init__(self, *, secret_url: str, source_vault: "_models.SubResource", **kwargs):
+    def __init__(self, *, secret_url: str, source_vault: "_models.SubResource", **kwargs: Any) -> None:
         """
         :keyword secret_url: The URL referencing a secret in a Key Vault. Required.
         :paramtype secret_url: str
@@ -4162,7 +4222,13 @@ class KeyVaultSecretReference(_serialization.Model):
 
 
 class LinuxConfiguration(_serialization.Model):
-    """Specifies the Linux operating system settings on the virtual machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on Azure-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_ :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for Non-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+    """Specifies the Linux operating system settings on the virtual machine.
+    :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
+    Azure-Endorsed Distributions
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+    :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
+    Non-Endorsed Distributions
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
 
     :ivar disable_password_authentication: Specifies whether password authentication should be
      disabled.
@@ -4188,8 +4254,8 @@ class LinuxConfiguration(_serialization.Model):
         disable_password_authentication: Optional[bool] = None,
         ssh: Optional["_models.SshConfiguration"] = None,
         provision_vm_agent: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disable_password_authentication: Specifies whether password authentication should be
          disabled.
@@ -4229,7 +4295,7 @@ class ListUsagesResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Usage"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Usage"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of compute resource usages. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.Usage]
@@ -4286,8 +4352,8 @@ class LogAnalyticsInputBase(_serialization.Model):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
          Api writes output logs to. Required.
@@ -4329,7 +4395,7 @@ class LogAnalyticsOperationResult(_serialization.Model):
         "properties": {"key": "properties", "type": "LogAnalyticsOutput"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -4352,7 +4418,7 @@ class LogAnalyticsOutput(_serialization.Model):
         "output": {"key": "output", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.output = None
@@ -4400,8 +4466,8 @@ class MaintenanceRedeployStatus(_serialization.Model):
         maintenance_window_end_time: Optional[datetime.datetime] = None,
         last_operation_result_code: Optional[Union[str, "_models.MaintenanceOperationResultCodeTypes"]] = None,
         last_operation_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_customer_initiated_maintenance_allowed: True, if customer is allowed to perform
          Maintenance.
@@ -4448,7 +4514,7 @@ class ManagedArtifact(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The managed artifact id. Required.
         :paramtype id: str
@@ -4479,8 +4545,8 @@ class ManagedDiskParameters(SubResource):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -4510,8 +4576,12 @@ class NetworkInterfaceReference(SubResource):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, primary: Optional[bool] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        primary: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -4536,7 +4606,9 @@ class NetworkProfile(_serialization.Model):
         "network_interfaces": {"key": "networkInterfaces", "type": "[NetworkInterfaceReference]"},
     }
 
-    def __init__(self, *, network_interfaces: Optional[List["_models.NetworkInterfaceReference"]] = None, **kwargs):
+    def __init__(
+        self, *, network_interfaces: Optional[List["_models.NetworkInterfaceReference"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword network_interfaces: Specifies the list of resource Ids for the network interfaces
          associated with the virtual machine.
@@ -4548,7 +4620,10 @@ class NetworkProfile(_serialization.Model):
 
 
 class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Specifies information about the operating system disk used by the virtual machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs for Azure virtual machines <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
+    """Specifies information about the operating system disk used by the virtual machine.
+    :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs for Azure
+    virtual machines
+    <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4628,8 +4703,8 @@ class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attribu
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_type: This property allows you to specify the type of the OS that is included in
          the disk if creating a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>`
@@ -4706,7 +4781,7 @@ class OSDiskImage(_serialization.Model):
         "operating_system": {"key": "operatingSystem", "type": "str"},
     }
 
-    def __init__(self, *, operating_system: Union[str, "_models.OperatingSystemTypes"], **kwargs):
+    def __init__(self, *, operating_system: Union[str, "_models.OperatingSystemTypes"], **kwargs: Any) -> None:
         """
         :keyword operating_system: The operating system of the osDiskImage. Required. Known values are:
          "Windows" and "Linux".
@@ -4808,8 +4883,8 @@ class OSProfile(_serialization.Model):
         secrets: Optional[List["_models.VaultSecretGroup"]] = None,
         allow_extension_operations: Optional[bool] = None,
         require_guest_provision_signal: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword computer_name: Specifies the host OS name of the virtual machine.
          :code:`<br>`:code:`<br>` This name cannot be updated after the VM is created.
@@ -4890,7 +4965,11 @@ class OSProfile(_serialization.Model):
 
 
 class Plan(_serialization.Model):
-    """Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace image that you want to use and then click **Want to deploy programmatically, Get Started ->**. Enter any required information and then click **Save**.
+    """Specifies information about the marketplace image used to create the virtual machine. This
+    element is only used for marketplace images. Before you can use a marketplace image from an
+    API, you must enable the image for programmatic use.  In the Azure portal, find the marketplace
+    image that you want to use and then click **Want to deploy programmatically, Get Started ->**.
+    Enter any required information and then click **Save**.
 
     :ivar name: The plan ID.
     :vartype name: str
@@ -4917,8 +4996,8 @@ class Plan(_serialization.Model):
         publisher: Optional[str] = None,
         product: Optional[str] = None,
         promotion_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -4999,8 +5078,8 @@ class ProximityPlacementGroup(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         proximity_placement_group_type: Optional[Union[str, "_models.ProximityPlacementGroupType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -5040,7 +5119,9 @@ class ProximityPlacementGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ProximityPlacementGroup"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.ProximityPlacementGroup"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of proximity placement groups. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.ProximityPlacementGroup]
@@ -5063,7 +5144,7 @@ class ProximityPlacementGroupUpdate(UpdateResource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -5097,7 +5178,7 @@ class PurchasePlan(_serialization.Model):
         "product": {"key": "product", "type": "str"},
     }
 
-    def __init__(self, *, publisher: str, name: str, product: str, **kwargs):
+    def __init__(self, *, publisher: str, name: str, product: str, **kwargs: Any) -> None:
         """
         :keyword publisher: The publisher ID. Required.
         :paramtype publisher: str
@@ -5114,7 +5195,8 @@ class PurchasePlan(_serialization.Model):
 
 
 class RecommendedMachineConfiguration(_serialization.Model):
-    """The properties describe the recommended machine configuration for this Image Definition. These properties are updatable.
+    """The properties describe the recommended machine configuration for this Image Definition. These
+    properties are updatable.
 
     :ivar v_cp_us: Describes the resource range.
     :vartype v_cp_us: ~azure.mgmt.compute.v2019_03_01.models.ResourceRange
@@ -5132,8 +5214,8 @@ class RecommendedMachineConfiguration(_serialization.Model):
         *,
         v_cp_us: Optional["_models.ResourceRange"] = None,
         memory: Optional["_models.ResourceRange"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword v_cp_us: Describes the resource range.
         :paramtype v_cp_us: ~azure.mgmt.compute.v2019_03_01.models.ResourceRange
@@ -5167,7 +5249,7 @@ class RecoveryWalkResponse(_serialization.Model):
         "next_platform_update_domain": {"key": "nextPlatformUpdateDomain", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.walk_performed = None
@@ -5204,7 +5286,7 @@ class RegionalReplicationStatus(_serialization.Model):
         "progress": {"key": "progress", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.region = None
@@ -5236,7 +5318,7 @@ class ReplicationStatus(_serialization.Model):
         "summary": {"key": "summary", "type": "[RegionalReplicationStatus]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.aggregated_state = None
@@ -5293,8 +5375,8 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
          Api writes output logs to. Required.
@@ -5344,8 +5426,8 @@ class ResourceRange(_serialization.Model):
         *,
         min: Optional[int] = None,  # pylint: disable=redefined-builtin
         max: Optional[int] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min: The minimum number of the resource.
         :paramtype min: int
@@ -5383,7 +5465,7 @@ class RollbackStatusInfo(_serialization.Model):
         "rollback_error": {"key": "rollbackError", "type": "ApiError"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.successfully_rolledback_instance_count = None
@@ -5436,8 +5518,8 @@ class RollingUpgradePolicy(_serialization.Model):
         max_unhealthy_instance_percent: Optional[int] = None,
         max_unhealthy_upgraded_instance_percent: Optional[int] = None,
         pause_time_between_batches: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_batch_instance_percent: The maximum percent of total virtual machine instances
          that will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
@@ -5497,7 +5579,7 @@ class RollingUpgradeProgressInfo(_serialization.Model):
         "pending_instance_count": {"key": "pendingInstanceCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.successful_instance_count = None
@@ -5537,7 +5619,7 @@ class RollingUpgradeRunningStatus(_serialization.Model):
         "last_action_time": {"key": "lastActionTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -5597,7 +5679,7 @@ class RollingUpgradeStatusInfo(Resource):
         "error": {"key": "properties.error", "type": "ApiError"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -5652,8 +5734,8 @@ class RunCommandDocumentBase(_serialization.Model):
         os_type: Union[str, "_models.OperatingSystemTypes"],
         label: str,
         description: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword schema: The VM run command schema. Required.
         :paramtype schema: str
@@ -5724,8 +5806,8 @@ class RunCommandDocument(RunCommandDocumentBase):
         description: str,
         script: List[str],
         parameters: Optional[List["_models.RunCommandParameterDefinition"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword schema: The VM run command schema. Required.
         :paramtype schema: str
@@ -5778,8 +5860,8 @@ class RunCommandInput(_serialization.Model):
         command_id: str,
         script: Optional[List[str]] = None,
         parameters: Optional[List["_models.RunCommandInputParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword command_id: The run command id. Required.
         :paramtype command_id: str
@@ -5816,7 +5898,7 @@ class RunCommandInputParameter(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: The run command parameter name. Required.
         :paramtype name: str
@@ -5849,7 +5931,9 @@ class RunCommandListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RunCommandDocumentBase"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.RunCommandDocumentBase"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machine run commands. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.RunCommandDocumentBase]
@@ -5889,7 +5973,9 @@ class RunCommandParameterDefinition(_serialization.Model):
         "required": {"key": "required", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, type: str, default_value: Optional[str] = None, required: bool = False, **kwargs):
+    def __init__(
+        self, *, name: str, type: str, default_value: Optional[str] = None, required: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The run command parameter name. Required.
         :paramtype name: str
@@ -5918,7 +6004,7 @@ class RunCommandResult(_serialization.Model):
         "value": {"key": "value", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Run command operation response.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.InstanceViewStatus]
@@ -5953,8 +6039,8 @@ class ScaleInPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, rules: Optional[List[Union[str, "_models.VirtualMachineScaleSetScaleInRules"]]] = None, **kwargs
-    ):
+        self, *, rules: Optional[List[Union[str, "_models.VirtualMachineScaleSetScaleInRules"]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword rules: The rules to be followed when scaling-in a virtual machine scale set.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Default** When a
@@ -5994,8 +6080,8 @@ class ScheduledEventsProfile(_serialization.Model):
     }
 
     def __init__(
-        self, *, terminate_notification_profile: Optional["_models.TerminateNotificationProfile"] = None, **kwargs
-    ):
+        self, *, terminate_notification_profile: Optional["_models.TerminateNotificationProfile"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword terminate_notification_profile: Specifies Terminate Scheduled Event related
          configurations.
@@ -6007,7 +6093,9 @@ class ScheduledEventsProfile(_serialization.Model):
 
 
 class Sku(_serialization.Model):
-    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not supported on the hardware the scale set is currently on, you need to deallocate the VMs in the scale set before you modify the SKU name.
+    """Describes a virtual machine scale set sku. NOTE: If the new VM SKU is not supported on the
+    hardware the scale set is currently on, you need to deallocate the VMs in the scale set before
+    you modify the SKU name.
 
     :ivar name: The sku name.
     :vartype name: str
@@ -6026,8 +6114,8 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs
-    ):
+        self, *, name: Optional[str] = None, tier: Optional[str] = None, capacity: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name.
         :paramtype name: str
@@ -6142,8 +6230,8 @@ class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
         disk_size_gb: Optional[int] = None,
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         incremental: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -6208,7 +6296,7 @@ class SnapshotList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of snapshots. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.Snapshot]
@@ -6241,7 +6329,9 @@ class SnapshotSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", and
          "Standard_ZRS".
@@ -6291,8 +6381,8 @@ class SnapshotUpdate(_serialization.Model):
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         disk_size_gb: Optional[int] = None,
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -6319,7 +6409,8 @@ class SnapshotUpdate(_serialization.Model):
 
 
 class SourceVault(_serialization.Model):
-    """The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
+    """The vault id is an Azure Resource Manager Resource id in the form
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -6329,7 +6420,7 @@ class SourceVault(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -6349,7 +6440,7 @@ class SshConfiguration(_serialization.Model):
         "public_keys": {"key": "publicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs):
+    def __init__(self, *, public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with linux based VMs.
         :paramtype public_keys: list[~azure.mgmt.compute.v2019_03_01.models.SshPublicKey]
@@ -6359,7 +6450,8 @@ class SshConfiguration(_serialization.Model):
 
 
 class SshPublicKey(_serialization.Model):
-    """Contains information about SSH certificate public key and the path on the Linux VM where the public key is placed.
+    """Contains information about SSH certificate public key and the path on the Linux VM where the
+    public key is placed.
 
     :ivar path: Specifies the full path on the created VM where ssh public key is stored. If the
      file already exists, the specified key is appended to the file. Example:
@@ -6377,7 +6469,7 @@ class SshPublicKey(_serialization.Model):
         "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(self, *, path: Optional[str] = None, key_data: Optional[str] = None, **kwargs):
+    def __init__(self, *, path: Optional[str] = None, key_data: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword path: Specifies the full path on the created VM where ssh public key is stored. If the
          file already exists, the specified key is appended to the file. Example:
@@ -6426,8 +6518,8 @@ class StorageProfile(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.OSDisk"] = None,
         data_disks: Optional[List["_models.DataDisk"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: Specifies information about the image to use. You can specify
          information about platform images, marketplace images, or virtual machine images. This element
@@ -6468,7 +6560,7 @@ class SubResourceReadOnly(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -6505,8 +6597,8 @@ class TargetRegion(_serialization.Model):
         name: str,
         regional_replica_count: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the region. Required.
         :paramtype name: str
@@ -6541,7 +6633,9 @@ class TerminateNotificationProfile(_serialization.Model):
         "enable": {"key": "enable", "type": "bool"},
     }
 
-    def __init__(self, *, not_before_timeout: Optional[str] = None, enable: Optional[bool] = None, **kwargs):
+    def __init__(
+        self, *, not_before_timeout: Optional[str] = None, enable: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword not_before_timeout: Configurable length of time a Virtual Machine being deleted will
          have to potentially approve the Terminate Scheduled Event before the event is auto approved
@@ -6600,8 +6694,8 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         group_by_throttle_policy: Optional[bool] = None,
         group_by_operation_name: Optional[bool] = None,
         group_by_resource_name: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_container_sas_uri: SAS Uri of the logging blob container to which LogAnalytics
          Api writes output logs to. Required.
@@ -6654,7 +6748,7 @@ class UpgradeOperationHistoricalStatusInfo(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -6700,7 +6794,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(_serialization.Model):
         "rollback_info": {"key": "rollbackInfo", "type": "RollbackStatusInfo"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.running_status = None
@@ -6737,7 +6831,7 @@ class UpgradeOperationHistoryStatus(_serialization.Model):
         "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -6776,8 +6870,8 @@ class UpgradePolicy(_serialization.Model):
         mode: Optional[Union[str, "_models.UpgradeMode"]] = None,
         rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = None,
         automatic_os_upgrade_policy: Optional["_models.AutomaticOSUpgradePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
          />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
@@ -6834,7 +6928,7 @@ class Usage(_serialization.Model):
 
     unit = "Count"
 
-    def __init__(self, *, current_value: int, limit: int, name: "_models.UsageName", **kwargs):
+    def __init__(self, *, current_value: int, limit: int, name: "_models.UsageName", **kwargs: Any) -> None:
         """
         :keyword current_value: The current usage of the resource. Required.
         :paramtype current_value: int
@@ -6863,7 +6957,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The name of the resource.
         :paramtype value: str
@@ -6903,7 +6997,7 @@ class UserArtifactManage(_serialization.Model):
         "update": {"key": "update", "type": "str"},
     }
 
-    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs):
+    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword install: Required. The path and arguments to install the gallery application. This is
          limited to 4096 characters. Required.
@@ -6944,7 +7038,7 @@ class UserArtifactSource(_serialization.Model):
         "default_configuration_link": {"key": "defaultConfigurationLink", "type": "str"},
     }
 
-    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword media_link: Required. The mediaLink of the artifact, must be a readable storage page
          blob. Required.
@@ -6979,7 +7073,7 @@ class UserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -6987,7 +7081,8 @@ class UserAssignedIdentitiesValue(_serialization.Model):
 
 
 class VaultCertificate(_serialization.Model):
-    """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
+    """Describes a single certificate reference in a Key Vault, and where the certificate should
+    reside on the VM.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -7011,7 +7106,9 @@ class VaultCertificate(_serialization.Model):
         "certificate_store": {"key": "certificateStore", "type": "str"},
     }
 
-    def __init__(self, *, certificate_url: Optional[str] = None, certificate_store: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, certificate_url: Optional[str] = None, certificate_store: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_url: This is the URL of a certificate that has been uploaded to Key Vault
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
@@ -7055,8 +7152,8 @@ class VaultSecretGroup(_serialization.Model):
         *,
         source_vault: Optional["_models.SubResource"] = None,
         vault_certificates: Optional[List["_models.VaultCertificate"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_vault: The relative URL of the Key Vault containing all of the certificates in
          VaultCertificates.
@@ -7081,7 +7178,7 @@ class VirtualHardDisk(_serialization.Model):
         "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(self, *, uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword uri: Specifies the virtual hard disk's uri.
         :paramtype uri: str
@@ -7251,8 +7348,8 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
         billing_profile: Optional["_models.BillingProfile"] = None,
         host: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -7380,8 +7477,8 @@ class VirtualMachineAgentInstanceView(_serialization.Model):
         vm_agent_version: Optional[str] = None,
         extension_handlers: Optional[List["_models.VirtualMachineExtensionHandlerInstanceView"]] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_agent_version: The VM Agent full version.
         :paramtype vm_agent_version: str
@@ -7423,7 +7520,9 @@ class VirtualMachineCaptureParameters(_serialization.Model):
         "overwrite_vhds": {"key": "overwriteVhds", "type": "bool"},
     }
 
-    def __init__(self, *, vhd_prefix: str, destination_container_name: str, overwrite_vhds: bool, **kwargs):
+    def __init__(
+        self, *, vhd_prefix: str, destination_container_name: str, overwrite_vhds: bool, **kwargs: Any
+    ) -> None:
         """
         :keyword vhd_prefix: The captured virtual hard disk's name prefix. Required.
         :paramtype vhd_prefix: str
@@ -7471,7 +7570,7 @@ class VirtualMachineCaptureResult(SubResource):
         "resources": {"key": "resources", "type": "[object]"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -7564,8 +7663,8 @@ class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-at
         settings: Optional[JSON] = None,
         protected_settings: Optional[JSON] = None,
         instance_view: Optional["_models.VirtualMachineExtensionInstanceView"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -7629,8 +7728,8 @@ class VirtualMachineExtensionHandlerInstanceView(_serialization.Model):
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
         status: Optional["_models.InstanceViewStatus"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Specifies the type of the extension; an example is "CustomScriptExtension".
         :paramtype type: str
@@ -7707,8 +7806,8 @@ class VirtualMachineExtensionImage(Resource):
         handler_schema: Optional[str] = None,
         vm_scale_set_enabled: Optional[bool] = None,
         supports_multiple_extensions: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -7767,8 +7866,8 @@ class VirtualMachineExtensionInstanceView(_serialization.Model):
         type_handler_version: Optional[str] = None,
         substatuses: Optional[List["_models.InstanceViewStatus"]] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The virtual machine extension name.
         :paramtype name: str
@@ -7800,7 +7899,7 @@ class VirtualMachineExtensionsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[VirtualMachineExtension]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VirtualMachineExtension"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VirtualMachineExtension"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of extensions.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineExtension]
@@ -7856,8 +7955,8 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         auto_upgrade_minor_version: Optional[bool] = None,
         settings: Optional[JSON] = None,
         protected_settings: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7907,7 +8006,7 @@ class VirtualMachineHealthStatus(_serialization.Model):
         "status": {"key": "status", "type": "InstanceViewStatus"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -7953,8 +8052,8 @@ class VirtualMachineIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the virtual machine. The type 'SystemAssigned,
          UserAssigned' includes both an implicitly created identity and a set of user assigned
@@ -8010,8 +8109,8 @@ class VirtualMachineImageResource(SubResource):
         location: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -8092,8 +8191,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
         data_disk_images: Optional[List["_models.DataDiskImage"]] = None,
         automatic_os_upgrade_properties: Optional["_models.AutomaticOSUpgradeProperties"] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGenerationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -8198,8 +8297,8 @@ class VirtualMachineInstanceView(_serialization.Model):  # pylint: disable=too-m
         extensions: Optional[List["_models.VirtualMachineExtensionInstanceView"]] = None,
         boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword platform_update_domain: Specifies the update domain of the virtual machine.
         :paramtype platform_update_domain: int
@@ -8272,7 +8371,9 @@ class VirtualMachineListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualMachine"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.VirtualMachine"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machines. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachine]
@@ -8286,7 +8387,8 @@ class VirtualMachineListResult(_serialization.Model):
 
 
 class VirtualMachineReimageParameters(_serialization.Model):
-    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be reimaged.
+    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk will always be
+    reimaged.
 
     :ivar temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This temp
      disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
@@ -8297,7 +8399,7 @@ class VirtualMachineReimageParameters(_serialization.Model):
         "temp_disk": {"key": "tempDisk", "type": "bool"},
     }
 
-    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs):
+    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
@@ -8437,8 +8539,8 @@ class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-att
         proximity_placement_group: Optional["_models.SubResource"] = None,
         additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
         scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -8570,8 +8672,8 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The disk name.
         :paramtype name: str
@@ -8673,8 +8775,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=t
         settings: Optional[JSON] = None,
         protected_settings: Optional[JSON] = None,
         provision_after_extensions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extension.
         :paramtype name: str
@@ -8735,8 +8837,8 @@ class VirtualMachineScaleSetExtensionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.VirtualMachineScaleSetExtension"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.VirtualMachineScaleSetExtension"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of VM scale set extensions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetExtension]
@@ -8761,7 +8863,9 @@ class VirtualMachineScaleSetExtensionProfile(_serialization.Model):
         "extensions": {"key": "extensions", "type": "[VirtualMachineScaleSetExtension]"},
     }
 
-    def __init__(self, *, extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = None, **kwargs):
+    def __init__(
+        self, *, extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword extensions: The virtual machine scale set child extension resources.
         :paramtype extensions:
@@ -8817,8 +8921,8 @@ class VirtualMachineScaleSetIdentity(_serialization.Model):
         user_assigned_identities: Optional[
             Dict[str, "_models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the virtual machine scale set. The type
          'SystemAssigned, UserAssigned' includes both an implicitly created identity and a set of user
@@ -8861,7 +8965,7 @@ class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(_serialization.M
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -8894,7 +8998,7 @@ class VirtualMachineScaleSetInstanceView(_serialization.Model):
         "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
     }
 
-    def __init__(self, *, statuses: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs):
+    def __init__(self, *, statuses: Optional[List["_models.InstanceViewStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword statuses: The resource status information.
         :paramtype statuses: list[~azure.mgmt.compute.v2019_03_01.models.InstanceViewStatus]
@@ -8923,7 +9027,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
         "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.statuses_summary = None
@@ -9009,8 +9113,8 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         application_security_groups: Optional[List["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
         load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -9074,7 +9178,7 @@ class VirtualMachineScaleSetIpTag(_serialization.Model):
         "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(self, *, ip_tag_type: Optional[str] = None, tag: Optional[str] = None, **kwargs):
+    def __init__(self, *, ip_tag_type: Optional[str] = None, tag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ip_tag_type: IP tag type. Example: FirstPartyUsage.
         :paramtype ip_tag_type: str
@@ -9109,8 +9213,12 @@ class VirtualMachineScaleSetListOSUpgradeHistory(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.UpgradeOperationHistoricalStatusInfo"], next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: List["_models.UpgradeOperationHistoricalStatusInfo"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of OS upgrades performed on the virtual machine scale set. Required.
         :paramtype value:
@@ -9145,7 +9253,9 @@ class VirtualMachineScaleSetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machine scale sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSet]
@@ -9179,7 +9289,9 @@ class VirtualMachineScaleSetListSkusResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualMachineScaleSetSku"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.VirtualMachineScaleSetSku"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of skus available for the virtual machine scale set. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetSku]
@@ -9213,7 +9325,9 @@ class VirtualMachineScaleSetListWithLinkResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.VirtualMachineScaleSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machine scale sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSet]
@@ -9241,7 +9355,9 @@ class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
     }
 
-    def __init__(self, *, storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_type: Specifies the storage account type for the managed disk. Managed
          OS disk storage account type can only be set when you create the scale set. NOTE: UltraSSD_LRS
@@ -9310,8 +9426,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
         ip_configurations: Optional[List["_models.VirtualMachineScaleSetIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -9355,7 +9471,7 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_serialization.Model
         "dns_servers": {"key": "dnsServers", "type": "[str]"},
     }
 
-    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, dns_servers: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword dns_servers: List of DNS servers IP addresses.
         :paramtype dns_servers: list[str]
@@ -9389,8 +9505,8 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         *,
         health_probe: Optional["_models.ApiEntityReference"] = None,
         network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
@@ -9479,8 +9595,8 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The disk name.
         :paramtype name: str
@@ -9611,8 +9727,8 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
         windows_configuration: Optional["_models.WindowsConfiguration"] = None,
         linux_configuration: Optional["_models.LinuxConfiguration"] = None,
         secrets: Optional[List["_models.VaultSecretGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword computer_name_prefix: Specifies the computer name prefix for all of the virtual
          machines in the scale set. Computer name prefixes must be 1 to 15 characters long.
@@ -9720,8 +9836,8 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_serialization.Model):
         dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
         ip_tags: Optional[List["_models.VirtualMachineScaleSetIpTag"]] = None,
         public_ip_prefix: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The publicIP address configuration name. Required.
         :paramtype name: str
@@ -9762,7 +9878,7 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_serializati
         "domain_name_label": {"key": "domainNameLabel", "type": "str"},
     }
 
-    def __init__(self, *, domain_name_label: str, **kwargs):
+    def __init__(self, *, domain_name_label: str, **kwargs: Any) -> None:
         """
         :keyword domain_name_label: The Domain name label.The concatenation of the domain name label
          and vm index will be the domain name labels of the PublicIPAddress resources that will be
@@ -9785,7 +9901,7 @@ class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters)
         "temp_disk": {"key": "tempDisk", "type": "bool"},
     }
 
-    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs):
+    def __init__(self, *, temp_disk: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
@@ -9811,7 +9927,9 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
         "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(self, *, temp_disk: Optional[bool] = None, instance_ids: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, *, temp_disk: Optional[bool] = None, instance_ids: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword temp_disk: Specifies whether to reimage temp disk. Default value: false. Note: This
          temp disk reimage parameter is only supported for VM/VMSS with Ephemeral OS disk.
@@ -9850,7 +9968,7 @@ class VirtualMachineScaleSetSku(_serialization.Model):
         "capacity": {"key": "capacity", "type": "VirtualMachineScaleSetSkuCapacity"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -9889,7 +10007,7 @@ class VirtualMachineScaleSetSkuCapacity(_serialization.Model):
         "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -9931,8 +10049,8 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
         data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: Specifies information about the image to use. You can specify
          information about platform images, marketplace images, or virtual machine images. This element
@@ -10039,8 +10157,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-
         additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
         scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
         proximity_placement_group: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -10169,8 +10287,8 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         application_security_groups: Optional[List["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
         load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -10267,8 +10385,8 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         dns_settings: Optional["_models.VirtualMachineScaleSetNetworkConfigurationDnsSettings"] = None,
         ip_configurations: Optional[List["_models.VirtualMachineScaleSetUpdateIPConfiguration"]] = None,
         enable_ip_forwarding: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -10327,8 +10445,8 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
         network_interface_configurations: Optional[
             List["_models.VirtualMachineScaleSetUpdateNetworkConfiguration"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword health_probe: A reference to a load balancer probe used to determine the health of an
          instance in the virtual machine scale set. The reference will be in the form:
@@ -10344,7 +10462,8 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_serialization.Model):
 
 
 class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
-    """Describes virtual machine scale set operating system disk Update Object. This should be used for Updating VMSS OS Disk.
+    """Describes virtual machine scale set operating system disk Update Object. This should be used
+    for Updating VMSS OS Disk.
 
     :ivar caching: The caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.compute.v2019_03_01.models.CachingTypes
@@ -10384,8 +10503,8 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[List[str]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword caching: The caching type. Known values are: "None", "ReadOnly", and "ReadWrite".
         :paramtype caching: str or ~azure.mgmt.compute.v2019_03_01.models.CachingTypes
@@ -10442,8 +10561,8 @@ class VirtualMachineScaleSetUpdateOSProfile(_serialization.Model):
         windows_configuration: Optional["_models.WindowsConfiguration"] = None,
         linux_configuration: Optional["_models.LinuxConfiguration"] = None,
         secrets: Optional[List["_models.VaultSecretGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_data: A base-64 encoded string of custom data.
         :paramtype custom_data: str
@@ -10488,8 +10607,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_serialization.Mo
         name: Optional[str] = None,
         idle_timeout_in_minutes: Optional[int] = None,
         dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The publicIP address configuration name.
         :paramtype name: str
@@ -10529,8 +10648,8 @@ class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.VirtualMachineScaleSetUpdateOSDisk"] = None,
         data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_reference: The image reference.
         :paramtype image_reference: ~azure.mgmt.compute.v2019_03_01.models.ImageReference
@@ -10595,8 +10714,8 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
         license_type: Optional[str] = None,
         billing_profile: Optional["_models.BillingProfile"] = None,
         scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_profile: The virtual machine scale set OS profile.
         :paramtype os_profile:
@@ -10783,8 +10902,8 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
         availability_set: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
         protection_policy: Optional["_models.VirtualMachineScaleSetVMProtectionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -10885,7 +11004,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):
         "statuses_summary": {"key": "statusesSummary", "type": "[VirtualMachineStatusCodeCount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -10905,7 +11024,7 @@ class VirtualMachineScaleSetVMInstanceIDs(_serialization.Model):
         "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(self, *, instance_ids: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, instance_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword instance_ids: The virtual machine scale set instance ids. Omitting the virtual machine
          scale set instance ids will result in the operation being performed on all virtual machines in
@@ -10933,7 +11052,7 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):
         "instance_ids": {"key": "instanceIds", "type": "[str]"},
     }
 
-    def __init__(self, *, instance_ids: List[str], **kwargs):
+    def __init__(self, *, instance_ids: List[str], **kwargs: Any) -> None:
         """
         :keyword instance_ids: The virtual machine scale set instance ids. Required.
         :paramtype instance_ids: list[str]
@@ -11008,8 +11127,8 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: dis
         boot_diagnostics: Optional["_models.BootDiagnosticsInstanceView"] = None,
         statuses: Optional[List["_models.InstanceViewStatus"]] = None,
         placement_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword platform_update_domain: The Update Domain count.
         :paramtype platform_update_domain: int
@@ -11073,7 +11192,9 @@ class VirtualMachineScaleSetVMListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VirtualMachineScaleSetVM"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.VirtualMachineScaleSetVM"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of virtual machine scale sets VMs. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetVM]
@@ -11105,8 +11226,8 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
         self,
         *,
         network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword network_interface_configurations: The list of network configurations.
         :paramtype network_interface_configurations:
@@ -11188,8 +11309,8 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):
         eviction_policy: Optional[Union[str, "_models.VirtualMachineEvictionPolicyTypes"]] = None,
         billing_profile: Optional["_models.BillingProfile"] = None,
         scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_profile: Specifies the operating system settings for the virtual machines in the
          scale set.
@@ -11268,8 +11389,8 @@ class VirtualMachineScaleSetVMProtectionPolicy(_serialization.Model):
         *,
         protect_from_scale_in: Optional[bool] = None,
         protect_from_scale_set_actions: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protect_from_scale_in: Indicates that the virtual machine scale set VM shouldn't be
          considered for deletion during a scale-in operation.
@@ -11321,8 +11442,8 @@ class VirtualMachineSize(_serialization.Model):
         resource_disk_size_in_mb: Optional[int] = None,
         memory_in_mb: Optional[int] = None,
         max_data_disk_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the virtual machine size.
         :paramtype name: str
@@ -11359,7 +11480,7 @@ class VirtualMachineSizeListResult(_serialization.Model):
         "value": {"key": "value", "type": "[VirtualMachineSize]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VirtualMachineSize"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VirtualMachineSize"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of virtual machine sizes.
         :paramtype value: list[~azure.mgmt.compute.v2019_03_01.models.VirtualMachineSize]
@@ -11389,7 +11510,7 @@ class VirtualMachineStatusCodeCount(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -11534,8 +11655,8 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
         billing_profile: Optional["_models.BillingProfile"] = None,
         host: Optional["_models.SubResource"] = None,
         license_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -11650,7 +11771,7 @@ class VMScaleSetConvertToSinglePlacementGroupInput(_serialization.Model):
         "active_placement_group_id": {"key": "activePlacementGroupId", "type": "str"},
     }
 
-    def __init__(self, *, active_placement_group_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, active_placement_group_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword active_placement_group_id: Id of the placement group in which you want future virtual
          machine instances to be placed. To query placement group Id, please use Virtual Machine Scale
@@ -11701,8 +11822,8 @@ class WindowsConfiguration(_serialization.Model):
         time_zone: Optional[str] = None,
         additional_unattend_content: Optional[List["_models.AdditionalUnattendContent"]] = None,
         win_rm: Optional["_models.WinRMConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provision_vm_agent: Indicates whether virtual machine agent should be provisioned on
          the virtual machine. :code:`<br>`:code:`<br>` When this property is not specified in the
@@ -11743,7 +11864,7 @@ class WinRMConfiguration(_serialization.Model):
         "listeners": {"key": "listeners", "type": "[WinRMListener]"},
     }
 
-    def __init__(self, *, listeners: Optional[List["_models.WinRMListener"]] = None, **kwargs):
+    def __init__(self, *, listeners: Optional[List["_models.WinRMListener"]] = None, **kwargs: Any) -> None:
         """
         :keyword listeners: The list of Windows Remote Management listeners.
         :paramtype listeners: list[~azure.mgmt.compute.v2019_03_01.models.WinRMListener]
@@ -11779,8 +11900,8 @@ class WinRMListener(_serialization.Model):
         *,
         protocol: Optional[Union[str, "_models.ProtocolTypes"]] = None,
         certificate_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protocol: Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values
          are: :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**. Known values are: "Http" and
