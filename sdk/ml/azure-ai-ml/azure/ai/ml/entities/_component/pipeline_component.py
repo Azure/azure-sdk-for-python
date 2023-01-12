@@ -193,7 +193,7 @@ class PipelineComponent(Component):
         for node_name in no_compute_with_resources_nodes:
             validation_result.append_error(
                 yaml_path=f"jobs.{parent_node_name}{node_name}.compute",
-                message="Invalid resource is set, please set serverless compute or pipeline default compute.",
+                message="Invalid resource is set, please set serverless compute or pipeline default compute",
             )
         return validation_result
 
