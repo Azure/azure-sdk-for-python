@@ -28,12 +28,12 @@
 import pytest
 import os
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_header_regex_sanitizer, \
-    set_default_session_settings, add_body_key_sanitizer, add_oauth_response_sanitizer, add_general_string_sanitizer
+    hard_setting_reset, add_body_key_sanitizer, add_oauth_response_sanitizer, add_general_string_sanitizer
 from azure.communication.identity._shared.utils import parse_connection_str
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    set_default_session_settings()
+    hard_setting_reset()
     add_oauth_response_sanitizer()
 
     connection_str = os.environ.get('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')

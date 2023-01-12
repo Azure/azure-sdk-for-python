@@ -3,15 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from typing import TYPE_CHECKING
-from urllib.error import HTTPError
 import requests
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
 
 if TYPE_CHECKING:
-    from typing import Any, Iterable, Optional
+    from typing import Any, Optional
 
 
 # This file contains methods for adjusting many aspects of test proxy behavior:
@@ -49,6 +49,19 @@ def set_default_session_settings() -> None:
     """
 
     _send_reset_request({})
+
+
+def hard_setting_reset() -> None:
+    """Removes any and all sanitizers, matchers, transforms, and recording options.
+
+    The default state of the test proxy removes and ignores some headers ("Authorization", "x-ms-client-request-id",
+    and "x-ms-request-id") and sanitizes the values of basic service principal-related environment variables
+    ("AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET", "AZURE_TENANT_ID", and "AZURE_SUBSCRIPTION_ID") in recordings.
+    This method removes these default settings, such that nothing is removed, ignored, or sanitized. To keep the basic,
+    default settings of the test proxy, use `set_default_function_settings` instead.
+    """
+
+    _send_hard_reset_request()
 
 
 # ----------MATCHERS----------
@@ -537,6 +550,21 @@ def _get_request_args(**kwargs: "Any") -> dict:
     return request_args
 
 
+def _send_hard_reset_request() -> None:
+    """Sends a POST request to the test proxy endpoint to reset setting customizations completely.
+
+    This method, unlike `_send_reset_request`, does not set any default settings. No sanitizers, transforms, matchers,
+    or recording options will be set. If live tests are being run with recording turned off via the
+    AZURE_SKIP_LIVE_RECORDING environment variable, no request will be sent.
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    response = requests.post(f"{PROXY_URL}/Admin/Reset")
+    response.raise_for_status()
+
+
 def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dict]" = None) -> None:
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
@@ -576,7 +604,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
 
 
 def _send_reset_request(headers: dict) -> None:
-    """Sends a POST request to the test proxy endpoint to reset setting customizations.
+    """Sends a POST request to the test proxy endpoint to reset setting customizations to their defaults.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
     request will be sent.
@@ -589,6 +617,22 @@ def _send_reset_request(headers: dict) -> None:
 
     response = requests.post(f"{PROXY_URL}/Admin/Reset", headers=headers)
     response.raise_for_status()
+
+    # Remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    add_remove_header_sanitizer(headers=headers_to_ignore)
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+
+    # Sanitize basic service principal variables by default
+    client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=subscription_id, value="00000000-0000-0000-0000-000000000000")
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
