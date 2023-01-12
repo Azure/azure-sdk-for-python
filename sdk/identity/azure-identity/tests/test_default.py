@@ -362,6 +362,23 @@ def test_interactive_browser_client_id():
     validate_client_id(mock_credential)
 
 
+def test_additionally_allowed_tenants():
+    """User-supplied additionally_allowed_tenants should be passed to applicable credentials"""
+
+    additionally_allowed_tenants = ["*"]
+    mocks = [Mock(), Mock(), Mock()]
+
+    with patch.multiple(DefaultAzureCredential.__module__, AzureCliCredential=mocks[0],
+        AzurePowerShellCredential=mocks[1], EnvironmentCredential=mocks[2]):
+
+        DefaultAzureCredential(additionally_allowed_tenants=additionally_allowed_tenants)
+
+    for mocked_credential in mocks:
+        _, kwargs = mocked_credential.call_args
+        assert "additionally_allowed_tenants" in kwargs
+        assert kwargs["additionally_allowed_tenants"] == additionally_allowed_tenants
+
+
 def test_unexpected_kwarg():
     """the credential shouldn't raise when given an unexpected keyword argument"""
     DefaultAzureCredential(foo=42)

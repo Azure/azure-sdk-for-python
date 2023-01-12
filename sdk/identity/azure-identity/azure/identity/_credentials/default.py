@@ -71,6 +71,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
         settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
+    :keyword List[str] additionally_allowed_tenants: In applicable credentials, specifies tenants in addition to the
+        specified tenant ID for which the credential may acquire tokens. Add the wildcard value "*" to allow the
+        credential to acquire tokens for any tenant the application can access.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -104,6 +107,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
+        additionally_allowed_tenants = kwargs.get("additionally_allowed_tenants", None)
+
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
@@ -129,9 +134,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential())
+            credentials.append(AzureCliCredential(additionally_allowed_tenants=additionally_allowed_tenants))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential())
+            credentials.append(AzurePowerShellCredential(additionally_allowed_tenants=additionally_allowed_tenants))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(

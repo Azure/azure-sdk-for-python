@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where certain arguments to `DefaultAzureCredential` were not being passed to the underlying credentials (i.e. `AzureCliCredential` and `AzurePowerShellCredential`). ([#28299](https://github.com/Azure/azure-sdk-for-python/pull/28299))
+
 ### Other Changes
 
 ## 1.13.0b1 (2023-01-10)
