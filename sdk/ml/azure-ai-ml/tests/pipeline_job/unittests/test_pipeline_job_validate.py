@@ -1,6 +1,8 @@
 import json
 import re
+from contextlib import contextmanager
 from pathlib import Path
+from typing import List, Optional
 from unittest.mock import patch
 
 import pytest
@@ -8,13 +10,12 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
-from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, SERVERLESS_COMPUTE_TEST_PARAMETERS
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -243,6 +244,18 @@ class TestPipelineJobValidate:
             ],
             "result": "Failed",
         }
+
+    @pytest.mark.parametrize("test_case,expected_error_message", SERVERLESS_COMPUTE_TEST_PARAMETERS)
+    def test_pipeline_job_with_serverless_compute(
+        self, test_case: str, expected_error_message: Optional[List[str]]
+    ) -> None:
+        yaml_path = f"./tests/test_configs/pipeline_jobs/serverless_compute/{test_case}/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        validation_result = pipeline_job._validate()
+        if expected_error_message is None:
+            assert validation_result.passed
+        else:
+            assert validation_result.error_messages == expected_error_message
 
 
 @pytest.mark.unittest

@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+
+name: simple_pipeline_component
+
+jobs:
+  vanilla_node:
+    type: command
+    component: ../components/component.yml
+  node_with_resources:
+    type: command
+    component: ../components/component_with_resources.yml

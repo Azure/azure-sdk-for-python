@@ -1,0 +1,17 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: Pipeline Job with Serverless Compute
+
+jobs:
+  # command component
+  vanilla_node:
+    type: command
+    component: ../components/component.yml
+  node_with_resources:
+    type: command
+    component: ../components/component_with_resources.yml
+  # pipeline component
+  pipeline_node:
+    type: pipeline
+    component: ./pipeline_component.yml
