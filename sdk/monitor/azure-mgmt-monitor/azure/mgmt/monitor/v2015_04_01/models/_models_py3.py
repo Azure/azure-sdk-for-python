@@ -1023,7 +1023,7 @@ class RuleCondition(_serialization.Model):
         :paramtype data_source: ~$(python-base-namespace).v2015_04_01.models.RuleDataSource
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.data_source = data_source
 
 
@@ -1082,7 +1082,7 @@ class LocationThresholdRuleCondition(RuleCondition):
         :paramtype failed_location_count: int
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition"
         self.window_size = window_size
         self.failed_location_count = failed_location_count
 
@@ -1180,7 +1180,7 @@ class ManagementEventRuleCondition(RuleCondition):
          ~$(python-base-namespace).v2015_04_01.models.ManagementEventAggregationCondition
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition"
         self.aggregation = aggregation
 
 
@@ -1599,7 +1599,7 @@ class RuleAction(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class RuleDataSource(_serialization.Model):
@@ -1666,7 +1666,7 @@ class RuleDataSource(_serialization.Model):
         :paramtype metric_namespace: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.resource_uri = resource_uri
         self.legacy_resource_id = legacy_resource_id
         self.resource_location = resource_location
@@ -1711,7 +1711,7 @@ class RuleEmailAction(RuleAction):
         :paramtype custom_emails: list[str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleEmailAction"
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
 
@@ -1856,7 +1856,7 @@ class RuleManagementEventDataSource(RuleDataSource):  # pylint: disable=too-many
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource"
         self.event_name = event_name
         self.event_source = event_source
         self.level = level
@@ -1934,7 +1934,7 @@ class RuleMetricDataSource(RuleDataSource):
             metric_namespace=metric_namespace,
             **kwargs
         )
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource"
         self.metric_name = metric_name
 
 
@@ -1974,7 +1974,7 @@ class RuleWebhookAction(RuleAction):
         :paramtype properties: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.RuleWebhookAction"
         self.service_uri = service_uri
         self.properties = properties
 
@@ -2281,7 +2281,7 @@ class ThresholdRuleCondition(RuleCondition):
          ~$(python-base-namespace).v2015_04_01.models.TimeAggregationOperator
         """
         super().__init__(data_source=data_source, **kwargs)
-        self.odata_type = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition"
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

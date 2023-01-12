@@ -891,7 +891,7 @@ class NotificationRequestBody(_serialization.Model):  # pylint: disable=too-many
     :ivar alert_type: The value of the supported alert type. Supported alert type values are:
      servicehealth, metricstaticthreshold, metricsdynamicthreshold, logalertv2, smartalert,
      webtestalert, logalertv1numresult, logalertv1metricmeasurement, resourcehealth, activitylog,
-     budget. Required.
+     actualcostbudget, forecastedbudget. Required.
     :vartype alert_type: str
     :ivar email_receivers: The list of email receivers that are part of this action group.
     :vartype email_receivers: list[~$(python-base-namespace).v2022_06_01.models.EmailReceiver]
@@ -966,7 +966,7 @@ class NotificationRequestBody(_serialization.Model):  # pylint: disable=too-many
         :keyword alert_type: The value of the supported alert type. Supported alert type values are:
          servicehealth, metricstaticthreshold, metricsdynamicthreshold, logalertv2, smartalert,
          webtestalert, logalertv1numresult, logalertv1metricmeasurement, resourcehealth, activitylog,
-         budget. Required.
+         actualcostbudget, forecastedbudget. Required.
         :paramtype alert_type: str
         :keyword email_receivers: The list of email receivers that are part of this action group.
         :paramtype email_receivers: list[~$(python-base-namespace).v2022_06_01.models.EmailReceiver]

@@ -47,7 +47,7 @@ class Action(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AlertingAction(Action):
@@ -104,7 +104,7 @@ class AlertingAction(Action):
         :paramtype trigger: ~$(python-base-namespace).v2018_04_16.models.TriggerCondition
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"  # type: str
+        self.odata_type: str = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction"
         self.severity = severity
         self.azns_action = azns_action
         self.throttling_in_min = throttling_in_min
@@ -616,7 +616,7 @@ class LogToMetricAction(Action):
         :paramtype criteria: list[~$(python-base-namespace).v2018_04_16.models.Criteria]
         """
         super().__init__(**kwargs)
-        self.odata_type = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction"  # type: str
+        self.odata_type: str = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction"
         self.criteria = criteria
 
 

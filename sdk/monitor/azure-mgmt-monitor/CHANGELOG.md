@@ -1,5 +1,27 @@
 # Release History
 
+## 5.1.0 (2023-01-12)
+
+### Features Added
+
+  - Model Condition has a new parameter metric_name
+  - Model ScheduledQueryRuleResource has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResource has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter identity
+  - Model ScheduledQueryRuleResource has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter public_network_access
+  - Model ScheduledQueryRuleResource has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResource has a new parameter skip_query_validation
+  - Model ScheduledQueryRuleResource has a new parameter system_data
+  - Model ScheduledQueryRuleResourceCollection has a new parameter next_link
+  - Model ScheduledQueryRuleResourcePatch has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResourcePatch has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter identity
+  - Model ScheduledQueryRuleResourcePatch has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter public_network_access
+  - Model ScheduledQueryRuleResourcePatch has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResourcePatch has a new parameter skip_query_validation
+
 ## 5.0.1 (2022-09-30)
 
 ### Bugs Fixed

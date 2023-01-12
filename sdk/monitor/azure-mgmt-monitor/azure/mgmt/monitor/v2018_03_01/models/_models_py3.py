@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -525,7 +526,7 @@ class MultiMetricCriteria(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.criterion_type = None  # type: Optional[str]
+        self.criterion_type: Optional[str] = None
         self.name = name
         self.metric_name = metric_name
         self.metric_namespace = metric_namespace
@@ -664,7 +665,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):  # pylint: disable=too-many-in
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "DynamicThresholdCriterion"  # type: str
+        self.criterion_type: str = "DynamicThresholdCriterion"
         self.operator = operator
         self.alert_sensitivity = alert_sensitivity
         self.failing_periods = failing_periods
@@ -987,7 +988,7 @@ class MetricAlertCriteria(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
@@ -1032,7 +1033,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):
         :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MultiMetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1390,7 +1391,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
         :paramtype all_of: list[~$(python-base-namespace).v2018_03_01.models.MetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
         self.all_of = all_of
 
 
@@ -1603,7 +1604,7 @@ class MetricCriteria(MultiMetricCriteria):
             skip_metric_validation=skip_metric_validation,
             **kwargs
         )
-        self.criterion_type = "StaticThresholdCriterion"  # type: str
+        self.criterion_type: str = "StaticThresholdCriterion"
         self.operator = operator
         self.threshold = threshold
 
@@ -1833,7 +1834,7 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         :paramtype failed_location_count: float
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"  # type: str
+        self.odata_type: str = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
         self.web_test_id = web_test_id
         self.component_id = component_id
         self.failed_location_count = failed_location_count
