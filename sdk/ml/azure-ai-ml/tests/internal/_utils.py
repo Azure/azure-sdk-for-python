@@ -284,7 +284,7 @@ def extract_non_primitive(obj):
 
 def unregister_internal_components():
     from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml._internal.utils import _set_registered
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from .utils.setup_utils import enable_internal_components_in_pipeline
+from .utils import enable_internal_components_in_pipeline
 from .entities import (
     Ae365exepool,
     AISuperComputerConfiguration,

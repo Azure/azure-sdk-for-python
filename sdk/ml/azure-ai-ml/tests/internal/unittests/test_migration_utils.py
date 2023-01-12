@@ -20,9 +20,9 @@ class TestMigrationUtils:
             description="Hello world on Linux",
         )
         def linux_hello(name: str):
-            hello_program_on_linux_step = hello_program_on_linux(name=name)  # noqa: F841
+            hello_program_on_linux_step = hello_program_on_linux(name=name)
             hello_program_on_linux_step.outputs.output.mode = "mount"
-            hello_program_on_linux_step1 = hello_program_on_linux(name=name)  # noqa: F841
+            hello_program_on_linux_step1 = hello_program_on_linux(name=name)
             hello_program_on_linux_step1.outputs.output.mode = "mount"
             return {"output": hello_program_on_linux_step1.outputs.output}
 
@@ -31,8 +31,7 @@ class TestMigrationUtils:
             description="Hello world on Linux",
         )
         def sub_pipeline(name: str):
-            hello_program_on_linux_step = linux_hello(name=name)  # noqa: F841
-            # hello_program_on_linux_step.outputs.output.mode = "mount"
+            hello_program_on_linux_step = linux_hello(name=name)
             return {"output": hello_program_on_linux_step.outputs.output}
 
         @dsl.pipeline(
@@ -41,8 +40,8 @@ class TestMigrationUtils:
         )
         def parent_pipeline(name: str):
             hello_program_on_linux_step = sub_pipeline(name=name)  # noqa: F841
-            print(hello_program_on_linux_step)
-            # hello_program_on_linux_step.outputs.output.mode = "mount"
+            # TODO: this is a bug of pipeline node serialization, which is not related to this test
+            # print(hello_program_on_linux_step)
 
         def assert_output_mode(_pipeline_job: PipelineJob, _expected_mode: Optional[str]):
             node = _pipeline_job.jobs["hello_program_on_linux_step"]
