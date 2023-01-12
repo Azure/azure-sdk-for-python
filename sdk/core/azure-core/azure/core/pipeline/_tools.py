@@ -29,7 +29,6 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.rest import HttpResponse as RestHttpResponse
 
-
 def await_result(func, *args, **kwargs):
     """If func returns an awaitable, raise that this runner can't handle it."""
     result = func(*args, **kwargs)
@@ -38,7 +37,6 @@ def await_result(func, *args, **kwargs):
             "Policy {} returned awaitable object in non-async pipeline.".format(func)
         )
     return result
-
 
 def is_rest(obj):
     # type: (Any) -> bool
@@ -50,7 +48,6 @@ def is_rest(obj):
     a check for is_stream_consumed, which is an exclusive property on our new responses.
     """
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
-
 
 def handle_non_stream_rest_response(response):
     # type: (RestHttpResponse) -> None

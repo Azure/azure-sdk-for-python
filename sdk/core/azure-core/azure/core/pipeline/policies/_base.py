@@ -38,7 +38,7 @@ from typing import (
 )  # pylint: disable=unused-import
 
 try:
-    from typing import Awaitable  # pylint: disable=unused-import
+    from typing import Awaitable   # pylint: disable=unused-import
 except ImportError:
     pass
 
@@ -49,7 +49,6 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
-
 
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
@@ -62,7 +61,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(self):
-        self.next = None  # type: Union[HTTPPolicy, HttpTransport]
+        self.next = None # type: Union[HTTPPolicy, HttpTransport]
 
     @abc.abstractmethod
     def send(self, request):

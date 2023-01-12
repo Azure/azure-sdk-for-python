@@ -23,7 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from collections.abc import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 from azure.core import PipelineClient
 from .policies import ARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 

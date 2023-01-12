@@ -38,7 +38,6 @@ from ._retry import RetryPolicyBase
 
 _LOGGER = logging.getLogger(__name__)
 
-
 class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
     """Async flavor of the retry policy.
 
@@ -75,9 +74,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async retry policy.
     """
 
-    async def _sleep_for_retry(
-        self, response, transport
-    ):  # pylint:disable=invalid-overridden-method
+    async def _sleep_for_retry(self, response, transport):  # pylint:disable=invalid-overridden-method
         """Sleep based on the Retry-After response header value.
 
         :param response: The PipelineResponse object.
@@ -90,9 +87,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return True
         return False
 
-    async def _sleep_backoff(
-        self, settings, transport
-    ):  # pylint:disable=invalid-overridden-method
+    async def _sleep_backoff(self, settings, transport):  # pylint:disable=invalid-overridden-method
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
         :param dict settings: The retry settings.
@@ -103,9 +98,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             return
         await transport.sleep(backoff)
 
-    async def sleep(
-        self, settings, transport, response=None
-    ):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, settings, transport, response=None):  # pylint:disable=invalid-overridden-method
         """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -139,7 +132,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         retry_settings = self.configure_retries(request.context.options)
         self._configure_positions(request, retry_settings)
 
-        absolute_timeout = retry_settings["timeout"]
+        absolute_timeout = retry_settings['timeout']
         is_response_error = True
 
         while retry_active:
@@ -150,9 +143,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        await self.sleep(
-                            retry_settings, request.context.transport, response=response
-                        )
+                        await self.sleep(retry_settings, request.context.transport, response=response)
                         is_response_error = True
                         continue
                 break
@@ -161,12 +152,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(
-                    retry_settings, request.http_request
-                ):
-                    retry_active = self.increment(
-                        retry_settings, response=request, error=err
-                    )
+                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):
@@ -178,7 +165,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= end_time - start_time
+                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response

@@ -40,13 +40,12 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
-
 class _ResponseStopIteration(Exception):
     pass
 
 
 def _iterate_response_content(iterator):
-    """ "To avoid:
+    """"To avoid:
     TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
     """
     try:
@@ -84,9 +83,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
                 "You can't get parts if the response is not multipart/mixed"
             )
 
-        return _PartGenerator(
-            self, default_http_response_type=AsyncHttpClientTransportResponse
-        )
+        return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
 
 class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
@@ -102,13 +99,15 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
     abc.ABC,
-    Generic[HTTPRequestType, AsyncHTTPResponseType],
+    Generic[HTTPRequestType, AsyncHTTPResponseType]
 ):
-    """An http sender ABC."""
+    """An http sender ABC.
+    """
 
     @abc.abstractmethod
     async def send(self, request, **kwargs):
-        """Send the request using this HTTP sender."""
+        """Send the request using this HTTP sender.
+        """
 
     @abc.abstractmethod
     async def open(self):

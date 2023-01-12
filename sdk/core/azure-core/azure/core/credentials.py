@@ -14,7 +14,6 @@ class AccessToken(NamedTuple):
     token: str
     expires_on: int
 
-
 AccessToken.token.__doc__ = """The token string."""
 AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
 
@@ -24,11 +23,7 @@ class TokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 
     def get_token(
-        self,
-        *scopes: str,
-        claims: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        **kwargs: Any
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -46,13 +41,7 @@ class TokenCredential(Protocol):
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
 
 
-__all__ = [
-    "AzureKeyCredential",
-    "AzureSasCredential",
-    "AccessToken",
-    "AzureNamedKeyCredential",
-    "TokenCredential",
-]
+__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential", "TokenCredential"]
 
 
 class AzureKeyCredential(object):

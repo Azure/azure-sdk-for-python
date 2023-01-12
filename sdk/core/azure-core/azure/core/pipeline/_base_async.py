@@ -39,7 +39,6 @@ ImplPoliciesType = List[
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
-
 class _SansIOAsyncHTTPPolicyRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
 ):  # pylint: disable=unsubscriptable-object
@@ -150,7 +149,7 @@ class AsyncPipeline(
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info # type: ignore
         if not multipart_mixed_info:
             return
 

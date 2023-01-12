@@ -12,7 +12,9 @@
   ],
   "ignorePaths": [
     "eng/**",
+    "doc/dev/find_sdk/find_the_sdk.PNG",
     ".github/CODEOWNERS",
+    ".github/fabricbot.json",
     "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
@@ -30,6 +32,7 @@
 
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
+    "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -75,6 +78,7 @@
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
+    "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
@@ -92,7 +96,6 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
-    "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py"
   ],
@@ -126,6 +129,7 @@
     "azurecr",
     "azuremgmtcore",
     "azuremgmtcommunication",
+    "azurestackhci",
     "bdist",
     "bstr",
     "byref",
@@ -137,7 +141,6 @@
     "cname",
     "conda",
     "connectedvmware",
-    "consts",
     "contoso",
     "contosodataset",
     "centralus",
@@ -188,6 +191,7 @@
     "hmac",
     "hnstestscope",
     "howto",
+    "hybridkubernetes",
     "Hololens",
     "httpx",
     "illumos",
@@ -213,6 +217,7 @@
     "kubeconfig",
     "kubeconfigs",
     "Kubernetes",
+    "kubernetesconfiguration",
     "Kusto",
     "kvlt",
     "livekvtest",
@@ -237,6 +242,7 @@
     "mipsle",
     "mktime",
     "msal",
+    "MSRC",
     "msrest",
     "msrestazure",
     "MSSQL",
@@ -272,11 +278,13 @@
     "plex",
     "pluggy",
     "popen",
+    "powerbidedicated",
     "prebuilts",
     "premf",
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "ptvstestsearch",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
@@ -292,6 +300,7 @@
     "rdbms",
     "reauthenticated",
     "reimage",
+    "reproducability",
     "revascularization",
     "riscv",
     "rollup",
@@ -333,6 +342,7 @@
     "unredacted",
     "unseekable",
     "unsubscriptable",
+    "updown",
     "upns",
     "upserted",
     "urandom",
@@ -359,6 +369,8 @@
     "vnet",
     "volcz",
     "vsts",
+    "wbits",
+    "WBITS",
     "wchar",
     "westcentralus",
     "westus",
@@ -370,6 +382,7 @@
     "chdir",
     "reqs",
     "rgpy",
+    "sdkrel",
     "swaggertosdk",
     "rgname",
     "mtype",
@@ -409,6 +422,7 @@
     {
       "filename": "sdk/tables/azure-data-tables/**/*.py",
       "words": [
+        "aefg",
         "astimezone",
         "myasynctable",
         "mytableasync",
@@ -646,57 +660,6 @@
       ]
     },
     {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/aio/operations/*.py",
-      "words": [
-        "Syms",
-        "MetastoreUpdation"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/models/*.py",
-      "words": [
-        "USQL",
-        "Eloqua",
-        "Hdfs",
-        "Informix",
-        "Magento",
-        "MetastoreUpdation",
-        "Netezza",
-        "Odbc",
-        "Responsys",
-        "Sybase",
-        "Twilio",
-        "Vertica",
-        "Xero",
-        "SASL",
-        "SSISDB",
-        "WTGCTBG",
-        "ilearner",
-        "DBFS",
-        "eloqua",
-        "byoa",
-        "cacerts",
-        "HDFS",
-        "hcatalog",
-        "ondemand",
-        "oozie",
-        "magento",
-        "mktorest",
-        "nbformat",
-        "paramref",
-        "myshopify",
-        "mysquare",
-        "xero"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
-      "words": [
-        "Syms",
-        "Updation",
-      ]
-    },
-    {
       "filename": "sdk/storage/azure-storage-file-datalake/**",
       "words": [
         "dlake",
@@ -882,8 +845,7 @@
         "posixpath",
         "SEPS",
         "wargs",
-        "pycache",
-        "ruamel"
+        "pycache"
       ]
     },
     {
@@ -928,12 +890,7 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb",
-        "FFFE",
-        "Fdirectory",
-        "Ffile",
-        "Fsubdir",
-        "Fdir"
+        "fileb"
       ]
     },
     {
@@ -1081,8 +1038,7 @@
         "myid",
         "jsonify",
         "ints",
-        "inirudebwoy",
-	"mghextreme"
+        "inirudebwoy"
       ]
     },
     {
@@ -1221,16 +1177,6 @@
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"
-      ]
-    },
-    {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "deseralize"
       ]
     }
   ],

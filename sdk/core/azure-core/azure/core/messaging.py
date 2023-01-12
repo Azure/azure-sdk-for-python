@@ -80,18 +80,14 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         self.id = kwargs.pop("id", str(uuid.uuid4()))  # type: Optional[str]
         self.time = kwargs.pop("time", datetime.now(TZ_UTC))  # type: Optional[datetime]
 
-        self.datacontenttype = kwargs.pop(
-            "datacontenttype", None
-        )  # type: Optional[str]
+        self.datacontenttype = kwargs.pop("datacontenttype", None)  # type: Optional[str]
         self.dataschema = kwargs.pop("dataschema", None)  # type: Optional[str]
         self.subject = kwargs.pop("subject", None)  # type: Optional[str]
         self.data = kwargs.pop("data", None)  # type: Optional[object]
 
         try:
             self.extensions = kwargs.pop("extensions")  # type: Optional[Dict]
-            for (
-                key
-            ) in self.extensions.keys():  # type:ignore # extensions won't be None here
+            for key in self.extensions.keys():  # type:ignore # extensions won't be None here
                 if not key.islower() or not key.isalnum():
                     raise ValueError(
                         "Extension attributes should be lower cased and alphanumeric."
@@ -102,8 +98,8 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
         if kwargs:
             remaining = ", ".join(kwargs.keys())
             raise ValueError(
-                f"Unexpected keyword arguments {remaining}. "
-                + "Any extension attributes must be passed explicitly using extensions."
+                "Unexpected keyword arguments {}. Any extension attributes must be passed explicitly using extensions."
+                .format(remaining)
             )
 
     def __repr__(self):
@@ -163,33 +159,21 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
                 type=event["type"],
                 specversion=event.get("specversion"),
                 time=_convert_to_isoformat(event.get("time")),
-                **kwargs,
+                **kwargs
             )
         except KeyError:
             # https://github.com/cloudevents/spec Cloud event spec requires source, type,
             # specversion. We autopopulate everything other than source, type.
             if not all([_ in event for _ in ("source", "type")]):
-                if all(
-                    [
-                        _ in event
-                        for _ in (
-                            "subject",
-                            "eventType",
-                            "data",
-                            "dataVersion",
-                            "id",
-                            "eventTime",
-                        )
-                    ]
-                ):
+                if all([_ in event for _ in ("subject", "eventType", "data", "dataVersion", "id", "eventTime")]):
                     raise ValueError(
-                        "The event you are trying to parse follows the Eventgrid Schema. You can parse"
-                        + " EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."
+                        "The event you are trying to parse follows the Eventgrid Schema. You can parse" +
+                        " EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library."
                     )
                 raise ValueError(
-                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec."
-                    + " The `source` and `type` params are required."
-                )
+                    "The event does not conform to the cloud event spec https://github.com/cloudevents/spec." +
+                    " The `source` and `type` params are required."
+                    )
         return event_obj
 
     @classmethod

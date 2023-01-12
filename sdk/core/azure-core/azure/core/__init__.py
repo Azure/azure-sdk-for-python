@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 from ._version import VERSION
-
 __version__ = VERSION
 
 from ._pipeline_client import PipelineClient

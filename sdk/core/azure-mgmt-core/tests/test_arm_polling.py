@@ -28,7 +28,12 @@ import json
 import pickle
 import re
 import types
-from unittest import mock
+import unittest
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 import pytest
 
 from requests import Request, Response

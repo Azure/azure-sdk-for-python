@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from typing import List
     from ..pipeline.policies import SansIOHTTPPolicy
 
-
 class _PartGenerator(AsyncIterator):
     """Until parts is a real async iterator, wrap the sync call.
 
