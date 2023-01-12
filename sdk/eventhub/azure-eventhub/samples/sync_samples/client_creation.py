@@ -17,10 +17,12 @@ from azure.eventhub import (
 )
 
 
-CONNECTION_STRING = 'Endpoint=sb://kashifk1.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=LmIpx06/gDr+B6NM3rCmRU7jpcUFvFdY6MzwF+ggnhk='
-#FULLY_QUALIFIED_NAMESPACE = os.envi
-EVENTHUB_NAME = 'test'
-
+CONNECTION_STRING = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+CONSUMER_GROUP = "$Default"
 
 
 def create_producer_client():
@@ -29,11 +31,31 @@ def create_producer_client():
     # Create producer client from connection string.
 
     producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STRING,
-        eventhub_name= EVENTHUB_NAME
-
+        conn_str=CONNECTION_STRING  # connection string contains EventHub name.
     )
 
+    # Illustration of commonly used parameters.
+    producer_client = EventHubProducerClient.from_connection_string(
+        conn_str=CONNECTION_STRING,
+        eventhub_name=EVENTHUB_NAME,  # EventHub name should be specified if it doesn't show up in connection string.
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+    )
+
+    # Create producer client from constructor.
+
+    producer_client = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=EventHubSharedKeyCredential(
+            policy=SAS_POLICY,
+            key=SAS_KEY
+        ),
+        logging_enable=False,  # To enable network tracing log, set logging_enable to True.
+        retry_total=3,  # Retry up to 3 times to re-do failed operations.
+        transport_type=TransportType.Amqp  # Use Amqp as the underlying transport protocol.
+    )
 
     print("Calling producer client get eventhub properties:", producer_client.get_eventhub_properties())
 
@@ -77,5 +99,4 @@ def create_consumer_client():
 
 
 create_producer_client()
-#create_consumer_client()
-# 
+create_consumer_client()
