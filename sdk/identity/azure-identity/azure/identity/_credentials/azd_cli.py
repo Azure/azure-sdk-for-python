@@ -6,8 +6,8 @@
 from datetime import datetime
 import json
 import os
-import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -23,6 +23,7 @@ from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = "Azure Developer CLI could not be found. Please visit https://aka.ms/azure-dev for installation instructions and then, once installed, authenticate to your Azure account using 'azd login'."
 COMMAND_LINE = "azd auth token --output json --scope {}"
+EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate before using this credential."
 
 
@@ -126,6 +127,10 @@ def sanitize_output(output):
 
 
 def _run_command(command):
+    # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
+    if shutil.which(EXECUTABLE_NAME) is None:
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
     if sys.platform.startswith("win"):
         args = ["cmd", "/c", command]
     else:
@@ -144,6 +149,7 @@ def _run_command(command):
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
+        # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'azd' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
         if "not logged in, run `azd login` to login" in ex.stderr:
@@ -156,7 +162,7 @@ def _run_command(command):
             message = "Failed to invoke Azure Developer CLI"
         raise ClientAuthenticationError(message=message)
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
+        # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         six.raise_from(error, ex)
     except Exception as ex:  # pylint:disable=broad-except

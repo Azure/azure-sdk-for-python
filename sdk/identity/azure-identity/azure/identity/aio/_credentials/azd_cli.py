@@ -3,8 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import sys
 import os
+import shutil
+import sys
 from typing import List
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -16,6 +17,7 @@ from ..._credentials.azd_cli import (
     AzureDeveloperCliCredential as _SyncAzureDeveloperCliCredential,
     CLI_NOT_FOUND,
     COMMAND_LINE,
+    EXECUTABLE_NAME,
     get_safe_working_dir,
     NOT_LOGGED_IN,
     parse_token,
@@ -87,6 +89,10 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
 
 async def _run_command(command: str) -> str:
+    # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
+    if shutil.which(EXECUTABLE_NAME) is None:
+        raise CredentialUnavailableError(message=CLI_NOT_FOUND)
+
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:
@@ -106,7 +112,7 @@ async def _run_command(command: str) -> str:
         output = stdout_b.decode()
         stderr = stderr_b.decode()
     except OSError as ex:
-        # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
+        # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
     except asyncio.TimeoutError as ex:
@@ -116,6 +122,7 @@ async def _run_command(command: str) -> str:
     if proc.returncode == 0:
         return output
 
+    # Fallback check in case the executable is not found while executing subprocess.
     if proc.returncode == 127 or stderr.startswith("'azd' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
