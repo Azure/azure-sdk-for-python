@@ -6,9 +6,6 @@ jobs:
     component: ../../../components/helloworld_component.yml
   parallelfor:
     type: parallel_for
-    items: [
-      {"job_data_path": "test_path1"},
-    ]
     body: ${{parent.jobs.body}}
 settings:
   default_compute: azureml:cpu-cluster

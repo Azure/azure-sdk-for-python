@@ -6,7 +6,9 @@ jobs:
     component: ../../../components/helloworld_component.yml
   parallelfor:
     type: parallel_for
-    items: '[{"component_in_number": ]'
+    items: [
+      {"unknown": "test_path1"},
+    ]
     body: ${{parent.jobs.body}}
 settings:
   default_compute: azureml:cpu-cluster
