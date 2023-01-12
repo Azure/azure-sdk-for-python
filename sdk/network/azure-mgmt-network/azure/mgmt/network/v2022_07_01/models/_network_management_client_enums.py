@@ -138,6 +138,7 @@ class ApplicationGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF_MEDIUM = "WAF_Medium"
     WAF_LARGE = "WAF_Large"
     STANDARD_V2 = "Standard_v2"
+    STANDARD_BASIC = "Standard_Basic"
     WAF_V2 = "WAF_v2"
 
 
@@ -208,6 +209,7 @@ class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF = "WAF"
     STANDARD_V2 = "Standard_v2"
     WAF_V2 = "WAF_v2"
+    STANDARD_BASIC = "Standard_Basic"
 
 
 class ApplicationGatewayTierTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
