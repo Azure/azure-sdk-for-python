@@ -51,7 +51,6 @@ class WorkspaceOutboundRuleOperations:
         self._operation = service_client.workspaces
         self._credentials = credentials
         self._init_kwargs = kwargs
-        self.containerRegistry = "none"
 
     def show(
         self,

@@ -211,6 +211,7 @@ class Workspace(Resource):
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
+            #managed_network=rest_obj.managed_network,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -230,4 +231,5 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
+            #managed_network=self.managed_network,
         )
