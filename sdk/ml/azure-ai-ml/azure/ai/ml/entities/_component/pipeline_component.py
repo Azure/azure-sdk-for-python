@@ -168,7 +168,7 @@ class PipelineComponent(Component):
         # Note: do not put this into customized validate, as we would like call
         # this from pipeline_job._validate_compute_is_set
         validation_result = self._create_empty_validation_result()
-        no_compute_nodes = []
+        no_compute_nodes, no_compute_with_resources_nodes = [], []
         parent_node_name = parent_node_name if parent_node_name else ""
         for node_name, node in self.jobs.items():
             full_node_name = f"{parent_node_name}{node_name}.jobs."
@@ -178,12 +178,22 @@ class PipelineComponent(Component):
             if isinstance(node, BaseNode) and node._skip_required_compute_missing_validation:
                 continue
             if has_attr_safe(node, "compute") and node.compute is None:
-                no_compute_nodes.append(node_name)
+                # node with only resources, which has different behaviour from standalone job;
+                # so special handle them with different error message.
+                if has_attr_safe(node, "resources") and node.resources is not None:
+                    no_compute_with_resources_nodes.append(node_name)
+                else:
+                    no_compute_nodes.append(node_name)
 
         for node_name in no_compute_nodes:
             validation_result.append_error(
                 yaml_path=f"jobs.{parent_node_name}{node_name}.compute",
                 message="Compute not set",
+            )
+        for node_name in no_compute_with_resources_nodes:
+            validation_result.append_error(
+                yaml_path=f"jobs.{parent_node_name}{node_name}.compute",
+                message="Invalid resource is set, please set serverless compute or pipeline default compute.",
             )
         return validation_result
 

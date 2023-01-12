@@ -47,6 +47,7 @@ from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     INTERNAL_REGISTRY_URI_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
     LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
@@ -684,7 +685,7 @@ def ComputeField(**kwargs):
     """
     return UnionField(
         [
-            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET]),
+            StringTransformedEnum(allowed_values=[LOCAL_COMPUTE_TARGET, SERVERLESS_COMPUTE]),
             ArmStr(azureml_type=AzureMLResourceType.COMPUTE),
             # Case for virtual clusters
             fields.Str(),
