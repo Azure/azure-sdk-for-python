@@ -11,7 +11,7 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any, List
+from typing import Any, List, Optional
 import six
 
 from azure.core.credentials import AccessToken
