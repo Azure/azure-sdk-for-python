@@ -3,11 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-
-try:
-    import urllib.parse as parse
-except ImportError:
-    import urlparse as parse  # type: ignore
+from urllib import parse
 
 try:
     from typing import TYPE_CHECKING
@@ -16,7 +12,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import
-    from typing import Dict
+    from typing import Dict, Optional
     from .http_challenge import HttpChallenge
 
 
@@ -24,10 +20,11 @@ _cache = {}  # type: Dict[str, HttpChallenge]
 _lock = threading.Lock()
 
 
-def get_challenge_for_url(url):
-    """ Gets the challenge for the cached URL.
-    :param url: the URL the challenge is cached for.
-    :rtype: HttpBearerChallenge """
+def get_challenge_for_url(url: str) -> "Optional[HttpChallenge]":
+    """Gets the challenge for the cached URL.
+
+    :param str url: the URL the challenge is cached for.
+    """
 
     if not url:
         raise ValueError("URL cannot be None")
@@ -38,7 +35,7 @@ def get_challenge_for_url(url):
         return _cache.get(key)
 
 
-def _get_cache_key(url):
+def _get_cache_key(url: str) -> str:
     """Use the URL's netloc as cache key except when the URL specifies the default port for its scheme. In that case
     use the netloc without the port. That is to say, https://foo.bar and https://foo.bar:443 are considered equivalent.
 
@@ -52,22 +49,27 @@ def _get_cache_key(url):
     return parsed.netloc
 
 
-def remove_challenge_for_url(url):
-    """ Removes the cached challenge for the specified URL.
-    :param url: the URL for which to remove the cached challenge """
+def remove_challenge_for_url(url: str) -> None:
+    """Removes the cached challenge for the specified URL.
+
+    :param str url: the URL for which to remove the cached challenge
+    """
     if not url:
         raise ValueError("URL cannot be empty")
 
-    url = parse.urlparse(url)
+    parsed = parse.urlparse(url)
 
     with _lock:
-        del _cache[url.netloc]
+        del _cache[parsed.netloc]
 
 
-def set_challenge_for_url(url, challenge):
-    """ Caches the challenge for the specified URL.
-    :param url: the URL for which to cache the challenge
-    :param challenge: the challenge to cache """
+def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
+    """Caches the challenge for the specified URL.
+
+    :param str url: the URL for which to cache the challenge
+    :param challenge: the challenge to cache
+    :type challenge: HttpChallenge
+    """
     if not url:
         raise ValueError("URL cannot be empty")
 
@@ -82,8 +84,8 @@ def set_challenge_for_url(url, challenge):
         _cache[src_url.netloc] = challenge
 
 
-def clear():
-    """ Clears the cache. """
+def clear() -> None:
+    """Clears the cache."""
 
     with _lock:
         _cache.clear()
