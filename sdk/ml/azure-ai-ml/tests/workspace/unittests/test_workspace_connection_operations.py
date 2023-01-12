@@ -7,7 +7,7 @@ from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import WorkspaceConnection, PatTokenConfiguration
+from azure.ai.ml.entities import PatTokenConfiguration, WorkspaceConnection
 from azure.ai.ml.operations import WorkspaceConnectionsOperations
 
 

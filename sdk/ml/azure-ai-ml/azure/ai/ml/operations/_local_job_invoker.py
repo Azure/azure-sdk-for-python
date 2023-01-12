@@ -18,9 +18,9 @@ from pathlib import Path
 from threading import Thread
 from typing import Dict, Optional, Tuple
 
-
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
@@ -31,7 +31,6 @@ from azure.ai.ml.constants._common import (
     LOCAL_JOB_FAILURE_MSG,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml._utils.utils import DockerProxy
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import AzureError
 

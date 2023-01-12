@@ -134,13 +134,12 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         assert len(events) != 0
 
     @ChangeFeedPreparer()
-    @recorded_by_proxy
     def test_change_feed_does_not_fail_on_empty_event_stream(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        start_time = datetime(2022, 11, 22)
+        start_time = datetime(2300, 1, 1)
         change_feed = cf_client.list_changes(start_time=start_time)
 
         events = list(change_feed)

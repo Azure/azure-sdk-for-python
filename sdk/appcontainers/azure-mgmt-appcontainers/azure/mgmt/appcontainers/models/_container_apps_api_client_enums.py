@@ -165,6 +165,17 @@ class ForwardProxyConvention(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
 
 
+class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Client certificate mode for mTLS authentication. Ignore indicates server drops client
+    certificate on forwarding. Accept indicates server forwards client certificate but does not
+    require a client certificate. Require indicates server requires a client certificate.
+    """
+
+    IGNORE = "ignore"
+    ACCEPT = "accept"
+    REQUIRE = "require"
+
+
 class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Ingress transport protocol."""
 

@@ -152,7 +152,7 @@ class SipRoutingClient(object):
             **kwargs)
 
     @distributed_trace
-    def get_trunks(
+    def list_trunks(
         self,
         **kwargs  # type: Any
     ):  # type: (...) -> Iterable[SipTrunk]
@@ -162,10 +162,10 @@ class SipRoutingClient(object):
         :rtype: Iterable[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._get_trunks_(**kwargs)
+        return self._list_trunks_(**kwargs)
 
     @distributed_trace
-    def get_routes(
+    def list_routes(
         self,
         **kwargs  # type: Any
     ):  # type: (...) -> Iterable[SipTrunkRoute]
@@ -200,15 +200,16 @@ class SipRoutingClient(object):
         trunks_dictionary = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
         config = SipConfiguration(trunks=trunks_dictionary)
 
-        old_trunks = self._get_trunks_(**kwargs)
+        old_trunks = self._list_trunks_(**kwargs)
 
         for x in old_trunks:
             if x.fqdn not in [o.fqdn for o in trunks]:
                 config.trunks[x.fqdn] = None
 
-        self._rest_service.patch_sip_configuration(
-            body=config, **kwargs
-        )
+        if len(config.trunks) > 0:
+            self._rest_service.patch_sip_configuration(
+                body=config, **kwargs
+            )
 
     @distributed_trace
     def set_routes(
@@ -231,7 +232,7 @@ class SipRoutingClient(object):
             body=SipConfiguration(routes=routes), **kwargs
         )
 
-    def _get_trunks_(self, **kwargs):
+    def _list_trunks_(self, **kwargs):
         config = self._rest_service.get_sip_configuration(
             **kwargs)
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]

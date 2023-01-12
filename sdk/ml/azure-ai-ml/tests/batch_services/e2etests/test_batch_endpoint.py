@@ -1,12 +1,11 @@
 from typing import Callable
 
 import pytest
-
-from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.core.exceptions import ResourceNotFoundError
-
 from devtools_testutils import AzureRecordedTestCase, is_live
+
+from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
@@ -118,7 +117,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
         endpoint.name = endpoint_name
-        print(endpoint)
 
         # Create deployment using local files
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_component.yaml"
@@ -127,7 +125,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         deployment = load_batch_deployment(deployment_yaml)
         deployment.endpoint_name = endpoint_name
         deployment.name = deployment_name
-        print(deployment)
 
         # create the batch endpoint
         endpoint = client.batch_endpoints.begin_create_or_update(endpoint).result()
@@ -146,3 +143,44 @@ class TestBatchEndpoint(AzureRecordedTestCase):
             inputs = inputs_dict,
         )
         assert job
+
+    def test_batch_invoke_outputs(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+        endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
+        endpoint_name = rand_batch_name("endpoint_name")
+        endpoint = load_batch_endpoint(endpoint_yaml)
+        endpoint.name = endpoint_name
+
+        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_3.yaml"
+        deployment_name = rand_batch_deployment_name("deployment_name")
+
+        deployment = load_batch_deployment(deployment_yaml)
+        deployment.endpoint_name = endpoint_name
+        deployment.name = deployment_name
+
+        # create the batch endpoint
+        client.batch_endpoints.begin_create_or_update(endpoint).result()
+        # create a deployment
+        client.batch_deployments.begin_create_or_update(deployment).result()
+
+        # Invoke using inputs: Dict[str, Input]
+        input_1 = Input(
+            type="uri_folder",
+            path='https://pipelinedata.blob.core.windows.net/sampledata/mnist',
+        )
+
+        # Invoke using outputs: Dict[str, Output]
+        output_1 = Output(
+            type="uri_file",
+            path='azureml://datastores/workspaceblobstore/paths/batchendpointinvoke/mnistOutput/output.csv',
+        )
+
+        batchjob = client.batch_endpoints.invoke(
+            endpoint_name=endpoint_name,
+            deployment_name=deployment_name,
+            inputs = {"input1": input_1},
+            outputs = {"output": output_1}
+        )
+        assert batchjob
+
+        delete_res = client.batch_endpoints.begin_delete(name=endpoint_name)
+        delete_res = delete_res.result()

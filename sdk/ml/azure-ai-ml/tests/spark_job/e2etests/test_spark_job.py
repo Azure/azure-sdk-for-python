@@ -1,11 +1,10 @@
 from typing import Callable
 
 import pytest
-
-from azure.ai.ml import Input, MLClient, Output, load_job, spark, ManagedIdentityConfiguration
-from azure.ai.ml.entities._job.spark_job import SparkJob
-
 from devtools_testutils import AzureRecordedTestCase
+
+from azure.ai.ml import Input, ManagedIdentityConfiguration, MLClient, Output, load_job, spark
+from azure.ai.ml.entities._job.spark_job import SparkJob
 
 
 @pytest.mark.timeout(600)

@@ -15,8 +15,6 @@ from typing import (
     TYPE_CHECKING
 )
 
-import six
-
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -45,8 +43,7 @@ from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from .._models import ContentSettings, FileProperties, NTFSAttributes
-    from .._generated.models import HandleItem
+    from .._models import ContentSettings, FileProperties, Handle, NTFSAttributes
 
 
 async def _upload_file_helper(
@@ -394,7 +391,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
 
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(encoding)
         if length is None:
             length = get_length(data)
@@ -1036,7 +1033,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = 'bytes={0}-{1}'.format(offset, end_range)
@@ -1312,8 +1309,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop("results_per_page", None)
@@ -1328,7 +1325,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:

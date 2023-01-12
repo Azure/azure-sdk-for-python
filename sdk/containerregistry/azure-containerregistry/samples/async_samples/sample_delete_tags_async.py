@@ -17,38 +17,43 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+
+    This sample assumes your registry has at least one repository with more than three tags.
 """
-
 import asyncio
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ArtifactTagOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.identity.aio import DefaultAzureCredential
+from samples.sample_utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class DeleteTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(
+            self.authority, exclude_environment_credential=True, is_async=True
+        )
 
     async def delete_tags(self):
-        # [START list_repository_names]
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(endpoint, credential, audience=audience)
-
-        async with client:
+        load_registry()
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+            # [START list_repository_names]
             async for repository in client.list_repository_names():
                 print(repository)
                 # [END list_repository_names]
 
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
-                async for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
+                async for tag in client.list_tag_properties(
+                    repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
+                ):
                     tag_count += 1
-                    if tag_count > 3:
+                    if tag_count > 3:                        
+                        print(f"Deleting {repository}:{tag.name}")
                         await client.delete_tag(repository, tag.name)
 
 

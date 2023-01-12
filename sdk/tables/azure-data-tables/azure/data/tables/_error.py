@@ -7,6 +7,7 @@ import sys
 import re
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -26,7 +27,6 @@ _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
-_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
 # Storage table validation regex breakdown:
 # ^ Match start of string.
@@ -51,15 +51,8 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if len(ex.args) > 0:
         msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
+    return desired_type(msg)
     # TODO: In the future we will log the trace
-    return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
 def _validate_storage_tablename(table_name):
@@ -264,73 +257,73 @@ class TableTransactionError(HttpResponseError):
 class RequestTooLargeError(TableTransactionError):
     """An error response with status code 413 - Request Entity Too Large"""
 
-# pylint: disable=enum-must-be-uppercase
-class TableErrorCode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+
+class TableErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # Generic storage values
-    account_already_exists = "AccountAlreadyExists"
-    account_being_created = "AccountBeingCreated"
-    account_is_disabled = "AccountIsDisabled"
-    authentication_failed = "AuthenticationFailed"
-    authorization_failure = "AuthorizationFailure"
-    no_authentication_information = "NoAuthenticationInformation"
-    condition_headers_not_supported = "ConditionHeadersNotSupported"
-    condition_not_met = "ConditionNotMet"
-    empty_metadata_key = "EmptyMetadataKey"
-    insufficient_account_permissions = "InsufficientAccountPermissions"
-    internal_error = "InternalError"
-    invalid_authentication_info = "InvalidAuthenticationInfo"
-    invalid_header_value = "InvalidHeaderValue"
-    invalid_http_verb = "InvalidHttpVerb"
-    invalid_input = "InvalidInput"
-    invalid_md5 = "InvalidMd5"
-    invalid_metadata = "InvalidMetadata"
-    invalid_query_parameter_value = "InvalidQueryParameterValue"
-    invalid_range = "InvalidRange"
-    invalid_resource_name = "InvalidResourceName"
-    invalid_uri = "InvalidUri"
-    invalid_xml_document = "InvalidXmlDocument"
-    invalid_xml_node_value = "InvalidXmlNodeValue"
-    md5_mismatch = "Md5Mismatch"
-    metadata_too_large = "MetadataTooLarge"
-    missing_content_length_header = "MissingContentLengthHeader"
-    missing_required_query_parameter = "MissingRequiredQueryParameter"
-    missing_required_header = "MissingRequiredHeader"
-    missing_required_xml_node = "MissingRequiredXmlNode"
-    multiple_condition_headers_not_supported = "MultipleConditionHeadersNotSupported"
-    operation_timed_out = "OperationTimedOut"
-    out_of_range_input = "OutOfRangeInput"
-    out_of_range_query_parameter_value = "OutOfRangeQueryParameterValue"
-    request_body_too_large = "RequestBodyTooLarge"
-    resource_type_mismatch = "ResourceTypeMismatch"
-    request_url_failed_to_parse = "RequestUrlFailedToParse"
-    resource_already_exists = "ResourceAlreadyExists"
-    resource_not_found = "ResourceNotFound"
-    server_busy = "ServerBusy"
-    unsupported_header = "UnsupportedHeader"
-    unsupported_xml_node = "UnsupportedXmlNode"
-    unsupported_query_parameter = "UnsupportedQueryParameter"
-    unsupported_http_verb = "UnsupportedHttpVerb"
+    ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"
+    ACCOUNT_BEING_CREATED = "AccountBeingCreated"
+    ACCOUNT_IS_DISABLED = "AccountIsDisabled"
+    AUTHENTICATION_FAILED = "AuthenticationFailed"
+    AUTHORIZATION_FAILURE = "AuthorizationFailure"
+    NO_AUTHENTICATION_INFORMATION = "NoAuthenticationInformation"
+    CONDITION_HEADERS_NOT_SUPPORTED = "ConditionHeadersNotSupported"
+    CONDITION_NOT_MET = "ConditionNotMet"
+    EMPTY_METADATA_KEY = "EmptyMetadataKey"
+    INSUFFICIENT_ACCOUNT_PERMISSIONS = "InsufficientAccountPermissions"
+    INTERNAL_ERROR = "InternalError"
+    INVALID_AUTHENTICATION_INFO = "InvalidAuthenticationInfo"
+    INVALID_HEADER_VALUE = "InvalidHeaderValue"
+    INVALID_HTTP_VERB = "InvalidHttpVerb"
+    INVALID_INPUT = "InvalidInput"
+    INVALID_MD5 = "InvalidMd5"
+    INVALID_METADATA = "InvalidMetadata"
+    INVALID_QUERY_PARAMETER_VALUE = "InvalidQueryParameterValue"
+    INVALID_RANGE = "InvalidRange"
+    INVALID_RESOURCE_NAME = "InvalidResourceName"
+    INVALID_URI = "InvalidUri"
+    INVALID_XML_DOCUMENT = "InvalidXmlDocument"
+    INVALID_XML_NODE_VALUE = "InvalidXmlNodeValue"
+    MD5_MISMATCH = "Md5Mismatch"
+    METADATA_TOO_LARGE = "MetadataTooLarge"
+    MISSING_CONTENT_LENGTH_HEADER = "MissingContentLengthHeader"
+    MISSING_REQUIRED_QUERY_PARAMETER = "MissingRequiredQueryParameter"
+    MISSING_REQUIRED_HEADER = "MissingRequiredHeader"
+    MISSING_REQUIRED_XML_NODE = "MissingRequiredXmlNode"
+    MULTIPLE_CONDITION_HEADERS_NOT_SUPPORTED = "MultipleConditionHeadersNotSupported"
+    OPERATION_TIMED_OUT = "OperationTimedOut"
+    OUT_OF_RANGE_INPUT = "OutOfRangeInput"
+    OUT_OF_RANGE_QUERY_PARAMETER_VALUE = "OutOfRangeQueryParameterValue"
+    REQUEST_BODY_TOO_LARGE = "RequestBodyTooLarge"
+    RESOURCE_TYPE_MISMATCH = "ResourceTypeMismatch"
+    REQUEST_URL_FAILED_TO_PARSE = "RequestUrlFailedToParse"
+    RESOURCE_ALREADY_EXISTS = "ResourceAlreadyExists"
+    RESOURCE_NOT_FOUND = "ResourceNotFound"
+    SERVER_BUSY = "ServerBusy"
+    UNSUPPORTED_HEADER = "UnsupportedHeader"
+    UNSUPPORTED_XML_NODE = "UnsupportedXmlNode"
+    UNSUPPORTED_QUERY_PARAMETER = "UnsupportedQueryParameter"
+    UNSUPPORTED_HTTP_VERB = "UnsupportedHttpVerb"
 
     # table error codes
-    duplicate_properties_specified = "DuplicatePropertiesSpecified"
-    entity_not_found = "EntityNotFound"
-    entity_already_exists = "EntityAlreadyExists"
-    entity_too_large = "EntityTooLarge"
-    host_information_not_present = "HostInformationNotPresent"
-    invalid_duplicate_row = "InvalidDuplicateRow"
-    invalid_value_type = "InvalidValueType"
-    json_format_not_supported = "JsonFormatNotSupported"
-    method_not_allowed = "MethodNotAllowed"
-    not_implemented = "NotImplemented"
-    properties_need_value = "PropertiesNeedValue"
-    property_name_invalid = "PropertyNameInvalid"
-    property_name_too_long = "PropertyNameTooLong"
-    property_value_too_large = "PropertyValueTooLarge"
-    table_already_exists = "TableAlreadyExists"
-    table_being_deleted = "TableBeingDeleted"
-    table_not_found = "TableNotFound"
-    too_many_properties = "TooManyProperties"
-    update_condition_not_satisfied = "UpdateConditionNotSatisfied"
-    x_method_incorrect_count = "XMethodIncorrectCount"
-    x_method_incorrect_value = "XMethodIncorrectValue"
-    x_method_not_using_post = "XMethodNotUsingPost"
+    DUPLICATE_PROPERTIES_SPECIFIED = "DuplicatePropertiesSpecified"
+    ENTITY_NOT_FOUND = "EntityNotFound"
+    ENTITY_ALREADY_EXISTS = "EntityAlreadyExists"
+    ENTITY_TOO_LARGE = "EntityTooLarge"
+    HOST_INFORMATION_NOT_PRESENT = "HostInformationNotPresent"
+    INVALID_DUPLICATE_ROW = "InvalidDuplicateRow"
+    INVALID_VALUE_TYPE = "InvalidValueType"
+    JSON_FORMAT_NOT_SUPPORTED = "JsonFormatNotSupported"
+    METHOD_NOT_ALLOWED = "MethodNotAllowed"
+    NOT_IMPLEMENTED = "NotImplemented"
+    PROPERTIES_NEED_VALUE = "PropertiesNeedValue"
+    PROPERTY_NAME_INVALID = "PropertyNameInvalid"
+    PROPERTY_NAME_TOO_LONG = "PropertyNameTooLong"
+    PROPERTY_VALUE_TOO_LARGE = "PropertyValueTooLarge"
+    TABLE_ALREADY_EXISTS = "TableAlreadyExists"
+    TABLE_BEING_DELETED = "TableBeingDeleted"
+    TABLE_NOT_FOUND = "TableNotFound"
+    TOO_MANY_PROPERTIES = "TooManyProperties"
+    UPDATE_CONDITION_NOT_SATISFIED = "UpdateConditionNotSatisfied"
+    X_METHOD_INCORRECT_COUNT = "XMethodIncorrectCount"
+    X_METHOD_INCORRECT_VALUE = "XMethodIncorrectValue"
+    X_METHOD_NOT_USING_POST = "XMethodNotUsingPost"

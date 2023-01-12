@@ -41,17 +41,18 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         package["result"] = "succeeded"
         # Generate api stub File
-        try:
-            package_path = Path(sdk_folder, folder_name, package_name)
-            check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                        "/simple/"], cwd=package_path)
-            check_call(["apistubgen", "--pkg-path", "."], cwd=package_path)
-            for file in os.listdir(package_path):
-                if "_python.json" in file:
-                    package["apiViewArtifact"] = str(Path(package_path, file))
-        except Exception as e:
-            _LOGGER.error(f"Fail to generate ApiView token file for {package_name}: {e}")
+        if "azure-mgmt-" not in package_name:
+            try:
+                package_path = Path(sdk_folder, folder_name, package_name)
+                check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
+                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                            "/simple/"], cwd=package_path, timeout=300)
+                check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+                for file in os.listdir(package_path):
+                    if "_python.json" in file:
+                        package["apiViewArtifact"] = str(Path(package_path, file))
+            except Exception as e:
+                _LOGGER.error(f"Fail to generate ApiView token file for {package_name}: {e}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",

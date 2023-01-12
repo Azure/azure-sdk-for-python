@@ -4,25 +4,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 # pylint: disable=anomalous-backslash-in-string
-
-from typing import TYPE_CHECKING, Any, List
-from msrest.serialization import Serializer
+from typing import Any, cast, List
 
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio._monitor_query_client import (
-    MonitorQueryClient,
-)
+from .._generated._serialization import Serializer
+from .._generated.metrics.aio._client import MonitorMetricsClient
+
 from .._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers_async import get_metrics_authentication_policy
 from .._helpers import construct_iso8601
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -34,15 +29,15 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._client = MonitorQueryClient(
+        self._client = MonitorMetricsClient(
             credential=credential,
-            base_url=self._endpoint,
+            endpoint=self._endpoint,
             authentication_policy=get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
@@ -132,9 +127,9 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         start_time = kwargs.pop("start_time", None)
         if start_time:
             start_time = Serializer.serialize_iso(start_time)
-        return self._namespace_op.list(
+        res = self._namespace_op.list(
             resource_uri,
-            start_time,
+            start_time=start_time,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -144,6 +139,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             ),
             **kwargs
         )
+        return cast(AsyncItemPaged[MetricNamespace], res)
 
     @distributed_trace
     def list_metric_definitions(
@@ -160,9 +156,9 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         metric_namespace = kwargs.pop("namespace", None)
-        return self._definitions_op.list(
+        res = self._definitions_op.list(
             resource_uri,
-            metric_namespace,
+            metricnamespace=metric_namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [
@@ -172,6 +168,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
             ),
             **kwargs
         )
+        return cast(AsyncItemPaged[MetricDefinition], res)
 
     async def __aenter__(self) -> "MetricsQueryClient":
         await self._client.__aenter__()

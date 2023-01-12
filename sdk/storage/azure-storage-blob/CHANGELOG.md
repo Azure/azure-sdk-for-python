@@ -1,13 +1,11 @@
 # Release History
 
-## 12.14.2 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-12-02.
+- Added support for new blob tier, `Cold`.
 - Added support for `AsyncIterable` as data type for async blob upload.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - Removed `msrest` dependency.

@@ -1,5 +1,4 @@
 import re
-import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -7,6 +6,8 @@ from typing import Callable
 
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
@@ -23,12 +24,8 @@ from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
-from test_utilities.utils import assert_job_cancel, sleep_if_live
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
-
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 def create_component(
@@ -146,7 +143,7 @@ class TestComponent(AzureRecordedTestCase):
                     "optional": True,
                     "type": "number",
                 },
-                "component_in_path": {"description": "A path", "type": "uri_folder"},
+                "component_in_path": {"description": "A path", "type": "uri_folder", 'optional': False},
             },
             "is_deterministic": True,
             "outputs": {"component_out_path": {"type": "uri_folder"}},
@@ -172,9 +169,11 @@ class TestComponent(AzureRecordedTestCase):
             "error_threshold": 10,
             "input_data": "${{inputs.score_input}}",
             "inputs": {
-                "label": {"description": "Other reference data for batch scoring, " "e.g. labels.", "type": "uri_file"},
-                "score_input": {"description": "The data to be split and scored in " "parallel.", "type": "mltable"},
-                "score_model": {"description": "The model for batch score.", "type": "custom_model"},
+                "label": {"description": "Other reference data for batch scoring, " "e.g. labels.",
+                          "type": "uri_file", 'optional': False},
+                "score_input": {"description": "The data to be split and scored in " "parallel.", "type": "mltable",
+                                'optional': False},
+                "score_model": {"description": "The model for batch score.", "type": "custom_model", 'optional': False},
             },
             "is_deterministic": True,
             "max_concurrency_per_instance": 12,
@@ -243,7 +242,7 @@ class TestComponent(AzureRecordedTestCase):
              'description': 'Aml Spark dataset test module',
              'display_name': 'Aml Spark dataset test module',
              'entry': {'file': 'kmeans_example.py'},
-             'inputs': {'file_input': {'type': 'uri_file'}},
+             'inputs': {'file_input': {'type': 'uri_file', 'optional': False}},
              'is_deterministic': True,
              'outputs': {'output': {'type': 'uri_folder'}},
              'type': 'spark',
@@ -283,10 +282,10 @@ class TestComponent(AzureRecordedTestCase):
         component_entity._creation_context = None
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
-        omit_fields = ["id", "command", "environment"]
-        assert pydash.omit(component_entity._to_dict(), *omit_fields) == pydash.omit(
-            target_entity._to_dict(), *omit_fields
-        )
+        # server side will return optional False for optional None input
+        omit_fields = ["id", "command", "environment", "inputs.*.optional"]
+        assert omit_with_wildcard(component_entity._to_dict(), *omit_fields) == \
+               omit_with_wildcard(target_entity._to_dict(), *omit_fields)
 
     def test_command_component_with_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
@@ -340,6 +339,7 @@ class TestComponent(AzureRecordedTestCase):
             "creation_context",
             "resources",
             "id",
+            "inputs.component_in_path.optional"  # backend will return component inputs as optional:False
         )
         expected_dict = pydash.omit(
             dict(target_entity._to_dict()),
@@ -535,6 +535,9 @@ class TestComponent(AzureRecordedTestCase):
     @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
+        # component with different name will be created as different instance;
+        # therefore component reuse will not work as component name differs
+
         # component without code
         component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))
         component_name_2 = variable_recorder.get_or_record("component_name_2", str(uuid.uuid4()))
@@ -544,7 +547,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(
             client, _sanitize_python_variable_name(component_name_2), is_anonymous=True
         )
-        assert component_resource1.id == component_resource2.id
         assert component_resource1.environment == component_resource2.environment
         assert component_resource1.code == component_resource2.code
 
@@ -562,9 +564,7 @@ class TestComponent(AzureRecordedTestCase):
             path=path,
             is_anonymous=True,
         )
-        # TODO: enable this check when environment reuse is enabled
-        # assert component_resource1.id == component_resource2.id
-        # assert component_resource1.environment == component_resource2.environment
+        assert component_resource1.environment == component_resource2.environment
         assert component_resource1.code == component_resource2.code
 
     def test_command_component_dependency_label_resolution(
@@ -719,8 +719,10 @@ class TestComponent(AzureRecordedTestCase):
             source=component_path,
         )
         # Assert binding on compute not changed after resolve dependencies
-        client.components._resolve_arm_id_for_pipeline_component_jobs(
-            component.jobs, resolver=client.components._orchestrators.get_asset_arm_id
+        client.components._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=client.components._orchestrators.get_asset_arm_id,
+            resolve_inputs=False
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E
@@ -734,7 +736,6 @@ class TestComponent(AzureRecordedTestCase):
             dict(rest_pipeline_component._to_dict()),
             "name",
             "creation_context",
-            # jobs not returned now
             "jobs",
             "id",
         )
@@ -746,7 +747,7 @@ class TestComponent(AzureRecordedTestCase):
             "display_name": "Hello World Pipeline Component",
             "is_deterministic": False,
             "inputs": {
-                "component_in_path": {"type": "uri_folder", "description": "A path"},
+                "component_in_path": {"type": "uri_folder", "description": "A path", "optional": False},
                 "component_in_number": {
                     "type": "number",
                     "optional": True,
@@ -754,11 +755,15 @@ class TestComponent(AzureRecordedTestCase):
                     "description": "A number",
                 },
                 # The azureml: prefix has been resolve and removed by service
-                "node_compute": {"type": "string", "default": "cpu-cluster"},
+                "node_compute": {"type": "string", "default": "cpu-cluster", "optional": False},
             },
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        jobs_dict = rest_pipeline_component._to_dict()["jobs"]
+        # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
+        assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
+        assert jobs_dict["component_a_job"]["type"] == "command"
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
@@ -784,7 +789,8 @@ class TestComponent(AzureRecordedTestCase):
             "display_name": "Hello World Pipeline Component",
             "is_deterministic": False,
             "inputs": {
-                "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component"},
+                "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component",
+                                      "optional": False},
                 "component_in_number": {
                     "type": "number",
                     "optional": True,
@@ -797,7 +803,6 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
-    @pytest.mark.skip("Running fine locally but failing in pipeline, the recording looks good")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(

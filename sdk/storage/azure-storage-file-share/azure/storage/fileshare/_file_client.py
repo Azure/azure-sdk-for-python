@@ -14,7 +14,6 @@ from typing import (
 )
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -44,7 +43,6 @@ from ._download import StorageStreamDownloader
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ContentSettings, FileProperties, Handle, NTFSAttributes
-    from ._generated.models import HandleItem
 
 
 def _upload_file_helper(
@@ -230,7 +228,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         mode hostname.
         """
         share_name = self.share_name
-        if isinstance(share_name, six.text_type):
+        if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -1157,7 +1155,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(encoding)
 
         end_range = offset + length - 1  # Reformat to an inclusive range index
@@ -1500,8 +1498,8 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.HandleItem]
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -1516,7 +1514,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:

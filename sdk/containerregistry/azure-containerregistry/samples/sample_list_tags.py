@@ -20,30 +20,33 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes the registry "myacr.azurecr.io" has a repository "hello-world".
+    This sample assumes your registry has a repository "library/hello-world".
 """
-
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from azure.identity import DefaultAzureCredential
+from sample_utilities import load_registry, get_authority, get_audience, get_credential
+
 
 class ListTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(
+            self.authority, exclude_environment_credential=True
+        )
 
     def list_tags(self):
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             manifest = client.get_manifest_properties("library/hello-world", "latest")
-            print(manifest.repository_name + ": ")
+            print("Tags of " + manifest.repository_name + ": ")
             # Iterate through all the tags
             for tag in manifest.tags:
-                print(tag + "\n")
+                print(tag)
 
 
 if __name__ == "__main__":

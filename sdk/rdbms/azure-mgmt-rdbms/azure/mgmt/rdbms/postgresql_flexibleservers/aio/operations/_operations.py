@@ -75,10 +75,10 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-12-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-03-08-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationListResult]
+        )
+        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         request = build_list_request(
             api_version=api_version,
@@ -87,9 +87,9 @@ class Operations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -107,4 +107,4 @@ class Operations:
 
         return deserialized
 
-    list.metadata = {"url": "/providers/Microsoft.DBforPostgreSQL/operations"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.DBforPostgreSQL/operations"}

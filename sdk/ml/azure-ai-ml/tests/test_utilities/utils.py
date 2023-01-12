@@ -7,21 +7,21 @@ import os
 import signal
 import tempfile
 import time
-from pathlib import Path
-from typing import Dict, Callable
-from zipfile import ZipFile
 from io import StringIO
+from pathlib import Path
+from typing import Callable, Dict
+from zipfile import ZipFile
 
 import pydash
 import urllib3
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
@@ -295,6 +295,12 @@ def assert_job_cancel(
         assert check_before_cancelled(created_job)
     cancel_job(client, created_job)
     return created_job
+
+
+def submit_and_cancel_new_dsl_pipeline(pipeline_func, client, default_compute="cpu-cluster", **kwargs):
+    pipeline_job: PipelineJob = pipeline_func(**kwargs)
+    pipeline_job.settings.default_compute = default_compute
+    return assert_job_cancel(pipeline_job, client)
 
 
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
