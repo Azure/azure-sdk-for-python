@@ -6,14 +6,10 @@
 # --------------------------------------------------------------------------
 import pytest
 from datetime import timedelta
-from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
-from _shared.utils import get_http_logging_policy
-from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from utils import is_token_expiration_within_allowed_deviation
-from azure.identity.aio import DefaultAzureCredential
 from acs_identity_test_case import ACSIdentityTestCase
 
 @pytest.mark.asyncio
@@ -23,15 +19,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_from_managed_identity(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
 
@@ -39,21 +27,15 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             user = await identity_client.create_user()
 
         assert user.properties.get('id') is not None
 
     @recorded_by_proxy_async
-    async def test_create_user_and_token_chat(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_create_user_and_token_with_scope_chat(self):
+        identity_client = self.get_async_client()
         async with identity_client:
             user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
 
@@ -61,11 +43,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_create_user_and_token_voip(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_create_user_and_token_with_scope_voip(self):
+        identity_client = self.get_async_client()
         async with identity_client:
             user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.VOIP])
 
@@ -73,11 +52,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_create_user_and_token_chat_voip(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_create_user_and_token_with_scope_chat_and_voip(self):
+        identity_client = self.get_async_client()
         async with identity_client:
             user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT,
                                                                                        CommunicationTokenScope.VOIP])
@@ -87,11 +63,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_minimum_validity(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=60)
 
         async with identity_client:
@@ -106,11 +78,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_maximum_validity(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=1440)
 
         async with identity_client:
@@ -125,11 +93,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_validity_under_minimum_allowed(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=59)
 
         async with identity_client:
@@ -142,11 +106,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_validity_over_maximum_allowed(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=1441)
 
         async with identity_client:
@@ -158,16 +118,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert ex.value.message is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_chat(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_get_token_from_managed_identity_with_scope_chat(self):
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -176,16 +128,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_voip(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_get_token_from_managed_identity_with_scope_voip(self):
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.VOIP])
@@ -194,16 +138,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_chat_voip(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+    async def test_get_token_from_managed_identity_with_scope_chat_and_voip(self):
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT,
@@ -213,10 +149,7 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
     @recorded_by_proxy_async
     async def test_get_token(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -226,11 +159,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_custom_minimum_validity(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=60)
 
         async with identity_client:
@@ -246,11 +175,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_custom_maximum_validity(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=1440)
 
         async with identity_client:
@@ -266,11 +191,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_custom_validity_under_minimum_allowed(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=59)
 
         async with identity_client:
@@ -284,11 +205,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_custom_validity_over_maximum_allowed(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         token_expires_in = timedelta(minutes=1441)
 
         async with identity_client:
@@ -302,15 +219,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_revoke_tokens_from_managed_identity(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -321,10 +230,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_revoke_tokens(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -335,15 +241,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_delete_user_from_managed_identity(self):
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
@@ -352,10 +250,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_delete_user(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
@@ -364,11 +259,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_no_scopes(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.create_user_and_token(scopes=None)
@@ -377,11 +268,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_delete_user_with_no_user(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.delete_user(user=None)
@@ -390,11 +277,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_revoke_tokens_with_no_user(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.revoke_tokens(user=None)
@@ -403,11 +286,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_no_user(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
@@ -416,11 +295,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_with_no_scopes(self):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
-
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 user = await identity_client.create_user()
@@ -430,17 +305,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_from_managed_identity(self):
-        if self.skip_get_token_for_teams_user_test():
-            return
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            credential = DefaultAzureCredential()
-        identity_client = CommunicationIdentityClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client_from_managed_identity()
         async with identity_client:
             aad_token, user_object_id = self.generate_teams_user_aad_token()
             token_response = await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id,
@@ -452,10 +317,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_valid_params(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             aad_token, user_object_id = self.generate_teams_user_aad_token()
             token_response = await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id,
@@ -467,10 +329,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_invalid_token(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user("invalid", self.m365_client_id, "")
@@ -482,10 +341,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_empty_token(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user("", self.m365_client_id, "")
@@ -497,10 +353,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_expired_token(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 _, user_object_id = self.generate_teams_user_aad_token()
@@ -514,10 +367,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_empty_client_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
@@ -530,10 +380,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_invalid_client_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
@@ -546,10 +393,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_wrong_client_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
@@ -562,10 +406,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_invalid_user_object_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
@@ -578,10 +419,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_empty_user_object_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
@@ -594,10 +432,7 @@ class TestClientAsync(ACSIdentityTestCase):
     async def test_get_token_for_teams_user_with_wrong_user_object_id(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        identity_client = self.get_async_client()
         aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
