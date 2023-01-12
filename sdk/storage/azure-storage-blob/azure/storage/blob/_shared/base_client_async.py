@@ -27,11 +27,11 @@ from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
+    QueueMessagePolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
-    QueueMessagePolicy
 )
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 
@@ -75,7 +75,7 @@ class AsyncStorageAccountHostsMixin(object):
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError(f"Unsupported credential: {credential}")
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
@@ -119,13 +119,10 @@ class AsyncStorageAccountHostsMixin(object):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/{}?{}comp=batch{}{}'.format(
-                self.scheme,
-                self.primary_hostname,
-                kwargs.pop('path', ""),
-                kwargs.pop('restype', ""),
-                kwargs.pop('sas', ""),
-                kwargs.pop('timeout', "")
+            url=(
+                f'{self.scheme}://{self.primary_hostname}/'
+                f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
+                f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
             ),
             headers={
                 'x-ms-version': self.api_version

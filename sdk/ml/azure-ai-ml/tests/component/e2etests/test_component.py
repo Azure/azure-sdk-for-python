@@ -1,5 +1,4 @@
 import re
-import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -536,6 +535,9 @@ class TestComponent(AzureRecordedTestCase):
     @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
+        # component with different name will be created as different instance;
+        # therefore component reuse will not work as component name differs
+
         # component without code
         component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))
         component_name_2 = variable_recorder.get_or_record("component_name_2", str(uuid.uuid4()))
@@ -545,7 +547,6 @@ class TestComponent(AzureRecordedTestCase):
         component_resource2 = create_component(
             client, _sanitize_python_variable_name(component_name_2), is_anonymous=True
         )
-        assert component_resource1.id == component_resource2.id
         assert component_resource1.environment == component_resource2.environment
         assert component_resource1.code == component_resource2.code
 
@@ -563,9 +564,7 @@ class TestComponent(AzureRecordedTestCase):
             path=path,
             is_anonymous=True,
         )
-        # TODO: enable this check when environment reuse is enabled
-        # assert component_resource1.id == component_resource2.id
-        # assert component_resource1.environment == component_resource2.environment
+        assert component_resource1.environment == component_resource2.environment
         assert component_resource1.code == component_resource2.code
 
     def test_command_component_dependency_label_resolution(
@@ -737,7 +736,6 @@ class TestComponent(AzureRecordedTestCase):
             dict(rest_pipeline_component._to_dict()),
             "name",
             "creation_context",
-            # jobs not returned now
             "jobs",
             "id",
         )
@@ -762,6 +760,10 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        jobs_dict = rest_pipeline_component._to_dict()["jobs"]
+        # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
+        assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
+        assert jobs_dict["component_a_job"]["type"] == "command"
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"
@@ -801,7 +803,6 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
-    @pytest.mark.skip("Running fine locally but failing in pipeline, the recording looks good")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(

@@ -924,7 +924,7 @@ class TestDSLPipeline:
                 side_effect=mock_arm_id,
         ):
             with mock.patch(
-                    "azure.ai.ml._restclient.v2022_05_01.operations.ComponentVersionsOperations.create_or_update",
+                    "azure.ai.ml._restclient.v2022_10_01.operations.ComponentVersionsOperations.create_or_update",
                     side_effect=mock_create,
             ):
                 with mock.patch.object(Component, "_from_rest_object", side_effect=mock_from_rest):

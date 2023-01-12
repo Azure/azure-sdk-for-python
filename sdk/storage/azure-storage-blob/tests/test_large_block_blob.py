@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import platform
+import tempfile
 import uuid
 from io import BytesIO
 from os import path, remove, urandom
@@ -44,13 +43,6 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
-            except:
-                pass
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
             except:
                 pass
 
@@ -161,20 +153,18 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'large_blob_from_path.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2, overwrite=True)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2, overwrite=True)
 
         block_list = blob.get_block_list()
 
         # Assert
         assert len(block_list) != 0
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -186,17 +176,15 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = "blob_from_path_with_md5.temp.dat"
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, validate_content=True, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, validate_content=True, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -208,17 +196,15 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(self.get_random_bytes(100))
-        FILE_PATH = "blob_from_path_non_parallel.temp.dat"
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=1)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -230,9 +216,6 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = "blob_from_path_with_progress.temp.dat"
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -242,13 +225,14 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -260,23 +244,21 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_path_with_properties.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -288,17 +270,15 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'blob_from_stream_chunked_upload.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -310,9 +290,6 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'stream_w_progress_chnkd_upload.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -322,13 +299,14 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -340,18 +318,16 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'chunked_upload_with_count.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, length=blob_size, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -363,25 +339,22 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'plod_w_count_n_props.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(
-                stream, length=blob_size, content_settings=content_settings, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, length=blob_size, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -393,22 +366,20 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'creat_lrg_blob.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
-        with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
-        self._teardown(FILE_PATH)
 
 # ------------------------------------------------------------------------------

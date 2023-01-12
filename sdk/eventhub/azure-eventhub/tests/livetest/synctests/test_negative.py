@@ -163,7 +163,6 @@ def test_invalid_proxy_server(connection_str, uamqp_transport):
             batch = client.create_batch()
 
 @pytest.mark.liveTest
-@pytest.mark.asyncio
 def test_client_send_timeout(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
 
@@ -201,7 +200,6 @@ def test_client_send_timeout(connstr_receivers, uamqp_transport):
 
 
 @pytest.mark.liveTest
-@pytest.mark.asyncio
 def test_client_invalid_credential(live_eventhub, uamqp_transport):
 
     def on_event(partition_context, event):
