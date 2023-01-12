@@ -36,24 +36,6 @@ You can create the resource using
 **Option 1:** [Azure Portal][azure_portal_create_ta_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Language service resource using the CLI:
-
-```bash
-# Create a new resource group to hold the Language service resource -
-# if using an existing resource group, skip this step
-az group create --name my-resource-group --location westus2
-```
-
-```bash
-# Create text analytics
-az cognitiveservices account create \
-    --name text-analytics-resource \
-    --resource-group my-resource-group \
-    --kind TextAnalytics \
-    --sku F0 \
-    --location westus2 \
-    --yes
-```
 
 Interaction with the service using the client library begins with a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the Cognitive Services or Language service `endpoint` to
@@ -700,7 +682,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_ta_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
-[azure_cli_create_ta_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
+[azure_cli_create_ta_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
