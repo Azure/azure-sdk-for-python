@@ -66,7 +66,7 @@ class EventHubConsumerClient(
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
     :keyword str user_agent: If specified, this will be added in front of the user agent string.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+    :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
      `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
@@ -74,6 +74,7 @@ class EventHubConsumerClient(
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
      new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
+    :paramtype retry_total: int
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -100,7 +101,7 @@ class EventHubConsumerClient(
      or a single partition. In the latter case load-balancing does not apply.
      If a checkpoint store is not provided, the checkpoint will be maintained internally
      in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
-    :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+    :paramtype checkpoint_store: Optional[~azure.eventhub.CheckpointStore]
     :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
      between two load-balancing evaluations. Default is 10 seconds.
     :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
@@ -118,14 +119,19 @@ class EventHubConsumerClient(
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-    :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+    :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-    :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+    :paramtype custom_endpoint_address: Optional[str]
+    :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :paramtype connection_verify: Optional[str]
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -227,7 +233,7 @@ class EventHubConsumerClient(
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :keyword str user_agent: If specified, this will be added in front of the user agent string.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
+        :keyword retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,
          `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
@@ -235,6 +241,7 @@ class EventHubConsumerClient(
          information. The failed internal partition consumer will be closed (`on_partition_close` will be called
          if provided) and new internal partition consumer will be created (`on_partition_initialize` will be called if
          provided) to resume receiving.
+        :paramtype retry_total: int
         :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
          (most errors are resolved immediately by a second try without a delay).
          In fixed mode, retry policy will always sleep for {backoff factor}.
@@ -261,7 +268,7 @@ class EventHubConsumerClient(
          or a single partition. In the latter case load-balancing does not apply.
          If a checkpoint store is not provided, the checkpoint will be maintained internally
          in memory, and the `EventHubConsumerClient` instance will receive events without load-balancing.
-        :paramtype checkpoint_store: ~azure.eventhub.CheckpointStore
+        :paramtype checkpoint_store: Optional[~azure.eventhub.CheckpointStore]
         :keyword float load_balancing_interval: When load-balancing kicks in. This is the interval, in seconds,
          between two load-balancing evaluations. Default is 10 seconds.
         :keyword float partition_ownership_expiration_interval: A partition ownership will expire after this number
@@ -279,14 +286,19 @@ class EventHubConsumerClient(
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
         :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
-        :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
+        :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
-        :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
+        :paramtype custom_endpoint_address: Optional[str]
+        :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :paramtype connection_verify: Optional[str]
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.eventhub.EventHubConsumerClient
 
 

@@ -11,7 +11,6 @@ from itertools import islice
 from math import ceil
 from threading import Lock
 
-import six
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
@@ -164,7 +163,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
                 temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                if not isinstance(temp, bytes):
                     raise TypeError("Blob data should be of type bytes.")
                 data += temp or b""
 
@@ -255,7 +254,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        index = '{0:032d}'.format(chunk_offset)
+        index = f'{chunk_offset:032d}'
         block_id = encode_base64(url_quote(encode_base64(index)))
         self.service.stage_block(
             block_id,
@@ -269,7 +268,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
+            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
             self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -294,7 +293,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # avoid uploading the empty pages
         if not self._is_chunk_empty(chunk_data):
             chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
+            content_range = f"bytes={chunk_offset}-{chunk_end}"
             computed_md5 = None
             self.response_headers = self.service.upload_pages(
                 body=chunk_data,
@@ -392,7 +391,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end), response
+        return f'bytes={chunk_offset}-{chunk_end}', response
 
     # TODO: Implement this method.
     def _upload_substream_block(self, index, block_stream):
@@ -594,7 +593,7 @@ class IterStreamer(object):
         try:
             while count < size:
                 chunk = self.__next__()
-                if isinstance(chunk, six.text_type):
+                if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)

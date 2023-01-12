@@ -7,9 +7,10 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 import yaml
+
 from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
@@ -28,7 +29,7 @@ class _AdditionalIncludes:
         self,
         code_path: Union[None, str],
         yaml_path: str,
-        ignore_file: InternalComponentIgnoreFile = None,
+        ignore_file: Optional[InternalComponentIgnoreFile] = None,
     ):
         self.__yaml_path = yaml_path
         self.__code_path = code_path
@@ -93,8 +94,9 @@ class _AdditionalIncludes:
             for root, _, files in os.walk(src):
                 dst_root = Path(dst) / Path(root).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(root, files, str(src), "",
-                                                  ignore_file=ignore_file or self._ignore_file):
+                for path, _ in traverse_directory(
+                    root, files, str(src), "", ignore_file=ignore_file or self._ignore_file
+                ):
                     # if there is nothing to copy under current dst_root, no need to create this folder
                     if dst_root_mkdir_flag is False:
                         dst_root.mkdir(parents=True)
@@ -221,8 +223,10 @@ class _AdditionalIncludes:
         try:
             with open(self._additional_includes_file_path) as f:
                 additional_includes_configs = yaml.safe_load(f)
-                return isinstance(
-                    additional_includes_configs, dict) and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+                return (
+                    isinstance(additional_includes_configs, dict)
+                    and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+                )
         except Exception:  # pylint: disable=broad-except
             return False
 
@@ -268,7 +272,8 @@ class _AdditionalIncludes:
                 name=artifact_config["name"],
                 version=artifact_config["version"],
                 scope=artifact_config.get("scope", "organization"),
-                resolve=True)
+                resolve=True,
+            )
             return artifact_path
 
         # Load the artifacts config from additional_includes
@@ -282,21 +287,26 @@ class _AdditionalIncludes:
                     # Get the artifacts package from devops to the local
                     artifact_path = get_artifacts_by_config(additional_include)
                     for item in os.listdir(artifact_path):
-                        config_info = f"{additional_include['name']}:{additional_include['version']} in " \
-                                      f"{additional_include['feed']}"
-                        merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
-                                                                config_info=config_info)
+                        config_info = (
+                            f"{additional_include['name']}:{additional_include['version']} in "
+                            f"{additional_include['feed']}"
+                        )
+                        merge_local_path_to_additional_includes(
+                            local_path=os.path.join(artifact_path, item), config_info=config_info
+                        )
                 except Exception as e:  # pylint: disable=broad-except
                     self._artifact_validate_result.append_error(message=e.args[0])
             elif isinstance(additional_include, str):
                 merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
             else:
                 self._artifact_validate_result.append_error(
-                    message=f"Unexpected format in additional_includes, {additional_include}")
+                    message=f"Unexpected format in additional_includes, {additional_include}"
+                )
 
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
         if conflict_files:
             self._artifact_validate_result.append_error(
-                message=f"There are conflict files in additional include: {conflict_files}")
+                message=f"There are conflict files in additional include: {conflict_files}"
+            )
         return additional_includes

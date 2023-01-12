@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Any
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
@@ -67,7 +67,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -131,7 +131,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

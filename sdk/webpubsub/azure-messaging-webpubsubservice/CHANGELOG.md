@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (2022-12-09)
+## 1.1.0b1 (2022-12-12)
 
 ### Features Added
 - Operation `send_to_all` has a new optional parameter `filter`

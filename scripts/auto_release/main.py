@@ -251,12 +251,6 @@ class CodegenTestPR:
         folder_info = glob(f'sdk/*/azure-mgmt-{self.package_name}')[0]
         self.sdk_folder = Path(folder_info).parts[1]
 
-    def prepare_branch(self):
-        if self.spec_readme:
-            self.prepare_branch_with_readme()
-        # else:
-        # self.prepare_branch_with_base_branch()
-
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
@@ -380,7 +374,7 @@ class CodegenTestPR:
 
     @staticmethod
     def get_need_dependency() -> List[str]:
-        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/packaging_files/setup.py')
         items = ["msrest>", "azure-mgmt-core", "typing-extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()
@@ -470,12 +464,13 @@ class CodegenTestPR:
     def run_test_proc(self):
         # run test
         os.chdir(self.sdk_code_path())
-        succeeded_result = 'Live test success'
-        failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
+        test_mode = "Live test" if os.getenv("AZURE_TEST_RUN_LIVE") else "Recording test"
+        succeeded_result = f'{test_mode} success'
+        failed_result = f'{test_mode} fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
             print_check(f'pytest  --collect-only')
         except:
-            log('live test run done, do not find any test !!!')
+            log(f'{test_mode} run done, do not find any test !!!')
             self.test_result = succeeded_result
             return
 
@@ -485,7 +480,7 @@ class CodegenTestPR:
             log('some test failed, please fix it locally')
             self.test_result = failed_result
         else:
-            log('live test run done, do not find failure !!!')
+            log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
     def run_test(self):
@@ -597,10 +592,16 @@ class CodegenTestPR:
         self.issue_comment()
 
     def run(self):
-        self.prepare_branch()
-        self.check_file()
-        self.run_test()
-        self.create_pr()
+        if "https:" in self.spec_readme:
+            self.prepare_branch_with_readme()
+            self.check_file()
+            self.run_test()
+            self.create_pr()
+        else:
+            self.sdk_folder = self.spec_readme.split('/')[0]
+            self.package_name = self.spec_readme.split('/')[-1].split('-')[-1]
+            self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+            self.run_test()
 
 
 if __name__ == '__main__':

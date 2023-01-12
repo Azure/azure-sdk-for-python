@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 # from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
@@ -54,13 +54,13 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        type: str = None,  # pylint: disable=redefined-builtin
-        code: str = None,
-        entry_script: str = None,
-        program_arguments: str = None,
-        model: str = None,
-        append_row_to: str = None,
-        environment: Union[Environment, str] = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        code: Optional[str] = None,
+        entry_script: Optional[str] = None,
+        program_arguments: Optional[str] = None,
+        model: Optional[str] = None,
+        append_row_to: Optional[str] = None,
+        environment: Optional[Union[Environment, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.type = type
@@ -78,8 +78,8 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     @classmethod
     def _load(
         cls,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> "ParallelTask":
         params_override = params_override or []
@@ -90,8 +90,8 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
     def _load_from_dict(
         cls,
         data: dict,
-        path: Union[PathLike, str] = None,
-        params_override: list = None,
+        path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "ParallelTask":
         params_override = params_override or []

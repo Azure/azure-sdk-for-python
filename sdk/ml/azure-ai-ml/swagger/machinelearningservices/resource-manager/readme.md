@@ -61,16 +61,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2022_02_01_preview
 ```
 
-### Tag: v2022-06-01-preview
-
-These settings apply only when `--tag=v2022-06-01-preview` is specified on the command line.
-
-```yaml $(tag) == 'v2022-06-01-preview'
-input-file:
-  - Microsoft.MachineLearningServices/preview/2022-06-01-preview/mfe.json
-output-folder: $(python-sdks-folder)/v2022_06_01_preview
-```
-
 ### Tag: v2022-01-01-preview
 
 These settings apply only when `--tag=v2022-01-01-preview` is specified on the command line.
@@ -80,18 +70,6 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2022-01-01-preview/machineLearningServices.json
   - Microsoft.MachineLearningServices/preview/2022-01-01-preview/workspaceFeatures.json
 output-folder: $(python-sdks-folder)/v2022_01_01_preview
-```
-
-### Tag: v2021-10-01
-
-These settings apply only when `--tag=v2021-10-01` is specified on the command line.
-
-```yaml $(tag) == 'v2021-10-01'
-input-file:
-  - Microsoft.MachineLearningServices/stable/2021-10-01/mfe.json
-  - Microsoft.MachineLearningServices/stable/2021-10-01/machineLearningServices.json
-  - Microsoft.MachineLearningServices/stable/2021-10-01/workspaceFeatures.json
-output-folder: $(python-sdks-folder)/v2021_10_01
 ```
 
 ### Tag: mfe-dataplane-preview
@@ -155,14 +133,12 @@ batch:
   - tag: dataset-dataplane
   - tag: v2022-05-01
   - tag: v2022-02-01-preview
-  - tag: v2022-06-01-preview
   - tag: v2022-01-01-preview
   - tag: runhistory
   - tag: v2020-09-01-dataplanepreview
   - tag: registry-discovery
   - tag: v2022-10-01-preview
   #unstable tags
-  - tag: v2021-10-01
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true
 ```

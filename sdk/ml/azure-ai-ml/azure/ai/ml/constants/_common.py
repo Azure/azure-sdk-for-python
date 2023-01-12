@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -49,6 +48,9 @@ COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
 AZUREML_INTERNAL_COMPONENTS_ENV_VAR = "AZURE_ML_INTERNAL_COMPONENTS_ENABLED"
+AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR = "AZURE_ML_DISABLE_ON_DISK_CACHE"
+AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS = "AZURE_ML_COMPONENT_REGISTRATION_MAX_WORKERS"
+AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION = "AZURE_ML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION"
 AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = "https://componentsdk.azureedge.net/jsonschema/"
 COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = (
@@ -324,7 +326,7 @@ class YAMLRefDocLinks:
     DATA = "https://aka.ms/ml-cli-v2-data-yaml-reference"
     MODEL = "https://aka.ms/ml-cli-v2-model-yaml-reference"
     AML_COMPUTE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
-    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
+    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-instance-yaml-reference"
     VIRTUAL_MACHINE_COMPUTE = "https://aka.ms/ml-cli-v2-compute-vm-yaml-reference"
     COMMAND_JOB = "https://aka.ms/ml-cli-v2-job-command-yaml-reference"
     PARALLEL_JOB = "https://aka.ms/ml-cli-v2-job-parallel-yaml-reference"
@@ -531,11 +533,13 @@ class AssetTypes:
     TRITON_MODEL = "triton_model"
     CUSTOM_MODEL = "custom_model"
 
+
 class InputTypes:
-    INTEGER = 'integer'
-    NUMBER = 'number'
-    STRING = 'string'
-    BOOLEAN = 'boolean'
+    INTEGER = "integer"
+    NUMBER = "number"
+    STRING = "string"
+    BOOLEAN = "boolean"
+
 
 class WorkspaceResourceConstants(object):
     ENCRYPTION_STATUS_ENABLED = "Enabled"
@@ -576,8 +580,8 @@ class RollingRate:
 
 
 class Scope:
-    SUBSCRIPTION="subscription"
-    RESOURCE_GROUP="resource_group"
+    SUBSCRIPTION = "subscription"
+    RESOURCE_GROUP = "resource_group"
 
 
 class IdentityType:

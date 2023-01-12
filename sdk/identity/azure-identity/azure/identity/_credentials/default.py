@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Any
 
 from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
@@ -18,7 +18,6 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
-
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -76,7 +75,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 

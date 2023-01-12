@@ -8,12 +8,13 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerDetails,
     ComponentVersionData,
     ComponentVersionDetails,
+    SystemData,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.operations import ComponentOperations
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml._restclient.v2022_05_01.models import SystemData
+from azure.ai.ml.operations import ComponentOperations
+
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
 

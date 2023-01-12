@@ -49,30 +49,30 @@ async def run_sample():
         certificate_name=cert_name, policy=CertificatePolicy.get_default()
     )
 
-    print("Certificate with name '{0}' created.".format(certificate.name))
+    print(f"Certificate with name '{certificate.name}' created.")
 
     # Backups are good to have, if in case certificates gets deleted accidentally.
     # For long term storage, it is ideal to write the backup to a file.
     print("\n.. Create a backup for an existing certificate")
     certificate_backup = await client.backup_certificate(cert_name)
-    print("Backup created for certificate with name '{0}'.".format(cert_name))
+    print(f"Backup created for certificate with name '{cert_name}'.")
 
     # The storage account certificate is no longer in use, so you can delete it.
     print("\n.. Delete the certificate")
     await client.delete_certificate(cert_name)
-    print("Deleted certificate with name '{0}'".format(cert_name))
+    print(f"Deleted certificate with name '{cert_name}'")
 
     # Purge the deleted certificate.
     # The purge will take some time, so wait before restoring the backup to avoid a conflict.
     print("\n.. Purge the certificate")
     await client.purge_deleted_certificate(cert_name)
     await asyncio.sleep(60)
-    print("Purged certificate with name '{0}'".format(cert_name))
+    print(f"Purged certificate with name '{cert_name}'")
 
     # In the future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the certificate using the backed up certificate bytes")
     certificate = await client.restore_certificate_backup(certificate_backup)
-    print("Restored certificate with name '{0}'".format(certificate.name))
+    print(f"Restored certificate with name '{certificate.name}'")
 
     print("\nrun_sample done")
     await credential.close()

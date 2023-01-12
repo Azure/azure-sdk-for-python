@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -54,7 +54,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_certificate: bytes = None,
         client_secret: str = None,
         user_assertion: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
@@ -86,13 +86,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.
