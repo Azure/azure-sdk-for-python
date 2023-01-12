@@ -11,7 +11,7 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._job.distribution import (
+from azure.ai.ml.entities._job.distribution import (  # pylint: disable = unused-import
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
