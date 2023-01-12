@@ -30,12 +30,7 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 
 The Language service supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language service resource.
-
-You can create the resource using
-
-**Option 1:** [Azure Portal][azure_portal_create_ta_resource]
-
-**Option 2:** [Azure CLI][azure_cli_create_ta_resource].
+You can create the resource using the [Azure Portal][azure_portal_create_ta_resource] or [Azure CLI][azure_cli] following the steps in [this document][azure_cli_create_ta_resource].
 
 Interaction with the service using the client library begins with a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the Cognitive Services or Language service `endpoint` to
@@ -682,6 +677,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_ta_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
+[azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_cli_create_ta_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
