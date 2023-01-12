@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import EXCLUDE, INCLUDE, fields, post_dump
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -109,6 +109,21 @@ class InternalComponentSchema(ComponentSchema):
             ):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
+
+    @pre_load()
+    def convert_input_value_to_str(self, data: dict, **kwargs) -> dict:
+        """Convert the non-str value in input to str."""
+        def convert_to_str(value):
+            if isinstance(value, bool):
+                return str(value).lower()
+            return str(value)
+
+        for name, input in data["inputs"].items():
+            if not isinstance(input.get("default", ""), str):
+                input["default"] = convert_to_str(input["default"])
+            if "enum" in input and any([not isinstance(item, str) for item in input["enum"]]):
+                input["enum"] = [convert_to_str(item) for item in input["enum"]]
+        return data
 
     @post_dump(pass_original=True)
     def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
