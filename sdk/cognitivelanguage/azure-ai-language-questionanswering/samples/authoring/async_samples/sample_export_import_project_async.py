@@ -63,7 +63,7 @@ async def sample_export_import_project_async():
 
         # import project
         import_poller = await client.begin_import_assets(
-            project_name=project_name,
+            project_name=f"{project_name}-imported",
             options=exported_project
         )
         await import_poller.result()

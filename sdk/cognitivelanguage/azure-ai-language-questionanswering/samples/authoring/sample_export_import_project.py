@@ -61,7 +61,7 @@ def sample_export_import_project():
 
         # import project
         import_poller = client.begin_import_assets(
-            project_name=project_name,
+            project_name=f"{project_name}-imported",
             options=exported_project,
         )
         import_poller.result()
