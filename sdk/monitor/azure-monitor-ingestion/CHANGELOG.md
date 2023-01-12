@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+  - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
 
 ### Breaking Changes
   - Removed support for max_concurrency

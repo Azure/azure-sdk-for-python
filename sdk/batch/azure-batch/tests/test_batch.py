@@ -28,6 +28,7 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
     CachedStorageAccountPreparer
 )
+from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 
 
 AZURE_LOCATION = 'eastus'
@@ -165,8 +166,8 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Create Iaas Pool
         users = [
-            models.UserAccount(name='test-user-1', password='kt#_gahr!@aGERDXA'),
-            models.UserAccount(name='test-user-2', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
+            models.UserAccount(name='test-user-1', password=BATCH_TEST_PASSWORD),
+            models.UserAccount(name='test-user-2', password=BATCH_TEST_PASSWORD, elevation_level=models.ElevationLevel.admin)
         ]
         test_iaas_pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_iaas_'),
@@ -670,7 +671,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Add User
         user_name = 'BatchPythonSDKUser'
         nodes = list(client.compute_node.list(batch_pool.name))
-        user = models.ComputeNodeUser(name=user_name, password='kt#_gahr!@aGERDXA', is_admin=False)
+        user = models.ComputeNodeUser(name=user_name, password=BATCH_TEST_PASSWORD, is_admin=False)
         response = client.compute_node.add_user(batch_pool.name, nodes[0].id, user)
         self.assertIsNone(response)
 

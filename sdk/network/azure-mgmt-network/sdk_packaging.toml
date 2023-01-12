@@ -6,5 +6,5 @@ is_stable = true
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
-sample_link = "network"
+sample_link = ""
 title = "NetworkManagementClient"

@@ -8,7 +8,7 @@ import json
 SUPPORTED_VERSIONS = {"1.0"}
 
 
-class AuthenticationRecord(object):
+class AuthenticationRecord:
     """Non-secret account information for an authenticated user
 
     This class enables :class:`DeviceCodeCredential` and :class:`InteractiveBrowserCredential` to access
@@ -32,8 +32,7 @@ class AuthenticationRecord(object):
         self._username = username
 
     @property
-    def authority(self):
-        # type: () -> str
+    def authority(self) -> str:
         return self._authority
 
     @property
@@ -54,8 +53,7 @@ class AuthenticationRecord(object):
         return self._username
 
     @classmethod
-    def deserialize(cls, data):
-        # type: (str) -> AuthenticationRecord
+    def deserialize(cls, data: str) -> "AuthenticationRecord":
         """Deserialize a record.
 
         :param str data: a serialized record

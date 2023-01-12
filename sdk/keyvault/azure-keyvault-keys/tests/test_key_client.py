@@ -110,8 +110,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
         
 
@@ -119,10 +119,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
 
     def _update_key_properties(self, client, key, release_policy=None):
@@ -148,7 +148,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
-                hex = "0{}".format(hex)
+                hex = f"0{hex}"
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
@@ -299,7 +299,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         # create many keys
         for x in range(max_keys):
-            key_name = self.get_resource_name("key{}".format(x))
+            key_name = self.get_resource_name(f"key{x}")
             key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
             expected[key.name] = key
 
@@ -348,7 +348,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         # create keys
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             expected[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
@@ -378,7 +378,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         # create keys
         keys = {}
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             keys[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
@@ -403,7 +403,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert client is not None
 
         # create keys
-        key_names = [self.get_resource_name("key{}".format(i)) for i in range(LIST_TEST_SIZE)]
+        key_names = [self.get_resource_name(f"key{i}") for i in range(LIST_TEST_SIZE)]
         for name in key_names:
             self._create_rsa_key(client, name, hardware_protected=is_hsm)
 

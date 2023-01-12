@@ -79,9 +79,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
             raise ValueError(
-                "Unsupported API version '{}'. Please select from:\n{}".format(
-                    api_version, supported_versions
-                )
+                f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
             )
         audience = kwargs.pop("audience", None)
         if not audience:
