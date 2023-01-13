@@ -238,9 +238,9 @@ class TestCommandComponentEntity:
         assert rest_yaml_component == expected_rest_component
 
         # assert positional args is not supported
-        with pytest.raises(TypeError) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             yaml_component_version(1)
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 1 was given" in str(error_info)
+        assert "Component function doesn't support positional arguments" in str(error_info)
 
         # unknown kw arg
         with pytest.raises(UnexpectedKeywordError) as error_info:

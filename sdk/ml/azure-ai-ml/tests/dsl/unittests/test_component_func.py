@@ -48,9 +48,9 @@ class TestComponentFunc:
         }
 
         # positional args is not allowed
-        with pytest.raises(Exception) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             component_func(10, "fake_path")
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 2 were given" in str(error_info)
+        assert "Component function doesn't support positional arguments" in str(error_info)
 
         # wrong kwargs is not allowed
         with pytest.raises(UnexpectedKeywordError) as error_info:
