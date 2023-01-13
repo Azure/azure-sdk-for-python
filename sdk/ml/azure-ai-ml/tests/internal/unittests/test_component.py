@@ -665,3 +665,26 @@ class TestComponent:
                 match="InternalCode name are calculated based on its content and cannot be changed.*"
             ):
                 code.name = expected_snapshot_id + "1"
+
+    def test_snapshot_id_calculation(self):
+        origin_test_configs_dir = Path("./tests/test_configs/internal/")
+        with tempfile.TemporaryDirectory() as test_configs_dir:
+            shutil.copytree(
+                origin_test_configs_dir / "component-reuse/simple-command",
+                Path(test_configs_dir) / "simple-command"
+            )
+
+            yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
+
+            component: InternalComponent = load_component(source=yaml_path)
+            with component._resolve_local_code() as code:
+                expected_snapshot_id = code.name
+            # create some files/folders expected to ignore
+            code_pycache = yaml_path.parent / "__pycache__"
+            code_pycache.mkdir()
+            (code_pycache / "a.pyc").touch()
+
+            # resolve and check snapshot directory
+            with component._resolve_local_code() as code:
+                assert code.name == expected_snapshot_id
+
