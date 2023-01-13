@@ -34,8 +34,10 @@ def deserialize_dir_properties(response, obj, headers):
 
 def deserialize_file_properties(response, obj, headers):
     metadata = deserialize_metadata(response, obj, headers)
+    # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
+        encryption_context=response.headers.get('x-ms-encryption-context'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -96,6 +98,10 @@ def from_blob_properties(blob_properties):
     file_props.deleted_time = blob_properties.deleted_time
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
+
+    # TODO: This is definitely not how we want to do this
+    if blob_properties.has_key('encryption_context'):
+        file_props.encryption_context = blob_properties.encryption_context
     return file_props
 
 
