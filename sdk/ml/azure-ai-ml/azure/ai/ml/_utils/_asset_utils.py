@@ -684,6 +684,43 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+def _get_latest_version_from_container(
+    asset_name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.latest_version
+
+    except ResourceNotFoundError:
+        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
+        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        raise ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+        )
+    return version
 
 def _get_latest(
     asset_name: str,
