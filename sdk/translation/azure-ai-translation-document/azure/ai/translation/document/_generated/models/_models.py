@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -48,8 +48,8 @@ class BatchRequest(_serialization.Model):
         source: "_models.SourceInput",
         targets: List["_models.TargetInput"],
         storage_type: Optional[Union[str, "_models.StorageInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source: Source of the input documents. Required.
         :paramtype source: ~azure.ai.translation.document.models.SourceInput
@@ -84,7 +84,7 @@ class DocumentFilter(_serialization.Model):
         "suffix": {"key": "suffix", "type": "str"},
     }
 
-    def __init__(self, *, prefix: Optional[str] = None, suffix: Optional[str] = None, **kwargs):
+    def __init__(self, *, prefix: Optional[str] = None, suffix: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword prefix: A case-sensitive prefix string to filter documents in the source path for
          translation.
@@ -121,7 +121,9 @@ class DocumentsStatus(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DocumentStatus"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DocumentStatus"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The detail status of individual documents. Required.
         :paramtype value: list[~azure.ai.translation.document.models.DocumentStatus]
@@ -200,8 +202,8 @@ class DocumentStatus(_serialization.Model):
         path: Optional[str] = None,
         error: Optional["_models.TranslationError"] = None,
         character_charged: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: Location of the document or folder.
         :paramtype path: str
@@ -280,8 +282,8 @@ class FileFormat(_serialization.Model):
         content_types: List[str],
         default_version: Optional[str] = None,
         versions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword format: Name of the format. Required.
         :paramtype format: str
@@ -341,8 +343,8 @@ class Glossary(_serialization.Model):
         format: str,
         version: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword glossary_url: Location of the glossary.
          We will use the file extension to extract the formatting if the format parameter is not
@@ -405,8 +407,8 @@ class InnerTranslationError(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: str, message: str, inner_error: Optional["_models.InnerTranslationError"] = None, **kwargs
-    ):
+        self, *, code: str, message: str, inner_error: Optional["_models.InnerTranslationError"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: Gets code error string. Required.
         :paramtype code: str
@@ -461,8 +463,8 @@ class SourceInput(_serialization.Model):
         filter: Optional["_models.DocumentFilter"] = None,  # pylint: disable=redefined-builtin
         language: Optional[str] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_url: Location of the folder / container or single file with your documents.
          Required.
@@ -499,7 +501,7 @@ class StartTranslationDetails(_serialization.Model):
         "inputs": {"key": "inputs", "type": "[BatchRequest]"},
     }
 
-    def __init__(self, *, inputs: List["_models.BatchRequest"], **kwargs):
+    def __init__(self, *, inputs: List["_models.BatchRequest"], **kwargs: Any) -> None:
         """
         :keyword inputs: The input list of documents or folders containing documents. Required.
         :paramtype inputs: list[~azure.ai.translation.document.models.BatchRequest]
@@ -559,8 +561,8 @@ class StatusSummary(_serialization.Model):
         not_yet_started: int,
         cancelled: int,
         total_character_charged: int,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword total: Total count. Required.
         :paramtype total: int
@@ -604,7 +606,7 @@ class SupportedFileFormats(_serialization.Model):
         "value": {"key": "value", "type": "[FileFormat]"},
     }
 
-    def __init__(self, *, value: List["_models.FileFormat"], **kwargs):
+    def __init__(self, *, value: List["_models.FileFormat"], **kwargs: Any) -> None:
         """
         :keyword value: list of objects. Required.
         :paramtype value: list[~azure.ai.translation.document.models.FileFormat]
@@ -630,7 +632,7 @@ class SupportedStorageSources(_serialization.Model):
         "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(self, *, value: List[Union[str, "_models.StorageSource"]], **kwargs):
+    def __init__(self, *, value: List[Union[str, "_models.StorageSource"]], **kwargs: Any) -> None:
         """
         :keyword value: list of objects. Required.
         :paramtype value: list[str or ~azure.ai.translation.document.models.StorageSource]
@@ -677,8 +679,8 @@ class TargetInput(_serialization.Model):
         category: Optional[str] = None,
         glossaries: Optional[List["_models.Glossary"]] = None,
         storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_url: Location of the folder / container with your documents. Required.
         :paramtype target_url: str
@@ -743,8 +745,8 @@ class TranslationError(_serialization.Model):
         code: Union[str, "_models.TranslationErrorCode"],
         message: str,
         inner_error: Optional["_models.InnerTranslationError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Enums containing high level error codes. Required. Known values are:
          "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
@@ -782,7 +784,7 @@ class TranslationErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "TranslationError"},
     }
 
-    def __init__(self, *, error: Optional["_models.TranslationError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.TranslationError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: This contains an outer error with error code, message, details, target and an
          inner error with more descriptive details.
@@ -812,7 +814,9 @@ class TranslationsStatus(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TranslationStatus"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.TranslationStatus"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The summary status of individual operation. Required.
         :paramtype value: list[~azure.ai.translation.document.models.TranslationStatus]
@@ -873,8 +877,8 @@ class TranslationStatus(_serialization.Model):
         status: Union[str, "_models.Status"],
         summary: "_models.StatusSummary",
         error: Optional["_models.TranslationError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Id of the operation. Required.
         :paramtype id: str
