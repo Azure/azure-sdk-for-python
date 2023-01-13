@@ -47,6 +47,7 @@ def sample_export_import_project():
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]
         request = HttpRequest("GET", export_url)
+        exported_project = None
 
         if export_format == "json":
             response = client.send_request(request)
