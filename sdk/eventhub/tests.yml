@@ -25,4 +25,4 @@ stages:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'eastus2euap'
+          Location: 'northeurope'
