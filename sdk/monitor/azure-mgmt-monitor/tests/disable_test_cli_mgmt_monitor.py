@@ -407,7 +407,7 @@ class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [

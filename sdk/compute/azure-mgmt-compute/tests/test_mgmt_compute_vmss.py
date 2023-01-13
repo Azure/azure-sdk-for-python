@@ -21,6 +21,7 @@ import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils.fake_credentials import FAKE_LOGIN_PASSWORD
 
 AZURE_LOCATION = 'eastus'
 
@@ -207,7 +208,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -304,7 +305,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -435,7 +436,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -591,7 +592,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -726,7 +727,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -911,7 +912,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [
@@ -1027,7 +1028,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
             "os_profile": {
               "computer_name_prefix": "testPC",
               "admin_username": "testuser",
-              "admin_password": "Aa!1()-xyz"
+              "admin_password": FAKE_LOGIN_PASSWORD
             },
             "network_profile": {
               "network_interface_configurations": [

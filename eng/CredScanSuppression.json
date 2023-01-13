@@ -3,8 +3,6 @@
     "suppressions": [
         {
             "placeholder": [
-                "Aa1!zyx_",
-                "Aa!1()-xyz",
                 ":code:`<pfx-file-password>`",
                 "000000000000000000000000000000000000000000000000000",
                 "fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA=",
