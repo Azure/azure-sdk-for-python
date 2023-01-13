@@ -4,9 +4,9 @@
 
 
 import azure.mgmt.resourcegraph as arg
-from azure.mgmt.resource import SubscriptionClient
+from azure.mgmt.resource import SubscriptionClient, ResourceManagementClient
 from azure.core.credentials import TokenCredential
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 def get_resources_from_all_subscriptions (strQuery: str, credential:  TokenCredential):
@@ -30,3 +30,15 @@ def get_resources_from_all_subscriptions (strQuery: str, credential:  TokenCrede
 def get_vitual_clusters_from_all_subscriptions(credential:  TokenCredential) -> List[Dict]:
     strQuery = "resources | where type == 'microsoft.machinelearningservices/virtualclusters' | order by tolower(name) asc | project id, subscriptionId, resourceGroup, name, location, tags, type"
     return get_resources_from_all_subscriptions(strQuery, credential).data
+
+
+def get_generic_resource_by_id(arm_id: str, credential:  TokenCredential, subscription_id: str, api_version: Optional[str] = None) -> Dict:
+    resource_client = ResourceManagementClient(credential, subscription_id)
+    generic_resource = resource_client.resources.get_by_id(arm_id, api_version)
+
+    return generic_resource.as_dict()
+
+def get_vc_by_id(name: str, resource_group: str, subscription_id: str, credential: TokenCredential) -> Dict:
+    arm_id = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/virtualClusters/{name}"
+    
+    return get_generic_resource_by_id(arm_id, credential, subscription_id, api_version="2021-03-01-preview") # This is the API version Studio UX is using.

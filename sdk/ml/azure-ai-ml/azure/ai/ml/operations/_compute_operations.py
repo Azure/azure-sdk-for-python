@@ -11,7 +11,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.reource_graph_utils import get_vitual_clusters_from_all_subscriptions
+from azure.ai.ml._utils.azure_reource_utils import get_vitual_clusters_from_all_subscriptions, get_vc_by_id
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import AmlComputeNodeInfo, Compute, Usage, VmSize
@@ -59,7 +59,7 @@ class ComputeOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Compute]
         """
 
-        if compute_type is not None and compute_type.lower() == "singularity":
+        if compute_type is not None and compute_type.lower() == "virtualcluster":
             return get_vitual_clusters_from_all_subscriptions(self._credentials)
 
         return self._operation.list(
@@ -74,7 +74,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str) -> Compute:
+    def get(self, name: str, **kwargs: Dict) -> Compute:
         """Get a compute resource.
 
         :param name: Name of the compute
@@ -82,6 +82,10 @@ class ComputeOperations(_ScopeDependentOperations):
         :return: Compute object
         :rtype: Compute
         """
+
+        compute_type = kwargs.pop("compute_type", None)
+        if compute_type is not None and compute_type.lower() == "virtualcluster":
+            return get_vc_by_id(name=name, resource_group=self._resource_group_name, subscription_id=self._subscription_id, credential=self._credentials)
 
         rest_obj = self._operation.get(
             self._operation_scope.resource_group_name,
