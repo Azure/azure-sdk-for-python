@@ -760,6 +760,7 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        # below line is expected to raise KeyError in live test, it will pass after related changes deployed to canary
         jobs_dict = rest_pipeline_component._to_dict()["jobs"]
         # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
         assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
