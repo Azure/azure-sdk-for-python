@@ -320,6 +320,8 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_from_managed_identity(self):
+        if self.skip_get_token_for_teams_user_test():
+            return
         identity_client = self.create_client_from_managed_identity()
         async with identity_client:
             aad_token, user_object_id = self.generate_teams_user_aad_token()
