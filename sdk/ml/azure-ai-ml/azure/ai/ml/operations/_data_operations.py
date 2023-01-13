@@ -344,7 +344,12 @@ class DataOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
         """
-        latest_version = _get_latest_version_from_container(name, self._container_operation, self._resource_group_name, self._workspace_name)
+        latest_version = _get_latest_version_from_container(
+            name,
+            self._container_operation,
+            self._resource_group_name,
+            self._workspace_name
+            )
         data_version_resource = self._operation.get(
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
