@@ -120,6 +120,8 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
         batch.add(EventData(body='A single message'))
         producer_client.send_batch(batch)
 
+    assert producer_client.get_eventhub_properties() is not None
+
 
 @pytest.mark.liveTest
 def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):

@@ -116,6 +116,8 @@ async def test_client_azure_sas_credential_async(live_eventhub, uamqp_transport)
         batch.add(EventData(body='A single message'))
         await producer_client.send_batch(batch)
 
+    assert (await producer_client.get_eventhub_properties()) is not None
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
