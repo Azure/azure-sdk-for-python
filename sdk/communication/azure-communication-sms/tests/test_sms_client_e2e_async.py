@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from _shared.utils import get_http_logging_policy
 from acs_sms_test_case import ACSSMTestCase
 from azure.identity.aio import DefaultAzureCredential
-from devtools_testutils.fake_credentials_async import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 
 SKIP_INT_SMS_TESTS = os.getenv("COMMUNICATION_SKIP_INT_SMS_TEST", "false") == "true"
 INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT."
@@ -60,7 +60,7 @@ class TestClientAsync(ACSSMTestCase):
     @recorded_by_proxy_async
     async def test_send_sms_from_managed_identity_async(self):
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         sms_client = SmsClient(

@@ -6,8 +6,7 @@
 
 import os
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
-from devtools_testutils import is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy, set_bodiless_matcher
 from _shared.utils import get_http_logging_policy
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -23,6 +22,8 @@ INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT
 class TestClient(ACSSMTestCase):
     def setup_method(self):
         super().setUp()
+
+        set_bodiless_matcher()
 
     @recorded_by_proxy
     def test_send_sms_single(self):
