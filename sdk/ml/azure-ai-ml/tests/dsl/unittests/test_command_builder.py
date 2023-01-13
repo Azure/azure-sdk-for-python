@@ -1006,7 +1006,7 @@ class TestCommandFunction:
         assert sweep_node_1.search_space == sweep_node_2.search_space
 
     def test_unsupported_positional_args(self, test_command):
-        with pytest.raises(ValidationError) as e:
+        with pytest.raises(ValidationException) as e:
             test_command(1)
 
         assert "Component function doesn't support positional arguments" in str(e.value)
