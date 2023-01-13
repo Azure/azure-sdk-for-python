@@ -29,7 +29,7 @@ import pytest
 import os
 from devtools_testutils import test_proxy, add_header_regex_sanitizer, \
     set_default_session_settings, add_body_key_sanitizer, add_oauth_response_sanitizer, add_general_string_sanitizer
-from azure.communication.identity._shared.utils import parse_connection_str
+from azure.communication.sms._shared.utils import parse_connection_str
 
 
 @pytest.fixture(scope="session", autouse=True)
