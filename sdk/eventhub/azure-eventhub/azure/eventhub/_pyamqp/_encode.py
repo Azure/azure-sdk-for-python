@@ -69,8 +69,10 @@ _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b"\x00"
 
 
-def _construct(byte, construct):
-    # type: (bytes, bool) -> bytes
+def _construct(
+    byte: bytes,
+    construct: bool
+) -> bytes:
     return byte if construct else b""
 
 

@@ -91,13 +91,15 @@ class EventProcessor(
         ] = kwargs.get(
             "initial_event_position", "@latest"
         )
-        self._initial_event_position_inclusive = kwargs.get(
+        self._initial_event_position_inclusive: Union[
+            bool, Dict[str, bool]
+        ] = kwargs.get(
             "initial_event_position_inclusive", False
-        )  # type: Union[bool, Dict[str, bool]]
+        )
 
-        self._load_balancing_interval = kwargs.get(
+        self._load_balancing_interval: float = kwargs.get(
             "load_balancing_interval", 10.0
-        )  # type: float
+        )
         self._load_balancing_strategy = (
             kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
         )
@@ -105,13 +107,13 @@ class EventProcessor(
             "partition_ownership_expiration_interval", self._load_balancing_interval * 6
         )
 
-        self._partition_contexts = {}  # type: Dict[str, PartitionContext]
+        self._partition_contexts: Dict[str, PartitionContext] = {}
 
         # Receive parameters
-        self._owner_level = kwargs.get("owner_level", None)  # type: Optional[int]
+        self._owner_level: Optional[int] = kwargs.get("owner_level", None)
         if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
-        self._prefetch = kwargs.get("prefetch", None)  # type: Optional[int]
+        self._prefetch: Optional[int] = kwargs.get("prefetch", None)
         self._track_last_enqueued_event_properties = kwargs.get(
             "track_last_enqueued_event_properties", False
         )
@@ -119,7 +121,7 @@ class EventProcessor(
         self._running = False
         self._lock = threading.RLock()
 
-        self._consumers = {}  # type: Dict[str, EventHubConsumer]
+        self._consumers: Dict[str, EventHubConsumer] = {}
         self._ownership_manager = OwnershipManager(
             self._eventhub_client,
             self._consumer_group,
@@ -239,9 +241,11 @@ class EventProcessor(
     ) -> None:
         if event:
             try:
-                partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
+                event = cast(List[EventData], event)
+                partition_context._last_received_event = event[-1]  #pylint:disable=protected-access
             except TypeError:
-                partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
+                event = cast(Optional[EventData], event)
+                partition_context._last_received_event = event  #pylint:disable=protected-access
             links = get_event_links(event)
             with self._context(links=links):
                 self._event_handler(partition_context, event)

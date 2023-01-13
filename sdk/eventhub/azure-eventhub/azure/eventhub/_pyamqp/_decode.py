@@ -36,130 +36,105 @@ c_float = struct.Struct('>f')
 c_double = struct.Struct('>d')
 
 
-def _decode_null(buffer):
-    # type: (memoryview) -> Tuple[memoryview, None]
+def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
     return buffer, None
 
 
-def _decode_true(buffer):
-    # type: (memoryview) -> Tuple[memoryview, bool]
+def _decode_true(buffer: memoryview) -> Tuple[memoryview, bool]:
     return buffer, True
 
 
-def _decode_false(buffer):
-    # type: (memoryview) -> Tuple[memoryview, bool]
+def _decode_false(buffer: memoryview) -> Tuple[memoryview, bool]:
     return buffer, False
 
 
-def _decode_zero(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_zero(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer, 0
 
 
-def _decode_empty(buffer):
-    # type: (memoryview) -> Tuple[memoryview, List[None]]
+def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[None]]:
     return buffer, []
 
 
-def _decode_boolean(buffer):
-    # type: (memoryview) -> Tuple[memoryview, bool]
+def _decode_boolean(buffer: memoryview) -> Tuple[memoryview, bool]:
     return buffer[1:], buffer[:1] == b'\x01'
 
 
-def _decode_ubyte(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_ubyte(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ushort(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_ushort(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[2:], c_unsigned_short.unpack(buffer[:2])[0]
 
 
-def _decode_uint_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_uint_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_uint_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_uint_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[4:], c_unsigned_int.unpack(buffer[:4])[0]
 
 
-def _decode_ulong_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_ulong_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ulong_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_ulong_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[8:], c_unsigned_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_byte(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_byte(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_short(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_short(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[2:], c_signed_short.unpack(buffer[:2])[0]
 
 
-def _decode_int_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_int_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_int_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_int_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[4:], c_signed_int.unpack(buffer[:4])[0]
 
 
-def _decode_long_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_long_small(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_long_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_long_large(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_float(buffer):
-    # type: (memoryview) -> Tuple[memoryview, float]
+def _decode_float(buffer: memoryview) -> Tuple[memoryview, float]:
     return buffer[4:], c_float.unpack(buffer[:4])[0]
 
 
-def _decode_double(buffer):
-    # type: (memoryview) -> Tuple[memoryview, float]
+def _decode_double(buffer: memoryview) -> Tuple[memoryview, float]:
     return buffer[8:], c_double.unpack(buffer[:8])[0]
 
 
-def _decode_timestamp(buffer):
-    # type: (memoryview) -> Tuple[memoryview, int]
+def _decode_timestamp(buffer: memoryview) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_uuid(buffer):
-    # type: (memoryview) -> Tuple[memoryview, uuid.UUID]
+def _decode_uuid(buffer: memoryview) -> Tuple[memoryview, uuid.UUID]:
     return buffer[16:], uuid.UUID(bytes=buffer[:16].tobytes())
 
 
-def _decode_binary_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, bytes]
+def _decode_binary_small(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = buffer[0] + 1
     return buffer[length_index:], buffer[1:length_index].tobytes()
 
 
-def _decode_binary_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, bytes]
+def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 
-def _decode_list_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, List[Any]]
+def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
     buffer = buffer[2:]
     values = [None] * count
@@ -168,8 +143,7 @@ def _decode_list_small(buffer):
     return buffer, values
 
 
-def _decode_list_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, List[Any]]
+def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     buffer = buffer[8:]
     values = [None] * count
@@ -178,8 +152,7 @@ def _decode_list_large(buffer):
     return buffer, values
 
 
-def _decode_map_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, Dict[Any, Any]]
+def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     count = int(buffer[1]/2)
     buffer = buffer[2:]
     values = {}
@@ -190,8 +163,7 @@ def _decode_map_small(buffer):
     return buffer, values
 
 
-def _decode_map_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, Dict[Any, Any]]
+def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     count = int(c_unsigned_long.unpack(buffer[4:8])[0]/2)
     buffer = buffer[8:]
     values = {}
@@ -202,8 +174,7 @@ def _decode_map_large(buffer):
     return buffer, values
 
 
-def _decode_array_small(buffer):
-    # type: (memoryview) -> Tuple[memoryview, List[Any]]
+def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
         subconstructor = buffer[2]
@@ -215,8 +186,7 @@ def _decode_array_small(buffer):
     return buffer[2:], []
 
 
-def _decode_array_large(buffer):
-    # type: (memoryview) -> Tuple[memoryview, List[Any]]
+def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     if count:
         subconstructor = buffer[8]
@@ -228,8 +198,7 @@ def _decode_array_large(buffer):
     return buffer[8:], []
 
 
-def _decode_described(buffer):
-    # type: (memoryview) -> Tuple[memoryview, Any]
+def _decode_described(buffer: memoryview) -> Tuple[memoryview, Any]:
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
@@ -242,8 +211,7 @@ def _decode_described(buffer):
         return buffer, value
 
 
-def decode_payload(buffer):
-    # type: (memoryview) -> Message
+def decode_payload(buffer: memoryview) -> Message
     message: Dict[str, Union[Properties, Header, Dict, bytes, List]] = {}
     while buffer:
         # Ignore the first two bytes, they will always be the constructors for
@@ -279,8 +247,7 @@ def decode_payload(buffer):
     return Message(**message)
 
 
-def decode_frame(data):
-    # type: (memoryview) -> Tuple[int, List[Any]]
+def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     # Ignore the first two bytes, they will always be the constructors for
     # described type then ulong.
     frame_type = data[2]
@@ -301,8 +268,7 @@ def decode_frame(data):
     return frame_type, fields
 
 
-def decode_empty_frame(header):
-    # type: (memoryview) -> Tuple[int, bytes]
+def decode_empty_frame(header: memoryview) -> Tuple[int, bytes]:
     if header[0:4] == _HEADER_PREFIX:
         return 0, header.tobytes()
     if header[5] == 0:
