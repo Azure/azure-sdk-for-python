@@ -742,6 +742,7 @@ def enable_private_preview_schema_features():
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
@@ -818,3 +819,18 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
+
+
+@pytest.fixture()
+def enable_private_preview_pipeline_node_types():
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    schema = pipeline_job.PipelineJobSchema
+    original_jobs = schema._declared_fields["jobs"]
+    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        schema._declared_fields["jobs"] = original_jobs
