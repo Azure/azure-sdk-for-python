@@ -36,6 +36,7 @@ from .pipeline.policies import (
     HttpLoggingPolicy,
     RequestIdPolicy,
     AsyncRetryPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -148,6 +149,7 @@ class AsyncPipelineClient(PipelineClientBase):
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
+                    SensitiveHeaderCleanupPolicy(**kwargs),
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )

@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
+from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
 
 
@@ -67,3 +68,6 @@ def get_retry_after(response):
             parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None
+
+def get_domain(url):
+    return str(urlparse(url).netloc).lower()

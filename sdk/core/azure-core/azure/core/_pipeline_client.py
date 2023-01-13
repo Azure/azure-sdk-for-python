@@ -40,6 +40,7 @@ from .pipeline.policies import (
     HttpLoggingPolicy,
     RequestIdPolicy,
     RetryPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 
 if TYPE_CHECKING:
@@ -131,6 +132,7 @@ class PipelineClient(PipelineClientBase):
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
+                    SensitiveHeaderCleanupPolicy(**kwargs),
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )

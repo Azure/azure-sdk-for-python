@@ -27,17 +27,18 @@
 This module is the requests implementation of Pipeline ABC
 """
 import logging
-from urllib.parse import urlparse  # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 
 from ._base import HTTPPolicy, RequestHistory
+from ._utils import get_domain
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class RedirectPolicyBase(object):
+class RedirectPolicyBase:
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
@@ -53,6 +54,7 @@ class RedirectPolicyBase(object):
         )
         redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
+        self._original_domain = None
         super(RedirectPolicyBase, self).__init__()
 
     @classmethod
@@ -125,6 +127,14 @@ class RedirectPolicyBase(object):
             response.http_request.headers.pop(non_redirect_header, None)
         return settings["redirects"] >= 0
 
+    def _domain_changed(self, url):
+        domain = get_domain(url)
+        if not self._original_domain:
+            self._original_domain = domain
+            return False
+        if self._original_domain == domain:
+            return False
+        return True
 
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
@@ -156,6 +166,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
+        self._original_domain = get_domain(request.http_request.url)
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
@@ -164,6 +175,8 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
                     redirect_settings, response, redirect_location
                 )
                 request.http_request = response.http_request
+                if self._domain_changed(request.http_request.url):
+                    request.context.options['insecure_domain_change'] = True
                 continue
             return response
 
