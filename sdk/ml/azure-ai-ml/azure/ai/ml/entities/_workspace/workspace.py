@@ -10,6 +10,7 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_01_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedNetworkDto as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
@@ -147,6 +148,8 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
+        print("called workspace.todict")
+        print(self)
         return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -157,13 +160,17 @@ class Workspace(Resource):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Workspace":
+        print("in workspace load function, data and params override", data, params_override)
         data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
+        print("context:", context)
+        print("about to call load from dict")
         loaded_schema = load_from_dict(WorkspaceSchema, data, context, **kwargs)
+        print("loaded_schema is ", loaded_schema)
         return Workspace(**loaded_schema)
 
     @classmethod
@@ -186,9 +193,11 @@ class Workspace(Resource):
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
+        # TODO: remove this once it is included in API response
         managed_network = None
         if hasattr(rest_obj, "managed_network"):
-            managed_network = rest_obj.managed_network
+            if rest_obj.managed_network and isinstance(rest_obj.managed_network, RestManagedNetwork):
+                managed_network = ManagedNetwork._from_rest_object(rest_obj.managed_network) 
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
@@ -217,7 +226,7 @@ class Workspace(Resource):
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
-            managed_network=rest_obj.managed_network,
+            managed_network=managed_network,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -238,5 +247,5 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
-            #managed_network=self.managed_network,
+            managed_network=self.managed_network._to_rest_object() if self.managed_network else None,
         )

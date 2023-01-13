@@ -2703,6 +2703,10 @@
           "encryption": {
             "$ref": "#/definitions/EncryptionUpdateProperties",
             "description": "The encryption settings of the workspace."
+          },
+          "managedNetwork": {
+            "description": "Managed network settings.",
+            "$ref": "#/definitions/ManagedNetworkSettings"
           }
         }
       },

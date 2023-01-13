@@ -138,23 +138,6 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         servicetagdest["port_ranges"] = port_ranges
         return servicetagdest
 
-    """
-    @post_load
-    def lowerstrip_email(self, item, many, **kwargs):
-        item['email'] = item['email'].lower().strip()
-        return item
-
-    @pre_load(pass_many=True)
-    def remove_envelope(self, data, many, **kwargs):
-        namespace = 'results' if many else 'result'
-        return data[namespace]
-
-    @post_dump(pass_many=True)
-    def add_envelope(self, data, many, **kwargs):
-        namespace = 'results' if many else 'result'
-        return {namespace: data}
-    """
-
 
 
 class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
@@ -165,4 +148,7 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        return ManagedNetwork(data["isolation_mode"], data["outbound_rules"])
+        if data.get("outbound_rules", False):
+            return ManagedNetwork(data["isolation_mode"], data["outbound_rules"])
+        else:
+            return ManagedNetwork(data["isolation_mode"])

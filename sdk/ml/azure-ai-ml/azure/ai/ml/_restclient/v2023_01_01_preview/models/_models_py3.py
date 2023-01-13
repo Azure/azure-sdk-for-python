@@ -25942,6 +25942,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype container_registry: str
     :ivar encryption: The encryption settings of the workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
     """
 
     _attribute_map = {
@@ -25957,6 +25959,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
     }
 
     def __init__(
@@ -25974,6 +25977,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         application_insights: Optional[str] = None,
         container_registry: Optional[str] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
+        managed_network: Optional["ManagedNetworkSettings"] = None,
         **kwargs
     ):
         """
@@ -26006,6 +26010,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         :keyword encryption: The encryption settings of the workspace.
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -26020,3 +26026,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.application_insights = application_insights
         self.container_registry = container_registry
         self.encryption = encryption
+        self.managed_network = managed_network

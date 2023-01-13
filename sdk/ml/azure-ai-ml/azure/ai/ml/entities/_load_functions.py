@@ -62,6 +62,8 @@ def load_common(
     :rtype: Resource
     """
 
+    print("inside load_common for type, ", cls)
+
     path = kwargs.pop("path", None)
     # Check for deprecated path input, either named or as first unnamed input
     if source is None and path is not None:
@@ -80,11 +82,16 @@ def load_common(
                 relative_origin = _DEFAULT_RELATIVE_ORIGIN
 
     params_override = params_override or []
+    print("about to call try_load_yaml_dict here with souce= ", source)
     yaml_dict = _try_load_yaml_dict(source)
+
+    print("finished try_load_yaml_dict = ", yaml_dict)
+    print("about to call resolve_cls_and_type")
 
     # pylint: disable=protected-access
     cls, type_str = cls._resolve_cls_and_type(data=yaml_dict, params_override=params_override)
 
+    print("cls returned %s, type_str %s", cls, type_str)
     try:
         return _load_common_raising_marshmallow_error(cls, yaml_dict, relative_origin, params_override, **kwargs)
     except ValidationError as e:
@@ -135,6 +142,7 @@ def _load_common_raising_marshmallow_error(
     params_override: Optional[list] = None,
     **kwargs,
 ) -> Resource:
+    print("inside load_common_raising_marshamllow_error")
     # pylint: disable=protected-access
     return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
 
@@ -197,6 +205,7 @@ def load_workspace(
     :return: Loaded workspace object.
     :rtype: Workspace
     """
+    print("inside load_workspace, kwargs ", kwargs)
     return load_common(Workspace, source, relative_origin, **kwargs)
 
 

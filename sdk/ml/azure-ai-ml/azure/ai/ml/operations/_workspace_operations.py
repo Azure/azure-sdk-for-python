@@ -9,12 +9,13 @@ from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2023_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012023Preview
 from azure.ai.ml._restclient.v2023_01_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork, IsolationMode
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -66,7 +67,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient012023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -115,6 +116,12 @@ class WorkspaceOperations:
         workspace_name = self._check_workspace_name(name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
+        """from azure.ai.ml.entities._load_functions import load_workspace
+        ws = load_workspace("..\ws2.yml")
+        obj = ws._to_rest_object()
+        obj.name = "testws"
+        print("REST object returned from get:\n", obj)
+        print("\n\n")"""
         return Workspace._from_rest_object(obj)
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
@@ -197,7 +204,14 @@ class WorkspaceOperations:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
+        print("\n\nworkspace before populate arm paramaters ", workspace)
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
+
+        print("\ntemplate to be submitted: ", template)
+        print("\n\nparams\n", param)
+        print(param["identity"]["value"])
+        print(param["managedNetwork"]["value"])
+        print("HERE WOULD SUBMIT arm deployment template")
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -602,11 +616,9 @@ class WorkspaceOperations:
         # is this what I need to do here to add it to the workspace template deployment?
         managed_network = None
         if workspace.managed_network:
-            # managed_network = workspace.managed_network._to_workspace_rest_object()
-            managed_network = managed_network
+            managed_network = workspace.managed_network._to_rest_object()
         else:
-            # managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_workspace_rest_object()
-            managed_network = managed_network
+            managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)

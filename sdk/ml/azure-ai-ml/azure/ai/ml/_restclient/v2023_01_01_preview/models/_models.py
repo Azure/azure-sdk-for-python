@@ -23896,6 +23896,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype container_registry: str
     :ivar encryption: The encryption settings of the workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
     """
 
     _attribute_map = {
@@ -23911,6 +23913,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
     }
 
     def __init__(
@@ -23947,6 +23950,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         :keyword encryption: The encryption settings of the workspace.
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
@@ -23961,3 +23966,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.application_insights = kwargs.get('application_insights', None)
         self.container_registry = kwargs.get('container_registry', None)
         self.encryption = kwargs.get('encryption', None)
+        self.managed_network = kwargs.get('managed_network', None)
