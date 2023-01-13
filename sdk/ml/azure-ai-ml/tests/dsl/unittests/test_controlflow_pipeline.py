@@ -114,7 +114,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
 
         with pytest.raises(ValidationException) as e:
-            invalid_pipeline()
+            pipeline_job = invalid_pipeline()
+            pipeline_job._validate(raise_error=True)
         assert error_message in str(e.value)
 
     @pytest.mark.parametrize(

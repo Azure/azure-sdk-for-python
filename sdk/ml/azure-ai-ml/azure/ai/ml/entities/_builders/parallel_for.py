@@ -82,7 +82,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
             self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
 
         self._items = items
-        # self._validate_items(raise_error=True)
 
         self.max_concurrency = max_concurrency
 
