@@ -7,7 +7,6 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._schema.pipeline import pipeline_job
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
@@ -25,25 +24,12 @@ omit_fields = [
 ]
 
 
-@pytest.fixture()
-def update_pipeline_schema():
-    # Update the job type that the pipeline is supported.
-    schema = pipeline_job.PipelineJobSchema
-    original_jobs = schema._declared_fields["jobs"]
-    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
-
-    try:
-        yield
-    finally:
-        schema._declared_fields["jobs"] = original_jobs
-
-
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
     "enable_private_preview_schema_features",
-    "update_pipeline_schema",
+    "enable_private_preview_pipeline_node_types",
     "mock_asset_name",
     "mock_component_hash",
 )

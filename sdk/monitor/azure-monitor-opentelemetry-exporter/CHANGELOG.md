@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Loosen instrumentation key validation strictness
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
 ## 1.0.0b11 (2022-12-15)
 
 ### Features Added
