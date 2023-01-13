@@ -45,10 +45,10 @@ class TestComponent:
         yaml_path = r"tests/test_configs/internal/command-component/command-linux/" \
                     r"component_with_bool_and_data_input/component.yaml"
         component = load_component(yaml_path)
-        assert component["inputs"]["bool_input"]["default"] == "true"
-        assert component["inputs"]["enum_input"]["default"] == "true"
-        assert component["inputs"]["enum_input"]["enum"] == ["true", "false"]
-        assert component["inputs"]["date_input"]["default"] == "2023-01-01"
+        assert component.inputs["bool_input"].default == "true"
+        assert component.inputs["enum_input"].default == "true"
+        assert component.inputs["enum_input"].enum == ["true", "false"]
+        assert component.inputs["date_input"].default == "2023-01-01"
 
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
