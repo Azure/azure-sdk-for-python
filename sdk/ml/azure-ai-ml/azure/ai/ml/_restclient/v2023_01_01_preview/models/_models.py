@@ -23379,6 +23379,9 @@ class Workspace(Resource):
     :ivar scheduled_purge_date: The timestamp when the soft deleted workspace is going to be
      purged.
     :vartype scheduled_purge_date: str
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network:
+     ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
     """
 
     _validation = {
@@ -23435,6 +23438,7 @@ class Workspace(Resource):
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'WorkspacePropertiesManagedNetwork'},
     }
 
     def __init__(
@@ -23495,6 +23499,9 @@ class Workspace(Resource):
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network:
+         ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
@@ -23528,6 +23535,7 @@ class Workspace(Resource):
         self.v1_legacy_mode = kwargs.get('v1_legacy_mode', False)
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
+        self.managed_network = kwargs.get('managed_network', None)
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -23815,6 +23823,46 @@ class WorkspaceListResult(msrest.serialization.Model):
         super(WorkspaceListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
+
+
+class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
+    """Managed network settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _validation = {
+        'outbound_rules': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+        :keyword network_id:
+        :paramtype network_id: str
+        """
+        super(WorkspacePropertiesManagedNetwork, self).__init__(**kwargs)
 
 
 class WorkspaceUpdateParameters(msrest.serialization.Model):

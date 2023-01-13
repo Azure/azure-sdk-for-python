@@ -2618,6 +2618,15 @@
             "description": "The timestamp when the soft deleted workspace is going to be purged",
             "type": "string",
             "readOnly": true
+          },
+          "managedNetwork": {
+            "description": "Managed network settings.",
+            "allOf": [
+              {
+                "$ref": "#/definitions/ManagedNetworkSettings"
+              }
+            ],
+            "x-nullable": true
           }
         }
       },
@@ -6734,4 +6743,3 @@
       }
     }
   }
-  

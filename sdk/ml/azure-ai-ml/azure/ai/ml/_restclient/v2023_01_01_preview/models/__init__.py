@@ -448,6 +448,7 @@ try:
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword
     from ._models_py3 import WorkspaceListResult
+    from ._models_py3 import WorkspacePropertiesManagedNetwork
     from ._models_py3 import WorkspaceUpdateParameters
 except (SyntaxError, ImportError):
     from ._models import AKS  # type: ignore
@@ -891,6 +892,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceConnectionSharedAccessSignature  # type: ignore
     from ._models import WorkspaceConnectionUsernamePassword  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
+    from ._models import WorkspacePropertiesManagedNetwork  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
@@ -1477,6 +1479,7 @@ __all__ = [
     'WorkspaceConnectionSharedAccessSignature',
     'WorkspaceConnectionUsernamePassword',
     'WorkspaceListResult',
+    'WorkspacePropertiesManagedNetwork',
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',

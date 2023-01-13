@@ -9,8 +9,8 @@ from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2023_01_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -268,12 +268,11 @@ class WorkspaceOperations:
                         rest_user_assigned_identities[uai.resource_id] = None
                 identity.user_assigned_identities = rest_user_assigned_identities
 
-        """this is where we will create the managed network as REST object
+        """this is where we will create the managed network as REST object"""
         managed_network = kwargs.get("managed_network", workspace.managed_network)
-        existing_workspace = self.get(workspace.name, **kwargs)
         if managed_network:
             managed_network = managed_network._to_workspace_rest_object()
-            print(managed_network)"""
+            print(managed_network)
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
