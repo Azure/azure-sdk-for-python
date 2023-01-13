@@ -3,15 +3,15 @@ import pytest
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.entities import Command
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import ValidationException
 
-from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
+from .._util import _DSL_TIMEOUT_SECOND
 
 
 @pytest.mark.usefixtures(
     "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features"
+    "enable_private_preview_schema_features",
+    "enable_private_preview_pipeline_node_types"
 )
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
@@ -95,7 +95,6 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                     # invalid JSON string items
-
                     '[{"component_in_number": 1}, {}]',
                     "Items should have same keys with body inputs"
             )
@@ -115,8 +114,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
 
         with pytest.raises(ValidationException) as e:
-            invalid_pipeline()
+            pipeline_job = invalid_pipeline()
+            pipeline_job._validate(raise_error=True)
         assert error_message in str(e.value)
+
     @pytest.mark.parametrize(
         "items",
         (
