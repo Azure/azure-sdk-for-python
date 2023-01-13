@@ -129,8 +129,8 @@ class TestClientAsync(ACSSMTestCase):
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
-    @recorded_by_proxy_async
     @pytest.mark.live_test_only
+    @recorded_by_proxy_async
     async def test_send_sms_unique_message_ids_async(self):
         sms_client = self.create_client_from_connection_string()
 
