@@ -3,6 +3,7 @@ import re
 import pydash
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import (
     Input,
@@ -10,11 +11,11 @@ from azure.ai.ml import (
     Output,
     PyTorchDistribution,
     TensorFlowDistribution,
+    UserIdentityConfiguration,
     command,
     load_component,
     load_job,
     spark,
-    UserIdentityConfiguration,
 )
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
@@ -22,7 +23,6 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
-from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -98,6 +98,11 @@ class TestCommandFunction:
     def test_command_function(self, test_command):
         assert isinstance(test_command, Command)
         assert test_command._source == "BUILDER"
+
+        # Test print and jupyter rendering for the builder object
+        print(test_command)
+        test_command._repr_html_()
+
         expected_command = {
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
@@ -970,3 +975,32 @@ class TestCommandFunction:
                 "type": "command",
             }
         }
+
+    def test_set_identity(self, test_command):
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
+        node1 = test_command()
+        node2 = node1()
+        node2.identity = AmlTokenConfiguration()
+        node3 = node1()
+        node3.identity = {'type': 'AMLToken'}
+        assert node2.identity == node3.identity
+
+    def test_sweep_set_search_space(self, test_command):
+        from azure.ai.ml.entities._job.sweep.search_space import Choice
+        node1 = test_command()
+        command_node_to_sweep_1 = node1()
+        sweep_node_1 = command_node_to_sweep_1.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_1.search_space = {'batch_size': {'type': 'choice', 'values': [25, 35]}}
+
+        command_node_to_sweep_2 = node1()
+        sweep_node_2 = command_node_to_sweep_2.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_2.search_space = {'batch_size': Choice(values=[25, 35])}
+        assert sweep_node_1.search_space == sweep_node_2.search_space

@@ -1,15 +1,14 @@
 import pytest
-
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
 from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml import MLClient, load_component, Input
+from azure.ai.ml import Input, MLClient, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._parallel_for import parallel_for
 
-from .._util import include_private_preview_nodes_in_pipeline, _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 
 test_input = Input(
     type="uri_file",
@@ -56,7 +55,7 @@ class TestIfElse(TestControlFlowPipeline):
             compute="cpu-cluster",
         )
         def condition_pipeline():
-            result = basic_component(str_param="abc", int_param=1)
+            result = basic_component()
 
             node1 = hello_world_component_no_paths(component_in_number=1)
             node2 = hello_world_component_no_paths(component_in_number=2)
@@ -90,10 +89,6 @@ class TestIfElse(TestControlFlowPipeline):
             },
             "result": {
                 "_source": "REMOTE.WORKSPACE.COMPONENT",
-                "inputs": {
-                    "int_param": {"job_input_type": "literal", "value": "1"},
-                    "str_param": {"job_input_type": "literal", "value": "abc"},
-                },
                 "name": "result",
                 "type": "command",
             },
@@ -610,3 +605,43 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         # parallel for pipeline component is correctly generated
         with include_private_preview_nodes_in_pipeline():
             assert_job_cancel(pipeline_job, client)
+
+    def test_parallel_for_pipeline_with_empty_inputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_inputs.yml",
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component()
+            foreach_config = {}
+            for i in range(10):
+                foreach_config[f"silo_{i}"] = {}
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=foreach_config
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+            }
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'parallel_body': {'_source': 'YAML.COMPONENT',
+                              'name': 'parallel_body',
+                              'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '{"silo_0": {}, "silo_1": {}, "silo_2": {}, '
+                                       '"silo_3": {}, "silo_4": {}, "silo_5": {}, '
+                                       '"silo_6": {}, "silo_7": {}, "silo_8": {}, '
+                                       '"silo_9": {}}',
+                              'outputs': {'component_out_path': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_path}}'}},
+                              'type': 'parallel_for'}
+        }

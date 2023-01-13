@@ -93,6 +93,7 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
     "tools/azure-sdk-tools/setup.py"
   ],
@@ -647,6 +648,57 @@
       ]
     },
     {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/aio/operations/*.py",
+      "words": [
+        "Syms",
+        "MetastoreUpdation"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/models/*.py",
+      "words": [
+        "USQL",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "MetastoreUpdation",
+        "Netezza",
+        "Odbc",
+        "Responsys",
+        "Sybase",
+        "Twilio",
+        "Vertica",
+        "Xero",
+        "SASL",
+        "SSISDB",
+        "WTGCTBG",
+        "ilearner",
+        "DBFS",
+        "eloqua",
+        "byoa",
+        "cacerts",
+        "HDFS",
+        "hcatalog",
+        "ondemand",
+        "oozie",
+        "magento",
+        "mktorest",
+        "nbformat",
+        "paramref",
+        "myshopify",
+        "mysquare",
+        "xero"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
+      "words": [
+        "Syms",
+        "Updation",
+      ]
+    },
+    {
       "filename": "sdk/storage/azure-storage-file-datalake/**",
       "words": [
         "dlake",
@@ -832,7 +884,8 @@
         "posixpath",
         "SEPS",
         "wargs",
-        "pycache"
+        "pycache",
+        "ruamel"
       ]
     },
     {

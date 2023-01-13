@@ -7,9 +7,9 @@
 from abc import ABC, abstractclassmethod, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
@@ -40,10 +40,10 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     def __init__(
         self,
         credentials: Any,
-        name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
@@ -82,9 +82,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Datastore":
         data = data or {}

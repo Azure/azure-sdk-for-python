@@ -14,7 +14,7 @@ from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, ValidationErrorType
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
 
 from .._util import convert_ordered_dict_to_dict
 from .base_node import BaseNode

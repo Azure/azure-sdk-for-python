@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union, List
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -42,20 +42,22 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        settings: PipelineJobSettings = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        settings: Optional[PipelineJobSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -131,7 +133,10 @@ class Pipeline(BaseNode):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            inputs=self._job_inputs,
+            # Filter None out to avoid case below failed with conflict keys check:
+            # group: None (user not specified)
+            # group.xx: 1 (user specified
+            inputs={k: v for k, v in self._job_inputs.items() if v},
             outputs=self._job_outputs,
             component=self.component,
             settings=self.settings,

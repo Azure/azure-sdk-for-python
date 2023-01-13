@@ -34,6 +34,11 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVRO = "Avro"
     """Represents the Apache Avro schema format."""
 
+    JSON = "Json"
+    """Represents the JSON schema format."""
+
+    CUSTOM = "Custom"
+    """Represents a custom schema format."""
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
@@ -41,7 +46,8 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     V2021_10 = "2021-10"
+    V2022_10 = "2022-10"
     """This is the default version."""
 
 
-DEFAULT_VERSION = ApiVersion.V2021_10
+DEFAULT_VERSION = ApiVersion.V2022_10

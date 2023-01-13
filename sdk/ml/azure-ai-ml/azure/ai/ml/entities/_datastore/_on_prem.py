@@ -6,10 +6,10 @@
 
 from base64 import b64encode
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import DatastoreData, DatastoreType
-from azure.ai.ml._restclient.v2022_02_01_preview.models import HdfsDatastore as RestHdfsDatastore
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import HdfsDatastore as RestHdfsDatastore
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
@@ -51,11 +51,11 @@ class HdfsDatastore(Datastore):
         *,
         name: str,
         name_node_address: str,
-        hdfs_server_certificate: str = None,
+        hdfs_server_certificate: Optional[str] = None,
         protocol: str = HTTP,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         credentials: Union[KerberosKeytabCredentials, KerberosPasswordCredentials],
         **kwargs
     ):

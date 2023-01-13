@@ -3,12 +3,12 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
-from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_05_01.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import DATASTORE_SCHEMA_TYPES
 from azure.ai.ml.entities import (
@@ -18,13 +18,13 @@ from azure.ai.ml.entities import (
     AzureFileDatastore,
     Datastore,
 )
-from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
-from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     NoneCredentialConfiguration,
     ServicePrincipalConfiguration,
 )
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
 kerberos_keytab_yml = "hdfs_kerberos_keytab.yml"

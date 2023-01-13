@@ -1,5 +1,5 @@
-import re
 import json
+import re
 from pathlib import Path
 from unittest.mock import patch
 
@@ -14,7 +14,6 @@ from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
-from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -50,6 +49,10 @@ class TestPipelineJobValidate:
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 "In order to specify an existing codes, please provide",
             ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_referencing_component_file.yml",
+                "In order to specify an existing components, please provide the correct registry"
+            )
         ],
     )
     def test_pipeline_job_validation_on_load(self, pipeline_job_path: str, expected_error: str) -> None:
@@ -645,7 +648,7 @@ class TestDSLPipelineJobValidate:
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
-        "update_pipeline_schema",
+        "enable_private_preview_pipeline_node_types",
         "enable_private_preview_schema_features",
     )
     def test_pipeline_with_invalid_do_while_node(self) -> None:
@@ -671,3 +674,8 @@ class TestDSLPipelineJobValidate:
             "Not a valid integer.",
             error_messages["errors"],
         )
+
+    def test_arm_id_pipeline_node_compute(self) -> None:
+        job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_with_registered_pipeline_component.yml")
+        validation_result = job._validate_compute_is_set()
+        assert validation_result.passed

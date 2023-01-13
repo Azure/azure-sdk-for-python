@@ -7,45 +7,45 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
+    Ae365exepool,
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
     AISuperComputerStorageReferenceConfiguration,
+    Command,
+    DataTransfer,
+    Distributed,
+    HDInsight,
+    Hemera,
     ITPConfiguration,
     ITPInteractiveConfiguration,
     ITPPriorityConfiguration,
     ITPResourceConfiguration,
     ITPRetrySettings,
-    TargetSelector,
-    Command,
-    Scope,
-    HDInsight,
     Parallel,
-    Distributed,
-    DataTransfer,
-    Starlite,
     Pipeline,
-    Hemera,
-    Ae365exepool,
+    Scope,
+    Starlite,
+    TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AssetTypes, AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
-from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
-    set_run_settings,
     get_expected_runsettings_items,
+    set_run_settings,
     unregister_internal_components,
 )
 
@@ -198,6 +198,7 @@ class TestPipelineJob:
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
         from azure.ai.ml._utils.utils import try_enable_internal_components
+
         # force register internal components after partially reload schema files
         try_enable_internal_components(force=True)
 
@@ -408,10 +409,6 @@ class TestPipelineJob:
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
 
-        # handle some known difference in yaml_dict
-        for _input in yaml_dict["inputs"].values():
-            if "optional" in _input and _input["optional"] is False:
-                del _input["optional"]
         yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")

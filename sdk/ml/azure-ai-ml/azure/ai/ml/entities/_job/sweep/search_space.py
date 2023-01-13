@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from abc import ABC
-from typing import List, Union
+from typing import List, Optional, Union
 
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace
@@ -14,7 +14,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
 class SweepDistribution(ABC, RestTranslatableMixin):
-    def __init__(self, *, type: str = None):  # pylint: disable=redefined-builtin
+    def __init__(self, *, type: Optional[str] = None):  # pylint: disable=redefined-builtin
         self.type = type
 
     @classmethod
@@ -58,7 +58,7 @@ class Choice(SweepDistribution):
     :vartype type: str
     """
 
-    def __init__(self, values: List[Union[float, str, dict]] = None, **kwargs):
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -107,7 +107,7 @@ class Normal(SweepDistribution):
     :vartype type: str
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -128,7 +128,7 @@ class LogNormal(Normal):
     :vartype type: str
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -140,7 +140,7 @@ class QNormal(Normal):
     :vartype type: str
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
         self.q = q
@@ -160,7 +160,7 @@ class QLogNormal(QNormal):
     :vartype type: str
     """
 
-    def __init__(self, mu: float = None, sigma: float = None, q: int = None, **kwargs):
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.QLOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, q=q, **kwargs)
 
@@ -171,7 +171,8 @@ class Randint(SweepDistribution):
     :ivar type: Specifies the type of sweep distribution. Set automatically to "randint" for this class.
     :vartype type: str
     """
-    def __init__(self, upper: int = None, **kwargs):
+
+    def __init__(self, upper: Optional[int] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.RANDINT)
         super().__init__(**kwargs)
         self.upper = upper
@@ -191,7 +192,7 @@ class Uniform(SweepDistribution):
     :vartype type: str
     """
 
-    def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.UNIFORM)
         super().__init__(**kwargs)
         self.min_value = min_value
@@ -212,7 +213,7 @@ class LogUniform(Uniform):
     :vartype type: str
     """
 
-    def __init__(self, min_value: float = None, max_value: float = None, **kwargs):
+    def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs):
         kwargs.setdefault(TYPE, SearchSpace.LOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, **kwargs)
 
@@ -226,9 +227,9 @@ class QUniform(Uniform):
 
     def __init__(
         self,
-        min_value: Union[int, float] = None,
-        max_value: Union[int, float] = None,
-        q: int = None,
+        min_value: Optional[Union[int, float]] = None,
+        max_value: Optional[Union[int, float]] = None,
+        q: Optional[int] = None,
         **kwargs,
     ):
         kwargs.setdefault(TYPE, SearchSpace.QUNIFORM)
@@ -249,6 +250,9 @@ class QLogUniform(QUniform):
     :ivar type: Specifies the type of sweep distribution. Set automatically to "qloguniform" for this class.
     :vartype type: str
     """
-    def __init__(self, min_value: float = None, max_value: float = None, q: int = None, **kwargs):
+
+    def __init__(
+        self, min_value: Optional[float] = None, max_value: Optional[float] = None, q: Optional[int] = None, **kwargs
+    ):
         kwargs.setdefault(TYPE, SearchSpace.QLOGUNIFORM)
         super().__init__(min_value=min_value, max_value=max_value, q=q, **kwargs)

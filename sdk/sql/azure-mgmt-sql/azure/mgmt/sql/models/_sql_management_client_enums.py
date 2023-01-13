@@ -59,6 +59,13 @@ class AggregationFunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUM = "sum"
 
 
+class AlwaysEncryptedEnclaveType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of enclave requested on the database i.e. Default or VBS enclaves."""
+
+    DEFAULT = "Default"
+    VBS = "VBS"
+
+
 class AuthenticationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AuthenticationName."""
 
