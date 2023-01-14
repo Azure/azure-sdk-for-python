@@ -15,8 +15,8 @@ from typing import (
     AnyStr,
     List,
     TYPE_CHECKING,
-    cast
-)  # pylint: disable=unused-import
+    cast,
+)
 
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
@@ -43,6 +43,7 @@ if TYPE_CHECKING:
         uamqp_SendClient = None
         uamqp_JWTTokenAuth = None
     from ._pyamqp.client import SendClient
+    from ._pyamqp.message import BatchMessage
     from ._pyamqp.authentication import JWTTokenAuth
     from ._transport._base import AmqpTransport
     from ._producer_client import EventHubProducerClient
@@ -57,14 +58,6 @@ def _set_partition_key(
 ) -> Iterable[EventData]:
     for ed in iter(event_datas):
         amqp_transport.set_message_partition_key(ed._message, partition_key)  # pylint: disable=protected-access
-        yield ed
-
-
-def _set_trace_message(
-    event_datas: Iterable[EventData], parent_span: Optional["AbstractSpan"] = None
-) -> Iterable[EventData]:
-    for ed in iter(event_datas):
-        trace_message(ed, parent_span)
         yield ed
 
 
@@ -204,7 +197,11 @@ class EventHubProducer(
                     outgoing_event_data._message, partition_key  # pylint: disable=protected-access
                 )
             wrapper_event_data = outgoing_event_data
-            trace_message(wrapper_event_data, span)
+            wrapper_event_data._message = trace_message(  # pylint: disable=protected-access
+                wrapper_event_data._message,  # pylint: disable=protected-access
+                amqp_transport=self._amqp_transport,
+                parent_span=span
+            )
         else:
             if isinstance(
                 event_data, EventDataBatch
@@ -229,17 +226,12 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                for (
-                    event
-                ) in event_data._message.data:  # pylint: disable=protected-access
-                    trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(
                         event_data, partition_key, self._amqp_transport
                     )
-                event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key=partition_key
                 )

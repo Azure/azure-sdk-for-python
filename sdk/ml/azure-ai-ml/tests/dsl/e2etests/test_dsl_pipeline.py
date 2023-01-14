@@ -33,7 +33,7 @@ from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -792,10 +792,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # TODO: optional_param_with_default should also exists
         assert len(pipeline_job.jobs["default_optional_component_1"].inputs) == 2
 
-    @pytest.mark.skipif(
-        not is_live(),
-        reason="TODO 2144070: recording is not stable for this test before the fix after we enable on-disk cache",
-    )
     def test_pipeline_with_none_parameter_has_default_optional_false(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -844,7 +840,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="default_optional_pipeline")
 
-        # only the two required input exists
+        # only the two required inputs exists
         assert len(next(pipeline_job.jobs.values().__iter__()).inputs) == 2
         validate_result = pipeline._validate()
         assert validate_result.passed is True
@@ -1456,8 +1452,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         mpi_func = load_component(source=str(components_dir / "helloworld_component_mpi.yml"))
         assert mpi_func._validate().passed
 
+        invalid_component_name = "_invalid"
+
         # name of anonymous component in pipeline job should be overwritten
-        mpi_func.name = "_invalid"
+        mpi_func.name = invalid_component_name
         assert not mpi_func._validate().passed
 
         @dsl.pipeline(
@@ -1481,6 +1479,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_job: PipelineJob = client.jobs.create_or_update(
             pipeline, experiment_name=experiment_name, continue_on_step_failure=True
         )
+        # Theoretically, we should keep the invalid name in request body,
+        # as component name valid in azureml-components maybe invalid in azure-ai-ml.
+        # So we leave this validation to server-side for now.
+        assert mpi_func._to_rest_object().properties.component_spec["name"] == invalid_component_name
+
         # continue_on_step_failure can't be set in create_or_update
         assert created_job.settings.continue_on_step_failure is False
         assert created_job.jobs["hello_world_component_mpi"].component.startswith(ANONYMOUS_COMPONENT_NAME)
@@ -1508,13 +1511,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(10, 15, job_input)
         job = client.jobs.create_or_update(pipeline)
         assert job.settings.force_rerun is None
-
-        # 1 interesting case: in client.jobs.create_or_update, component_func1 and/or component_func2
-        # will be renamed to azureml_anonymous in resolution, and the component name will be used as
-        # node name when we use them in the 2nd pipeline job.
-        # After we enabled in-memory cache, only component_func1 will be resolved, and name of component_func2
-        # will keep as randstr("component_name"). Here we manually rename to avoid recording change.
-        component_func2.name = "azureml_anonymous"
 
         @dsl.pipeline(
             name=randstr("pipeline_name"),
@@ -2292,6 +2288,57 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
+
+    def test_registered_pipeline_with_group(self, client: MLClient):
+
+        hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
+        hello_world_component_func = load_component(hello_world_component_yaml)
+        from azure.ai.ml.dsl._group_decorator import group
+
+        @group
+        class SubParamClass:
+            int_param: Input(min=1.0, max=5.0, type="integer")
+
+        @group
+        class ParamClass:
+            sub: SubParamClass
+            str_param: str = "test"
+            bool_param: bool = True
+            number_param = 4.0
+
+        @dsl.pipeline()
+        def pipeline_with_group(group: ParamClass):
+            hello_world_component_func(
+                component_in_string=group.str_param,
+                component_in_ranged_number=group.number_param,
+                component_in_boolean=group.bool_param,
+                component_in_ranged_integer=group.sub.int_param,
+            )
+        component = client.components.create_or_update(pipeline_with_group)
+        # Assert key not exists
+        match = "(.*)unexpected keyword argument 'group.not_exist'(.*)valid keywords: " \
+                "'group', 'group.sub.int_param', 'group.str_param', 'group.bool_param', 'group.number_param'"
+        with pytest.raises(UnexpectedKeywordError, match=match):
+            component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group.not_exist": 4,
+            })
+        # Assert conflict assignment
+        with pytest.raises(ValidationException, match="Conflict parameter key 'group' and 'group.number_param'"):
+            pipeline = component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group": ParamClass(sub=SubParamClass(int_param=1))
+            })
+            pipeline.settings.default_compute = "cpu-cluster"
+            client.jobs.create_or_update(pipeline)
+        # Assert happy path
+        inputs = {
+            "group.number_param": 4.0, "group.str_param": "testing", "group.sub.int_param": 4
+        }
+        pipeline = component(**inputs)
+        pipeline.settings.default_compute = "cpu-cluster"
+        rest_pipeline_job = client.jobs.create_or_update(pipeline)
+        assert rest_pipeline_job._to_dict()["inputs"] == {key: str(val) for key, val in inputs.items()}
 
     def test_dsl_pipeline_with_default_component(
         self,

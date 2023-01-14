@@ -5,11 +5,7 @@
 import asyncio
 import functools
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
@@ -30,7 +26,7 @@ def await_prepared_test(test_fn):
 
     return run
 
-class TestSearchIndexClient(object):
+class TestSearchIndexClient:
     def test_index_init(self):
         client = SearchIndexClient("endpoint", CREDENTIAL)
         assert client._headers == {
@@ -72,7 +68,7 @@ class TestSearchIndexClient(object):
             client = SearchIndexClient(12345, credential)
 
 
-class TestSearchIndexerClient(object):
+class TestSearchIndexerClient:
     def test_indexer_init(self):
         client = SearchIndexerClient("endpoint", CREDENTIAL)
         assert client._headers == {

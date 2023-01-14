@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(object):
+class ManagedIdentityCredential:
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
@@ -33,7 +33,7 @@ class ManagedIdentityCredential(object):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[TokenCredential]
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -95,7 +95,7 @@ class ManagedIdentityCredential(object):
         self.__exit__()
 
     @log_get_token("ManagedIdentityCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

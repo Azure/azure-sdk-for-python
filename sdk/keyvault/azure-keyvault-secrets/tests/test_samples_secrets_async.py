@@ -114,8 +114,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_client = client
         async with secret_client:
             for i in range(7):
-                secret_name = self.get_resource_name("secret{}".format(i))
-                await secret_client.set_secret(secret_name, "value{}".format(i))
+                secret_name = self.get_resource_name(f"secret{i}")
+                await secret_client.set_secret(secret_name, f"value{i}")
 
             # [START list_secrets]
             # gets a list of secrets in the vault

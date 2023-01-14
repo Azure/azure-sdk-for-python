@@ -64,12 +64,12 @@ async def run_sample():
     # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
     # if creation is successful, and the CertificateOperation if not.
     certificate = await client.create_certificate(certificate_name=cert_name, policy=cert_policy)
-    print("Certificate with name '{0}' created".format(certificate.name))
+    print(f"Certificate with name '{certificate.name}' created")
 
     # Let's get the bank certificate using its name
     print("\n.. Get a certificate by name")
     bank_certificate = await client.get_certificate(cert_name)
-    print("Certificate with name '{0}' was found.".format(bank_certificate.name))
+    print(f"Certificate with name '{bank_certificate.name}' was found.")
 
     # After one year, the bank account is still active, and we have decided to update the tags.
     print("\n.. Update a certificate by name")
@@ -78,21 +78,18 @@ async def run_sample():
         certificate_name=bank_certificate.name, tags=tags
     )
     print(
-        "Certificate with name '{0}' was updated on date '{1}'".format(
-            bank_certificate.name, updated_certificate.properties.updated_on
-        )
+        f"Certificate with name '{bank_certificate.name}' was updated on date "
+        f"'{updated_certificate.properties.updated_on}'"
     )
     print(
-        "Certificate with name '{0}' was updated with tags '{1}'".format(
-            bank_certificate.name, updated_certificate.properties.tags
-        )
+        f"Certificate with name '{bank_certificate.name}' was updated with tags '{updated_certificate.properties.tags}'"
     )
 
     # The bank account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete certificate")
     deleted_certificate = await client.delete_certificate(bank_certificate.name)
     print("Deleting certificate..")
-    print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))
+    print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 
     print("\nrun_sample done")
     await credential.close()

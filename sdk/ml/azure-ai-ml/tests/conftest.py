@@ -1,4 +1,5 @@
 import base64
+import hashlib
 import json
 import os
 import random
@@ -7,13 +8,15 @@ import shutil
 import time
 import uuid
 from datetime import datetime
+from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Union, Optional
 from unittest.mock import Mock, patch
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -524,8 +527,35 @@ def generate_component_hash(*args, **kwargs):
     return dict_hash
 
 
+def get_client_hash_with_request_node_name(
+    subscription_id: Optional[str],
+    resource_group_name: Optional[str],
+    workspace_name: Optional[str],
+    registry_name: Optional[str],
+    random_seed: str
+):
+    """Generate a hash for the client."""
+    object_hash = hashlib.sha256()
+    for s in [
+        subscription_id,
+        resource_group_name,
+        workspace_name,
+        registry_name,
+        random_seed,
+    ]:
+        object_hash.update(str(s).encode("utf-8"))
+    return object_hash.hexdigest()
+
+
+def clear_on_disk_cache(cached_resolver):
+    """Clear on disk cache for current client."""
+    cached_resolver._lock.acquire()
+    shutil.rmtree(cached_resolver._on_disk_cache_dir, ignore_errors=True)
+    cached_resolver._lock.release()
+
+
 @pytest.fixture
-def mock_component_hash(mocker: MockFixture):
+def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     """Mock the component hash function.
 
     In playback mode, workspace information in returned arm_id will be normalized like this:
@@ -538,37 +568,51 @@ def mock_component_hash(mocker: MockFixture):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
-
-    if is_live():
+    if is_live() and not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
             side_effect=generate_component_hash
         )
 
-    if is_live_and_not_recording():
-        return
+    # On-disk cache can't be shared among different tests in playback mode or when recording.
+    # When doing recording:
+    # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
+    #    the cached result from tests run earlier, so we won't found enough recordings when
+    #    running tests in reversed order.
+    # In playback mode:
+    # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
+    #   with the same on-disk hash.
+    # 2) Server-side may return different version for the same anonymous component in different workspace,
+    #   while workspace information will be normalized in recordings. If we record test1 in workspace A
+    #   and test2 in workspace B, the version in recordings can be different.
+    # So we use a random (probably unique) on-disk cache base directory for each test, and on-disk cache operations
+    # will be thread-safe when concurrently running different tests.
+    mocker.patch(
+        "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
+        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex)
+    )
 
-    if not os.getenv("ENABLE_ON_DISK_CACHE_ACROSS_TESTS", False) in ["True", "true", True]:
-        # On-disk cache can't be shared among different tests in playback mode or when recording.
-        # When doing recording:
-        # 1) Recorded requests may be impacted by the order to run tests. Tests run later will reuse
-        #    the cached result from tests run earlier, so we won't found enough recordings when
-        #    running tests in reversed order.
-        # In playback mode:
-        # 1) We can't guarantee that server-side will return the same version for 2 anonymous component
-        #   with the same on-disk hash.
-        # 2) Server-side may return different version for the same anonymous component in different workspace,
-        #   while workspace information will be normalized in recordings. If we record test1 in workspace A
-        #   and test2 in workspace B, the version in recordings can be different.
-        # So we need to clear on-disk cache for each test.
+    # Collect involved resolvers before yield, as fixtures may be destroyed after yield.
+    from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+    involved_resolvers = []
+    for client_fixture_name in ["client", "registry_client"]:
+        if client_fixture_name not in request.fixturenames:
+            continue
+        client: MLClient = request.getfixturevalue(client_fixture_name)
+        involved_resolvers.append(CachedNodeResolver(
+            resolver=None,
+            subscription_id=client.subscription_id,
+            resource_group_name=client.resource_group_name,
+            workspace_name=client.workspace_name,
+            registry_name=client._operation_scope.registry_name,
+        ))
 
-        # If you want to run tests concurrently, you can either:
-        # 1) Disable on-disk cache or
-        # 2) Set ENABLE_ON_DISK_CACHE_ACROSS_TESTS to True and acknowledge that you may meet
-        #   the issues mentioned above.
-        from azure.ai.ml._utils._cache_utils import CachedNodeResolver
-        shutil.rmtree(CachedNodeResolver.get_on_disk_cache_base_dir(), ignore_errors=True)
+    yield
+
+    # clear on-disk cache after each test
+    for resolver in involved_resolvers:
+        clear_on_disk_cache(resolver)
 
 
 @pytest.fixture
@@ -682,6 +726,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._utils._cache_utils.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
@@ -697,6 +742,7 @@ def enable_private_preview_schema_features():
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
@@ -773,3 +819,18 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
+
+
+@pytest.fixture()
+def enable_private_preview_pipeline_node_types():
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    schema = pipeline_job.PipelineJobSchema
+    original_jobs = schema._declared_fields["jobs"]
+    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        schema._declared_fields["jobs"] = original_jobs
