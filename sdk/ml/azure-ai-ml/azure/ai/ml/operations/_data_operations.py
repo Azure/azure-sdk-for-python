@@ -350,14 +350,7 @@ class DataOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name
             )
-        data_version_resource = self._operation.get(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                name=name,
-                version=latest_version,
-                **self._init_kwargs,
-            )
-        return Data._from_rest_object(data_version_resource)
+        return self.get(name, version=latest_version)
 
 
 def _assert_local_path_matches_asset_type(
