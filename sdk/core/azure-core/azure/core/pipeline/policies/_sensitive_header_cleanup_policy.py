@@ -55,7 +55,7 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        insecure_domain_change = request.context.options.pop('insecure_domain_change', False)
+        insecure_domain_change = request.context.options.pop("insecure_domain_change", False)
         if not self._not_clean_up_header and insecure_domain_change:
             for header in self._block_headers_list:
                 request.http_request.headers.pop(header, None)
