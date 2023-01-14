@@ -340,9 +340,9 @@ if uamqp_installed:
                 **kwargs
             )
             status_code = response.application_properties[kwargs.get("status_code_field")]
-            description = response.application_properties.get(
+            description: Optional[Union[str, bytes]] = response.application_properties.get(
                 kwargs.get("description_fields")
-            )  # type: Optional[Union[str, bytes]]
+            )
             return status_code, description, response
 
         @staticmethod

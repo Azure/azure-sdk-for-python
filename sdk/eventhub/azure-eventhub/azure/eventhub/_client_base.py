@@ -47,14 +47,24 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from ._producer_client import EventHubProducerClient
+    from ._consumer_client import EventHubConsumerClient
+    from ._transport._base import AmqpTransport
     try:
-        from uamqp import Message as uamqp_Message
-        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import (   # pylint:disable=unused-import
+            Message as uamqp_Message,
+            ReceiveClient as uamqp_ReceiveClient,
+            SendClient as uamqp_SendClient
+        )
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth   # pylint:disable=unused-import
     except ImportError:
         uamqp_Message = None
         uamqp_JWTTokenAuth = None
+        uamqp_SendClient = None
+        uamqp_ReceiveClient = None
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp import SendClient, ReceiveClient
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -124,7 +134,7 @@ def _parse_conn_str(
     parsed = urlparse(endpoint)
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
-    host = cast(str, parsed.netloc.strip())
+    host = parsed.netloc.strip()
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
@@ -346,7 +356,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
+    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
@@ -407,7 +417,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             raise last_exception
 
     def _management_request(
-        self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
+        self, mgmt_msg: Union["uamqp_Message", Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
         retried_times = 0
@@ -532,6 +542,7 @@ class ConsumerProducerMixin(object):
         pass
 
     def _check_closed(self):
+        self._name: str
         if self.closed:
             raise ClientClosedError(
                 f"{self._name} has been closed. Please create a new one to handle event data."
@@ -540,6 +551,9 @@ class ConsumerProducerMixin(object):
     def _open(self):
         """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
         # pylint: disable=protected-access
+        self._handler: Union["uamqp_SendClient", "uamqp_ReceiveClient", SendClient, ReceiveClient]
+        self._client: Union["EventHubProducerClient", "EventHubConsumerClient"]
+        self._amqp_transport: "AmqpTransport"
         if not self.running:
             if self._handler:
                 self._handler.close()

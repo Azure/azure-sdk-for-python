@@ -211,7 +211,7 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, Any]:
         return buffer, value
 
 
-def decode_payload(buffer: memoryview) -> Message
+def decode_payload(buffer: memoryview) -> Message:
     message: Dict[str, Union[Properties, Header, Dict, bytes, List]] = {}
     while buffer:
         # Ignore the first two bytes, they will always be the constructors for

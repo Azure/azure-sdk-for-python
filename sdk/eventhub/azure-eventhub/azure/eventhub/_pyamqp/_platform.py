@@ -19,13 +19,11 @@ except ImportError:  # pragma: no cover
 RE_NUM = re.compile(r'(\d+).+')
 
 
-def _linux_version_to_tuple(s):
-    # type: (str) -> Tuple[int, int, int]
+def _linux_version_to_tuple(s: str) -> Tuple[int, int, int]:
     return cast(Tuple[int, int, int], tuple(map(_versionatom, s.split('.')[:3])))
 
 
-def _versionatom(s):
-    # type: (str) -> int
+def _versionatom(s: str) -> int:
     if s.isdigit():
         return int(s)
     match = RE_NUM.match(s)

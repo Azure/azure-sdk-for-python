@@ -99,7 +99,7 @@ class EventHubProducer(
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
-        self._unsent_events = []  # type: List[Any]
+        self._unsent_events: List[Any] = []
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition

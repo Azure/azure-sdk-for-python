@@ -557,11 +557,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             return
 
-    def _process_incoming_frame(
+    def _process_incoming_frame(    # pylint:disable=too-many-return-statements
         self,
         channel: int,
         frame: Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]
-    ) -> bool:  # pylint:disable=too-many-return-statements
+    ) -> bool:
         """Process an incoming frame, either directly or by passing to the necessary Session.
 
         :param int channel: The channel the frame arrived on.

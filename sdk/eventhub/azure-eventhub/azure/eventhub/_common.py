@@ -19,6 +19,7 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
+    Mapping
 )
 from typing_extensions import TypedDict
 
@@ -134,13 +135,13 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self._uamqp_message: Optional[Union[LegacyMessage, uamqp_Message]] = None
+        self._uamqp_message: Optional[Union[LegacyMessage, "uamqp_Message"]] = None
         self._message: Message = None  # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
-        self.message_id = None
-        self.content_type = None
-        self.correlation_id = None
+        self.message_id: Optional[str] = None
+        self.content_type: Optional[str] = None
+        self.correlation_id: Optional[str] = None
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
@@ -297,18 +298,18 @@ class EventData(object):
     def sequence_number(self) -> Optional[int]:
         """The sequence number of the event.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
+        return cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.annotations).get(PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self) -> Optional[str]:
         """The offset of the event.
 
-        :rtype: str
+        :rtype: str or None
         """
         try:
-            return self._raw_amqp_message.annotations[PROP_OFFSET].decode("UTF-8")
+            return cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.annotations)[PROP_OFFSET].decode("UTF-8")
         except (KeyError, AttributeError):
             return None
 
@@ -316,9 +317,9 @@ class EventData(object):
     def enqueued_time(self) -> Optional[datetime.datetime]:
         """The enqueued timestamp of the event.
 
-        :rtype: datetime.datetime
+        :rtype: datetime.datetime or None
         """
-        timestamp = self._raw_amqp_message.annotations.get(PROP_TIMESTAMP, None)
+        timestamp = cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.annotations).get(PROP_TIMESTAMP, None)
         if timestamp:
             return utc_from_timestamp(float(timestamp) / 1000)
         return None
@@ -327,9 +328,9 @@ class EventData(object):
     def partition_key(self) -> Optional[bytes]:
         """The partition key of the event.
 
-        :rtype: bytes
+        :rtype: bytes or None
         """
-        return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
+        return cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.annotations).get(PROP_PARTITION_KEY, None)
 
     @property
     def properties(self) -> Dict[Union[str, bytes], Any]:
@@ -337,7 +338,7 @@ class EventData(object):
 
         :rtype: dict
         """
-        return self._raw_amqp_message.application_properties
+        return cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.application_properties)
 
     @properties.setter
     def properties(self, value: Dict[Union[str, bytes], Any]):
@@ -383,7 +384,7 @@ class EventData(object):
                     value = getattr(self._raw_amqp_message.properties, prop_name, None)
                     if value:
                         self._sys_properties[key] = value
-            self._sys_properties.update(self._raw_amqp_message.annotations)
+            self._sys_properties.update(cast(Mapping[bytes, Any], self._raw_amqp_message.annotations))
         return self._sys_properties
 
     @property
@@ -457,7 +458,7 @@ class EventData(object):
         if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._raw_amqp_message.properties.content_type.decode("UTF-8")
+            return cast(bytes, self._raw_amqp_message.properties.content_type).decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._raw_amqp_message.properties.content_type
 
@@ -477,7 +478,7 @@ class EventData(object):
         if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._raw_amqp_message.properties.correlation_id.decode("UTF-8")
+            return cast(bytes, self._raw_amqp_message.properties.correlation_id).decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._raw_amqp_message.properties.correlation_id
 
@@ -499,7 +500,7 @@ class EventData(object):
         if not self._raw_amqp_message.properties:
             return None
         try:
-            return self._raw_amqp_message.properties.message_id.decode("UTF-8")
+            return cast(bytes, self._raw_amqp_message.properties.message_id).decode("UTF-8")
         except (AttributeError, UnicodeDecodeError):
             return self._raw_amqp_message.properties.message_id
 

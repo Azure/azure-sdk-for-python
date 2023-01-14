@@ -9,7 +9,7 @@ import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union, List
+from typing import Optional, Union
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
 from ._sender_async import SenderLink
@@ -81,8 +81,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         new_session = cls(connection, channel)
         return new_session
 
-    async def _set_state(self, new_state):
-        # type: (SessionState) -> None
+    async def _set_state(self, new_state: SessionState) -> None:
         """Update the session state."""
         if new_state is None:
             return
@@ -102,8 +101,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
                 await self._set_state(SessionState.DISCARDING)
 
-    def _get_next_output_handle(self):
-        # type: () -> int
+    def _get_next_output_handle(self) -> int:
         """Get the next available outgoing handle number within the max handle limit.
 
         :raises ValueError: If maximum handle has been reached.
@@ -382,8 +380,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             )
 
-    async def _wait_for_response(self, wait, end_state):
-        # type: (Union[bool, float], SessionState) -> None
+    async def _wait_for_response(
+        self,
+        wait: Union[bool, float],
+        end_state: SessionState
+    ) -> None:
         if wait is True:
             await self._connection.listen(wait=False)
             while self.state != end_state:
@@ -406,8 +407,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         elif not self.allow_pipelined_open:
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
-    async def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError], bool) -> None
+    async def end(
+        self,
+        error: Optional[AMQPError] = None,
+        wait: bool = False
+    ) -> None:
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 await self._outgoing_end(error=error)
