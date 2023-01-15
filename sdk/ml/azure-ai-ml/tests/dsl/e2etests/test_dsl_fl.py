@@ -1,11 +1,19 @@
+import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from .._util import _DSL_TIMEOUT_SECOND
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
+
+from typing import Callable
+
+from azure.ai.ml import (
+    MLClient,
+)
 
 
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
-@pytest.mark.pipeline_test
+@pytest.mark.core_sdk_test
 class TestDSLPipeline(AzureRecordedTestCase):
     def test_fl_pipeline(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         pass

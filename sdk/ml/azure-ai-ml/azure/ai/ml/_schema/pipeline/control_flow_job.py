@@ -106,3 +106,15 @@ class ParallelForSchema(BaseLoopSchema):
         result = copy.copy(job)
         _resolve_outputs(result, job)
         return result
+
+# Schema of a federated learning scatter-gather node.
+class FLScatterGatherSchema(ControlFlowSchema):
+    # TODO determine serialization once inputs are determined.
+
+    #@pre_dump
+    def serialize_items(self, data, **kwargs): 
+        pass
+
+    #@pre_dump
+    def resolve_outputs(self, job, **kwargs): 
+        pass

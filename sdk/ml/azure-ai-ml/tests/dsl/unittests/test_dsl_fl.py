@@ -1,8 +1,11 @@
+import pytest
 
+from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestDSLPipeline:
-    def test_dsl_fl_encoding(self) -> None:
+    def test_fl_node_creation(self) -> None:
         pass
         '''If the 4, big test files for testing the dsl pipeline are any clue, there's a lot to test
         when decorators are concerned. 
@@ -15,3 +18,9 @@ class TestDSLPipeline:
         offer to represent the scatter-gather loop and silos encode everything correctly for azure to 
         process.
         '''
+
+    def test_fl_node_creation_bad(self) -> None:
+        pass
+
+    def test_fl_node_in_pipeline(self) -> None:
+        pass
