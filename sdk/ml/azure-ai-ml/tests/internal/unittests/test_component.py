@@ -367,21 +367,25 @@ class TestComponent:
         assert not code_path.is_dir()
 
     def test_additional_includes_ignore(self) -> None:
-        test_configs_dir = Path("./tests/test_configs/internal/")
-        yaml_path = test_configs_dir / "component_with_additional_includes" / "helloworld_additional_includes.yml"
-        additional_includes_dir = test_configs_dir / "additional_includes"
-        component: InternalComponent = load_component(source=yaml_path)
-        # create some files/folders expected to ignore
-        code_pycache = yaml_path.parent / "__pycache__"
-        additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
-        additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
-        try:
-            if not code_pycache.is_dir():
-                code_pycache.mkdir()
+        origin_test_configs_dir = Path("./tests/test_configs/internal/")
+        with tempfile.TemporaryDirectory() as test_configs_dir:
+            for dir_name in ["component_with_additional_includes", "additional_includes"]:
+                shutil.copytree(origin_test_configs_dir / dir_name, Path(test_configs_dir) / dir_name)
+
+            yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
+            additional_includes_dir = Path(test_configs_dir) / "additional_includes"
+
+            component: InternalComponent = load_component(source=yaml_path)
+            # create some files/folders expected to ignore
+            code_pycache = yaml_path.parent / "__pycache__"
+            additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
+            additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
+            code_pycache.mkdir()
+
             (code_pycache / "a.pyc").touch()
             additional_includes_ignore.touch()
-            if not additional_includes_pycache.is_dir():
-                additional_includes_pycache.mkdir()
+
+            additional_includes_pycache.mkdir()
             (additional_includes_pycache / "a.pyc").touch()
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
@@ -389,13 +393,6 @@ class TestComponent:
                 assert not (code_path / "__pycache__").exists()
                 assert not (code_path / "library1" / "x.additional_includes").exists()
                 assert not (code_path / "library1" / "__pycache__").exists()
-        finally:
-            if code_pycache.is_dir():
-                shutil.rmtree(code_pycache)
-            if additional_includes_ignore.is_file():
-                additional_includes_ignore.unlink()
-            if additional_includes_pycache.is_dir():
-                shutil.rmtree(additional_includes_pycache)
 
     def test_additional_includes_merge_folder(self) -> None:
         yaml_path = (
@@ -677,3 +674,25 @@ class TestComponent:
                 match="InternalCode name are calculated based on its content and cannot be changed.*"
             ):
                 code.name = expected_snapshot_id + "1"
+
+    def test_snapshot_id_calculation(self):
+        origin_test_configs_dir = Path("./tests/test_configs/internal/")
+        with tempfile.TemporaryDirectory() as test_configs_dir:
+            shutil.copytree(
+                origin_test_configs_dir / "component-reuse/simple-command",
+                Path(test_configs_dir) / "simple-command"
+            )
+
+            yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
+
+            component: InternalComponent = load_component(source=yaml_path)
+            # create some files/folders expected to ignore
+            code_pycache = yaml_path.parent / "__pycache__"
+            code_pycache.mkdir()
+            (code_pycache / "a.pyc").touch()
+
+            # resolve and check snapshot directory
+            with component._resolve_local_code() as code:
+                # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
+                assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
+

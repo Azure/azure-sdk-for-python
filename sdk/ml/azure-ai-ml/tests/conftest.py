@@ -568,12 +568,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     Note that component hash value in playback mode can be different from the one in live mode,
     so tests that check component hash directly should be skipped if not is_live.
     """
-    # do nothing if in live mode and not recording
-    if is_live_and_not_recording():
-        yield
-        return
-
-    if is_live():
+    if is_live() and not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
             "azure.ai.ml.entities._component.pipeline_component.hash_dict",
@@ -747,6 +742,7 @@ def enable_private_preview_schema_features():
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
@@ -823,3 +819,18 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
+
+
+@pytest.fixture()
+def enable_private_preview_pipeline_node_types():
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    schema = pipeline_job.PipelineJobSchema
+    original_jobs = schema._declared_fields["jobs"]
+    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        schema._declared_fields["jobs"] = original_jobs
