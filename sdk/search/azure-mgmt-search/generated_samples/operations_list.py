@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_get_service.py
+    python operations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,14 @@ from azure.mgmt.search import SearchManagementClient
 def main():
     client = SearchManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.services.get(
-        resource_group_name="rg1",
-        search_service_name="mysearchservice",
-    )
-    print(response)
+    response = client.operations.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/SearchGetService.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/OperationsList.json
 if __name__ == "__main__":
     main()
