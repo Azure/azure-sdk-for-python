@@ -125,7 +125,9 @@ class InternalComponentSchema(ComponentSchema):
 
         if "inputs" in data and isinstance(data["inputs"], dict):
             for input_port in data["inputs"].values():
-                if input_port["type"].lower() in ["string", "enum"]:
+                input_type = input_port["type"]
+                # input type can be a list for internal component
+                if isinstance(input_type, str) and input_type.lower() in ["string", "enum"]:
                     if not isinstance(input_port.get("default", ""), str):
                         input_port["default"] = convert_to_str(input_port["default"])
                     if "enum" in input_port and any([not isinstance(item, str) for item in input_port["enum"]]):
