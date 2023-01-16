@@ -94,6 +94,14 @@ class CompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TAR_G_ZIP = "tarGZip"
 
 
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the spark config."""
+
+    DEFAULT = "Default"
+    CUSTOMIZED = "Customized"
+    ARTIFACT = "Artifact"
+
+
 class CopyBehaviorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All available types of copy behavior."""
 
@@ -786,6 +794,12 @@ class SparkAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USERNAME = "Username"
     USERNAME_AND_PASSWORD = "UsernameAndPassword"
     WINDOWS_AZURE_HD_INSIGHT_SERVICE = "WindowsAzureHDInsightService"
+
+
+class SparkConfigurationReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Spark configuration reference type."""
+
+    SPARK_CONFIGURATION_REFERENCE = "SparkConfigurationReference"
 
 
 class SparkJobReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

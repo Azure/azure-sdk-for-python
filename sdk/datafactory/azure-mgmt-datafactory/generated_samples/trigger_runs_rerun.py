@@ -14,7 +14,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
     pip install azure-identity
     pip install azure-mgmt-datafactory
 # USAGE
-    python get_private_link_resources_of_a_site.py
+    python trigger_runs_rerun.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,18 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 def main():
     client = DataFactoryManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+        subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.private_link_resources.get(
+    response = client.trigger_runs.rerun(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
+        trigger_name="exampleTrigger",
+        run_id="2f7fdb90-5df1-4b8e-ac2f-064cfa58202b",
     )
     print(response)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/GetPrivateLinkResources.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/TriggerRuns_Rerun.json
 if __name__ == "__main__":
     main()

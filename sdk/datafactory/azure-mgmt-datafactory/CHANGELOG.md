@@ -1,5 +1,19 @@
 # Release History
 
+## 3.0.0 (2023-01-16)
+
+### Features Added
+
+  - Added operation group CredentialOperationsOperations
+  - Model SynapseSparkJobDefinitionActivity has a new parameter configuration_type
+  - Model SynapseSparkJobDefinitionActivity has a new parameter scan_folder
+  - Model SynapseSparkJobDefinitionActivity has a new parameter spark_config
+  - Model SynapseSparkJobDefinitionActivity has a new parameter target_spark_configuration
+
+### Breaking Changes
+
+  - Parameter export_settings of model SnowflakeSource is now required
+
 ## 2.10.0 (2022-11-22)
 
 ### Features Added
