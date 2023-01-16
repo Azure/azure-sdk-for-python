@@ -677,8 +677,6 @@ class TestComponent:
             yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
 
             component: InternalComponent = load_component(source=yaml_path)
-            with component._resolve_local_code() as code:
-                expected_snapshot_id = code.name
             # create some files/folders expected to ignore
             code_pycache = yaml_path.parent / "__pycache__"
             code_pycache.mkdir()
@@ -686,5 +684,6 @@ class TestComponent:
 
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
-                assert code.name == expected_snapshot_id
+                # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
+                assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
 
