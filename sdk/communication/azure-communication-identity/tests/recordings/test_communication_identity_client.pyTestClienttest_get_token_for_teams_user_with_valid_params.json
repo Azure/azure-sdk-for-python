@@ -33,11 +33,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "472ms"
+        "X-Processing-Time": "309ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2023-01-16T13:51:23.5619323\u002B00:00"
+        "expiresOn": "2023-01-16T15:14:39.1194242\u002B00:00"
       }
     }
   ],
