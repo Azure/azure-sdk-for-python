@@ -60,7 +60,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -70,7 +70,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -110,7 +111,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -181,8 +182,8 @@ class Association(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         association_type: Optional[Literal["subnets"]] = None,
         subnet: Optional["_models.AssociationSubnet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -219,7 +220,7 @@ class AssociationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Association"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Association"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The Association items on this page. Required.
         :paramtype value: list[~azure.mgmt.servicenetworking.models.Association]
@@ -248,7 +249,7 @@ class AssociationSubnet(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Association ID. Required.
         :paramtype id: str
@@ -276,8 +277,8 @@ class AssociationUpdate(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.AssociationUpdateProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -308,8 +309,8 @@ class AssociationUpdateProperties(_serialization.Model):
         *,
         association_type: Optional[Literal["subnets"]] = None,
         subnet: Optional["_models.AssociationSubnet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword association_type: Association Type. Default value is "subnets".
         :paramtype association_type: str
@@ -342,7 +343,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -382,7 +383,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -393,7 +394,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.servicenetworking.models.ErrorDetail
@@ -403,7 +405,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.servicenetworking.models.ErrorDetail
@@ -477,8 +479,8 @@ class Frontend(TrackedResource):
         mode: Optional[Literal["public"]] = None,
         ip_address_version: Optional[Union[str, "_models.FrontendIPAddressVersion"]] = None,
         public_ip_address: Optional["_models.FrontendPropertiesIPAddress"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -520,7 +522,7 @@ class FrontendListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Frontend"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Frontend"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The Frontend items on this page. Required.
         :paramtype value: list[~azure.mgmt.servicenetworking.models.Frontend]
@@ -549,7 +551,7 @@ class FrontendPropertiesIPAddress(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: IP Address. Required.
         :paramtype id: str
@@ -577,8 +579,8 @@ class FrontendUpdate(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.FrontendUpdateProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -615,8 +617,8 @@ class FrontendUpdateProperties(_serialization.Model):
         mode: Optional[Literal["public"]] = None,
         ip_address_version: Optional[Union[str, "_models.FrontendIPAddressVersion"]] = None,
         public_ip_address: Optional["_models.FrontendPropertiesIPAddress"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mode: Frontend Mode (Optional). Default value is "public".
         :paramtype mode: str
@@ -670,7 +672,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.servicenetworking.models.OperationDisplay
@@ -716,7 +718,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -726,7 +728,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -746,7 +749,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -770,7 +773,7 @@ class ResourceID(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID of child resource. Required.
         :paramtype id: str
@@ -816,8 +819,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -844,7 +847,8 @@ class SystemData(_serialization.Model):
 
 
 class TrafficController(TrackedResource):
-    """Concrete tracked resource types can be created by aliasing this type using a specific property type.
+    """Concrete tracked resource types can be created by aliasing this type using a specific property
+    type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -901,7 +905,7 @@ class TrafficController(TrackedResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -935,7 +939,9 @@ class TrafficControllerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TrafficController"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.TrafficController"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The TrafficController items on this page. Required.
         :paramtype value: list[~azure.mgmt.servicenetworking.models.TrafficController]
@@ -961,7 +967,9 @@ class TrafficControllerUpdate(_serialization.Model):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, properties: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, properties: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
