@@ -10,7 +10,8 @@ stages:
         Public:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
-            - $(sub-config-communication-services-sms-cloud-test-resources)
+            - $(sub-config-communication-services-cloud-test-resources-common)
+            - $(sub-config-communication-services-cloud-test-resources-python)
           MatrixReplace:
             - TestSamples=.*/true
       Clouds: Public
