@@ -165,6 +165,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-iotcentral typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-keyvault-keys typing-extensions>=4.0.1
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-servicenetworking msrest>=0.7.1
 #override azure-keyvault-secrets isodate>=0.6.1
 #override azure-keyvault-secrets typing-extensions>=4.0.1
 #override azure-mgmt-managementpartner typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -300,6 +301,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-identity msrest>=0.7.1
 #override azure-communication-networktraversal msrest>=0.7.1
 #override azure-mgmt-storagecache typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-servicenetworking azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-communication-networktraversal azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-communication typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-communication-email msrest>=0.7.1
@@ -381,6 +383,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-resourceconnector msrest>=0.7.1
 #override azure-mgmt-desktopvirtualization msrest>=0.7.1
 #override azure-mgmt-resourcegraph typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-servicenetworking typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-netapp msrest>=0.7.1
 #override azure-mgmt-monitor msrest>=0.7.1
 #override azure-mgmt-applicationinsights msrest>=0.6.21
