@@ -4,22 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from enum import auto, Enum
 from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.communication.sms._shared.utils import parse_connection_str
-from msal import PublicClientApplication
-
-class CommunicationTestResourceType(Enum):
-    """Type of ACS resource used for livetests."""
-    UNSPECIFIED = auto()
-    DYNAMIC = auto()
-    STATIC = auto()
 
 class ACSSMTestCase(AzureRecordedTestCase):
-    def setUp(self, resource_type=CommunicationTestResourceType.UNSPECIFIED):
-        self.connection_str = self._get_connection_str(resource_type)
+    def setUp(self):
+        self.connection_str = self._get_connection_str()
         if is_live():
-            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
+            self.phone_number = os.getenv("SMS_PHONE_NUMBER")
             self.endpoint, _ = parse_connection_str(self.connection_str)
         else:
             self.endpoint, _ = parse_connection_str(self.connection_str)
@@ -27,16 +19,10 @@ class ACSSMTestCase(AzureRecordedTestCase):
         self._resource_name = self.endpoint.split(".")[0]
 
     # sms
-    def _get_connection_str(self, resource_type):
+    def _get_connection_str(self):
         if self.is_playback():
             return "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
-        if resource_type == CommunicationTestResourceType.UNSPECIFIED:
-            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
-                os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-        if resource_type == CommunicationTestResourceType.DYNAMIC:
-            return os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
-        if resource_type == CommunicationTestResourceType.STATIC:
-            return os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+        return os.getenv('COMMUNICATION_SMS_LIVETEST_STATIC_CONNECTION_STRING')
 
     def verify_successful_sms_response(self, sms_response):
         if self.is_live:
