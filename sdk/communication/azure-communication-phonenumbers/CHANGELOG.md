@@ -3,10 +3,12 @@
 ## 1.1.0b4 (Unreleased)
 
 ### Features Added
+- API version `2022-12-01` is now the default for Phone Numbers clients.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Adds missing API version `2022-12-01` to the list of supported API versions.
 
 ### Other Changes
 

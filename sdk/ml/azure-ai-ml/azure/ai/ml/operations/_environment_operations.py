@@ -90,6 +90,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._kwargs,
                 )
+            sas_uri = None
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -109,9 +110,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )
                     return self.get(name=environment.name, version=environment.version)
-                environment = _check_and_upload_env_build_context(
-                    environment=environment, operations=self, sas_uri=sas_uri
-                )
+
+            environment = _check_and_upload_env_build_context(
+                environment=environment, operations=self, sas_uri=sas_uri
+            )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(

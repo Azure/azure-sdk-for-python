@@ -15,7 +15,6 @@ from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
-from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, SERVERLESS_COMPUTE_TEST_PARAMETERS
 
 
@@ -52,6 +51,10 @@ class TestPipelineJobValidate:
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 "In order to specify an existing codes, please provide",
             ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_referencing_component_file.yml",
+                "In order to specify an existing components, please provide the correct registry"
+            )
         ],
     )
     def test_pipeline_job_validation_on_load(self, pipeline_job_path: str, expected_error: str) -> None:
@@ -659,7 +662,7 @@ class TestDSLPipelineJobValidate:
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
-        "update_pipeline_schema",
+        "enable_private_preview_pipeline_node_types",
         "enable_private_preview_schema_features",
     )
     def test_pipeline_with_invalid_do_while_node(self) -> None:
