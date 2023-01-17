@@ -29,6 +29,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -44,6 +45,7 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
                 message = ServiceBusMessage(b"Sample topic message")
                 await sender.send_messages(message)
 
+    @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
