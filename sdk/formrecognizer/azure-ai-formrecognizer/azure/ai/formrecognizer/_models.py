@@ -525,9 +525,9 @@ class FormField:
         """
         value = self.value
         if isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value.items()}
+            value = {k: v.to_dict() for k, v in self.value.items()} if self.value else {}
         elif isinstance(self.value, list):
-            value = [v.to_dict() for v in self.value]
+            value = [v.to_dict() for v in self.value] if self.value else []
         return {
             "value_type": self.value_type,
             "name": self.name,
@@ -1060,7 +1060,9 @@ class FormTable:
             "page_number": self.page_number,
             "row_count": self.row_count,
             "column_count": self.column_count,
-            "cells": [cell.to_dict() for cell in self.cells],
+            "cells": [cell.to_dict() for cell in self.cells]
+            if self.cells
+            else [],
             "bounding_box": [box.to_dict() for box in self.bounding_box]
             if self.bounding_box
             else [],
@@ -2401,15 +2403,15 @@ class DocumentField:
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         if self.value_type == "currency":
-            value = self.value.to_dict()
+            value = self.value.to_dict() if self.value else None
         # AddressValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         elif self.value_type == "address":
-            value = self.value.to_dict()
+            value = self.value.to_dict() if self.value else None
         elif isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value.items()}
+            value = {k: v.to_dict() for k, v in self.value.items()} if self.value else {}
         elif isinstance(self.value, list):
-            value = [v.to_dict() for v in self.value]
+            value = [v.to_dict() for v in self.value] if self.value else []
         return {
             "value_type": self.value_type,
             "value": value,
