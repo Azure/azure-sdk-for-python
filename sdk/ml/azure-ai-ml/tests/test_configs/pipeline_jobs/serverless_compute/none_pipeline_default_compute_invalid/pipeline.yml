@@ -7,10 +7,12 @@ jobs:
   # command component
   vanilla_node:
     type: command
-    component: ../components/component.yml
+    component: ../component.yml
   node_with_resources:
     type: command
-    component: ../components/component_with_resources.yml
+    component: ../component.yml
+    resources:
+      instance_count: 2
   # pipeline component
   pipeline_node:
     type: pipeline

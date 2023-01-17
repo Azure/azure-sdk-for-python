@@ -7,20 +7,24 @@ jobs:
   # command component
   node_with_compute_target:
     type: command
-    component: ../components/component.yml
+    component: ../component.yml
     compute: azureml:cpu-cluster
   node_with_compute_target_and_resources:
     type: command
-    component: ../components/component_with_resources.yml
+    component: ../component.yml
     compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
   serverless_node:
     type: command
-    component: ../components/component.yml
+    component: ../component.yml
     compute: azureml:serverless
   serverless_node_with_resources:
     type: command
-    component: ../components/component_with_resources.yml
+    component: ../component.yml
     compute: azureml:serverless
+    resources:
+      instance_count: 2
   # pipeline component
   pipeline_node:
     type: pipeline
