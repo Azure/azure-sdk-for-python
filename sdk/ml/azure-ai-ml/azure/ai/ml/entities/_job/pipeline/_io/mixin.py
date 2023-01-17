@@ -5,8 +5,8 @@
 import copy
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -196,9 +196,14 @@ class NodeIOMixin:
             rest_output_bindings[key] = {"value": binding["value"], "type": "literal"}
             if "mode" in binding:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
-        rest_data_outputs = {name: val.as_dict() for name, val in rest_data_outputs.items()}
-        rest_data_outputs.update(rest_output_bindings)
-        return rest_data_outputs
+        updated_rest_data_outputs = {}
+        for name, val in rest_data_outputs.items():
+            if isinstance(val, RestJobOutput):
+                updated_rest_data_outputs[name] = val
+            else:
+                updated_rest_data_outputs[name] = val.as_dict()
+        rest_output_bindings.update(updated_rest_data_outputs)
+        return rest_output_bindings
 
     @classmethod
     def _from_rest_inputs(cls, inputs) -> Dict[str, Union[Input, str, bool, int, float]]:

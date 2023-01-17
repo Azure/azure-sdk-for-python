@@ -1701,8 +1701,6 @@ class AssetJobOutput(msrest.serialization.Model):
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
-        'name': {'key': 'assetName', 'type': 'str'},
-        'version': {'key': 'assetVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -1722,8 +1720,6 @@ class AssetJobOutput(msrest.serialization.Model):
         super(AssetJobOutput, self).__init__(**kwargs)
         self.mode = mode
         self.uri = uri
-        self.name = kwargs.get('name', None)
-        self.version = kwargs.get('version', None)
 
 
 class AssetReferenceBase(msrest.serialization.Model):
@@ -7397,8 +7393,6 @@ class JobOutput(msrest.serialization.Model):
     _attribute_map = {
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
-        # 'name': {'key': 'assetName', 'type': 'str'},
-        # 'version': {'key': 'assetVersion', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -7418,8 +7412,6 @@ class JobOutput(msrest.serialization.Model):
         super(JobOutput, self).__init__(**kwargs)
         self.description = description
         self.job_output_type = None  # type: Optional[str]
-        # self.name = kwargs.get('name', None)
-        # self.version = kwargs.get('version', None)
 
 
 class CustomModelJobOutput(JobOutput, AssetJobOutput):
@@ -16570,8 +16562,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
 
     _validation = {
         'job_output_type': {'required': True},
-        'name': {'required': True},
-        'version': {'required': True},
     }
 
     _attribute_map = {
@@ -16579,8 +16569,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         'uri': {'key': 'uri', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
-        'name': {'key': 'assetName', 'type': 'str'},
-        'version': {'key': 'assetVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -16605,8 +16593,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'mltable'  # type: str
         self.description = description
-        # self.name = kwargs.get('name', None)
-        # self.version = kwargs.get('version', None)
 
 
 class ModelContainer(Resource):

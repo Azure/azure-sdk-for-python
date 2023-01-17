@@ -93,12 +93,12 @@ def get_output_rest_init_func_dict():
     """Get output rest init func dict."""
 
     return {
-        AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobOutput(uri=uri, mode=mode),
-        AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda asset_name, asset_version, uri, mode, : RestMLTableJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode, ),
-        AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobOutput(uri=uri, mode=mode),
+        AssetTypes.URI_FILE: lambda asset_name, asset_version, uri, mode: RestUriFileJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
+        AssetTypes.URI_FOLDER: lambda asset_name, asset_version, uri, mode: RestUriFolderJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
+        AssetTypes.MLTABLE: lambda asset_name, asset_version, uri, mode, : RestMLTableJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
+        AssetTypes.MLFLOW_MODEL: lambda asset_name, asset_version, uri, mode: RestMLFlowModelJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
+        AssetTypes.CUSTOM_MODEL: lambda asset_name, asset_version, uri, mode: RestCustomModelJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
+        AssetTypes.TRITON_MODEL: lambda asset_name, asset_version, uri, mode: RestTritonModelJobOutput(asset_name=asset_name, asset_version=asset_version, uri=uri, mode=mode),
     }
 
 
@@ -309,8 +309,8 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
             if output_value_type in target_init_func_dict:
                 output = target_init_func_dict[output_value_type](
-                    output_value.asset_name,
-                    output_value.asset_version,
+                    output_value.name,
+                    output_value.version,
                     output_value.path,
                     OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
                 )

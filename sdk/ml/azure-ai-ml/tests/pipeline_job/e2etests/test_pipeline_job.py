@@ -1354,10 +1354,25 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
     def test_pipeline_job_output_with_name_version(self, client: MLClient):
-        test_path = "./test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_name_version.yaml"
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_name_version.yaml"
         pipeline = load_job(source=test_path)
         pipeline_job = client.jobs.create_or_update(pipeline)
 
+    def test_pipeline_job_output_with_name_version_sdk(self, client: MLClient):
+        from azure.ai.ml import dsl
+
+        @dsl.pipeline(
+            default_compute="azureml:cpu-cluster",
+        )
+        def register_node_output():
+            component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+            node = component(component_in_path=Input(type='uri_file',
+                                                     path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv'))
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.nersion = '1'
+
+        pipeline = register_node_output()  # use default pipeline parameter
+        pipeline_job = client.jobs.create_or_update(pipeline)
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest

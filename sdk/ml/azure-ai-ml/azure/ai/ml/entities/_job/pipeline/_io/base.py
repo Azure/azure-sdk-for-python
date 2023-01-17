@@ -371,8 +371,21 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._asset_name = data.asset_name if data else None
-        self._asset_version = data.asset_version if data else None
+        self._asset_name = None
+        self._asset_version = None
+
+        if isinstance(data, PipelineOutput) and data._asset_name:
+            self._asset_name = data._asset_name
+        if isinstance(data, Output) and data.name:
+            self._asset_name = data.name
+
+        if isinstance(data, PipelineOutput) and data._asset_name:
+            self._asset_version = data._asset_version
+        if isinstance(data, Output) and data.version:
+            self._asset_version = data.version
+
+        if self._asset_version and not self._asset_name:
+            raise UserErrorException("We don't support setting version for output when name isn't set.")
         self._is_control = meta.is_control if meta is not None else None
 
     @property
@@ -415,12 +428,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # None data means this output is not configured.
             result = None
         elif isinstance(self._data, str):
-            result = Output(path=self._data, mode=self.mode)
+            result = Output(path=self._data, mode=self.mode, name=self._asset_name, version=self._asset_version)
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
             is_control = self._meta.is_control if self._meta is not None else None
-            result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
+            result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control, name=self._asset_name, version=self._asset_version)
         else:
             msg = "Got unexpected type for output: {}."
             raise ValidationException(

@@ -11,7 +11,7 @@ jobs:
 outputs:
   component_out_path:
     type: mltable
-    asset_name: a_output
-    asset_version: '1'
+    name: a_output
+    version: '1'
 settings:
   default_compute: azureml:cpu-cluster
