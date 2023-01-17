@@ -14,7 +14,6 @@ from typing import (
 from urllib.parse import urlparse, quote, unquote
 import warnings
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -191,7 +190,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _format_url(self, hostname):
         container_name = self.container_name
-        if isinstance(container_name, six.text_type):
+        if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -2349,7 +2348,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if length is None:
@@ -3338,7 +3337,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if isinstance(page, six.text_type):
+        if isinstance(page, str):
             page = page.encode(kwargs.pop('encoding', 'UTF-8'))
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
@@ -3765,7 +3764,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
         if length is None:
             length = get_length(data)

@@ -109,10 +109,10 @@ given the expressiveness of Python as a language. So, in practice, what should y
    type checker, follow the steps per [PEP 561](https://mypy.readthedocs.io/en/stable/installed_packages.html#creating-pep-561-compatible-packages) below:
 
     - add an empty `py.typed` file to your package directory. E.g. `.../sdk/azure-core/azure/core/py.typed`
-    - include the `py.typed` file in the
+    - include the path to the `py.typed` in the
       MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
       This is important as it ensures the `py.typed` is included in both the sdist/bdist.
-    - include `py.typed` under `package_data` in your setup.py (`package_data={"azure.core": ["py.typed"]}`).
+    - set `include_package_data=True` and `package_data={"azure.core": ["py.typed"]}` in the setup.py.
       Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
@@ -211,7 +211,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.274](https://github.com/microsoft/pyright).
+We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -221,7 +221,7 @@ To run pyright on your library, run the tox pyright env at the package level:
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -253,7 +253,7 @@ To run verifytypes on your library, run the tox verifytypes env at the package l
 
 If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
 

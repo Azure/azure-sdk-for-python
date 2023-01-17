@@ -17,9 +17,10 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -59,7 +60,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient052022,
+        service_client: ServiceClient102022,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -244,10 +245,7 @@ class DataOperations(_ScopeDependentOperations):
                     metadata_yaml_path = None
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    module_logger.info(
-                        "Unable to access MLTable metadata at path %s",
-                        asset_path
-                    )
+                    module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
@@ -271,22 +269,25 @@ class DataOperations(_ScopeDependentOperations):
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
 
-    def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str
-    ) -> Union[Dict, None]:
+    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
-                'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
-                mltable_schema_url
+                'Failed to download MLTable metadata jsonschema from "%s", skipping validation', mltable_schema_url
             )
             return None
 
     # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -309,7 +310,13 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived data asset.
 
         :param name: Name of data asset.

@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import pytest
 import platform
-import sys
 import os
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
@@ -31,7 +30,6 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 
 
 
 class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")
     @cosmos_decorator
     @recorded_by_proxy
     def test_user_agent_default(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

@@ -1,10 +1,12 @@
 """
 Usage: python sample_send_small_logs.py
 """
-
 import os
-from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
+
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
@@ -25,9 +27,7 @@ body = [
       }
     ]
 
-response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-
-## iterates directly over Tuple[HttpResponseError, JSON]:
-for error, failed_logs in response:
-    # prints nothing if there are no failed_logs (i/e the status is success)
-    print(failed_logs, error)
+try:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")

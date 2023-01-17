@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
+from azure.core.exceptions import HttpResponseError
 from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import async_create_token_credential, get_http_logging_policy
@@ -38,7 +38,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     async def test_get_trunks(self):
         await self._prepare_test()
         async with self._sip_routing_client:
-            trunks = await self._sip_routing_client.get_trunks()
+            trunks = await self._sip_routing_client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(trunks,[self.first_trunk, self.second_trunk]), "Trunks are not equal."
     
@@ -47,7 +47,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         await self._prepare_test()
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
-            trunks = await self._sip_routing_client.get_trunks()
+            trunks = await self._sip_routing_client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(trunks,[self.first_trunk, self.second_trunk]), "Trunks are not equal."
 
@@ -56,7 +56,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         await self._prepare_test()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
-            routes = await self._sip_routing_client.get_routes()
+            routes = await self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         assert_routes_are_equal(routes,[self.first_route]), "Routes are not equal."
 
@@ -66,7 +66,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
-            routes = await self._sip_routing_client.get_routes()
+            routes = await self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         assert_routes_are_equal(routes,[self.first_route]), "Routes are not equal."
 
@@ -75,7 +75,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         await self._prepare_test()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunks([self.additional_trunk])
-            result_trunks = await self._sip_routing_client.get_trunks()
+            result_trunks = await self._sip_routing_client.list_trunks()
         assert result_trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(result_trunks,[self.additional_trunk]), "Trunks are not equal."
 
@@ -85,9 +85,20 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunks([self.additional_trunk])
-            result_trunks = await self._sip_routing_client.get_trunks()
+            result_trunks = await self._sip_routing_client.list_trunks()
         assert result_trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(result_trunks,[self.additional_trunk]), "Trunks are not equal."
+
+    @recorded_by_proxy_async
+    async def test_set_trunks_empty_list(self):
+        """Verification of bug fix. SDK shouldn't send empty PATCH, otherwise it will receive exception.
+        This situation occurs, when sending empty trunks list to already empty trunk configuration."""
+        async with self._sip_routing_client:
+            try: 
+                await self._sip_routing_client.set_trunks([])
+                await self._sip_routing_client.set_trunks([])
+            except HttpResponseError as exception:
+                assert False, "Trying to set empty trunks list returned Http error: " + str(exception.status_code) + ", message: " + exception.message
     
     @recorded_by_proxy_async
     async def test_set_routes(self):
@@ -96,7 +107,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
             await self._sip_routing_client.set_routes(new_routes)
-            result_routes = await self._sip_routing_client.get_routes()
+            result_routes = await self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         assert_routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
@@ -108,7 +119,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
             await self._sip_routing_client.set_routes(new_routes)
-            result_routes = await self._sip_routing_client.get_routes()
+            result_routes = await self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         assert_routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
@@ -118,7 +129,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         trunk_to_delete = self.second_trunk.fqdn
         async with self._sip_routing_client:
             await self._sip_routing_client.delete_trunk(trunk_to_delete)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk]), "Trunk was not deleted."
 
     @recorded_by_proxy_async
@@ -128,7 +139,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.delete_trunk(trunk_to_delete)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk]), "Trunk was not deleted."
 
     @recorded_by_proxy_async
@@ -136,7 +147,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         await self._prepare_test()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunk(self.additional_trunk)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
     
     @recorded_by_proxy_async
@@ -145,7 +156,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunk(self.additional_trunk)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
 
     @recorded_by_proxy_async
@@ -171,7 +182,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn,sip_signaling_port=7777)
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunk(modified_trunk)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,modified_trunk])
     
     @recorded_by_proxy_async
@@ -181,7 +192,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_trunk(modified_trunk)
-            new_trunks = await self._sip_routing_client.get_trunks()
+            new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,modified_trunk])
 
     def _get_sip_client_managed_identity(self):

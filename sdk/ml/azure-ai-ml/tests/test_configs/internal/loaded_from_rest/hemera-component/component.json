@@ -26,31 +26,38 @@
     },
     "YarnCluster": {
       "type": "string",
-      "default": "mtprime-bn2-0"
+      "default": "mtprime-bn2-0",
+      "optional": false
     },
     "JobQueue": {
       "type": "string",
-      "default": "default"
+      "default": "default",
+      "optional": false
     },
     "WorkerCount": {
       "type": "string",
-      "default": "2.0"
+      "default": "2.0",
+      "optional": false
     },
     "Cpu": {
       "type": "string",
-      "default": "2.0"
+      "default": "2.0",
+      "optional": false
     },
     "Memory": {
       "type": "string",
-      "default": "10g"
+      "default": "10g",
+      "optional": false
     },
     "HdfsRootDir": {
       "type": "string",
-      "default": "/projects/default/"
+      "default": "/projects/default/",
+      "optional": false
     },
     "CosmosRootDir": {
       "type": "string",
-      "default": "https://cosmos09.osdinfra.net/cosmos/dummy/local/root/"
+      "default": "https://cosmos09.osdinfra.net/cosmos/dummy/local/root/",
+      "optional": false
     }
   },
   "outputs": {

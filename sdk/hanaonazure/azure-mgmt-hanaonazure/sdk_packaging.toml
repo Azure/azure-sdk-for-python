@@ -5,3 +5,4 @@ package_doc_id = "hanaonazure"
 is_stable = false
 is_arm = true
 auto_update=false
+title = "HanaManagementClient"

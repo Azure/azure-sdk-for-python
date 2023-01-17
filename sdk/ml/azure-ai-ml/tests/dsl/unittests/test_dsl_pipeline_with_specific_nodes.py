@@ -6,19 +6,9 @@ from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml.automl import classification, regression
-from azure.ai.ml.constants._common import (
-    AssetTypes,
-    InputOutputModes,
-)
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.entities import (
-    CommandComponent,
-    CommandJob,
-    Data,
-    ParallelTask,
-    PipelineJob,
-    SparkJob,
-)
+from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
 from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
@@ -195,6 +185,46 @@ class TestDSLPipelineWithSpecificNodes:
         sweep_node_dict_from_rest = Sweep._from_rest_object(sweep_node_rest_obj)._to_dict()
         omit_fields = ["trial"]
         assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(sweep_node_dict_from_rest, *omit_fields)
+
+    def test_dsl_pipeline_with_sweep_distributed_component_setting_instance_type(self) -> None:
+        yaml_file = "./tests/test_configs/components/helloworld_component_pytorch.yml"
+
+        @dsl.pipeline(force_rerun=True)
+        def train_with_sweep_in_pipeline(raw_data):
+            component_to_sweep: CommandComponent = load_component(source=yaml_file)
+            cmd_node: Command = component_to_sweep(
+                component_in_number=Choice([2, 3, 4, 5]), component_in_path=raw_data
+            )
+            sweep_job: Sweep = cmd_node.sweep(
+                primary_metric="AUC",  # primary_metric,
+                goal="maximize",
+                sampling_algorithm="random",
+            )
+            # Todo: this is a workaround method, a long term task will track
+            sweep_job.resources.instance_type = "cpularge"
+            sweep_job.compute = "test-aks-large"
+            sweep_job.set_limits(max_total_trials=10)
+
+        pipeline: PipelineJob = train_with_sweep_in_pipeline(raw_data=Input(path="/a/path/on/ds", mode="ro_mount"))
+        pipeline.settings.default_compute = "test-aks-large"
+
+        pytorch_node = pipeline.jobs["sweep_job"]
+        assert isinstance(pytorch_node, Sweep)
+        pytorch_node_rest = pytorch_node._to_rest_object()
+        omit_fields = ["trial"]
+        pydash.omit(pytorch_node_rest, *omit_fields) == {
+            'limits': {'max_total_trials': 10},
+            'sampling_algorithm': 'random',
+             'objective': {'goal': 'maximize', 'primary_metric': 'AUC'},
+             'search_space': {'component_in_number': {'values': [2, 3, 4, 5], 'type': 'choice'}},
+             'name': 'sweep_job',
+             'type': 'sweep',
+             'computeId': 'test-aks-large',
+             'inputs': {'component_in_path': {'job_input_type': 'literal',
+               'value': '${{parent.inputs.raw_data}}'}},
+             '_source': 'YAML.COMPONENT',
+             'resources': {'instance_type': 'cpularge'},
+        }
 
     def test_dsl_pipeline_with_parallel(self) -> None:
         yaml_file = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"

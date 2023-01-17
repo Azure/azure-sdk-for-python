@@ -1,5 +1,55 @@
 # Release History
 
+## 2.0.0 (2023-01-16)
+
+### Features Added
+
+  - Added operation PacketCoreControlPlanesOperations.begin_collect_diagnostics_package
+  - Added operation PacketCoreControlPlanesOperations.begin_reinstall
+  - Added operation PacketCoreControlPlanesOperations.begin_rollback
+  - Added operation SimsOperations.begin_bulk_delete
+  - Added operation SimsOperations.begin_bulk_upload
+  - Added operation SimsOperations.begin_bulk_upload_encrypted
+
+### Breaking Changes
+
+  - Removed operation group PacketCoreControlPlaneOperations
+  - Removed operation group SimOperations
+
+## 1.0.0 (2022-12-15)
+
+### Features Added
+
+  - Added operation PacketCoreControlPlaneVersionsOperations.list
+  - Added operation SimsOperations.list_by_group
+  - Added operation group PacketCoreControlPlaneOperations
+  - Added operation group SimOperations
+  - Model DataNetworkConfiguration has a new parameter maximum_number_of_buffered_packets
+  - Model PacketCoreControlPlane has a new parameter installation
+  - Model PacketCoreControlPlane has a new parameter rollback_version
+  - Model PacketCoreControlPlane has a new parameter ue_mtu
+  - Model PacketCoreControlPlaneVersion has a new parameter platforms
+  - Model PlatformConfiguration has a new parameter azure_stack_edge_devices
+  - Model PlatformConfiguration has a new parameter azure_stack_hci_cluster
+  - Model Sim has a new parameter site_provisioning_state
+  - Model Sim has a new parameter vendor_key_fingerprint
+  - Model Sim has a new parameter vendor_name
+  - Model SimPolicy has a new parameter site_provisioning_state
+
+### Breaking Changes
+
+  - Model LocalDiagnosticsAccessConfiguration has a new required parameter authentication_type
+  - Model PacketCoreControlPlane has a new required parameter sites
+  - Model PacketCoreControlPlane no longer has parameter mobile_network
+  - Model PacketCoreControlPlaneVersion no longer has parameter recommended_version
+  - Model PacketCoreControlPlaneVersion no longer has parameter version_state
+  - Parameter dns_addresses of model AttachedDataNetwork is now required
+  - Parameter local_diagnostics_access of model PacketCoreControlPlane is now required
+  - Parameter platform of model PacketCoreControlPlane is now required
+  - Removed operation MobileNetworksOperations.begin_list_sim_ids
+  - Removed operation PacketCoreControlPlaneVersionsOperations.list_by_resource_group
+  - Removed operation SimsOperations.list_by_sim_group
+
 ## 1.0.0b3 (2022-08-01)
 
 **Features**

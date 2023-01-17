@@ -85,7 +85,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
@@ -118,7 +118,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 schema_id = 'your-schema-id'
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
@@ -139,7 +139,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ["SCHEMAREGISTRY_GROUP"]
 name = "your-schema-name"
 version = int("<your schema version>")
@@ -162,7 +162,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
@@ -257,7 +257,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemas]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schemas
 [schema_groups]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schema-groups
 [schemaregistry_service]: https://aka.ms/schemaregistry
-[schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
 [quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

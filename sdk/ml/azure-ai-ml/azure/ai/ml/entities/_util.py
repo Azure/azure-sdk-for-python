@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, List, Optional, Union, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Union
 from unittest import mock
 
 import msrest
@@ -44,16 +44,16 @@ from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, ErrorCategory
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -133,7 +133,7 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
-def find_type_in_override(params_override: list = None) -> Optional[str]:
+def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -141,7 +141,7 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
     return None
 
 
-def is_compute_in_override(params_override: list = None) -> bool:
+def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 
@@ -193,12 +193,15 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
+
 def is_empty_target(obj):
     """Determines if it's empty target"""
-    return (obj is None
-            # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
-            or (isinstance(obj, dict) and len(obj) == 0)
-        )
+    return (
+        obj is None
+        # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+        or (isinstance(obj, dict) and len(obj) == 0)
+    )
+
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
@@ -266,6 +269,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # rest object structure
         # pylint: disable=protected-access
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+
         if isinstance(target_obj, _BaseIdentityConfiguration):
             return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)

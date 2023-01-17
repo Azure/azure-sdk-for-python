@@ -14,13 +14,15 @@ from ._models_py3 import Condition
 from ._models_py3 import Datastore
 from ._models_py3 import DatastoreInventoryItem
 from ._models_py3 import DatastoresList
-from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtendedLocation
+from ._models_py3 import ExtensionTargetProperties
 from ._models_py3 import GuestAgent
 from ._models_py3 import GuestAgentList
 from ._models_py3 import GuestAgentProfile
+from ._models_py3 import GuestAgentProfileUpdate
 from ._models_py3 import GuestCredential
 from ._models_py3 import HardwareProfile
 from ._models_py3 import Host
@@ -40,6 +42,7 @@ from ._models_py3 import MachineExtensionInstanceView
 from ._models_py3 import MachineExtensionInstanceViewStatus
 from ._models_py3 import MachineExtensionPropertiesInstanceView
 from ._models_py3 import MachineExtensionUpdate
+from ._models_py3 import MachineExtensionUpgrade
 from ._models_py3 import MachineExtensionsListResult
 from ._models_py3 import NetworkInterface
 from ._models_py3 import NetworkInterfaceUpdate
@@ -91,145 +94,146 @@ from ._models_py3 import VirtualNetworksList
 from ._models_py3 import VirtualSCSIController
 from ._models_py3 import WindowsParameters
 
-
-from ._azure_arc_vmware_management_service_api_enums import (
-    CreatedByType,
-    DiskMode,
-    DiskType,
-    FirmwareType,
-    IPAddressAllocationMethod,
-    IdentityType,
-    InventoryType,
-    NICType,
-    OsType,
-    OsTypeUM,
-    PatchOperationStartedBy,
-    PatchOperationStatus,
-    PatchServiceUsed,
-    PowerOnBootOption,
-    ProvisioningAction,
-    ProvisioningState,
-    SCSIControllerType,
-    StatusLevelTypes,
-    StatusTypes,
-    VMGuestPatchClassificationLinux,
-    VMGuestPatchClassificationWindows,
-    VMGuestPatchRebootSetting,
-    VMGuestPatchRebootStatus,
-    VirtualSCSISharing,
-)
+from ._azure_arc_vmware_management_service_api_enums import CreatedByType
+from ._azure_arc_vmware_management_service_api_enums import DiskMode
+from ._azure_arc_vmware_management_service_api_enums import DiskType
+from ._azure_arc_vmware_management_service_api_enums import FirmwareType
+from ._azure_arc_vmware_management_service_api_enums import IPAddressAllocationMethod
+from ._azure_arc_vmware_management_service_api_enums import IdentityType
+from ._azure_arc_vmware_management_service_api_enums import InventoryType
+from ._azure_arc_vmware_management_service_api_enums import NICType
+from ._azure_arc_vmware_management_service_api_enums import OsType
+from ._azure_arc_vmware_management_service_api_enums import OsTypeUM
+from ._azure_arc_vmware_management_service_api_enums import PatchOperationStartedBy
+from ._azure_arc_vmware_management_service_api_enums import PatchOperationStatus
+from ._azure_arc_vmware_management_service_api_enums import PatchServiceUsed
+from ._azure_arc_vmware_management_service_api_enums import PowerOnBootOption
+from ._azure_arc_vmware_management_service_api_enums import ProvisioningAction
+from ._azure_arc_vmware_management_service_api_enums import ProvisioningState
+from ._azure_arc_vmware_management_service_api_enums import SCSIControllerType
+from ._azure_arc_vmware_management_service_api_enums import StatusLevelTypes
+from ._azure_arc_vmware_management_service_api_enums import StatusTypes
+from ._azure_arc_vmware_management_service_api_enums import VMGuestPatchClassificationLinux
+from ._azure_arc_vmware_management_service_api_enums import VMGuestPatchClassificationWindows
+from ._azure_arc_vmware_management_service_api_enums import VMGuestPatchRebootSetting
+from ._azure_arc_vmware_management_service_api_enums import VMGuestPatchRebootStatus
+from ._azure_arc_vmware_management_service_api_enums import VirtualSCSISharing
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AvailablePatchCountByClassification',
-    'Cluster',
-    'ClusterInventoryItem',
-    'ClustersList',
-    'Condition',
-    'Datastore',
-    'DatastoreInventoryItem',
-    'DatastoresList',
-    'ErrorDefinition',
-    'ErrorDetail',
-    'ErrorResponse',
-    'ExtendedLocation',
-    'GuestAgent',
-    'GuestAgentList',
-    'GuestAgentProfile',
-    'GuestCredential',
-    'HardwareProfile',
-    'Host',
-    'HostInventoryItem',
-    'HostsList',
-    'HttpProxyConfiguration',
-    'HybridIdentityMetadata',
-    'HybridIdentityMetadataList',
-    'Identity',
-    'InventoryItem',
-    'InventoryItemDetails',
-    'InventoryItemProperties',
-    'InventoryItemsList',
-    'LinuxParameters',
-    'MachineExtension',
-    'MachineExtensionInstanceView',
-    'MachineExtensionInstanceViewStatus',
-    'MachineExtensionPropertiesInstanceView',
-    'MachineExtensionUpdate',
-    'MachineExtensionsListResult',
-    'NetworkInterface',
-    'NetworkInterfaceUpdate',
-    'NetworkProfile',
-    'NetworkProfileUpdate',
-    'NicIPAddressSettings',
-    'NicIPSettings',
-    'Operation',
-    'OperationDisplay',
-    'OperationsList',
-    'OsProfile',
-    'OsProfileLinuxConfiguration',
-    'OsProfileUpdate',
-    'OsProfileUpdateLinuxConfiguration',
-    'OsProfileUpdateWindowsConfiguration',
-    'OsProfileWindowsConfiguration',
-    'PlacementProfile',
-    'ProxyResource',
-    'Resource',
-    'ResourcePatch',
-    'ResourcePool',
-    'ResourcePoolInventoryItem',
-    'ResourcePoolsList',
-    'ResourceStatus',
-    'SecurityProfile',
-    'StopVirtualMachineOptions',
-    'StorageProfile',
-    'StorageProfileUpdate',
-    'SystemData',
-    'UefiSettings',
-    'VCenter',
-    'VCentersList',
-    'VICredential',
-    'VirtualDisk',
-    'VirtualDiskUpdate',
-    'VirtualMachine',
-    'VirtualMachineAssessPatchesResult',
-    'VirtualMachineInstallPatchesParameters',
-    'VirtualMachineInstallPatchesResult',
-    'VirtualMachineInventoryItem',
-    'VirtualMachineTemplate',
-    'VirtualMachineTemplateInventoryItem',
-    'VirtualMachineTemplatesList',
-    'VirtualMachineUpdate',
-    'VirtualMachinesList',
-    'VirtualNetwork',
-    'VirtualNetworkInventoryItem',
-    'VirtualNetworksList',
-    'VirtualSCSIController',
-    'WindowsParameters',
-    'CreatedByType',
-    'DiskMode',
-    'DiskType',
-    'FirmwareType',
-    'IPAddressAllocationMethod',
-    'IdentityType',
-    'InventoryType',
-    'NICType',
-    'OsType',
-    'OsTypeUM',
-    'PatchOperationStartedBy',
-    'PatchOperationStatus',
-    'PatchServiceUsed',
-    'PowerOnBootOption',
-    'ProvisioningAction',
-    'ProvisioningState',
-    'SCSIControllerType',
-    'StatusLevelTypes',
-    'StatusTypes',
-    'VMGuestPatchClassificationLinux',
-    'VMGuestPatchClassificationWindows',
-    'VMGuestPatchRebootSetting',
-    'VMGuestPatchRebootStatus',
-    'VirtualSCSISharing',
+    "AvailablePatchCountByClassification",
+    "Cluster",
+    "ClusterInventoryItem",
+    "ClustersList",
+    "Condition",
+    "Datastore",
+    "DatastoreInventoryItem",
+    "DatastoresList",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "ExtendedLocation",
+    "ExtensionTargetProperties",
+    "GuestAgent",
+    "GuestAgentList",
+    "GuestAgentProfile",
+    "GuestAgentProfileUpdate",
+    "GuestCredential",
+    "HardwareProfile",
+    "Host",
+    "HostInventoryItem",
+    "HostsList",
+    "HttpProxyConfiguration",
+    "HybridIdentityMetadata",
+    "HybridIdentityMetadataList",
+    "Identity",
+    "InventoryItem",
+    "InventoryItemDetails",
+    "InventoryItemProperties",
+    "InventoryItemsList",
+    "LinuxParameters",
+    "MachineExtension",
+    "MachineExtensionInstanceView",
+    "MachineExtensionInstanceViewStatus",
+    "MachineExtensionPropertiesInstanceView",
+    "MachineExtensionUpdate",
+    "MachineExtensionUpgrade",
+    "MachineExtensionsListResult",
+    "NetworkInterface",
+    "NetworkInterfaceUpdate",
+    "NetworkProfile",
+    "NetworkProfileUpdate",
+    "NicIPAddressSettings",
+    "NicIPSettings",
+    "Operation",
+    "OperationDisplay",
+    "OperationsList",
+    "OsProfile",
+    "OsProfileLinuxConfiguration",
+    "OsProfileUpdate",
+    "OsProfileUpdateLinuxConfiguration",
+    "OsProfileUpdateWindowsConfiguration",
+    "OsProfileWindowsConfiguration",
+    "PlacementProfile",
+    "ProxyResource",
+    "Resource",
+    "ResourcePatch",
+    "ResourcePool",
+    "ResourcePoolInventoryItem",
+    "ResourcePoolsList",
+    "ResourceStatus",
+    "SecurityProfile",
+    "StopVirtualMachineOptions",
+    "StorageProfile",
+    "StorageProfileUpdate",
+    "SystemData",
+    "UefiSettings",
+    "VCenter",
+    "VCentersList",
+    "VICredential",
+    "VirtualDisk",
+    "VirtualDiskUpdate",
+    "VirtualMachine",
+    "VirtualMachineAssessPatchesResult",
+    "VirtualMachineInstallPatchesParameters",
+    "VirtualMachineInstallPatchesResult",
+    "VirtualMachineInventoryItem",
+    "VirtualMachineTemplate",
+    "VirtualMachineTemplateInventoryItem",
+    "VirtualMachineTemplatesList",
+    "VirtualMachineUpdate",
+    "VirtualMachinesList",
+    "VirtualNetwork",
+    "VirtualNetworkInventoryItem",
+    "VirtualNetworksList",
+    "VirtualSCSIController",
+    "WindowsParameters",
+    "CreatedByType",
+    "DiskMode",
+    "DiskType",
+    "FirmwareType",
+    "IPAddressAllocationMethod",
+    "IdentityType",
+    "InventoryType",
+    "NICType",
+    "OsType",
+    "OsTypeUM",
+    "PatchOperationStartedBy",
+    "PatchOperationStatus",
+    "PatchServiceUsed",
+    "PowerOnBootOption",
+    "ProvisioningAction",
+    "ProvisioningState",
+    "SCSIControllerType",
+    "StatusLevelTypes",
+    "StatusTypes",
+    "VMGuestPatchClassificationLinux",
+    "VMGuestPatchClassificationWindows",
+    "VMGuestPatchRebootSetting",
+    "VMGuestPatchRebootStatus",
+    "VirtualSCSISharing",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

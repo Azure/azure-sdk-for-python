@@ -3,23 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, TYPE_CHECKING
+from typing import List, Dict, Optional
 
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
-from .._generated.models import SearchRequest
+from .._generated.models import AnswerResult
 from .._paging import (
     convert_search_result,
     pack_continuation_token,
     unpack_continuation_token,
 )
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from ...documents.models import AnswerResult
-
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance = None
 
@@ -44,28 +40,25 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
             self._first_page_iterator_instance = self._page_iterator
         return self._first_page_iterator_instance
 
-    async def get_facets(self) -> Union[dict, None]:
+    async def get_facets(self) -> Optional[Dict]:
         """Return any facet results if faceting was requested."""
         return await self._first_iterator_instance().get_facets()
 
-    async def get_coverage(self):
-        # type: () -> float
+    async def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """
         return await self._first_iterator_instance().get_coverage()
 
-    async def get_count(self):
-        # type: () -> float
+    async def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
         set for the query.
 
         """
         return await self._first_iterator_instance().get_count()
 
-    async def get_answers(self):
-        # type: () -> Union[list[AnswerResult], None]
+    async def get_answers(self) -> Optional[List[AnswerResult]]:
         """Return answers."""
         return await self._first_iterator_instance().get_answers()
 
@@ -86,7 +79,7 @@ def _ensure_response(f):
 
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
-    def __init__(self, client, initial_query, kwargs, continuation_token=None):
+    def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,

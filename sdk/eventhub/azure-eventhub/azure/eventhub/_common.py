@@ -5,6 +5,7 @@
 from __future__ import unicode_literals, annotations
 
 import json
+import warnings
 import datetime
 import logging
 import uuid
@@ -52,10 +53,19 @@ from .amqp import (
     AmqpMessageHeader,
     AmqpMessageProperties,
 )
-from ._transport._uamqp_transport import UamqpTransport
+from ._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
+from ._pyamqp.message import Message as pyamqp_Message
+from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
-    from uamqp import Message as uamqp_Message, BatchMessage as uamqp_BatchMessage
+    try:
+        from uamqp import (  # pylint: disable=unused-import
+            Message,    # not importing as uamqp_Message, b/c type is exposed to user
+            BatchMessage,
+        )
+    except ImportError:
+        Message = None
+        BatchMessage = None
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -124,9 +134,8 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        # amqp message to be reset right before sending
-        self._message = UamqpTransport.to_outgoing_amqp_message(self._raw_amqp_message)
-        self.message = self._message
+        self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
+        self._message: Union["Message", pyamqp_Message] = None  # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -137,35 +146,42 @@ class EventData(object):
         # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_repr = f"body='{body_str}'"
         try:
             event_repr += f", properties={self.properties}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message properties read error: %r", e)
             event_repr += ", properties=<read-error>"
         try:
             event_repr += f", offset={self.offset}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message offset read error: %r", e)
             event_repr += ", offset=<read-error>"
         try:
             event_repr += f", sequence_number={self.sequence_number}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message sequence number read error: %r", e)
             event_repr += ", sequence_number=<read-error>"
         try:
             event_repr += f", partition_key={self.partition_key!r}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message partition key read error: %r", e)
             event_repr += ", partition_key=<read-error>"
         try:
             event_repr += f", enqueued_time={self.enqueued_time!r}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message enqueued time read error: %r", e)
             event_repr += ", enqueued_time=<read-error>"
         return f"EventData({event_repr})"
 
     def __str__(self) -> str:
         try:
             body_str = self.body_as_str()
-        except:  # pylint: disable=bare-except
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_str = f"{{ body: '{body_str}'"
         try:
@@ -178,8 +194,8 @@ class EventData(object):
                 event_str += f", partition_key={self.partition_key!r}"
             if self.enqueued_time:
                 event_str += f", enqueued_time={self.enqueued_time!r}"
-        except:  # pylint: disable=bare-except
-            pass
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message metadata read error: %r", e)
         event_str += " }"
         return event_str
 
@@ -210,7 +226,7 @@ class EventData(object):
     @classmethod
     def _from_message(
         cls,
-        message: uamqp_Message,
+        message: Union["Message", pyamqp_Message],
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
         # pylint:disable=protected-access
@@ -225,7 +241,6 @@ class EventData(object):
         event_data = cls(body="")
         # pylint: disable=protected-access
         event_data._message = message
-        event_data.message = message
         event_data._raw_amqp_message = (
             raw_amqp_message
             if raw_amqp_message
@@ -243,6 +258,35 @@ class EventData(object):
 
         seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
+
+    @property
+    def message(self) -> Union["Message", LegacyMessage]:
+        """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: uamqp.Message or LegacyMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        if not self._uamqp_message:
+            self._uamqp_message = LegacyMessage(
+                self._raw_amqp_message,
+                to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
+            )
+        return self._uamqp_message
+
+    @message.setter
+    def message(self, value: "Message") -> None:
+        """DEPRECATED: Set the underlying Message.
+        This is deprecated and will be removed in a later release.
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        self._uamqp_message = value
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -379,9 +423,11 @@ class EventData(object):
             if self.body_type != AmqpMessageBodyType.DATA:
                 return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
-        except TypeError:
+        except UnicodeDecodeError as e:
+            raise TypeError(f"Message data is not compatible with string type: {e}")
+        except TypeError as e:
             return str(data)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             pass
         try:
             return cast(bytes, data).decode(encoding)
@@ -493,13 +539,12 @@ class EventDataBatch(object):
         self,
         max_size_in_bytes: Optional[int] = None,
         partition_id: Optional[str] = None,
-        partition_key: Optional[Union[str, bytes]] = None
+        partition_key: Optional[Union[str, bytes]] = None,
+        **kwargs,
     ) -> None:
-        self._amqp_transport = UamqpTransport
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
-        if partition_key and not isinstance(
-            partition_key, (str, bytes)
-        ):
+        if partition_key and not isinstance(partition_key, (str, bytes)):
             _LOGGER.info(
                 "WARNING: Setting partition_key of non-string value on the events to be sent is discouraged "
                 "as the partition_key will be ignored by the Event Hub service and events will be assigned "
@@ -507,22 +552,25 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
-        self.max_size_in_bytes = (
-            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
-        )
-        self._message = self._amqp_transport.build_batch_message(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
 
+        self._message = self._amqp_transport.build_batch_message(data=[])
         self._message = self._amqp_transport.set_message_partition_key(
             self._message, self._partition_key
         )
-        self.message: uamqp_BatchMessage = self._message
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
+        self.max_size_in_bytes = (
+            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+        )
+
         self._count = 0
-        self._internal_events: List[
-            Union[EventData, AmqpAnnotatedMessage]
-        ] = []
+        self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
+        self._uamqp_message = (
+            None
+            if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR
+            else self._message
+        )
 
     def __repr__(self) -> str:
         batch_repr = (
@@ -537,9 +585,12 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(
         cls,
-        batch_data: Iterable[EventData],
+        batch_data: Iterable[Union[AmqpAnnotatedMessage, EventData]],
         amqp_transport: AmqpTransport,
         partition_key: Optional[AnyStr] = None,
+        *,
+        max_size_in_bytes: Optional[int] = None,
+        partition_id: Optional[str] = None,
     ) -> EventDataBatch:
         outgoing_batch_data = [
             transform_outbound_single_message(
@@ -547,7 +598,12 @@ class EventDataBatch(object):
             )
             for m in batch_data
         ]
-        batch_data_instance = cls(partition_key=partition_key)
+        batch_data_instance = cls(
+            partition_key=partition_key,
+            amqp_transport=amqp_transport,
+            max_size_in_bytes=max_size_in_bytes,
+            partition_id=partition_id,
+        )
 
         for event_data in outgoing_batch_data:
             batch_data_instance.add(event_data)
@@ -563,6 +619,36 @@ class EventDataBatch(object):
                     "the Event Hub frame size limit. Please send a smaller collection of EventData "
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
                 )
+
+    @property
+    def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
+        """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: uamqp.BatchMessage or LegacyBatchMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        if not self._uamqp_message:
+            message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
+            self._uamqp_message = LegacyBatchMessage(
+                message,
+                to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
+            )
+        return self._uamqp_message
+
+    @message.setter
+    def message(self, value: "BatchMessage") -> None:
+        """DEPRECATED: Set the underlying BatchMessage.
+        This is deprecated and will be removed in a later release.
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        self._uamqp_message = value
 
     @property
     def size_in_bytes(self) -> int:
@@ -598,12 +684,15 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                self._amqp_transport.set_message_partition_key(
+                outgoing_event_data._message = self._amqp_transport.set_message_partition_key(  # pylint: disable=protected-access
                     outgoing_event_data._message,  # pylint: disable=protected-access
                     self._partition_key,
                 )
 
-        trace_message(outgoing_event_data)
+        outgoing_event_data._message = trace_message(   # pylint: disable=protected-access
+            outgoing_event_data._message,   # pylint: disable=protected-access
+            amqp_transport=self._amqp_transport
+        )
         event_data_size = self._amqp_transport.get_message_encoded_size(
             outgoing_event_data._message  # pylint: disable=protected-access
         )
