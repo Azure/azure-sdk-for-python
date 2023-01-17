@@ -209,9 +209,9 @@ class TestComponent:
             # enum will be transformed to string
             if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
-                    input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
+                    input_port["enum"] = list(map(lambda x: str(x).lower() if isinstance(x, bool) else str(x), input_port["enum"]))
                 if "default" in input_port:
-                    input_port["default"] = str(input_port["default"])
+                    input_port["default"] = str(input_port["default"]).lower() if isinstance(input_port["default"], bool) else str(input_port["default"])
 
         # code will be dumped as absolute path
         if "code" in expected_dict:
@@ -594,7 +594,7 @@ class TestComponent:
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
                 # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
-                "param_string_with_yes_value": {"default": "True", "type": "string"},
+                "param_string_with_yes_value": {"default": "true", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
             },
             "outputs": {
