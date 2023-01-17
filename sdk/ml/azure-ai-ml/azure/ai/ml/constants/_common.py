@@ -21,7 +21,7 @@ CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
 HTTP_PREFIX = "http"
-HTTPS_PREFIX = "https"
+HTTPS_PREFIX = "https://"
 ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
@@ -171,7 +171,6 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
-SERVICE_URL = "https://{}.api.azureml.ms"
 
 
 class AzureMLResourceType(object):

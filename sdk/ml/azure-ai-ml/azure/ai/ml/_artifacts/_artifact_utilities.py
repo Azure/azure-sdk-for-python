@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
-from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata, _get_cloud_details
 from azure.ai.ml._restclient.v2022_05_01.models import Workspace
 from azure.ai.ml._restclient.v2022_10_01.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -42,13 +42,13 @@ from azure.ai.ml._utils._storage_utils import (
     get_artifact_path_from_storage_url,
     get_storage_client,
 )
-from azure.ai.ml._utils.utils import is_mlflow_uri, is_url, retry
+from azure.ai.ml._utils.utils import is_mlflow_uri, is_url, retry, replace_between
 
 from azure.ai.ml.constants._common import (
     SHORT_URI_FORMAT,
     STORAGE_ACCOUNT_URLS,
-    SERVICE_URL,
     MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+    HTTPS_PREFIX,
 )
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
@@ -488,7 +488,13 @@ def get_temporary_data_reference(
     }
     data_encoded = json.dumps(data).encode('utf-8')
     serialized_data = json.loads(data_encoded)
-    request_url = f"{SERVICE_URL.format(workspace.location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
+
+    # make sure correct cloud endpoint is used
+    cloud_endpoint = _get_cloud_details()['registry_discovery_endpoint']
+    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+
+    # send request
+    request_url = f"{service_url}assetstore/v1.0/temporaryDataReference/createOrGet"
     response = requests_pipeline.post(request_url, json=serialized_data, headers=request_headers)
 
     if response.status_code != 200:
@@ -520,7 +526,11 @@ def get_asset_by_hash(
     # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
     # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
     # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
-    request_url = f"{SERVICE_URL.format(workspace.location)}/content/v2.0/subscriptions/{subscription_id}/"\
+
+    # make sure correct cloud endpoint is used
+    cloud_endpoint = _get_cloud_details()['registry_discovery_endpoint']
+    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+    request_url = f"{service_url}content/v2.0/subscriptions/{subscription_id}/"\
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
         f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
 
