@@ -142,14 +142,21 @@ class AMQPClientAsync(AMQPClientSync):
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    _logger.info("Keeping %r connection alive. %r",
-                                 self.__class__.__name__,
-                                 self._connection.container_id)
+                    _logger.debug(
+                        "Keeping %r connection alive.",
+                        self.__class__.__name__,
+                        extra=self._network_trace_params
+                    )
                     await asyncio.shield(self._connection.work_async())
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
-            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+            _logger.info(
+                "Connection keep-alive for %r failed: %r.",
+                self.__class__.__name__,
+                e,
+                extra=self._network_trace_params
+            )
 
     async def __aenter__(self):
         """Run Client in an async context manager."""
@@ -221,7 +228,6 @@ class AMQPClientAsync(AMQPClientSync):
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
-        _logger.debug("Opening client connection.")
         if connection:
             self._connection = connection
             self._external_connection = True
@@ -254,9 +260,13 @@ class AMQPClientAsync(AMQPClientSync):
                 auth_timeout=self._auth_timeout
             )
             await self._cbs_authenticator.open()
+        self._network_trace_params["amqpConnection"] = self._connection._container_id
+        self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
-        if self._keep_alive_interval:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+        # TODO: Looks like this is broken - should re-enable later and test
+        # correct empty frame behaviour
+        # if self._keep_alive_interval:
+        #    self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -279,6 +289,8 @@ class AMQPClientAsync(AMQPClientSync):
         if not self._external_connection:
             await self._connection.close()
             self._connection = None
+        self._network_trace_params["amqpConnection"] = None
+        self._network_trace_params["amqpSession"] = None
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during
@@ -318,6 +330,7 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
+
         if self._shutdown:
             return False
         if not await self.client_ready_async():
@@ -493,13 +506,8 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
         :rtype: bool
         """
-        try:
-            await self._link.update_pending_deliveries()
-            await self._connection.listen(wait=self._socket_timeout, **kwargs)
-        except ValueError:
-            _logger.info("Timeout reached, closing sender.")
-            self._shutdown = True
-            return False
+        await self._link.update_pending_deliveries()
+        await self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
 
     async def _transfer_message_async(self, message_delivery, timeout=0):
@@ -562,6 +570,11 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = await self.do_work_async()
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Send failed - connection not running."
+            )
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
@@ -714,7 +727,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
-            _logger.info("Timeout reached, closing receiver.")
+            _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
             return False
         return True
@@ -732,10 +745,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             await self._message_received_callback(message)
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
-        # TODO: do we need settled property for a message?
-        # elif not message.settled:
-        #    # Message was received with callback processing and wasn't settled.
-        #    _logger.info("Message was not settled.")
 
     async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
         self._message_received_callback = on_message_received
@@ -746,7 +755,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self.open_async()
         while len(batch) < max_batch_size:
             try:
-                # TODO: This looses the transfer frame data
+                # TODO: This drops the transfer frame data
                 _, message = self._received_messages.get_nowait()
                 batch.append(message)
                 self._received_messages.task_done()

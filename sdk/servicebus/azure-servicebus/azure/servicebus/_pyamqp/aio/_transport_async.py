@@ -42,12 +42,13 @@ from io import BytesIO
 import logging
 
 
+
 import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
+from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -59,6 +60,7 @@ from .._transport import (
     AMQP_PORT,
     TIMEOUT_INTERVAL,
 )
+from ..error import AuthenticationException, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -74,7 +76,6 @@ class AsyncTransportMixin:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (
             TimeoutError,
@@ -101,10 +102,15 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
+                    _LOGGER.debug(
+                        "Received invalid frame type: %r, expected: %r",
+                        frame_type,
+                        verify_frame_type,
+                        extra=self.network_trace_params
+                    )
                     raise ValueError(
                         f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
                     )
-
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
@@ -122,7 +128,13 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
-            except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
+            except (
+                asyncio.CancelledError,
+                asyncio.TimeoutError,
+                TimeoutError,
+                socket.timeout,
+                asyncio.IncompleteReadError
+            ):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -134,9 +146,22 @@ class AsyncTransportMixin:
                     raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
+                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
                 raise
             offset -= 2
         return frame_header, channel, payload[offset:]
+
+    async def write(self, s):
+        async with self.socket_lock:
+            try:
+                await self._write(s)
+            except socket.timeout:
+                raise
+            except (OSError, IOError, socket.error) as exc:
+                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
 
     async def send_frame(self, channel, frame, **kwargs):
         header, performative = encode_frame(frame, **kwargs)
@@ -147,7 +172,6 @@ class AsyncTransportMixin:
             data = header + encoded_channel + performative
 
         await self.write(data)
-        # _LOGGER.info("OCH%d -> %r", channel, frame)
 
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
@@ -175,6 +199,11 @@ class AsyncTransportMixin:
                     context.check_hostname = True
                 if (certfile is not None) and (keyfile is not None):
                     context.load_cert_chain(certfile, keyfile)
+                return context
+            ca_certs = sslopts.get("ca_certs")
+            if ca_certs:
+                context = ssl.SSLContext(ssl_version)
+                context.load_verify_locations(ca_certs)
                 return context
             return True
         except TypeError:
@@ -218,9 +247,9 @@ class AsyncTransport(
 
         self.connect_timeout = connect_timeout
         self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts)
+        self.sslopts = ssl_opts
+        self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
         try:
@@ -238,7 +267,8 @@ class AsyncTransport(
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
             self.connected = True
-        except (OSError, IOError, SSLError):
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
             if self.sock and not self.connected:
                 self.sock.close()
@@ -261,7 +291,7 @@ class AsyncTransport(
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = await self.loop.getaddrinfo(
+                entries = await asyncio.get_event_loop().getaddrinfo(
                     host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP
                 )
                 entries_num = len(entries)
@@ -283,7 +313,7 @@ class AsyncTransport(
                     except NotImplementedError:
                         pass
                     self.sock.settimeout(timeout)
-                    await self.loop.sock_connect(self.sock, sa)
+                    await asyncio.get_event_loop().sock_connect(self.sock, sa)
                 except socket.error as ex:
                     e = ex
                     if self.sock is not None:
@@ -300,6 +330,17 @@ class AsyncTransport(
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
+        try:
+            # Building ssl opts here instead of constructor, so that invalid cert error is raised
+            # when client is connecting, rather then during creation. For uamqp exception parity.
+            self.sslopts = self._build_ssl_opts(self.sslopts)
+        except FileNotFoundError as exc:
+            # FileNotFoundError does not have missing filename info, so adding it below.
+            # Assuming that this must be ca_certs, since this is the only file path that
+            # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
+            # For uamqp exception parity. Remove later when resolving issue #27128.
+            exc.filename = self.sslopts
+            raise exc
         self.sock.settimeout(1)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
@@ -351,6 +392,10 @@ class AsyncTransport(
                         toread
                     )
                     nbytes = toread
+                except AttributeError:
+                    # This means that close() was called concurrently
+                    # self.reader has been set to None.
+                    raise IOError("Connection has already been closed")
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
                     view[nbytes : nbytes + pbytes] = exc.partial
@@ -379,39 +424,29 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
+        try:
+            self.writer.write(s)
+            await self.writer.drain()
+        except AttributeError:
+            raise IOError("Connection has already been closed")
 
     async def close(self):
-        if self.writer is not None:
-            if self.sslopts:
-                # see issue: https://github.com/encode/httpx/issues/914
-                self.writer.transport.abort()
-            self.writer.close()
+        async with self.socket_lock:
+            try:
+                if self.writer is not None:
+                    # Closing the writer closes the underlying socket.
+                    self.writer.close()
+                    if self.sslopts:
+                        # see issue: https://github.com/encode/httpx/issues/914
+                        await asyncio.sleep(0)
+                        self.writer.transport.abort()
+                    await self.writer.wait_closed()
+            except Exception as e:  # pylint: disable=broad-except
+                # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
+                _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
             self.writer, self.reader = None, None
         self.sock = None
         self.connected = False
-
-    async def write(self, s):
-        try:
-            await self._write(s)
-        except socket.timeout:
-            raise
-        except (OSError, IOError, socket.error) as exc:
-            if get_errno(exc) not in _UNAVAIL:
-                self.connected = False
-            raise
-
-    async def receive_frame_with_lock(self, **kwargs):
-        try:
-            async with self.socket_lock:
-                header, channel, payload = await self.read(**kwargs)
-            if not payload:
-                decoded = decode_empty_frame(header)
-            else:
-                decoded = decode_frame(payload)
-            return channel, decoded
-        except (socket.timeout, TimeoutError):
-            return None, None
 
     async def negotiate(self):
         if not self.sslopts:
@@ -439,7 +474,7 @@ class WebSocketTransportAsync(
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
@@ -447,8 +482,10 @@ class WebSocketTransportAsync(
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
+        self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
+        self.sslopts = self._build_ssl_opts(self.sslopts)
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
         http_proxy_auth = None
@@ -462,7 +499,7 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession
+            from aiohttp import ClientSession, ClientConnectorError
             from urllib.parse import urlsplit
 
             if username or password:
@@ -478,52 +515,72 @@ class WebSocketTransportAsync(
                 parsed_url = urlsplit(url)
                 url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
-            self.ws = await self.session.ws_connect(
-                url=url,
-                timeout=self._connect_timeout,
-                protocols=[AMQP_WS_SUBPROTOCOL],
-                autoclose=False,
-                proxy=http_proxy_host,
-                proxy_auth=http_proxy_auth,
-                ssl=self.sslopts,
-            )
-            self.connected = True
+            try:
+                # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
+                # if pong response is not received then close connection. This raises an error when trying
+                # to communicate with the websocket which is no longer active.
+                # We are waiting a bug fix in aiohttp for these 2 bugs where aiohttp ws might hang on network disconnect
+                # and the heartbeat mechanism helps mitigate these two.
+                # https://github.com/aio-libs/aiohttp/pull/5860
+                # https://github.com/aio-libs/aiohttp/issues/2309
 
+                self.ws = await self.session.ws_connect(
+                    url=url,
+                    timeout=self._connect_timeout,
+                    protocols=[AMQP_WS_SUBPROTOCOL],
+                    autoclose=False,
+                    proxy=http_proxy_host,
+                    proxy_auth=http_proxy_auth,
+                    ssl=self.sslopts,
+                    heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+                )
+            except ClientConnectorError as exc:
+                _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
+                if self._custom_endpoint:
+                    raise AuthenticationException(
+                        ErrorCondition.ClientError,
+                        description="Failed to authenticate the connection due to exception: " + str(exc),
+                        error=exc,
+                    )
+                raise ConnectionError("Failed to establish websocket connection: " + str(exc))
+            self.connected = True
         except ImportError:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
 
-    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
+    async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-
         length = 0
-        view = buffer or memoryview(bytearray(n))
+        view = buffer or memoryview(bytearray(toread))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
-        n -= nbytes
-
+        toread -= nbytes
         try:
-            while n:
+            while toread:
                 data = await self.ws.receive_bytes()
-                if len(data) <= n:
-                    view[length : length + len(data)] = data
-                    n -= len(data)
+                read_length = len(data)
+                if read_length <= toread:
+                    view[length : length + read_length] = data
+                    toread -= read_length
+                    length += read_length
                 else:
-                    view[length : length + n] = data[0:n]
-                    self._read_buffer = BytesIO(data[n:])
-                    n = 0
+                    view[length : length + toread] = data[0:toread]
+                    self._read_buffer = BytesIO(data[toread:])
+                    toread = 0
             return view
-        except asyncio.TimeoutError:
-            raise TimeoutError()
+        except:
+            self._read_buffer = BytesIO(view[:length])
+            raise
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.ws.close()
-        await self.session.close()
-        self.connected = False
+        async with self.socket_lock:
+            await self.ws.close()
+            await self.session.close()
+            self.connected = False
 
-    async def write(self, s):
+    async def _write(self, s):
         """Completely write a string (byte array) to the peer.
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234

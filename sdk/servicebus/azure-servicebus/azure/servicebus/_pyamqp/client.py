@@ -176,6 +176,7 @@ class AMQPClient(
             "remote_idle_timeout_empty_frame_send_ratio", None
         )
         self._network_trace = kwargs.pop("network_trace", False)
+        self._network_trace_params = {"amqpConnection": None, "amqpSession": None, "amqpLink": None}
 
         # Session settings
         self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
@@ -280,7 +281,6 @@ class AMQPClient(
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
-        _logger.debug("Opening client connection.")
         if connection:
             self._connection = connection
             self._external_connection = True
@@ -311,6 +311,8 @@ class AMQPClient(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
             )
             self._cbs_authenticator.open()
+        self._network_trace_params["amqpConnection"] = self._connection._container_id
+        self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
 
     def close(self):
@@ -337,6 +339,8 @@ class AMQPClient(
         if not self._external_connection:
             self._connection.close()
             self._connection = None
+        self._network_trace_params["amqpConnection"] = None
+        self._network_trace_params["amqpSession"] = None
 
     def auth_complete(self):
         """Whether the authentication handshake is complete during
@@ -555,13 +559,8 @@ class SendClient(AMQPClient):
 
         :rtype: bool
         """
-        try:
-            self._link.update_pending_deliveries()
-            self._connection.listen(wait=self._socket_timeout, **kwargs)
-        except ValueError:
-            _logger.info("Timeout reached, closing sender.")
-            self._shutdown = True
-            return False
+        self._link.update_pending_deliveries()
+        self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
 
     def _transfer_message(self, message_delivery, timeout=0):
@@ -631,6 +630,12 @@ class SendClient(AMQPClient):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Send failed - connection not running."
+            )
+
         if message_delivery.state in (
             MessageDeliveryState.Error,
             MessageDeliveryState.Cancelled,
@@ -797,7 +802,7 @@ class ReceiveClient(AMQPClient):
             self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
-            _logger.info("Timeout reached, closing receiver.")
+            _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
             return False
         return True
@@ -827,7 +832,7 @@ class ReceiveClient(AMQPClient):
         self.open()
         while len(batch) < max_batch_size:
             try:
-                # TODO: This looses the transfer frame data
+                # TODO: This drops the transfer frame data
                 _, message = self._received_messages.get_nowait()
                 batch.append(message)
                 self._received_messages.task_done()

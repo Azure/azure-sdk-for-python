@@ -38,12 +38,14 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         self.state = ManagementLinkState.IDLE
         self._pending_operations = []
         self._session = session
+        self._network_trace_params = kwargs.get('network_trace_params')
         self._request_link: SenderLink = session.create_sender_link(
             endpoint,
             source_address=endpoint,
             on_link_state_change=self._on_sender_state_change,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First,
+            network_trace=kwargs.get("network_trace", False)
         )
         self._response_link: ReceiverLink = session.create_receiver_link(
             endpoint,
@@ -52,6 +54,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             on_transfer=self._on_message_received,
             send_settle_mode=SenderSettleMode.Unsettled,
             rcv_settle_mode=ReceiverSettleMode.First,
+            network_trace=kwargs.get("network_trace", False)
         )
         self._on_amqp_management_error = kwargs.get("on_amqp_management_error")
         self._on_amqp_management_open_complete = kwargs.get("on_amqp_management_open_complete")
@@ -70,7 +73,12 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         await self.close()
 
     async def _on_sender_state_change(self, previous_state, new_state):
-        _LOGGER.info("Management link sender state changed: %r -> %r", previous_state, new_state)
+        _LOGGER.info(
+            "Management link sender state changed: %r -> %r",
+            previous_state,
+            new_state,
+            extra=self._network_trace_params
+        )
         if new_state == previous_state:
             return
         if self.state == ManagementLinkState.OPENING:
@@ -95,7 +103,12 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             return
 
     async def _on_receiver_state_change(self, previous_state, new_state):
-        _LOGGER.info("Management link receiver state changed: %r -> %r", previous_state, new_state)
+        _LOGGER.info(
+            "Management link receiver state changed: %r -> %r",
+            previous_state,
+            new_state,
+            extra=self._network_trace_params
+        )
         if new_state == previous_state:
             return
         if self.state == ManagementLinkState.OPENING:

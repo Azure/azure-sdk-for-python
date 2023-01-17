@@ -28,6 +28,11 @@ class ManagementOperation(object):
 
         self._session = session
         self._connection = self._session._connection
+        self._network_trace_params = {
+            "amqpConnection": self._session._connection._container_id,
+            "amqpSession": self._session.name,
+            "amqpLink": None
+        }
         self._mgmt_link = self._session.create_request_response_link_pair(
             endpoint=endpoint,
             on_amqp_management_open_complete=self._on_amqp_management_open_complete,
@@ -61,22 +66,22 @@ class ManagementOperation(object):
         error=None
     ):
         _LOGGER.debug(
-            "mgmt operation completed, operation id: %r; operation_result: %r; status_code: %r; "
-            "status_description: %r, raw_message: %r, error: %r",
+            "Management operation completed, id: %r; result: %r; code: %r; description: %r, error: %r",
             operation_id,
             operation_result,
             status_code,
             status_description,
-            raw_message,
-            error
+            error,
+            extra=self._network_trace_params
         )
 
         if operation_result in\
                 (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
             self._mgmt_error = error
             _LOGGER.error(
-                "Failed to complete mgmt operation due to error: %r. The management request message is: %r",
-                error, raw_message
+                "Failed to complete management operation due to error: %r.",
+                error,
+                extra=self._network_trace_params
             )
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)

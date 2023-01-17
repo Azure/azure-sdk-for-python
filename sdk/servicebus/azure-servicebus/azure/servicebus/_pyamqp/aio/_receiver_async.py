@@ -41,13 +41,13 @@ class ReceiverLink(Link):
         try:
             return await self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Handler function failed with error: %r", e)
+            _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
 
     async def _incoming_attach(self, frame):
         await super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
-            _LOGGER.info("Cannot get initial-delivery-count. Detaching link")
+            _LOGGER.info("Cannot get initial-delivery-count. Detaching link", extra=self.network_trace_params)
             await self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
@@ -55,7 +55,7 @@ class ReceiverLink(Link):
 
     async def _incoming_transfer(self, frame):
         if self.network_trace:
-            _LOGGER.info("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
         self.current_link_credit -= 1
         self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
@@ -69,8 +69,6 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-                if self.network_trace:
-                    _LOGGER.info("   %r", message, extra=self.network_trace_params)
             delivery_state = await self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
@@ -103,7 +101,7 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
-            _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
+            _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     async def attach(self):

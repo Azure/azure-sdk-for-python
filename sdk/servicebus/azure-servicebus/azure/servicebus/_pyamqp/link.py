@@ -81,7 +81,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
 
         self.network_trace = kwargs["network_trace"]
         self.network_trace_params = kwargs["network_trace_params"]
-        self.network_trace_params["link"] = self.name
+        self.network_trace_params["amqpLink"] = self.name
         self._session = session
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
@@ -157,16 +157,16 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             properties=self.properties,
         )
         if self.network_trace:
-            _LOGGER.info("-> %r", attach_frame, extra=self.network_trace_params)
+            _LOGGER.debug("-> %r", attach_frame, extra=self.network_trace_params)
         self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
 
     def _incoming_attach(self, frame):
         if self.network_trace:
-            _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
         if not frame[5] or not frame[6]:
-            _LOGGER.info("Cannot get source or target. Detaching link")
+            _LOGGER.info("Cannot get source or target. Detaching link", extra=self.network_trace_params)
             self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
@@ -188,7 +188,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
                     frame[6] = Target(*frame[6])
                 self._on_attach(AttachFrame(*frame))
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("Callback for link attach raised error: %r", e)
+                _LOGGER.warning("Callback for link attach raised error: %r", e, extra=self.network_trace_params)
 
     def _outgoing_flow(self, **kwargs):
         flow_frame = {
@@ -211,14 +211,14 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     def _outgoing_detach(self, close=False, error=None):
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
-            _LOGGER.info("-> %r", detach_frame, extra=self.network_trace_params)
+            _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
         self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
         if close:
             self._is_closed = True
 
     def _incoming_detach(self, frame):
         if self.network_trace:
-            _LOGGER.info("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
         if self.state == LinkState.ATTACHED:
             self._outgoing_detach(close=frame[1])  # closed
         elif frame[1] and not self._is_closed and self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
@@ -253,7 +253,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACH_SENT)
         except Exception as exc:  # pylint: disable=broad-except
-            _LOGGER.info("An error occurred when detaching the link: %r", exc)
+            _LOGGER.info("An error occurred when detaching the link: %r", exc, extra=self.network_trace_params)
             self._set_state(LinkState.DETACHED)
 
     def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:

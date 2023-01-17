@@ -11,9 +11,6 @@ import time
 from ._encode import encode_payload
 from .link import Link
 from .constants import SessionTransferState, LinkDeliverySettleReason, LinkState, Role, SenderSettleMode, SessionState
-from .performatives import (
-    TransferFrame,
-)
 from .error import AMQPLinkError, ErrorCondition, MessageException
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,13 +26,18 @@ class PendingDelivery(object):
         self.transfer_state = None
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
+        self._network_trace_params = kwargs.get('network_trace_params')
 
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
             try:
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
-                _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e)
+                _LOGGER.warning(
+                    "Message 'on_send_complete' callback failed: %r",
+                    e,
+                    extra=self._network_trace_params
+                )
         self.settled = True
 
 
@@ -75,7 +77,10 @@ class SenderLink(Link):
         rcv_delivery_count = frame[5]  # delivery_count
         if frame[4] is not None:  # handle
             if rcv_link_credit is None or rcv_delivery_count is None:
-                _LOGGER.info("Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.")
+                _LOGGER.info(
+                    "Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
+                    extra=self.network_trace_params
+                )
                 self._remove_pending_deliveries()
                 self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
             else:
@@ -99,12 +104,10 @@ class SenderLink(Link):
             "batchable": None,
             "payload": output,
         }
-        if self.network_trace:
-            _LOGGER.info(
-                "-> %r", TransferFrame(delivery_id="<pending>", **delivery.frame), extra=self.network_trace_params
-            )
-            _LOGGER.info("   %r", delivery.message, extra=self.network_trace_params)
-        self._session._outgoing_transfer(delivery)  # pylint:disable=protected-access
+        self._session._outgoing_transfer(  # pylint:disable=protected-access
+            delivery,
+            self.network_trace_params if self.network_trace else None
+        )
         sent_and_settled = False
         if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count
@@ -172,6 +175,7 @@ class SenderLink(Link):
             timeout=kwargs.get("timeout"),
             message=message,
             settled=settled,
+            network_trace_params = self.network_trace_params
         )
         if self.current_link_credit == 0 or send_async:
             self._pending_deliveries.append(delivery)
