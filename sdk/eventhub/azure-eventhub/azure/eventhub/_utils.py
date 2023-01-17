@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     try:
         from uamqp import types as uamqp_types
     except ImportError:
-        uamqp_types = None
+        pass
     from ._pyamqp import types
     from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential

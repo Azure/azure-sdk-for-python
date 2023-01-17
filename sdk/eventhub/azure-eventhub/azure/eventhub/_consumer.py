@@ -30,10 +30,7 @@ if TYPE_CHECKING:
         from uamqp.types import AMQPType as uamqp_AMQPType
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
-        uamqp_ReceiveClient = None
-        uamqp_Message = None
-        uamqp_AMQPType = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._consumer_client import EventHubConsumerClient
 
 

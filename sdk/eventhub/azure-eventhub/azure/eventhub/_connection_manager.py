@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union, Any
+from typing import TYPE_CHECKING, Optional, Union, Any, runtime_checkable
 from threading import Lock
 from enum import Enum
 
@@ -17,8 +17,7 @@ if TYPE_CHECKING:
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
         from uamqp import Connection as uamqp_Connection
     except ImportError:
-        uamqp_JWTTokenAuth = None
-        uamqp_Connection = None
+        pass
     from ._transport._base import AmqpTransport
 
     try:
@@ -26,6 +25,7 @@ if TYPE_CHECKING:
     except ImportError:
         Protocol = object  # type: ignore
 
+    @runtime_checkable
     class ConnectionManager(Protocol):
         def get_connection(
             self,

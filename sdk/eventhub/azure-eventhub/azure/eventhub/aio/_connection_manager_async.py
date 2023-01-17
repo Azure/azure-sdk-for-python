@@ -18,8 +18,7 @@ if TYPE_CHECKING:
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
         from uamqp.async_ops import ConnectionAsync as uamqp_ConnectionAsync
     except ImportError:
-        uamqp_JWTTokenAuthAsync = None
-        uamqp_ConnectionAsync = None
+        pass
 
     try:
         from typing_extensions import Protocol

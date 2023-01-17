@@ -27,10 +27,7 @@ if TYPE_CHECKING:
         from uamqp.types import AMQPType as uamqp_AMQPType
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
     except ImportError:
-        uamqp_Message = None
-        uamqp_ReceiveClientAsync = None
-        uamqp_AMQPType = None
-        uamqp_JWTTokenAsync = None
+        pass
 
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from .._pyamqp.aio._client_async import ReceiveClientAsync

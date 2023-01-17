@@ -51,9 +51,7 @@ if TYPE_CHECKING:
             AMQPClientAsync as uamqp_AMQPClientAsync,
         )
     except ImportError:
-        uamqp_authentication = None
-        uamqp_Message = None
-        uamqp_AMQPClientAsync = None
+        pass
     from azure.core.credentials_async import AsyncTokenCredential
 
     CredentialTypes = Union[

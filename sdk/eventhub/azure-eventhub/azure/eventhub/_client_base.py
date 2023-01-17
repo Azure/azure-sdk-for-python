@@ -9,7 +9,7 @@ import uuid
 import time
 import functools
 import collections
-from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
+from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union, Callable
 try:
     from typing import TypeAlias    # type: ignore
 except ImportError:
@@ -58,10 +58,7 @@ if TYPE_CHECKING:
         )
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth   # pylint:disable=unused-import
     except ImportError:
-        uamqp_Message = None
-        uamqp_JWTTokenAuth = None
-        uamqp_SendClient = None
-        uamqp_ReceiveClient = None
+        pass
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
     from ._pyamqp import SendClient, ReceiveClient

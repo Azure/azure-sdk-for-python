@@ -39,9 +39,7 @@ if TYPE_CHECKING:
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
-        uamqp_MessageSendResult = None
-        uamqp_SendClient = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._pyamqp.client import SendClient
     from ._pyamqp.authentication import JWTTokenAuth
     from ._transport._base import AmqpTransport

@@ -65,8 +65,7 @@ if TYPE_CHECKING:
             BatchMessage,
         )
     except ImportError:
-        uamqp_Message = None
-        BatchMessage = None
+        pass
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -139,9 +138,6 @@ class EventData(object):
         self._message: Message = None  # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
-        self.message_id: Optional[str] = None
-        self.content_type: Optional[str] = None
-        self.correlation_id: Optional[str] = None
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
@@ -341,7 +337,7 @@ class EventData(object):
         return cast(Dict[Union[str, bytes], Any], self._raw_amqp_message.application_properties)
 
     @properties.setter
-    def properties(self, value: Dict[Union[str, bytes], Any]):
+    def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
         """Application-defined properties on the event.
 
         :param dict value: The application properties for the EventData.
@@ -463,7 +459,7 @@ class EventData(object):
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value: str) -> None:
+    def content_type(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
@@ -483,7 +479,7 @@ class EventData(object):
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value: str) -> None:
+    def correlation_id(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
@@ -505,7 +501,7 @@ class EventData(object):
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value: str) -> None:
+    def message_id(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.message_id = value
