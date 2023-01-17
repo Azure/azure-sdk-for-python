@@ -100,4 +100,13 @@ async def main():
     await sample_copy_model_to_async(model_id)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)
