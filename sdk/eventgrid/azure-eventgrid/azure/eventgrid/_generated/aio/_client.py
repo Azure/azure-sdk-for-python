@@ -15,9 +15,9 @@ from azure.core.rest import HttpRequest, HttpResponse
 from .. import models as _models
 from .._configuration import EventGridPublisherClientConfiguration
 from .._serialization import Deserializer, Serializer
+from ._operations import EventGridPublisherClientOperationsMixin
 
-
-class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """EventGrid Python Publisher Client.
 
     :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
