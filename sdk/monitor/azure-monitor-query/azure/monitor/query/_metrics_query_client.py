@@ -80,16 +80,18 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
          Only one order can be specified.
          Examples: sum asc.
         :paramtype order_by: str
-        :keyword filter: The **$filter** is used to reduce the set of metric data
-         returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **$filter=A
-         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the
-         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
-         series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
-         ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘\ *’ and C eq ‘*\ ’**.
-         To use the split feature, set the value to * - for example, like "City eq '*'"
+        :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
+         Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
+         b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
+         eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
+         operator cannot separate two different metadata names. - Return all time series where A = a1, B
+         = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
+         where A = a1 **$filter=A eq 'a1' and B eq '*' and C eq '*'**. Special case: When dimension
+         name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
+         Instead of using **$filter= "dim (test) 1 eq '*'"** use **$filter= "dim %2528test%2529 1 eq '*'"**.
+         When dimension name is **dim (test) 3** and dimension value is **dim3 (test) val**, instead of using
+         **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
+         %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
         :paramtype filter: str
         :keyword metric_namespace: Metric namespace to query metric definitions for.
         :paramtype metric_namespace: str
