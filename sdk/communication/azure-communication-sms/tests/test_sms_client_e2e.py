@@ -30,6 +30,8 @@ class TestClient(ACSSMTestCase):
 
         assert len(sms_responses) == 1
         self.verify_successful_sms_response(sms_responses[0])
+        print("ConnectionStr: " + self.connection_str)
+        print("NumberStr: ", self.phone_number)
 
     @recorded_by_proxy
     def test_send_sms_multiple_with_options(self):
