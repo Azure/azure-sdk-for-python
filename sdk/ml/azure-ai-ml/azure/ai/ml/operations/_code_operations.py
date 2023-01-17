@@ -26,7 +26,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWork
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
 from azure.ai.ml.entities._assets import Code
@@ -105,7 +104,12 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
             else:
-                existing_asset = _get_existing_snapshot_by_hash(self._datastore_operation, asset_hash, workspace_info, requests_pipeline=self._requests_pipeline)
+                existing_asset = _get_existing_snapshot_by_hash(
+                    self._datastore_operation,
+                    asset_hash,
+                    workspace_info,
+                    requests_pipeline=self._requests_pipeline
+                )
                 if existing_asset:
                     return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
 
