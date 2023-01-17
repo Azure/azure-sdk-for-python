@@ -235,6 +235,10 @@
         ],
         "summary": "Update tags",
         "operationId": "Registries_Update",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        },
         "consumes": [
           "application/json"
         ],
@@ -375,10 +379,7 @@
             }
           },
           "202": {
-            "description": "Created",
-            "schema": {
-              "$ref": "#/definitions/RegistryTrackedResource"
-            }
+            "description": "Created"
           }
         },
         "x-ms-examples": {

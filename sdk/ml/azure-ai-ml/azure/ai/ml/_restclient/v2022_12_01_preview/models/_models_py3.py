@@ -27,8 +27,10 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -56,15 +58,17 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -90,8 +94,10 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -118,7 +124,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -126,8 +132,10 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -369,9 +377,9 @@ class Compute(msrest.serialization.Model):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -466,9 +474,9 @@ class AKS(Compute, AKSSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -936,9 +944,9 @@ class AmlCompute(Compute, AmlComputeSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -5976,9 +5984,9 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -6153,6 +6161,8 @@ class ComputeInstanceConnectivityEndpoints(msrest.serialization.Model):
 class ComputeInstanceContainer(msrest.serialization.Model):
     """Defines an Aml Instance container.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar name: Name of the ComputeInstance container.
     :vartype name: str
     :ivar autosave: Auto save settings. Possible values include: "None", "Local", "Remote".
@@ -6166,6 +6176,10 @@ class ComputeInstanceContainer(msrest.serialization.Model):
     :ivar services: services of this containers.
     :vartype services: list[any]
     """
+
+    _validation = {
+        'services': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -6184,7 +6198,6 @@ class ComputeInstanceContainer(msrest.serialization.Model):
         gpu: Optional[str] = None,
         network: Optional[Union[str, "Network"]] = None,
         environment: Optional["ComputeInstanceEnvironmentInfo"] = None,
-        services: Optional[List[Any]] = None,
         **kwargs
     ):
         """
@@ -6199,8 +6212,6 @@ class ComputeInstanceContainer(msrest.serialization.Model):
         :keyword environment: Environment information of this container.
         :paramtype environment:
          ~azure.mgmt.machinelearningservices.models.ComputeInstanceEnvironmentInfo
-        :keyword services: services of this containers.
-        :paramtype services: list[any]
         """
         super(ComputeInstanceContainer, self).__init__(**kwargs)
         self.name = name
@@ -6208,7 +6219,7 @@ class ComputeInstanceContainer(msrest.serialization.Model):
         self.gpu = gpu
         self.network = network
         self.environment = environment
-        self.services = services
+        self.services = None
 
 
 class ComputeInstanceCreatedBy(msrest.serialization.Model):
@@ -6553,6 +6564,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
+        'containers': {'readonly': True},
+        'data_disks': {'readonly': True},
+        'data_mounts': {'readonly': True},
         'versions': {'readonly': True},
     }
 
@@ -6597,9 +6611,6 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         schedules: Optional["ComputeSchedules"] = None,
         idle_time_before_shutdown: Optional[str] = None,
         enable_node_public_ip: Optional[bool] = None,
-        containers: Optional[List["ComputeInstanceContainer"]] = None,
-        data_disks: Optional[List["ComputeInstanceDataDisk"]] = None,
-        data_mounts: Optional[List["ComputeInstanceDataMount"]] = None,
         **kwargs
     ):
         """
@@ -6641,14 +6652,6 @@ class ComputeInstanceProperties(msrest.serialization.Model):
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
          public IPs.
         :paramtype enable_node_public_ip: bool
-        :keyword containers: Describes informations of containers on this ComputeInstance.
-        :paramtype containers:
-         list[~azure.mgmt.machinelearningservices.models.ComputeInstanceContainer]
-        :keyword data_disks: Describes informations of dataDisks on this ComputeInstance.
-        :paramtype data_disks: list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDataDisk]
-        :keyword data_mounts: Describes informations of dataMounts on this ComputeInstance.
-        :paramtype data_mounts:
-         list[~azure.mgmt.machinelearningservices.models.ComputeInstanceDataMount]
         """
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
@@ -6670,9 +6673,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.schedules = schedules
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.enable_node_public_ip = enable_node_public_ip
-        self.containers = containers
-        self.data_disks = data_disks
-        self.data_mounts = data_mounts
+        self.containers = None
+        self.data_disks = None
+        self.data_mounts = None
         self.versions = None
 
 
@@ -7777,9 +7780,9 @@ class Databricks(Compute, DatabricksSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -8120,9 +8123,9 @@ class DataFactory(Compute):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -8232,9 +8235,9 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -11029,9 +11032,9 @@ class HDInsight(Compute, HDInsightSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -14716,9 +14719,9 @@ class Kubernetes(Compute, KubernetesSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -16001,8 +16004,10 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -16030,7 +16035,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -16038,8 +16043,10 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -17506,8 +17513,10 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -17531,15 +17540,17 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -18579,8 +18590,10 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -18608,7 +18621,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -18616,8 +18629,10 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -20298,8 +20313,10 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -20327,7 +20344,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -20335,8 +20352,10 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -20823,8 +20842,10 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -20852,7 +20873,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -20860,8 +20881,10 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -22076,9 +22099,9 @@ class SynapseSpark(Compute):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -24421,8 +24444,10 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
-    :ivar category: Category of the connection.
-    :vartype category: str
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+     "AzureSynapseAnalytics".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
     :ivar value: Value details of the workspace connection.
@@ -24450,7 +24475,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     def __init__(
         self,
         *,
-        category: Optional[str] = None,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
         target: Optional[str] = None,
         value: Optional[str] = None,
         value_format: Optional[Union[str, "ValueFormat"]] = None,
@@ -24458,8 +24483,10 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         **kwargs
     ):
         """
-        :keyword category: Category of the connection.
-        :paramtype category: str
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
+         "AzureSynapseAnalytics".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
         :keyword value: Value details of the workspace connection.
@@ -24519,9 +24546,9 @@ class VirtualMachine(Compute, VirtualMachineSchema):
     :vartype compute_location: str
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
      Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     "Creating", "Deleting", "Succeeded", "Failed", "Canceled", "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.ComputeProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar description: The description of the Machine Learning compute.
     :vartype description: str
     :ivar created_on: The time at which the compute was created.
@@ -25068,7 +25095,7 @@ class Workspace(Resource):
      "Unknown", "Updating", "Creating", "Deleting", "Succeeded", "Failed", "Canceled",
      "SoftDeleted".
     :vartype provisioning_state: str or
-     ~azure.mgmt.machinelearningservices.models.WorkspaceProvisioningState
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
     :ivar encryption: The encryption settings of Azure ML workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
     :ivar hbi_workspace: The flag to signal HBI data in the workspace and reduce diagnostic data

@@ -887,9 +887,9 @@ from ._azure_machine_learning_workspaces_enums import (
     ComputeInstanceAuthorizationType,
     ComputeInstanceState,
     ComputePowerAction,
-    ComputeProvisioningState,
     ComputeType,
     ConnectionAuthType,
+    ConnectionCategory,
     ContainerType,
     CreatedByType,
     CredentialsType,
@@ -955,6 +955,7 @@ from ._azure_machine_learning_workspaces_enums import (
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
     Protocol,
+    ProvisioningState,
     ProvisioningStatus,
     PublicNetworkAccess,
     PublicNetworkAccessType,
@@ -1005,7 +1006,6 @@ from ._azure_machine_learning_workspaces_enums import (
     VmPriority,
     VolumeDefinitionType,
     WeekDay,
-    WorkspaceProvisioningState,
 )
 
 __all__ = [
@@ -1456,9 +1456,9 @@ __all__ = [
     'ComputeInstanceAuthorizationType',
     'ComputeInstanceState',
     'ComputePowerAction',
-    'ComputeProvisioningState',
     'ComputeType',
     'ConnectionAuthType',
+    'ConnectionCategory',
     'ContainerType',
     'CreatedByType',
     'CredentialsType',
@@ -1524,6 +1524,7 @@ __all__ = [
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',
     'Protocol',
+    'ProvisioningState',
     'ProvisioningStatus',
     'PublicNetworkAccess',
     'PublicNetworkAccessType',
@@ -1574,5 +1575,4 @@ __all__ = [
     'VmPriority',
     'VolumeDefinitionType',
     'WeekDay',
-    'WorkspaceProvisioningState',
 ]

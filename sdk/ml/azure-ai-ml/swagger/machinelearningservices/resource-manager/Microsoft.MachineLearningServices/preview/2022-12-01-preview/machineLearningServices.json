@@ -2219,7 +2219,7 @@
             "SoftDeleted"
           ],
           "x-ms-enum": {
-            "name": "WorkspaceProvisioningState",
+            "name": "ProvisioningState",
             "modelAsString": true
           },
           "readOnly": true,
@@ -3303,7 +3303,7 @@
             "Canceled"
           ],
           "x-ms-enum": {
-            "name": "ComputeProvisioningState",
+            "name": "ProvisioningState",
             "modelAsString": true
           },
           "readOnly": true
@@ -3828,6 +3828,7 @@
         },
         "containers": {
           "type": "array",
+          "readOnly": true,
           "description": "Describes informations of containers on this ComputeInstance.",
           "x-nullable": true,
           "items": {
@@ -3839,6 +3840,7 @@
         },
         "dataDisks": {
           "type": "array",
+          "readOnly": true,
           "description": "Describes informations of dataDisks on this ComputeInstance.",
           "x-nullable": true,
           "items": {
@@ -3848,6 +3850,7 @@
         },
         "dataMounts": {
           "type": "array",
+          "readOnly": true,
           "description": "Describes informations of dataMounts on this ComputeInstance.",
           "x-nullable": true,
           "items": {
@@ -5583,6 +5586,7 @@
         },
         "services": {
           "type": "array",
+          "readOnly": true,
           "description": "services of this containers.",
           "items": {
             "type": "object"
@@ -5782,8 +5786,22 @@
       }
     },
     "ConnectionCategory": {
+      "enum": [
+        "PythonFeed",
+        "ContainerRegistry",
+        "Git",
+        "FeatureStore",
+        "S3",
+        "Snowflake",
+        "AzureSqlDb",
+        "AzureSynapseAnalytics"
+      ],
       "type": "string",
-      "description": "Category of the connection"
+      "description": "Category of the connection",
+      "x-ms-enum": {
+        "name": "ConnectionCategory",
+        "modelAsString": true
+      }
     },
     "WorkspaceConnectionUsernamePassword": {
       "type": "object",
