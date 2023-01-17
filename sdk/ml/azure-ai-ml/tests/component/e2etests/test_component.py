@@ -1,5 +1,4 @@
 import re
-import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -761,6 +760,7 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        # below line is expected to raise KeyError in live test, it will pass after related changes deployed to canary
         jobs_dict = rest_pipeline_component._to_dict()["jobs"]
         # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
         assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
@@ -804,7 +804,6 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
-    @pytest.mark.skip("Running fine locally but failing in pipeline, the recording looks good")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(

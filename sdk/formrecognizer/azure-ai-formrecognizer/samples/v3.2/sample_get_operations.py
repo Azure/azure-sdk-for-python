@@ -57,11 +57,13 @@ def sample_get_operations():
         if operation_info.status == "succeeded":
             print("My {} operation is completed.".format(operation_info.kind))
             result = operation_info.result
-            print("Model ID: {}".format(result.model_id))
+            if result is not None:
+                print("Model ID: {}".format(result.model_id))
         elif operation_info.status == "failed":
             print("My {} operation failed.".format(operation_info.kind))
             error = operation_info.error
-            print("{}: {}".format(error.code, error.message))
+            if error is not None:
+                print("{}: {}".format(error.code, error.message))
         else:
             print("My operation status is {}".format(operation_info.status))
     else:

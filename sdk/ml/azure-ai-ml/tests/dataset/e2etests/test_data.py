@@ -7,7 +7,7 @@ from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_data
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
