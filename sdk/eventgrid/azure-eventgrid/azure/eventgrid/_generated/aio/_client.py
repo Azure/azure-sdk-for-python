@@ -13,7 +13,7 @@ from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
 from .. import models as _models
-from ._configuration import EventGridPublisherClientConfiguration
+from .._configuration import EventGridPublisherClientConfiguration
 from .._serialization import Deserializer, Serializer
 
 
