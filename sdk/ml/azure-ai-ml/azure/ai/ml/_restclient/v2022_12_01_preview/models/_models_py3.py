@@ -7104,6 +7104,51 @@ class CosmosDbSettings(msrest.serialization.Model):
         self.collections_throughput = collections_throughput
 
 
+class Cron(msrest.serialization.Model):
+    """The workflow trigger cron for ComputeStartStop schedule type.
+
+    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+    :vartype start_time: str
+    :ivar time_zone: Specifies time zone in which the schedule runs.
+     TimeZone should follow Windows time zone format. Refer:
+     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+    :vartype time_zone: str
+    :ivar expression: [Required] Specifies cron expression of schedule.
+     The expression should follow NCronTab format.
+    :vartype expression: str
+    """
+
+    _attribute_map = {
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'expression': {'key': 'expression', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time: Optional[str] = None,
+        time_zone: Optional[str] = "UTC",
+        expression: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+        :paramtype start_time: str
+        :keyword time_zone: Specifies time zone in which the schedule runs.
+         TimeZone should follow Windows time zone format. Refer:
+         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+        :paramtype time_zone: str
+        :keyword expression: [Required] Specifies cron expression of schedule.
+         The expression should follow NCronTab format.
+        :paramtype expression: str
+        """
+        super(Cron, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.time_zone = time_zone
+        self.expression = expression
+
+
 class TriggerBase(msrest.serialization.Model):
     """TriggerBase.
 
@@ -10943,6 +10988,91 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         super(FQDNEndpointsProperties, self).__init__(**kwargs)
         self.category = category
         self.endpoints = endpoints
+
+
+class OutboundRule(msrest.serialization.Model):
+    """OutboundRule.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'FQDN': 'FqdnOutboundRule', 'PrivateEndpoint': 'PrivateEndpointOutboundRule', 'ServiceTag': 'ServiceTagOutboundRule'}
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        """
+        super(OutboundRule, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.category = category
+
+
+class FqdnOutboundRule(OutboundRule):
+    """FqdnOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination: str
+        """
+        super(FqdnOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'FQDN'  # type: str
+        self.destination = destination
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
@@ -16134,6 +16264,85 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         self.credentials = credentials
 
 
+class ManagedNetworkDto(msrest.serialization.Model):
+    """ManagedNetworkDto.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkDtoIsolationMode
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkDtoIsolationMode"]] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkDtoIsolationMode
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(ManagedNetworkDto, self).__init__(**kwargs)
+        self.isolation_mode = isolation_mode
+        self.outbound_rules = outbound_rules
+
+
+class ManagedNetworkSettings(msrest.serialization.Model):
+    """ManagedNetworkSettings.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkSettingsIsolationMode"]] = None,
+        network_id: Optional[str] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+        :keyword network_id:
+        :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(ManagedNetworkSettings, self).__init__(**kwargs)
+        self.isolation_mode = isolation_mode
+        self.network_id = network_id
+        self.outbound_rules = outbound_rules
+
+
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
     """Properties specific to a ManagedOnlineDeployment.
 
@@ -19037,6 +19246,125 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         self.value = value
 
 
+class PrivateEndpointDestination(msrest.serialization.Model):
+    """PrivateEndpointDestination.
+
+    :ivar service_resource_id:
+    :vartype service_resource_id: str
+    :ivar subresource_target:
+    :vartype subresource_target: str
+    :ivar spark_jobs_enabled:
+    :vartype spark_jobs_enabled: bool
+    """
+
+    _attribute_map = {
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
+        'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
+        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_resource_id: Optional[str] = None,
+        subresource_target: Optional[str] = None,
+        spark_jobs_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_resource_id:
+        :paramtype service_resource_id: str
+        :keyword subresource_target:
+        :paramtype subresource_target: str
+        :keyword spark_jobs_enabled:
+        :paramtype spark_jobs_enabled: bool
+        """
+        super(PrivateEndpointDestination, self).__init__(**kwargs)
+        self.service_resource_id = service_resource_id
+        self.subresource_target = subresource_target
+        self.spark_jobs_enabled = spark_jobs_enabled
+
+
+class PrivateEndpointOutboundRule(OutboundRule):
+    """PrivateEndpointOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination:
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointOutboundRuleDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'PrivateEndpointOutboundRuleDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional["PrivateEndpointOutboundRuleDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination:
+         ~azure.mgmt.machinelearningservices.models.PrivateEndpointOutboundRuleDestination
+        """
+        super(PrivateEndpointOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'PrivateEndpoint'  # type: str
+        self.destination = destination
+
+
+class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
+    """PrivateEndpointOutboundRuleDestination.
+
+    :ivar service_resource_id:
+    :vartype service_resource_id: str
+    :ivar subresource_target:
+    :vartype subresource_target: str
+    :ivar spark_jobs_enabled:
+    :vartype spark_jobs_enabled: bool
+    """
+
+    _attribute_map = {
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
+        'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
+        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_resource_id: Optional[str] = None,
+        subresource_target: Optional[str] = None,
+        spark_jobs_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_resource_id:
+        :paramtype service_resource_id: str
+        :keyword subresource_target:
+        :paramtype subresource_target: str
+        :keyword spark_jobs_enabled:
+        :paramtype spark_jobs_enabled: bool
+        """
+        super(PrivateEndpointOutboundRuleDestination, self).__init__(service_resource_id=service_resource_id, subresource_target=subresource_target, spark_jobs_enabled=spark_jobs_enabled, **kwargs)
+
+
 class PrivateLinkResource(Resource):
     """A private link resource.
 
@@ -19461,6 +19789,65 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         self.logbase = logbase
         self.rule = rule
         self.seed = seed
+
+
+class Recurrence(msrest.serialization.Model):
+    """The workflow trigger recurrence for ComputeStartStop schedule type.
+
+    :ivar frequency: [Required] The frequency to trigger schedule. Possible values include:
+     "Minute", "Hour", "Day", "Week", "Month".
+    :vartype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
+    :ivar interval: [Required] Specifies schedule interval in conjunction with frequency.
+    :vartype interval: int
+    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+    :vartype start_time: str
+    :ivar time_zone: Specifies time zone in which the schedule runs.
+     TimeZone should follow Windows time zone format. Refer:
+     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+    :vartype time_zone: str
+    :ivar schedule: [Required] The recurrence schedule.
+    :vartype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
+    """
+
+    _attribute_map = {
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
+    }
+
+    def __init__(
+        self,
+        *,
+        frequency: Optional[Union[str, "RecurrenceFrequency"]] = None,
+        interval: Optional[int] = None,
+        start_time: Optional[str] = None,
+        time_zone: Optional[str] = "UTC",
+        schedule: Optional["RecurrenceSchedule"] = None,
+        **kwargs
+    ):
+        """
+        :keyword frequency: [Required] The frequency to trigger schedule. Possible values include:
+         "Minute", "Hour", "Day", "Week", "Month".
+        :paramtype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
+        :keyword interval: [Required] Specifies schedule interval in conjunction with frequency.
+        :paramtype interval: int
+        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+        :paramtype start_time: str
+        :keyword time_zone: Specifies time zone in which the schedule runs.
+         TimeZone should follow Windows time zone format. Refer:
+         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+        :paramtype time_zone: str
+        :keyword schedule: [Required] The recurrence schedule.
+        :paramtype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
+        """
+        super(Recurrence, self).__init__(**kwargs)
+        self.frequency = frequency
+        self.interval = interval
+        self.start_time = start_time
+        self.time_zone = time_zone
+        self.schedule = schedule
 
 
 class RecurrenceSchedule(msrest.serialization.Model):
@@ -21085,6 +21472,125 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
         super(ServicePrincipalDatastoreSecrets, self).__init__(**kwargs)
         self.secrets_type = 'ServicePrincipal'  # type: str
         self.client_secret = client_secret
+
+
+class ServiceTagDestination(msrest.serialization.Model):
+    """ServiceTagDestination.
+
+    :ivar service_tag:
+    :vartype service_tag: str
+    :ivar protocol:
+    :vartype protocol: str
+    :ivar port_ranges:
+    :vartype port_ranges: str
+    """
+
+    _attribute_map = {
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port_ranges': {'key': 'portRanges', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_tag: Optional[str] = None,
+        protocol: Optional[str] = None,
+        port_ranges: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_tag:
+        :paramtype service_tag: str
+        :keyword protocol:
+        :paramtype protocol: str
+        :keyword port_ranges:
+        :paramtype port_ranges: str
+        """
+        super(ServiceTagDestination, self).__init__(**kwargs)
+        self.service_tag = service_tag
+        self.protocol = protocol
+        self.port_ranges = port_ranges
+
+
+class ServiceTagOutboundRule(OutboundRule):
+    """ServiceTagOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination:
+     ~azure.mgmt.machinelearningservices.models.ServiceTagOutboundRuleDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'ServiceTagOutboundRuleDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional["ServiceTagOutboundRuleDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination:
+         ~azure.mgmt.machinelearningservices.models.ServiceTagOutboundRuleDestination
+        """
+        super(ServiceTagOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'ServiceTag'  # type: str
+        self.destination = destination
+
+
+class ServiceTagOutboundRuleDestination(ServiceTagDestination):
+    """ServiceTagOutboundRuleDestination.
+
+    :ivar service_tag:
+    :vartype service_tag: str
+    :ivar protocol:
+    :vartype protocol: str
+    :ivar port_ranges:
+    :vartype port_ranges: str
+    """
+
+    _attribute_map = {
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port_ranges': {'key': 'portRanges', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_tag: Optional[str] = None,
+        protocol: Optional[str] = None,
+        port_ranges: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_tag:
+        :paramtype service_tag: str
+        :keyword protocol:
+        :paramtype protocol: str
+        :keyword port_ranges:
+        :paramtype port_ranges: str
+        """
+        super(ServiceTagOutboundRuleDestination, self).__init__(service_tag=service_tag, protocol=protocol, port_ranges=port_ranges, **kwargs)
 
 
 class SetupScripts(msrest.serialization.Model):
@@ -25231,6 +25737,9 @@ class Workspace(Resource):
     :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
      the workspace.
     :vartype system_datastores_auth_mode: str
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network:
+     ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
@@ -25292,6 +25801,7 @@ class Workspace(Resource):
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'WorkspacePropertiesManagedNetwork'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
     }
 
@@ -25320,6 +25830,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         v1_legacy_mode: Optional[bool] = False,
         system_datastores_auth_mode: Optional[str] = None,
+        managed_network: Optional["WorkspacePropertiesManagedNetwork"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
         **kwargs
     ):
@@ -25382,6 +25893,9 @@ class Workspace(Resource):
         :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
          the workspace.
         :paramtype system_datastores_auth_mode: str
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network:
+         ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
@@ -25420,6 +25934,7 @@ class Workspace(Resource):
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = system_datastores_auth_mode
+        self.managed_network = managed_network
         self.feature_store_settings = feature_store_settings
 
 
@@ -25734,6 +26249,46 @@ class WorkspaceListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
+class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
+    """Managed network settings.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkSettingsIsolationMode"]] = None,
+        network_id: Optional[str] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+        :keyword network_id:
+        :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(WorkspacePropertiesManagedNetwork, self).__init__(isolation_mode=isolation_mode, network_id=network_id, outbound_rules=outbound_rules, **kwargs)
+
+
 class WorkspaceUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a machine learning workspace.
 
@@ -25765,6 +26320,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype container_registry: str
     :ivar encryption: The encryption settings of the workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
@@ -25783,6 +26340,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
     }
 
@@ -25801,6 +26359,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         application_insights: Optional[str] = None,
         container_registry: Optional[str] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
+        managed_network: Optional["ManagedNetworkSettings"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
         **kwargs
     ):
@@ -25834,6 +26393,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         :keyword encryption: The encryption settings of the workspace.
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
@@ -25851,4 +26412,5 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.application_insights = application_insights
         self.container_registry = container_registry
         self.encryption = encryption
+        self.managed_network = managed_network
         self.feature_store_settings = feature_store_settings

@@ -76,7 +76,7 @@ from azure.ai.ml.operations import (
     VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    WorkspaceOutboundRuleOperations
+    WorkspaceOutboundRuleOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -224,7 +224,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient102022Preview(
+        self._rp_service_client = ServiceClient122022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -565,7 +565,7 @@ class MLClient:
     @property
     def workspace_outbound_rule(self) -> WorkspaceOutboundRuleOperations:
         """A collection of workspace managed network outbound rule related operations.
-        
+
         :return: Workspace Outbound Rule operations
         :rtype: WorkspaceOutboundRuleOperations
         """

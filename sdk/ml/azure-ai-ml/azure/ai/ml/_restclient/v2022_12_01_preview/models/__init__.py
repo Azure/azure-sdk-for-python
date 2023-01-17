@@ -108,6 +108,7 @@ try:
     from ._models_py3 import ContainerResourceRequirements
     from ._models_py3 import ContainerResourceSettings
     from ._models_py3 import CosmosDbSettings
+    from ._models_py3 import Cron
     from ._models_py3 import CronTrigger
     from ._models_py3 import CsvExportSummary
     from ._models_py3 import CustomForecastHorizon
@@ -187,6 +188,7 @@ try:
     from ._models_py3 import Forecasting
     from ._models_py3 import ForecastingSettings
     from ._models_py3 import ForecastingTrainingSettings
+    from ._models_py3 import FqdnOutboundRule
     from ._models_py3 import GridSamplingAlgorithm
     from ._models_py3 import HDInsight
     from ._models_py3 import HDInsightProperties
@@ -261,6 +263,8 @@ try:
     from ._models_py3 import MLTableJobOutput
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
+    from ._models_py3 import ManagedNetworkDto
+    from ._models_py3 import ManagedNetworkSettings
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MedianStoppingPolicy
@@ -294,6 +298,7 @@ try:
     from ._models_py3 import OnlineEndpointTrackedResourceArmPaginatedResult
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
+    from ._models_py3 import OutboundRule
     from ._models_py3 import OutputPathAssetReference
     from ._models_py3 import PATAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import PaginatedComputeResourcesList
@@ -311,6 +316,9 @@ try:
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateEndpointDestination
+    from ._models_py3 import PrivateEndpointOutboundRule
+    from ._models_py3 import PrivateEndpointOutboundRuleDestination
     from ._models_py3 import PrivateLinkResource
     from ._models_py3 import PrivateLinkResourceListResult
     from ._models_py3 import PrivateLinkServiceConnectionState
@@ -320,6 +328,7 @@ try:
     from ._models_py3 import QuotaBaseProperties
     from ._models_py3 import QuotaUpdateParameters
     from ._models_py3 import RandomSamplingAlgorithm
+    from ._models_py3 import Recurrence
     from ._models_py3 import RecurrenceSchedule
     from ._models_py3 import RecurrenceTrigger
     from ._models_py3 import RegenerateEndpointKeysRequest
@@ -355,6 +364,9 @@ try:
     from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
     from ._models_py3 import ServicePrincipalDatastoreSecrets
+    from ._models_py3 import ServiceTagDestination
+    from ._models_py3 import ServiceTagOutboundRule
+    from ._models_py3 import ServiceTagOutboundRuleDestination
     from ._models_py3 import SetupScripts
     from ._models_py3 import SharedPrivateLinkResource
     from ._models_py3 import Sku
@@ -438,6 +450,7 @@ try:
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword
     from ._models_py3 import WorkspaceListResult
+    from ._models_py3 import WorkspacePropertiesManagedNetwork
     from ._models_py3 import WorkspaceUpdateParameters
 except (SyntaxError, ImportError):
     from ._models import AKS  # type: ignore
@@ -541,6 +554,7 @@ except (SyntaxError, ImportError):
     from ._models import ContainerResourceRequirements  # type: ignore
     from ._models import ContainerResourceSettings  # type: ignore
     from ._models import CosmosDbSettings  # type: ignore
+    from ._models import Cron  # type: ignore
     from ._models import CronTrigger  # type: ignore
     from ._models import CsvExportSummary  # type: ignore
     from ._models import CustomForecastHorizon  # type: ignore
@@ -620,6 +634,7 @@ except (SyntaxError, ImportError):
     from ._models import Forecasting  # type: ignore
     from ._models import ForecastingSettings  # type: ignore
     from ._models import ForecastingTrainingSettings  # type: ignore
+    from ._models import FqdnOutboundRule  # type: ignore
     from ._models import GridSamplingAlgorithm  # type: ignore
     from ._models import HDInsight  # type: ignore
     from ._models import HDInsightProperties  # type: ignore
@@ -694,6 +709,8 @@ except (SyntaxError, ImportError):
     from ._models import MLTableJobOutput  # type: ignore
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIdentityAuthTypeWorkspaceConnectionProperties  # type: ignore
+    from ._models import ManagedNetworkDto  # type: ignore
+    from ._models import ManagedNetworkSettings  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MedianStoppingPolicy  # type: ignore
@@ -727,6 +744,7 @@ except (SyntaxError, ImportError):
     from ._models import OnlineEndpointTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import OutboundRule  # type: ignore
     from ._models import OutputPathAssetReference  # type: ignore
     from ._models import PATAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import PaginatedComputeResourcesList  # type: ignore
@@ -744,6 +762,9 @@ except (SyntaxError, ImportError):
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
+    from ._models import PrivateEndpointDestination  # type: ignore
+    from ._models import PrivateEndpointOutboundRule  # type: ignore
+    from ._models import PrivateEndpointOutboundRuleDestination  # type: ignore
     from ._models import PrivateLinkResource  # type: ignore
     from ._models import PrivateLinkResourceListResult  # type: ignore
     from ._models import PrivateLinkServiceConnectionState  # type: ignore
@@ -753,6 +774,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaBaseProperties  # type: ignore
     from ._models import QuotaUpdateParameters  # type: ignore
     from ._models import RandomSamplingAlgorithm  # type: ignore
+    from ._models import Recurrence  # type: ignore
     from ._models import RecurrenceSchedule  # type: ignore
     from ._models import RecurrenceTrigger  # type: ignore
     from ._models import RegenerateEndpointKeysRequest  # type: ignore
@@ -788,6 +810,9 @@ except (SyntaxError, ImportError):
     from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
     from ._models import ServicePrincipalDatastoreSecrets  # type: ignore
+    from ._models import ServiceTagDestination  # type: ignore
+    from ._models import ServiceTagOutboundRule  # type: ignore
+    from ._models import ServiceTagOutboundRuleDestination  # type: ignore
     from ._models import SetupScripts  # type: ignore
     from ._models import SharedPrivateLinkResource  # type: ignore
     from ._models import Sku  # type: ignore
@@ -871,6 +896,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceConnectionSharedAccessSignature  # type: ignore
     from ._models import WorkspaceConnectionUsernamePassword  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
+    from ._models import WorkspacePropertiesManagedNetwork  # type: ignore
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
@@ -923,6 +949,7 @@ from ._azure_machine_learning_workspaces_enums import (
     IncrementalDataRefresh,
     InputDeliveryMode,
     InstanceSegmentationPrimaryMetrics,
+    IsolationMode,
     JobInputType,
     JobLimitsType,
     JobOutputType,
@@ -936,6 +963,8 @@ from ._azure_machine_learning_workspaces_enums import (
     LogVerbosity,
     MLAssistConfigurationType,
     MLFlowAutologgerState,
+    ManagedNetworkDtoIsolationMode,
+    ManagedNetworkSettingsIsolationMode,
     ManagedServiceIdentityType,
     MediaType,
     MlflowAutologger,
@@ -955,6 +984,8 @@ from ._azure_machine_learning_workspaces_enums import (
     OperationTrigger,
     OrderString,
     OsType,
+    OutboundRuleCategory,
+    OutboundRuleType,
     OutputDeliveryMode,
     PrivateEndpointConnectionProvisioningState,
     PrivateEndpointServiceConnectionStatus,
@@ -970,6 +1001,8 @@ from ._azure_machine_learning_workspaces_enums import (
     RegressionModels,
     RegressionPrimaryMetrics,
     RemoteLoginPortPublicAccess,
+    RuleCategory,
+    RuleType,
     SamplingAlgorithmType,
     ScaleType,
     ScheduleActionType,
@@ -1114,6 +1147,7 @@ __all__ = [
     'ContainerResourceRequirements',
     'ContainerResourceSettings',
     'CosmosDbSettings',
+    'Cron',
     'CronTrigger',
     'CsvExportSummary',
     'CustomForecastHorizon',
@@ -1193,6 +1227,7 @@ __all__ = [
     'Forecasting',
     'ForecastingSettings',
     'ForecastingTrainingSettings',
+    'FqdnOutboundRule',
     'GridSamplingAlgorithm',
     'HDInsight',
     'HDInsightProperties',
@@ -1267,6 +1302,8 @@ __all__ = [
     'MLTableJobOutput',
     'ManagedIdentity',
     'ManagedIdentityAuthTypeWorkspaceConnectionProperties',
+    'ManagedNetworkDto',
+    'ManagedNetworkSettings',
     'ManagedOnlineDeployment',
     'ManagedServiceIdentity',
     'MedianStoppingPolicy',
@@ -1300,6 +1337,7 @@ __all__ = [
     'OnlineEndpointTrackedResourceArmPaginatedResult',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'OutboundRule',
     'OutputPathAssetReference',
     'PATAuthTypeWorkspaceConnectionProperties',
     'PaginatedComputeResourcesList',
@@ -1317,6 +1355,9 @@ __all__ = [
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
+    'PrivateEndpointDestination',
+    'PrivateEndpointOutboundRule',
+    'PrivateEndpointOutboundRuleDestination',
     'PrivateLinkResource',
     'PrivateLinkResourceListResult',
     'PrivateLinkServiceConnectionState',
@@ -1326,6 +1367,7 @@ __all__ = [
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
     'RandomSamplingAlgorithm',
+    'Recurrence',
     'RecurrenceSchedule',
     'RecurrenceTrigger',
     'RegenerateEndpointKeysRequest',
@@ -1361,6 +1403,9 @@ __all__ = [
     'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
     'ServicePrincipalDatastoreSecrets',
+    'ServiceTagDestination',
+    'ServiceTagOutboundRule',
+    'ServiceTagOutboundRuleDestination',
     'SetupScripts',
     'SharedPrivateLinkResource',
     'Sku',
@@ -1444,6 +1489,7 @@ __all__ = [
     'WorkspaceConnectionSharedAccessSignature',
     'WorkspaceConnectionUsernamePassword',
     'WorkspaceListResult',
+    'WorkspacePropertiesManagedNetwork',
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',
@@ -1494,6 +1540,7 @@ __all__ = [
     'IncrementalDataRefresh',
     'InputDeliveryMode',
     'InstanceSegmentationPrimaryMetrics',
+    'IsolationMode',
     'JobInputType',
     'JobLimitsType',
     'JobOutputType',
@@ -1507,6 +1554,8 @@ __all__ = [
     'LogVerbosity',
     'MLAssistConfigurationType',
     'MLFlowAutologgerState',
+    'ManagedNetworkDtoIsolationMode',
+    'ManagedNetworkSettingsIsolationMode',
     'ManagedServiceIdentityType',
     'MediaType',
     'MlflowAutologger',
@@ -1526,6 +1575,8 @@ __all__ = [
     'OperationTrigger',
     'OrderString',
     'OsType',
+    'OutboundRuleCategory',
+    'OutboundRuleType',
     'OutputDeliveryMode',
     'PrivateEndpointConnectionProvisioningState',
     'PrivateEndpointServiceConnectionStatus',
@@ -1541,6 +1592,8 @@ __all__ = [
     'RegressionModels',
     'RegressionPrimaryMetrics',
     'RemoteLoginPortPublicAccess',
+    'RuleCategory',
+    'RuleType',
     'SamplingAlgorithmType',
     'ScaleType',
     'ScheduleActionType',
