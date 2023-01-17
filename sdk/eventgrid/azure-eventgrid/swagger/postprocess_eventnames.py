@@ -3,7 +3,6 @@ import re
 import warnings
 import sys
 from urllib.request import urlopen
-from azure.eventgrid._generated import models
 from _constants import files, backward_compat, additional_events, EXCEPTIONS
 
 def extract(definitions):
