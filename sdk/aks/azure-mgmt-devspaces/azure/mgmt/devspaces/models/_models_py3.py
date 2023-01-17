@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -17,7 +17,8 @@ if TYPE_CHECKING:
 
 
 class ContainerHostMapping(_serialization.Model):
-    """Container host mapping object specifying the Container host resource ID and its associated Controller resource.
+    """Container host mapping object specifying the Container host resource ID and its associated
+    Controller resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -36,7 +37,7 @@ class ContainerHostMapping(_serialization.Model):
         "mapped_controller_resource_id": {"key": "mappedControllerResourceId", "type": "str"},
     }
 
-    def __init__(self, *, container_host_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, container_host_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword container_host_resource_id: ARM ID of the Container Host resource.
         :paramtype container_host_resource_id: str
@@ -71,7 +72,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -110,7 +111,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Tags for the Azure resource.
         :paramtype tags: dict[str, str]
@@ -196,8 +197,8 @@ class Controller(TrackedResource):  # pylint: disable=too-many-instance-attribut
         target_container_host_credentials_base64: str,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags for the Azure resource.
         :paramtype tags: dict[str, str]
@@ -241,8 +242,8 @@ class ControllerConnectionDetails(_serialization.Model):
         self,
         *,
         orchestrator_specific_connection_details: Optional["_models.OrchestratorSpecificConnectionDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword orchestrator_specific_connection_details: Base class for types that supply values used
          to connect to container orchestrators.
@@ -266,8 +267,8 @@ class ControllerConnectionDetailsList(_serialization.Model):
     }
 
     def __init__(
-        self, *, connection_details_list: Optional[List["_models.ControllerConnectionDetails"]] = None, **kwargs
-    ):
+        self, *, connection_details_list: Optional[List["_models.ControllerConnectionDetails"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword connection_details_list: List of Azure Dev Spaces Controller connection details.
         :paramtype connection_details_list:
@@ -298,7 +299,7 @@ class ControllerList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Controller"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Controller"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Azure Dev Spaces Controllers.
         :paramtype value: list[~azure.mgmt.devspaces.models.Controller]
@@ -331,8 +332,8 @@ class ControllerUpdateParameters(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         target_container_host_credentials_base64: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Tags for the Azure Dev Spaces Controller.
         :paramtype tags: dict[str, str]
@@ -346,7 +347,8 @@ class ControllerUpdateParameters(_serialization.Model):
 
 
 class DevSpacesErrorResponse(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar error: The details of the error.
     :vartype error: ~azure.mgmt.devspaces.models.ErrorDetails
@@ -356,7 +358,7 @@ class DevSpacesErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.devspaces.models.ErrorDetails
@@ -390,7 +392,7 @@ class ErrorDetails(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -422,10 +424,10 @@ class OrchestratorSpecificConnectionDetails(_serialization.Model):
 
     _subtype_map = {"instance_type": {"Kubernetes": "KubernetesConnectionDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.instance_type = None  # type: Optional[str]
+        self.instance_type: Optional[str] = None
 
 
 class KubernetesConnectionDetails(OrchestratorSpecificConnectionDetails):
@@ -450,13 +452,13 @@ class KubernetesConnectionDetails(OrchestratorSpecificConnectionDetails):
         "kube_config": {"key": "kubeConfig", "type": "str"},
     }
 
-    def __init__(self, *, kube_config: Optional[str] = None, **kwargs):
+    def __init__(self, *, kube_config: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kube_config: Gets the kubeconfig for the cluster.
         :paramtype kube_config: str
         """
         super().__init__(**kwargs)
-        self.instance_type = "Kubernetes"  # type: str
+        self.instance_type: str = "Kubernetes"
         self.kube_config = kube_config
 
 
@@ -478,7 +480,7 @@ class ListConnectionDetailsParameters(_serialization.Model):
         "target_container_host_resource_id": {"key": "targetContainerHostResourceId", "type": "str"},
     }
 
-    def __init__(self, *, target_container_host_resource_id: str, **kwargs):
+    def __init__(self, *, target_container_host_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword target_container_host_resource_id: Resource ID of the target container host mapped to
          the Azure Dev Spaces Controller. Required.
@@ -507,8 +509,8 @@ class ResourceProviderOperationDefinition(_serialization.Model):
         *,
         name: Optional[str] = None,
         display: Optional["_models.ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource provider operation name.
         :paramtype name: str
@@ -547,8 +549,8 @@ class ResourceProviderOperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the resource provider.
         :paramtype provider: str
@@ -587,7 +589,9 @@ class ResourceProviderOperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperationDefinition"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ResourceProviderOperationDefinition"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Resource provider operations list.
         :paramtype value: list[~azure.mgmt.devspaces.models.ResourceProviderOperationDefinition]
@@ -618,8 +622,12 @@ class Sku(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Union[str, "_models.SkuName"], tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Union[str, "_models.SkuName"],
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU for Azure Dev Spaces Controller. Required. "S1"
         :paramtype name: str or ~azure.mgmt.devspaces.models.SkuName
