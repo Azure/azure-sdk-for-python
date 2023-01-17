@@ -27,7 +27,7 @@ class EventGridPublisherClient(object):  # pylint: disable=client-accepts-api-ve
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         _endpoint = "https://{topicHostname}"
-        # self._config = EventGridPublisherClientConfiguration(**kwargs)
+        self._config = EventGridPublisherClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
