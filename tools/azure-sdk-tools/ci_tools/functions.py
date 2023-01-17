@@ -90,7 +90,7 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
             collected_packages.append(pkg)
 
     logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(package_set, collected_packages)))
+    logging.debug("Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages)))
 
     return collected_packages
 
