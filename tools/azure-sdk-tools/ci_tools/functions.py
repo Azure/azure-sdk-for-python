@@ -212,8 +212,8 @@ def is_package_active(package_path: str):
 def apply_inactive_filter(collected_packages: List[str]) -> List[str]:
     packages = [pkg for pkg in collected_packages if is_package_active(pkg)]
 
-    logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, packages)))
+    logging.debug("Target packages after applying inactive filter: {}".format(collected_packages))
+    logging.debug("Package(s) omitted by inactive filter: {}".format(generate_difference(collected_packages, packages)))
 
     return packages
 
