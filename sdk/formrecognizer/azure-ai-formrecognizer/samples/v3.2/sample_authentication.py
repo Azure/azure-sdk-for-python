@@ -100,7 +100,16 @@ def authentication_with_azure_active_directory_document_model_admin_client():
 
 
 if __name__ == "__main__":
-    authentication_with_api_key_credential_document_analysis_client()
-    authentication_with_azure_active_directory_document_analysis_client()
-    authentication_with_api_key_credential_document_model_admin_client()
-    authentication_with_azure_active_directory_document_model_admin_client()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        authentication_with_api_key_credential_document_analysis_client()
+        authentication_with_azure_active_directory_document_analysis_client()
+        authentication_with_api_key_credential_document_model_admin_client()
+        authentication_with_azure_active_directory_document_model_admin_client()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

@@ -101,25 +101,33 @@ def analyze_custom_documents(custom_model_id):
 
 
 if __name__ == "__main__":
-    model_id = None
-    if os.getenv("CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
-        from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        model_id = None
+        if os.getenv("CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
+            from azure.core.credentials import AzureKeyCredential
+            from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
-        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
-        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
+            endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
+            key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
 
-        if not endpoint or not key:
-            raise ValueError("Please provide endpoint and API key to run the samples.")
+            if not endpoint or not key:
+                raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        document_model_admin_client = DocumentModelAdministrationClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key)
-        )
-        blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
-        if blob_container_sas_url is not None:
-            model = document_model_admin_client.begin_build_document_model(
-                ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url
-            ).result()
-            model_id = model.model_id
-
-    analyze_custom_documents(model_id)
+            document_model_admin_client = DocumentModelAdministrationClient(
+                endpoint=endpoint, credential=AzureKeyCredential(key)
+            )
+            blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
+            if blob_container_sas_url is not None:
+                model = document_model_admin_client.begin_build_document_model(
+                    ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url
+                ).result()
+                model_id = model.model_id
+        analyze_custom_documents(model_id)
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

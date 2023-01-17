@@ -121,4 +121,13 @@ def analyze_receipts():
 
 
 if __name__ == "__main__":
-    analyze_receipts()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        analyze_receipts()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

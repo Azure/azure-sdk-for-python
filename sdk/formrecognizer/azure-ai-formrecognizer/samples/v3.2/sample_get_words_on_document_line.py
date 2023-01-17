@@ -91,4 +91,13 @@ def get_words_on_document_line():
 
 
 if __name__ == "__main__":
-    get_words_on_document_line()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        get_words_on_document_line()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

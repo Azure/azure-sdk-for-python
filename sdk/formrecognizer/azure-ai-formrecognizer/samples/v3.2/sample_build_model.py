@@ -57,4 +57,13 @@ def sample_build_model():
 
 
 if __name__ == '__main__':
-    sample_build_model()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        sample_build_model()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

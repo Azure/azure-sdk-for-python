@@ -111,4 +111,13 @@ def analyze_identity_documents():
 
 
 if __name__ == "__main__":
-    analyze_identity_documents()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        analyze_identity_documents()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)

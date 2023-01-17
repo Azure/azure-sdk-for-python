@@ -73,4 +73,13 @@ def convert_to_and_from_dict():
 
 
 if __name__ == "__main__":
-    convert_to_and_from_dict()
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        convert_to_and_from_dict()
+    except HttpResponseError as error:
+        filter_errors = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_errors):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        print(error)
