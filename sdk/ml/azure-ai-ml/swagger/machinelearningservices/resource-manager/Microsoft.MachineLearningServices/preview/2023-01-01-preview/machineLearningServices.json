@@ -6593,7 +6593,6 @@
             "additionalProperties": {
                 "$ref": "#/definitions/OutboundRule"
             },
-            "readOnly": true,
             "x-nullable": true
           }
         }

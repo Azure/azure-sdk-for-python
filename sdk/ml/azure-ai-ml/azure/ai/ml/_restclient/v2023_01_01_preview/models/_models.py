@@ -14837,8 +14837,6 @@ class ManagedNetworkDto(msrest.serialization.Model):
 class ManagedNetworkSettings(msrest.serialization.Model):
     """ManagedNetworkSettings.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
      "AllowOnlyApprovedOutbound".
     :vartype isolation_mode: str or
@@ -14848,10 +14846,6 @@ class ManagedNetworkSettings(msrest.serialization.Model):
     :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
     :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
     """
-
-    _validation = {
-        'outbound_rules': {'readonly': True},
-    }
 
     _attribute_map = {
         'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
@@ -14870,11 +14864,13 @@ class ManagedNetworkSettings(msrest.serialization.Model):
          ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
         :keyword network_id:
         :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
         """
         super(ManagedNetworkSettings, self).__init__(**kwargs)
         self.isolation_mode = kwargs.get('isolation_mode', None)
         self.network_id = kwargs.get('network_id', None)
-        self.outbound_rules = None
+        self.outbound_rules = kwargs.get('outbound_rules', None)
 
 
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
@@ -23828,8 +23824,6 @@ class WorkspaceListResult(msrest.serialization.Model):
 class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
     """Managed network settings.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
      "AllowOnlyApprovedOutbound".
     :vartype isolation_mode: str or
@@ -23839,10 +23833,6 @@ class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
     :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
     :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
     """
-
-    _validation = {
-        'outbound_rules': {'readonly': True},
-    }
 
     _attribute_map = {
         'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
@@ -23861,6 +23851,8 @@ class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
          ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
         :keyword network_id:
         :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
         """
         super(WorkspacePropertiesManagedNetwork, self).__init__(**kwargs)
 
