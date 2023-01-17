@@ -696,7 +696,8 @@ class ComponentOperations(_ScopeDependentOperations):
         layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
-                self._set_default_display_name_for_anonymous_component_in_node,
+                # hide this function now as we have kept the original component name for anonymous components now
+                # self._set_default_display_name_for_anonymous_component_in_node,
                 partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
