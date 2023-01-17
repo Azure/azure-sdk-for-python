@@ -6,14 +6,8 @@
 
 import logging
 import re
-import sys
 from typing import List, Tuple
-
-try:
-    from urllib.parse import urlparse, unquote
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import unquote  # type: ignore
+from urllib.parse import unquote, urlparse
 
 try:
     from yarl import URL
@@ -38,14 +32,7 @@ def _wrap_exception(ex, desired_type):
     msg = ""
     if ex.args:
         msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
-    # TODO: In the future we will log the trace
-    return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+    return desired_type(msg)
 
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:

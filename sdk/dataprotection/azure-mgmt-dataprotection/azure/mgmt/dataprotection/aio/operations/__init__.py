@@ -27,7 +27,7 @@ from ._resource_guards_operations import ResourceGuardsOperations
 from ._dpp_resource_guard_proxy_operations import DppResourceGuardProxyOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

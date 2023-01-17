@@ -3,29 +3,19 @@ version: '1'
 display_name: basic_component
 description: module run logic goes here
 type: command
-inputs:
-  str_param:
-    type: string
-  int_param:
-    type: integer
 outputs:
   output1:
     type: boolean
     is_control: true
-    mode: rw_mount
   output2:
     type: boolean
     is_control: true
-    mode: rw_mount
   output3:
     type: boolean
-    mode: rw_mount
   output:
     type: boolean
     is_control: true
-    mode: rw_mount
-command: mldesigner execute --source entry.py --name basic_component --inputs
-  str_param=${{inputs.str_param}} int_param=${{inputs.int_param}} --outputs
+command: mldesigner execute --source entry.py --name basic_component --outputs
   output1=${{outputs.output1}} output2=${{outputs.output2}} output3=${{outputs.output3}}
   output=${{outputs.output}}
 environment:
