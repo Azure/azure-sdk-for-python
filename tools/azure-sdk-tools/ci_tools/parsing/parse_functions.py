@@ -90,11 +90,11 @@ class ParsedSetup:
     def get_build_config(self) -> Dict[str, Any]:
         return get_build_config(self.folder)
 
-def get_build_config(package: str) -> Dict[str, Any]:
-    if package.lower().endswith("setup.py"):
-        package = os.path.dirname(package)
+def get_build_config(package_path: str) -> Dict[str, Any]:
+    if package_path.lower().endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
 
-    toml_file = os.path.join(package, "pyproject.toml")
+    toml_file = os.path.join(package_path, "pyproject.toml")
 
     if os.path.exists(toml_file):
         try:

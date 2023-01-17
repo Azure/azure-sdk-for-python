@@ -328,7 +328,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             if not filtered_tox_environment_set:
                 logging.info(
                     f"All requested tox environments for package {package_name} have been excluded by the environment exclusion list."
-                    + f" Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
+                    + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
                 )
                 continue
 

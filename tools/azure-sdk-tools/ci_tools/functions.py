@@ -42,7 +42,6 @@ omit_regression = (
     and "mgmt" not in x
     and os.path.basename(x) not in MANAGEMENT_PACKAGE_IDENTIFIERS
     and os.path.basename(x) not in META_PACKAGES
-    # and os.path.basename(x) not in REGRESSION_EXCLUDED_PACKAGES
     and str_to_bool(get_config_setting(x, "regression", True))
 )
 

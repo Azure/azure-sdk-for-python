@@ -5,7 +5,6 @@ import pdb
 from unittest.mock import patch
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
 def test_parse_require():
     test_scenarios = [
