@@ -711,8 +711,16 @@ def _get_latest_version_from_container(
         version = container.properties.latest_version
 
     except ResourceNotFoundError:
-        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
-        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}." 
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -764,8 +772,16 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
-        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}." 
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
