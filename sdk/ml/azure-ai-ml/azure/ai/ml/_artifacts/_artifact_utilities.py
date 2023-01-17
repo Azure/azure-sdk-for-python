@@ -11,7 +11,6 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
-import requests
 
 from azure.core.exceptions import HttpResponseError
 
@@ -37,6 +36,7 @@ from azure.ai.ml._utils._asset_utils import (
     get_content_hash,
     get_content_hash_version,
 )
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
     get_artifact_path_from_storage_url,
@@ -470,6 +470,7 @@ def get_temporary_data_reference(
     asset_version: str,
     request_headers: Dict[str, str],
     workspace: Workspace,
+    requests_pipeline: HttpPipeline,
     asset_type: str = "codes",
     ) -> Tuple[str, str]:
     """Make a temporary data reference for an asset and return SAS uri and blob storage uri."""
@@ -486,13 +487,14 @@ def get_temporary_data_reference(
         "temporaryDataReferenceType": "TemporaryBlobReference"
     }
     data_encoded = json.dumps(data).encode('utf-8')
-    s = requests.Session()
+    serialized_data = json.loads(data_encoded)
     request_url = f"{SERVICE_URL.format(workspace.location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
-    response = s.post(request_url, data=data_encoded, headers=request_headers)
+    response = requests_pipeline.post(request_url, json=serialized_data, headers=request_headers)
+
     if response.status_code != 200:
         raise HttpResponseError(response=response)
 
-    response_json = json.loads(response.text)
+    response_json = json.loads(response.text())
 
     # get SAS uri for upload and blob uri for asset creation
     blob_uri = response_json['blobReferenceForConsumption']['blobUri']
@@ -505,7 +507,8 @@ def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
     request_headers: Dict[str, str],
-    workspace: Workspace) -> Dict[str, str]:
+    workspace: Workspace,
+    requests_pipeline: HttpPipeline) -> Dict[str, str]:
     existing_asset = {}
     hash_version = get_content_hash_version()
 
@@ -521,19 +524,17 @@ def get_asset_by_hash(
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
         f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
 
-    s = requests.Session()
-
     # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?
     # path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&
     # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
-    response = s.get(request_url, headers=request_headers)
+    response = requests_pipeline.post(request_url, headers=request_headers)
     if response.status_code == 404:
         return None
     if response.status_code != 200:
         # If API is unresponsive, create new asset
         return None
 
-    response_json = json.loads(response.text)
+    response_json = json.loads(response.text())
     existing_asset["name"] = response_json['name']
     existing_asset["version"] = response_json['version']
 
@@ -569,7 +570,8 @@ def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
 def _get_existing_snapshot_by_hash(
     datastore_operation,
     asset_hash,
-    workspace: Workspace
+    workspace: Workspace,
+    requests_pipeline: HttpPipeline,
 ):
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
@@ -581,6 +583,7 @@ def _get_existing_snapshot_by_hash(
         hash_str=asset_hash,
         request_headers=request_headers,
         workspace=workspace,
+        requests_pipeline=requests_pipeline,
     )
 
     return existing_asset
@@ -591,6 +594,7 @@ def _upload_snapshot_to_datastore(
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
     workspace: Workspace,
+    requests_pipeline: HttpPipeline,
     datastore_name: str = None,
     show_progress: bool = True,
     asset_name: str = None,
@@ -606,6 +610,7 @@ def _upload_snapshot_to_datastore(
 
     if not sas_uri:
         sas_uri, blob_uri = get_temporary_data_reference(
+            requests_pipeline=requests_pipeline,
             asset_name=asset_name,
             asset_version=asset_version,
             request_headers=request_headers,
@@ -634,6 +639,7 @@ def _check_and_upload_snapshot(
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     path: Union[str, Path, os.PathLike],
     workspace: Workspace,
+    requests_pipeline: HttpPipeline,
     ignore_file: IgnoreFile = None,
     datastore_name: str = WORKSPACE_BLOB_STORE,
     sas_uri: str = None,
@@ -653,6 +659,7 @@ def _check_and_upload_snapshot(
         datastore_operation=asset_operations._datastore_operation,
         path=path,
         workspace=workspace,
+        requests_pipeline=requests_pipeline,
         datastore_name=datastore_name,
         asset_name=artifact.name,
         asset_version=str(artifact.version),
