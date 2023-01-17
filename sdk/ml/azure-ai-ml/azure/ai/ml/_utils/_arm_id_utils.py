@@ -220,10 +220,14 @@ class AzureResourceId:
             match = re.match(AzureResourceId.REGEX_PATTERN, arm_id)
             rg_match = re.match(AzureResourceId.RESOURCEGROUP_PATTERN, arm_id)
             if match:
-                self.subscription_id = match.group(1)
-                self.resource_group_name = match.group(2)
-                self.asset_type = match.group(4)
                 self.asset_name = match.group(5)
+                self.asset_type = match.group(4)
+                self.asset_type = match.group(5)
+            elif rg_match:
+                self.subscription_id = rg_match.group(1)
+                self.resource_group_name = None
+                self.asset_name = rg_match.group(4)
+                self.asset_name = rg_match.group(3)
             elif rg_match:
                 self.subscription_id = rg_match.group(1)
                 self.resource_group_name = None
@@ -238,6 +242,9 @@ class AzureResourceId:
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.ARM_RESOURCE,
                 )
+
+            self.subscription_id = match.group(1)
+            self.resource_group_name = match.group(2)
 
 
 def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:

@@ -8,9 +8,9 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_01_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedNetworkDto as RestManagedNetwork
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
@@ -19,7 +19,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
-from .networking import OutboundRule, ManagedNetwork
+from .networking import ManagedNetwork
 
 
 class Workspace(Resource):
@@ -191,7 +191,9 @@ class Workspace(Resource):
         managed_network = None
         if hasattr(rest_obj, "managed_network"):
             if rest_obj.managed_network and isinstance(rest_obj.managed_network, RestManagedNetwork):
-                managed_network = ManagedNetwork._from_rest_object(rest_obj.managed_network) 
+                managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.managed_network
+                )
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
@@ -241,5 +243,7 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
-            managed_network=self.managed_network._to_rest_object() if self.managed_network else None,
+            managed_network=self.managed_network._to_rest_object()
+            if self.managed_network
+            else None,  # pylint: disable=protected-access
         )
