@@ -167,7 +167,7 @@ def discover_targeted_packages(
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
 
-    # filter for compatiblity, this means excluding a package that doesn't support py36 when we are running a py36 executable
+    # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
 
