@@ -105,7 +105,7 @@ def get_build_config(package: str) -> Dict[str, Any]:
                     if "azure-sdk-build" in tool_configs:
                         return tool_configs["azure-sdk-build"]
         except:
-                return {}
+            return {}
 
 
 def read_setup_py_content(setup_filename: str) -> str:
