@@ -273,7 +273,7 @@ class MLClient(object):
             base_url=base_url,
             **kwargs,
         )
-        
+
         self._service_client_12_2022_preview = ServiceClient122022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
