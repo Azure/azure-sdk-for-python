@@ -3,7 +3,7 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
--
+- Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed
 -
