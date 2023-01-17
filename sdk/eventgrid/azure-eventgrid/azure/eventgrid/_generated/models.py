@@ -13,6 +13,12 @@ from typing import Any, Dict, Optional
 
 from . import _serialization
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
 class EventGridEvent(_serialization.Model):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
