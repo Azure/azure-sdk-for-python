@@ -28,7 +28,7 @@ from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork, OutboundRule
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -52,45 +52,50 @@ class WorkspaceOutboundRuleOperations:
         self._credentials = credentials
         self._init_kwargs = kwargs
 
+
     def show(
         self,
         name: str,
         outbound_rule_name: str,
-        **kwargs) -> ManagedNetwork:
+        **kwargs) -> OutboundRule:
 
-        print("SDK show method called")
-        return ManagedNetwork()
+        print("SDK outbound rule show method called")
+        raise NotImplementedError("workspace outbound rule operations show")
+        # return OutboundRule()
         """obj = self._operation.get(
             workspace_name=self._workspace_name,
             outbound_rule_name=outbound_rule_name,
             **self._scope_kwargs,
             **kwargs,
         )
-        return ManagedNetwork._from_rest_object(rest_obj=obj)"""
+        return OutboundRule._from_rest_object(rest_obj=obj)"""
 
 
     def list(
         self,
         name: str,
-        **kwargs) -> ManagedNetwork:
+        **kwargs) -> OutboundRule:
         
-        print("SDK list method called")
-        return ManagedNetwork()
+        print("SDK outbound rule list method called")
+        raise NotImplementedError("workspace outbound rule operations list")
+        # return OutboundRule()
 
     def set(
         self,
         name: str,
         outbound_rule_name: str,
-        **kwargs) -> ManagedNetwork:
+        **kwargs) -> OutboundRule:
         
-        print("SDK set method called")
-        return ManagedNetwork()
+        print("SDK outbound rule set method called")
+        raise NotImplementedError("workspace outbound rule operations set")
+        # return OutboundRule()
 
     def remove(
         self,
         name: str,
         outbound_rule_name: str,
-        **kwargs) -> ManagedNetwork:
+        **kwargs) -> OutboundRule:
         
-        print("SDK remove method called")
-        return ManagedNetwork()
+        print("SDK outbound rule remove method called")
+        raise NotImplementedError("workspace outbound rule operations remove")
+        # return OutboundRule()

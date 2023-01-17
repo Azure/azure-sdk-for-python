@@ -148,8 +148,6 @@ class Workspace(Resource):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        print("called workspace.todict")
-        print(self)
         return WorkspaceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -160,17 +158,13 @@ class Workspace(Resource):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Workspace":
-        print("in workspace load function, data and params override", data, params_override)
         data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        print("context:", context)
-        print("about to call load from dict")
         loaded_schema = load_from_dict(WorkspaceSchema, data, context, **kwargs)
-        print("loaded_schema is ", loaded_schema)
         return Workspace(**loaded_schema)
 
     @classmethod

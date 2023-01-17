@@ -147,7 +147,6 @@ class Resource(abc.ABC):
         :return: Class to use for deserializing the data & its "type". Type will be None if no override is provided.
         :rtype: tuple[class, typing.Optional[str]]
         """
-        print("reached inside here..")
         return cls, None
 
     @classmethod

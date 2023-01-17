@@ -116,12 +116,6 @@ class WorkspaceOperations:
         workspace_name = self._check_workspace_name(name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
-        """from azure.ai.ml.entities._load_functions import load_workspace
-        ws = load_workspace("..\ws2.yml")
-        obj = ws._to_rest_object()
-        obj.name = "testws"
-        print("REST object returned from get:\n", obj)
-        print("\n\n")"""
         return Workspace._from_rest_object(obj)
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
@@ -204,14 +198,7 @@ class WorkspaceOperations:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        print("\n\nworkspace before populate arm paramaters ", workspace)
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
-
-        print("\ntemplate to be submitted: ", template)
-        print("\n\nparams\n", param)
-        print(param["identity"]["value"])
-        print(param["managedNetwork"]["value"])
-        print("HERE WOULD SUBMIT arm deployment template")
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -267,7 +254,6 @@ class WorkspaceOperations:
         existing_workspace = self.get(workspace.name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
-            print(identity)
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
             if (
@@ -282,11 +268,9 @@ class WorkspaceOperations:
                         rest_user_assigned_identities[uai.resource_id] = None
                 identity.user_assigned_identities = rest_user_assigned_identities
 
-        """this is where we will create the managed network as REST object"""
         managed_network = kwargs.get("managed_network", workspace.managed_network)
         if managed_network:
-            managed_network = managed_network._to_workspace_rest_object()
-            print(managed_network)
+            managed_network = managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -336,6 +320,7 @@ class WorkspaceOperations:
             primary_user_assigned_identity=kwargs.get(
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
+            managed_network=managed_network,
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -613,7 +598,6 @@ class WorkspaceOperations:
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
-        # is this what I need to do here to add it to the workspace template deployment?
         managed_network = None
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()
