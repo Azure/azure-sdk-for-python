@@ -13,9 +13,9 @@ Create metadata file
 
 Update metadata file
 
-Update MANIFETS.IN
+Update MANIFEST.IN
 
-No need to update MANIFETS.IN
+No need to update MANIFEST.IN
 """
 
 MANIFEST_TEMP = """recursive-include tests *.py *.yaml
