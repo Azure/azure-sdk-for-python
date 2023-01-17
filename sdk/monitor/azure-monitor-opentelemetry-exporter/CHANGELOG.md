@@ -15,7 +15,7 @@
 - Disable storage for statsbeat if storage is disabled for exporter
     ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
 - Add UK to eu statsbeats
-    ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
+    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
 
 ## 1.0.0b11 (2022-12-15)
 
