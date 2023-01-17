@@ -93,7 +93,7 @@ class TestClientAsync(ACSSMTestCase):
                     message="Hello World via SMS")
 
         assert str(
-            ex.value.status_code) == "401"  # TODO: It used to be 400  but now the service returns 401. Was there a breaking change in the service response?
+            ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @recorded_by_proxy_async
