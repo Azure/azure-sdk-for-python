@@ -9,7 +9,6 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union  # noqa
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
@@ -28,6 +27,17 @@ from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deploymen
 from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, TYPE, ArmConstants
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._assets._artifacts.model import Model
+from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
+from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
+from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
+from azure.ai.ml.entities._deployment.scale_settings import (  # pylint: disable = unused-import
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import (
@@ -41,20 +51,9 @@ from azure.ai.ml.exceptions import (
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
 
-module_logger = logging.getLogger(__name__)
+from typing import Any, Dict, Optional, Union  # noqa
 
-if TYPE_CHECKING:
-    from azure.ai.ml.entities._assets import Code
-    from azure.ai.ml.entities._assets._artifacts.model import Model
-    from azure.ai.ml.entities._assets.environment import Environment
-    from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
-    from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
-    from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
-    from azure.ai.ml.entities._deployment.scale_settings import (  # pylint: disable = unused-import
-        DefaultScaleSettings,
-        OnlineScaleSettings,
-        TargetUtilizationScaleSettings,
-    )
+module_logger = logging.getLogger(__name__)
 
 
 class OnlineDeployment(Deployment):
@@ -98,7 +97,7 @@ class OnlineDeployment(Deployment):
         properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
-        code_configuration: Optional[CodeConfiguration] = None,
+        code_configuration: Optional["CodeConfiguration"] = None,
         environment: Optional[Union[str, "Environment"]] = None,
         app_insights_enabled: Optional[bool] = False,
         scale_settings: Optional["OnlineScaleSettings"] = None,

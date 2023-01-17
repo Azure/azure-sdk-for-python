@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from typing import Dict, Optional, Union
 
+from marshmallow import Schema
+
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -18,7 +20,6 @@ from azure.ai.ml.entities._job.distribution import (
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from marshmallow import Schema
 
 from ..._restclient.v2022_05_01.models import ComponentVersionData
 from ..._schema import PathAwareSchema
