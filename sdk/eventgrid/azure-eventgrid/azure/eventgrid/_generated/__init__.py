@@ -1,4 +1,4 @@
-@@ -1,16 +0,0 @@
+# @@ -1,16 +0,0 @@
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
