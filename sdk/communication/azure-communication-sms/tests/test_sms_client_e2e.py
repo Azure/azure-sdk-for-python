@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import os
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy, set_bodiless_matcher
 from _shared.utils import get_http_logging_policy
@@ -14,11 +12,6 @@ from azure.identity import DefaultAzureCredential
 from acs_sms_test_case import ACSSMTestCase
 from azure.communication.sms import SmsClient
 
-SKIP_INT_SMS_TESTS = os.getenv("COMMUNICATION_SKIP_INT_SMS_TEST", "false") == "true"
-INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT."
-
-
-@pytest.mark.skipif(SKIP_INT_SMS_TESTS, reason=INT_SMS_TEST_SKIP_REASON)
 class TestClient(ACSSMTestCase):
     def setup_method(self):
         super().setUp()

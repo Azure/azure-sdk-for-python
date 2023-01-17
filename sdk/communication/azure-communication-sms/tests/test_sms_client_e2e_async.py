@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live
@@ -15,11 +13,7 @@ from acs_sms_test_case import ACSSMTestCase
 from azure.identity.aio import DefaultAzureCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 
-SKIP_INT_SMS_TESTS = os.getenv("COMMUNICATION_SKIP_INT_SMS_TEST", "false") == "true"
-INT_SMS_TEST_SKIP_REASON = "SMS does not support in INT. Skip these tests in INT."
-
 @pytest.mark.asyncio
-@pytest.mark.skipif(SKIP_INT_SMS_TESTS, reason=INT_SMS_TEST_SKIP_REASON)
 class TestClientAsync(ACSSMTestCase):
     def setup_method(self):
         super().setUp()
