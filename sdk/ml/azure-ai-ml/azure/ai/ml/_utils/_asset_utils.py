@@ -712,7 +712,7 @@ def _get_latest_version_from_container(
 
     except ResourceNotFoundError:
         message = (
-            f"Asset {asset_name} does not exist in registry {registry_name}." 
+            f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
             )
@@ -773,7 +773,7 @@ def _get_latest(
         latest = cast(ModelVersionData, latest)
     if not latest:
         message = (
-            f"Asset {asset_name} does not exist in registry {registry_name}." 
+            f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
             )
