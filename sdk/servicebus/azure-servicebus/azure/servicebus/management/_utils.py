@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, cast, Union, Mapping, Type, Any, Optional
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
+import six
 
 from . import _constants as constants
 from ._api_version import DEFAULT_VERSION
@@ -122,9 +123,9 @@ def serialize_value_type(value):
         value, bool
     ):  # Attention: bool is subclass of int. So put bool ahead of int
         return "boolean", str(value).lower()
-    if isinstance(value, str):
+    if isinstance(value, six.string_types):
         return "string", value
-    if isinstance(value, int):
+    if isinstance(value, six.integer_types):
         return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
     if isinstance(value, datetime):
         return "dateTime", isodate.datetime_isoformat(value)

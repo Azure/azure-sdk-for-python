@@ -3,13 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from __future__ import annotations
-from typing import TYPE_CHECKING
 import time
+import six
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest
 
 
 class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
@@ -21,7 +18,7 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self._endpoint = endpoint
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, str):
+        if not isinstance(name, six.string_types):
             raise TypeError("name must be a string.")
         self._name = name
         self._token_expiry_on = 0
@@ -36,8 +33,6 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             )
             self._token = access_token.decode("utf-8")
 
-    async def on_request(
-        self, request: PipelineRequest
-    ):  # pylint: disable=invalid-overridden-method
+    async def on_request(self, request):  # pylint: disable=invalid-overridden-method
         await self._update_token()
         request.http_request.headers[self._name] = self._token
