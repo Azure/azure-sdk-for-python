@@ -45,10 +45,11 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorMetricsClient(
             credential=credential,
             endpoint=self._endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential, audience),
+            authentication_policy=auth_policy or get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
