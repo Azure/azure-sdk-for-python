@@ -1,11 +1,5 @@
 # Release History
 
-<<<<<<< HEAD
-## 1.3.0 (Unreleased)
-
-### Other Changes
-- Switched compute operations to go through 2022-12-01-preview API version.
-=======
 ## 1.4.0 (Unreleased)
 
 ### Features Added
@@ -39,7 +33,6 @@
 
 ### Other Changes
 - Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
->>>>>>> main
 
 ## 1.2.0 (2022-12-05)
 
