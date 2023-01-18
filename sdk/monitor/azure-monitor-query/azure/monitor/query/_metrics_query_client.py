@@ -113,6 +113,8 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         if aggregations:
             kwargs.setdefault("aggregation", ",".join(aggregations))
         timespan = construct_iso8601(kwargs.pop("timespan", None))
+        # Metric names with commas need to be encoded.
+        metric_names = [x.replace(",", "%2") for x in metric_names]
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         kwargs.setdefault("top", kwargs.pop("max_results", None))

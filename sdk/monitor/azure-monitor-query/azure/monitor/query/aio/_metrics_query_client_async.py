@@ -95,6 +95,8 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = construct_iso8601(kwargs.pop("timespan", None))
+        # Metric names with commas need to be encoded.
+        metric_names = [x.replace(",", "%2") for x in metric_names]
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         kwargs.setdefault("top", kwargs.pop("max_results", None))
