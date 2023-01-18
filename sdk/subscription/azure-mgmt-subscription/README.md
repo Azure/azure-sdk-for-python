@@ -30,17 +30,13 @@ By default, [Azure Active Directory](https://aka.ms/awps/aad) token authenticati
 - `AZURE_TENANT_ID` for Azure tenant ID.
 - `AZURE_CLIENT_SECRET` or `AZURE_CLIENT_CERTIFICATE_PATH` for client secret or client certificate.
 
-In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
-
 With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.subscription import 
-import os
+from azure.mgmt.subscription import SubscriptionClient
 
-sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = (credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = SubscriptionClient(credential=DefaultAzureCredential())
 ```
 
 ## Examples

@@ -10,8 +10,6 @@ from typing import ( # pylint: disable=unused-import
 )
 from urllib.parse import urlparse, quote
 
-import six
-
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
@@ -129,7 +127,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
+        if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,

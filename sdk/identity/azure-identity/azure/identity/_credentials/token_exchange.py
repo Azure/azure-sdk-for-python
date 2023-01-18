@@ -8,11 +8,11 @@ from typing import Any
 from .client_assertion import ClientAssertionCredential
 
 
-class TokenFileMixin(object):
+class TokenFileMixin:
     def __init__(
             self,
             token_file_path: str,
-            **_
+            **_: Any
     ) -> None:
         super(TokenFileMixin, self).__init__()
         self._jwt = ""
@@ -34,7 +34,7 @@ class TokenExchangeCredential(ClientAssertionCredential, TokenFileMixin):
             tenant_id: str,
             client_id: str,
             token_file_path: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
         super(TokenExchangeCredential, self).__init__(
             tenant_id=tenant_id,

@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING)
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -114,7 +113,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         mode hostname.
         """
         queue_name = self.queue_name
-        if isinstance(queue_name, six.text_type):
+        if isinstance(queue_name, str):
             queue_name = queue_name.encode('UTF-8')
         return (
             f"{self.scheme}://{hostname}"

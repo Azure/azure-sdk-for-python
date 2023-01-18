@@ -17,38 +17,52 @@ USAGE:
     python sample_hello_world_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONTAINERREGISTRY_URL - The URL of you Container Registry account
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+
+    This sample assumes your registry has a repository "library/hello-world".
 """
-
 import asyncio
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.identity.aio import DefaultAzureCredential
+from samples.sample_utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class HelloWorldAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(
+            self.authority, exclude_environment_credential=True, is_async=True
+        )
 
     async def basic_sample(self):
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        audience = "https://management.azure.com"
-        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
         # [END create_registry_client]
-        async with client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
-                if repository_name == "hello-world":
-                    # Create a repository client from the registry client
+                print(repository_name)
+                if repository_name == "library/hello-world":
+                    print("Tags of repository library/hello-world:")
                     async for tag in client.list_tag_properties(repository_name):
-                        print(tag.digest)
+                        print(tag.name)
+                        
+                        # Make sure will have the permission to delete the repository later
+                        await client.update_manifest_properties(
+                            repository_name,
+                            tag.name,
+                            can_write=True,
+                            can_delete=True
+                        )
 
+                    print("Deleting " + repository_name)
                     # [START delete_repository]
-                    await client.delete_repository(repository_name, "hello-world")
+                    await client.delete_repository(repository_name)
                     # [END delete_repository]
 
 

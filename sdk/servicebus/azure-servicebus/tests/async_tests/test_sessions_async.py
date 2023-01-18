@@ -896,6 +896,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     count += 1
                 state = await receiver.session.get_state()
                 assert state == b'first_state'
+                await receiver.session.set_state(None, timeout=5)
+                state = await receiver.session.get_state()
+                assert not state
             assert count == 3
 
     @pytest.mark.skip(reason='Requires list sessions')

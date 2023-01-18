@@ -35,6 +35,8 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -770,6 +772,14 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_on_disk_cache_enabled():
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+
+
+def is_concurrent_component_registration_enabled():
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
+
+
 def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
@@ -898,7 +908,7 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
+def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -922,3 +932,26 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: 
             target=ErrorTarget.GENERAL,
             error_category=ErrorCategory.USER_ERROR,
         )
+
+
+@contextmanager
+def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
+    """Open file with specific mode and return the file object.
+
+    :param file: Path to the file.
+    :param mode: Mode to open the file.
+    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
+    w+r for owner, group and others.
+    :param int_mode: Mode for the opener.
+    :return: The file object.
+    """
+    origin_mask = os.umask(0)
+    try:
+        def opener(path, flags):
+            # w+r for owner, group and others
+            return os.open(path, flags, int_mode)
+
+        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
+            yield f
+    finally:
+        os.umask(origin_mask)

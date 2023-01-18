@@ -93,6 +93,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
     from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+    from azure.ai.ml.entities._builders.condition_node import ConditionNode
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)
@@ -106,17 +107,18 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
                     loaded_data=job_instance,
                 )
-                jobs[key] = job_instance
+            elif job_instance.get("type") == ControlFlowType.IF_ELSE:
+                # Convert to if-else node.
+                job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
             elif job_instance.get("type") == ControlFlowType.DO_WHILE:
                 # Convert to do-while node.
                 job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
-                jobs[key] = job_instance
             elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
                 # Convert to do-while node.
                 job_instance = ParallelFor._create_instance_from_schema_dict(
                     pipeline_jobs=jobs, loaded_data=job_instance
                 )
-                jobs[key] = job_instance
+            jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
         # Translate job to node if translatable and overrides to_node.
@@ -232,7 +234,7 @@ class PipelineSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference

@@ -11,7 +11,12 @@ from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from azure.core.credentials import AccessToken, TokenCredential, AzureKeyCredential, AzureSasCredential
+    from azure.core.credentials import (
+        AccessToken,
+        TokenCredential,
+        AzureKeyCredential,
+        AzureSasCredential,
+    )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -174,6 +179,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
+
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureKeyCredential, str, **Any) -> None
         super(AzureKeyCredentialPolicy, self).__init__()
@@ -195,6 +201,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     :type credential: ~azure.core.credentials.AzureSasCredential
     :raises: ValueError or TypeError
     """
+
     def __init__(self, credential, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureSasCredential, **Any) -> None
         super(AzureSasCredentialPolicy, self).__init__()

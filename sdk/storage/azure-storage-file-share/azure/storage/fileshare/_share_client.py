@@ -9,7 +9,6 @@ from typing import (
 )
 from urllib.parse import urlparse, quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -180,7 +179,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         mode hostname.
         """
         share_name = self.share_name
-        if isinstance(share_name, six.text_type):
+        if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,

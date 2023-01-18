@@ -49,7 +49,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MLException,
+    MlException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -139,10 +139,13 @@ class OperationOrchestrator(object):
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
                 # Short form of curated env will be expanded on the backend side.
                 # CLI strips off azureml: in the schema, appending it back as required by backend
-                if azureml_type == "environments" and (
-                    asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}")
-                ):
-                    return f"azureml:{asset}"
+                if azureml_type == AzureMLResourceType.ENVIRONMENT:
+                    azureml_prefix = "azureml:"
+                    # return the same value if resolved result is passed in
+                    _asset = asset[len(azureml_prefix):] if asset.startswith(azureml_prefix) else asset
+                    if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
+                            REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"):
+                        return f"{azureml_prefix}{_asset}"
 
                 name, label = parse_name_label(asset)
                 # TODO: remove this condition after label is fully supported for all versioned resources
@@ -266,7 +269,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -315,7 +318,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(

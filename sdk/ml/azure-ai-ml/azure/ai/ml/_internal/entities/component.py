@@ -20,6 +20,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
 from ..._utils._arm_id_utils import parse_name_label
+from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
 from .._schema.component import InternalComponentSchema
 from ._additional_includes import _AdditionalIncludes
@@ -117,7 +118,6 @@ class InternalComponent(Component):
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
-        self._origin_name, self._origin_version = None, None
 
         self.successful_return_code = successful_return_code
         self.code = code
@@ -190,18 +190,8 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
-    def _set_is_anonymous(self, is_anonymous: bool):
-        if is_anonymous:
-            self._origin_name, self._origin_version = self.name, self.version
-        super()._set_is_anonymous(is_anonymous)
-
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
-
-        if self._origin_name:
-            component["name"] = self._origin_name
-        if self._origin_version:
-            component["version"] = self._origin_version
 
         properties = ComponentVersionDetails(
             component_spec=component,
@@ -229,16 +219,28 @@ class InternalComponent(Component):
         :type ignore_file: InternalComponentIgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        curr_root = create_merkletree(code_path, lambda x: ignore_file.is_file_excluded(code_path))
+        curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
-        # Note that if self.code is already a Code object, this function won't be called
-        # in create_or_update => _try_resolve_code_for_component, which is also
-        # forbidden by schema CodeFields for now.
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
+        # an internal component always has a default local code of its base path
+        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
 
         self._additional_includes.resolve()
 

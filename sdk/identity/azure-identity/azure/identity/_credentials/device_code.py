@@ -4,7 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 import time
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -52,14 +52,17 @@ class DeviceCodeCredential(InteractiveCredential):
     def __init__(
             self,
             client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
-            **kwargs
+            *,
+            timeout: Optional[int] = None,
+            prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+            **kwargs: Any
     ) -> None:
-        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = kwargs.pop("prompt_callback", None)
+        self._timeout = timeout
+        self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs) -> Dict:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
 
