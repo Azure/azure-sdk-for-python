@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,31 +24,33 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_create(
-        resource_group_name="TestGroup",
-        server_name="pgtestsvc4",
+        resource_group_name="testrg",
+        server_name="mysqltestserver",
         parameters={
-            "location": "westus",
+            "location": "southeastasia",
             "properties": {
                 "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "<administratorLoginPassword>",
+                "administratorLoginPassword": "your_password",
+                "availabilityZone": "1",
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "createMode": "Default",
-                "minimalTlsVersion": "TLS1_2",
-                "sslEnforcement": "Enabled",
-                "storageProfile": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled", "storageMB": 128000},
+                "highAvailability": {"mode": "ZoneRedundant", "standbyAvailabilityZone": "3"},
+                "storage": {"autoGrow": "Disabled", "iops": 600, "storageSizeGB": 100},
+                "version": "5.7",
             },
-            "sku": {"capacity": 2, "family": "Gen5", "name": "B_Gen5_2", "tier": "Basic"},
-            "tags": {"ElasticServer": "1"},
+            "sku": {"name": "Standard_D2ds_v4", "tier": "GeneralPurpose"},
+            "tags": {"num": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/preview/2021-12-01-preview/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

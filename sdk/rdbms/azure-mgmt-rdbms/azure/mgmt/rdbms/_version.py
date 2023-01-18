@@ -5,4 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "10.2.0b6"
+VERSION = "0.0.0 (it should be perview)"
