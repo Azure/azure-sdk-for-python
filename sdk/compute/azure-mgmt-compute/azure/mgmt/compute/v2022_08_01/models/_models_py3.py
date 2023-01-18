@@ -13,13 +13,18 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -87,8 +92,8 @@ class AdditionalUnattendContent(_serialization.Model):
     def __init__(
         self,
         *,
-        pass_name: Optional[str] = None,
-        component_name: Optional[str] = None,
+        pass_name: Optional[Literal["OobeSystem"]] = None,
+        component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = None,
         setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
         **kwargs
@@ -7199,6 +7204,36 @@ class SubResourceWithColocationStatus(SubResource):
         """
         super().__init__(id=id, **kwargs)
         self.colocation_status = colocation_status
+
+
+class SystemData(_serialization.Model):
+    """The system meta data relating to this resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was created. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was last modified. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.created_at = None
+        self.last_modified_at = None
 
 
 class TerminateNotificationProfile(_serialization.Model):

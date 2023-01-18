@@ -26,7 +26,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01",
-        "Content-Length": "115",
+        "Content-Length": "113",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -35,7 +35,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "114ms"
+        "X-Processing-Time": "88ms"
       },
       "ResponseBody": {
         "identity": {
@@ -43,7 +43,7 @@
         },
         "accessToken": {
           "token": "sanitized",
-          "expiresOn": "2023-01-13T11:26:20.7467648\u002B00:00"
+          "expiresOn": "2023-01-17T13:47:51.33864\u002B00:00"
         }
       }
     }

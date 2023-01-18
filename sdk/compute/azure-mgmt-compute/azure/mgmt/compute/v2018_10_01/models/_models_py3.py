@@ -13,13 +13,18 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -78,8 +83,8 @@ class AdditionalUnattendContent(_serialization.Model):
     def __init__(
         self,
         *,
-        pass_name: Optional[str] = None,
-        component_name: Optional[str] = None,
+        pass_name: Optional[Literal["OobeSystem"]] = None,
+        component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = None,
         setting_name: Optional[Union[str, "_models.SettingNames"]] = None,
         content: Optional[str] = None,
         **kwargs
