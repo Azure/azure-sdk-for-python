@@ -70,7 +70,7 @@ class OnlineDeployment(Deployment):
     :keyword ~azure.ai.ml.entities.CodeConfiguration code_configuration: Code Configuration, defaults to None
     :keyword typing.Union[str, ~azure.ai.ml.entities.Environment] environment: Environment entity for the endpoint \
         deployment, defaults to None
-    :keyword bool] app_insights_enabled: Is appinsights enabled, defaults to False
+    :keyword bool app_insights_enabled: Is appinsights enabled, defaults to False
     :keyword ~azure.ai.ml.entities.OnlineScaleSettings scale_settings: How the online deployment will scale, \
         defaults to None
     :keyword ~azure.ai.ml.entities.OnlineRequestSettings request_settings: Online Request Settings, defaults to None
@@ -127,7 +127,7 @@ class OnlineDeployment(Deployment):
         :keyword ~azure.ai.ml.entities.CodeConfiguration code_configuration: Code Configuration, defaults to None
         :keyword typing.Union[str, ~azure.ai.ml.entities.Environment] environment: Environment entity for the \
             endpoint deployment, defaults to None
-        :keyword bool] app_insights_enabled: Is appinsights enabled, defaults to False
+        :keyword bool app_insights_enabled: Is appinsights enabled, defaults to False
         :keyword ~azure.ai.ml.entities.OnlineScaleSettings scale_settings: How the online deployment will scale, \
             defaults to None
         :keyword ~azure.ai.ml.entities.OnlineRequestSettings request_settings: Online Request Settings, \

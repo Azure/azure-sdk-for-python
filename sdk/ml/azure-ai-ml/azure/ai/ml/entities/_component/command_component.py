@@ -37,23 +37,25 @@ class CommandComponent(Component, ParameterizedCommand):
     :keyword typing.Optional[str] name: Name of the component, defaults to None
     :keyword typing.Optional[str] version: Version of the component, defaults to None
     :keyword typing.Optional[str] description: Description of the component, defaults to None
-    :keyword Optional[typing.Dict] tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :keyword typing.Optional[typing.Dict] tags: Tag dictionary. Tags can be added, removed, and updated, \
+        defaults to None
     :keyword typing.Optional[str] display_name: Display name of the component, defaults to None
     :keyword typing.Optional[str] command: Command to be executed in component, defaults to None
-    :keyword typing.Optional[str] code: Code file or folder that will be uploaded to the cloud for component execution\
-        , defaults to None
-    :keyword Optional[Union[str, Environment]] environment: Environment that component will run in, defaults to None
-    :keyword Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] distribution: Distribution \
-        configuration for distributed training, defaults to None
-    :keyword Optional[JobResourceConfiguration] resources: Compute Resource configuration for the component, defaults \
-        to None
-    :keyword Optional[typing.Dict] inputs: Inputs of the component, defaults to None
-    :keyword Optional[typing.Dict] outputs: Outputs of the component, defaults to None
-    :keyword Optional[int] instance_count: promoted property from resources.instance_count, defaults to None
+    :keyword typing.Optional[str] code: Code file or folder that will be uploaded to the cloud for component \
+        execution, defaults to None
+    :keyword typing.Optional[typing.Union[str, Environment]] environment: Environment that component will run in, \
+        defaults to None
+    :keyword typing.Optional[typing.Union[PyTorchDistribution, MpiDistribution, \
+        TensorFlowDistribution]] distribution: Distribution configuration for distributed training, defaults to None
+    :keyword typing.Optional[JobResourceConfiguration] resources: Compute Resource configuration for the component, \
+        defaults to None
+    :keyword typing.Optional[typing.Dict] inputs: Inputs of the component, defaults to None
+    :keyword typing.Optional[typing.Dict] outputs: Outputs of the component, defaults to None
+    :keyword typing.Optional[int] instance_count: promoted property from resources.instance_count, defaults to None
     :keyword bool is_deterministic: Whether the command component is deterministic, defaults to None
-    :keyword Optional[typing.Dict] properties: Properties of the component. Contents inside will pass through to \
-        backend as a dictionary, defaults to None
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
+    :keyword typing.Optional[typing.Dict] properties: Properties of the component. Contents inside will pass through \
+        to backend as a dictionary, defaults to None
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated. \
         Details will be provided in the error message.
     """
 
@@ -67,9 +69,9 @@ class CommandComponent(Component, ParameterizedCommand):
         display_name: Optional[str] = None,
         command: Optional[str] = None,
         code: Optional[str] = None,
-        environment: Optional[Union[str, Environment]] = None,
-        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
-        resources: Optional[JobResourceConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
+        distribution: Optional[Union["PyTorchDistribution", "MpiDistribution", "TensorFlowDistribution"]] = None,
+        resources: Optional["JobResourceConfiguration"] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
@@ -82,23 +84,24 @@ class CommandComponent(Component, ParameterizedCommand):
         :keyword typing.Optional[str] name: Name of the component, defaults to None
         :keyword typing.Optional[str] version: Version of the component, defaults to None
         :keyword typing.Optional[str] description: Description of the component, defaults to None
-        :keyword Optional[typing.Dict] tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :keyword typing.Optional[typing.Dict] tags: Tag dictionary. Tags can be added, removed, and \
+            updated, defaults to None
         :keyword typing.Optional[str] display_name: Display name of the component, defaults to None
         :keyword typing.Optional[str] command: Command to be executed in component, defaults to None
         :keyword typing.Optional[str] code: Code file or folder that will be uploaded to the cloud for component \
             execution, defaults to None
-        :keyword Optional[Union[str, Environment]] environment: Environment that component will run in, defaults to \
-            None
-        :keyword Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] distribution: \
-            Distribution configuration for distributed training, defaults to None
-        :keyword Optional[JobResourceConfiguration] resources: Compute Resource configuration for the component, \
+        :keyword typing.Optional[typing.Union[str, Environment]] environment: Environment that component will run in, \
             defaults to None
-        :keyword Optional[typing.Dict] inputs: Inputs of the component, defaults to None
-        :keyword Optional[typing.Dict] outputs: Outputs of the component, defaults to None
-        :keyword Optional[int] instance_count: promoted property from resources.instance_count, defaults to None
+        :keyword typing.Optional[typing.Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution\
+            ]] distribution: Distribution configuration for distributed training, defaults to None
+        :keyword typing.Optional[JobResourceConfiguration] resources: Compute Resource configuration for the component\
+            , defaults to None
+        :keyword typing.Optional[typing.Dict] inputs: Inputs of the component, defaults to None
+        :keyword typing.Optional[typing.Dict] outputs: Outputs of the component, defaults to None
+        :keyword typing.Optional[int] instance_count: promoted property from resources.instance_count, defaults to None
         :keyword bool is_deterministic: Whether the command component is deterministic, defaults to None
-        :keyword Optional[typing.Dict] properties: Properties of the component. Contents inside will pass through to \
-            backend as a dictionary, defaults to None
+        :keyword typing.Optional[typing.Dict] properties: Properties of the component. Contents inside will pass \
+            through to backend as a dictionary, defaults to None
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully \
             validated. Details will be provided in the error message.
         """
@@ -153,7 +156,7 @@ class CommandComponent(Component, ParameterizedCommand):
         """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
-        :rtype: Optional[int]
+        :rtype: typing.Optional[int]
         """
         return self.resources.instance_count if self.resources else None
 
