@@ -238,7 +238,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b783a44b-5535-9d08-0a6b-2c5fa4ded8fa?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/5eac3019-f7f1-32c5-5e21-e481aaa8546a?api-version=2022-05-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -260,7 +260,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "component_a_job",
             "is_deterministic": true,
             "outputs": {
               "world_output": {
@@ -279,7 +278,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 04 Jan 2023 06:20:34 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b783a44b-5535-9d08-0a6b-2c5fa4ded8fa?api-version=2022-05-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/5eac3019-f7f1-32c5-5e21-e481aaa8546a?api-version=2022-05-01",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
         "Server-Timing": "traceparent;desc=\u002200-b241cacbdee84fbf84ba05beea561889-3a4f4fb3a842af67-00\u0022",
@@ -293,8 +292,8 @@
         "x-request-time": "3.090"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/643ad68f-c2a0-4cec-a4d5-2cf6f07badc4",
-        "name": "643ad68f-c2a0-4cec-a4d5-2cf6f07badc4",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/5eac3019-f7f1-32c5-5e21-e481aaa8546a",
+        "name": "5eac3019-f7f1-32c5-5e21-e481aaa8546a",
         "type": "Microsoft.MachineLearningServices/workspaces/components/versions",
         "properties": {
           "description": null,
@@ -305,7 +304,6 @@
           "componentSpec": {
             "name": "azureml_anonymous",
             "version": "643ad68f-c2a0-4cec-a4d5-2cf6f07badc4",
-            "display_name": "component_a_job",
             "is_deterministic": "True",
             "type": "command",
             "outputs": {
@@ -570,7 +568,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b783a44b-5535-9d08-0a6b-2c5fa4ded8fa?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/5eac3019-f7f1-32c5-5e21-e481aaa8546a?api-version=2022-05-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -592,7 +590,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "component_a_job",
             "is_deterministic": true,
             "outputs": {
               "world_output": {
@@ -611,7 +608,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 04 Jan 2023 06:20:39 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b783a44b-5535-9d08-0a6b-2c5fa4ded8fa?api-version=2022-05-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/5eac3019-f7f1-32c5-5e21-e481aaa8546a?api-version=2022-05-01",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
         "Server-Timing": "traceparent;desc=\u002200-36309a8c8a5c9ce986a289be478e357b-4cf2bd006a7466b7-00\u0022",
@@ -637,7 +634,6 @@
           "componentSpec": {
             "name": "azureml_anonymous",
             "version": "643ad68f-c2a0-4cec-a4d5-2cf6f07badc4",
-            "display_name": "component_a_job",
             "is_deterministic": "True",
             "type": "command",
             "outputs": {
