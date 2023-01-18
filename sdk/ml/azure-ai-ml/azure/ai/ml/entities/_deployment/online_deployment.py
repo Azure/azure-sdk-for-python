@@ -9,6 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
@@ -50,8 +51,6 @@ from azure.ai.ml.exceptions import (
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
-
-from typing import Any, Dict, Optional, Union  # noqa
 
 module_logger = logging.getLogger(__name__)
 
