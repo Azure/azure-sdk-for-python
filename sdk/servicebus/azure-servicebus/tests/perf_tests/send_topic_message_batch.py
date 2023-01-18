@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._test_base import _SendTest
+from ._test_base import _SendTopicTest
 
 from azure_devtools.perfstress_tests import get_random_bytes
 
 from azure.servicebus import ServiceBusMessage
 
 
-class SendMessageBatchTest(_SendTest):
+class SendTopicMessageBatchTest(_SendTopicTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.data = get_random_bytes(self.args.message_size)

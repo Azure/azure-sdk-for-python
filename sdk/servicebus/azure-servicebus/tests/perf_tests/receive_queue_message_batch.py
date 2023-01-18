@@ -5,10 +5,10 @@
 
 import asyncio
 
-from ._test_base import _ReceiveTest
+from ._test_base import _ReceiveQueueTest
 
 
-class ReceiveMessageBatchTest(_ReceiveTest):
+class ReceiveQueueMessageBatchTest(_ReceiveQueueTest):
     def run_sync(self):
         count = 0
         while count < self.args.num_messages:
