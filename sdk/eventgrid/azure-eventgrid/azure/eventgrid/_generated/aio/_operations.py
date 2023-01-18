@@ -22,6 +22,7 @@ from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
+from azure.core.messaging import CloudEvent
 
 from .. import models as _models
 from .._operations import (
@@ -152,7 +153,7 @@ class EventGridPublisherClientOperationsMixin():
 
     @distributed_trace_async
     async def publish_cloud_event_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: List[_models.CloudEvent], **kwargs: Any
+        self, topic_hostname: str, events: List[CloudEvent], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 

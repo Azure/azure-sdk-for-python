@@ -22,6 +22,7 @@ from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
+from azure.core.messaging import CloudEvent
 
 from . import models as _models
 from ._serialization import Serializer
@@ -62,7 +63,7 @@ def build_event_grid_publisher_publish_events_request(**kwargs: Any) -> HttpRequ
 
 
 def build_event_grid_publisher_publish_cloud_event_events_request(
-    *, json: List[_models.CloudEvent], **kwargs: Any
+    *, json: List[CloudEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -214,7 +215,7 @@ class EventGridPublisherClientOperationsMixin():
 
     @distributed_trace
     def publish_cloud_event_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_hostname: str, events: List[_models.CloudEvent], **kwargs: Any
+        self, topic_hostname: str, events: List[CloudEvent], **kwargs: Any
     ) -> None:
         """Publishes a batch of events to an Azure Event Grid topic.
 
