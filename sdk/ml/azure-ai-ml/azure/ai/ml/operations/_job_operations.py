@@ -847,6 +847,7 @@ class JobOperations(_ScopeDependentOperations):
             # inputs in sub-pipelines has been resolved in
             # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
             # as they are part of the pipeline component
+            job.settings.force_rerun = True
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, Spark):

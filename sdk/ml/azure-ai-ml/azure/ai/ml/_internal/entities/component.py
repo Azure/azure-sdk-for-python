@@ -220,7 +220,7 @@ class InternalComponent(Component):
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
         curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
-        snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
+        snapshot_id = str(UUID(str(UUID(curr_root.hexdigest_hash[::4]))))
         return snapshot_id
 
     @contextmanager
