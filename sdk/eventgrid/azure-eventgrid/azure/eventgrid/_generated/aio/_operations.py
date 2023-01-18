@@ -23,7 +23,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from .. import models as _models
 from .._operations import (
     build_event_grid_publisher_publish_cloud_event_events_request,
     build_event_grid_publisher_publish_custom_event_events_request,
