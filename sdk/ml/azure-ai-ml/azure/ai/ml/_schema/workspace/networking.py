@@ -29,6 +29,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         keys=fields.Str(required=True), values=fields.Raw(required=True), allow_none=True
     )"""
     destination = fields.Raw(required=True)
+    category = fields.Str(required=False)
 
     """@pre_dump
     def predump(self, data, **kwargs):

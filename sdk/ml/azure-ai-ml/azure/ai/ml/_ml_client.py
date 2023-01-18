@@ -30,6 +30,7 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012023Preview
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
@@ -224,7 +225,7 @@ class MLClient(object):
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient102022Preview(
+        self._rp_service_client = ServiceClient012023Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,

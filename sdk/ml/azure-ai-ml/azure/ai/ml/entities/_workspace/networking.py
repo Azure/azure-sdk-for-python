@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml._restclient.v2023_01_01_preview.models import (
-    ManagedNetworkDto as RestManagedNetwork,
+    ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
     PrivateEndpointOutboundRuleDestination as RestPrivateEndpointOutboundRuleDestination,
@@ -40,27 +40,35 @@ class OutboundRuleType:
 class OutboundRule:
     def __init__(
         self,
-        type: str = None
+        type: str = None,
+        category: str = OutboundRuleCategory.USER_DEFINED
     ) -> None:
         self.type = type
-        self.category = OutboundRuleCategory.USER_DEFINED
+        self.category = category
         
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any) -> "OutboundRule":
+        print("in outbound rule from rest obj, rest obj = ", rest_obj.category)
         if type(rest_obj)==RestFqdnOutboundRule:
-            return FqdnDestination(destination=rest_obj.destination)
+            rule = FqdnDestination(destination=rest_obj.destination)
+            rule.category = rest_obj.category
+            return rule
         if type(rest_obj)==RestPrivateEndpointOutboundRule:
-            return PrivateEndpointDestination(
+            rule = PrivateEndpointDestination(
                 service_resource_id=rest_obj.destination.service_resource_id,
                 subresource_target=rest_obj.destination.subresource_target,
                 spark_jobs_enabled=rest_obj.destination.spark_jobs_enabled)
+            rule.category = rest_obj.category
+            return rule
         if type(rest_obj)==RestServiceTagOutboundRule:
-            return ServiceTagDestination(
+            rule = ServiceTagDestination(
                 service_tag=rest_obj.destination.service_tag,
                 protocol=rest_obj.destination.protocol,
                 port_ranges=rest_obj.destination.port_ranges,
             )
+            rule.category = rest_obj.category
+            return rule
 
 
 class FqdnDestination(OutboundRule):
@@ -101,17 +109,6 @@ class ServiceTagDestination(OutboundRule):
         self.protocol = protocol
         self.port_ranges = port_ranges
         OutboundRule.__init__(self, OutboundRuleType.SERVICE_TAG)
-
-    def _to_rest_object(self) -> RestServiceTagOutboundRule:
-        return RestServiceTagOutboundRule(
-            type=self.type,
-            category=self.category,
-            destination=RestServiceTagOutboundRuleDestination(
-                service_tag=self.service_tag,
-                protocol=self.protocol,
-                port_ranges=self.port_ranges
-            )
-        )
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
         return RestServiceTagOutboundRule(

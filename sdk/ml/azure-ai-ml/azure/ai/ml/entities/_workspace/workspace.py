@@ -10,7 +10,7 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_01_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedNetworkDto as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_01_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
