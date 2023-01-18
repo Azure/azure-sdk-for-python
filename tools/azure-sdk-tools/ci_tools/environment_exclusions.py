@@ -341,6 +341,8 @@ IGNORE_PACKAGES = [
 
 
 def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
+    if package_path.endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
     enabled = default
     package_name = os.path.basename(package_path)
 
@@ -350,8 +352,9 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
         exclusions_for_env = globals()[f"{check.strip().upper()}_OPT_OUT"]
     except Exception as e:
         pass
+
     if package_name in exclusions_for_env:
-        result = False
+        enabled = False
 
     # now pull the new pyproject.toml configuration    
     config = get_config_setting(package_path, check.strip().lower(), True)
@@ -364,9 +367,12 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
     Takes an incoming comma separated list of tox environments and package name. Resolves whether or not
     each given tox environment should run, given comparison to single unified exclusion file in `environment_exclusions`.
 
-    :param namespace_argument: A namespace argument.
-    :param package_name: The name of the package. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
+    :param namespace_argument: A namespace argument. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
+    :param package_path: The path to the package.
     """
+    if package_path.endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
+
     package_name = os.path.basename(package_path)
 
     if namespace_argument:
