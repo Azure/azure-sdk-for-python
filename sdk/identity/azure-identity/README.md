@@ -407,7 +407,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
-[azd_cli]:aka.ms/azure-dev
+[azd_cli]:https://aka.ms/azure-dev
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
