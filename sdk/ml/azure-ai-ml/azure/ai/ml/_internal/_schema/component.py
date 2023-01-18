@@ -1,7 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import pydash
+import yaml
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
@@ -143,13 +144,6 @@ class InternalComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            input_type = port_definition.get("type", None)
-            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
-            for key in ["default", "min", "max"]:
-                if key in port_definition:
-                    value = getattr(original.inputs[port_name], key)
-                    # Keep value in float input as string to avoid precision issue.
-                    data["inputs"][port_name][key] = str(value) if is_float_type else value
             if "mode" in port_definition:
                 del port_definition["mode"]
 
@@ -160,4 +154,25 @@ class InternalComponentSchema(ComponentSchema):
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
+        return data
+
+    @post_dump(pass_original=True)
+    def load_original_string_value(self, data: dict, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+        if not original._source_path:  # pylint:disable=protected-access
+            return data
+        with open(original._source_path, "r") as f:  # pylint:disable=protected-access
+            # TODO: this is not safe. We'd better use a customized yaml loader to load the original string value.
+            # TODO: it will ignore params override. need to handle it somewhere
+            origin_data = yaml.load(f, Loader=yaml.BaseLoader)  # pylint:disable=protected-access
+        # safe loader will load version 0.10 as 0.1, so need to convert it back
+        data["version"] = origin_data["version"]
+
+        for port_name, port_definition in data["inputs"].items():
+            input_type = port_definition.get("type", None)
+            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
+            for key in ["default", "min", "max"]:
+                if key in port_definition:
+                    value = pydash.get(origin_data, f"inputs.{port_name}.{key}")
+                    # Keep value in float input as string to avoid precision issue.
+                    data["inputs"][port_name][key] = str(value) if is_float_type else value
         return data

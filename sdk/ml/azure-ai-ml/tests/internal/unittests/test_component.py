@@ -809,3 +809,31 @@ class TestComponent:
                 # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
                 assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
 
+    def test_component_serialization_corner_case(self):
+        yaml_path = "./tests/test_configs/internal/command-component-serialization-core-case/component_spec.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec == {
+            '$schema': 'https://componentsdk.azureedge.net/jsonschema/CommandComponent.json',
+            'command': 'echo {inputs.input_float} && echo {inputs.delimiter}',
+            'display_name': 'Hello Command',
+            'environment': {'name': 'AzureML-Designer', 'os': 'Linux'},
+            'inputs': {
+                'input_float': {
+                    'default': '1',  # previously this is 1.0
+                    'optional': False,
+                    'type': 'Float'
+                },
+                'delimiter': {
+                    'default': '\t',  # why? seems as expected
+                    'optional': True,
+                    'type': 'String'
+                },
+            },
+            'is_deterministic': True,
+            'name': 'hello_command',
+            'type': 'CommandComponent',
+            'version': '0.10'  # previously this is 0.1
+        }
+
