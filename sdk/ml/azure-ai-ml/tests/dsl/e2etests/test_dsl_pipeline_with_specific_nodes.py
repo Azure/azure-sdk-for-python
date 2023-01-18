@@ -213,7 +213,8 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
         created_pipeline = assert_job_cancel(pipeline, client)
         name, version = created_pipeline.jobs["sweep_job1"].trial.split(":")
         created_component = client.components.get(name, version)
-        assert created_component.display_name == "sweep_job1"
+        # keep original component display name to guarantee reuse
+        assert created_component.display_name is None
 
     def test_dsl_pipeline_component_cache_in_resolver(self, client: MLClient) -> None:
         input_data_path = "./tests/test_configs/data/"
