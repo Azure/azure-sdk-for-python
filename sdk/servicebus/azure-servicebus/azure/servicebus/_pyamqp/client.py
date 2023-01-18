@@ -757,6 +757,8 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+        self._timeout_reached = False
+        self._timeout_count = 5
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -907,18 +909,23 @@ class ReceiveClient(AMQPClient):
 
         :rtype: generator[~uamqp.message.Message]
         """
-        self.open()
+        # self.open()
         # auto_complete = self.auto_complete
-        self.auto_complete = False
-        self._timeout_reached = False
-        self._last_activity_timestamp = None
+        # self.auto_complete = False
+        # self._last_activity_timestamp = None
         receiving = True
         message = None
         try:
-            while receiving and not self._timeout_reached:
-                while receiving and self._received_messages.empty() and not self._timeout_reached:
-                    receiving = self.do_work()
+            # need something to break out of this loop (created an arbitrary timeout for now)
+            while receiving and self._received_messages.empty() and not self._timeout_reached:
+                # while receiving and self._received_messages.empty():
+                # while receiving and self._received_messages.empty() and not self._timeout_reached:
+                receiving = self.do_work()
+                self._timeout_count = self._timeout_count-1
+                if self._timeout_count == 0: 
+                    self._timeout_reached = True
                 while not self._received_messages.empty():
+                    self._timeout_count = 5
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
