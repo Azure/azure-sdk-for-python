@@ -39,7 +39,7 @@ from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnio
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
-from ..job.services import JobServiceSchema
+from ..job.services import JobServiceSchema, SshJobServiceSchema, JupyterLabJobServiceSchema, VsCodeJobServiceSchema, TensorBoardJobServiceSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -152,7 +152,18 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
     )
-    services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    services = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(JobServiceSchema),
+                NestedField(SshJobServiceSchema),
+                NestedField(JupyterLabJobServiceSchema),
+                NestedField(TensorBoardJobServiceSchema),
+                NestedField(VsCodeJobServiceSchema),
+            ]
+        ),
+    )
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),

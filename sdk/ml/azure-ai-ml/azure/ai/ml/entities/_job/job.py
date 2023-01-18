@@ -79,6 +79,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         properties: Optional[Dict] = None,
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
+        # TODO: Should we accept JobService, SshJobService entity?
         services: Optional[Dict[str, JobService]] = None,
         **kwargs,
     ):
@@ -97,6 +98,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         self.display_name = display_name
         self.experiment_name = experiment_name
         self.compute = compute
+        # TODO: Should we store JobService/SshJobService entity?
         self.services = services
 
     @property
