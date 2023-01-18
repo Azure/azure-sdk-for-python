@@ -340,10 +340,11 @@ class ComponentOperations(_ScopeDependentOperations):
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
             else:
-                # _auto_increment_version can be True for non-registry component creation operation
-                if component._auto_increment_version:
+                # _auto_increment_version can be True for non-registry component creation operation;
+                # and anonymous component should use hash as version
+                if not component._is_anonymous and component._auto_increment_version:
                     result = _create_or_update_autoincrement(
-                        name=component.name,
+                        name=name,
                         body=rest_component_resource,
                         version_operation=self._version_operation,
                         container_operation=self._container_operation,
