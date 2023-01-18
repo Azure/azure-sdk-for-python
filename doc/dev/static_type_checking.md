@@ -211,7 +211,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-We pin the version of pyright to version [1.1.274](https://github.com/microsoft/pyright).
+We pin the version of pyright to version [1.1.287](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -221,7 +221,7 @@ To run pyright on your library, run the tox pyright env at the package level:
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -253,7 +253,7 @@ To run verifytypes on your library, run the tox verifytypes env at the package l
 
 If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
 
-`pip install pyright==1.1.274`
+`pip install pyright==1.1.287`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
 

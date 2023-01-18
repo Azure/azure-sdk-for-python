@@ -726,9 +726,10 @@ class TestComponent(AzureRecordedTestCase):
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E
+        component_name = randstr("component_name")
         rest_pipeline_component = create_component(
             client,
-            component_name=randstr("component_name"),
+            component_name=component_name,
             path=component_path,
         )
         assert rest_pipeline_component is not None
@@ -760,10 +761,15 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+        # below line is expected to raise KeyError in live test, it will pass after related changes deployed to canary
         jobs_dict = rest_pipeline_component._to_dict()["jobs"]
         # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
         assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
         assert jobs_dict["component_a_job"]["type"] == "command"
+        # Assert component show result
+        rest_pipeline_component2 = client.components.get(name=component_name, version="1")
+        jobs_dict2 = rest_pipeline_component2._to_dict()["jobs"]
+        assert jobs_dict == jobs_dict2
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"

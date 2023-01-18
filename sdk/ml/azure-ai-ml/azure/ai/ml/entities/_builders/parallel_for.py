@@ -82,7 +82,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
             self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
 
         self._items = items
-        self._validate_items(raise_error=True)
 
         self.max_concurrency = max_concurrency
 
@@ -120,11 +119,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
 
     @classmethod
-    def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data):
+    def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data, **kwargs):
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
 
         loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
-        return cls(**loaded_data)
+        return cls(**loaded_data, **kwargs)
 
     def _convert_output_meta(self, outputs):
         """Convert output meta to aggregate types."""
@@ -161,7 +160,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 except json.JSONDecodeError as e:
                     if not is_data_binding_expression(items, ["parent"]):
                         validation_result.append_error(
-                            f"Items is neither a valid JSON string due to {e} or a binding string."
+                            yaml_path="items",
+                            message=f"Items is neither a valid JSON string due to {e} or a binding string."
                         )
             if isinstance(items, dict):
                 # Validate dict keys
@@ -170,12 +170,18 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 if len(items) > 0:
                     self._validate_items_list(items, validation_result)
                 else:
-                    validation_result.append_error("Items is an empty list/dict.")
+                    validation_result.append_error(
+                        yaml_path="items",
+                        message="Items is an empty list/dict.")
         else:
             validation_result.append_error(
-                "Items is required for parallel_for node",
+                yaml_path="items",
+                message="Items is required for parallel_for node",
             )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result.try_raise(
+            self._get_validation_error_target(),
+            raise_error=raise_error,
+        )
 
     def _customized_validate(self):
         """Customized validation for parallel for node."""
@@ -192,7 +198,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
             # Note: item can be empty dict when loop_body don't have foreach inputs.
             if not isinstance(item, dict):
                 validation_result.append_error(
-                    f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}."
+                    yaml_path="items",
+                    message=f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}."
                 )
             else:
                 # item has to have matched meta
@@ -200,12 +207,16 @@ class ParallelFor(LoopNode, NodeIOMixin):
                     if not meta.keys():
                         meta = item
                     else:
+                        msg = f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
                         validation_result.append_error(
-                            f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
+                            yaml_path="items",
+                            message=msg
                         )
                 # items' keys should appear in body's inputs
                 body_component = self.body._component
                 if isinstance(body_component, Component) and (not item.keys() <= body_component.inputs.keys()):
+                    msg = f"Item {item} got unmatched inputs with loop body component inputs {body_component.inputs}."
                     validation_result.append_error(
-                        f"Item {item} got unmatched inputs with " f"loop body component inputs {body_component.inputs}."
+                        yaml_path="items",
+                        message=msg
                     )
