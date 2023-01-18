@@ -12,8 +12,8 @@ from typing import IO, Any, AnyStr, Dict, Optional, Union
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.entities._assets._artifacts.model import Model
-from azure.ai.ml.entities._assets.environment import Environment
+from azure.ai.ml.entities._assets._artifacts.model import Model  # pylint: disable=unused-import
+from azure.ai.ml.entities._assets.environment import Environment  # pylint: disable=unused-import
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
