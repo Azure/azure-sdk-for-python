@@ -29,6 +29,8 @@ _EU_ENDPOINTS = [
     "swedencentral",
     "switzerlandnorth",
     "switzerlandwest",
+    "uksouth",
+    "ukwest",
 ]
 
 _STATSBEAT_METER_PROVIDER = None
