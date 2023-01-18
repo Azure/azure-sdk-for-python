@@ -1,7 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be perview) (2023-01-18)
+## 5.1.0b4 (2023-01-18)
 
+### Other Changes
+
+  - Add some model parameters
 
 
 ## 5.1.0b3 (2023-01-03)
