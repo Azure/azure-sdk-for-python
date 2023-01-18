@@ -459,9 +459,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             obj_message = cast(Union[ServiceBusMessage, ServiceBusMessageBatch], obj_message)
             if send_span:
                 self._add_span_request_attributes(send_span)
-            self._send(
+            self._do_retryable_operation(
+                self._send,
                 message=obj_message,
-                timeout=timeout
+                timeout=timeout,
+                operation_requires_timeout=True,
+                require_last_exception=True,
             )
 
     def create_message_batch(
