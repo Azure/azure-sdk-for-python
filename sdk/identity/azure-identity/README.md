@@ -48,6 +48,16 @@ the browser to authenticate a user.
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
 
+#### Authenticate via the Azure Developer CLI
+
+`DefaultAzureCredential` and `AzureDeveloperCliCredential` can authenticate as the user
+signed in to the [Azure Developer CLI][azd_cli]. To sign in to the Azure Developer CLI, run
+`azd login`. On a system with a default web browser, the Azure Developer CLI will launch
+the browser to authenticate a user.
+
+When no default browser is available, `azd login` will use the device code
+authentication flow. This can also be selected manually by running `azd login --use-device-code`.
+
 ## Key concepts
 
 ### Credentials
@@ -279,8 +289,6 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 |Credential|Usage|Reference
 |-|-|-
 |[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
-#TODO: link for reference is pending
-|[`AzureDeveloperCliCredential`][azd_cli_cred_ref]| Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI authentication]()
 |[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
 |[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
 
@@ -399,12 +407,11 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
+[azd_cli]:aka.ms/azure-dev
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
-#TODO: azd_cli_cred_ref is pending
-[azd_cli_cred_ref]: 
 [client_assertion_cred_ref]: https://aka.ms/azsdk/python/identity/clientassertioncredential
 [client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/clientsecretcredential
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/defaultazurecredential
