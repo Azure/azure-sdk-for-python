@@ -99,6 +99,7 @@
     "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
     "tomli",
     "sdkrel",
     "qnamaker",

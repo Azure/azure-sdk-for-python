@@ -151,7 +151,7 @@ This same methodology also applies to _individual checks_ that run during variou
 
 The name that you should use is visible based on what the `tox environment` that the check refers to! Here are a few examples of enabling/disabling checks:
 
-- `AZURE_SERVICEBUS_PYRIGHT=true` <-- enable a check that normally is disabled in pyproject.toml
+- `AZURE_SERVICEBUS_PYRIGHT=true` <-- enable a check that normally is disabled in `pyproject.toml`
 - `AZURE_CORE_PYLINT=false` <-- disable a check that normally runs
 
 ## Analyze Checks
