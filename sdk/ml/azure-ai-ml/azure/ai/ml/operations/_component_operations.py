@@ -212,6 +212,11 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
         component = Component._from_rest_object(result)
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=self._orchestrators.resolve_azureml_id,
+            resolve_inputs=False,
+        )
         return component
 
     @experimental
