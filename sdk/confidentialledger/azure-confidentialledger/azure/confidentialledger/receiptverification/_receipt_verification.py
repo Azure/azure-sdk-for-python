@@ -7,7 +7,7 @@ transaction receipts."""
 
 from base64 import b64decode
 from hashlib import sha256
-from typing import Union, Dict, List, Any, cast
+from typing import Dict, List, Any, cast
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
@@ -22,54 +22,63 @@ from azure.confidentialledger.receiptverification._models import (
 
 from azure.confidentialledger.receiptverification._utils import (
     _convert_dict_to_camel_case,
+    _validate_receipt_content,
 )
 
 
-def verify_receipt(receipt: Union[Receipt, Dict[str, Any]], service_cert: str) -> None:
+def verify_receipt(receipt: Dict[str, Any], service_cert: str) -> None:
     """Verify that a given Azure Confidential Ledger write transaction receipt
     is valid from its content and the Confidential Ledger service identity
     certificate.
 
-    :param receipt: Receipt object or dictionary containing the content of an Azure
+    :param receipt: Receipt dictionary containing the content of an Azure
     Confidential Ledger write transaction receipt.
-    :type receipt: Union[~azure.confidentialledgertools.receiptverification.models.Receipt, Dict[str, Any]]
+    :type receipt: Dict[str, Any]
     :param service_cert: String containing the PEM-encoded
     certificate of the Confidential Ledger service identity.
     :type service_cert: str
     """
 
-    if isinstance(receipt, dict):
-
-        # Convert any key in the receipt dictionary to camel case
-        # to match the model fields (we do this because customers may
-        # provide receipts with snake case keys since they were returned
-        # by older ACL instances)
-        receipt = _convert_dict_to_camel_case(receipt)
-
-        # Convert receipt JSON object to Receipt model
-        receipt = Receipt.from_dict(receipt)
+    # Validate receipt content and convert it into a Receipt model
+    receipt_obj = _preprocess_input_receipt(receipt)
 
     # Load node PEM certificate
-    node_cert = _load_and_verify_pem_certificate(receipt.cert)
+    node_cert = _load_and_verify_pem_certificate(receipt_obj.cert)
 
     # Verify node certificate is endorsed by the service certificate
     # through endorsements certificates
     _verify_node_cert_endorsed_by_service_cert(
-        node_cert, service_cert, receipt.serviceEndorsements
+        node_cert, service_cert, receipt_obj.serviceEndorsements
     )
 
     # Compute hash of the leaf node in the Merkle Tree corresponding
     # to the transaction associated to the given receipt
-    leaf_node_hash = _compute_leaf_node_hash(receipt.leafComponents)
+    leaf_node_hash = _compute_leaf_node_hash(receipt_obj.leafComponents)
 
     # Compute root of the Merkle Tree at the time the transaction was committed
-    root_node_hash = _compute_root_node_hash(leaf_node_hash, receipt.proof)
+    root_node_hash = _compute_root_node_hash(leaf_node_hash, receipt_obj.proof)
 
     # Verify signature of the signing node over the root of the tree with
     # node certificate public key
     _verify_signature_over_root_node_hash(
-        receipt.signature, node_cert, receipt.nodeId, root_node_hash
+        receipt_obj.signature, node_cert, receipt_obj.nodeId, root_node_hash
     )
+
+
+def _preprocess_input_receipt(receipt_dict: Dict[str, Any]) -> Receipt:
+    """Preprocess input receipt dictionary, validate its content, and returns a
+    valid Receipt object based on the vetted input data."""
+
+    # Convert any key in the receipt dictionary to camel case
+    # to match the model fields (we do this because customers may
+    # provide receipts with snake case keys since they were returned
+    # by older ACL instances)
+    receipt_dict = _convert_dict_to_camel_case(receipt_dict)
+
+    _validate_receipt_content(receipt_dict)
+
+    # Convert receipt JSON object to Receipt model
+    return Receipt.from_dict(receipt_dict)
 
 
 def _verify_signature_over_root_node_hash(
@@ -83,7 +92,9 @@ def _verify_signature_over_root_node_hash(
         public_key_bytes = node_cert.public_key().public_bytes(
             Encoding.DER, PublicFormat.SubjectPublicKeyInfo
         )
-        assert sha256(public_key_bytes).digest() == bytes.fromhex(node_id)
+
+        if node_id is not None:
+            assert sha256(public_key_bytes).digest() == bytes.fromhex(node_id)
 
         # Verify signature over root node hash using node certificate public key
         _verify_ec_signature(
