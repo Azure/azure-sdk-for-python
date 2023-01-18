@@ -9,10 +9,10 @@ from _shared.utils import get_http_logging_policy
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
-from acs_sms_test_case import ACSSMTestCase
+from acs_sms_test_case import ACSSMSTestCase
 from azure.communication.sms import SmsClient
 
-class TestClient(ACSSMTestCase):
+class TestClient(ACSSMSTestCase):
     def setup_method(self):
         super().setUp()
 

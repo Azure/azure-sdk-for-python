@@ -7,7 +7,7 @@ import os
 from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.communication.sms._shared.utils import parse_connection_str
 
-class ACSSMTestCase(AzureRecordedTestCase):
+class ACSSMSTestCase(AzureRecordedTestCase):
     def setUp(self):
         self.connection_str = self._get_connection_str()
         if is_live():

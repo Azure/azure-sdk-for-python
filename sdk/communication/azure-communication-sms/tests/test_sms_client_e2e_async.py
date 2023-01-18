@@ -9,12 +9,12 @@ from devtools_testutils import is_live
 from azure.communication.sms.aio import SmsClient
 from azure.core.exceptions import HttpResponseError
 from _shared.utils import get_http_logging_policy
-from acs_sms_test_case import ACSSMTestCase
+from acs_sms_test_case import ACSSMSTestCase
 from azure.identity.aio import DefaultAzureCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 
 @pytest.mark.asyncio
-class TestClientAsync(ACSSMTestCase):
+class TestClientAsync(ACSSMSTestCase):
     def setup_method(self):
         super().setUp()
 
