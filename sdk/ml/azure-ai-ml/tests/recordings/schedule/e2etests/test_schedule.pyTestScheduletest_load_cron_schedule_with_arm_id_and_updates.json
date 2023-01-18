@@ -572,7 +572,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "a",
             "is_deterministic": true,
             "inputs": {
               "hello_string": {
@@ -1008,7 +1007,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "b",
             "is_deterministic": true,
             "outputs": {
               "world_output": {
@@ -1443,7 +1441,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "c",
             "is_deterministic": true,
             "inputs": {
               "world_input": {

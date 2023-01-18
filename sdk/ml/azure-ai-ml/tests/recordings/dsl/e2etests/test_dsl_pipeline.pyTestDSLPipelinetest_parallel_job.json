@@ -382,7 +382,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1005",
+        "Content-Length": "972",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -395,7 +395,6 @@
           "componentSpec": {
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "parallel_node",
             "is_deterministic": true,
             "inputs": {
               "job_data_path": {

@@ -446,7 +446,6 @@
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "train_job",
             "is_deterministic": true,
             "inputs": {
               "training_data": {
@@ -667,8 +666,8 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Accept-Ranges": "bytes",
-        "Content-Length": "499",
-        "Content-MD5": "kD7N5\u002BygjTfbYTFhyEo7RA==",
+        "Content-Length": "508",
+        "Content-MD5": "dUQjYq1qrTeqLOaZ4N2AUQ==",
         "Content-Type": "application/octet-stream",
         "Date": "Wed, 18 Jan 2023 00:45:06 GMT",
         "ETag": "\u00220x8DAF8E960E8A3F1\u0022",

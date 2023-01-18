@@ -1058,7 +1058,6 @@
             "args": "--file_input ${{inputs.file_input}}",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "add_greeting_column",
             "is_deterministic": true,
             "inputs": {
               "file_input": {
@@ -1182,7 +1181,6 @@
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "count_by_row",
             "is_deterministic": true,
             "inputs": {
               "file_input": {

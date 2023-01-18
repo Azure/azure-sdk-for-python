@@ -951,7 +951,6 @@
             "name": "azureml_anonymous",
             "description": "Simple job that writes hello world to file.",
             "version": "1",
-            "display_name": "hello_world_inline_commandjob_1",
             "is_deterministic": true,
             "outputs": {
               "component_out_path_1": {
@@ -1050,7 +1049,6 @@
             "name": "azureml_anonymous",
             "description": "Simple job that writes hello world to file.",
             "version": "1",
-            "display_name": "hello_world_inline_commandjob_2",
             "is_deterministic": true,
             "outputs": {
               "component_out_path_2": {

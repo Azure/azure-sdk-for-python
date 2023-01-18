@@ -450,7 +450,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "924",
+        "Content-Length": "882",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -470,7 +470,6 @@
             },
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "train_with_sample_data",
             "is_deterministic": true,
             "inputs": {
               "training_data": {

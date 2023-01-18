@@ -67,7 +67,7 @@
               "runningNodeCount": 0,
               "idleNodeCount": 0,
               "unusableNodeCount": 0,
-              "leavingNodeCount": 1,
+              "leavingNodeCount": 0,
               "preemptedNodeCount": 0
             },
             "allocationState": "Resizing",
@@ -149,7 +149,7 @@
               "runningNodeCount": 0,
               "idleNodeCount": 0,
               "unusableNodeCount": 0,
-              "leavingNodeCount": 1,
+              "leavingNodeCount": 0,
               "preemptedNodeCount": 0
             },
             "allocationState": "Resizing",
@@ -2237,8 +2237,13 @@
             "version": "1",
             "display_name": "hello_world_component_inline_3",
             "is_deterministic": true,
+            "outputs": {
+              "output_path": {
+                "type": "uri_folder"
+              }
+            },
             "type": "command",
-            "_source": "YAML.JOB"
+            "_source": "YAML.COMPONENT"
           }
         }
       },

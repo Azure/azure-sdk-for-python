@@ -576,7 +576,6 @@
           "componentSpec": {
             "name": "azureml_anonymous",
             "version": "1",
-            "display_name": "hello_world_inline_parallel_file_job_1",
             "is_deterministic": true,
             "inputs": {
               "job_data_path": {
