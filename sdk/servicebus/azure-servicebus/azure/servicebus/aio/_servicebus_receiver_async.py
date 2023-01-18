@@ -270,8 +270,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def _iter_next(self):
         await self._open()
         # TODO: Add in Recieve Message Iterator
-        # if not self._message_iter:
-        #     self._message_iter = self._handler.receive_messages_iter_async()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message)
         if (
