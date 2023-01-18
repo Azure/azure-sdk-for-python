@@ -816,6 +816,7 @@ class TestComponent:
         rest_object = component._to_rest_object()
         assert rest_object.properties.component_spec == {
             '$schema': 'https://componentsdk.azureedge.net/jsonschema/CommandComponent.json',
+            '_source': 'YAML.COMPONENT',
             'command': 'echo {inputs.input_float} && echo {inputs.delimiter}',
             'display_name': 'Hello Command',
             'environment': {'name': 'AzureML-Designer', 'os': 'Linux'},
@@ -826,7 +827,7 @@ class TestComponent:
                     'type': 'Float'
                 },
                 'delimiter': {
-                    'default': '\t',  # why? seems as expected
+                    'default': '\t',
                     'optional': True,
                     'type': 'String'
                 },
@@ -834,6 +835,9 @@ class TestComponent:
             'is_deterministic': True,
             'name': 'hello_command',
             'type': 'CommandComponent',
-            'version': '0.10'  # previously this is 0.1
+            'version': '0.10',  # previously this is 0.1
+            "datatransfer": {
+                "cloud_type": "aether"
+            }
         }
 

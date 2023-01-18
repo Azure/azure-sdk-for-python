@@ -17,3 +17,5 @@ command: >-
   echo {inputs.input_float} && echo {inputs.delimiter}
 environment:
   name: AzureML-Designer
+datatransfer:
+  cloud_type: aether
