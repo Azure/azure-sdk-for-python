@@ -34,6 +34,19 @@ from .test_vcr_utils import before_record_cb, vcr_header_filters
 
 
 @pytest.fixture
+def mock_workspace_operations(
+    mock_workspace_scope: OperationScope,
+    mock_aml_services_2022_10_01: Mock,
+    mock_machinelearning_client: Mock,
+) -> WorkspaceOperations:
+    yield WorkspaceOperations(
+        operation_scope=mock_workspace_scope,
+        service_client=mock_aml_services_2022_10_01,
+        all_operations=mock_machinelearning_client._operation_container,
+    )
+
+
+@pytest.fixture
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> DatastoreOperations:
@@ -48,15 +61,23 @@ def mock_datastore_operation(
 def mock_code_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_datastore_operation: Mock,
+    mock_machinelearning_client: Mock,
+    mock_aml_services_2020_09_01_dataplanepreview: Mock,
 ) -> CodeOperations:
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
+    kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
+
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_05_01,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operation,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        **kwargs,
     )
+
 
 
 @pytest.fixture

@@ -48,6 +48,17 @@ auth_mode: aad_token # required
     return p
 
 
+@pytest.fixture()
+def mock_datastore_operation(
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+) -> DatastoreOperations:
+    yield DatastoreOperations(
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+    )
+
+
 @pytest.fixture
 def mock_datastore_operations(
     mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
@@ -79,13 +90,20 @@ def mock_code_assets_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_10_01: Mock,
-    mock_datastore_operations: DatastoreOperations,
+    mock_datastore_operation: Mock,
+    mock_machinelearning_client: Mock,
+    mock_aml_services_2020_09_01_dataplanepreview: Mock,
 ) -> CodeOperations:
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
+    kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
+
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        **kwargs,
     )
 
 
