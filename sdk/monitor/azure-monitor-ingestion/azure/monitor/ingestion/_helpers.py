@@ -19,6 +19,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 MAX_CHUNK_SIZE_BYTES = 1024 * 1024 # 1 MiB
 CHAR_SIZE_BYTES = 4
+GZIP_MAGIC_NUMBER = b"\x1f\x8b"
 
 
 def _split_chunks(logs: List[JSON]) -> Generator[List[JSON], None, None]:
