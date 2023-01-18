@@ -14,7 +14,7 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from msrest import Serializer
+from azure.core.serialization import AzureJSONEncoder
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
@@ -157,17 +157,20 @@ def _from_cncf_events(event):
 
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
-    serialize = Serializer()
+    serialize = AzureJSONEncoder()
     header_parameters = {}  # type: Dict[str, Any]
-    header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+    # header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
+    header_parameters['Content-Type'] = serialize.default(content_type)
 
     if channel_name:
         header_parameters['aeg-channel-name'] = channel_name
 
     query_parameters = {}  # type: Dict[str, Any]
-    query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
+    # query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
+    query_parameters['api-version'] = serialize.default("2018-01-01")
 
-    body = serialize.body(events, '[object]')
+    # body = serialize.body(events, '[object]')
+    body = serialize.default(events)
     if body is None:
         data = None
     else:
