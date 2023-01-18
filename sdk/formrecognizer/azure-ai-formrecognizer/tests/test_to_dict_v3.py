@@ -359,6 +359,8 @@ class TestToDict(FormRecognizerTest):
             "confidence": 0.99,
         }
         assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
 
     def test_document_field_to_dict_none_value_currency(self):
         model = _models.DocumentField(
@@ -429,6 +431,8 @@ class TestToDict(FormRecognizerTest):
             "confidence": 0.99,
         }
         assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
 
     def test_document_key_value_element_to_dict(self):
         model = _models.DocumentKeyValueElement(
