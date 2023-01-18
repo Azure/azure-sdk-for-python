@@ -2509,3 +2509,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
         # pipeline component output mode is undefined behavior so we skip assert it
         # assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+
+    def test_local_data_as_node_input(self, client: MLClient):
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+        local_data_input = Input(type="uri_folder", path="./tests/test_configs/data")
+
+        @dsl.pipeline
+        def my_pipeline():
+            hello_world_component_func(component_in_number=1, component_in_path=local_data_input)
+
+        pipeline_job: PipelineJob = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert_job_cancel(pipeline_job, client)

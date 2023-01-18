@@ -81,7 +81,7 @@ class BackupVaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupVaultResourceList] = kwargs.pop("cls", None)
@@ -158,7 +158,7 @@ class BackupVaultsOperations:
     ) -> AsyncIterable["_models.BackupVaultResource"]:
         """Returns resource collection belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -170,7 +170,7 @@ class BackupVaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupVaultResourceList] = kwargs.pop("cls", None)
@@ -246,7 +246,7 @@ class BackupVaultsOperations:
     async def get(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> _models.BackupVaultResource:
         """Returns a resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -267,7 +267,7 @@ class BackupVaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupVaultResource] = kwargs.pop("cls", None)
@@ -323,7 +323,7 @@ class BackupVaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -389,7 +389,7 @@ class BackupVaultsOperations:
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
         """Creates or updates a BackupVault resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -426,7 +426,7 @@ class BackupVaultsOperations:
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
         """Creates or updates a BackupVault resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -461,7 +461,7 @@ class BackupVaultsOperations:
     ) -> AsyncLROPoller[_models.BackupVaultResource]:
         """Creates or updates a BackupVault resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -488,7 +488,7 @@ class BackupVaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -541,7 +541,7 @@ class BackupVaultsOperations:
     ) -> None:
         """Deletes a BackupVault resource from the resource group.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -562,7 +562,7 @@ class BackupVaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -614,7 +614,7 @@ class BackupVaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -679,7 +679,7 @@ class BackupVaultsOperations:
         """Updates a BackupVault resource belonging to a resource group. For example, updating tags for a
         resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -717,7 +717,7 @@ class BackupVaultsOperations:
         """Updates a BackupVault resource belonging to a resource group. For example, updating tags for a
         resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -753,7 +753,7 @@ class BackupVaultsOperations:
         """Updates a BackupVault resource belonging to a resource group. For example, updating tags for a
         resource.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -780,7 +780,7 @@ class BackupVaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -841,7 +841,7 @@ class BackupVaultsOperations:
 
         API to check for resource name availability.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param location: The location in which uniqueness will be verified. Required.
@@ -871,7 +871,7 @@ class BackupVaultsOperations:
 
         API to check for resource name availability.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param location: The location in which uniqueness will be verified. Required.
@@ -899,7 +899,7 @@ class BackupVaultsOperations:
 
         API to check for resource name availability.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param location: The location in which uniqueness will be verified. Required.
@@ -926,7 +926,7 @@ class BackupVaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
