@@ -36,7 +36,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
@@ -54,8 +54,8 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         :keyword str tenant_id: optional tenant to include in the token request.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure Developer CLI.
-        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI but didn't
-          receive an access token.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI
+          but didn't receive an access token.
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):

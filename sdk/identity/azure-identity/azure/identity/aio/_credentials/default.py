@@ -44,7 +44,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
-    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI from the credential. Defaults to **False**.
+    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI 
+        from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
@@ -121,7 +122,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
-            AzureDeveloperCliCredential
         if not exclude_azd_cli_credential:
             credentials.append(AzureDeveloperCliCredential())
         if not exclude_cli_credential:
