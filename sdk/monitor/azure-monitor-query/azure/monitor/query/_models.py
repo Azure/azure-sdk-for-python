@@ -5,14 +5,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import uuid
 from datetime import datetime, timedelta
 import sys
 from typing import Any, Optional, List, Union, Tuple, Dict, Iterator
 
-from azure.core import CaseInsensitiveEnumMeta
-
+from ._enums import LogsQueryStatus, MetricAggregationType, MetricClass, MetricNamespaceClassification, MetricUnit
+from ._exceptions import LogsQueryError
 from ._generated._serialization import Deserializer
 from ._helpers import construct_iso8601, process_row
 
@@ -366,14 +365,6 @@ class LogsBatchQuery:
         }
 
 
-class LogsQueryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the result object."""
-
-    PARTIAL = "PartialError"
-    SUCCESS = "Success"
-    FAILURE = "Failure"
-
-
 class LogsQueryResult:
     """The LogsQueryResult type is returned when the response of a query is a success."""
 
@@ -416,14 +407,6 @@ class LogsQueryResult:
         )
 
 
-class MetricNamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of namespace"""
-
-    PLATFORM = "Platform"
-    CUSTOM = "Custom"
-    QOS = "Qos"
-
-
 class MetricNamespace:
     """Metric namespace class specifies the metadata for a metric namespace."""
 
@@ -462,45 +445,6 @@ class MetricNamespace:
         )
 
 
-class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The class of the metric."""
-
-    AVAILABILITY = "Availability"
-    TRANSACTIONS = "Transactions"
-    ERRORS = "Errors"
-    LATENCY = "Latency"
-    SATURATION = "Saturation"
-
-
-class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric."""
-
-    COUNT = "Count"
-    BYTES = "Bytes"
-    SECONDS = "Seconds"
-    COUNT_PER_SECOND = "CountPerSecond"
-    BYTES_PER_SECOND = "BytesPerSecond"
-    PERCENT = "Percent"
-    MILLI_SECONDS = "MilliSeconds"
-    BYTE_SECONDS = "ByteSeconds"
-    UNSPECIFIED = "Unspecified"
-    CORES = "Cores"
-    MILLI_CORES = "MilliCores"
-    NANO_CORES = "NanoCores"
-    BITS_PER_SECOND = "BitsPerSecond"
-
-
-class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The aggregation type of the metric."""
-
-    NONE = "None"
-    AVERAGE = "Average"
-    COUNT = "Count"
-    MINIMUM = "Minimum"
-    MAXIMUM = "Maximum"
-    TOTAL = "Total"
-
-
 class MetricAvailability:
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
@@ -528,7 +472,6 @@ class MetricAvailability:
             granularity=granularity,
             retention=retention
         )
-
 
 
 class MetricDefinition:  # pylint: disable=too-many-instance-attributes
@@ -617,7 +560,7 @@ class LogsQueryPartialResult:
     visualization: Optional[JSON] = None
     """This will include a visualization property in the response that specifies the type of visualization
     selected by the query and any properties for that visualization."""
-    partial_error: Any
+    partial_error: Optional[LogsQueryError] = None
     """The partial error info."""
     status: LogsQueryStatus
     """The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult."""
