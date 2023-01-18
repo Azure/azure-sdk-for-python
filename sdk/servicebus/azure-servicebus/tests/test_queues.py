@@ -68,7 +68,7 @@ _logger = get_logger(logging.DEBUG)
 # are ported to offline-compatible code.
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    # @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

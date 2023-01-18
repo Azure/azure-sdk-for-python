@@ -762,6 +762,8 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+        self._timeout_reached = False
+        self._timeout_count = 5
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -894,6 +896,57 @@ class ReceiveClient(AMQPClient):
         :type timeout: float
         """
         return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
+
+    def receive_messages_iter(self, on_message_received=None):
+        """Receive messages by generator. Messages returned in the generator have already been
+        accepted - if you wish to add logic to accept or reject messages based on custom
+        criteria, pass in a callback.
+
+        :param on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~uamqp.message.Message object.
+        :type on_message_received: callable[~uamqp.message.Message]
+        """
+        self._message_received_callback = on_message_received
+        return self._message_generator()
+
+    def _message_generator(self):
+        """Iterate over processed messages in the receive queue.
+
+        :rtype: generator[~uamqp.message.Message]
+        """
+        # self.open()
+        # auto_complete = self.auto_complete
+        # self.auto_complete = False
+        # self._last_activity_timestamp = None
+        receiving = True
+        message = None
+        try:
+            # need something to break out of this loop (created an arbitrary timeout for now)
+            while receiving and self._received_messages.empty() and not self._timeout_reached:
+                # while receiving and self._received_messages.empty():
+                # while receiving and self._received_messages.empty() and not self._timeout_reached:
+                receiving = self.do_work()
+                self._timeout_count = self._timeout_count-1
+                if self._timeout_count == 0: 
+                    self._timeout_reached = True
+                while not self._received_messages.empty():
+                    self._timeout_count = 5
+                    message = self._received_messages.get()
+                    self._received_messages.task_done()
+                    yield message
+                    # self.settle_messages(message[1],"accepted")
+                    # self._complete_message(message, auto_complete)
+        finally:
+            # self.settle_messages(message[1],"accepted")
+            # self._complete_message(message, auto_complete)
+            # self.auto_complete = auto_complete
+            if self._shutdown:
+                self.close()
+
+    # def _complete_message(self, message, auto):  # pylint: disable=no-self-use
+    #     if not message or not auto:
+    #         return
+    #     message.accept()
 
     @overload
     def settle_messages(
