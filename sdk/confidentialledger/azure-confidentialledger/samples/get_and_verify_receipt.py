@@ -26,7 +26,7 @@ from azure.confidentialledger import ConfidentialLedgerClient
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
-from azure.confidentialledger.receiptverification import (
+from azure.confidentialledger.receipt import (
     verify_receipt,
 )
 from azure.core.exceptions import HttpResponseError

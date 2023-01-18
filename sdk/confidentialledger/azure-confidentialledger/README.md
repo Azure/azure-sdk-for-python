@@ -410,7 +410,7 @@ print(f"Write receipt for transaction id {transaction_id} was successfully retri
 After fetching a receipt for a write transaction, it is possible to call the `verify_receipt` function to verify that the receipt is valid.
 
 ```python
-from azure.confidentialledger.receiptverification import (
+from azure.confidentialledger.receipt import (
     verify_receipt,
 )
 

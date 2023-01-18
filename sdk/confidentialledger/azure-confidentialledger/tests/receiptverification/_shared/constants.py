@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.confidentialledger.receiptverification._models import (
+from azure.confidentialledger.receipt._models import (
     LeafComponents,
     ProofElement,
     Receipt,

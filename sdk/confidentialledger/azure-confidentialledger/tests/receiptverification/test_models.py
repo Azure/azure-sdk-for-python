@@ -7,13 +7,13 @@
 
 import pytest
 
-from azure.confidentialledger.receiptverification._models import (
+from azure.confidentialledger.receipt._models import (
     LeafComponents,
     ProofElement,
     Receipt,
 )
 
-from azure.confidentialledger.receiptverification._utils import (
+from azure.confidentialledger.receipt._utils import (
     _convert_dict_to_camel_case,
 )
 

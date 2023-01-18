@@ -7,11 +7,11 @@
 
 import pytest
 
-from azure.confidentialledger.receiptverification._receipt_verification import (
+from azure.confidentialledger.receipt._receipt_verification import (
     verify_receipt,
 )
 
-from azure.confidentialledger.receiptverification._models import (
+from azure.confidentialledger.receipt._models import (
     LeafComponents,
     ProofElement,
 )

@@ -1,10 +1,10 @@
 # Release History
 
 ## 1.1.0 (2022-12-21)
-Add `azure.confidentialledger.receiptverification` module for Azure Confidential Ledger write transaction receipt verification.
+Add `azure.confidentialledger.receipt` module for Azure Confidential Ledger write transaction receipt verification.
 
 ### Features Added
-- Add `verify_receipt` function to verify write transaction receipts from a `Receipt` object or a receipt JSON object.
+- Add `verify_receipt` function to verify write transaction receipts from a receipt JSON object.
 - Add sample code to get and verify a write receipt from a running Confidential Ledger instance.
 - Update README with examples and documentation for receipt verification.
 
