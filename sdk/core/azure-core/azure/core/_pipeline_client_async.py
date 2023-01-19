@@ -31,7 +31,6 @@ from typing import (
     Awaitable,
     TypeVar,
     AsyncContextManager,
-    Generic,
     Generator,
     cast,
     TYPE_CHECKING,
@@ -66,7 +65,7 @@ AsyncHTTPResponseType = TypeVar(
 _LOGGER = logging.getLogger(__name__)
 
 
-class _Coroutine(Awaitable[AsyncHTTPResponseType], Generic[AsyncHTTPResponseType]):
+class _Coroutine(Awaitable[AsyncHTTPResponseType]):
     """Wrapper to get both context manager and awaitable in place.
 
     Naming it "_Coroutine" because if you don't await it makes the error message easier:
