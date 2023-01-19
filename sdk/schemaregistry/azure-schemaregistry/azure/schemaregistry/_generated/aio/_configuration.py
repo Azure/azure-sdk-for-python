@@ -42,7 +42,7 @@ class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-ma
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-10")  # type: Literal["2022-10"]
+        api_version: Literal["2022-10"] = kwargs.pop("api_version", "2022-10")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
