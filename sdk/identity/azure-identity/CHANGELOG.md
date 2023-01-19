@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `AzureDeveloperCredential` for Azure Developer CLI. ([#27916](https://github.com/Azure/azure-sdk-for-python/pull/27916))
+
 ### Breaking Changes
 
 ### Bugs Fixed
