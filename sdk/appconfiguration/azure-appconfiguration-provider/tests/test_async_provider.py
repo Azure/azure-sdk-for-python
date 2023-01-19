@@ -3,15 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
 from azure.appconfiguration.provider.aio import load_provider
 from azure.appconfiguration.provider import SettingSelector
-from devtools_testutils import (
-    AzureRecordedTestCase, 
-    recorded_by_proxy
-)
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration import AzureAppConfigurationClient
-from preparers import app_config_decorator
+from async_preparers import app_config_decorator_async
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
@@ -19,16 +16,16 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         return await load_provider(connection_string=connection_string, trimmed_key_prefixes=trimmed_key_prefixes, selects=selects)
 
     # method: provider_creation
-    @recorded_by_proxy
-    @app_config_decorator
+    @recorded_by_proxy_async
+    @app_config_decorator_async
     def test_provider_creation(self, appconfiguration_connection_string):
         client = self.build_provider(appconfiguration_connection_string)
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
 
     # method: provider_trimmed_key_prefixes
-    @recorded_by_proxy
-    @app_config_decorator
+    @recorded_by_proxy_async
+    @app_config_decorator_async
     def test_provider_trimmed_key_prefixes(self, appconfiguration_connection_string):
         trimmed = {"test."}
         client = self.build_provider(appconfiguration_connection_string, trimmed_key_prefixes=trimmed)
@@ -38,8 +35,8 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         assert "test.trimmed" not in client
 
     # method: provider_selectors
-    @recorded_by_proxy
-    @app_config_decorator
+    @recorded_by_proxy_async
+    @app_config_decorator_async
     def test_provider_selectors(self, appconfiguration_connection_string):
         selects = {SettingSelector("message*", "dev")}
         client = self.build_provider(appconfiguration_connection_string, selects=selects)
