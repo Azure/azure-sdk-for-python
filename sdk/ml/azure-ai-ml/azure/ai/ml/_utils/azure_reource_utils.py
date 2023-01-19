@@ -9,11 +9,16 @@ from azure.core.credentials import TokenCredential
 from typing import List, Dict, Optional
 
 
-def get_resources_from_all_subscriptions (strQuery: str, credential:  TokenCredential):
-    subsClient = SubscriptionClient(credential)
+def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential, subscription_list: Optional[List[str]] = None):
+    # If a subscription list is passed in, use it. Otherwise, get all subscriptions
+    
     subsList = []
-    for sub in subsClient.subscriptions.list():
-        subsList.append(sub.as_dict().get('subscription_id'))
+    if subscription_list is not None:
+        subsList = subscription_list
+    else:
+        subsClient = SubscriptionClient(credential)
+        for sub in subsClient.subscriptions.list():
+            subsList.append(sub.as_dict().get('subscription_id'))
 
     # Create Azure Resource Graph client and set options
     argClient = arg.ResourceGraphClient(credential)
@@ -27,9 +32,9 @@ def get_resources_from_all_subscriptions (strQuery: str, credential:  TokenCrede
     return argClient.resources(argQuery)
 
 
-def get_vitual_clusters_from_all_subscriptions(credential:  TokenCredential) -> List[Dict]:
+def get_vitual_clusters_from_subscriptions(credential: TokenCredential, subscription_list: Optional[List[str]] = None) -> List[Dict]:
     strQuery = "resources | where type == 'microsoft.machinelearningservices/virtualclusters' | order by tolower(name) asc | project id, subscriptionId, resourceGroup, name, location, tags, type"
-    return get_resources_from_all_subscriptions(strQuery, credential).data
+    return get_resources_from_subscriptions(strQuery, credential, subscription_list).data
 
 
 def get_generic_resource_by_id(arm_id: str, credential:  TokenCredential, subscription_id: str, api_version: Optional[str] = None) -> Dict:

@@ -11,13 +11,11 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.azure_reource_utils import get_vitual_clusters_from_all_subscriptions, get_vc_by_id
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import AmlComputeNodeInfo, Compute, Usage, VmSize
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -36,7 +34,6 @@ class ComputeOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient102022Preview,
-        credentials: TokenCredential,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
@@ -45,7 +42,6 @@ class ComputeOperations(_ScopeDependentOperations):
         self._workspace_operations = service_client.workspaces
         self._vmsize_operations = service_client.virtual_machine_sizes
         self._usage_operations = service_client.usages
-        self._credentials = credentials
         self._init_kwargs = kwargs
 
     @distributed_trace
@@ -59,9 +55,6 @@ class ComputeOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Compute]
         """
 
-        if compute_type is not None and compute_type.lower() == "virtualcluster":
-            return get_vitual_clusters_from_all_subscriptions(self._credentials)
-
         return self._operation.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
@@ -74,7 +67,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> Compute:
+    def get(self, name: str) -> Compute:
         """Get a compute resource.
 
         :param name: Name of the compute
@@ -82,10 +75,6 @@ class ComputeOperations(_ScopeDependentOperations):
         :return: Compute object
         :rtype: Compute
         """
-
-        compute_type = kwargs.pop("compute_type", None)
-        if compute_type is not None and compute_type.lower() == "virtualcluster":
-            return get_vc_by_id(name=name, resource_group=self._resource_group_name, subscription_id=self._subscription_id, credential=self._credentials)
 
         rest_obj = self._operation.get(
             self._operation_scope.resource_group_name,
