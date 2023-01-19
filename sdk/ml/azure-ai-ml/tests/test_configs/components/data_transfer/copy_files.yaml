@@ -10,4 +10,4 @@ inputs:
 outputs:
   output_folder:
     type: uri_folder
-data_copy_mode: haha
+data_copy_mode: merge_with_overwrite

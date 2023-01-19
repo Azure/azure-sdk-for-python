@@ -1,11 +1,14 @@
 import pydash
 import pytest
 
+from azure.ai.ml import MLClient
 from azure.ai.ml import load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
+    DataTransferImportComponent, DataTransferExportComponent
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-
+from azure.ai.ml.constants._component import DataCopyMode, DataTransferTaskType
+from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
@@ -13,75 +16,130 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestDataTransferComponentEntity:
-    def test_copy_task_component_validate(self):
-        # code is specified in yaml, value is respected
-        component_yaml = "./tests/test_configs/components/data_transfer/copy_files.yaml"
-        data_transfer_copy_component = load_component(
-            component_yaml,
+    def test_serialize_deserialize_copy_task_component(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/data_transfer/copy_files.yaml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
+                                                           _type="data_transfer")
+        assert isinstance(component_entity, DataTransferCopyComponent)
+        # Todo: Add rest when e2e
+        # rest_path = "./tests/test_configs/components/automl/copy_files_rest.json"
+        # rest_entity = load_component_entity_from_rest_json(rest_path)
+        data_transfer_copy_component = DataTransferCopyComponent(
+            task=DataTransferTaskType.COPY_DATA,
+            name="datatransfer_copy_files",
+            display_name="Data Transfer Pipeline copy-files",
+            inputs={"folder1": {"type": "uri_folder"}},
+            outputs={"output_folder": {"type": "uri_folder"}},
+            data_copy_mode= DataCopyMode.MERGE_WITH_OVERWRITE,
+            base_path="./tests/test_configs/components/data_transfer",
         )
-        validation_result = data_transfer_copy_component._validate()
-        assert validation_result.passed
 
-    # def test_spark_component_to_dict(self):
-    #     # Test optional params exists in component dict
-    #     yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-    #     yaml_dict = load_yaml(yaml_path)
-    #     yaml_dict["mock_option_param"] = {"mock_key": "mock_val"}
-    #     spark_component = DataTransferComponent._load(data=yaml_dict, yaml_path=yaml_path)
-    #     assert spark_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
-    #
-    # def test_copy_task_component_entity(self):
-    #     component = DataTransferComponent(
-    #         name="datatransfer_copy_files",
-    #         display_name="Data Transfer Pipeline copy-files",
-    #         version="1",
-    #         inputs={
-    #             "file_input": {"type": "uri_file", "mode": "direct"},
-    #         },
-    #         base_path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline",
-    #     )
-    #     omit_fields = [
-    #         "properties.component_spec.$schema",
-    #         "properties.component_spec._source",
-    #     ]
-    #     component_dict = component._to_rest_object().as_dict()
-    #     component_dict = pydash.omit(component_dict, *omit_fields)
-    #
-    #     yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-    #     yaml_component = load_component(yaml_path)
-    #     yaml_component_dict = yaml_component._to_rest_object().as_dict()
-    #     yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
-    #
-    #     assert component_dict == yaml_component_dict
-    #
-    # def test_spark_component_version_as_a_function_with_inputs(self):
-    #     expected_rest_component = {
-    #         "type": "spark",
-    #         "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-    #         "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-    #         "py_files": ["utils.zip"],
-    #         "files": ["my_files.txt"],
-    #         "identity": {"identity_type": "UserIdentity"},
-    #         "conf": {
-    #             "spark.driver.cores": 2,
-    #             "spark.driver.memory": "1g",
-    #             "spark.executor.cores": 1,
-    #             "spark.executor.instances": 1,
-    #             "spark.executor.memory": "1g",
-    #         },
-    #         "args": "--file_input ${{inputs.file_input}}",
-    #         "inputs": {
-    #             "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
-    #         },
-    #         "_source": "YAML.COMPONENT",
-    #         "componentId": "fake_component",
-    #     }
-    #     yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-    #     yaml_component_version = load_component(yaml_path)
-    #     pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
-    #     yaml_component = yaml_component_version(file_input=pipeline_input)
-    #     yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
-    #     yaml_component._component = "fake_component"
-    #     rest_yaml_component = yaml_component._to_rest_object()
-    #
-    #     assert rest_yaml_component == expected_rest_component
+        omit_fields = ["name", "id", "$schema"]
+        yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
+        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        # assert yaml_dict == rest_dict
+        assert sdk_dict == yaml_dict
+
+    def test_serialize_deserialize_merge_task_component(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/data_transfer/merge_files.yaml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
+                                                           _type="data_transfer")
+        assert isinstance(component_entity, DataTransferCopyComponent)
+        # Todo: Add rest when e2e
+        # rest_path = "./tests/test_configs/components/automl/merge_files_rest.json"
+        # rest_entity = load_component_entity_from_rest_json(rest_path)
+        data_transfer_copy_component = DataTransferCopyComponent(
+            task=DataTransferTaskType.COPY_DATA,
+            name="datatransfer_merge_files",
+            display_name="Data Transfer Pipeline merge-files",
+            inputs={"folder1": {"type": "uri_folder"}, "folder2": {"type": "uri_folder"}},
+            outputs={"output_folder": {"type": "uri_folder"}},
+            data_copy_mode= DataCopyMode.MERGE_WITH_OVERWRITE,
+            base_path="./tests/test_configs/components/data_transfer",
+        )
+
+        omit_fields = ["name", "id", "$schema"]
+        yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
+        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        # assert yaml_dict == rest_dict
+        assert sdk_dict == yaml_dict
+
+    def test_serialize_deserialize_import_task_component(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/data_transfer/import_file_to_blob.yaml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
+                                                           _type="data_transfer")
+        assert isinstance(component_entity, DataTransferImportComponent)
+        # Todo: Add rest when e2e
+        # rest_path = "./tests/test_configs/components/automl/import_file_to_blob.json"
+        # rest_entity = load_component_entity_from_rest_json(rest_path)
+        data_transfer_copy_component = DataTransferImportComponent(
+            task=DataTransferTaskType.IMPORT_DATA,
+            name="datatransfer_s3_blob",
+            display_name="Data Transfer s3-blob",
+            source={"type": "file_system"},
+            outputs={"sink": {"type": "uri_folder"}},
+            base_path="./tests/test_configs/components/data_transfer",
+        )
+
+        omit_fields = ["name", "id", "$schema"]
+        yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
+        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        # assert yaml_dict == rest_dict
+        assert sdk_dict == yaml_dict
+
+    def test_serialize_deserialize_export_task_component(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/data_transfer/export_blob_to_database.yaml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
+                                                           _type="data_transfer")
+        assert isinstance(component_entity, DataTransferExportComponent)
+        # Todo: Add rest when e2e
+        # rest_path = "./tests/test_configs/components/automl/export_blob_to_database.json"
+        # rest_entity = load_component_entity_from_rest_json(rest_path)
+        data_transfer_copy_component = DataTransferExportComponent(
+            task=DataTransferTaskType.EXPORT_DATA,
+            name="datatransfer_blob_azuresql",
+            display_name="Data Transfer blob-azuresql",
+            inputs={"source": {"type": "uri_folder"}},
+            sink={"type": "database"},
+            base_path="./tests/test_configs/components/data_transfer",
+        )
+
+        omit_fields = ["name", "id", "$schema"]
+        yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
+        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
+        # assert yaml_dict == rest_dict
+        assert sdk_dict == yaml_dict
+
+    def test_copy_task_component_entity(self):
+        component = DataTransferCopyComponent(
+            task=DataTransferTaskType.COPY_DATA,
+            name="datatransfer_copy_files",
+            display_name="Data Transfer Pipeline copy-files",
+            inputs={
+                "folder1": {"type": "uri_folder"},
+            },
+            outputs={
+                "output_folder": {"type": "uri_folder"},
+            },
+            data_copy_mode= DataCopyMode.MERGE_WITH_OVERWRITE,
+            base_path="./tests/test_configs/components/data_transfer",
+        )
+        omit_fields = [
+            "properties.component_spec.$schema",
+            "properties.component_spec._source",
+        ]
+        component._validate()
+        component_dict = component._to_rest_object().as_dict()
+        component_dict = pydash.omit(component_dict, *omit_fields)
+
+        yaml_path = "./tests/test_configs/components/data_transfer/copy_files.yaml"
+        yaml_component = load_component(yaml_path)
+        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
+
+        assert component_dict == yaml_component_dict
+

@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load
+from marshmallow import INCLUDE, fields, post_load, validates, ValidationError
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -29,13 +29,6 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
     inputs = fields.Dict(
         keys=fields.Str(),
         values=NestedField(InputPortSchema),
-        required=True,
-        # allow_none=False
-    )
-    outputs = fields.Dict(
-        keys=fields.Str(),
-        values=NestedField(OutputPortSchema),
-        required=True
     )
 
 
@@ -53,20 +46,40 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
     source = NestedField(SinkSourceSchema, required=True)
     outputs = fields.Dict(
-        keys=fields.Str(data_key="sink"),
+        keys=fields.Str(),
         values=NestedField(InputsOutputsSchema),
-        required=True
     )
+
+    @validates("inputs")
+    def inputs_key(self, value):
+        raise ValidationError(f"inputs field is not a valid filed in task type "
+                              f"{DataTransferTaskType.IMPORT_DATA}.")
+
+    @validates("outputs")
+    def outputs_key(self, value):
+        if len(value) != 1 or value and list(value.keys())[0] != "sink":
+            raise ValidationError(f"outputs field only support one output called sink in task type "
+                                  f"{DataTransferTaskType.IMPORT_DATA}.")
 
 
 class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True)
     inputs = fields.Dict(
-        keys=fields.Str(data_key="source"),
+        keys=fields.Str(),
         values=NestedField(InputsOutputsSchema),
-        required=True
     )
     sink = NestedField(SinkSourceSchema(), required=True)
+
+    @validates("inputs")
+    def inputs_key(self, value):
+        if len(value) != 1 or value and list(value.keys())[0] != "source":
+            raise ValidationError(f"inputs field only support one input called source in task type "
+                                  f"{DataTransferTaskType.EXPORT_DATA}.")
+
+    @validates("outputs")
+    def outputs_key(self, value):
+        raise ValidationError(f"outputs field is not a valid filed in task type "
+                              f"{DataTransferTaskType.EXPORT_DATA}.")
 
 
 class RestDataTransferCopyComponentSchema(DataTransferCopyComponentSchema):

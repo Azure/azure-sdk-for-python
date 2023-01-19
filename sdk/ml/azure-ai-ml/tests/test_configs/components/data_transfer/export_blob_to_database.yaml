@@ -5,6 +5,6 @@ type: data_transfer
 task: export_data
 inputs:
   source:
-    type: uri_file
+    type: uri_folder
 sink:
   type: database

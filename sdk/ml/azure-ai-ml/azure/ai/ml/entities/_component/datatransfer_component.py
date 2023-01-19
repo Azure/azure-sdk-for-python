@@ -76,6 +76,14 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         except BaseException:  # pylint: disable=broad-except
             return super(DataTransferComponent, self).__str__()
 
+    @classmethod
+    def _build_source_sink(cls, io_dict: Union[Dict, Source, Sink], is_source: bool):
+        if is_source:
+            component_io = io_dict if isinstance(io_dict, Source) else Source(**io_dict)
+        else:
+            component_io = io_dict if isinstance(io_dict, Sink) else Sink(**io_dict)
+        return component_io
+
 
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer component.
@@ -130,12 +138,6 @@ class DataTransferCopyComponent(DataTransferComponent):
 
     def _validate_copy(self):
         validation_result = self._create_empty_validation_result()
-        # todo validate if need add this in builder case
-        if self.data_copy_mode is None or self.data_copy_mode not in [DataCopyMode.MERGE_WITH_OVERWRITE,
-                                                                      DataCopyMode.FAIL_IF_CONFLICT]:
-            msg = f"data_copy_mode need to be set when task type is {DataTransferTaskType.COPY_DATA} and only " \
-                  f"support {DataCopyMode.MERGE_WITH_OVERWRITE} and {DataCopyMode.FAIL_IF_CONFLICT} for now"
-            validation_result.append_error(message=msg, yaml_path=f"data_copy_mode")
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
@@ -201,42 +203,11 @@ class DataTransferImportComponent(DataTransferComponent):
 
         self._task = task
         source = source if source else {}
-        self._source = self._build_source_sink(source, is_source=True)
-
-    @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Source, Sink], is_source: bool):
-        component_io = {}
-        for name, port in io_dict.items():
-            if is_source:
-                component_io[name] = port if isinstance(port, Source) else Source(**port)
-            else:
-                component_io[name] = port if isinstance(port, Sink) else Sink(**port)
-        return component_io
+        self.source = self._build_source_sink(source, is_source=True)
 
     @classmethod
     def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
-
-    @property
-    def source(self) -> Dict:
-        """Source of the component.
-
-        :return: Source of the component.
-        :rtype: dict
-        """
-        return self._source
-
-    def _customized_validate(self):
-        validation_result = super(DataTransferComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_import())
-        return validation_result
-
-    def _validate_import(self):
-        validation_result = self._create_empty_validation_result()
-        if self.inputs:
-            msg = f"inputs field is not a valid filed in task type {DataTransferTaskType.IMPORT_DATA}."
-            validation_result.append_error(message=msg, yaml_path=f"inputs")
-        return validation_result
 
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
@@ -267,39 +238,8 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         )
 
         sink = sink if sink else {}
-        self._sink = self._build_source_sink(sink, is_source=False)
-
-    @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Source, Sink], is_source: bool):
-        component_io = {}
-        for name, port in io_dict.items():
-            if is_source:
-                component_io[name] = port if isinstance(port, Source) else Source(**port)
-            else:
-                component_io[name] = port if isinstance(port, Sink) else Sink(**port)
-        return component_io
+        self.sink = self._build_source_sink(sink, is_source=False)
 
     @classmethod
     def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
-
-    @property
-    def sink(self) -> Dict:
-        """Sink of the component.
-
-        :return: Sink of the component.
-        :rtype: dict
-        """
-        return self._sink
-
-    def _customized_validate(self):
-        validation_result = super(DataTransferComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_export())
-        return validation_result
-
-    def _validate_export(self):
-        validation_result = self._create_empty_validation_result()
-        if self.outputs:
-            msg = f"outputs field is not a valid filed in task type {DataTransferTaskType.EXPORT_DATA}."
-            validation_result.append_error(message=msg, yaml_path=f"outputs")
-        return validation_result

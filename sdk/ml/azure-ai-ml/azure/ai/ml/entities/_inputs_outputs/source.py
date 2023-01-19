@@ -105,7 +105,6 @@ class Source(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-inst
         connection: Optional[str] = None,
         **kwargs,
     ):
-        super(Source, self).__init__(kwargs)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
         self.type = type
