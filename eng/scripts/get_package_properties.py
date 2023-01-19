@@ -5,6 +5,7 @@ import os
 import re
 
 from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import is_package_active
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
