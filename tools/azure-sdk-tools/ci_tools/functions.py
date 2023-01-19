@@ -149,6 +149,7 @@ def discover_targeted_packages(
     additional_contains_filter: str = "",
     filter_type: str = "Build",
     compatibility_filter: bool = True,
+    include_inactive: bool = False
 ) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
@@ -173,7 +174,8 @@ def discover_targeted_packages(
 
     # apply package-specific exclusions only if we have gotten more than one
     if len(collected_packages) > 1:
-        collected_packages = apply_inactive_filter(collected_packages)
+        if not include_inactive:
+            collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)

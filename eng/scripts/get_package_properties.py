@@ -5,7 +5,6 @@ import os
 import re
 
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import is_package_active
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
@@ -19,12 +18,11 @@ if __name__ == "__main__":
                 try:
                     parsed = ParsedSetup.from_path(root)
 
-                    if is_package_active(parsed.folder):
-                        print(
-                            "{0} {1} {2} {3}".format(
-                                parsed.name, parsed.version, parsed.is_new_sdk, os.path.dirname(parsed.setup_filename)
-                            )
+                    print(
+                        "{0} {1} {2} {3}".format(
+                            parsed.name, parsed.version, parsed.is_new_sdk, os.path.dirname(parsed.setup_filename)
                         )
+                    )
                 except:
                     # Skip setup.py if the package cannot be parsed
                     pass
