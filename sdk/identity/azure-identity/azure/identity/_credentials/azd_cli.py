@@ -20,9 +20,7 @@ from .. import CredentialUnavailableError
 from .._internal import resolve_tenant
 from .._internal.decorators import log_get_token
 
-CLI_NOT_FOUND = "Azure Developer CLI could not be found. Please visit "
-+"https://aka.ms/azure-dev for installation instructions and then,"
-+" once installed, authenticate to your Azure account using 'azd login'."
+CLI_NOT_FOUND = "Azure Developer CLI could not be found. Please visit https://aka.ms/azure-dev for installation instructions and then, once installed, authenticate to your Azure account using 'azd login'."
 COMMAND_LINE = "azd auth token --output json --scope {}"
 EXECUTABLE_NAME = "azd"
 NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate before using this credential."
@@ -38,6 +36,7 @@ class AzureDeveloperCliCredential:
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
+
     def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
 
         self.tenant_id = tenant_id
@@ -75,12 +74,10 @@ class AzureDeveloperCliCredential:
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
-        commandString = ' --scope '.join(scopes)
+        commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
         if tenant:
             command += " --tenant-id " + tenant
@@ -90,7 +87,8 @@ class AzureDeveloperCliCredential:
         if not token:
             sanitized_output = sanitize_output(output)
             raise ClientAuthenticationError(
-                message="Unexpected output from Azure Developer CLI: '{}'. \n".format(sanitized_output))
+                message="Unexpected output from Azure Developer CLI: '{}'. \n".format(sanitized_output)
+            )
 
         return token
 
@@ -117,8 +115,9 @@ def get_safe_working_dir():
     if sys.platform.startswith("win"):
         path = os.environ.get("SYSTEMROOT")
         if not path:
-            raise CredentialUnavailableError(message="Azure Developer CLI credential"
-                +" expects a 'SystemRoot' environment variable")
+            raise CredentialUnavailableError(
+                message="Azure Developer CLI credential" + " expects a 'SystemRoot' environment variable"
+            )
         return path
 
     return "/bin"
@@ -172,4 +171,3 @@ def _run_command(command):
         # could be a timeout, for example
         error = CredentialUnavailableError(message="Failed to invoke the Azure Developer CLI")
         six.raise_from(error, ex)
-        

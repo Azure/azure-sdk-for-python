@@ -36,13 +36,14 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
+
     def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
-    async def get_token(self, *scopes: str,  **kwargs: Any) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -64,12 +65,10 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
-        commandString = ' --scope '.join(scopes)
+        commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
         if tenant:
@@ -80,7 +79,8 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if not token:
             sanitized_output = sanitize_output(output)
             raise ClientAuthenticationError(
-                message="Unexpected output from Azure Developer CLI: '{}'. \n".format(sanitized_output))
+                message="Unexpected output from Azure Developer CLI: '{}'. \n".format(sanitized_output)
+            )
 
         return token
 
