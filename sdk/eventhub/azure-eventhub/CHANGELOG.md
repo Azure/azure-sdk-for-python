@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.0 (2023-01-10)
+## 5.11.0 (2023-01-19)
 
 Version 5.11.0 is our first stable release of the Azure Event Hubs client library based on a pure Python implemented AMQP stack.
 
@@ -11,7 +11,7 @@ Version 5.11.0 is our first stable release of the Azure Event Hubs client librar
 ### Bugs Fixed
 
 - Fixed a bug that caused an error when sending batches with tracing enabled (issue #27986).
-- Fixed a bug that fixed a bug where `EventHubSharedKeyCredential` returned an `AccessToken.token` of type `bytes` and not `str`.
+- Fixed a bug that fixed where `EventHubSharedKeyCredential` returned an `AccessToken.token` of type `bytes` and not `str`.
 
 ### Other Changes
 
