@@ -84,7 +84,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         return token
 
-    async def close(self):
+    async def close(self) -> None:
         """Calling this method is unnecessary"""
 
 
