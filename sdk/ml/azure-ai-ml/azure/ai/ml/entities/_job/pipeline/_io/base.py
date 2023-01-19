@@ -73,12 +73,13 @@ class InputOutputBase(ABC):
         self._original_data = data
         self._data = self._build_data(data)
         self._default_data = default_data
-        if meta:
-            self._type = meta.type
-        elif data and hasattr(data, 'type'):
-            self._type = data.type
-        else:
-            self._type = kwargs.pop("type", None)
+        self._type = meta.type if meta is not None else kwargs.pop("type", None)
+        # if meta:
+        #     self._type = meta.type
+        # elif data and hasattr(data, 'type'):
+        #     self._type = data.type
+        # else:
+        #     self._type = kwargs.pop("type", None)
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description

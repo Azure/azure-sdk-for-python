@@ -55,7 +55,7 @@ def process_sdk_component_job_io(
                         io_bindings[io_name].update({"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]})
                     else:
                         io_bindings[io_name].update({"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]})
-                if isinstance(io_value, Output):
+                if isinstance(io_value, Output) and io_value.name:
                     dataset_literal_io[io_name] = io_value
             elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
                 new_format = path.replace("{{", "{{parent.")
