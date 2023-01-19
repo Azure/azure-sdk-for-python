@@ -61,7 +61,7 @@ def build() -> None:
     parser.add_argument(
         "--inactive",
         default=False,
-        dest="is_dev_build",
+        dest="inactive",
         action="store_true",
         help=(
             "Include inactive packages when assembling artifacts. CI builds will include inactive packages as a way to ensure that the yml"
@@ -106,7 +106,7 @@ def build() -> None:
         target_dir = repo_root
 
     targeted_packages = discover_targeted_packages(
-        args.glob_string, target_dir, args.package_filter_string, include_inactive=True
+        args.glob_string, target_dir, args.package_filter_string, filter_type="Build", compatibility_filter=True, include_inactive=args.inactive
     )
     artifact_directory = get_artifact_directory(args.distribution_directory)
 
