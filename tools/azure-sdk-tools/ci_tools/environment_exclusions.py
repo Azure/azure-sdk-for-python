@@ -212,6 +212,7 @@ VERIFYTYPES_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
+    # If you want to remove azure-core, check to see if azure-identity can also be removed
     "azure-core",
     "azure-mgmt-core",
     "azure-core-experimental",
@@ -219,6 +220,8 @@ VERIFYTYPES_OPT_OUT = [
     "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
+    # Remove azure-identity once azure-core (AccessToken) typing is completed
+    "azure-identity",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
     "azure-eventgrid",
