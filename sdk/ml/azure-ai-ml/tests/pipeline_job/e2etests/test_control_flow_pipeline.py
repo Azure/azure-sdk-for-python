@@ -164,6 +164,11 @@ def assert_foreach(client: MLClient, job_name, source, expected_node):
     assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
 
 
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary."
+)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"

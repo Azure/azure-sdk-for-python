@@ -96,10 +96,13 @@ class ParallelForSchema(BaseLoopSchema):
     @pre_load
     def load_items(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
         # load items from json to convert the assets in it to rest
-        items = data["items"]
-        if isinstance(items, str):
-            items = json.loads(items)
-        data["items"] = items
+        try:
+            items = data["items"]
+            if isinstance(items, str):
+                items = json.loads(items)
+            data["items"] = items
+        except Exception: # pylint: disable=broad-except
+            pass
         return data
 
     @pre_dump

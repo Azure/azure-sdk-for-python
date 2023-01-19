@@ -107,13 +107,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     def _to_rest_item(self, item: Dict[str, Union[Input, InputOutputBase]]) -> dict:
         """Convert item to rest object."""
+        # TODO: convert primitive type input to RestJobInput
         primitive_inputs, asset_inputs = {}, {}
         # validate item
         for key, val in item.items():
-            if not isinstance(val, (Input, str, bool, int, float)):
-                raise UserErrorException("Unsupported type {} in parallel_for items. Supported types are: {}".format(
-                    type(val), [Input, str, bool, int, float]
-                ))
             if isinstance(val, Input):
                 asset_inputs[key] = val
             else:
@@ -154,11 +151,39 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
+    def _from_rest_item(cls, rest_item):
+        """Convert rest item to item."""
+        # TODO: convert primitive inputs to RestJobInput
+        primitive_inputs, asset_inputs = {}, {}
+        for key, val in rest_item.items():
+            if isinstance(val, dict) and val.get("job_input_type"):
+                asset_inputs[key] = val
+            else:
+                primitive_inputs[key] = val
+        return {
+            **cls._from_rest_inputs(inputs=asset_inputs),
+            **primitive_inputs
+        }
+
+    @classmethod
+    def _from_rest_items(cls, rest_items: str) -> Union[dict, list, str]:
+        """Convert items from rest object."""
+        try:
+            items = json.loads(rest_items)
+        except json.JSONDecodeError:
+            # return original items when failed to load
+            return rest_items
+        if isinstance(items, list):
+            return [cls._from_rest_item(rest_item=i) for i in items]
+        if isinstance(items, dict):
+            return {k: cls._from_rest_item(rest_item=v) for k, v in items.items()}
+        return rest_items
+
+    @classmethod
     def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "ParallelFor":
         # pylint: disable=protected-access
-
         obj = BaseNode._from_rest_object_to_init_params(obj)
-        # TODO: rest input -> input object
+        obj["items"] = cls._from_rest_items(rest_items=obj.get("items", ""))
         return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
 
     @classmethod
@@ -191,6 +216,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 resolved_output = Output(type=new_type)
             aggregate_outputs[name] = resolved_output
         return aggregate_outputs
+
+    def _customized_validate(self):
+        """Customized validation for parallel for node."""
+        validation_result = self._validate_body(raise_error=False)
+        validation_result.merge_with(self._validate_items(raise_error=False))
+        return validation_result
 
     def _validate_items(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
@@ -226,12 +257,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
             raise_error=raise_error,
         )
 
-    def _customized_validate(self):
-        """Customized validation for parallel for node."""
-        validation_result = self._validate_body(raise_error=False)
-        validation_result.merge_with(self._validate_items(raise_error=False))
-        return validation_result
-
     def _validate_items_list(self, items: list, validation_result):
         # pylint: disable=protected-access
         meta = {}
@@ -263,3 +288,18 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         yaml_path="items",
                         message=msg
                     )
+                # validate item value type
+                self._validate_item_value_type(item=item, validation_result=validation_result)
+
+    @classmethod
+    def _validate_item_value_type(cls, item: dict, validation_result):
+        # pylint: disable=protected-access
+        supported_types = (Input, str, bool, int, float)
+        for _, val in item.items():
+            if not isinstance(val, supported_types):
+                validation_result.append_error(
+                    yaml_path="items",
+                    message="Unsupported type {} in parallel_for items. Supported types are: {}".format(
+                        type(val), supported_types
+                    )
+                )
