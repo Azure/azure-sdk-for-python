@@ -108,6 +108,28 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
 
+    ApiManagementGatewayApiAddedEventName = 'Microsoft.ApiManagement.GatewayApiAdded'
+
+    ApiManagementGatewayApiRemovedEventName = 'Microsoft.ApiManagement.GatewayApiRemoved'
+
+    ApiManagementGatewayCertificateAuthorityCreatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityCreated'
+
+    ApiManagementGatewayCertificateAuthorityDeletedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted'
+
+    ApiManagementGatewayCertificateAuthorityUpdatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated'
+
+    ApiManagementGatewayCreatedEventName = 'Microsoft.ApiManagement.GatewayCreated'
+
+    ApiManagementGatewayDeletedEventName = 'Microsoft.ApiManagement.GatewayDeleted'
+
+    ApiManagementGatewayHostnameConfigurationCreatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationCreated'
+
+    ApiManagementGatewayHostnameConfigurationDeletedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted'
+
+    ApiManagementGatewayHostnameConfigurationUpdatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated'
+
+    ApiManagementGatewayUpdatedEventName = 'Microsoft.ApiManagement.GatewayUpdated'
+
     ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
 
     ApiManagementProductDeletedEventName = 'Microsoft.ApiManagement.ProductDeleted'
@@ -139,6 +161,12 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
+
+    DataBoxCopyStartedEventName = 'Microsoft.DataBox.CopyStarted'
+
+    DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
