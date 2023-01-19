@@ -3,27 +3,27 @@
 ## 1.0.0b3 (2023-01-01)
 
 ### Features Added 
-- Method added `azure.developer.loadtesting.LoadTestRunClient.list_metric_namespaces`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.list_metric_definitions`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.list_metrics`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.create_or_update_app_components`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.get_app_components`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.create_or_update_server_metrics_config`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.get_server_metrics_config`
-- Method added `azure.developer.loadtesting.LoadTestAdministration.begin_upload_test_file`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.begin_test_run`
-- Method added `azure.developer.loadtesting.LoadTestRunClient.begin_test_run_status`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.list_metric_namespaces`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.list_metric_definitions`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.list_metrics`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.create_or_update_app_components`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.get_app_components`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.create_or_update_server_metrics_config`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.get_server_metrics_config`
-- Method added `azure.developer.loadtesting.aio.LoadTestAdministration.begin_upload_test_file`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.begin_test_run_status`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.get_metric_dimension_values`
-- Method added `azure.developer.loadtesting.aio.LoadTestRunClient.begin_test_run`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.list_metric_namespaces`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.list_metric_definitions`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.list_metrics`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.create_or_update_app_components`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.get_app_components`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.create_or_update_server_metrics_config`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.get_server_metrics_config`
+- Method added `azure.developer.loadtesting.LoadTestingClient.administration.begin_upload_test_file`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.begin_test_run`
+- Method added `azure.developer.loadtesting.LoadTestingClient.test_run.begin_test_run_status`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.list_metric_namespaces`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.list_metric_definitions`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.list_metrics`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.create_or_update_app_components`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.get_app_components`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.create_or_update_server_metrics_config`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.get_server_metrics_config`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.administration.begin_upload_test_file`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.begin_test_run_status`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.get_metric_dimension_values`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.test_run.begin_test_run`
 
 
 ### Breaking Changes
