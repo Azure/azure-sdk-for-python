@@ -78,7 +78,7 @@ async def load_provider(**kwargs):
 
     provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
 
-    secret_clients = key_vault_options.secret_clients if key_vault_options else {}
+    provider._secret_clients = key_vault_options.secret_clients if key_vault_options else {}
 
     for select in selects:
         configurations = provider._client.list_configuration_settings(
@@ -105,9 +105,6 @@ async def load_provider(**kwargs):
                     provider._dict[trimmed_key] = config.value
             else:
                 provider._dict[trimmed_key] = config.value
-    for client in secret_clients.values():
-        await client.close()
-    await provider._client.close()
     return provider
 
 def __buildprovider(connection_string:str, endpoint:str, credential,
@@ -199,6 +196,14 @@ class AzureAppConfigurationProvider:
         self._dict = {}
         self._trim_prefixes = []
         self._client = None
+
+    async def close(self):
+        """
+        Closes the connection to Azure App Configuration.
+        """
+        for client in self._secret_clients.values():
+            await client.close()
+        await self._client.close()
 
     def __getitem__(self, key:str) -> str:
         """
