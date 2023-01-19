@@ -89,11 +89,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     # for internal code whose upload_hash is of length 36
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s\"]{36})\\/?", group_for_replace="1"
+        value="000000000000000000000000000000000000", regex='\\/LocalUpload\\/([^/\\s"]{36})\\/?', group_for_replace="1"
     )
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s\"]{36})\\/",
-        group_for_replace="1"
+        value="000000000000000000000000000000000000",
+        regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
+        group_for_replace="1",
     )
 
 
@@ -115,6 +116,13 @@ def mock_credential():
 def mock_workspace_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
+    )
+
+
+@pytest.fixture
+def mock_registry_scope() -> OperationScope:
+    yield OperationScope(
+        subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Registry_Name
     )
 
 
@@ -165,7 +173,7 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
             "registryName": "testFeed",
             "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
             "resourceGroup": "resourceGroup",
-            "subscriptionId": "subscriptionId"
+            "subscriptionId": "subscriptionId",
         }
     )
     mocker.patch(
@@ -235,6 +243,7 @@ def randstr(variable_recorder: VariableRecorder) -> Callable[[str], str]:
 
     return generate_random_string
 
+
 @pytest.fixture
 def rand_batch_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     """return a random batch endpoint name string  e.g. batch-ept-xxx"""
@@ -244,6 +253,7 @@ def rand_batch_name(variable_recorder: VariableRecorder) -> Callable[[str], str]
         return variable_recorder.get_or_record(variable_name, random_string)
 
     return generate_random_string
+
 
 @pytest.fixture
 def rand_batch_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
@@ -255,6 +265,7 @@ def rand_batch_deployment_name(variable_recorder: VariableRecorder) -> Callable[
 
     return generate_random_string
 
+
 @pytest.fixture
 def rand_online_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     """return a random online endpoint name string  e.g. online-ept-xxx"""
@@ -265,6 +276,7 @@ def rand_online_name(variable_recorder: VariableRecorder) -> Callable[[str], str
 
     return generate_random_string
 
+
 @pytest.fixture
 def rand_online_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     """return a random online deployment name string  e.g. online-dpm-xxx"""
@@ -274,6 +286,7 @@ def rand_online_deployment_name(variable_recorder: VariableRecorder) -> Callable
         return variable_recorder.get_or_record(variable_name, random_string)
 
     return generate_random_string
+
 
 @pytest.fixture
 def rand_compute_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
@@ -496,8 +509,10 @@ def normalized_arm_id_in_object(items):
         r"/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/"
         r"Microsoft\.MachineLearningServices/workspaces/([^/]+)/"
     )
-    replacement = "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/" \
-                  "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+    replacement = (
+        "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/"
+        "00000/providers/Microsoft.MachineLearningServices/workspaces/00000/"
+    )
 
     if isinstance(items, dict):
         for key, value in items.items():
@@ -532,7 +547,7 @@ def get_client_hash_with_request_node_name(
     resource_group_name: Optional[str],
     workspace_name: Optional[str],
     registry_name: Optional[str],
-    random_seed: str
+    random_seed: str,
 ):
     """Generate a hash for the client."""
     object_hash = hashlib.sha256()
@@ -571,8 +586,7 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     if is_live() and not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_component_hash)
         mocker.patch(
-            "azure.ai.ml.entities._component.pipeline_component.hash_dict",
-            side_effect=generate_component_hash
+            "azure.ai.ml.entities._component.pipeline_component.hash_dict", side_effect=generate_component_hash
         )
 
     # On-disk cache can't be shared among different tests in playback mode or when recording.
@@ -590,23 +604,26 @@ def mock_component_hash(mocker: MockFixture, request: FixtureRequest):
     # will be thread-safe when concurrently running different tests.
     mocker.patch(
         "azure.ai.ml._utils._cache_utils.CachedNodeResolver._get_client_hash",
-        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex)
+        side_effect=partial(get_client_hash_with_request_node_name, random_seed=uuid.uuid4().hex),
     )
 
     # Collect involved resolvers before yield, as fixtures may be destroyed after yield.
     from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+
     involved_resolvers = []
     for client_fixture_name in ["client", "registry_client"]:
         if client_fixture_name not in request.fixturenames:
             continue
         client: MLClient = request.getfixturevalue(client_fixture_name)
-        involved_resolvers.append(CachedNodeResolver(
-            resolver=None,
-            subscription_id=client.subscription_id,
-            resource_group_name=client.resource_group_name,
-            workspace_name=client.workspace_name,
-            registry_name=client._operation_scope.registry_name,
-        ))
+        involved_resolvers.append(
+            CachedNodeResolver(
+                resolver=None,
+                subscription_id=client.subscription_id,
+                resource_group_name=client.resource_group_name,
+                workspace_name=client.workspace_name,
+                registry_name=client._operation_scope.registry_name,
+            )
+        )
 
     yield
 
@@ -742,6 +759,7 @@ def enable_private_preview_schema_features():
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
+
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
         pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
@@ -818,3 +836,18 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
+
+
+@pytest.fixture()
+def enable_private_preview_pipeline_node_types():
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    schema = pipeline_job.PipelineJobSchema
+    original_jobs = schema._declared_fields["jobs"]
+    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        schema._declared_fields["jobs"] = original_jobs

@@ -7,7 +7,7 @@
 import sys
 from typing import Any, List, Optional
 
-from ._models import LogsQueryStatus
+from ._enums import LogsQueryStatus
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
