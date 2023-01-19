@@ -54,14 +54,12 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         """
         for gzip_data, log_chunk in _create_gzip_requests(logs):
             try:
-                await super().upload(
-                    rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs
-                )
+                await super().upload(rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs)
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
                     await on_error(err, log_chunk)
                 else:
-                    _LOGGER.error( "Failed to upload chunk containing %d log entries", len(log_chunk))
+                    _LOGGER.error("Failed to upload chunk containing %d log entries", len(log_chunk))
                     raise err
 
 
