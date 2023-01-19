@@ -14,32 +14,26 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import LoadTestingClientConfiguration
-from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
+from .operations import AdministrationOperations, TestRunOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
-    :ivar app_component: AppComponentOperations operations
-    :vartype app_component: azure.developer.loadtesting.aio.operations.AppComponentOperations
-    :ivar server_metrics: ServerMetricsOperations operations
-    :vartype server_metrics: azure.developer.loadtesting.aio.operations.ServerMetricsOperations
-    :ivar test: TestOperations operations
-    :vartype test: azure.developer.loadtesting.aio.operations.TestOperations
+    :ivar administration: AdministrationOperations operations
+    :vartype administration: azure.developer.loadtesting.aio.operations.AdministrationOperations
     :ivar test_run: TestRunOperations operations
     :vartype test_run: azure.developer.loadtesting.aio.operations.TestRunOperations
     :param endpoint: URL to perform data plane API operations on the resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -51,11 +45,7 @@ class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.app_component = AppComponentOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.server_metrics = ServerMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.test = TestOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.administration = AdministrationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.test_run = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
