@@ -98,6 +98,11 @@ class TestCommandFunction:
     def test_command_function(self, test_command):
         assert isinstance(test_command, Command)
         assert test_command._source == "BUILDER"
+
+        # Test print and jupyter rendering for the builder object
+        print(test_command)
+        test_command._repr_html_()
+
         expected_command = {
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
@@ -739,9 +744,9 @@ class TestCommandFunction:
             )
             node._to_rest_object()
             assert (
-                ve.message
-                == "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
-                "spark.executor.instances are mandatory fields."
+                    ve.message
+                    == "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+                       "spark.executor.instances are mandatory fields."
             )
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
@@ -999,3 +1004,11 @@ class TestCommandFunction:
         )
         sweep_node_2.search_space = {'batch_size': Choice(values=[25, 35])}
         assert sweep_node_1.search_space == sweep_node_2.search_space
+
+    def test_unsupported_positional_args(self, test_command):
+        with pytest.raises(ValidationException) as e:
+            test_command(1)
+        msg = "Component function doesn't support positional arguments, got (1,) " \
+              "for my_job. Please use keyword arguments like: " \
+              "component_func(float=xxx, integer=xxx, string=xxx, boolean=xxx, uri_folder=xxx, uri_file=xxx)."
+        assert msg in str(e.value)

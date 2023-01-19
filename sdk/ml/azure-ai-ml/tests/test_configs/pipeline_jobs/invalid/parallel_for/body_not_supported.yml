@@ -1,0 +1,12 @@
+display_name: valid_pipeline
+type: pipeline
+jobs:
+  body:
+    type: parallel
+    component: ../../../components/parallel_component_with_file_input.yml
+  parallelfor:
+    type: parallel_for
+    items: []
+    body: ${{parent.jobs.body}}
+settings:
+  default_compute: azureml:cpu-cluster

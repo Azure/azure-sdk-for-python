@@ -24,6 +24,7 @@ try:
         compat,
         errors,
         Connection,
+        __version__,
     )
     from uamqp.message import (
         MessageHeader,
@@ -38,6 +39,7 @@ from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
+    UAMQP_LIBRARY,
 )
 
 from ..exceptions import (
@@ -91,6 +93,7 @@ if uamqp_installed:
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             )
+        TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")
@@ -179,6 +182,20 @@ if uamqp_installed:
                 delivery_annotations=annotated_message.delivery_annotations,
                 footer=annotated_message.footer
             )
+
+        @staticmethod
+        def update_message_app_properties(message, key, value):
+            """
+            Adds the given key/value to the application properties of the message.
+            :param pyamqp.Message message: Message.
+            :param str key: Key to set in application properties.
+            :param str Value: Value to set for key in application properties.
+            :rtype: pyamqp.Message
+            """
+            if not message.application_properties:
+                message.application_properties = {}
+            message.application_properties.setdefault(key, value)
+            return message
 
         @staticmethod
         def get_batch_message_encoded_size(message):

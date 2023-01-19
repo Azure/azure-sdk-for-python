@@ -27,10 +27,14 @@ import collections.abc
 import asyncio
 from itertools import groupby
 from multidict import CIMultiDict
-from ._http_response_impl_async import AsyncHttpResponseImpl, AsyncHttpResponseBackcompatMixin
+from ._http_response_impl_async import (
+    AsyncHttpResponseImpl,
+    AsyncHttpResponseBackcompatMixin,
+)
 from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
 from ..exceptions import ResponseNotReadError
+
 
 class _ItemsView(collections.abc.ItemsView):
     def __init__(self, ref):
@@ -52,6 +56,7 @@ class _ItemsView(collections.abc.ItemsView):
     def __repr__(self):
         return f"dict_items({list(self.__iter__())})"
 
+
 class _KeysView(collections.abc.KeysView):
     def __init__(self, items):
         super().__init__(items)
@@ -66,8 +71,10 @@ class _KeysView(collections.abc.KeysView):
             if key.lower() == k.lower():
                 return True
         return False
+
     def __repr__(self):
         return f"dict_keys({list(self.__iter__())})"
+
 
 class _ValuesView(collections.abc.ValuesView):
     def __init__(self, items):
@@ -115,6 +122,7 @@ class _CIMultiDict(CIMultiDict):
             values = ", ".join(values)
         return values or default
 
+
 class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMixin):
     """Backcompat mixin for aiohttp responses.
 
@@ -142,24 +150,21 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         attr = _pad_attr_name(attr, backcompat_attrs)
         return super().__getattr__(attr)
 
-class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
-    def __init__(
-        self,
-        *,
-        internal_response,
-        decompress: bool = True,
-        **kwargs
-    ):
+
+class RestAioHttpTransportResponse(
+    AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin
+):
+    def __init__(self, *, internal_response, decompress: bool = True, **kwargs):
         headers = _CIMultiDict(internal_response.headers)
         super().__init__(
             internal_response=internal_response,
             status_code=internal_response.status,
             headers=headers,
-            content_type=headers.get('content-type'),
+            content_type=headers.get("content-type"),
             reason=internal_response.reason,
             stream_download_generator=AioHttpStreamDownloadGenerator,
             content=None,
-            **kwargs
+            **kwargs,
         )
         self._decompress = decompress
         self._decompressed_content = False
@@ -167,8 +172,10 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportR
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state['_internal_response'] = None  # aiohttp response are not pickable (see headers comments)
-        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        state[
+            "_internal_response"
+        ] = None  # aiohttp response are not pickable (see headers comments)
+        state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 
     @property

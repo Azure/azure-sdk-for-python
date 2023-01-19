@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional
+from typing import cast, Optional, Any
 
 from azure.core.credentials import AccessToken
 from ..._exceptions import CredentialUnavailableError
@@ -45,7 +45,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             await self._client.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
@@ -69,14 +69,14 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         refresh_token = self._get_refresh_token()
         self._client = cast(AadClient, self._client)
         return await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
 
-    def _get_client(self, **kwargs) -> AadClient:
+    def _get_client(self, **kwargs: Any) -> AadClient:
         return AadClient(**kwargs)
