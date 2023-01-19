@@ -1029,6 +1029,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(ValueError):
                         receiver.complete_message(message)
 
+                    _logger.debug("SENDING PEEKED MESSAGE")
+                    # Uamqp just passes message.message in the sdk, this passes all the properties of the emssage and I think some byte encoding is messing up it sending corectly
                     sender.send_messages(message)
 
                 cnt = 0
