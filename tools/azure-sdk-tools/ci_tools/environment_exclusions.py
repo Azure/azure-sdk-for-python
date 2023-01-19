@@ -343,6 +343,10 @@ IGNORE_PACKAGES = [
 def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
+
+    if package_path == ".":
+        package_path = os.getcwd()
+
     enabled = default
     package_name = os.path.basename(package_path)
 
