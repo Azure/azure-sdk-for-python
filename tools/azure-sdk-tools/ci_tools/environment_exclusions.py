@@ -212,6 +212,7 @@ VERIFYTYPES_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
+    # If you want to remove azure-core, check to see if azure-identity can also be removed
     "azure-core",
     "azure-mgmt-core",
     "azure-core-experimental",
