@@ -1353,26 +1353,76 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_pipeline_job_output_with_name_version(self, client: MLClient):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_name_version.yaml"
-        pipeline = load_job(source=test_path)
+    def test_register_output_cli(self, client: MLClient):
+        register_pipeline_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
+        pipeline = load_job(source=register_pipeline_output_path)
         pipeline_job = client.jobs.create_or_update(pipeline)
+        output = pipeline_job.outputs.component_out_path
+        assert output.name == 'pipeline_output'
+        assert output.version == '1'
 
-    def test_pipeline_job_output_with_name_version_sdk(self, client: MLClient):
+        register_node_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_name_version.yaml"
+        pipeline = load_job(source=register_node_output_path)
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert output.name == 'node_output'
+        assert output.version == '1'
+
+    def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml import dsl
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
-        @dsl.pipeline(
-            default_compute="azureml:cpu-cluster",
-        )
+        @dsl.pipeline()
         def register_node_output():
-            component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
-            node = component(component_in_path=Input(type='uri_file',
-                                                     path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv'))
+            node = component(component_in_path=component_input)
             node.outputs.component_out_path.name = 'a_output'
-            node.outputs.component_out_path.nersion = '1'
+            node.outputs.component_out_path.version = '1'
 
-        pipeline = register_node_output()  # use default pipeline parameter
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
         pipeline_job = client.jobs.create_or_update(pipeline)
+        output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert output.name == 'a_output'
+        assert output.version == '1'
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.name = 'a_output'
+        pipeline.outputs.pipeine_a_output.version = '1'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        output = pipeline_job.outputs.pipeine_a_output
+        assert output.name == 'a_output'
+        assert output.version == '1'
+
+        @dsl.pipeline()
+        def register_both_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.version = '1'
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_both_output()
+        pipeline.outputs.pipeine_a_output.name = 'b_output'
+        pipeline.outputs.pipeine_a_output.version = '2'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = client.jobs.create_or_update(pipeline)
+
+        pipeline_output = pipeline_job.outputs.pipeine_a_output
+        assert pipeline_output.name == 'b_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert node_output.name == 'a_output'
+        assert node_output.version == '1'
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest

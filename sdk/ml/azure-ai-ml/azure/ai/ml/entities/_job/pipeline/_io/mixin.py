@@ -31,7 +31,7 @@ class NodeIOMixin:
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
-        return NodeOutput(name=name, meta=meta, data=data, owner=self)
+        return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
     def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
         # use None value as data placeholder for unfilled inputs.
@@ -308,7 +308,7 @@ class PipelineIOMixin(PipelineNodeIOMixin):
 
     def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
-        return PipelineOutput(name=name, meta=meta, data=data, owner=self)
+        return PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}

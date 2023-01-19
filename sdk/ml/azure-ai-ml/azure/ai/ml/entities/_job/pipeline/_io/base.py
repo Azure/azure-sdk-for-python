@@ -73,9 +73,9 @@ class InputOutputBase(ABC):
         self._original_data = data
         self._data = self._build_data(data)
         self._default_data = default_data
-        if meta is not None:
+        if meta:
             self._type = meta.type
-        elif data is not None and hasattr(data, 'type'):
+        elif data and hasattr(data, 'type'):
             self._type = data.type
         else:
             self._type = kwargs.pop("type", None)
@@ -337,7 +337,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     def __init__(
         self,
-        name: str,
+        port_name: str,
         meta: Output,
         *,
         data: Optional[Union[Output, str]] = None,
@@ -369,23 +369,13 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 no_personal_data_message=msg.format("[data]"),
             )
         super().__init__(meta=meta, data=data, **kwargs)
-        self._name = name
+        self._port_name = port_name
         self._owner = owner
-        self._asset_name = None
-        self._asset_version = None
+        self._name = data.name if isinstance(data, Output) else None
+        self._version = data.version if isinstance(data, Output) else None
 
-        if isinstance(data, PipelineOutput) and data._asset_name:
-            self._asset_name = data._asset_name
-        if isinstance(data, Output) and data.name:
-            self._asset_name = data.name
+        self._assert_name_and_version_exist()
 
-        if isinstance(data, PipelineOutput) and data._asset_name:
-            self._asset_version = data._asset_version
-        if isinstance(data, Output) and data.version:
-            self._asset_version = data.version
-
-        if self._asset_version and not self._asset_name:
-            raise UserErrorException("We don't support setting version for output when name isn't set.")
         self._is_control = meta.is_control if meta is not None else None
 
     @property
@@ -393,12 +383,42 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._is_control
 
     @property
-    def asset_name(self):
-        return self._asset_name
+    def port_name(self) -> str:
+        return self._port_name
 
     @property
-    def asset_version(self) -> str:
-        return self._asset_version
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._build_default_data()
+        self._name = name
+        if isinstance(self._data, (Input, Output)):
+            self._data.name = name
+        else:
+            self._data._name = name
+
+    @property
+    def version(self) -> str:
+        return self._version
+
+    @version.setter
+    def version(self, version):
+        self._build_default_data()
+        self._data.type = self.type
+        self._version = version
+        if isinstance(self._data, (Input, Output)):
+            self._data.version = version
+        else:
+            self._data._version = version
+
+    def _assert_name_and_version_exist(self):
+        if self.version and not self.name:
+            class_name = self.__class__.__name__
+            raise UserErrorException(
+                f"""{class_name}.name is missing. We don't support registering output only with version.
+                Please assign {class_name}.name before {class_name}.version""")
 
     def _build_default_data(self):
         """Build default data when output not configured."""
@@ -428,12 +448,19 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # None data means this output is not configured.
             result = None
         elif isinstance(self._data, str):
-            result = Output(path=self._data, mode=self.mode, name=self._asset_name, version=self._asset_version)
+            result = Output(path=self._data, mode=self.mode, name=self.name, version=self.version)
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
             is_control = self._meta.is_control if self._meta is not None else None
-            result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control, name=self._asset_name, version=self._asset_version)
+            result = Output(
+                path=self._data._data_binding(),
+                mode=self.mode,
+                is_control=is_control,
+                name=self.name,
+                version=self.version,
+                description=self.description
+            )
         else:
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
@@ -444,11 +471,11 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return result
 
     def _data_binding(self):
-        return f"${{{{parent.jobs.{self._owner.name}.outputs.{self._name}}}}}"
+        return f"${{{{parent.jobs.{self._owner.name}.outputs.{self._port_name}}}}}"
 
     def _copy(self, owner):
         return NodeOutput(
-            name=self._name,
+            port_name=self._port_name,
             data=self._data,
             owner=owner,
             meta=self._meta,
@@ -456,7 +483,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     def _deepcopy(self):
         return NodeOutput(
-            name=self._name,
+            port_name=self._port_name,
             data=copy.copy(self._data),
             owner=self._owner,
             meta=self._meta,
@@ -568,7 +595,7 @@ class PipelineOutput(NodeOutput):
         return super(PipelineOutput, self)._to_job_output()
 
     def _data_binding(self):
-        return f"${{{{parent.outputs.{self._name}}}}}"
+        return f"${{{{parent.outputs.{self._port_name}}}}}"
 
     def _to_output(self) -> Output:
         """Convert pipeline output to component output for pipeline

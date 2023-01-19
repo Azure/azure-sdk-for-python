@@ -351,6 +351,8 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                name=output_value.asset_name,
+                version=output_value.asset_version,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)
