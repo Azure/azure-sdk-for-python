@@ -11,7 +11,7 @@ from azure.servicebus import ServiceBusClient, ServiceBusReceiveMode, ServiceBus
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-MAX_QUEUE_SIZE = 40960
+MAX_QUEUE_SIZE = 4096
 
 
 class _ServiceTest(PerfStressTest):
