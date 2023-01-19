@@ -81,5 +81,3 @@ class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):
 
         assert msg in str(e.value)
         assert location in str(e.value)
-
-

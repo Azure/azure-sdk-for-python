@@ -203,24 +203,34 @@ def is_empty_target(obj):
     )
 
 
-def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
+def convert_ordered_dict_to_dict(
+        target_object: Union[Dict, List],
+        remove_empty=True,
+        reserved_keys=None
+) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
 
     This is a workaround for rest request must be in dict instead of
     ordered dict.
+    When field appears in reserved_keys, it's value will not be removed.
     """
+    if not reserved_keys:
+        reserved_keys = []
     # OrderedDict can appear nested in a list
     if isinstance(target_object, list):
         new_list = []
         for item in target_object:
-            item = convert_ordered_dict_to_dict(item)
+            item = convert_ordered_dict_to_dict(item, reserved_keys=reserved_keys)
             if not is_empty_target(item) or not remove_empty:
                 new_list.append(item)
         return new_list
     if isinstance(target_object, dict):
         new_dict = {}
         for key, value in target_object.items():
-            value = convert_ordered_dict_to_dict(value)
+            if key in reserved_keys:
+                new_dict[key] = value
+                continue
+            value = convert_ordered_dict_to_dict(value, reserved_keys=reserved_keys)
             if not is_empty_target(value) or not remove_empty:
                 new_dict[key] = value
         return new_dict
