@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 
 import logging
 from os import fstat
+import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
@@ -70,7 +71,11 @@ def get_length(data):
             pass
         else:
             try:
-                return fstat(fileno).st_size
+                mode = fstat(fileno).st_mode
+                if stat.S_ISREG(mode) or stat.S_ISLNK(mode):
+                    #st_size only meaningful if regular file or symlink, other types
+                    # e.g. sockets may return misleading sizes like 0
+                    return fstat(fileno).st_size
             except OSError:
                 # Not a valid fileno, may be possible requests returned
                 # a socket number?
@@ -117,18 +122,18 @@ def validate_and_format_range_headers(
     # Page ranges must be 512 aligned
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
-            raise ValueError("Invalid page blob start_range: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(start_range))
+            raise ValueError(f"Invalid page blob start_range: {start_range}. "
+                             "The size must be aligned to a 512-byte boundary.")
         if end_range is not None and end_range % 512 != 511:
-            raise ValueError("Invalid page blob end_range: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(end_range))
+            raise ValueError(f"Invalid page blob end_range: {end_range}. "
+                             "The size must be aligned to a 512-byte boundary.")
 
     # Format based on whether end_range is present
     range_header = None
     if end_range is not None:
-        range_header = 'bytes={0}-{1}'.format(start_range, end_range)
+        range_header = f'bytes={start_range}-{end_range}'
     elif start_range is not None:
-        range_header = "bytes={0}-".format(start_range)
+        range_header = f"bytes={start_range}-"
 
     # Content MD5 can only be provided for a complete range less than 4MB in size
     range_validation = None
@@ -147,7 +152,7 @@ def add_metadata_headers(metadata=None):
     headers = {}
     if metadata:
         for key, value in metadata.items():
-            headers['x-ms-meta-{}'.format(key.strip())] = value.strip() if value else value
+            headers[f'x-ms-meta-{key.strip()}'] = value.strip() if value else value
     return headers
 
 

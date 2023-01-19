@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import tempfile
 import uuid
 from datetime import datetime, timedelta
 from os import path, remove
@@ -24,7 +25,6 @@ from test_helpers_async import  NonSeekableStream, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
-FILE_PATH = 'blob_input.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_BLOB_SIZE = 64 * 1024
 # ------------------------------------------------------------------------------
 
@@ -39,13 +39,6 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             try:
                 await bsc.create_container(self.container_name)
                 await bsc.create_container(self.source_container_name)
-            except:
-                pass
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
             except:
                 pass
 
@@ -1116,21 +1109,18 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'path_chunked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = await blob.upload_blob(stream, blob_type=BlobType.AppendBlob)
-
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = await blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
         blob_properties = await blob.get_blob_properties()
 
         # Assert
         await self.assertBlobEqual(blob, data)
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1142,9 +1132,6 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'progress_chnked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         progress = []
@@ -1161,14 +1148,15 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                 yield chunk
                 current += len(chunk)
 
-        with open(FILE_PATH, 'rb') as stream:
-            upload_data = progress_gen(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            upload_data = progress_gen(temp_file)
             await blob.upload_blob(upload_data, blob_type=BlobType.AppendBlob)
 
         # Assert
         await self.assertBlobEqual(blob, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1180,20 +1168,18 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_chunked_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = await blob.upload_blob(stream, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = await blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
         blob_properties = await blob.get_blob_properties()
 
         # Assert
         await self.assertBlobEqual(blob, data)
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1205,19 +1191,17 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'chnkd_upld_knwn_size_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
         blob_size = len(data) - 66
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             await blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
         await self.assertBlobEqual(blob, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1229,18 +1213,16 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'nonseek_chnked_upld_unk_size_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = NonSeekableStream(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = NonSeekableStream(temp_file)
             await blob.upload_blob(non_seekable_file, blob_type=BlobType.AppendBlob)
 
         # Assert
         await self.assertBlobEqual(blob, data)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1252,22 +1234,20 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'stream_with_multiple_appends_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream1:
-            stream1.write(data)
-        with open(FILE_PATH, 'wb') as stream2:
-            stream2.write(data)
 
         # Act
-        with open(FILE_PATH, 'rb') as stream1:
-            await blob.upload_blob(stream1, blob_type=BlobType.AppendBlob)
-        with open(FILE_PATH, 'rb') as stream2:
-            await blob.upload_blob(stream2, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file2:
+            temp_file2.write(data)
+            temp_file2.seek(0)
+            await blob.upload_blob(temp_file2, blob_type=BlobType.AppendBlob)
 
         # Assert
         data = data * 2
         await self.assertBlobEqual(blob, data)
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1279,18 +1259,16 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'hnked_upload_w_count_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
         await self.assertBlobEqual(blob, data[:blob_size])
-        self._teardown(FILE_PATH)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1303,21 +1281,19 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        FILE_PATH = 'upload_w_count_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
         blob_size = len(data) - 301
-        with open(FILE_PATH, 'rb') as stream:
-            append_resp = await blob.upload_blob(stream, length=blob_size, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            append_resp = await blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.AppendBlob)
         blob_properties = await blob.get_blob_properties()
 
         # Assert
         await self.assertBlobEqual(blob, data[:blob_size])
         assert blob_properties.etag == append_resp.get('etag')
         assert blob_properties.last_modified == append_resp.get('last_modified')
-        self._teardown(FILE_PATH)
 
     @BlobPreparer()
     @recorded_by_proxy_async

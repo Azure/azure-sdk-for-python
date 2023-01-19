@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""This package defines constants used in Azure Machine Learning SDKv2."""
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 

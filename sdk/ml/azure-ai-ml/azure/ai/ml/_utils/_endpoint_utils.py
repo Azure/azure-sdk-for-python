@@ -18,7 +18,7 @@ from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LR
 from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -207,7 +207,7 @@ def validate_scoring_script(deployment):
     except Exception as err:
         if isinstance(err, ValidationException):
             raise err
-        raise MLException(
+        raise MlException(
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
         )

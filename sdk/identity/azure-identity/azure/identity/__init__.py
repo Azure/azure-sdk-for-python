@@ -9,6 +9,7 @@ from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
     AuthorizationCodeCredential,
+    AzureDeveloperCliCredential,
     AzureCliCredential,
     AzurePowerShellCredential,
     CertificateCredential,
@@ -34,6 +35,7 @@ __all__ = [
     "AuthorizationCodeCredential",
     "AzureAuthorityHosts",
     "AzureCliCredential",
+    "AzureDeveloperCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",

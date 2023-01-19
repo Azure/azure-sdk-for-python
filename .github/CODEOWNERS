@@ -725,7 +725,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @derek1ee
 
 # ServiceLabel: %Search %Service Attention
-#/<NotInRepo>/          @brjohnstmsft @bleroy @tjacobhi @markheff @miwelsh
+#/<NotInRepo>/          @bleroy @tjacobhi @markheff @miwelsh
 
 # ServiceLabel: %Security %Service Attention
 #/<NotInRepo>/          @chlahav

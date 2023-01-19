@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2023-01-16)
+
+### Features Added
+
+  - Added operation PacketCoreControlPlanesOperations.begin_collect_diagnostics_package
+  - Added operation PacketCoreControlPlanesOperations.begin_reinstall
+  - Added operation PacketCoreControlPlanesOperations.begin_rollback
+  - Added operation SimsOperations.begin_bulk_delete
+  - Added operation SimsOperations.begin_bulk_upload
+  - Added operation SimsOperations.begin_bulk_upload_encrypted
+
+### Breaking Changes
+
+  - Removed operation group PacketCoreControlPlaneOperations
+  - Removed operation group SimOperations
+
 ## 1.0.0 (2022-12-15)
 
 ### Features Added

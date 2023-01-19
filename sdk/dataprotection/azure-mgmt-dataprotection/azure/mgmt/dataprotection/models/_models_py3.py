@@ -50,7 +50,7 @@ class DeleteOption(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.duration = duration
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AbsoluteDeleteOption(DeleteOption):
@@ -80,7 +80,7 @@ class AbsoluteDeleteOption(DeleteOption):
         :paramtype duration: str
         """
         super().__init__(duration=duration, **kwargs)
-        self.object_type = "AbsoluteDeleteOption"  # type: str
+        self.object_type: str = "AbsoluteDeleteOption"
 
 
 class AdHocBackupRuleOptions(_serialization.Model):
@@ -186,7 +186,7 @@ class TriggerContext(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AdhocBasedTriggerContext(TriggerContext):
@@ -217,7 +217,7 @@ class AdhocBasedTriggerContext(TriggerContext):
         :paramtype tagging_criteria: ~azure.mgmt.dataprotection.models.AdhocBasedTaggingCriteria
         """
         super().__init__(**kwargs)
-        self.object_type = "AdhocBasedTriggerContext"  # type: str
+        self.object_type: str = "AdhocBasedTriggerContext"
         self.tagging_criteria = tagging_criteria
 
 
@@ -246,7 +246,7 @@ class AuthCredentials(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureBackupRecoveryPoint(_serialization.Model):
@@ -274,7 +274,7 @@ class AzureBackupRecoveryPoint(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
@@ -362,7 +362,7 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
         :paramtype retention_tag_version: str
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureBackupDiscreteRecoveryPoint"  # type: str
+        self.object_type: str = "AzureBackupDiscreteRecoveryPoint"
         self.friendly_name = friendly_name
         self.recovery_point_data_stores_details = recovery_point_data_stores_details
         self.recovery_point_time = recovery_point_time
@@ -1053,7 +1053,7 @@ class BackupParameters(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureBackupParams(BackupParameters):
@@ -1083,7 +1083,7 @@ class AzureBackupParams(BackupParameters):
         :paramtype backup_type: str
         """
         super().__init__(**kwargs)
-        self.object_type = "AzureBackupParams"  # type: str
+        self.object_type: str = "AzureBackupParams"
         self.backup_type = backup_type
 
 
@@ -1146,7 +1146,7 @@ class AzureBackupRestoreRequest(_serialization.Model):
         :paramtype source_resource_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
         self.restore_target_info = restore_target_info
         self.source_data_store_type = source_data_store_type
         self.source_resource_id = source_resource_id
@@ -1220,7 +1220,7 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
             source_resource_id=source_resource_id,
             **kwargs
         )
-        self.object_type = "AzureBackupRecoveryPointBasedRestoreRequest"  # type: str
+        self.object_type: str = "AzureBackupRecoveryPointBasedRestoreRequest"
         self.recovery_point_id = recovery_point_id
 
 
@@ -1362,7 +1362,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
             source_resource_id=source_resource_id,
             **kwargs
         )
-        self.object_type = "AzureBackupRecoveryTimeBasedRestoreRequest"  # type: str
+        self.object_type: str = "AzureBackupRecoveryTimeBasedRestoreRequest"
         self.recovery_point_time = recovery_point_time
 
 
@@ -1496,7 +1496,7 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
             recovery_point_id=recovery_point_id,
             **kwargs
         )
-        self.object_type = "AzureBackupRestoreWithRehydrationRequest"  # type: str
+        self.object_type: str = "AzureBackupRestoreWithRehydrationRequest"
         self.rehydration_priority = rehydration_priority
         self.rehydration_retention_duration = rehydration_retention_duration
 
@@ -1534,7 +1534,7 @@ class BasePolicyRule(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class AzureBackupRule(BasePolicyRule):
@@ -1589,7 +1589,7 @@ class AzureBackupRule(BasePolicyRule):
         :paramtype trigger: ~azure.mgmt.dataprotection.models.TriggerContext
         """
         super().__init__(name=name, **kwargs)
-        self.object_type = "AzureBackupRule"  # type: str
+        self.object_type: str = "AzureBackupRule"
         self.backup_parameters = backup_parameters
         self.data_store = data_store
         self.trigger = trigger
@@ -1649,7 +1649,7 @@ class DataStoreParameters(_serialization.Model):
         :paramtype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
         """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
         self.data_store_type = data_store_type
 
 
@@ -1693,7 +1693,7 @@ class AzureOperationalStoreParameters(DataStoreParameters):
         :paramtype resource_group_id: str
         """
         super().__init__(data_store_type=data_store_type, **kwargs)
-        self.object_type = "AzureOperationalStoreParameters"  # type: str
+        self.object_type: str = "AzureOperationalStoreParameters"
         self.resource_group_id = resource_group_id
 
 
@@ -1737,7 +1737,7 @@ class AzureRetentionRule(BasePolicyRule):
         :paramtype lifecycles: list[~azure.mgmt.dataprotection.models.SourceLifeCycle]
         """
         super().__init__(name=name, **kwargs)
-        self.object_type = "AzureRetentionRule"  # type: str
+        self.object_type: str = "AzureRetentionRule"
         self.is_default = is_default
         self.lifecycles = lifecycles
 
@@ -1767,7 +1767,40 @@ class BackupCriteria(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
+
+
+class BackupDatasourceParameters(_serialization.Model):
+    """Parameters for Backup Datasource.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobBackupDatasourceParameters, KubernetesClusterBackupDatasourceParameters
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "object_type": {
+            "BlobBackupDatasourceParameters": "BlobBackupDatasourceParameters",
+            "KubernetesClusterBackupDatasourceParameters": "KubernetesClusterBackupDatasourceParameters",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.object_type: Optional[str] = None
 
 
 class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -2040,7 +2073,7 @@ class BaseBackupPolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.datasource_types = datasource_types
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class BackupPolicy(BaseBackupPolicy):
@@ -2078,7 +2111,7 @@ class BackupPolicy(BaseBackupPolicy):
         :paramtype policy_rules: list[~azure.mgmt.dataprotection.models.BasePolicyRule]
         """
         super().__init__(datasource_types=datasource_types, **kwargs)
-        self.object_type = "BackupPolicy"  # type: str
+        self.object_type: str = "BackupPolicy"
         self.policy_rules = policy_rules
 
 
@@ -2145,6 +2178,7 @@ class BackupVault(_serialization.Model):
         "resource_move_state": {"readonly": True},
         "resource_move_details": {"readonly": True},
         "storage_settings": {"required": True},
+        "is_vault_protected_by_resource_guard": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2163,7 +2197,6 @@ class BackupVault(_serialization.Model):
         storage_settings: List["_models.StorageSetting"],
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
-        is_vault_protected_by_resource_guard: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -2173,8 +2206,6 @@ class BackupVault(_serialization.Model):
         :paramtype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
         :keyword storage_settings: Storage Settings. Required.
         :paramtype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
-        :keyword is_vault_protected_by_resource_guard: Is vault protected by resource guard.
-        :paramtype is_vault_protected_by_resource_guard: bool
         """
         super().__init__(**kwargs)
         self.monitoring_settings = monitoring_settings
@@ -2183,7 +2214,7 @@ class BackupVault(_serialization.Model):
         self.resource_move_details = None
         self.security_settings = security_settings
         self.storage_settings = storage_settings
-        self.is_vault_protected_by_resource_guard = is_vault_protected_by_resource_guard
+        self.is_vault_protected_by_resource_guard = None
 
 
 class DppTrackedResource(_serialization.Model):
@@ -2434,6 +2465,39 @@ class BaseBackupPolicyResourceList(DppResourceList):
         """
         super().__init__(next_link=next_link, **kwargs)
         self.value = value
+
+
+class BlobBackupDatasourceParameters(BackupDatasourceParameters):
+    """Parameters to be used during configuration of backup of blobs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar containers_list: List of containers to be backed up during configuration of backup of
+     blobs. Required.
+    :vartype containers_list: list[str]
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "containers_list": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "containers_list": {"key": "containersList", "type": "[str]"},
+    }
+
+    def __init__(self, *, containers_list: List[str], **kwargs):
+        """
+        :keyword containers_list: List of containers to be backed up during configuration of backup of
+         blobs. Required.
+        :paramtype containers_list: list[str]
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "BlobBackupDatasourceParameters"
+        self.containers_list = containers_list
 
 
 class CheckNameAvailabilityRequest(_serialization.Model):
@@ -2752,7 +2816,7 @@ class CopyOption(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class CopyOnExpiryOption(CopyOption):
@@ -2775,7 +2839,7 @@ class CopyOnExpiryOption(CopyOption):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = "CopyOnExpiryOption"  # type: str
+        self.object_type: str = "CopyOnExpiryOption"
 
 
 class CustomCopyOption(CopyOption):
@@ -2804,7 +2868,7 @@ class CustomCopyOption(CopyOption):
         :paramtype duration: str
         """
         super().__init__(**kwargs)
-        self.object_type = "CustomCopyOption"  # type: str
+        self.object_type: str = "CustomCopyOption"
         self.duration = duration
 
 
@@ -3503,7 +3567,7 @@ class FeatureValidationRequestBase(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class FeatureValidationRequest(FeatureValidationRequestBase):
@@ -3545,7 +3609,7 @@ class FeatureValidationRequest(FeatureValidationRequestBase):
         :paramtype feature_name: str
         """
         super().__init__(**kwargs)
-        self.object_type = "FeatureValidationRequest"  # type: str
+        self.object_type: str = "FeatureValidationRequest"
         self.feature_type = feature_type
         self.feature_name = feature_name
 
@@ -3575,7 +3639,7 @@ class FeatureValidationResponseBase(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class FeatureValidationResponse(FeatureValidationResponseBase):
@@ -3617,7 +3681,7 @@ class FeatureValidationResponse(FeatureValidationResponseBase):
         :paramtype features: list[~azure.mgmt.dataprotection.models.SupportedFeature]
         """
         super().__init__(**kwargs)
-        self.object_type = "FeatureValidationResponse"  # type: str
+        self.object_type: str = "FeatureValidationResponse"
         self.feature_type = feature_type
         self.features = features
 
@@ -3642,7 +3706,7 @@ class ImmediateCopyOption(CopyOption):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = "ImmediateCopyOption"  # type: str
+        self.object_type: str = "ImmediateCopyOption"
 
 
 class ImmutabilitySettings(_serialization.Model):
@@ -3710,8 +3774,8 @@ class ItemLevelRestoreCriteria(_serialization.Model):
     """Class to contain criteria for item level restore.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    KubernetesPVRestoreCriteria, KubernetesStorageClassRestoreCriteria,
-    RangeBasedItemLevelRestoreCriteria
+    ItemPathBasedRestoreCriteria, KubernetesClusterRestoreCriteria, KubernetesPVRestoreCriteria,
+    KubernetesStorageClassRestoreCriteria, RangeBasedItemLevelRestoreCriteria
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3729,6 +3793,8 @@ class ItemLevelRestoreCriteria(_serialization.Model):
 
     _subtype_map = {
         "object_type": {
+            "ItemPathBasedRestoreCriteria": "ItemPathBasedRestoreCriteria",
+            "KubernetesClusterRestoreCriteria": "KubernetesClusterRestoreCriteria",
             "KubernetesPVRestoreCriteria": "KubernetesPVRestoreCriteria",
             "KubernetesStorageClassRestoreCriteria": "KubernetesStorageClassRestoreCriteria",
             "RangeBasedItemLevelRestoreCriteria": "RangeBasedItemLevelRestoreCriteria",
@@ -3738,7 +3804,7 @@ class ItemLevelRestoreCriteria(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class RestoreTargetInfoBase(_serialization.Model):
@@ -3787,7 +3853,7 @@ class RestoreTargetInfoBase(_serialization.Model):
         :paramtype restore_location: str
         """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
         self.recovery_option = recovery_option
         self.restore_location = restore_location
 
@@ -3859,11 +3925,68 @@ class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase):
         :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
         """
         super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = "ItemLevelRestoreTargetInfo"  # type: str
+        self.object_type: str = "ItemLevelRestoreTargetInfo"
         self.restore_criteria = restore_criteria
         self.datasource_info = datasource_info
         self.datasource_set_info = datasource_set_info
         self.datasource_auth_credentials = datasource_auth_credentials
+
+
+class ItemPathBasedRestoreCriteria(ItemLevelRestoreCriteria):
+    """Prefix criteria to be used to during restore.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar item_path: The path of the item to be restored. It could be the full path of the item or
+     the path relative to the backup item. Required.
+    :vartype item_path: str
+    :ivar is_path_relative_to_backup_item: Flag to specify if the path is relative to backup item
+     or full path. Required.
+    :vartype is_path_relative_to_backup_item: bool
+    :ivar sub_item_path_prefix: The list of prefix strings to be used as filter criteria during
+     restore. These are relative to the item path specified.
+    :vartype sub_item_path_prefix: list[str]
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "item_path": {"required": True},
+        "is_path_relative_to_backup_item": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "item_path": {"key": "itemPath", "type": "str"},
+        "is_path_relative_to_backup_item": {"key": "isPathRelativeToBackupItem", "type": "bool"},
+        "sub_item_path_prefix": {"key": "subItemPathPrefix", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        item_path: str,
+        is_path_relative_to_backup_item: bool,
+        sub_item_path_prefix: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword item_path: The path of the item to be restored. It could be the full path of the item
+         or the path relative to the backup item. Required.
+        :paramtype item_path: str
+        :keyword is_path_relative_to_backup_item: Flag to specify if the path is relative to backup
+         item or full path. Required.
+        :paramtype is_path_relative_to_backup_item: bool
+        :keyword sub_item_path_prefix: The list of prefix strings to be used as filter criteria during
+         restore. These are relative to the item path specified.
+        :paramtype sub_item_path_prefix: list[str]
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "ItemPathBasedRestoreCriteria"
+        self.item_path = item_path
+        self.is_path_relative_to_backup_item = is_path_relative_to_backup_item
+        self.sub_item_path_prefix = sub_item_path_prefix
 
 
 class JobExtendedInfo(_serialization.Model):
@@ -3982,6 +4105,213 @@ class JobSubTask(_serialization.Model):
         self.task_status = task_status
 
 
+class KubernetesClusterBackupDatasourceParameters(BackupDatasourceParameters):
+    """Parameters for Kubernetes Cluster Backup Datasource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar snapshot_volumes: Gets or sets the volume snapshot property. This property if enabled
+     will take volume snapshots during restore. Required.
+    :vartype snapshot_volumes: bool
+    :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
+     This property if enabled will include cluster scope resources during restore. Required.
+    :vartype include_cluster_scope_resources: bool
+    :ivar included_namespaces: Gets or sets the include namespaces property. This property sets the
+     namespaces to be included during restore.
+    :vartype included_namespaces: list[str]
+    :ivar excluded_namespaces: Gets or sets the exclude namespaces property. This property sets the
+     namespaces to be excluded during restore.
+    :vartype excluded_namespaces: list[str]
+    :ivar included_resource_types: Gets or sets the include resource types property. This property
+     sets the resource types to be included during restore.
+    :vartype included_resource_types: list[str]
+    :ivar excluded_resource_types: Gets or sets the exclude resource types property. This property
+     sets the resource types to be excluded during restore.
+    :vartype excluded_resource_types: list[str]
+    :ivar label_selectors: Gets or sets the LabelSelectors property. This property sets the
+     resource with such label selectors to be included during restore.
+    :vartype label_selectors: list[str]
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "snapshot_volumes": {"required": True},
+        "include_cluster_scope_resources": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "snapshot_volumes": {"key": "snapshotVolumes", "type": "bool"},
+        "include_cluster_scope_resources": {"key": "includeClusterScopeResources", "type": "bool"},
+        "included_namespaces": {"key": "includedNamespaces", "type": "[str]"},
+        "excluded_namespaces": {"key": "excludedNamespaces", "type": "[str]"},
+        "included_resource_types": {"key": "includedResourceTypes", "type": "[str]"},
+        "excluded_resource_types": {"key": "excludedResourceTypes", "type": "[str]"},
+        "label_selectors": {"key": "labelSelectors", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        snapshot_volumes: bool,
+        include_cluster_scope_resources: bool,
+        included_namespaces: Optional[List[str]] = None,
+        excluded_namespaces: Optional[List[str]] = None,
+        included_resource_types: Optional[List[str]] = None,
+        excluded_resource_types: Optional[List[str]] = None,
+        label_selectors: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword snapshot_volumes: Gets or sets the volume snapshot property. This property if enabled
+         will take volume snapshots during restore. Required.
+        :paramtype snapshot_volumes: bool
+        :keyword include_cluster_scope_resources: Gets or sets the include cluster resources property.
+         This property if enabled will include cluster scope resources during restore. Required.
+        :paramtype include_cluster_scope_resources: bool
+        :keyword included_namespaces: Gets or sets the include namespaces property. This property sets
+         the namespaces to be included during restore.
+        :paramtype included_namespaces: list[str]
+        :keyword excluded_namespaces: Gets or sets the exclude namespaces property. This property sets
+         the namespaces to be excluded during restore.
+        :paramtype excluded_namespaces: list[str]
+        :keyword included_resource_types: Gets or sets the include resource types property. This
+         property sets the resource types to be included during restore.
+        :paramtype included_resource_types: list[str]
+        :keyword excluded_resource_types: Gets or sets the exclude resource types property. This
+         property sets the resource types to be excluded during restore.
+        :paramtype excluded_resource_types: list[str]
+        :keyword label_selectors: Gets or sets the LabelSelectors property. This property sets the
+         resource with such label selectors to be included during restore.
+        :paramtype label_selectors: list[str]
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "KubernetesClusterBackupDatasourceParameters"
+        self.snapshot_volumes = snapshot_volumes
+        self.include_cluster_scope_resources = include_cluster_scope_resources
+        self.included_namespaces = included_namespaces
+        self.excluded_namespaces = excluded_namespaces
+        self.included_resource_types = included_resource_types
+        self.excluded_resource_types = excluded_resource_types
+        self.label_selectors = label_selectors
+
+
+class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):
+    """kubernetes Cluster Backup target info for restore operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar include_cluster_scope_resources: Gets or sets the include cluster resources property.
+     This property if enabled will include cluster scope resources during restore. Required.
+    :vartype include_cluster_scope_resources: bool
+    :ivar included_namespaces: Gets or sets the include namespaces property. This property sets the
+     namespaces to be included during restore.
+    :vartype included_namespaces: list[str]
+    :ivar excluded_namespaces: Gets or sets the exclude namespaces property. This property sets the
+     namespaces to be excluded during restore.
+    :vartype excluded_namespaces: list[str]
+    :ivar included_resource_types: Gets or sets the include resource types property. This property
+     sets the resource types to be included during restore.
+    :vartype included_resource_types: list[str]
+    :ivar excluded_resource_types: Gets or sets the exclude resource types property. This property
+     sets the resource types to be excluded during restore.
+    :vartype excluded_resource_types: list[str]
+    :ivar label_selectors: Gets or sets the LabelSelectors property. This property sets the
+     resource with such label selectors to be included during restore.
+    :vartype label_selectors: list[str]
+    :ivar persistent_volume_restore_mode: Gets or sets the PV Restore Mode property. This property
+     sets whether volumes needs to be restored. Known values are: "RestoreWithVolumeData" and
+     "RestoreWithoutVolumeData".
+    :vartype persistent_volume_restore_mode: str or
+     ~azure.mgmt.dataprotection.models.PersistentVolumeRestoreMode
+    :ivar conflict_policy: Gets or sets the Conflict Policy property. This property sets policy
+     during conflict of resources during restore. Known values are: "Skip" and "Patch".
+    :vartype conflict_policy: str or ~azure.mgmt.dataprotection.models.ExistingResourcePolicy
+    :ivar namespace_mappings: Gets or sets the Namespace Mappings property. This property sets if
+     namespace needs to be change during restore.
+    :vartype namespace_mappings: dict[str, str]
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+        "include_cluster_scope_resources": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "include_cluster_scope_resources": {"key": "includeClusterScopeResources", "type": "bool"},
+        "included_namespaces": {"key": "includedNamespaces", "type": "[str]"},
+        "excluded_namespaces": {"key": "excludedNamespaces", "type": "[str]"},
+        "included_resource_types": {"key": "includedResourceTypes", "type": "[str]"},
+        "excluded_resource_types": {"key": "excludedResourceTypes", "type": "[str]"},
+        "label_selectors": {"key": "labelSelectors", "type": "[str]"},
+        "persistent_volume_restore_mode": {"key": "persistentVolumeRestoreMode", "type": "str"},
+        "conflict_policy": {"key": "conflictPolicy", "type": "str"},
+        "namespace_mappings": {"key": "namespaceMappings", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        include_cluster_scope_resources: bool,
+        included_namespaces: Optional[List[str]] = None,
+        excluded_namespaces: Optional[List[str]] = None,
+        included_resource_types: Optional[List[str]] = None,
+        excluded_resource_types: Optional[List[str]] = None,
+        label_selectors: Optional[List[str]] = None,
+        persistent_volume_restore_mode: Optional[Union[str, "_models.PersistentVolumeRestoreMode"]] = None,
+        conflict_policy: Optional[Union[str, "_models.ExistingResourcePolicy"]] = None,
+        namespace_mappings: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword include_cluster_scope_resources: Gets or sets the include cluster resources property.
+         This property if enabled will include cluster scope resources during restore. Required.
+        :paramtype include_cluster_scope_resources: bool
+        :keyword included_namespaces: Gets or sets the include namespaces property. This property sets
+         the namespaces to be included during restore.
+        :paramtype included_namespaces: list[str]
+        :keyword excluded_namespaces: Gets or sets the exclude namespaces property. This property sets
+         the namespaces to be excluded during restore.
+        :paramtype excluded_namespaces: list[str]
+        :keyword included_resource_types: Gets or sets the include resource types property. This
+         property sets the resource types to be included during restore.
+        :paramtype included_resource_types: list[str]
+        :keyword excluded_resource_types: Gets or sets the exclude resource types property. This
+         property sets the resource types to be excluded during restore.
+        :paramtype excluded_resource_types: list[str]
+        :keyword label_selectors: Gets or sets the LabelSelectors property. This property sets the
+         resource with such label selectors to be included during restore.
+        :paramtype label_selectors: list[str]
+        :keyword persistent_volume_restore_mode: Gets or sets the PV Restore Mode property. This
+         property sets whether volumes needs to be restored. Known values are: "RestoreWithVolumeData"
+         and "RestoreWithoutVolumeData".
+        :paramtype persistent_volume_restore_mode: str or
+         ~azure.mgmt.dataprotection.models.PersistentVolumeRestoreMode
+        :keyword conflict_policy: Gets or sets the Conflict Policy property. This property sets policy
+         during conflict of resources during restore. Known values are: "Skip" and "Patch".
+        :paramtype conflict_policy: str or ~azure.mgmt.dataprotection.models.ExistingResourcePolicy
+        :keyword namespace_mappings: Gets or sets the Namespace Mappings property. This property sets
+         if namespace needs to be change during restore.
+        :paramtype namespace_mappings: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.object_type: str = "KubernetesClusterRestoreCriteria"
+        self.include_cluster_scope_resources = include_cluster_scope_resources
+        self.included_namespaces = included_namespaces
+        self.excluded_namespaces = excluded_namespaces
+        self.included_resource_types = included_resource_types
+        self.excluded_resource_types = excluded_resource_types
+        self.label_selectors = label_selectors
+        self.persistent_volume_restore_mode = persistent_volume_restore_mode
+        self.conflict_policy = conflict_policy
+        self.namespace_mappings = namespace_mappings
+
+
 class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria):
     """Item Level kubernetes persistent volume target info for restore operation.
 
@@ -4013,7 +4343,7 @@ class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria):
         :paramtype storage_class_name: str
         """
         super().__init__(**kwargs)
-        self.object_type = "KubernetesPVRestoreCriteria"  # type: str
+        self.object_type: str = "KubernetesPVRestoreCriteria"
         self.name = name
         self.storage_class_name = storage_class_name
 
@@ -4051,7 +4381,7 @@ class KubernetesStorageClassRestoreCriteria(ItemLevelRestoreCriteria):
         :paramtype provisioner: str
         """
         super().__init__(**kwargs)
-        self.object_type = "KubernetesStorageClassRestoreCriteria"  # type: str
+        self.object_type: str = "KubernetesStorageClassRestoreCriteria"
         self.selected_storage_class_name = selected_storage_class_name
         self.provisioner = provisioner
 
@@ -4104,7 +4434,7 @@ class OperationExtendedInfo(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.object_type = None  # type: Optional[str]
+        self.object_type: Optional[str] = None
 
 
 class OperationJobExtendedInfo(OperationExtendedInfo):
@@ -4134,7 +4464,7 @@ class OperationJobExtendedInfo(OperationExtendedInfo):
         :paramtype job_id: str
         """
         super().__init__(**kwargs)
-        self.object_type = "OperationJobExtendedInfo"  # type: str
+        self.object_type: str = "OperationJobExtendedInfo"
         self.job_id = job_id
 
 
@@ -4329,20 +4659,37 @@ class PolicyParameters(_serialization.Model):
     :ivar data_store_parameters_list: Gets or sets the DataStore Parameters.
     :vartype data_store_parameters_list:
      list[~azure.mgmt.dataprotection.models.DataStoreParameters]
+    :ivar backup_datasource_parameters_list: Gets or sets the Backup Data Source Parameters.
+    :vartype backup_datasource_parameters_list:
+     list[~azure.mgmt.dataprotection.models.BackupDatasourceParameters]
     """
 
     _attribute_map = {
         "data_store_parameters_list": {"key": "dataStoreParametersList", "type": "[DataStoreParameters]"},
+        "backup_datasource_parameters_list": {
+            "key": "backupDatasourceParametersList",
+            "type": "[BackupDatasourceParameters]",
+        },
     }
 
-    def __init__(self, *, data_store_parameters_list: Optional[List["_models.DataStoreParameters"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        data_store_parameters_list: Optional[List["_models.DataStoreParameters"]] = None,
+        backup_datasource_parameters_list: Optional[List["_models.BackupDatasourceParameters"]] = None,
+        **kwargs
+    ):
         """
         :keyword data_store_parameters_list: Gets or sets the DataStore Parameters.
         :paramtype data_store_parameters_list:
          list[~azure.mgmt.dataprotection.models.DataStoreParameters]
+        :keyword backup_datasource_parameters_list: Gets or sets the Backup Data Source Parameters.
+        :paramtype backup_datasource_parameters_list:
+         list[~azure.mgmt.dataprotection.models.BackupDatasourceParameters]
         """
         super().__init__(**kwargs)
         self.data_store_parameters_list = data_store_parameters_list
+        self.backup_datasource_parameters_list = backup_datasource_parameters_list
 
 
 class ProtectionStatusDetails(_serialization.Model):
@@ -4412,7 +4759,7 @@ class RangeBasedItemLevelRestoreCriteria(ItemLevelRestoreCriteria):
         :paramtype max_matching_value: str
         """
         super().__init__(**kwargs)
-        self.object_type = "RangeBasedItemLevelRestoreCriteria"  # type: str
+        self.object_type: str = "RangeBasedItemLevelRestoreCriteria"
         self.min_matching_value = min_matching_value
         self.max_matching_value = max_matching_value
 
@@ -5047,7 +5394,7 @@ class RestoreFilesTargetInfo(RestoreTargetInfoBase):
         :paramtype target_details: ~azure.mgmt.dataprotection.models.TargetDetails
         """
         super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = "RestoreFilesTargetInfo"  # type: str
+        self.object_type: str = "RestoreFilesTargetInfo"
         self.target_details = target_details
 
 
@@ -5143,7 +5490,7 @@ class RestoreTargetInfo(RestoreTargetInfoBase):
         :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
         """
         super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = "RestoreTargetInfo"  # type: str
+        self.object_type: str = "RestoreTargetInfo"
         self.datasource_info = datasource_info
         self.datasource_set_info = datasource_set_info
         self.datasource_auth_credentials = datasource_auth_credentials
@@ -5252,7 +5599,7 @@ class ScheduleBasedBackupCriteria(BackupCriteria):
         :paramtype weeks_of_the_month: list[str or ~azure.mgmt.dataprotection.models.WeekNumber]
         """
         super().__init__(**kwargs)
-        self.object_type = "ScheduleBasedBackupCriteria"  # type: str
+        self.object_type: str = "ScheduleBasedBackupCriteria"
         self.absolute_criteria = absolute_criteria
         self.days_of_month = days_of_month
         self.days_of_the_week = days_of_the_week
@@ -5296,7 +5643,7 @@ class ScheduleBasedTriggerContext(TriggerContext):
         :paramtype tagging_criteria: list[~azure.mgmt.dataprotection.models.TaggingCriteria]
         """
         super().__init__(**kwargs)
-        self.object_type = "ScheduleBasedTriggerContext"  # type: str
+        self.object_type: str = "ScheduleBasedTriggerContext"
         self.schedule = schedule
         self.tagging_criteria = tagging_criteria
 
@@ -5327,7 +5674,7 @@ class SecretStoreBasedAuthCredentials(AuthCredentials):
         :paramtype secret_store_resource: ~azure.mgmt.dataprotection.models.SecretStoreResource
         """
         super().__init__(**kwargs)
-        self.object_type = "SecretStoreBasedAuthCredentials"  # type: str
+        self.object_type: str = "SecretStoreBasedAuthCredentials"
         self.secret_store_resource = secret_store_resource
 
 

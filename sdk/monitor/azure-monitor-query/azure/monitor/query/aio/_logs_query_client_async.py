@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import Any, Tuple, Union, Sequence, Dict, List
+from typing import Any, cast, Tuple, Union, Sequence, Dict, List
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -38,9 +38,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
@@ -84,7 +85,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        timespan = construct_iso8601(timespan)
+        timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -96,7 +97,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         body = {
             "query": query,
-            "timespan": timespan,
+            "timespan": timespan_iso,
             "workspaces": additional_workspaces
         }
 
@@ -108,7 +109,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
-        response = None
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
             response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
@@ -139,11 +140,11 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]
+            queries = [LogsBatchQuery(**cast(Dict, q)) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [
-            q._to_generated() for q in queries # pylint: disable=protected-access
+            cast(LogsBatchQuery, q)._to_generated() for q in queries # pylint: disable=protected-access
         ]
         request_order = [req["id"] for req in queries]
         batch = {"requests": queries}
@@ -162,7 +163,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

@@ -10,7 +10,6 @@ from typing import (
 )
 from urllib.parse import quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -454,7 +453,7 @@ class DataLakeFileClient(PathClient):
         ):
         # type: (...) -> Dict[str, Any]
 
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
         if length is None:
             length = get_length(data)

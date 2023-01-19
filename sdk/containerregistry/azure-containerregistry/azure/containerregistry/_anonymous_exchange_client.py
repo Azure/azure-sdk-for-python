@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, Any
+from typing import Dict, Any
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -11,17 +11,15 @@ from ._generated.models._container_registry_enums import TokenGrantType
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
-
-class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
+class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :param credential: Credential which provides tokens to authenticate requests
-    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+     may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
