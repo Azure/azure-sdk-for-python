@@ -51,6 +51,7 @@ from azure.ai.ml.constants._common import (
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
+from azure.ai.ml.constants._component import NodeType, DataTransferTaskType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -434,7 +435,9 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
-
+    # todo: refine Hard code for now to support different task type for DataTransfer component
+    if _type == NodeType.DATATRANSFER:
+        _type = "_".join([NodeType.DATATRANSFER, data.get("task", None)])
     if _type not in valid_keys:
         if (
             schema

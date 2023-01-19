@@ -13,6 +13,7 @@ from azure.ai.ml._schema.core.fields import (
     StringTransformedEnum,
     UnionField,
     LocalPathField,
+    NestedField
 )
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
@@ -21,6 +22,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
+from azure.ai.ml.constants._component import ExternalDataType
 
 module_logger = logging.getLogger(__name__)
 
@@ -169,3 +171,70 @@ class OutputSchema(PathAwareSchema):
             return data
         # Assists with union schema
         raise ValidationError("OutputSchema needs type Output to dump")
+
+
+class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str()
+    value = fields.Str()
+    type = fields.Str()
+
+
+class SourceSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=[
+            ExternalDataType.FILE_SYSTEM,
+            ExternalDataType.DATABASE
+        ],
+        required=True
+    )
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    query = fields.Str(
+        metadata={
+            "description": "The sql query command."
+        },
+    )
+    stored_procedure = fields.Str()
+    stored_procedure_params = fields.List(NestedField(StoredProcedureParamsSchema))
+    connection = ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, required=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._inputs_outputs import Source
+
+        return Source(**data)
+
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.entities._inputs_outputs import Source
+
+        if isinstance(data, Source):
+            return data
+        raise ValidationError("InputSchema needs type Source to dump")
+
+
+class SinkSchema(PathAwareSchema):
+    type = StringTransformedEnum(
+        allowed_values=[
+            ExternalDataType.FILE_SYSTEM,
+            ExternalDataType.DATABASE
+        ],
+        required=True
+    )
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    table_name = fields.Str()
+    connection = ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, required=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._inputs_outputs import Sink
+
+        return Sink(**data)
+
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.entities._inputs_outputs import Sink
+
+        if isinstance(data, Sink):
+            return data
+        # Assists with union schema
+        raise ValidationError("OutputSchema needs type Sink to dump")

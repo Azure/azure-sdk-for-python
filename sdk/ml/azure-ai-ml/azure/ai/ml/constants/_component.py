@@ -22,6 +22,7 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
+    DATATRANSFER = "data_transfer"
     # Note: container is not a real component type,
     # only used to mark component from container data.
     _CONTAINER = "_container"
@@ -31,6 +32,27 @@ class ControlFlowType(object):
     DO_WHILE = "do_while"
     IF_ELSE = "if_else"
     PARALLEL_FOR = "parallel_for"
+
+
+class DataTransferTaskType(object):
+    COPY_DATA = "copy_data"
+    IMPORT_DATA = "import_data"
+    EXPORT_DATA = "export_data"
+
+
+class DataCopyMode(object):
+    MERGE_WITH_OVERWRITE = "merge_with_overwrite"
+    FAIL_IF_CONFLICT = "fail_if_conflict"
+
+
+class ExternalDataType(object):
+    FILE_SYSTEM = "file_system"
+    DATABASE = "database"
+
+    EXTERNAL_DATA_TYPE_COMBINATION = {
+        "file_system": ["path", "connection"],
+        "database": ["query", "stored_procedure", "stored_procedure_params", "connection"]
+    }
 
 
 class ComponentSource:

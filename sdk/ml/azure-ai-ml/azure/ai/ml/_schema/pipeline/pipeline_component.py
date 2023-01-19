@@ -38,6 +38,7 @@ from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJob
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
+# from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import PipelineDataTransferJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
@@ -70,6 +71,10 @@ def PipelineJobsField():
             NestedField(SparkSchema, unknown=INCLUDE),
             NestedField(PipelineSparkJobSchema),
         ],
+        # NodeType.DATATRANSFER: [
+        #     NestedField(DataTransferSchema, unknown=INCLUDE),
+        #     NestedField(PipelineDataTransferJobSchema),
+        # ],
     }
 
     # Note: the private node types only available when private preview flag opened before init of pipeline job
