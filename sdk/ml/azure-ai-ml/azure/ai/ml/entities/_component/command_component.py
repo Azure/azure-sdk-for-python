@@ -11,7 +11,7 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._job.distribution import (
+from azure.ai.ml.entities._job.distribution import (  # pylint: disable = unused-import
     DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
@@ -32,39 +32,40 @@ from .component import Component
 
 
 class CommandComponent(Component, ParameterizedCommand):
-    """Command component version, used to define a command component.
+    """
+    Command component version, used to define a command component.
 
-    :param name: Name of the component.
-    :type name: str
-    :param version: Version of the component.
-    :type version: str
-    :param description: Description of the component.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param command: Command to be executed in component.
-    :type command: str
-    :param code: Code file or folder that will be uploaded to the cloud for component execution.
-    :type code: str
-    :param environment: Environment that component will run in.
-    :type environment: Union[Environment, str]
-    :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
-    :param resources: Compute Resource configuration for the component.
-    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
-    :param instance_count: promoted property from resources.instance_count
-    :type instance_count: int
-    :param is_deterministic: Whether the command component is deterministic.
+    :keyword name: Name of the component, defaults to None
+    :type name: typing.Optional[str]
+    :keyword version: Version of the component, defaults to None
+    :type version: typing.Optional[str]
+    :keyword description: Description of the component, defaults to None
+    :type description: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: Optional[typing.Dict]
+    :keyword display_name: Display name of the component, defaults to None
+    :type display_name: typing.Optional[str]
+    :keyword command: Command to be executed in component, defaults to None
+    :type command: typing.Optional[str]
+    :keyword code: Code file or folder that will be uploaded to the cloud for component execution, defaults to None
+    :type code: typing.Optional[str]
+    :keyword environment: Environment that component will run in, defaults to None
+    :type environment: Optional[Union[str, Environment]]
+    :keyword distribution: Distribution configuration for distributed training, defaults to None
+    :type distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]]
+    :keyword resources: Compute Resource configuration for the component, defaults to None
+    :type resources: Optional[JobResourceConfiguration]
+    :keyword inputs: Inputs of the component, defaults to None
+    :type inputs: Optional[typing.Dict]
+    :keyword outputs: Outputs of the component, defaults to None
+    :type outputs: Optional[typing.Dict]
+    :keyword instance_count: promoted property from resources.instance_count, defaults to None
+    :type instance_count: Optional[int]
+    :keyword is_deterministic: Whether the command component is deterministic, defaults to None
     :type is_deterministic: bool
-    :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
-    :type properties: dict
-
+    :keyword properties: Properties of the component. Contents inside will pass through to backend as a dictionary
+        , defaults to None
+    :type properties: Optional[typing.Dict]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -79,9 +80,9 @@ class CommandComponent(Component, ParameterizedCommand):
         display_name: Optional[str] = None,
         command: Optional[str] = None,
         code: Optional[str] = None,
-        environment: Optional[Union[str, Environment]] = None,
-        distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]] = None,
-        resources: Optional[JobResourceConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
+        distribution: Optional[Union["PyTorchDistribution", "MpiDistribution", "TensorFlowDistribution"]] = None,
+        resources: Optional["JobResourceConfiguration"] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
@@ -89,6 +90,45 @@ class CommandComponent(Component, ParameterizedCommand):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
+        """
+        Constructor for CommandComponent
+
+        Command component version, used to define a command component.
+
+        :keyword name: Name of the component, defaults to None
+        :type name: typing.Optional[str]
+        :keyword version: Version of the component, defaults to None
+        :type version: typing.Optional[str]
+        :keyword description: Description of the component, defaults to None
+        :type description: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :type tags: Optional[typing.Dict]
+        :keyword display_name: Display name of the component, defaults to None
+        :type display_name: typing.Optional[str]
+        :keyword command: Command to be executed in component, defaults to None
+        :type command: typing.Optional[str]
+        :keyword code: Code file or folder that will be uploaded to the cloud for component execution, defaults to None
+        :type code: typing.Optional[str]
+        :keyword environment: Environment that component will run in, defaults to None
+        :type environment: Optional[Union[str, Environment]]
+        :keyword distribution: Distribution configuration for distributed training, defaults to None
+        :type distribution: Optional[Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]]
+        :keyword resources: Compute Resource configuration for the component, defaults to None
+        :type resources: Optional[JobResourceConfiguration]
+        :keyword inputs: Inputs of the component, defaults to None
+        :type inputs: Optional[typing.Dict]
+        :keyword outputs: Outputs of the component, defaults to None
+        :type outputs: Optional[typing.Dict]
+        :keyword instance_count: promoted property from resources.instance_count, defaults to None
+        :type instance_count: Optional[int]
+        :keyword is_deterministic: Whether the command component is deterministic, defaults to None
+        :type is_deterministic: bool
+        :keyword properties: Properties of the component. Contents inside will pass through to backend as a dictionary
+            , defaults to None
+        :type properties: Optional[typing.Dict]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully
+             validated. Details will be provided in the error message.
+        """
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -139,7 +179,7 @@ class CommandComponent(Component, ParameterizedCommand):
         """Return value of promoted property resources.instance_count.
 
         :return: Value of resources.instance_count.
-        :rtype: Optional[int]
+        :rtype: typing.Optional[int]
         """
         return self.resources.instance_count if self.resources else None
 
