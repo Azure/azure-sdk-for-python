@@ -61,6 +61,18 @@ class TestComponentFunc:
             "valid keywords: 'component_in_number', 'component_in_path'." in str(error_info)
         )
 
+        params_override = [{"inputs": {}}]
+        new_func = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml", params_override=params_override
+        )
+
+        # hint user when component func don't take any parameters.
+        with pytest.raises(ValidationException) as error_info:
+            new_func(10)
+        assert (
+            "Component function doesn't has any parameters"
+        ) in str(error_info.value)
+
     def test_required_component_inputs_missing(self):
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component = component_func()
