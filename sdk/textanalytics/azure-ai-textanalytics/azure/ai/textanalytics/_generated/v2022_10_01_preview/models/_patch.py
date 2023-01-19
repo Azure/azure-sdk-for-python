@@ -38,12 +38,13 @@ class AgeResolution(GeneratedAgeResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
-     "Month", "Week", and "Day".
-    :vartype unit: str or ~azure.ai.textanalytics.AgeUnit
+     "Month", "Week", and "Day". Described in ~azure.ai.textanalytics.AgeUnit.
+    :vartype unit: str
     """
+
 
 class AreaResolution(GeneratedAreaResolution, DictMixin):
     """Represents the area entity resolution model.
@@ -55,14 +56,15 @@ class AreaResolution(GeneratedAreaResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The area Unit of measurement. Required. Known values are: "Unspecified",
      "SquareKilometer", "SquareHectometer", "SquareDecameter", "SquareDecimeter", "SquareMeter",
      "SquareCentimeter", "SquareMillimeter", "SquareInch", "SquareFoot", "SquareMile", "SquareYard",
-     and "Acre".
-    :vartype unit: str or ~azure.ai.textanalytics.AreaUnit
+     and "Acre". Described in ~azure.ai.textanalytics.AreaUnit.
+    :vartype unit: str
     """
+
 
 class BooleanResolution(GeneratedBooleanResolution, DictMixin):
     """A resolution for boolean expressions.
@@ -72,11 +74,12 @@ class BooleanResolution(GeneratedBooleanResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar value: Required.
     :vartype value: bool
     """
+
 
 class CurrencyResolution(GeneratedCurrencyResolution, DictMixin):
     """Represents the currency entity resolution model.
@@ -88,8 +91,8 @@ class CurrencyResolution(GeneratedCurrencyResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
      codes for country names. The first two letters of the ISO 4217 three-letter code are the same
      as the code for the country name, and, where possible, the third letter corresponds to the
@@ -99,6 +102,7 @@ class CurrencyResolution(GeneratedCurrencyResolution, DictMixin):
     :vartype unit: str
     """
 
+
 class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
     """A resolution for datetime entity instances.
 
@@ -107,24 +111,24 @@ class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar timex: An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
      Required.
     :vartype timex: str
     :ivar date_time_sub_kind: The DateTime SubKind. Required. Known values are: "Time", "Date",
-     "DateTime", "Duration", and "Set".
-    :vartype date_time_sub_kind: str or
-     ~azure.ai.textanalytics.DateTimeSubKind
+     "DateTime", "Duration", and "Set". Described in ~azure.ai.textanalytics.DateTimeSubKind.
+    :vartype date_time_sub_kind: str
     :ivar value: The actual time that the extracted text denote. Required.
     :vartype value: str
     :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
-     "More".
-    :vartype modifier: str or ~azure.ai.textanalytics.TemporalModifier
+     "More". Described in ~azure.ai.textanalytics.TemporalModifier.
+    :vartype modifier: str
     """
+
 
 class InformationResolution(GeneratedInformationResolution, DictMixin):
     """Represents the information (data) entity resolution model.
@@ -136,13 +140,15 @@ class InformationResolution(GeneratedInformationResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The information (data) Unit of measurement. Required. Known values are:
      "Unspecified", "Bit", "Kilobit", "Megabit", "Gigabit", "Terabit", "Petabit", "Byte",
      "Kilobyte", "Megabyte", "Gigabyte", "Terabyte", and "Petabyte".
-    :vartype unit: str or ~azure.ai.textanalytics.InformationUnit
+     Described in ~azure.ai.textanalytics.InformationUnit.
+    :vartype unit: str
     """
+
 
 class LengthResolution(GeneratedLengthResolution, DictMixin):
     """Represents the length entity resolution model.
@@ -154,13 +160,15 @@ class LengthResolution(GeneratedLengthResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The length Unit of measurement. Required. Known values are: "Unspecified",
      "Kilometer", "Hectometer", "Decameter", "Meter", "Decimeter", "Centimeter", "Millimeter",
      "Micrometer", "Nanometer", "Picometer", "Mile", "Yard", "Inch", "Foot", "LightYear", and "Pt".
-    :vartype unit: str or ~azure.ai.textanalytics.LengthUnit
+     Described in ~azure.ai.textanalytics.LengthUnit.
+    :vartype unit: str
     """
+
 
 class NumberResolution(GeneratedNumberResolution, DictMixin):
     """A resolution for numeric entity instances.
@@ -170,14 +178,16 @@ class NumberResolution(GeneratedNumberResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar number_kind: The type of the extracted number entity. Required. Known values are:
      "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
-    :vartype number_kind: str or ~azure.ai.textanalytics.NumberKind
+     Described in ~azure.ai.textanalytics.NumberKind.
+    :vartype number_kind: str
     :ivar value: A numeric representation of what the extracted text denotes. Required.
     :vartype value: float
     """
+
 
 class NumericRangeResolution(GeneratedNumericRangeResolution, DictMixin):
     """represents the resolution of numeric intervals.
@@ -187,17 +197,18 @@ class NumericRangeResolution(GeneratedNumericRangeResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar range_kind: The kind of range that the resolution object represents. Required. Known
      values are: "Number", "Speed", "Weight", "Length", "Volume", "Area", "Age", "Information",
-     "Temperature", and "Currency".
-    :vartype range_kind: str or ~azure.ai.textanalytics.RangeKind
+     "Temperature", and "Currency". Described in ~azure.ai.textanalytics.RangeKind.
+    :vartype range_kind: str
     :ivar minimum: The beginning value of  the interval. Required.
     :vartype minimum: float
     :ivar maximum: The ending value of the interval. Required.
     :vartype maximum: float
     """
+
 
 class OrdinalResolution(GeneratedOrdinalResolution, DictMixin):
     """A resolution for ordinal numbers entity instances.
@@ -207,17 +218,18 @@ class OrdinalResolution(GeneratedOrdinalResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar offset: The offset With respect to the reference (e.g., offset = -1 in "show me the
      second to last". Required.
     :vartype offset: str
     :ivar relative_to: The reference point that the ordinal number denotes. Required. Known values
-     are: "Current", "End", and "Start".
-    :vartype relative_to: str or ~azure.ai.textanalytics.RelativeTo
+     are: "Current", "End", and "Start". Described in ~azure.ai.textanalytics.RelativeTo.
+    :vartype relative_to: str
     :ivar value: A simple arithmetic expression that the ordinal denotes. Required.
     :vartype value: str
     """
+
 
 class SpeedResolution(GeneratedSpeedResolution, DictMixin):
     """Represents the speed entity resolution model.
@@ -229,14 +241,16 @@ class SpeedResolution(GeneratedSpeedResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in  ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
      "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
      "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
      "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
-    :vartype unit: str or ~azure.ai.textanalytics.SpeedUnit
+     Described in ~azure.ai.textanalytics.SpeedUnit.
+    :vartype unit: str
     """
+
 
 class TemperatureResolution(GeneratedTemperatureResolution, DictMixin):
     """Represents the temperature entity resolution model.
@@ -248,12 +262,13 @@ class TemperatureResolution(GeneratedTemperatureResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The temperature Unit of measurement. Required. Known values are: "Unspecified",
-     "Fahrenheit", "Kelvin", "Rankine", and "Celsius".
-    :vartype unit: str or ~azure.ai.textanalytics.TemperatureUnit
+     "Fahrenheit", "Kelvin", "Rankine", and "Celsius". Described in ~azure.ai.textanalytics.TemperatureUnit.
+    :vartype unit: str
     """
+
 
 class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
     """represents the resolution of a date and/or time span.
@@ -263,8 +278,8 @@ class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar begin: An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
     :vartype begin: str
@@ -277,12 +292,13 @@ class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
     :ivar modifier: An optional modifier of a date/time instance. Known values are: "AfterApprox",
      "Before", "BeforeStart", "Approx", "ReferenceUndefined", "SinceEnd", "AfterMid", "Start",
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
-     "More".
-    :vartype modifier: str or ~azure.ai.textanalytics.TemporalModifier
+     "More". Described in ~azure.ai.textanalytics.TemporalModifier.
+    :vartype modifier: str
     :ivar timex: An optional triplet containing the beginning, the end, and the duration all stated
      as ISO 8601 formatted strings.
     :vartype timex: str
     """
+
 
 class VolumeResolution(GeneratedVolumeResolution, DictMixin):
     """Represents the volume entity resolution model.
@@ -294,15 +310,16 @@ class VolumeResolution(GeneratedVolumeResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The Volume Unit of measurement. Required. Known values are: "Unspecified",
      "CubicMeter", "CubicCentimeter", "CubicMillimeter", "Hectoliter", "Decaliter", "Liter",
      "Centiliter", "Milliliter", "CubicYard", "CubicInch", "CubicFoot", "CubicMile", "FluidOunce",
      "Teaspoon", "Tablespoon", "Pint", "Quart", "Cup", "Gill", "Pinch", "FluidDram", "Barrel",
-     "Minim", "Cord", "Peck", "Bushel", and "Hogshead".
-    :vartype unit: str or ~azure.ai.textanalytics.VolumeUnit
+     "Minim", "Cord", "Peck", "Bushel", and "Hogshead". Described in ~azure.ai.textanalytics.VolumeUnit.
+    :vartype unit: str
     """
+
 
 class WeightResolution(GeneratedWeightResolution, DictMixin):
     """Represents the weight entity resolution model.
@@ -314,12 +331,13 @@ class WeightResolution(GeneratedWeightResolution, DictMixin):
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.ResolutionKind
+     Described in ~azure.ai.textanalytics.ResolutionKind.
+    :vartype resolution_kind: str
     :ivar unit: The weight Unit of measurement. Required. Known values are: "Unspecified",
      "Kilogram", "Gram", "Milligram", "Gallon", "MetricTon", "Ton", "Pound", "Ounce", "Grain",
      "PennyWeight", "LongTonBritish", "ShortTonUS", "ShortHundredWeightUS", "Stone", and "Dram".
-    :vartype unit: str or ~azure.ai.textanalytics.WeightUnit
+     Described in ~azure.ai.textanalytics.WeightUnit.
+    :vartype unit: str
     """
 
 
