@@ -7,26 +7,27 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_tags.py
+FILE: sample_upload_download_blob.py
 
 DESCRIPTION:
-    This sample demonstrates deleting all but the most recent three tags for each repository.
+    This sample demonstrates uploading and downloading an OCI artifact blob to and from a repository.
 
 USAGE:
-    python sample_delete_tags.py
+    python sample_upload_download_blob.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least one repository with more than three tags.
+    This sample assumes your registry has a repository "library/hello-world".
 """
 import os
+from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
+from azure.containerregistry import ContainerRegistryClient
 from sample_utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class DeleteTags(object):
+class UploadDownloadBlob(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
@@ -34,25 +35,16 @@ class DeleteTags(object):
         self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, exclude_environment_credential=True)
 
-    def delete_tags(self):
+    def upload_download_blob(self):
         load_registry()
+        repository_name = "library/hello-world"
+        blob_content = BytesIO("Hello world!".encode())
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            # [START list_repository_names]
-            for repository in client.list_repository_names():
-                print(repository)
-                # [END list_repository_names]
-
-                # Keep the three most recent tags, delete everything else
-                tag_count = 0
-                for tag in client.list_tag_properties(
-                    repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
-                ):
-                    tag_count += 1
-                    if tag_count > 3:
-                        print(f"Deleting {repository}:{tag.name}")
-                        client.delete_tag(repository, tag.name)
+            digest = client.upload_blob(repository_name, blob_content)
+            download_result = client.download_blob(repository_name, digest)
+            print(download_result.data.getvalue().decode())
 
 
 if __name__ == "__main__":
-    sample = DeleteTags()
-    sample.delete_tags()
+    sample = UploadDownloadBlob()
+    sample.upload_download_blob()
