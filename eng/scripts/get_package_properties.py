@@ -17,11 +17,13 @@ if __name__ == "__main__":
             if "setup.py" in files:
                 try:
                     parsed = ParsedSetup.from_path(root)
-                    print(
-                        "{0} {1} {2} {3}".format(
-                            parsed.name, parsed.version, parsed.is_new_sdk, os.path.dirname(parsed.setup_filename)
+
+                    if is_package_active(parsed.folder):
+                        print(
+                            "{0} {1} {2} {3}".format(
+                                parsed.name, parsed.version, parsed.is_new_sdk, os.path.dirname(parsed.setup_filename)
+                            )
                         )
-                    )
                 except:
                     # Skip setup.py if the package cannot be parsed
                     pass
