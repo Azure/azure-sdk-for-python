@@ -72,7 +72,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         length=None,
         overwrite=None,
         headers=None,
-        validate_content=None,
+        checksum=None,
         max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
@@ -92,8 +92,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
         immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
         legal_hold = kwargs.pop('legal_hold', None)
         progress_hook = kwargs.pop('progress_hook', None)
-
-        checksum = kwargs.pop('checksum', None)
 
         # Do single put if the size is smaller than or equal config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
@@ -115,7 +113,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 blob_http_headers=blob_headers,
                 headers=headers,
                 cls=return_response_headers,
-                validate_content=validate_content,
                 data_stream_total=adjusted_count,
                 upload_stream_current=0,
                 tier=tier.value if tier else None,
@@ -133,7 +130,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             return response
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
-            validate_content or encryption_options.get('required') or \
+            checksum or encryption_options.get('required') or \
             blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
             hasattr(stream, 'seekable') and not stream.seekable() or \
             not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
@@ -164,7 +161,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 chunk_size=blob_settings.max_block_size,
                 max_concurrency=max_concurrency,
                 stream=stream,
-                validate_content=validate_content,
                 checksum=checksum,
                 progress_hook=progress_hook,
                 encryptor=encryptor,
@@ -173,6 +169,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 **kwargs
             )
         else:
+            # TODO: Handle this case
             block_ids = upload_substream_blocks(
                 service=client,
                 uploader_class=BlockBlobChunkUploader,
@@ -180,7 +177,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
                 chunk_size=blob_settings.max_block_size,
                 max_concurrency=max_concurrency,
                 stream=stream,
-                validate_content=validate_content,
+                # validate_content=validate_content,
                 progress_hook=progress_hook,
                 headers=headers,
                 **kwargs
@@ -192,7 +189,6 @@ def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statements
             block_lookup,
             blob_http_headers=blob_headers,
             cls=return_response_headers,
-            validate_content=validate_content,
             headers=headers,
             tier=tier.value if tier else None,
             blob_tags_string=blob_tags_string,
@@ -215,7 +211,6 @@ def upload_page_blob(
         length=None,
         overwrite=None,
         headers=None,
-        validate_content=None,
         max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
@@ -272,7 +267,6 @@ def upload_page_blob(
             chunk_size=blob_settings.max_page_size,
             stream=stream,
             max_concurrency=max_concurrency,
-            validate_content=validate_content,
             progress_hook=progress_hook,
             headers=headers,
             **kwargs)
@@ -292,7 +286,6 @@ def upload_append_blob(  # pylint: disable=unused-argument
         length=None,
         overwrite=None,
         headers=None,
-        validate_content=None,
         max_concurrency=None,
         blob_settings=None,
         encryption_options=None,
@@ -322,7 +315,6 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
                 max_concurrency=max_concurrency,
-                validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 progress_hook=progress_hook,
                 headers=headers,
@@ -351,7 +343,6 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 chunk_size=blob_settings.max_block_size,
                 stream=stream,
                 max_concurrency=max_concurrency,
-                validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
                 progress_hook=progress_hook,
                 headers=headers,

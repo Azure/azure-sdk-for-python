@@ -50,7 +50,6 @@ def upload_data_chunks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
-        validate_content=None,
         progress_hook=None,
         **kwargs):
 
@@ -65,7 +64,6 @@ def upload_data_chunks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        validate_content=validate_content,
         progress_hook=progress_hook,
         **kwargs)
     if parallel:
@@ -180,7 +178,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             content_md5, content_crc64 = get_content_checksum(self.checksum, data)
             chunk_info = ChunkInfo(index, data, content_md5, content_crc64)
 
-            # TODO: Handle encryption V1
+            # TODO: Checksum - Handle encryption V1
             if len(data) == self.chunk_size:
                 if self.padder:
                     data = self.padder.update(data)

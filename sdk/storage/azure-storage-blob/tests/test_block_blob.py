@@ -1855,8 +1855,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             self.container_name, blob_name,
             credential=storage_account_key)
 
-        blob_client.upload_blob(data, overwrite=True, checksum='md5')
-        blob_client.upload_blob(data, overwrite=True, checksum='crc64')
+        blob_client.upload_blob(data, overwrite=True, validate_content=True, checksum_algorithm='md5')
+        blob_client.upload_blob(data, overwrite=True, validate_content=True, checksum_algorithm='crc64')
 
     @BlobPreparer()
     def test_upload_blob_checksum_chunks(self, **kwargs):
@@ -1874,10 +1874,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             credential=storage_account_key,
             max_single_put_size=1024, max_block_size=1024)
 
-        blob_client.upload_blob(data, overwrite=True, checksum='md5')
+        blob_client.upload_blob(data, overwrite=True, validate_content=True, checksum_algorithm='md5')
         assert blob_client.download_blob().readall() == data
 
-        blob_client.upload_blob(data, overwrite=True, checksum='crc64')
+        blob_client.upload_blob(data, overwrite=True, validate_content=True, checksum_algorithm='crc64')
         assert blob_client.download_blob().readall() == data
 
     @BlobPreparer()
@@ -1890,10 +1890,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = b'Hello World Checksum!'
         blob_client = self._create_blob(data=data)
 
-        result = blob_client.download_blob(checksum='md5').readall()
+        result = blob_client.download_blob(validate_content=True, checksum_algorithm='md5').readall()
         assert result == data
 
-        result = blob_client.download_blob(checksum='crc64').readall()
+        result = blob_client.download_blob(validate_content=True, checksum_algorithm='crc64').readall()
         assert result == data
 
     @BlobPreparer()
@@ -1913,10 +1913,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             max_single_get_size=1024, max_chunk_get_size=1024)
         blob_client.upload_blob(data, overwrite=True)
 
-        result = blob_client.download_blob(checksum='md5').readall()
+        result = blob_client.download_blob(validate_content=True, checksum_algorithm='md5').readall()
         assert result == data
 
-        result = blob_client.download_blob(checksum='crc64').readall()
+        result = blob_client.download_blob(validate_content=True, checksum_algorithm='crc64').readall()
         assert result == data
 
 # ------------------------------------------------------------------------------

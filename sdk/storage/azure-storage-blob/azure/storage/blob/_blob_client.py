@@ -395,6 +395,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
         validate_content = kwargs.pop('validate_content', False)
+        checksum_algorithm = kwargs.pop('checksum_algorithm', "md5")
+        checksum = checksum_algorithm if validate_content else None
+
         content_settings = kwargs.pop('content_settings', None)
         overwrite = kwargs.pop('overwrite', False)
         max_concurrency = kwargs.pop('max_concurrency', 1)
@@ -426,7 +429,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['length'] = length
         kwargs['overwrite'] = overwrite
         kwargs['headers'] = headers
-        kwargs['validate_content'] = validate_content
+        kwargs['checksum'] = checksum
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
@@ -630,14 +633,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
         :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
+            If true, calculates a checksum for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
+            that was sent. Note that this checksum hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
+            will not be used because computing the checksum hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword checksum_algorithm:
+            Sets the checksum algorithm to use when `validate_content` is set to True. Leave unset
+            or set to None to use the default algorithm. Note, the default algorithm may change with
+            different versions of the SDK. Currently accepted values are "md5" or "crc64".
+            Default value is "md5".
+        :paramtype checksum_algorithm: Literal["md5", "crc64"]
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
             blob's lease is active and matches this ID. Value can be a BlobLeaseClient object
@@ -754,6 +761,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             length = offset + length - 1  # Service actually uses an end-range inclusive index
 
         validate_content = kwargs.pop('validate_content', False)
+        checksum_algorithm = kwargs.pop('checksum_algorithm', "md5")
+        checksum = checksum_algorithm if validate_content else None
+
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
 
@@ -771,7 +781,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'start_range': offset,
             'end_range': length,
             'version_id': kwargs.pop('version_id', None),
-            'validate_content': validate_content,
+            'checksum': checksum,
             'encryption_options': {
                 'required': self.require_encryption,
                 'key': self.key_encryption_key,
@@ -831,14 +841,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             This keyword argument was introduced in API version '2019-12-12'.
 
         :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
+            If true, calculates a checksum for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
+            that was sent. Note that this checksum hash is not stored with the
             blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
+            will not be used because computing the checksum hash requires buffering
             entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword checksum_algorithm:
+            Sets the checksum algorithm to use when `validate_content` is set to True. Leave unset
+            or set to None to use the default algorithm. Note, the default algorithm may change with
+            different versions of the SDK. Currently accepted values are "md5" or "crc64".
+            Default value is "md5".
+        :paramtype checksum_algorithm: Literal["md5", "crc64"]
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a

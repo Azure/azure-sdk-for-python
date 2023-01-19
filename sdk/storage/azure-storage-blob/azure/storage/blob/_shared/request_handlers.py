@@ -115,7 +115,7 @@ def validate_and_format_range_headers(
         end_range,
         start_range_required=True,
         end_range_required=True,
-        validate_content=False,
+        checksum=False,
         align_to_page=False):
     # If end range is provided, start range must be provided
     if (start_range_required or end_range is not None) and start_range is None:
@@ -140,7 +140,7 @@ def validate_and_format_range_headers(
         range_header = "bytes={0}-".format(start_range)
 
     # Content validation can only be provided for a complete range less than 4MB in size
-    if validate_content:
+    if checksum:
         if start_range is None or end_range is None:
             raise ValueError("Both start and end range required for content validation.")
         if end_range - start_range > 4 * 1024 * 1024:

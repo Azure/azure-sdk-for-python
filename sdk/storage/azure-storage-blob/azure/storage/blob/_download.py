@@ -79,7 +79,6 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         end_range=None,
         stream=None,
         parallel=None,
-        validate_content=None,
         checksum=None,
         encryption_options=None,
         encryption_data=None,
@@ -113,7 +112,6 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         self.encryption_data = encryption_data
 
         # Parameters for each get operation
-        self.validate_content = validate_content
         self.checksum = checksum
         self.request_options = kwargs
 
@@ -198,7 +196,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
             range_header = validate_and_format_range_headers(
                 download_range[0],
                 download_range[1],
-                validate_content=self.validate_content or self.checksum
+                checksum=self.checksum
             )
 
             retry_active = True
@@ -207,9 +205,8 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     _, response = self.client.download(
                         range=range_header,
-                        range_get_content_md5=self.validate_content or self.checksum == 'md5' or None,
+                        range_get_content_md5=self.checksum == 'md5' or None,
                         range_get_content_crc64=self.checksum == 'crc64' or None,
-                        validate_content=self.validate_content,
                         data_stream_total=self.total_size,
                         download_stream_current=self.progress_total,
                         **self.request_options
@@ -311,7 +308,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         config=None,
         start_range=None,
         end_range=None,
-        validate_content=None,
+        checksum=None,
         encryption_options=None,
         max_concurrency=1,
         name=None,
@@ -331,10 +328,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._end_range = end_range
         self._max_concurrency = max_concurrency
         self._encoding = encoding
-        self._validate_content = validate_content
+        self._checksum = checksum
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
-        self._checksum = kwargs.pop('checksum', None)
         self._request_options = kwargs
         self._location_mode = None
         self._download_complete = False
@@ -353,10 +349,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._get_encryption_data_request()
 
         self._first_get_size = self._config.max_single_get_size
-        # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
-        # chunk so a transactional MD5 can be retrieved.
-        if self._validate_content or self._checksum:
+        # The service only provides transactional checksum for chunks under 4MB.
+        # If checksum is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # chunk so a transactional checksum can be retrieved.
+        if self._checksum:
             self._first_get_size = self._config.max_chunk_get_size
 
         initial_request_start = self._start_range if self._start_range is not None else 0
@@ -418,7 +414,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            validate_content=self._validate_content or self._checksum
+            checksum=self._checksum
         )
 
         retry_active = True
@@ -427,9 +423,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             try:
                 location_mode, response = self._clients.blob.download(
                     range=range_header,
-                    range_get_content_md5=self._validate_content or self._checksum == 'md5' or None,
+                    range_get_content_md5=self._checksum == 'md5' or None,
                     range_get_content_crc64=self._checksum == 'crc64' or None,
-                    validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
                     **self._request_options
@@ -456,14 +451,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self.size = self._file_size
 
             except HttpResponseError as error:
-                # TODO: Handle empty blob
                 if self._start_range is None and error.response and error.response.status_code == 416:
                     # Get range will fail on an empty file. If the user did not
                     # request a range, do a regular get request in order to get
                     # any properties.
                     try:
+                        # TODO: Checksum - Handle empty blob
                         _, response = self._clients.blob.download(
-                            validate_content=self._validate_content,
+                            # validate_content=self._validate_content,
                             data_stream_total=0,
                             download_stream_current=0,
                             **self._request_options
@@ -559,6 +554,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
                 data_start = (self._start_range or 0) + len(self._current_content)
 
+            # TODO: Checksum - Handle chunks case
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
                 non_empty_ranges=self._non_empty_ranges,
@@ -569,7 +565,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 end_range=data_end,
                 stream=None,
                 parallel=False,
-                validate_content=self._validate_content,
+                # validate_content=self._validate_content,
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
@@ -633,7 +629,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 end_range=end_range,
                 stream=stream,
                 parallel=parallel,
-                validate_content=self._validate_content,
                 checksum=self._checksum,
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
@@ -766,7 +761,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             end_range=data_end,
             stream=stream,
             parallel=parallel,
-            validate_content=self._validate_content,
             checksum=self._checksum,
             encryption_options=self._encryption_options,
             encryption_data=self._encryption_data,
