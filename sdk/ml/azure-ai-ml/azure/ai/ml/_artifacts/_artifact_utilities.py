@@ -459,6 +459,11 @@ def _check_and_upload_env_build_context(
     return environment
 
 
+def _generate_temporary_data_reference_id() -> str:
+    """Generate a temporary data reference id."""
+    return str(uuid.uuid4())
+
+
 @retry(
     exceptions=HttpResponseError,
     failure_msg="Artifact upload exceeded maximum retries. Try again.",
@@ -476,7 +481,7 @@ def get_temporary_data_reference(
     """Make a temporary data reference for an asset and return SAS uri and blob storage uri."""
 
     # create temporary data reference
-    temporary_data_reference_id = str(uuid.uuid4())
+    temporary_data_reference_id = _generate_temporary_data_reference_id()
 
     # build and send request
     asset_id = f"azureml://locations/{workspace.location}/workspaces/{workspace.workspace_id}/"\
