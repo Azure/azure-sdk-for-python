@@ -10,9 +10,12 @@ from azure.appconfiguration.provider import (
 )
 from azure.identity import DefaultAzureCredential
 import os
+from sample_utilities import get_authority, get_audience, get_credential
 
 endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
-credential = DefaultAzureCredential()
+authority = get_authority(endpoint)
+audience = get_audience(authority)
+credential = get_credential(authority)
 
 # Connecting to Azure App Configuration using AAD
 config = load_provider(endpoint=endpoint, credential=credential)

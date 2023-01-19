@@ -78,7 +78,9 @@ async def load_provider(**kwargs):
 
     provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
 
-    provider._secret_clients = key_vault_options.secret_clients if key_vault_options else {}
+    if key_vault_options != None and len(key_vault_options.secret_clients) > 0:
+        for secret_client in key_vault_options.secret_clients:
+            provider._secret_clients[secret_client.vault_url] = secret_client
 
     for select in selects:
         configurations = provider._client.list_configuration_settings(
@@ -94,7 +96,7 @@ async def load_provider(**kwargs):
                     break
 
             if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
-                secret = __resolve_keyvault_reference(config, key_vault_options, secret_clients)
+                secret = await __resolve_keyvault_reference(config, key_vault_options, provider)
                 provider._dict[trimmed_key] = secret
             elif __is_json_content_type(config.content_type):
                 try:
@@ -134,8 +136,7 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
     provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
     return provider
 
-async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions,
-        secret_clients: List[SecretClient]) -> str:
+async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, provider) -> str:
     if key_vault_options is None:
         raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
 
@@ -144,18 +145,16 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
-    referenced_client = next(
-        (client for client in secret_clients if client.vault_url == key_vault_identifier.vault_url), None
-    )
+    referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
 
     if referenced_client is None and key_vault_options.credential is not None:
         referenced_client = SecretClient(
             vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential
         )
-        secret_clients[key_vault_identifier.vault_url] = referenced_client
+        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
 
     if referenced_client:
-        return await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
+        return (await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)).value
 
     if key_vault_options.secret_resolver is not None:
         return key_vault_options.secret_resolver(config.secret_id)

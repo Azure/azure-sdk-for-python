@@ -6,8 +6,9 @@
 
 import asyncio
 from azure.appconfiguration.provider.aio import load_provider
-from azure.appconfiguration.provider import SettingSelector
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
@@ -17,23 +18,13 @@ async def main():
     audience = get_audience(authority)
     credential = get_credential(authority, is_async=True)
 
-    # Connecting to Azure App Configuration using AAD
-    config = await load_provider(endpoint=endpoint, credential=credential)
-    print(config["message"])
+    # Connection to Azure App Configuration using AAD and Resolving Key Vault References
+    key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=credential)
+    selects = {SettingSelector("*", "prod")}
 
-    # Connecting to Azure App Configuration using AAD and trimmed key prefixes
-    trimmed = {"test."}
-    config = await load_provider(endpoint=endpoint, credential=credential, trimmed_key_prefixes=trimmed)
+    config = await load_provider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
-    print(config["message"])
-
-    # Connection to Azure App Configuration using SettingSelector
-    selects = {SettingSelector("message*", "\0")}
-    config = await load_provider(endpoint=endpoint, credential=credential, selects=selects)
-
-    print("message found: " + str("message" in config))
-    print("test.message found: " + str("test.message" in config))
-
+    print(config["secret"])
 
     await credential.close()
     await config.close()

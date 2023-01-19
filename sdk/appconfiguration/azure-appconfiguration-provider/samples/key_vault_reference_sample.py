@@ -11,9 +11,12 @@ from azure.appconfiguration.provider import (
 )
 from azure.identity import DefaultAzureCredential
 import os
+from sample_utilities import get_authority, get_audience, get_credential
 
 endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
-credential = DefaultAzureCredential()
+authority = get_authority(endpoint)
+audience = get_audience(authority)
+credential = get_credential(authority)
 
 # Connection to Azure App Configuration using AAD and Resolving Key Vault References
 key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=credential)
