@@ -6,12 +6,13 @@
 import json
 from typing import overload, List, Tuple
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from azure.keyvault.secrets.aio import SecretClient, KeyVaultSecretIdentifier
-from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
-from ._settingselector import SettingSelector
-from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
+from azure.keyvault.secrets.aio import SecretClient
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
+from .._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
+from .._settingselector import SettingSelector
+from .._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
 
-from ._user_agent import USER_AGENT
+from .._user_agent import USER_AGENT
 
 @overload
 async def load_provider(endpoint: str, credential: str, **kwargs):
@@ -80,10 +81,10 @@ async def load_provider(**kwargs):
     secret_clients = key_vault_options.secret_clients if key_vault_options else {}
 
     for select in selects:
-        configurations = await provider._client.list_configuration_settings(
+        configurations = provider._client.list_configuration_settings(
             key_filter=select.key_filter, label_filter=select.label_filter
         )
-        for config in configurations:
+        async for config in configurations:
 
             trimmed_key = config.key
             # Trim the key if it starts with one of the prefixes provided
@@ -104,6 +105,9 @@ async def load_provider(**kwargs):
                     provider._dict[trimmed_key] = config.value
             else:
                 provider._dict[trimmed_key] = config.value
+    for client in secret_clients.values():
+        await client.close()
+    await provider._client.close()
     return provider
 
 def __buildprovider(connection_string:str, endpoint:str, credential,

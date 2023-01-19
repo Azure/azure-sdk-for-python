@@ -4,7 +4,7 @@
  # license information.
  # -------------------------------------------------------------------------
 
-from ._provider import load_provider, AzureAppConfigurationProvider
+from ._azureappconfigurationproviderasync import load_provider, AzureAppConfigurationProvider
 
 __all__ = [
     "load_provider",
