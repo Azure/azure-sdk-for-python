@@ -196,14 +196,7 @@ class AzureAppConfigurationProvider:
         self._dict = {}
         self._trim_prefixes = []
         self._client = None
-
-    async def close(self):
-        """
-        Closes the connection to Azure App Configuration.
-        """
-        for client in self._secret_clients.values():
-            await client.close()
-        await self._client.close()
+        self._secret_clients = {}
 
     def __getitem__(self, key:str) -> str:
         """
@@ -262,3 +255,22 @@ class AzureAppConfigurationProvider:
 
     def __ne__(self, other):
         return not self == other
+
+    async def close(self):
+        """
+        Closes the connection to Azure App Configuration.
+        """
+        for client in self._secret_clients.values():
+            await client.close()
+        await self._client.close()
+
+    async def __aenter__(self):
+        await self.client.__aenter__()
+        for client in self._secret_clients.values():
+            await client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args):
+        await self.client.__aexit__(*args)
+        for client in self._secret_clients.values():
+            await client.__aexit__()
