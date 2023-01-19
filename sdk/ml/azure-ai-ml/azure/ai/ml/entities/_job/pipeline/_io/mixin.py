@@ -154,10 +154,14 @@ class NodeIOMixin:
         }
         """
         built_inputs = self._build_inputs()
+        return self._input_entity_to_rest_inputs(input_entity=built_inputs)
+
+    @classmethod
+    def _input_entity_to_rest_inputs(cls, input_entity: Dict[str, Input]) -> Dict[str, Dict]:
 
         # Convert io entity to rest io objects
         input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
-            built_inputs, [ComponentJobConstants.INPUT_PATTERN]
+            input_entity, [ComponentJobConstants.INPUT_PATTERN]
         )
 
         # parse input_bindings to InputLiteral(value=str(binding))

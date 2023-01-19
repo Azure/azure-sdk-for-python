@@ -4,7 +4,7 @@
 import json
 from typing import Dict, Union
 
-from azure.ai.ml import Output
+from azure.ai.ml import Output, Input
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -13,7 +13,7 @@ from azure.ai.ml.constants._component import ComponentParameterTypes, ControlFlo
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, InputOutputBase
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
 from azure.ai.ml.exceptions import UserErrorException
@@ -105,10 +105,52 @@ class ParallelFor(LoopNode, NodeIOMixin):
             "items": (dict, list, str, PipelineInput, NodeOutput),
         }
 
+    def _to_rest_item(self, item: Dict[str, Union[Input, InputOutputBase]]) -> dict:
+        """Convert item to rest object."""
+        primitive_inputs, asset_inputs = {}, {}
+        # validate item
+        for key, val in item.items():
+            if not isinstance(val, (Input, str, bool, int, float)):
+                raise UserErrorException("Unsupported type {} in parallel_for items. Supported types are: {}".format(
+                    type(val), [Input, str, bool, int, float]
+                ))
+            if isinstance(val, Input):
+                asset_inputs[key] = val
+            else:
+                primitive_inputs[key] = val
+        return {
+            # asset type inputs will be converted to JobInput dict:
+            # {"asset_param": {"uri": "xxx", "job_input_type": "uri_file"}}
+            **self._input_entity_to_rest_inputs(input_entity=asset_inputs),
+            # primitive inputs has primitive type value like this
+            # {"int_param": 1}
+            **primitive_inputs
+        }
+
+    def _to_rest_items(self):
+        """Convert items to rest object."""
+        self._validate_items(raise_error=True)
+
+        if isinstance(self.items, list):
+            rest_items = [self._to_rest_item(item=i) for i in self.items]
+        elif isinstance(self.items, dict):
+            rest_items = {k: self._to_rest_item(item=v) for k, v in self.items.items()}
+        elif isinstance(self.items, InputOutputBase):
+            # TODO: only support output or pipeline input
+            rest_items = str(self.items)
+        elif isinstance(self.items, str):
+            rest_items = self.items
+        else:
+            raise UserErrorException("Unsupported items type: {}".format(type(self.items)))
+        return json.dumps(rest_items)
+
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
-        rest_node.update(dict(outputs=self._to_rest_outputs()))
+        rest_node.update(dict(
+            items=self._to_rest_items(),
+            outputs=self._to_rest_outputs()
+        ))
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
@@ -116,6 +158,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # pylint: disable=protected-access
 
         obj = BaseNode._from_rest_object_to_init_params(obj)
+        # TODO: rest input -> input object
         return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
 
     @classmethod

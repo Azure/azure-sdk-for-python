@@ -120,6 +120,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
         assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
+
 class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
@@ -163,11 +164,6 @@ def assert_foreach(client: MLClient, job_name, source, expected_node):
     assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
 
 
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary."
-)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"
@@ -203,6 +199,21 @@ class TestParallelFor(TestConditionalNodeInPipeline):
         expected_node = {
             'body': '${{parent.jobs.parallel_body}}',
             'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)
+
+    def test_assets_in_items(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/assets_items.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}}, {"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}}]',
             'outputs': {'component_out_path': {'type': 'literal',
                                                'value': '${{parent.outputs.component_out_path}}'}},
             'type': 'parallel_for'
