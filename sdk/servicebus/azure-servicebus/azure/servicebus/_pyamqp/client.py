@@ -763,7 +763,7 @@ class ReceiveClient(AMQPClient):
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
         self._timeout_reached = False
-        self._timeout_count = 5
+        self._generator_timeout = 10
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -923,20 +923,23 @@ class ReceiveClient(AMQPClient):
         try:
             # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving and self._received_messages.empty() and not self._timeout_reached:
+                # self._generator_timeout = time.time()
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = self.do_work()
-                self._timeout_count = self._timeout_count-1
-                if self._timeout_count == 0: 
+                # if time.time() - self._generator_timeout  >= 5: 
+                self._generator_timeout -= 1
+                if self._generator_timeout == 0:
                     self._timeout_reached = True
                 while not self._received_messages.empty():
-                    self._timeout_count = 5
+                    # self._generator_timeout = time.time()
+                    self._generator_timeout = 10
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
                     # self.settle_messages(message[1],"accepted")
                     # self._complete_message(message, auto_complete)
-        finally:
+        except:
             # self.settle_messages(message[1],"accepted")
             # self._complete_message(message, auto_complete)
             # self.auto_complete = auto_complete
