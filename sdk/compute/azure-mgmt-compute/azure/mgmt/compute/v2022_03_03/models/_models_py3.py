@@ -650,6 +650,38 @@ class EncryptionImages(_serialization.Model):
         self.data_disk_images = data_disk_images
 
 
+class ExtendedLocation(_serialization.Model):
+    """The complex type of the extended location.
+
+    :ivar name: The name of the extended location.
+    :vartype name: str
+    :ivar type: The type of the extended location. "EdgeZone"
+    :vartype type: str or ~azure.mgmt.compute.v2022_03_03.models.ExtendedLocationTypes
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the extended location.
+        :paramtype name: str
+        :keyword type: The type of the extended location. "EdgeZone"
+        :paramtype type: str or ~azure.mgmt.compute.v2022_03_03.models.ExtendedLocationTypes
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
 class Resource(_serialization.Model):
     """The Resource model definition.
 
@@ -3471,6 +3503,52 @@ class ResourceRange(_serialization.Model):
         self.max = max
 
 
+class ResourceWithOptionalLocation(_serialization.Model):
+    """The Resource model definition with location property as optional.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = tags
+
+
 class SharedGallery(PirSharedGalleryResource):
     """Specifies information about the Shared Gallery that you want to create or update.
 
@@ -4147,6 +4225,79 @@ class SoftDeletePolicy(_serialization.Model):
         self.is_soft_delete_enabled = is_soft_delete_enabled
 
 
+class SubResource(_serialization.Model):
+    """SubResource.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource Id.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class SubResourceReadOnly(_serialization.Model):
+    """SubResourceReadOnly.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+
+
+class SystemData(_serialization.Model):
+    """The system meta data relating to this resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was created. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was last modified. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.created_at = None
+        self.last_modified_at = None
+
+
 class TargetRegion(_serialization.Model):
     """Describes the target region information.
 
@@ -4332,3 +4483,31 @@ class UserArtifactSource(_serialization.Model):
         super().__init__(**kwargs)
         self.media_link = media_link
         self.default_configuration_link = default_configuration_link
+
+
+class UserAssignedIdentitiesValue(_serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None

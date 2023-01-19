@@ -309,7 +309,7 @@ class MLClient(object):
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2022_05_01=self._service_client_05_2022,
+            serviceclient_2022_10_01=self._service_client_10_2022,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -385,7 +385,7 @@ class MLClient(object):
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
@@ -394,7 +394,7 @@ class MLClient(object):
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._operation_container,
             **ops_kwargs,
         )
@@ -760,12 +760,12 @@ class MLClient(object):
         """Creates or updates an Azure ML resource.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Job,
-            ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component,
-            ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceModelReference]
+        :type entity: typing.Union[~azure.ai.ml.entities.Job
+            , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
+            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceModelReference]
         :return: The created or updated resource.
-        :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model,
-            ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
+        :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
+            , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -784,15 +784,15 @@ class MLClient(object):
         """Creates or updates an Azure ML resource asynchronously.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Workspace,
-            ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
-            ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,
-            ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
+        :type entity: typing.Union[~azure.ai.ml.entities.Workspace
+            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
+            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
         :return: The resource after create/update operation.
-        :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace,
-            ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
-            ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,
-            ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
+        :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace
+            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
+            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)

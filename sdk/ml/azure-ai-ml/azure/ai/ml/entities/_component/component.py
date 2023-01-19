@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import re
 import tempfile
 from contextlib import contextmanager
 from os import PathLike
@@ -26,7 +27,7 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
     AzureMLResourceType,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -265,11 +266,9 @@ class Component(
         lower2original_kwargs = {}
 
         for name in io_dict.keys():
-            # validate name format
-            if not name.isidentifier():
+            if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
-
             # validate name conflict
             lower_key = name.lower()
             if lower_key in lower2original_kwargs:
@@ -511,6 +510,20 @@ class Component(
 
     def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
         """Call ComponentVersion as a function and get a Component object."""
+        if args:
+            # raise clear error message for unsupported positional args
+            if self._func._has_parameters:
+                msg = f"Component function doesn't support positional arguments, got {args} for {self.name}. " \
+                      f"Please use keyword arguments like: {self._func._func_calling_example}."
+            else:
+                msg = "Component function doesn't has any parameters, " \
+                      f"please make sure component {self.name} has inputs. "
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.COMPONENT,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
 
     @contextmanager

@@ -6,9 +6,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import logging
 import sys
-from typing import List, Any, Union, IO, Iterable, Tuple
-from azure.core.exceptions import HttpResponseError
+from typing import Callable, List, Any, Awaitable, Optional
+
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests
 
@@ -16,6 +17,9 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+
+_LOGGER = logging.getLogger(__name__)
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -24,31 +28,40 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         self,
         rule_id: str,
         stream_name: str,
-        logs: Union[List[JSON], IO],
+        logs: List[JSON],
+        *,
+        on_error: Optional[Callable[[Exception, List[JSON]], Awaitable[None]]] = None,
         **kwargs: Any
-    ) -> Iterable[Tuple[HttpResponseError, List[JSON]]]:
+    ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
-        See error response code and error response message for more detail.
+        Logs are divided into chunks of 1MB or less, then each chunk is gzip-compressed and uploaded.
 
-        :param rule_id: The immutable Id of the Data Collection Rule resource.
+        :param rule_id: The immutable ID of the Data Collection Rule resource.
         :type rule_id: str
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
         :param logs: An array of objects matching the schema defined by the provided stream.
-        :type logs: list[JSON] or IO
-        :return: Iterable[Tuple[HttpResponseError, List[JSON]]]
-        :rtype: Iterable[Tuple[HttpResponseError, List[JSON]]]
+        :type logs: list[JSON]
+        :keyword on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
+            This function should expect two arguments that correspond to the error encountered and
+            the list of logs that failed to upload. If no function is provided, then the first exception
+            encountered will be raised.
+        :paramtype on_error: Optional[Callable[[Exception, List[JSON]], None]]
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        requests = _create_gzip_requests(logs)
-        results = []
-        for request in requests:
+        for gzip_data, log_chunk in _create_gzip_requests(logs):
             try:
-                await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
+                await super().upload(rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs)
             except Exception as err:  # pylint: disable=broad-except
-                results.append((err, request))
-        return results
+                if on_error:
+                    await on_error(err, log_chunk)
+                else:
+                    _LOGGER.error("Failed to upload chunk containing %d log entries", len(log_chunk))
+                    raise err
+
 
 __all__: List[str] = [
     "LogsIngestionClientOperationsMixin"

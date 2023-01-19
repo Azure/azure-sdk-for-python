@@ -13,8 +13,8 @@ from typing import Callable, Dict, Iterable, Optional, Union, List, Any
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -74,7 +74,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Dict,
     ):
@@ -212,6 +212,11 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
         component = Component._from_rest_object(result)
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=self._orchestrators.resolve_azureml_id,
+            resolve_inputs=False,
+        )
         return component
 
     @experimental
@@ -696,7 +701,8 @@ class ComponentOperations(_ScopeDependentOperations):
         layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
-                self._set_default_display_name_for_anonymous_component_in_node,
+                # no need to do this as we now keep the original component name for anonymous components
+                # self._set_default_display_name_for_anonymous_component_in_node,
                 partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),

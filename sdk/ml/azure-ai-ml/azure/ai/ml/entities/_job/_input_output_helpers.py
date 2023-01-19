@@ -26,6 +26,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
+from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
 from azure.ai.ml.entities._util import normalize_job_input_output_type
@@ -159,7 +160,7 @@ def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
-    if re.match(r"^([a-zA-Z_]+[a-zA-Z0-9_]*)([.]([a-zA-Z_]+[a-zA-Z0-9_]*))*$", key) is None:
+    if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
         msg = (
             "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
         )

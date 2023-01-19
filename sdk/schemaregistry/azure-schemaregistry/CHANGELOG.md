@@ -1,11 +1,22 @@
 # Release History
 
-## 1.3.0b1 (2023-01-10)
+## 1.3.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0b1 (2023-01-12)
 
 ### Features Added
 
 - `V2022_10` has been added to `ApiVersion` and set as the default api version.
   - `Json` and `Custom` have been added to supported formats in `SchemaFormat`.
+  - At the time of this release, only Draft 3 of JSON schemas is currently supported by the service.
 
 ### Bugs Fixed
 

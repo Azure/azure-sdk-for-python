@@ -4,4 +4,4 @@
 # ------------------------------------
 from ._version import VERSION
 
-SDK_MONIKER = "keyvault-certificates/{}".format(VERSION)
+SDK_MONIKER = f"keyvault-certificates/{VERSION}"
