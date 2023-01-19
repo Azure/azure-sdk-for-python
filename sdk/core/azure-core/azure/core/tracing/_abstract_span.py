@@ -131,7 +131,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, traceparent: str, attributes: "Attributes" = None) -> None:
+    def link(cls, traceparent: str, attributes: Optional["Attributes"] = None) -> None:
         """
         Given a traceparent, extracts the context and links the context to the current tracer.
 
@@ -141,7 +141,7 @@ class AbstractSpan(Protocol):
 
     @classmethod
     def link_from_headers(
-        cls, headers: Dict[str, str], attributes: "Attributes" = None
+        cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None
     ) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
@@ -241,7 +241,7 @@ class Link:
     """
 
     def __init__(
-        self, headers: Dict[str, str], attributes: "Attributes" = None
+        self, headers: Dict[str, str], attributes: Optional["Attributes"] = None
     ) -> None:
         self.headers = headers
         self.attributes = attributes

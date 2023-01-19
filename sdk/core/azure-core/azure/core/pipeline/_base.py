@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from typing import Generic, TypeVar, Union, Any, List, Dict
+from typing import Generic, TypeVar, Union, Any, List, Dict, Optional
 from contextlib import AbstractContextManager
 from azure.core.pipeline import (
     PipelineRequest,
@@ -122,7 +122,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     """
 
     def __init__(
-        self, transport: HttpTransportType, policies: PoliciesType = None
+        self, transport: HttpTransportType, policies: Optional[PoliciesType] = None
     ) -> None:
         self._impl_policies: List[HTTPPolicy] = []
         self._transport = transport
@@ -184,7 +184,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def run(self, request: HTTPRequestType, **kwargs) -> PipelineResponse:
+    def run(self, request: HTTPRequestType, **kwargs: Any) -> PipelineResponse:
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.

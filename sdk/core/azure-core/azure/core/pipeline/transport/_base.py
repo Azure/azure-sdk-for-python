@@ -158,9 +158,9 @@ class HttpRequest:
         self,
         method: str,
         url: str,
-        headers: Mapping[str, str] = None,
-        files: Any = None,
-        data: DataType = None,
+        headers: Optional[Mapping[str, str]] = None,
+        files: Optional[Any] = None,
+        data: Optional[DataType] = None,
     ) -> None:
         self.method = method
         self.url = url

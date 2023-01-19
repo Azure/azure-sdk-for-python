@@ -25,8 +25,6 @@
 # --------------------------------------------------------------------------
 from typing import Union, Optional
 
-IntOrFloat = Union[int, float]
-
 
 class Configuration:
     """Provides the home for all of the configurable policies in the pipeline.
@@ -97,8 +95,8 @@ class ConnectionConfiguration:
     Common properties that can be configured on all transports. Found in the
     Configuration object.
 
-    :keyword int connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
-    :keyword int read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
+    :keyword float connection_timeout: A single float in seconds for the connection timeout. Defaults to 300 seconds.
+    :keyword float read_timeout: A single float in seconds for the read timeout. Defaults to 300 seconds.
     :keyword connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :paramtype connection_verify: bool or str
@@ -119,11 +117,11 @@ class ConnectionConfiguration:
     def __init__(
         self,  # pylint: disable=unused-argument
         *,
-        connection_timeout: IntOrFloat = 300,
-        read_timeout: IntOrFloat = 300,
+        connection_timeout: float = 300,
+        read_timeout: float = 300,
         connection_verify: Union[bool, str] = True,
         connection_cert: Optional[str] = None,
-        connection_data_block_size: IntOrFloat = 4096,
+        connection_data_block_size: int = 4096,
         **kwargs
     ) -> None:
         self.timeout = connection_timeout

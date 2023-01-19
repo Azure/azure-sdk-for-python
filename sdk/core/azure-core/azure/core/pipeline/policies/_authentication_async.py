@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import asyncio
 import time
-from typing import TYPE_CHECKING, Any, Awaitable, Optional, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Optional
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
@@ -119,7 +119,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def on_response(
         self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> Union[None, Awaitable[None]]:
+    ) -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
