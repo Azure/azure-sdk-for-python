@@ -12,13 +12,12 @@ DESCRIPTION:
     This sample demos update_sync_token for the AzureAppConfigurationClient
 USAGE: python sync_token_samples.py
 """
-
+from typing import Any, Dict, List
 from azure.appconfiguration import AzureAppConfigurationClient
-from util import print_configuration_setting, get_connection_string
+from util import get_connection_string
 
 
-def handle_event_grid_notifications(event_grid_events):
-    # type: (List[dict[str, Any]]) -> None
+def handle_event_grid_notifications(event_grid_events: List[Dict[str, Any]]) -> None:
     CONNECTION_STRING = get_connection_string()
 
     all_keys = []

@@ -8,6 +8,8 @@ import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
+from azure.core import CaseInsensitiveEnumMeta
+
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
@@ -134,12 +136,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     @property
     def fully_qualified_reference(self):
         # type: () -> str
-        return "{}/{}{}{}".format(
-            _host_only(self._registry),
-            self._repository_name,
-            ":" if _is_tag(self._digest) else "@",
-            _strip_alg(self._digest)
-        )
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
     def _to_generated(self):
         # type: () -> ManifestWriteableProperties
@@ -342,7 +339,7 @@ class DownloadManifestResult(object):
         self.digest = kwargs.get("digest")
 
 
-class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AMD64 = "amd64"
     ARM = "arm"
@@ -359,7 +356,7 @@ class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AIX = "aix"
     ANDROID = "android"

@@ -28,7 +28,7 @@ class Compute(Resource, RestTranslatableMixin):
     :type type: str
     :param name: Name of the compute
     :type name: str
-    :param location: The resource location, defaults to None
+    :param location: The resource location, defaults to workspace location.
     :type location: Optional[str], optional
     :param description: Description of the resource.
     :type description: Optional[str], optional

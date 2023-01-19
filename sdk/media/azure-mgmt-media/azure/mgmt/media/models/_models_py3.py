@@ -56,7 +56,7 @@ class Codec(_serialization.Model):
         :paramtype label: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.label = label
 
 
@@ -64,7 +64,7 @@ class Audio(Codec):
     """Defines the common properties for all audio codecs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AacAudio
+    AacAudio, DDAudio
 
     All required parameters must be populated in order to send to Azure.
 
@@ -92,7 +92,7 @@ class Audio(Codec):
         "bitrate": {"key": "bitrate", "type": "int"},
     }
 
-    _subtype_map = {"odata_type": {"#Microsoft.Media.AacAudio": "AacAudio"}}
+    _subtype_map = {"odata_type": {"#Microsoft.Media.AacAudio": "AacAudio", "#Microsoft.Media.DDAudio": "DDAudio"}}
 
     def __init__(
         self,
@@ -115,7 +115,7 @@ class Audio(Codec):
         :paramtype bitrate: int
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.Audio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Audio"
         self.channels = channels
         self.sampling_rate = sampling_rate
         self.bitrate = bitrate
@@ -179,7 +179,7 @@ class AacAudio(Audio):
         :paramtype profile: str or ~azure.mgmt.media.models.AacAudioProfile
         """
         super().__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
-        self.odata_type = "#Microsoft.Media.AacAudio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AacAudio"
         self.profile = profile
 
 
@@ -213,7 +213,7 @@ class ClipTime(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AbsoluteClipTime(ClipTime):
@@ -245,7 +245,7 @@ class AbsoluteClipTime(ClipTime):
         :paramtype time: ~datetime.timedelta
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AbsoluteClipTime"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AbsoluteClipTime"
         self.time = time
 
 
@@ -1250,7 +1250,7 @@ class Preset(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioAnalyzerPreset(Preset):
@@ -1325,7 +1325,7 @@ class AudioAnalyzerPreset(Preset):
         :paramtype experimental_options: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioAnalyzerPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioAnalyzerPreset"
         self.audio_language = audio_language
         self.mode = mode
         self.experimental_options = experimental_options
@@ -1434,7 +1434,7 @@ class Overlay(_serialization.Model):
         :paramtype audio_gain_level: float
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.input_label = input_label
         self.start = start
         self.end = end
@@ -1547,7 +1547,7 @@ class AudioOverlay(Overlay):
             audio_gain_level=audio_gain_level,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.AudioOverlay"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioOverlay"
 
 
 class TrackBase(_serialization.Model):
@@ -1581,7 +1581,7 @@ class TrackBase(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioTrack(TrackBase):
@@ -1655,7 +1655,7 @@ class AudioTrack(TrackBase):
         :paramtype mpeg4_track_id: int
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioTrack"
         self.file_name = file_name
         self.display_name = display_name
         self.language_code = language_code
@@ -1695,7 +1695,7 @@ class TrackDescriptor(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class AudioTrackDescriptor(TrackDescriptor):
@@ -1740,7 +1740,7 @@ class AudioTrackDescriptor(TrackDescriptor):
         :paramtype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.AudioTrackDescriptor"  # type: str
+        self.odata_type: str = "#Microsoft.Media.AudioTrackDescriptor"
         self.channel_mapping = channel_mapping
 
 
@@ -1756,11 +1756,11 @@ class BuiltInStandardEncoderPreset(Preset):
     :vartype configurations: ~azure.mgmt.media.models.PresetConfigurations
     :ivar preset_name: The built-in preset to be used for encoding videos. Required. Known values
      are: "H264SingleBitrateSD", "H264SingleBitrate720p", "H264SingleBitrate1080p",
-     "AdaptiveStreaming", "AACGoodQualityAudio", "ContentAwareEncodingExperimental",
-     "ContentAwareEncoding", "CopyAllBitrateNonInterleaved", "H264MultipleBitrate1080p",
-     "H264MultipleBitrate720p", "H264MultipleBitrateSD", "H265ContentAwareEncoding",
-     "H265AdaptiveStreaming", "H265SingleBitrate720p", "H265SingleBitrate1080p", and
-     "H265SingleBitrate4K".
+     "AdaptiveStreaming", "AACGoodQualityAudio", "DDGoodQualityAudio",
+     "ContentAwareEncodingExperimental", "ContentAwareEncoding", "CopyAllBitrateNonInterleaved",
+     "H264MultipleBitrate1080p", "H264MultipleBitrate720p", "H264MultipleBitrateSD",
+     "H265ContentAwareEncoding", "H265AdaptiveStreaming", "H265SingleBitrate720p",
+     "H265SingleBitrate1080p", and "H265SingleBitrate4K".
     :vartype preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
     """
 
@@ -1788,15 +1788,15 @@ class BuiltInStandardEncoderPreset(Preset):
         :paramtype configurations: ~azure.mgmt.media.models.PresetConfigurations
         :keyword preset_name: The built-in preset to be used for encoding videos. Required. Known
          values are: "H264SingleBitrateSD", "H264SingleBitrate720p", "H264SingleBitrate1080p",
-         "AdaptiveStreaming", "AACGoodQualityAudio", "ContentAwareEncodingExperimental",
-         "ContentAwareEncoding", "CopyAllBitrateNonInterleaved", "H264MultipleBitrate1080p",
-         "H264MultipleBitrate720p", "H264MultipleBitrateSD", "H265ContentAwareEncoding",
-         "H265AdaptiveStreaming", "H265SingleBitrate720p", "H265SingleBitrate1080p", and
-         "H265SingleBitrate4K".
+         "AdaptiveStreaming", "AACGoodQualityAudio", "DDGoodQualityAudio",
+         "ContentAwareEncodingExperimental", "ContentAwareEncoding", "CopyAllBitrateNonInterleaved",
+         "H264MultipleBitrate1080p", "H264MultipleBitrate720p", "H264MultipleBitrateSD",
+         "H265ContentAwareEncoding", "H265AdaptiveStreaming", "H265SingleBitrate720p",
+         "H265SingleBitrate1080p", and "H265SingleBitrate4K".
         :paramtype preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.BuiltInStandardEncoderPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.BuiltInStandardEncoderPreset"
         self.configurations = configurations
         self.preset_name = preset_name
 
@@ -2158,7 +2158,7 @@ class ContentKeyPolicyConfiguration(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
@@ -2181,7 +2181,7 @@ class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
 
 
 class ContentKeyPolicyCollection(_serialization.Model):
@@ -2225,7 +2225,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar ask: The key that must be used as FairPlay Application Secret key. Required.
+    :ivar ask: The key that must be used as FairPlay Application Secret key. This needs to be
+     base64 encoded. Required.
     :vartype ask: bytes
     :ivar fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
      format. Required.
@@ -2278,7 +2279,8 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         **kwargs
     ):
         """
-        :keyword ask: The key that must be used as FairPlay Application Secret key. Required.
+        :keyword ask: The key that must be used as FairPlay Application Secret key. This needs to be
+         base64 encoded. Required.
         :paramtype ask: bytes
         :keyword fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
          format. Required.
@@ -2297,7 +2299,7 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
          ~azure.mgmt.media.models.ContentKeyPolicyFairPlayOfflineRentalConfiguration
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"
         self.ask = ask
         self.fair_play_pfx_password = fair_play_pfx_password
         self.fair_play_pfx = fair_play_pfx
@@ -2371,7 +2373,7 @@ class ContentKeyPolicyRestriction(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
@@ -2394,7 +2396,7 @@ class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyOpenRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyOpenRestriction"
 
 
 class ContentKeyPolicyOption(_serialization.Model):
@@ -2490,7 +2492,7 @@ class ContentKeyPolicyPlayReadyConfiguration(ContentKeyPolicyConfiguration):
         :paramtype response_custom_data: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"
         self.licenses = licenses
         self.response_custom_data = response_custom_data
 
@@ -2526,7 +2528,7 @@ class ContentKeyPolicyPlayReadyContentKeyLocation(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2549,7 +2551,7 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPl
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2579,7 +2581,7 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyP
         :paramtype key_id: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"
         self.key_id = key_id
 
 
@@ -2983,7 +2985,7 @@ class ContentKeyPolicyRestrictionTokenKey(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
@@ -3019,7 +3021,7 @@ class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
         :paramtype modulus: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"
         self.exponent = exponent
         self.modulus = modulus
 
@@ -3051,7 +3053,7 @@ class ContentKeyPolicySymmetricTokenKey(ContentKeyPolicyRestrictionTokenKey):
         :paramtype key_value: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"
         self.key_value = key_value
 
 
@@ -3162,7 +3164,7 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
         :paramtype open_id_connect_discovery_document: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyTokenRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyTokenRestriction"
         self.issuer = issuer
         self.audience = audience
         self.primary_verification_key = primary_verification_key
@@ -3192,7 +3194,7 @@ class ContentKeyPolicyUnknownConfiguration(ContentKeyPolicyConfiguration):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"
 
 
 class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
@@ -3215,7 +3217,7 @@ class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"
 
 
 class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
@@ -3245,7 +3247,7 @@ class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
         :paramtype widevine_template: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"
         self.widevine_template = widevine_template
 
 
@@ -3278,7 +3280,7 @@ class ContentKeyPolicyX509CertificateTokenKey(ContentKeyPolicyRestrictionTokenKe
         :paramtype raw_body: bytes
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"
         self.raw_body = raw_body
 
 
@@ -3309,7 +3311,7 @@ class CopyAudio(Codec):
         :paramtype label: str
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.CopyAudio"  # type: str
+        self.odata_type: str = "#Microsoft.Media.CopyAudio"
 
 
 class CopyVideo(Codec):
@@ -3339,7 +3341,7 @@ class CopyVideo(Codec):
         :paramtype label: str
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.CopyVideo"  # type: str
+        self.odata_type: str = "#Microsoft.Media.CopyVideo"
 
 
 class CrossSiteAccessPolicies(_serialization.Model):
@@ -3388,6 +3390,59 @@ class DashSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.role = role
+
+
+class DDAudio(Audio):
+    """Describes Dolby Digital Audio Codec (AC3) audio encoding settings. The current implementation for Dolby Digital Audio support are: Audio channel numbers at 1((mono), 2(stereo), 6(5.1side); Audio sampling frequency rates at: 32K/44.1K/48K Hz; Audio bitrate values as AC3 specification supports: 32000, 40000, 48000, 56000, 64000, 80000, 96000, 112000, 128000, 160000, 192000, 224000, 256000, 320000, 384000, 448000, 512000, 576000, 640000 bps.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: The discriminator for derived types. Required.
+    :vartype odata_type: str
+    :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
+    :vartype label: str
+    :ivar channels: The number of channels in the audio.
+    :vartype channels: int
+    :ivar sampling_rate: The sampling rate to use for encoding in hertz.
+    :vartype sampling_rate: int
+    :ivar bitrate: The bitrate, in bits per second, of the output encoded audio.
+    :vartype bitrate: int
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "channels": {"key": "channels", "type": "int"},
+        "sampling_rate": {"key": "samplingRate", "type": "int"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        label: Optional[str] = None,
+        channels: Optional[int] = None,
+        sampling_rate: Optional[int] = None,
+        bitrate: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword label: An optional label for the codec. The label can be used to control muxing
+         behavior.
+        :paramtype label: str
+        :keyword channels: The number of channels in the audio.
+        :paramtype channels: int
+        :keyword sampling_rate: The sampling rate to use for encoding in hertz.
+        :paramtype sampling_rate: int
+        :keyword bitrate: The bitrate, in bits per second, of the output encoded audio.
+        :paramtype bitrate: int
+        """
+        super().__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.DDAudio"
 
 
 class DefaultKey(_serialization.Model):
@@ -3877,11 +3932,66 @@ class FaceDetectorPreset(Preset):
         :paramtype experimental_options: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.FaceDetectorPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FaceDetectorPreset"
         self.resolution = resolution
         self.mode = mode
         self.blur_type = blur_type
         self.experimental_options = experimental_options
+
+
+class Fade(_serialization.Model):
+    """Describes the properties of a Fade effect applied to the input media.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar duration: The Duration of the fade effect in the video. The value can be in ISO 8601
+     format (For example, PT05S to fade In/Out a color during 5 seconds), or a frame count (For
+     example, 10 to fade 10 frames from the start time), or a relative value to stream duration (For
+     example, 10% to fade 10% of stream duration). Required.
+    :vartype duration: ~datetime.timedelta
+    :ivar fade_color: The Color for the fade In/Out. it can be on the CSS Level1 colors
+     https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color_keywords or an RGB/hex
+     value: e.g: rgb(255,0,0), 0xFF0000 or #FF0000. Required.
+    :vartype fade_color: str
+    :ivar start: The position in the input video from where to start fade. The value can be in ISO
+     8601 format (For example, PT05S to start at 5 seconds), or a frame count (For example, 10 to
+     start at the 10th frame), or a relative value to stream duration (For example, 10% to start at
+     10% of stream duration). Default is 0.
+    :vartype start: str
+    """
+
+    _validation = {
+        "duration": {"required": True},
+        "fade_color": {"required": True},
+    }
+
+    _attribute_map = {
+        "duration": {"key": "duration", "type": "duration"},
+        "fade_color": {"key": "fadeColor", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+    }
+
+    def __init__(self, *, duration: datetime.timedelta, fade_color: str, start: Optional[str] = None, **kwargs):
+        """
+        :keyword duration: The Duration of the fade effect in the video. The value can be in ISO 8601
+         format (For example, PT05S to fade In/Out a color during 5 seconds), or a frame count (For
+         example, 10 to fade 10 frames from the start time), or a relative value to stream duration (For
+         example, 10% to fade 10% of stream duration). Required.
+        :paramtype duration: ~datetime.timedelta
+        :keyword fade_color: The Color for the fade In/Out. it can be on the CSS Level1 colors
+         https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color_keywords or an RGB/hex
+         value: e.g: rgb(255,0,0), 0xFF0000 or #FF0000. Required.
+        :paramtype fade_color: str
+        :keyword start: The position in the input video from where to start fade. The value can be in
+         ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count (For example, 10
+         to start at the 10th frame), or a relative value to stream duration (For example, 10% to start
+         at 10% of stream duration). Default is 0.
+        :paramtype start: str
+        """
+        super().__init__(**kwargs)
+        self.duration = duration
+        self.fade_color = fade_color
+        self.start = start
 
 
 class Filters(_serialization.Model):
@@ -3895,6 +4005,10 @@ class Filters(_serialization.Model):
     :vartype rotation: str or ~azure.mgmt.media.models.Rotation
     :ivar crop: The parameters for the rectangular window with which to crop the input video.
     :vartype crop: ~azure.mgmt.media.models.Rectangle
+    :ivar fade_in: Describes the properties of a Fade effect applied to the input media.
+    :vartype fade_in: ~azure.mgmt.media.models.Fade
+    :ivar fade_out: Describes the properties of a Fade effect applied to the input media.
+    :vartype fade_out: ~azure.mgmt.media.models.Fade
     :ivar overlays: The properties of overlays to be applied to the input video. These could be
      audio, image or video overlays.
     :vartype overlays: list[~azure.mgmt.media.models.Overlay]
@@ -3904,6 +4018,8 @@ class Filters(_serialization.Model):
         "deinterlace": {"key": "deinterlace", "type": "Deinterlace"},
         "rotation": {"key": "rotation", "type": "str"},
         "crop": {"key": "crop", "type": "Rectangle"},
+        "fade_in": {"key": "fadeIn", "type": "Fade"},
+        "fade_out": {"key": "fadeOut", "type": "Fade"},
         "overlays": {"key": "overlays", "type": "[Overlay]"},
     }
 
@@ -3913,6 +4029,8 @@ class Filters(_serialization.Model):
         deinterlace: Optional["_models.Deinterlace"] = None,
         rotation: Optional[Union[str, "_models.Rotation"]] = None,
         crop: Optional["_models.Rectangle"] = None,
+        fade_in: Optional["_models.Fade"] = None,
+        fade_out: Optional["_models.Fade"] = None,
         overlays: Optional[List["_models.Overlay"]] = None,
         **kwargs
     ):
@@ -3925,6 +4043,10 @@ class Filters(_serialization.Model):
         :paramtype rotation: str or ~azure.mgmt.media.models.Rotation
         :keyword crop: The parameters for the rectangular window with which to crop the input video.
         :paramtype crop: ~azure.mgmt.media.models.Rectangle
+        :keyword fade_in: Describes the properties of a Fade effect applied to the input media.
+        :paramtype fade_in: ~azure.mgmt.media.models.Fade
+        :keyword fade_out: Describes the properties of a Fade effect applied to the input media.
+        :paramtype fade_out: ~azure.mgmt.media.models.Fade
         :keyword overlays: The properties of overlays to be applied to the input video. These could be
          audio, image or video overlays.
         :paramtype overlays: list[~azure.mgmt.media.models.Overlay]
@@ -3933,6 +4055,8 @@ class Filters(_serialization.Model):
         self.deinterlace = deinterlace
         self.rotation = rotation
         self.crop = crop
+        self.fade_in = fade_in
+        self.fade_out = fade_out
         self.overlays = overlays
 
 
@@ -4049,16 +4173,17 @@ class Format(_serialization.Model):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
@@ -4081,20 +4206,21 @@ class Format(_serialization.Model):
 
     def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.filename_pattern = filename_pattern
 
 
@@ -4137,7 +4263,7 @@ class InputDefinition(_serialization.Model):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.included_tracks = included_tracks
 
 
@@ -4169,7 +4295,7 @@ class FromAllInputFile(InputDefinition):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.FromAllInputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FromAllInputFile"
 
 
 class FromEachInputFile(InputDefinition):
@@ -4200,7 +4326,7 @@ class FromEachInputFile(InputDefinition):
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.FromEachInputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.FromEachInputFile"
 
 
 class Layer(_serialization.Model):
@@ -4619,7 +4745,7 @@ class Video(Codec):
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
         """
         super().__init__(label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Video"
         self.key_frame_interval = key_frame_interval
         self.stretch_mode = stretch_mode
         self.sync_mode = sync_mode
@@ -4720,7 +4846,7 @@ class H264Video(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.H264Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.H264Video"
         self.complexity = complexity
         self.layers = layers
         self.rate_control_mode = rate_control_mode
@@ -5111,7 +5237,7 @@ class H265Video(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.H265Video"  # type: str
+        self.odata_type: str = "#Microsoft.Media.H265Video"
         self.scene_change_detection = scene_change_detection
         self.complexity = complexity
         self.layers = layers
@@ -5309,7 +5435,7 @@ class Image(Video):
         super().__init__(
             label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
         )
-        self.odata_type = "#Microsoft.Media.Image"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Image"
         self.start = start
         self.step = step
         self.range = range
@@ -5325,16 +5451,17 @@ class ImageFormat(Format):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
@@ -5354,20 +5481,21 @@ class ImageFormat(Format):
 
     def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.ImageFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.ImageFormat"
 
 
 class InputFile(InputDefinition):
@@ -5409,7 +5537,7 @@ class InputFile(InputDefinition):
         :paramtype filename: str
         """
         super().__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = "#Microsoft.Media.InputFile"  # type: str
+        self.odata_type: str = "#Microsoft.Media.InputFile"
         self.filename = filename
 
 
@@ -5619,12 +5747,12 @@ class JobError(_serialization.Model):
     :ivar code: Error code describing the error. Known values are: "ServiceError",
      "ServiceTransientError", "DownloadNotAccessible", "DownloadTransientError",
      "UploadNotAccessible", "UploadTransientError", "ConfigurationUnsupported", "ContentMalformed",
-     and "ContentUnsupported".
+     "ContentUnsupported", and "IdentityUnsupported".
     :vartype code: str or ~azure.mgmt.media.models.JobErrorCode
     :ivar message: A human-readable language-dependent representation of the error.
     :vartype message: str
     :ivar category: Helps with categorization of errors. Known values are: "Service", "Download",
-     "Upload", "Configuration", and "Content".
+     "Upload", "Configuration", "Content", and "Account".
     :vartype category: str or ~azure.mgmt.media.models.JobErrorCategory
     :ivar retry: Indicates that it may be possible to retry the Job. If retry is unsuccessful,
      please contact Azure support via Azure Portal. Known values are: "DoNotRetry" and "MayRetry".
@@ -5718,7 +5846,7 @@ class JobInput(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
 
 
 class JobInputClip(JobInput):
@@ -5802,7 +5930,7 @@ class JobInputClip(JobInput):
         :paramtype input_definitions: list[~azure.mgmt.media.models.InputDefinition]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputClip"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputClip"
         self.files = files
         self.start = start
         self.end = end
@@ -5888,7 +6016,7 @@ class JobInputAsset(JobInputClip):
         :paramtype asset_name: str
         """
         super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputAsset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputAsset"
         self.asset_name = asset_name
 
 
@@ -5975,7 +6103,7 @@ class JobInputHttp(JobInputClip):
         :paramtype base_uri: str
         """
         super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputHttp"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputHttp"
         self.base_uri = base_uri
 
 
@@ -6005,7 +6133,7 @@ class JobInputs(JobInput):
         :paramtype inputs: list[~azure.mgmt.media.models.JobInput]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputs"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputs"
         self.inputs = inputs
 
 
@@ -6035,7 +6163,7 @@ class JobInputSequence(JobInput):
         :paramtype inputs: list[~azure.mgmt.media.models.JobInputClip]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.JobInputSequence"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobInputSequence"
         self.inputs = inputs
 
 
@@ -6120,7 +6248,7 @@ class JobOutput(_serialization.Model):
         :paramtype label: str
         """
         super().__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        self.odata_type: Optional[str] = None
         self.error = None
         self.preset_override = preset_override
         self.state = None
@@ -6219,7 +6347,7 @@ class JobOutputAsset(JobOutput):
         :paramtype asset_name: str
         """
         super().__init__(preset_override=preset_override, label=label, **kwargs)
-        self.odata_type = "#Microsoft.Media.JobOutputAsset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JobOutputAsset"
         self.asset_name = asset_name
 
 
@@ -6230,16 +6358,17 @@ class JpgFormat(ImageFormat):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
@@ -6255,20 +6384,21 @@ class JpgFormat(ImageFormat):
 
     def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.JpgFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JpgFormat"
 
 
 class JpgImage(Image):
@@ -6422,7 +6552,7 @@ class JpgImage(Image):
             range=range,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.JpgImage"  # type: str
+        self.odata_type: str = "#Microsoft.Media.JpgImage"
         self.layers = layers
         self.sprite_column = sprite_column
 
@@ -8043,16 +8173,17 @@ class MultiBitrateFormat(Format):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -8079,23 +8210,24 @@ class MultiBitrateFormat(Format):
 
     def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.MultiBitrateFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.MultiBitrateFormat"
         self.output_files = output_files
 
 
@@ -8106,16 +8238,17 @@ class Mp4Format(MultiBitrateFormat):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -8135,23 +8268,24 @@ class Mp4Format(MultiBitrateFormat):
 
     def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = "#Microsoft.Media.Mp4Format"  # type: str
+        self.odata_type: str = "#Microsoft.Media.Mp4Format"
 
 
 class NoEncryption(_serialization.Model):
@@ -8347,16 +8481,17 @@ class PngFormat(ImageFormat):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
@@ -8372,20 +8507,21 @@ class PngFormat(ImageFormat):
 
     def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
         super().__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = "#Microsoft.Media.PngFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.PngFormat"
 
 
 class PngImage(Image):
@@ -8525,7 +8661,7 @@ class PngImage(Image):
             range=range,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.PngImage"  # type: str
+        self.odata_type: str = "#Microsoft.Media.PngImage"
         self.layers = layers
 
 
@@ -9126,7 +9262,7 @@ class SelectAudioTrackByAttribute(AudioTrackDescriptor):
         :paramtype filter_value: str
         """
         super().__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = "#Microsoft.Media.SelectAudioTrackByAttribute"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9172,7 +9308,7 @@ class SelectAudioTrackById(AudioTrackDescriptor):
         :paramtype track_id: int
         """
         super().__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = "#Microsoft.Media.SelectAudioTrackById"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackById"
         self.track_id = track_id
 
 
@@ -9206,7 +9342,7 @@ class VideoTrackDescriptor(TrackDescriptor):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.VideoTrackDescriptor"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoTrackDescriptor"
 
 
 class SelectVideoTrackByAttribute(VideoTrackDescriptor):
@@ -9264,7 +9400,7 @@ class SelectVideoTrackByAttribute(VideoTrackDescriptor):
         :paramtype filter_value: str
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.SelectVideoTrackByAttribute"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9297,7 +9433,7 @@ class SelectVideoTrackById(VideoTrackDescriptor):
         :paramtype track_id: int
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.SelectVideoTrackById"  # type: str
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackById"
         self.track_id = track_id
 
 
@@ -9336,6 +9472,9 @@ class StandardEncoderPreset(Preset):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
+    :ivar experimental_options: Dictionary containing key value pairs for parameters not exposed in
+     the preset itself.
+    :vartype experimental_options: dict[str, str]
     :ivar filters: One or more filtering operations that are applied to the input media before
      encoding.
     :vartype filters: ~azure.mgmt.media.models.Filters
@@ -9353,6 +9492,7 @@ class StandardEncoderPreset(Preset):
 
     _attribute_map = {
         "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "experimental_options": {"key": "experimentalOptions", "type": "{str}"},
         "filters": {"key": "filters", "type": "Filters"},
         "codecs": {"key": "codecs", "type": "[Codec]"},
         "formats": {"key": "formats", "type": "[Format]"},
@@ -9363,10 +9503,14 @@ class StandardEncoderPreset(Preset):
         *,
         codecs: List["_models.Codec"],
         formats: List["_models.Format"],
+        experimental_options: Optional[Dict[str, str]] = None,
         filters: Optional["_models.Filters"] = None,
         **kwargs
     ):
         """
+        :keyword experimental_options: Dictionary containing key value pairs for parameters not exposed
+         in the preset itself.
+        :paramtype experimental_options: dict[str, str]
         :keyword filters: One or more filtering operations that are applied to the input media before
          encoding.
         :paramtype filters: ~azure.mgmt.media.models.Filters
@@ -9376,7 +9520,8 @@ class StandardEncoderPreset(Preset):
         :paramtype formats: list[~azure.mgmt.media.models.Format]
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.StandardEncoderPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.StandardEncoderPreset"
+        self.experimental_options = experimental_options
         self.filters = filters
         self.codecs = codecs
         self.formats = formats
@@ -10485,7 +10630,7 @@ class TextTrack(TrackBase):
         :paramtype hls_settings: ~azure.mgmt.media.models.HlsSettings
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.TextTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.TextTrack"
         self.file_name = file_name
         self.display_name = display_name
         self.language_code = None
@@ -10723,16 +10868,17 @@ class TransportStreamFormat(MultiBitrateFormat):
 
     :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: The pattern of the file names for the generated output files. The
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
      following macros are supported in the file name: {Basename} - An expansion macro that will use
      the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -10752,23 +10898,24 @@ class TransportStreamFormat(MultiBitrateFormat):
 
     def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: The pattern of the file names for the generated output files. The
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
          following macros are supported in the file name: {Basename} - An expansion macro that will use
          the name of the input video file. If the base name(the file suffix is not included) of the
          input video file is less than 32 characters long, the base name of input video files will be
          used. If the length of base name of the input video file exceeds 32 characters, the base name
          is truncated to the first 32 characters in total length. {Extension} - The appropriate
          extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-         index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-         applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-         resolution. Any unsubstituted macros will be collapsed and removed from the filename. Required.
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
         super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = "#Microsoft.Media.TransportStreamFormat"  # type: str
+        self.odata_type: str = "#Microsoft.Media.TransportStreamFormat"
 
 
 class UserAssignedManagedIdentity(_serialization.Model):
@@ -10827,7 +10974,7 @@ class UtcClipTime(ClipTime):
         :paramtype time: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.UtcClipTime"  # type: str
+        self.odata_type: str = "#Microsoft.Media.UtcClipTime"
         self.time = time
 
 
@@ -10918,7 +11065,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
         :paramtype insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
         """
         super().__init__(audio_language=audio_language, mode=mode, experimental_options=experimental_options, **kwargs)
-        self.odata_type = "#Microsoft.Media.VideoAnalyzerPreset"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoAnalyzerPreset"
         self.insights_to_extract = insights_to_extract
 
 
@@ -11047,7 +11194,7 @@ class VideoOverlay(Overlay):
             audio_gain_level=audio_gain_level,
             **kwargs
         )
-        self.odata_type = "#Microsoft.Media.VideoOverlay"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoOverlay"
         self.position = position
         self.opacity = opacity
         self.crop_rectangle = crop_rectangle
@@ -11073,4 +11220,4 @@ class VideoTrack(TrackBase):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.odata_type = "#Microsoft.Media.VideoTrack"  # type: str
+        self.odata_type: str = "#Microsoft.Media.VideoTrack"

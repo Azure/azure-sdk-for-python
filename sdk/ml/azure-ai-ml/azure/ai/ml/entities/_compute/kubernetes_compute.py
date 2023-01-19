@@ -41,7 +41,7 @@ class KubernetesCompute(Compute):
     def __init__(
         self,
         *,
-        namespace: Optional[str] = "default",
+        namespace: str = "default",
         properties: Optional[Dict[str, Any]] = None,
         identity: Optional[IdentityConfiguration] = None,
         **kwargs,

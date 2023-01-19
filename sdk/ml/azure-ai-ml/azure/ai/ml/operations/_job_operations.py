@@ -83,7 +83,7 @@ from azure.ai.ml.exceptions import (
     ErrorTarget,
     JobException,
     JobParsingError,
-    MLException,
+    MlException,
     PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
@@ -509,8 +509,7 @@ class JobOperations(_ScopeDependentOperations):
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
             if hasattr(rest_job_resource.properties, "identity") and (
-                rest_job_resource.properties.identity is None
-                or isinstance(rest_job_resource.properties.identity, UserIdentity)
+                isinstance(rest_job_resource.properties.identity, UserIdentity)
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
@@ -642,7 +641,7 @@ class JobOperations(_ScopeDependentOperations):
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MLException: Raised if logs and outputs cannot be successfully downloaded.
+        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
             Details will be provided in the error message.
         """
         job_details = self.get(name)
@@ -845,8 +844,9 @@ class JobOperations(_ScopeDependentOperations):
         if isinstance(job, PipelineJob):
             # Resolve top-level inputs
             self._resolve_pipeline_job_inputs(job, job._base_path)
-            if job.jobs:
-                self._component_operations._resolve_inputs_for_pipeline_component_jobs(job.jobs, job.base_path)
+            # inputs in sub-pipelines has been resolved in
+            # self._resolve_arm_id_or_azureml_id(job, self._orchestrators.get_asset_arm_id)
+            # as they are part of the pipeline component
         elif isinstance(job, AutoMLJob):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, Spark):
@@ -996,7 +996,12 @@ class JobOperations(_ScopeDependentOperations):
 
                 entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
-                local_path = Path(base_path, entry.path).resolve()
+                # Base path will be None for dsl pipeline component for now. We have 2 choices if the dsl pipeline
+                # function is imported from another file:
+                # 1) Use cwd as default base path;
+                # 2) Use the file path of the dsl pipeline function as default base path.
+                # Pick solution 1 for now as defining input path in the script to submit is a more common scenario.
+                local_path = Path(base_path or Path.cwd(), entry.path).resolve()
                 entry.path = _upload_and_generate_remote_uri(
                     self._operation_scope,
                     self._datastore_operations,
@@ -1007,7 +1012,7 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ValidationException(
@@ -1170,16 +1175,17 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         # Process each component job
-        if pipeline_job.jobs:
-            try:
-                self._component_operations._resolve_arm_id_for_pipeline_component_jobs(pipeline_job.jobs, resolver)
-            except ComponentException as e:
-                raise JobException(
-                    message=e.message,
-                    target=ErrorTarget.JOB,
-                    no_personal_data_message=e.no_personal_data_message,
-                    error_category=e.error_category,
-                )
+        try:
+            self._component_operations._resolve_dependencies_for_pipeline_component_jobs(
+                pipeline_job.component, resolver
+            )
+        except ComponentException as e:
+            raise JobException(
+                message=e.message,
+                target=ErrorTarget.JOB,
+                no_personal_data_message=e.no_personal_data_message,
+                error_category=e.error_category,
+            )
 
         # Create a pipeline component for pipeline job if user specified component in job yaml.
         if (
@@ -1213,9 +1219,28 @@ class JobOperations(_ScopeDependentOperations):
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
-        azure_ml_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        aml_resource_id = _get_aml_resource_id_from_metadata()
+        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
         aml_token = self._credential.get_token(*azure_ml_scopes).token
+        # validate token has aml audience
+        decoded_token = jwt.decode(
+            aml_token,
+            options={"verify_signature": False, "verify_aud": False},
+        )
+        if decoded_token.get("aud") != aml_resource_id:
+            msg = """AAD token with aml scope could not be fetched using the credentials being used.
+            Please validate if token with {0} scope can be fetched using credentials provided to MLClient.
+            Token with {0} scope can be fetched using credentials.get_token({0})
+            """
+            raise ValidationException(
+                message=msg.format(*azure_ml_scopes),
+                target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
+                no_personal_data_message=msg.format("[job.code]"),
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         headers = kwargs.pop("headers", {})
         headers["x-azureml-token"] = aml_token
         kwargs["headers"] = headers

@@ -10,7 +10,6 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._restclient.v2021_10_01.models import UriReference
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
@@ -50,7 +49,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MLException,
+    MlException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -140,10 +139,13 @@ class OperationOrchestrator(object):
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
                 # Short form of curated env will be expanded on the backend side.
                 # CLI strips off azureml: in the schema, appending it back as required by backend
-                if azureml_type == "environments" and (
-                    asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}")
-                ):
-                    return f"azureml:{asset}"
+                if azureml_type == AzureMLResourceType.ENVIRONMENT:
+                    azureml_prefix = "azureml:"
+                    # return the same value if resolved result is passed in
+                    _asset = asset[len(azureml_prefix):] if asset.startswith(azureml_prefix) else asset
+                    if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
+                            REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"):
+                        return f"{azureml_prefix}{_asset}"
 
                 name, label = parse_name_label(asset)
                 # TODO: remove this condition after label is fully supported for all versioned resources
@@ -267,7 +269,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -316,7 +318,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(
@@ -429,15 +431,10 @@ class OperationOrchestrator(object):
             and id_.workspace_name == self._operation_scope.workspace_name
         )
 
-    def _validate_datastore_name(self, datastore_uri: Optional[Union[UriReference, str, PathLike]]) -> None:
+    def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
         if datastore_uri:
             try:
-                if isinstance(datastore_uri, UriReference):
-                    if datastore_uri.file:
-                        datastore_uri = datastore_uri.file
-                    else:
-                        datastore_uri = datastore_uri.folder
-                elif isinstance(datastore_uri, str):
+                if isinstance(datastore_uri, str):
                     if datastore_uri.startswith(FILE_PREFIX):
                         datastore_uri = datastore_uri[len(FILE_PREFIX) :]
                     elif datastore_uri.startswith(FOLDER_PREFIX):

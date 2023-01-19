@@ -59,23 +59,23 @@ def component_operations(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_aml_services_2022_10_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
 @pytest.fixture
 def mock_code_assets_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_datastore_operations: DatastoreOperations,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
     )
 

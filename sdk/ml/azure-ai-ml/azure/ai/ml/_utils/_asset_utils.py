@@ -32,8 +32,8 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    DatasetVersionData,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
@@ -109,9 +109,11 @@ class IgnoreFile(object):
         file_path = Path(file_path)
         if file_path.is_absolute():
             ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
+            try:
+                file_path = os.path.relpath(file_path, ignore_dirname)
+            except ValueError:
+                # 2 paths are on different drives
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
         file_path = str(file_path)
         norm_file = normalize_file(file_path)
@@ -682,6 +684,51 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+def _get_latest_version_from_container(
+    asset_name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.latest_version
+
+    except ResourceNotFoundError:
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        raise ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+        )
+    return version
 
 def _get_latest(
     asset_name: str,
@@ -691,7 +738,7 @@ def _get_latest(
     registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersionData, DatasetVersionData]:
+) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
     Latest is defined as the most recently created, not the most
@@ -725,8 +772,16 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
-        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,

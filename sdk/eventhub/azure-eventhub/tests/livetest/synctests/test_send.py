@@ -11,6 +11,8 @@ import time
 import json
 import sys
 
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
@@ -61,52 +63,27 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub, uamqp_transpo
     batch_cnt = 0
     single_cnt = 0
     found_partition_keys = {}
-    reconnect_receivers = []
     for index, partition in enumerate(receivers):
         retry_total = 0
         while retry_total < 3:
             timeout = (5 + retry_total) * timeout_factor
-            try:
-                received = partition.receive_message_batch(timeout=timeout)
-                for message in received:
-                    try:
-                        event_data = EventData._from_message(message)
-                        if event_data.properties and event_data.properties[b'is_single']:
-                            single_cnt += 1
-                        else:
-                            batch_cnt += 1
-                        existing = found_partition_keys[event_data.partition_key]
-                        assert existing == index
-                    except KeyError:
-                        found_partition_keys[event_data.partition_key] = index
-                if received:
-                    break
-                retry_total += 1
-            except AMQPConnectionError:
-                for r in reconnect_receivers:
-                    r.close()
-                uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-                source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-                    live_eventhub['hostname'],
-                    live_eventhub['event_hub'],
-                    live_eventhub['consumer_group'],
-                    index)
-                if uamqp_transport:
-                    sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
-                        uri, live_eventhub['key_name'], live_eventhub['access_key'])
-                    partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
-                else:
-                    sas_auth = SASTokenAuth(
-                        uri, uri, live_eventhub['key_name'], live_eventhub['access_key'])
-                    partition = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=0, link_credit=500)
-                partition.open()
-                reconnect_receivers.append(partition)
-                retry_total += 1
-        if retry_total == 3:
+            received = partition.receive_message_batch(timeout=timeout)
+            for message in received:
+                try:
+                    event_data = EventData._from_message(message)
+                    if event_data.properties and event_data.properties[b'is_single']:
+                        single_cnt += 1
+                    else:
+                        batch_cnt += 1
+                    existing = found_partition_keys[event_data.partition_key]
+                    assert existing == index
+                except KeyError:
+                    found_partition_keys[event_data.partition_key] = index
+            if received:
+                break
+            retry_total += 1
+        if retry_total >= 3:
             raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
-
-    for r in reconnect_receivers:
-        r.close()
 
     assert single_cnt == 60
     assert batch_cnt == 60
@@ -261,22 +238,41 @@ def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
 @pytest.mark.parametrize("payload",
                          [b"", b"A single event"])
 @pytest.mark.liveTest
-def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport, timeout_factor):
+def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport, timeout_factor, fake_span):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    with client:
-        batch = client.create_batch()
-        batch.add(EventData(payload))
-        client.send_batch(batch)
-        client.send_event(EventData(payload))
-    received = []
-    timeout = 5 * timeout_factor
-    for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
+
+    settings.tracing_implementation.set_value(fake_span)
+    with fake_span(name="SendTest") as root_span:
+        client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+        with client:
+            batch = client.create_batch()
+            batch.add(EventData(payload))
+            client.send_batch(batch)
+            client.send_event(EventData(payload))
+        received = []
+        timeout = 5 * timeout_factor
+        for r in receivers:
+            received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
     assert len(received) == 2
     assert list(received[0].body)[0] == payload
     assert list(received[1].body)[0] == payload
+
+    # TODO: check for send/message span links and traceparents (issue #28141).
+    # Will need to modify FakeSpan in conftest.
+    assert root_span.name == "SendTest"
+    assert len(root_span.children[0].children) == 3
+    assert root_span.children[0].children[0].name == "Azure.EventHubs.message"
+    assert root_span.children[0].children[0].kind == SpanKind.PRODUCER
+    assert root_span.children[0].children[1].name == "Azure.EventHubs.send"
+    assert root_span.children[0].children[1].kind == SpanKind.CLIENT
+    assert root_span.children[0].children[2].name == "Azure.EventHubs.send"
+    assert root_span.children[0].children[2].kind == SpanKind.CLIENT
+    assert len(root_span.children[0].children[2].children) == 1
+    assert root_span.children[0].children[2].children[0].name == "Azure.EventHubs.message"
+    assert root_span.children[0].children[2].children[0].kind == SpanKind.PRODUCER
+    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
+    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest

@@ -132,6 +132,16 @@ class InputOutputBase(ABC):
     def description(self) -> str:
         return self._description
 
+    @description.setter
+    def description(self, description):
+        # For un-configured input/output, we build a default data entry for them.
+        self._build_default_data()
+        self._description = description
+        if isinstance(self._data, (Input, Output)):
+            self._data.description = description
+        else:
+            self._data._description = description
+
     @property
     def path(self) -> str:
         # This property is introduced for static intellisense.
@@ -591,7 +601,7 @@ class PipelineOutput(NodeOutput):
         if self._data is None and self._meta and self._meta.type:
             # For un-configured pipeline output with meta, we need to return Output with accurate type,
             # so it won't default to uri_folder.
-            return Output(type=self._meta.type)
+            return Output(type=self._meta.type, mode=self._meta.mode, description=self._meta.description)
 
         return super(PipelineOutput, self)._to_job_output()
 

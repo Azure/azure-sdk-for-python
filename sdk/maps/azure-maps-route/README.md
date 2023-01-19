@@ -109,27 +109,27 @@ The following sections provide several code snippets covering some of the most c
 
 ### Request and Get Route Directions
 
-This service request returns a route between an origin and a destination, passing through waypoints if they are specified. The route will take into account factors such as current traffic and the typical road speeds on the requested day of the week and time of day.
+This service request returns a route between an origin and a destination, passing through waypoints if they are specified. The route will take into account factors such as current traffic and the typical road speeds on the requested day of the week and time of day. Refer the sample code [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_directions.py).
 
 ```python
 from azure.maps.route import MapsRouteClient
 
-route_directions_result = client.get_route_directions(route_points=[LatLon(47.60323, -122.33028), LatLon(53.2, -106)]);
+route_directions_result = client.get_route_directions(route_points=[(47.60323, -122.33028), (53.2, -106)]);
 ```
 
 ### Request and Get Route Range
 
-This service will calculate a set of locations that can be reached from the origin point by given coordinates and based on fuel, energy,  time or distance budget that is specified.
+This service will calculate a set of locations that can be reached from the origin point by given coordinates and based on fuel, energy,  time or distance budget that is specified. Refer the sample code [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_range.py).
 
 ```python
 from azure.maps.route import MapsRouteClient
 
-route_range_result = client.get_route_range(coordinates=LatLon(47.60323, -122.33028), time_budget_in_sec=6000);
+route_range_result = client.get_route_range(coordinates=(47.60323, -122.33028), time_budget_in_sec=6000);
 ```
 
 ### Get Route Matrix
 
-If the Matrix Route request was accepted successfully, the Location header in the response contains the URL to download the results of the request.
+If the Matrix Route request was accepted successfully, the Location header in the response contains the URL to download the results of the request. Refer the sample code [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_matrix.py).
 
 Retrieves the result of a previous route matrix request.
 The method returns a poller for retrieving the result.
@@ -143,7 +143,7 @@ route_matrix_result = client.begin_get_route_matrix_result(matrix_id="11111111-2
 ### Get Route Directions Batch
 
 Retrieves the result of a previous route direction batch request.
-The method returns a poller for retrieving the result.
+The method returns a poller for retrieving the result. Refer sample code [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_directions_batch_sync.py).
 
 ```python
 from azure.maps.route import MapsRouteClient

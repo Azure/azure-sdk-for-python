@@ -199,7 +199,7 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
         train_job.inputs.training_data.mode = InputOutputModes.MOUNT
         train_job.outputs.model_output.mode = InputOutputModes.MOUNT
         return {
-            "trained_model": train_job.outputs.model_output,
+            "output": train_job.outputs.model_output,
         }
 
     @dsl.pipeline(
@@ -219,10 +219,10 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
             learning_rate_schedule=pipeline_learning_rate_schedule,
         )
         subgraph1.inputs.training_input.mode = InputOutputModes.RO_MOUNT
-        subgraph1.outputs.trained_model.mode = InputOutputModes.UPLOAD
+        subgraph1.outputs.output.mode = InputOutputModes.UPLOAD
 
         return {
-            "pipeline_trained_model": subgraph1.outputs.trained_model,
+            "pipeline_trained_model": subgraph1.outputs.output,
         }
 
     pipeline_job = e2e_local_components(
