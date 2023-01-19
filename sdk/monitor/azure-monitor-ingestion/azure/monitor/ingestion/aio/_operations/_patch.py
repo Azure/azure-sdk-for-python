@@ -55,11 +55,14 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if isinstance(logs, IOBase):
-            # Check if the stream is gzip-compressed.
+            if not logs.readable():
+                raise ValueError("The 'logs' stream must be readable.")
             content_encoding = None
-            if logs.read(2) == GZIP_MAGIC_NUMBER:
-                content_encoding = "gzip"
-            logs.seek(0)
+            # Check if the stream is gzip-compressed if stream is seekable.
+            if logs.seekable():
+                if logs.read(2) == GZIP_MAGIC_NUMBER:
+                    content_encoding = "gzip"
+                logs.seek(0)
 
             await super().upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
