@@ -763,7 +763,7 @@ class ReceiveClient(AMQPClient):
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
         self._timeout_reached = False
-        self._generator_timeout = 10
+        self._generator_timeout = 3
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -933,7 +933,7 @@ class ReceiveClient(AMQPClient):
                     self._timeout_reached = True
                 while not self._received_messages.empty():
                     # self._generator_timeout = time.time()
-                    self._generator_timeout = 10
+                    self._generator_timeout = 3
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
