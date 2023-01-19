@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+  - Added new enum values related to DataBox and ApiManagementGateway.
 
 ## 4.9.1 (2022-11-08)
 
