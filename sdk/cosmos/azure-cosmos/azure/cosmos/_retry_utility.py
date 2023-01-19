@@ -33,6 +33,7 @@ from . import _resource_throttle_retry_policy
 from . import _default_retry_policy
 from . import _session_retry_policy
 from . import _gone_retry_policy
+from . import _timeout_failover_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -67,15 +68,22 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
     )
+
     partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
+
+    timeout_failover_retry_policy = _timeout_failover_retry_policy(
+        client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
+    )
 
     while True:
         try:
             client_timeout = kwargs.get('timeout')
             start_time = time.time()
             if args:
+                print("EXE FUN 1")
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
+                print("EXE FUN 2")
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
@@ -90,6 +98,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
             return result
         except exceptions.CosmosHttpResponseError as e:
+            print(" GOT TO ERROR")
             retry_policy = None
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
@@ -103,6 +112,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
+            elif (e.status_code == StatusCodes.REQUEST_TIMEOUT):
+                print("TIMEOUT RETRY POLICY SET")
+                retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
 
@@ -134,7 +146,6 @@ def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
     """
     return function(*args, **kwargs)
-
 
 def _configure_timeout(request, absolute, per_request):
     # type: (azure.core.pipeline.PipelineRequest, Optional[int], int) -> Optional[AzureError]
