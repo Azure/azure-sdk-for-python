@@ -1009,6 +1009,6 @@ class TestCommandFunction:
         with pytest.raises(ValidationException) as e:
             test_command(1)
         msg = "Component function doesn't support positional arguments, got (1,) " \
-              "for my_job. Please use keyword arguments like this " \
+              "for my_job. Please use keyword arguments like: " \
               "component_func(float=xxx, integer=xxx, string=xxx, boolean=xxx, uri_folder=xxx, uri_file=xxx)."
         assert msg in str(e.value)

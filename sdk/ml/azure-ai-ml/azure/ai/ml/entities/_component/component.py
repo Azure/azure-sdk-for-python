@@ -514,7 +514,7 @@ class Component(
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:
                 msg = f"Component function doesn't support positional arguments, got {args} for {self.name}. " \
-                      f"Please use keyword arguments like this {self._func._func_calling_example}."
+                      f"Please use keyword arguments like: {self._func._func_calling_example}."
             else:
                 msg = "Component function doesn't has any parameters, " \
                       f"please make sure component {self.name} has inputs. "
