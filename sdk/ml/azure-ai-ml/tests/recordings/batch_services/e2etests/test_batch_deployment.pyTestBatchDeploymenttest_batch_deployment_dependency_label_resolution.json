@@ -1,7 +1,11 @@
 {
   "Entries": [
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/foo?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/foo?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +13,11 @@
         "Connection": "keep-alive",
         "Content-Length": "372",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "properties": {
@@ -23,6 +31,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
+<<<<<<< HEAD
         "Content-Length": "1190",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 18 Jan 2023 18:11:28 GMT",
@@ -42,6 +51,27 @@
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/foo",
+=======
+        "Content-Length": "1202",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:49:42 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/foo?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-6b9465f2d1af459a172c0a56bb134658-7431c23483ebd5c5-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "d2ead702-30ed-4b9c-a4fd-2a46ef18a0dc",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184942Z:d2ead702-30ed-4b9c-a4fd-2a46ef18a0dc",
+        "x-request-time": "1.822"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/foo",
+>>>>>>> parent of a5566183de... Update recordings
         "name": "foo",
         "type": "Microsoft.MachineLearningServices/workspaces/environments/versions",
         "properties": {
@@ -56,17 +86,29 @@
           "osType": "Linux"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:27.2612247\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-18T18:11:27.2612247\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
+=======
+          "createdAt": "2022-11-04T18:49:41.0182218\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-11-04T18:49:41.0182218\u002B00:00",
+          "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -74,7 +116,11 @@
         "Connection": "keep-alive",
         "Content-Length": "372",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "properties": {
@@ -88,6 +134,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
+<<<<<<< HEAD
         "Content-Length": "1190",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 18 Jan 2023 18:11:29 GMT",
@@ -107,6 +154,27 @@
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+        "Content-Length": "1200",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:49:43 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-3f7e5c1bfcab0b8fa76263928c3c2844-baac1a12c1344cfe-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "403baa8f-72e3-4b51-a059-9c024bfd3c1b",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184943Z:403baa8f-72e3-4b51-a059-9c024bfd3c1b",
+        "x-request-time": "0.372"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
         "name": "bar",
         "type": "Microsoft.MachineLearningServices/workspaces/environments/versions",
         "properties": {
@@ -121,23 +189,39 @@
           "osType": "Linux"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:29.0403166\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-18T18:11:29.0403166\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
+=======
+          "createdAt": "2022-11-04T18:49:43.237944\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-11-04T18:49:43.237944\u002B00:00",
+          "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore?api-version=2022-10-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -145,17 +229,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:30 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-034410634b82daa567c6c1b06d947f21-1d2e631074c28c92-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-111ec6e241cbe961f9a8c3d9c14cf04b-8b724b4f59829952-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "0effbf42-0233-4149-aeb0-f0d1ca4c798b",
@@ -163,6 +256,15 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181130Z:0effbf42-0233-4149-aeb0-f0d1ca4c798b",
         "x-request-time": "0.154"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "c65107ae-52e6-4b06-9355-5b4066461758",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184944Z:c65107ae-52e6-4b06-9355-5b4066461758",
+        "x-request-time": "0.183"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
@@ -177,31 +279,51 @@
             "credentialsType": "AccountKey"
           },
           "datastoreType": "AzureBlob",
+<<<<<<< HEAD
           "accountName": "sadnuammrwdeilc",
           "containerName": "azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612",
+=======
+          "accountName": "sano4nluz7tny6e",
+          "containerName": "azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd",
+>>>>>>> parent of a5566183de... Update recordings
           "endpoint": "core.windows.net",
           "protocol": "https",
           "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-17T23:08:21.8676998\u002B00:00",
           "createdBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
           "createdByType": "Application",
           "lastModifiedAt": "2023-01-17T23:08:22.378308\u002B00:00",
+=======
+          "createdAt": "2022-09-20T06:30:35.010066\u002B00:00",
+          "createdBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
+          "createdByType": "Application",
+          "lastModifiedAt": "2022-09-20T06:30:35.6763178\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
           "lastModifiedByType": "Application"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore/listSecrets?api-version=2022-10-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore/listSecrets?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -209,6 +331,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:30 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
@@ -224,6 +347,23 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181131Z:5c08e2bb-c1e3-447e-8f3d-a4b552928cb4",
         "x-request-time": "0.156"
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:45 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b0de790a2cfa6396007022058a4c5a54-955113a80bdd46e8-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a1fe4c79-f678-422b-ba7a-71095b6bf153",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184945Z:a1fe4c79-f678-422b-ba7a-71095b6bf153",
+        "x-request-time": "0.701"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "secretsType": "AccountKey",
@@ -231,12 +371,17 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612/LocalUpload/00000000000000000000000000000000/model.pkl",
+=======
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/LocalUpload/00000000000000000000000000000000/model.pkl",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:11:31 GMT",
         "x-ms-version": "2021-08-06"
@@ -245,10 +390,27 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Date": "Wed, 18 Jan 2023 18:11:31 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:49:45 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "7",
+        "Content-MD5": "r1WXwpRnqWUjpweHwxn02w==",
+        "Content-Type": "application/octet-stream",
+        "Date": "Fri, 04 Nov 2022 18:49:45 GMT",
+        "ETag": "\u00220x8DAA27CB4D4193E\u0022",
+        "Last-Modified": "Fri, 30 Sep 2022 00:42:51 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
+<<<<<<< HEAD
         "Transfer-Encoding": "chunked",
         "Vary": "Origin",
         "x-ms-error-code": "BlobNotFound",
@@ -285,17 +447,36 @@
         ],
         "x-ms-content-crc64": "B1ZarUv7Q2o=",
         "x-ms-request-server-encrypted": "true",
+=======
+        "Vary": "Origin",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Wed, 28 Sep 2022 08:53:18 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-name": "test_96655932790",
+        "x-ms-meta-upload_status": "completed",
+        "x-ms-meta-version": "1",
+        "x-ms-server-encrypted": "true",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612/LocalUpload/00000000000000000000000000000000/model.pkl?comp=metadata",
       "RequestMethod": "PUT",
+=======
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/az-ml-artifacts/00000000000000000000000000000000/model.pkl",
+      "RequestMethod": "HEAD",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:11:32 GMT",
@@ -311,17 +492,37 @@
         "Date": "Wed, 18 Jan 2023 18:11:32 GMT",
         "ETag": "\u00220x8DAF97F6DAF0311\u0022",
         "Last-Modified": "Wed, 18 Jan 2023 18:11:32 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:49:46 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Date": "Fri, 04 Nov 2022 18:49:46 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
+<<<<<<< HEAD
         "x-ms-request-server-encrypted": "true",
+=======
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-error-code": "BlobNotFound",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/1?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/1?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -329,7 +530,11 @@
         "Connection": "keep-alive",
         "Content-Length": "320",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "properties": {
@@ -344,6 +549,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
+<<<<<<< HEAD
         "Content-Length": "953",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 18 Jan 2023 18:11:33 GMT",
@@ -363,6 +569,27 @@
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/1",
+=======
+        "Content-Length": "963",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:49:47 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/1?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-708f5f110ffa33981a67fee51895c56b-3265147059d4be99-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e4d149b9-5d11-46c2-8d0e-fb56ac94b611",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184947Z:e4d149b9-5d11-46c2-8d0e-fb56ac94b611",
+        "x-request-time": "1.079"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/1",
+>>>>>>> parent of a5566183de... Update recordings
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/models/versions",
         "properties": {
@@ -377,23 +604,39 @@
           "jobName": null
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:33.5177896\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-18T18:11:33.5177896\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
+=======
+          "createdAt": "2022-11-04T18:49:47.300562\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-11-04T18:49:47.300562\u002B00:00",
+          "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore?api-version=2022-10-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -401,17 +644,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:33 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-3c73fe317bc62ec1f79d53797f921f5b-89870fca986b2f3b-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-c02184355ad19082a0945b68958bcfc9-d4fa7f54827579a0-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "bffb4686-3366-41a9-be4d-f07bb1b19e56",
@@ -419,6 +671,15 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181134Z:bffb4686-3366-41a9-be4d-f07bb1b19e56",
         "x-request-time": "0.099"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a5e2c83d-fd04-49f8-a5ab-ce42c5dd0f58",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184947Z:a5e2c83d-fd04-49f8-a5ab-ce42c5dd0f58",
+        "x-request-time": "0.110"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
@@ -433,31 +694,51 @@
             "credentialsType": "AccountKey"
           },
           "datastoreType": "AzureBlob",
+<<<<<<< HEAD
           "accountName": "sadnuammrwdeilc",
           "containerName": "azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612",
+=======
+          "accountName": "sano4nluz7tny6e",
+          "containerName": "azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd",
+>>>>>>> parent of a5566183de... Update recordings
           "endpoint": "core.windows.net",
           "protocol": "https",
           "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-17T23:08:21.8676998\u002B00:00",
           "createdBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
           "createdByType": "Application",
           "lastModifiedAt": "2023-01-17T23:08:22.378308\u002B00:00",
+=======
+          "createdAt": "2022-09-20T06:30:35.010066\u002B00:00",
+          "createdBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
+          "createdByType": "Application",
+          "lastModifiedAt": "2022-09-20T06:30:35.6763178\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
           "lastModifiedByType": "Application"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore/listSecrets?api-version=2022-10-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore/listSecrets?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -465,6 +746,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:34 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
@@ -480,6 +762,23 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181134Z:b095e1b7-25b6-4f5b-9548-072323d0a1fd",
         "x-request-time": "0.072"
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b5d3bc8e80d02b19dc67dcd6ff0e33a9-289cfda6950e20e3-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "cf1d57b2-09f0-4b80-9ea6-6c02a192b561",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184948Z:cf1d57b2-09f0-4b80-9ea6-6c02a192b561",
+        "x-request-time": "0.099"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "secretsType": "AccountKey",
@@ -487,26 +786,44 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612/LocalUpload/00000000000000000000000000000000/model.pkl",
+=======
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/LocalUpload/00000000000000000000000000000000/model.pkl",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:11:34 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:49:48 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Accept-Ranges": "bytes",
+<<<<<<< HEAD
         "Content-Length": "6",
         "Content-MD5": "sZRqySSS0jR8YjW00mERhA==",
         "Content-Type": "application/octet-stream",
         "Date": "Wed, 18 Jan 2023 18:11:34 GMT",
         "ETag": "\u00220x8DAF97F6DAF0311\u0022",
         "Last-Modified": "Wed, 18 Jan 2023 18:11:32 GMT",
+=======
+        "Content-Length": "7",
+        "Content-MD5": "r1WXwpRnqWUjpweHwxn02w==",
+        "Content-Type": "application/octet-stream",
+        "Date": "Fri, 04 Nov 2022 18:49:48 GMT",
+        "ETag": "\u00220x8DAA27CB4D4193E\u0022",
+        "Last-Modified": "Fri, 30 Sep 2022 00:42:51 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -515,10 +832,17 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
+<<<<<<< HEAD
         "x-ms-creation-time": "Wed, 18 Jan 2023 18:11:32 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-name": "test_415278849478",
+=======
+        "x-ms-creation-time": "Wed, 28 Sep 2022 08:53:18 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-name": "test_96655932790",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-meta-upload_status": "completed",
         "x-ms-meta-version": "1",
         "x-ms-server-encrypted": "true",
@@ -527,20 +851,33 @@
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/azureml-blobstore-c33afa53-cead-40f1-8d1d-ac5976604612/az-ml-artifacts/00000000000000000000000000000000/model.pkl",
+=======
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/az-ml-artifacts/00000000000000000000000000000000/model.pkl",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:11:34 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:49:48 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:34 GMT",
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:48 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -553,7 +890,11 @@
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -561,7 +902,11 @@
         "Connection": "keep-alive",
         "Content-Length": "320",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "properties": {
@@ -576,6 +921,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
+<<<<<<< HEAD
         "Content-Length": "953",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 18 Jan 2023 18:11:35 GMT",
@@ -595,6 +941,27 @@
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2",
+=======
+        "Content-Length": "965",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:49:48 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-b7bccf57879d5d2c74eb6c9b2b9ec4ae-0a9e574c9491c9f7-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "eca6745a-2e68-4a80-b67e-1da2d9aa695d",
+        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184949Z:eca6745a-2e68-4a80-b67e-1da2d9aa695d",
+        "x-request-time": "0.394"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2",
+>>>>>>> parent of a5566183de... Update recordings
         "name": "2",
         "type": "Microsoft.MachineLearningServices/workspaces/models/versions",
         "properties": {
@@ -609,11 +976,19 @@
           "jobName": null
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:35.6914017\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-18T18:11:35.6914017\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
+=======
+          "createdAt": "2022-11-04T18:49:49.1901541\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-11-04T18:49:49.1901541\u002B00:00",
+          "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
@@ -625,7 +1000,11 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -633,17 +1012,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:36 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-dfab71dd9c08d984798b341a510699fc-483ed54470d34597-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:52 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-a0e25e402fc0c490a8d707aeb93a596e-29cc51915e8d434d-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "1f7de77e-1285-431f-923f-f250f7549f59",
@@ -651,6 +1039,15 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181137Z:1f7de77e-1285-431f-923f-f250f7549f59",
         "x-request-time": "0.016"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6078296a-4f49-42ad-b1da-e0e4845a0b64",
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184953Z:6078296a-4f49-42ad-b1da-e0e4845a0b64",
+        "x-request-time": "0.017"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
@@ -662,29 +1059,47 @@
         "properties": {
           "friendlyName": "00000",
           "description": "",
+<<<<<<< HEAD
           "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sadnuammrwdeilc",
           "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtesthhy5m5pqcjec6",
           "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aidnuammrwdeilc",
+=======
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sano4nluz7tny6e",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtestg4pvkwb5ugzdu",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aino4nluz7tny6e",
+>>>>>>> parent of a5566183de... Update recordings
           "hbiWorkspace": false,
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
           "imageBuildCompute": null,
           "provisioningState": "Succeeded",
           "v1LegacyMode": false,
           "softDeleteEnabled": false,
+<<<<<<< HEAD
           "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/crdnuammrwdeilc",
           "notebookInfo": {
             "resourceId": "493ca697a7f447848820635d6ef3a5f0",
             "fqdn": "ml-sdkvnextcli-eastus2-c33afa53-cead-40f1-8d1d-ac5976604612.eastus2.notebooks.azure.net",
+=======
+          "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/crno4nluz7tny6e",
+          "notebookInfo": {
+            "resourceId": "91eece339fe8458b972c06afa45ed5c3",
+            "fqdn": "ml-sdkvnextcli-eastus2-ee8c8c7b-8359-4874-b140-2a13f80fdccd.eastus2.notebooks.azure.net",
+>>>>>>> parent of a5566183de... Update recordings
             "isPrivateLinkEnabled": false,
             "notebookPreparationError": null
           },
           "storageHnsEnabled": false,
+<<<<<<< HEAD
           "workspaceId": "c33afa53-cead-40f1-8d1d-ac5976604612",
+=======
+          "workspaceId": "ee8c8c7b-8359-4874-b140-2a13f80fdccd",
+>>>>>>> parent of a5566183de... Update recordings
           "linkedModelInventoryArmId": null,
           "privateLinkCount": 0,
           "publicNetworkAccess": "Enabled",
           "discoveryUrl": "https://eastus2.api.azureml.ms/discovery",
           "mlFlowTrackingUri": "azureml://eastus2.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
+<<<<<<< HEAD
           "sdkTelemetryAppInsightsKey": "066b0d89-53d2-4b58-8bc8-ac382527e4fb",
           "sasGetterUri": "",
           "enableDataIsolation": false
@@ -692,6 +1107,14 @@
         "identity": {
           "type": "SystemAssigned",
           "principalId": "ab3f5d04-98db-441d-97a8-f558ea82f4ef",
+=======
+          "sdkTelemetryAppInsightsKey": "e1f7b545-6243-4abf-ba76-c5691d2edb62",
+          "sasGetterUri": ""
+        },
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "cb26b995-24b2-471e-9912-81805f881bd2",
+>>>>>>> parent of a5566183de... Update recordings
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
         },
         "sku": {
@@ -699,17 +1122,29 @@
           "tier": "Basic"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-17T23:08:06.6643232Z",
           "createdBy": "dipeck@microsoft.com",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-17T23:08:06.6643232Z",
           "lastModifiedBy": "dipeck@microsoft.com",
+=======
+          "createdAt": "2022-09-20T06:30:21.9315063Z",
+          "createdBy": "namejia@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-20T06:30:21.9315063Z",
+          "lastModifiedBy": "namejia@microsoft.com",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -717,7 +1152,11 @@
         "Connection": "keep-alive",
         "Content-Length": "136",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "tags": {},
@@ -730,6 +1169,7 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
+<<<<<<< HEAD
         "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01",
         "Cache-Control": "no-cache",
         "Content-Length": "1480",
@@ -753,13 +1193,43 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469",
         "name": "batch-ept-727267c33e66469",
+=======
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "1486",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:49:56 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-3bb65aefd86d535cbb46f1a91626ed3d-245293017090a458-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT30M",
+        "x-ms-correlation-request-id": "94b0b377-770a-46b5-8ae3-bf17ea38bd30",
+        "x-ms-ratelimit-remaining-subscription-writes": "1195",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184956Z:94b0b377-770a-46b5-8ae3-bf17ea38bd30",
+        "x-request-time": "1.225"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e",
+        "name": "batch-ept-cd4587100c9249e",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints",
         "properties": {
           "description": "my sample batch endpoint",
           "properties": {
             "BatchEndpointCreationApiVersion": "2022-05-01",
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01"
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01"
+>>>>>>> parent of a5566183de... Update recordings
           },
           "scoringUri": null,
           "swaggerUri": null,
@@ -770,9 +1240,15 @@
           "provisioningState": "Creating"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:39.7702133\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:11:39.7702134\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:49:56.3614054\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:49:56.3614054\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2",
@@ -784,13 +1260,21 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -798,17 +1282,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:11:40 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-202f7c2cef2ef4c5dcf4410f1df1754c-0c3fc89e00266373-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:49:56 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-d492952dd3b317c8b51473e7bc4e8857-682e48f1c451c0f9-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "1b6f8572-4149-4a20-958b-6ddeec346039",
@@ -821,18 +1314,40 @@
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6",
         "name": "be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6",
         "startTime": "2023-01-18T18:11:39.4015752\u002B00:00",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "d1a6b400-8d07-4945-b323-c9c529abcd45",
+        "x-ms-ratelimit-remaining-subscription-reads": "11996",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T184957Z:d1a6b400-8d07-4945-b323-c9c529abcd45",
+        "x-request-time": "0.042"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9",
+        "name": "be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9",
+        "startTime": "2022-11-04T18:49:55.972508\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
         "percentComplete": 0.0,
         "status": "Updating"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -840,17 +1355,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:10 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-1ce268fc50a49280e28d5b2c7cebcdc2-dc4a42e3f415aed9-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:27 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-1738b7777425ff694fcefb3451d5449f-8d95931ae8f2ff14-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "e8c99ff2-81ec-4b57-ad87-039df43aa302",
@@ -864,18 +1388,41 @@
         "name": "be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6",
         "startTime": "2023-01-18T18:11:39.4015752\u002B00:00",
         "endTime": "2023-01-18T18:11:50.1357104\u002B00:00",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "9fdaf6b4-6ed5-4b09-91fa-0efb2c8e05d1",
+        "x-ms-ratelimit-remaining-subscription-reads": "11995",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185028Z:9fdaf6b4-6ed5-4b09-91fa-0efb2c8e05d1",
+        "x-request-time": "0.807"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9",
+        "name": "be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9",
+        "startTime": "2022-11-04T18:49:55.972508\u002B00:00",
+        "endTime": "2022-11-04T18:50:06.6063303\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
         "percentComplete": 100.0,
         "status": "Succeeded"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -883,17 +1430,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:11 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-0cc28dc1ec57b383e5c82fd89ad17a1c-c5738cc681226e08-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-a7467dd4014ecb63a197d028b5655da4-6e8cf9c360dc7b4f-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "991d8db9-9135-45f3-b9d1-9da5a69ff151",
@@ -905,15 +1461,35 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469",
         "name": "batch-ept-727267c33e66469",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "13d799a0-6714-44be-81a6-67429b7534aa",
+        "x-ms-ratelimit-remaining-subscription-reads": "11994",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185028Z:13d799a0-6714-44be-81a6-67429b7534aa",
+        "x-request-time": "0.069"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e",
+        "name": "batch-ept-cd4587100c9249e",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints",
         "properties": {
           "description": "my sample batch endpoint",
           "properties": {
             "BatchEndpointCreationApiVersion": "2022-05-01",
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01"
           },
           "scoringUri": "https://batch-ept-727267c33e66469.eastus2.inference.ml.azure.com/jobs",
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01"
+          },
+          "scoringUri": "https://batch-ept-cd4587100c9249e.eastus2.inference.ml.azure.com/jobs",
+>>>>>>> parent of a5566183de... Update recordings
           "swaggerUri": null,
           "authMode": "AADToken",
           "defaults": {
@@ -922,9 +1498,15 @@
           "provisioningState": "Succeeded"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:39.7702133\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:11:50.2059548\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:49:56.3614054\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:50:06.6598064\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2",
@@ -936,13 +1518,21 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -950,17 +1540,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:11 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-b3c436e5466d049e5063644619610fb5-0c504d78a1030a7e-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-e2f5e9f11eb04b173dff825a648c4c90-15dfd995413de2db-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "da3b6578-e6e2-4f93-aed5-c894e33a12aa",
@@ -972,15 +1571,35 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469",
         "name": "batch-ept-727267c33e66469",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "290f30e6-cdf1-4381-ad5d-d96da2a4c201",
+        "x-ms-ratelimit-remaining-subscription-reads": "11993",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185028Z:290f30e6-cdf1-4381-ad5d-d96da2a4c201",
+        "x-request-time": "0.076"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e",
+        "name": "batch-ept-cd4587100c9249e",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints",
         "properties": {
           "description": "my sample batch endpoint",
           "properties": {
             "BatchEndpointCreationApiVersion": "2022-05-01",
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:539fd044-b7c6-4eda-8ec5-302eda1fe6a6?api-version=2022-05-01"
           },
           "scoringUri": "https://batch-ept-727267c33e66469.eastus2.inference.ml.azure.com/jobs",
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b27f2b2c-9c59-45a5-bdb5-6e8f7c77a8a9?api-version=2022-05-01"
+          },
+          "scoringUri": "https://batch-ept-cd4587100c9249e.eastus2.inference.ml.azure.com/jobs",
+>>>>>>> parent of a5566183de... Update recordings
           "swaggerUri": null,
           "authMode": "AADToken",
           "defaults": {
@@ -989,9 +1608,15 @@
           "provisioningState": "Succeeded"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:11:39.7702133\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:11:50.2059548\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:49:56.3614054\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:50:06.6598064\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2",
@@ -1003,13 +1628,21 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?api-version=2022-10-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1017,17 +1650,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-9ab944211337a469ce5ebd2416ceb9f4-b924a49c0035b9cb-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:28 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-8f63fc028c1e4ab5e6626124795ab9ec-ac21b38672db37db-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "59d735ee-5fb9-4611-bad2-dc3133b12aec",
@@ -1089,10 +1731,47 @@
           "lastModifiedAt": "2023-01-17T23:08:06.6643232Z",
           "lastModifiedBy": "dipeck@microsoft.com",
           "lastModifiedByType": "User"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "36886a07-61c0-4850-8ea3-7c809c271ce3",
+        "x-ms-ratelimit-remaining-subscription-reads": "11992",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185029Z:36886a07-61c0-4850-8ea3-7c809c271ce3",
+        "x-request-time": "0.146"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore",
+        "name": "workspaceblobstore",
+        "type": "Microsoft.MachineLearningServices/workspaces/datastores",
+        "properties": {
+          "description": null,
+          "tags": null,
+          "properties": null,
+          "isDefault": true,
+          "credentials": {
+            "credentialsType": "AccountKey"
+          },
+          "datastoreType": "AzureBlob",
+          "accountName": "sano4nluz7tny6e",
+          "containerName": "azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd",
+          "endpoint": "core.windows.net",
+          "protocol": "https",
+          "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
+        },
+        "systemData": {
+          "createdAt": "2022-09-20T06:30:35.010066\u002B00:00",
+          "createdBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
+          "createdByType": "Application",
+          "lastModifiedAt": "2022-09-20T06:30:35.6763178\u002B00:00",
+          "lastModifiedBy": "779301c0-18b2-4cdc-801b-a0a3368fee0a",
+          "lastModifiedByType": "Application"
+>>>>>>> parent of a5566183de... Update recordings
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://eastus2.api.azureml.ms/content/v2.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/snapshots/getByHash?hash=ddf4149f78db19fb1308570b1af99292f73b17baf7035fb931551282e5df40cc\u0026hashVersion=202208",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -1163,10 +1842,34 @@
         "Date": "Wed, 18 Jan 2023 18:12:17 GMT",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/datastores/workspaceblobstore/listSecrets?api-version=2022-05-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:50:29 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-c7b66711a500e023ad625a99200432e9-8785c99fb2d48e5b-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+>>>>>>> parent of a5566183de... Update recordings
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
+<<<<<<< HEAD
         "x-ms-response-type": "standard",
         "x-request-time": "0.322"
       },
@@ -1187,11 +1890,27 @@
     },
     {
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/c33afa53-c-92bfb5d6-e29f-5586-8b60-e251504c2927/endpoint_scoring/do_nothing.py?skoid=ab3f5d04-98db-441d-97a8-f558ea82f4ef\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-01-17T23%3A58%3A03Z\u0026ske=2023-01-19T08%3A08%3A03Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-08-06\u0026st=2023-01-18T18%3A02%3A17Z\u0026se=2023-01-19T02%3A12%3A17Z\u0026sr=c\u0026sp=rcwl\u0026sig=qy8iOA%2FVInKZ1j18hLuzder2d1CydL64qLXhlsZX3Ag%3D",
+=======
+        "x-ms-correlation-request-id": "26e61ae2-aacd-42a1-86be-e66a5d0cf0d1",
+        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185029Z:26e61ae2-aacd-42a1-86be-e66a5d0cf0d1",
+        "x-request-time": "0.137"
+      },
+      "ResponseBody": {
+        "secretsType": "AccountKey",
+        "key": "dGhpcyBpcyBmYWtlIGtleQ=="
+      }
+    },
+    {
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/LocalUpload/00000000000000000000000000000000/endpoint_scoring/do_nothing.py",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:12:17 GMT",
         "x-ms-version": "2021-08-06"
@@ -1269,10 +1988,27 @@
         "Date": "Wed, 18 Jan 2023 18:12:18 GMT",
         "ETag": "\u00220x8DAF97F89663EE6\u0022",
         "Last-Modified": "Wed, 18 Jan 2023 18:12:18 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:50:29 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "109",
+        "Content-MD5": "QXWyM3w9I7r0fGlSF6jkIg==",
+        "Content-Type": "application/octet-stream",
+        "Date": "Fri, 04 Nov 2022 18:50:29 GMT",
+        "ETag": "\u00220x8DAA12D0BC99648\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 08:40:06 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
+<<<<<<< HEAD
         "x-ms-content-crc64": "SbNvRBb9XX0=",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2021-08-06"
@@ -1309,17 +2045,36 @@
         ],
         "x-ms-content-crc64": "vtxH\u002Bx5L5w8=",
         "x-ms-request-server-encrypted": "true",
+=======
+        "Vary": "Origin",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Wed, 28 Sep 2022 08:40:06 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-name": "11ffefbf-7709-4bc3-9bc9-fb24252358d5",
+        "x-ms-meta-upload_status": "completed",
+        "x-ms-meta-version": "1",
+        "x-ms-server-encrypted": "true",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://sadnuammrwdeilc.blob.core.windows.net/c33afa53-c-92bfb5d6-e29f-5586-8b60-e251504c2927/endpoint_scoring/do_nothing.py?comp=metadata\u0026skoid=ab3f5d04-98db-441d-97a8-f558ea82f4ef\u0026sktid=72f988bf-86f1-41af-91ab-2d7cd011db47\u0026skt=2023-01-17T23%3A58%3A03Z\u0026ske=2023-01-19T08%3A08%3A03Z\u0026sks=b\u0026skv=2019-07-07\u0026sv=2021-08-06\u0026st=2023-01-18T18%3A02%3A17Z\u0026se=2023-01-19T02%3A12%3A17Z\u0026sr=c\u0026sp=rcwl\u0026sig=qy8iOA%2FVInKZ1j18hLuzder2d1CydL64qLXhlsZX3Ag%3D",
       "RequestMethod": "PUT",
+=======
+      "RequestUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/az-ml-artifacts/00000000000000000000000000000000/endpoint_scoring/do_nothing.py",
+      "RequestMethod": "HEAD",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 18 Jan 2023 18:12:18 GMT",
@@ -1335,25 +2090,51 @@
         "Date": "Wed, 18 Jan 2023 18:12:18 GMT",
         "ETag": "\u00220x8DAF97F89907D09\u0022",
         "Last-Modified": "Wed, 18 Jan 2023 18:12:19 GMT",
+=======
+        "User-Agent": "azsdk-python-storage-blob/12.13.1 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 04 Nov 2022 18:50:30 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Date": "Fri, 04 Nov 2022 18:50:30 GMT",
+>>>>>>> parent of a5566183de... Update recordings
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
+<<<<<<< HEAD
         "x-ms-request-server-encrypted": "true",
+=======
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-error-code": "BlobNotFound",
+>>>>>>> parent of a5566183de... Update recordings
         "x-ms-version": "2021-08-06"
       },
       "ResponseBody": null
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/256da464-ec46-4d55-9985-0dff98b6b6aa/versions/1?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "Content-Length": "257",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "Content-Length": "305",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "properties": {
@@ -1363,6 +2144,7 @@
           },
           "isAnonymous": true,
           "isArchived": false,
+<<<<<<< HEAD
           "codeUri": "https://sadnuammrwdeilc.blob.core.windows.net:443/c33afa53-c-92bfb5d6-e29f-5586-8b60-e251504c2927/endpoint_scoring"
         }
       },
@@ -1388,6 +2170,37 @@
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/256da464-ec46-4d55-9985-0dff98b6b6aa/versions/1",
+=======
+          "codeUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/LocalUpload/00000000000000000000000000000000/endpoint_scoring"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:50:30 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-0494e0583544201c5a42cdf75f6688f0-48220e3bb1c4d9c2-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "eec13d4b-381a-446d-969a-40658ae4a2d1",
+        "x-ms-ratelimit-remaining-subscription-writes": "1194",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185031Z:eec13d4b-381a-446d-969a-40658ae4a2d1",
+        "x-request-time": "0.688"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1",
+>>>>>>> parent of a5566183de... Update recordings
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -1399,6 +2212,7 @@
           },
           "isArchived": false,
           "isAnonymous": false,
+<<<<<<< HEAD
           "codeUri": "https://sadnuammrwdeilc.blob.core.windows.net:443/c33afa53-c-92bfb5d6-e29f-5586-8b60-e251504c2927/endpoint_scoring"
         },
         "systemData": {
@@ -1407,18 +2221,36 @@
           "createdByType": "User",
           "lastModifiedAt": "2023-01-18T18:12:19.5315941\u002B00:00",
           "lastModifiedBy": "Diondra Peck",
+=======
+          "codeUri": "https://sano4nluz7tny6e.blob.core.windows.net/azureml-blobstore-ee8c8c7b-8359-4874-b140-2a13f80fdccd/LocalUpload/00000000000000000000000000000000/endpoint_scoring"
+        },
+        "systemData": {
+          "createdAt": "2022-09-28T08:40:07.6691863\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-11-04T18:50:31.1377854\u002B00:00",
+          "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions?api-version=2022-05-01\u0026$orderBy=createdtime%20desc\u0026$top=1",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions?api-version=2022-05-01\u0026$orderBy=createdtime%20desc\u0026$top=1",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1426,17 +2258,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:19 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-66d8eccdac8b72d0fdf5644f5c35a50a-9e01c6d225615b46-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-fbec77084eeb2a3ace6f267ae84dc2b5-9f6272dd1b6ec677-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "d5051693-22fe-441d-bf82-a7533c21c954",
@@ -1444,11 +2285,24 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181220Z:d5051693-22fe-441d-bf82-a7533c21c954",
         "x-request-time": "0.185"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "d05e4af1-06b6-47d7-9fb4-fab4ddafc137",
+        "x-ms-ratelimit-remaining-subscription-reads": "11991",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185031Z:d05e4af1-06b6-47d7-9fb4-fab4ddafc137",
+        "x-request-time": "0.323"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "value": [
           {
+<<<<<<< HEAD
             "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
             "name": "bar",
             "type": "Microsoft.MachineLearningServices/workspaces/environments/versions",
             "properties": {
@@ -1463,11 +2317,19 @@
               "osType": "Linux"
             },
             "systemData": {
+<<<<<<< HEAD
               "createdAt": "2023-01-18T18:11:29.0403166\u002B00:00",
               "createdBy": "Diondra Peck",
               "createdByType": "User",
               "lastModifiedAt": "2023-01-18T18:11:29.0403166\u002B00:00",
               "lastModifiedBy": "Diondra Peck",
+=======
+              "createdAt": "2022-11-04T18:49:43.237944\u002B00:00",
+              "createdBy": "Nancy Mejia Juarez",
+              "createdByType": "User",
+              "lastModifiedAt": "2022-11-04T18:49:43.237944\u002B00:00",
+              "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
               "lastModifiedByType": "User"
             }
           }
@@ -1475,13 +2337,21 @@
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions?api-version=2022-05-01\u0026$orderBy=createdtime%20desc\u0026$top=1",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions?api-version=2022-05-01\u0026$orderBy=createdtime%20desc\u0026$top=1",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1489,17 +2359,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:20 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-a69790f184e733a2126bb50ad39b7fd8-230b7ca013a01c08-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-0a76b277232c8f0d878dab74accbc291-7163dcdfd84415fe-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "944a6611-2b68-4617-b033-0f41016ec18b",
@@ -1507,11 +2386,24 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181220Z:944a6611-2b68-4617-b033-0f41016ec18b",
         "x-request-time": "0.150"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e32d720a-8272-4697-8373-4b1524702c62",
+        "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185032Z:e32d720a-8272-4697-8373-4b1524702c62",
+        "x-request-time": "0.144"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "value": [
           {
+<<<<<<< HEAD
             "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2",
+=======
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2",
+>>>>>>> parent of a5566183de... Update recordings
             "name": "2",
             "type": "Microsoft.MachineLearningServices/workspaces/models/versions",
             "properties": {
@@ -1526,16 +2418,28 @@
               "jobName": null
             },
             "systemData": {
+<<<<<<< HEAD
               "createdAt": "2023-01-18T18:11:35.6914017\u002B00:00",
               "createdBy": "Diondra Peck",
               "createdByType": "User",
               "lastModifiedAt": "2023-01-18T18:11:35.6914017\u002B00:00",
               "lastModifiedBy": "Diondra Peck",
+=======
+              "createdAt": "2022-11-04T18:49:49.1901541\u002B00:00",
+              "createdBy": "Nancy Mejia Juarez",
+              "createdByType": "User",
+              "lastModifiedAt": "2022-11-04T18:49:49.1901541\u002B00:00",
+              "lastModifiedBy": "Nancy Mejia Juarez",
+>>>>>>> parent of a5566183de... Update recordings
               "lastModifiedByType": "User"
             }
           }
         ],
+<<<<<<< HEAD
         "nextLink": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions?api-version=2022-05-01\u0026$orderBy=createdtime\u002Bdesc\u0026$top=1\u0026$skipToken=K1JJRDp%2baDJKckFJYjIwZ2huWFNJQUFBREFCUT09I1JUOjEjVFJDOjEjUlREOjAzdjZ0SFdoVHpRd0wvblZ5ZVZzQlRNeE16UXVNVEl1TWpsVk1qazdNakk3TkRZdk56b3lOVEV5T0N3eE1Uc3hNUUE9I0lTVjoyI0lFTzo2NTU1MSNRQ0Y6OCNGUEM6QWdpSkFBQUFBQmNBQUlrQUFBQUFGd0FBaVFBQUFBQVhBQUFFQUdFZG9BQT0%3d"
+=======
+        "nextLink": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions?api-version=2022-05-01\u0026$orderBy=createdtime\u002Bdesc\u0026$top=1\u0026$skipToken=K1JJRDp%2baDJKckFJYjIwZ2lBS1JjQUFBQkFBQT09I1JUOjEjVFJDOjEjUlREOjAzdjZ0SFdoVHpRd0wvblZ5ZVZzQlRNeE16TXVNakl1TVRWVk1qazdOVG83TlRvdk1qb3hNalkxTWl3eE1Uc3hNUUE9I0lTVjoyI0lFTzo2NTU1MSNRQ0Y6OCNGUEM6QWdoY0FBQUFBQUVBQUZ3QUFBQUFBUUFBWEFBQUFBQUJBQUFFQUg2cEFJQT0%3d"
+>>>>>>> parent of a5566183de... Update recordings
       }
     },
     {
@@ -1545,7 +2449,11 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1553,17 +2461,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:20 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-78aa5e612bd27fc9fb54c5ce22979e04-f138e89a024cc7c9-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-f0c6e5d170a32333125045dfe0422a57-e55c258f2bb90bc5-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "21eb9b67-e129-4d48-97f5-6cd12f9f4a26",
@@ -1571,6 +2488,15 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181220Z:21eb9b67-e129-4d48-97f5-6cd12f9f4a26",
         "x-request-time": "0.016"
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "54252407-9c72-471f-8cbb-2c0bdeddff9a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11989",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185032Z:54252407-9c72-471f-8cbb-2c0bdeddff9a",
+        "x-request-time": "0.013"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
@@ -1582,29 +2508,47 @@
         "properties": {
           "friendlyName": "00000",
           "description": "",
+<<<<<<< HEAD
           "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sadnuammrwdeilc",
           "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtesthhy5m5pqcjec6",
           "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aidnuammrwdeilc",
+=======
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sano4nluz7tny6e",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtestg4pvkwb5ugzdu",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aino4nluz7tny6e",
+>>>>>>> parent of a5566183de... Update recordings
           "hbiWorkspace": false,
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
           "imageBuildCompute": null,
           "provisioningState": "Succeeded",
           "v1LegacyMode": false,
           "softDeleteEnabled": false,
+<<<<<<< HEAD
           "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/crdnuammrwdeilc",
           "notebookInfo": {
             "resourceId": "493ca697a7f447848820635d6ef3a5f0",
             "fqdn": "ml-sdkvnextcli-eastus2-c33afa53-cead-40f1-8d1d-ac5976604612.eastus2.notebooks.azure.net",
+=======
+          "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/crno4nluz7tny6e",
+          "notebookInfo": {
+            "resourceId": "91eece339fe8458b972c06afa45ed5c3",
+            "fqdn": "ml-sdkvnextcli-eastus2-ee8c8c7b-8359-4874-b140-2a13f80fdccd.eastus2.notebooks.azure.net",
+>>>>>>> parent of a5566183de... Update recordings
             "isPrivateLinkEnabled": false,
             "notebookPreparationError": null
           },
           "storageHnsEnabled": false,
+<<<<<<< HEAD
           "workspaceId": "c33afa53-cead-40f1-8d1d-ac5976604612",
+=======
+          "workspaceId": "ee8c8c7b-8359-4874-b140-2a13f80fdccd",
+>>>>>>> parent of a5566183de... Update recordings
           "linkedModelInventoryArmId": null,
           "privateLinkCount": 0,
           "publicNetworkAccess": "Enabled",
           "discoveryUrl": "https://eastus2.api.azureml.ms/discovery",
           "mlFlowTrackingUri": "azureml://eastus2.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
+<<<<<<< HEAD
           "sdkTelemetryAppInsightsKey": "066b0d89-53d2-4b58-8bc8-ac382527e4fb",
           "sasGetterUri": "",
           "enableDataIsolation": false
@@ -1612,6 +2556,14 @@
         "identity": {
           "type": "SystemAssigned",
           "principalId": "ab3f5d04-98db-441d-97a8-f558ea82f4ef",
+=======
+          "sdkTelemetryAppInsightsKey": "e1f7b545-6243-4abf-ba76-c5691d2edb62",
+          "sasGetterUri": ""
+        },
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "cb26b995-24b2-471e-9912-81805f881bd2",
+>>>>>>> parent of a5566183de... Update recordings
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
         },
         "sku": {
@@ -1619,17 +2571,29 @@
           "tier": "Basic"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-17T23:08:06.6643232Z",
           "createdBy": "dipeck@microsoft.com",
           "createdByType": "User",
           "lastModifiedAt": "2023-01-17T23:08:06.6643232Z",
           "lastModifiedBy": "dipeck@microsoft.com",
+=======
+          "createdAt": "2022-09-20T06:30:21.9315063Z",
+          "createdBy": "namejia@microsoft.com",
+          "createdByType": "User",
+          "lastModifiedAt": "2022-09-20T06:30:21.9315063Z",
+          "lastModifiedBy": "namejia@microsoft.com",
+>>>>>>> parent of a5566183de... Update recordings
           "lastModifiedByType": "User"
         }
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1637,17 +2601,28 @@
         "Connection": "keep-alive",
         "Content-Length": "1196",
         "Content-Type": "application/json",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": {
         "tags": {},
         "location": "eastus2",
         "properties": {
           "codeConfiguration": {
+<<<<<<< HEAD
             "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/256da464-ec46-4d55-9985-0dff98b6b6aa/versions/1",
             "scoringScript": "./main.py"
           },
           "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+            "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1",
+            "scoringScript": "./main.py"
+          },
+          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
           "environmentVariables": {},
           "properties": {},
           "compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
@@ -1657,7 +2632,11 @@
           "miniBatchSize": 5,
           "model": {
             "referenceType": "Id",
+<<<<<<< HEAD
             "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2"
+=======
+            "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2"
+>>>>>>> parent of a5566183de... Update recordings
           },
           "outputAction": "AppendRow",
           "outputFileName": "append_row.txt",
@@ -1673,6 +2652,7 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
+<<<<<<< HEAD
         "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01",
         "Cache-Control": "no-cache",
         "Content-Length": "2449",
@@ -1696,10 +2676,36 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431",
         "name": "batch-dpm-65dddf539a32431",
+=======
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "2455",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:50:34 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-5fdcb4b27473f2f5981c37cc0514e338-5295de5e120e07fb-00\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT30M",
+        "x-ms-correlation-request-id": "c79d3eb8-c260-45c5-8ea9-c95bc73a3d0d",
+        "x-ms-ratelimit-remaining-subscription-resource-requests": "24",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185035Z:c79d3eb8-c260-45c5-8ea9-c95bc73a3d0d",
+        "x-request-time": "2.169"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424",
+        "name": "batch-dpm-9e5517ac40ae424",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints/deployments",
         "properties": {
           "description": null,
           "properties": {
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01"
           },
@@ -1708,6 +2714,16 @@
             "scoringScript": "./main.py"
           },
           "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01"
+          },
+          "codeConfiguration": {
+            "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1",
+            "scoringScript": "./main.py"
+          },
+          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
           "environmentVariables": {},
           "compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
           "errorThreshold": 10,
@@ -1719,7 +2735,11 @@
           "loggingLevel": "Info",
           "model": {
             "referenceType": "Id",
+<<<<<<< HEAD
             "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2"
+=======
+            "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2"
+>>>>>>> parent of a5566183de... Update recordings
           },
           "maxConcurrencyPerInstance": 5,
           "outputAction": "AppendRow",
@@ -1732,22 +2752,36 @@
           "provisioningState": "Updating"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:12:24.3060329\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:12:24.3060329\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:50:35.0966822\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:50:35.0966822\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1755,17 +2789,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:24 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-b1e528e1c051990e6d1eef513cc8d8dc-3f43882de1a7e4ef-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:50:35 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-23c08089068c08ef5a1b94d801aaa959-14f22a750d006c9c-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "eb24aac7-4356-45cd-955f-7712c661d4a8",
@@ -1778,18 +2821,40 @@
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46",
         "name": "bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46",
         "startTime": "2023-01-18T18:12:24.3060192\u002B00:00",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "91396ec2-999a-40ea-b62f-6bf81314b3ac",
+        "x-ms-ratelimit-remaining-subscription-reads": "11988",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185036Z:91396ec2-999a-40ea-b62f-6bf81314b3ac",
+        "x-request-time": "0.038"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d",
+        "name": "bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d",
+        "startTime": "2022-11-04T18:50:35.0966732\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
         "percentComplete": 0.0,
         "status": "Updating"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1797,17 +2862,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-d9c45f0a94490d70fd59bed49a0195a9-531c2c4996298aeb-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:51:05 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-2093e559c4ba2c047f4f8e24a0dce65b-285de1d776dc1a72-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "e4e16b38-7fa2-4945-be66-10b2f62de20a",
@@ -1821,18 +2895,41 @@
         "name": "bd:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46",
         "startTime": "2023-01-18T18:12:24.3060192\u002B00:00",
         "endTime": "2023-01-18T18:12:45.6793706\u002B00:00",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a5bb7cb8-daa2-4c8d-b7b4-d660b905d542",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185106Z:a5bb7cb8-daa2-4c8d-b7b4-d660b905d542",
+        "x-request-time": "0.068"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d",
+        "name": "bd:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d",
+        "startTime": "2022-11-04T18:50:35.0966732\u002B00:00",
+        "endTime": "2022-11-04T18:50:55.9805545\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
         "percentComplete": 100.0,
         "status": "Succeeded"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1840,17 +2937,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:56 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-8878ba1b2c173c9855cc7067c5c90b35-636d5ea8aef343fd-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:51:06 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-91a30732fb0139ddaacdb074b4ba48d8-751e75b2eacca93e-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "f271a6f8-61b2-4f55-9bb1-4ad5993e8765",
@@ -1862,10 +2968,24 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431",
         "name": "batch-dpm-65dddf539a32431",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "3336881c-ed31-47a3-a882-f3654e55ef62",
+        "x-ms-ratelimit-remaining-subscription-reads": "11986",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185107Z:3336881c-ed31-47a3-a882-f3654e55ef62",
+        "x-request-time": "0.384"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424",
+        "name": "batch-dpm-9e5517ac40ae424",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints/deployments",
         "properties": {
           "description": null,
           "properties": {
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01"
           },
@@ -1874,6 +2994,16 @@
             "scoringScript": "./main.py"
           },
           "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01"
+          },
+          "codeConfiguration": {
+            "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1",
+            "scoringScript": "./main.py"
+          },
+          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
           "environmentVariables": {},
           "compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
           "errorThreshold": 10,
@@ -1885,7 +3015,11 @@
           "loggingLevel": "Info",
           "model": {
             "referenceType": "Id",
+<<<<<<< HEAD
             "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2"
+=======
+            "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2"
+>>>>>>> parent of a5566183de... Update recordings
           },
           "maxConcurrencyPerInstance": 5,
           "outputAction": "AppendRow",
@@ -1898,22 +3032,36 @@
           "provisioningState": "Succeeded"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:12:24.3060329\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:12:24.3060329\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:50:35.0966822\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:50:35.0966822\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1921,17 +3069,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:56 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-f2ff0c0c47d2df4f399678f112e3c9f7-540515ecd0d3e3ea-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:51:06 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-2e586d1def0cd6871aff195c5391b711-55f7dc49e6426486-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "f14f6215-3daf-4d06-ab01-3cf91b9863ae",
@@ -1943,10 +3100,24 @@
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469/deployments/batch-dpm-65dddf539a32431",
         "name": "batch-dpm-65dddf539a32431",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "32afa71c-753c-4be9-8205-a769de1f651b",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185107Z:32afa71c-753c-4be9-8205-a769de1f651b",
+        "x-request-time": "0.138"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e/deployments/batch-dpm-9e5517ac40ae424",
+        "name": "batch-dpm-9e5517ac40ae424",
+>>>>>>> parent of a5566183de... Update recordings
         "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints/deployments",
         "properties": {
           "description": null,
           "properties": {
+<<<<<<< HEAD
             "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-727267c33e66469",
             "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:e527784a-8d68-4865-a133-fc5f319f4b46?api-version=2022-05-01"
           },
@@ -1955,6 +3126,16 @@
             "scoringScript": "./main.py"
           },
           "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_448297559359/versions/bar",
+=======
+            "azureml.onlineendpointid": "/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/providers/microsoft.machinelearningservices/workspaces/00000/onlineendpoints/batch-ept-cd4587100c9249e",
+            "AzureAsyncOperationUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:5666d2c0-e510-445e-bb0d-e20a04d3035d?api-version=2022-05-01"
+          },
+          "codeConfiguration": {
+            "codeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/11ffefbf-7709-4bc3-9bc9-fb24252358d5/versions/1",
+            "scoringScript": "./main.py"
+          },
+          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/test_739064025832/versions/bar",
+>>>>>>> parent of a5566183de... Update recordings
           "environmentVariables": {},
           "compute": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
           "errorThreshold": 10,
@@ -1966,7 +3147,11 @@
           "loggingLevel": "Info",
           "model": {
             "referenceType": "Id",
+<<<<<<< HEAD
             "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_415278849478/versions/2"
+=======
+            "assetId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/models/test_148984333853/versions/2"
+>>>>>>> parent of a5566183de... Update recordings
           },
           "maxConcurrencyPerInstance": 5,
           "outputAction": "AppendRow",
@@ -1979,27 +3164,42 @@
           "provisioningState": "Succeeded"
         },
         "systemData": {
+<<<<<<< HEAD
           "createdAt": "2023-01-18T18:12:24.3060329\u002B00:00",
           "createdBy": "Diondra Peck",
           "lastModifiedAt": "2023-01-18T18:12:24.3060329\u002B00:00"
+=======
+          "createdAt": "2022-11-04T18:50:35.0966822\u002B00:00",
+          "createdBy": "Nancy Mejia Juarez",
+          "lastModifiedAt": "2022-11-04T18:50:35.0966822\u002B00:00"
+>>>>>>> parent of a5566183de... Update recordings
         },
         "tags": {},
         "location": "eastus2"
       }
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-727267c33e66469?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/batchEndpoints/batch-ept-cd4587100c9249e?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
+<<<<<<< HEAD
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+=======
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
+<<<<<<< HEAD
         "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:04fe5825-4c6d-4fd0-a584-b161f22f79c3?api-version=2022-05-01",
         "Cache-Control": "no-cache",
         "Content-Length": "4",
@@ -2018,19 +3218,48 @@
         "x-ms-response-type": "standard",
         "x-ms-routing-request-id": "WESTUS2:20230118T181258Z:6fe08ac0-b23e-4c09-b395-e0097ef71cbc",
         "x-request-time": "0.392"
+=======
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b73fad7b-9aff-4430-8d14-72d9c4bb2660?api-version=2022-05-01",
+        "Cache-Control": "no-cache",
+        "Content-Length": "4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Nov 2022 18:51:07 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationResults/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b73fad7b-9aff-4430-8d14-72d9c4bb2660?api-version=2022-05-01",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-async-operation-timeout": "PT30M",
+        "x-ms-correlation-request-id": "73a62615-9fcb-466b-91eb-87e9d4e8bfbb",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14999",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185108Z:73a62615-9fcb-466b-91eb-87e9d4e8bfbb",
+        "x-request-time": "0.495"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "ResponseBody": "null"
     },
     {
+<<<<<<< HEAD
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:04fe5825-4c6d-4fd0-a584-b161f22f79c3?api-version=2022-05-01",
+=======
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b73fad7b-9aff-4430-8d14-72d9c4bb2660?api-version=2022-05-01",
+>>>>>>> parent of a5566183de... Update recordings
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+<<<<<<< HEAD
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "bc512d68-975b-11ed-be67-010101010000"
+=======
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+>>>>>>> parent of a5566183de... Update recordings
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -2038,17 +3267,26 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
+<<<<<<< HEAD
         "Date": "Wed, 18 Jan 2023 18:12:57 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-9688e4368e621f1a629e8201b38c1443-f179daef4bd9c3d2-00\u0022",
+=======
+        "Date": "Fri, 04 Nov 2022 18:51:07 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-8b843d9036e15b6d66e26ab47bf6511d-5f2cfad3ca1b5773-00\u0022",
+>>>>>>> parent of a5566183de... Update recordings
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
+<<<<<<< HEAD
         "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
         "x-ms-correlation-request-id": "a09d5340-71e2-48a3-ba0e-b9ed6ceb0010",
@@ -2062,15 +3300,36 @@
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:c33afa53-cead-40f1-8d1d-ac5976604612:04fe5825-4c6d-4fd0-a584-b161f22f79c3",
         "name": "be:c33afa53-cead-40f1-8d1d-ac5976604612:04fe5825-4c6d-4fd0-a584-b161f22f79c3",
         "startTime": "2023-01-18T18:12:58.1476422\u002B00:00",
+=======
+        "x-aml-cluster": "vienna-eastus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "0cb09098-5558-4484-acb2-e280937b773e",
+        "x-ms-ratelimit-remaining-subscription-reads": "11984",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS:20221104T185108Z:0cb09098-5558-4484-acb2-e280937b773e",
+        "x-request-time": "0.038"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationsStatus/be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b73fad7b-9aff-4430-8d14-72d9c4bb2660",
+        "name": "be:ee8c8c7b-8359-4874-b140-2a13f80fdccd:b73fad7b-9aff-4430-8d14-72d9c4bb2660",
+        "startTime": "2022-11-04T18:51:08.2925715\u002B00:00",
+>>>>>>> parent of a5566183de... Update recordings
         "percentComplete": 0.0,
         "status": "Updating"
       }
     }
   ],
   "Variables": {
+<<<<<<< HEAD
     "deployment_name": "batch-dpm-65dddf539a32431",
     "environment_name": "test_448297559359",
     "model_name": "test_415278849478",
     "name": "batch-ept-727267c33e66469"
+=======
+    "deployment_name": "batch-dpm-9e5517ac40ae424",
+    "environment_name": "test_739064025832",
+    "model_name": "test_148984333853",
+    "name": "batch-ept-cd4587100c9249e"
+>>>>>>> parent of a5566183de... Update recordings
   }
 }
