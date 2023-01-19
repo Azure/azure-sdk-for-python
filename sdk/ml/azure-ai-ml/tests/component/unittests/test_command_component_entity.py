@@ -240,7 +240,7 @@ class TestCommandComponentEntity:
         # assert positional args is not supported
         with pytest.raises(ValidationException) as error_info:
             yaml_component_version(1)
-        assert "Component function doesn't support positional arguments" in str(error_info)
+        assert "Component function doesn't has any parameters" in str(error_info)
 
         # unknown kw arg
         with pytest.raises(UnexpectedKeywordError) as error_info:
