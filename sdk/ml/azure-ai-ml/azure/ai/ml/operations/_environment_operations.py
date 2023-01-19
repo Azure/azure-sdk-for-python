@@ -8,7 +8,10 @@ from typing import Any, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+    _get_existing_snapshot_by_hash
+)
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -68,6 +71,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
     # @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, environment: Environment) -> Environment:
         """Returns created or updated environment asset.
@@ -81,6 +86,11 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name
+            )
+
             if not environment.version and environment._auto_increment_version:
                 environment.version = _get_next_version_from_container(
                     name=environment.name,
@@ -90,6 +100,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._kwargs,
                 )
+
             sas_uri = None
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -110,10 +121,25 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )
                     return self.get(name=environment.name, version=environment.version)
+            else:
+                existing_asset = _get_existing_snapshot_by_hash(
+                    self._datastore_operation,
+                    environment._upload_hash,
+                    workspace_info,
+                    requests_pipeline=self._requests_pipeline
+                )
+                if existing_asset:
+                    return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
+
 
             environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri
+                environment=environment,
+                operations=self,
+                workspace=workspace_info,
+                requests_pipeline=self._requests_pipeline,
+                sas_uri=sas_uri,
             )
+
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(

@@ -438,22 +438,27 @@ def _check_and_upload_path(
 def _check_and_upload_env_build_context(
     environment: Environment,
     operations: "EnvironmentOperations",
+    workspace: Workspace,
+    requests_pipeline: HttpPipeline,
     sas_uri=None,
     show_progress: bool = True,
 ) -> Environment:
     if environment.path:
-        uploaded_artifact = _upload_to_datastore(
-            operations._operation_scope,
-            operations._datastore_operation,
-            environment.path,
+        uploaded_artifact = _upload_snapshot_to_datastore(
+            operation_scope=operations._operation_scope,
+            datastore_operation=operations._datastore_operation,
+            path=environment.path,
+            workspace=workspace,
+            requests_pipeline=requests_pipeline,
+            datastore_name=environment.datastore,
             asset_name=environment.name,
             asset_version=str(environment.version),
             asset_hash=environment._upload_hash,
-            sas_uri=sas_uri,
-            artifact_type=ErrorTarget.ENVIRONMENT,
-            datastore_name=environment.datastore,
+            asset_type="environments",
             show_progress=show_progress,
+            sas_uri=sas_uri,
         )
+
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"
     return environment
@@ -476,7 +481,7 @@ def get_temporary_data_reference(
     request_headers: Dict[str, str],
     workspace: Workspace,
     requests_pipeline: HttpPipeline,
-    asset_type: str = "codes",
+    asset_type: str,
     ) -> Tuple[str, str]:
     """Make a temporary data reference for an asset and return SAS uri and blob storage uri."""
 
@@ -615,7 +620,8 @@ def _upload_snapshot_to_datastore(
     asset_name: str = None,
     asset_version: str = None,
     asset_hash: str = None,
-    ignore_file: IgnoreFile = None,
+    asset_type: str = "codes",
+    ignore_file: IgnoreFile = IgnoreFile(),
     sas_uri: str = None,  # contains registry sas url
 ) -> ArtifactStorageInfo:
     ws_base_url = datastore_operation._operation._client._base_url
@@ -627,6 +633,7 @@ def _upload_snapshot_to_datastore(
         sas_uri, blob_uri = get_temporary_data_reference(
             requests_pipeline=requests_pipeline,
             asset_name=asset_name,
+            asset_type=asset_type,
             asset_version=asset_version,
             request_headers=request_headers,
             workspace=workspace,
