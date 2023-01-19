@@ -279,6 +279,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
+        **kwargs # pylint:disable=unused-argument
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -306,6 +307,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
+        **kwargs # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived environment version.
 
