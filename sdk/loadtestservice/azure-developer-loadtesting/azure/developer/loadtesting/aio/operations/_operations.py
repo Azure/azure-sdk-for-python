@@ -28,6 +28,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ...operations._operations import (
+    build_administration_begin_upload_test_file_request,
     build_administration_create_or_update_app_components_request,
     build_administration_create_or_update_server_metrics_config_request,
     build_administration_create_or_update_test_request,
@@ -39,10 +40,9 @@ from ...operations._operations import (
     build_administration_get_test_request,
     build_administration_list_test_files_request,
     build_administration_list_tests_request,
-    build_administration_upload_test_file_request,
+    build_test_run_begin_test_run_request,
     build_test_run_create_or_update_app_components_request,
     build_test_run_create_or_update_server_metrics_config_request,
-    build_test_run_create_or_update_test_run_request,
     build_test_run_delete_test_run_request,
     build_test_run_get_app_components_request,
     build_test_run_get_server_metrics_config_request,
@@ -1162,7 +1162,6 @@ class AdministrationOperations:
         search: Optional[str] = None,
         last_modified_start_time: Optional[datetime.datetime] = None,
         last_modified_end_time: Optional[datetime.datetime] = None,
-        continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """Get all load tests by the fully qualified resource Id e.g
@@ -1184,9 +1183,6 @@ class AdministrationOperations:
         :keyword last_modified_end_time: End DateTime(ISO 8601 literal format) of the last updated time
          range to filter tests. Default value is None.
         :paramtype last_modified_end_time: ~datetime.datetime
-        :keyword continuation_token_parameter: Continuation token to get the next page of response.
-         Default value is None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1381,7 +1377,6 @@ class AdministrationOperations:
                     search=search,
                     last_modified_start_time=last_modified_start_time,
                     last_modified_end_time=last_modified_end_time,
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1439,7 +1434,7 @@ class AdministrationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def upload_test_file(
+    async def begin_upload_test_file(
         self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Upload input file for a given test name. File size can't be more than 50 MB. Existing file with
@@ -1498,7 +1493,7 @@ class AdministrationOperations:
 
         _content = body
 
-        request = build_administration_upload_test_file_request(
+        request = build_administration_begin_upload_test_file_request(
             test_id=test_id,
             file_name=file_name,
             file_type=file_type,
@@ -1667,9 +1662,7 @@ class AdministrationOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_test_files(
-        self, test_id: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    def list_test_files(self, test_id: str, **kwargs: Any) -> AsyncIterable[JSON]:
         """Get all test files.
 
         Get all test files.
@@ -1677,9 +1670,6 @@ class AdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :keyword continuation_token_parameter: Continuation token to get the next page of response.
-         Default value is None.
-        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of JSON object
         :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1720,7 +1710,6 @@ class AdministrationOperations:
 
                 request = build_administration_list_test_files_request(
                     test_id=test_id,
-                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2445,7 +2434,7 @@ class TestRunOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_or_update_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: JSON,
@@ -2968,7 +2957,7 @@ class TestRunOperations:
         """
 
     @overload
-    async def create_or_update_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: IO,
@@ -3247,7 +3236,7 @@ class TestRunOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update_test_run(
+    async def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
@@ -3540,7 +3529,7 @@ class TestRunOperations:
         else:
             _json = body
 
-        request = build_test_run_create_or_update_test_run_request(
+        request = build_test_run_begin_test_run_request(
             test_run_id=test_run_id,
             old_test_run_id=old_test_run_id,
             content_type=content_type,
@@ -4021,7 +4010,6 @@ class TestRunOperations:
         self,
         *,
         orderby: Optional[str] = None,
-        continuation_token_parameter: Optional[str] = None,
         search: Optional[str] = None,
         test_id: Optional[str] = None,
         execution_from: Optional[datetime.datetime] = None,
@@ -4036,9 +4024,6 @@ class TestRunOperations:
         :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg: executedDateTime
          asc. Supported fields - executedDateTime. Default value is None.
         :paramtype orderby: str
-        :keyword continuation_token_parameter: Continuation token to get the next page of response.
-         Default value is None.
-        :paramtype continuation_token_parameter: str
         :keyword search: Prefix based, case sensitive search on searchable fields - description,
          executedUser. For example, to search for a test run, with description 500 VUs, the search
          parameter can be 500. Default value is None.
@@ -4322,7 +4307,6 @@ class TestRunOperations:
 
                 request = build_test_run_list_test_runs_request(
                     orderby=orderby,
-                    continuation_token_parameter=continuation_token_parameter,
                     search=search,
                     test_id=test_id,
                     execution_from=execution_from,
