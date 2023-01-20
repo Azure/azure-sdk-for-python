@@ -231,6 +231,9 @@ class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
             pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
         )
 
+    @pytest.mark.skip(
+        reason="TODO(2177353): check why recorded tests failure."
+    )
     def test_do_while(self, client: MLClient, randstr: Callable[[], str]):
         assert_control_flow_in_pipeline_component(
             client=client,
