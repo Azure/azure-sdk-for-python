@@ -14,6 +14,13 @@ security: AADToken
 security-scopes: https://cnt-prod.loadtesting.azure.com/.default
 directive:
   - from: swagger-document
+    where: $["paths"]["/tests/{testId}/files/{fileName}"].put
+    transform: $["operationId"] = "LoadTestAdministration_BeginUploadTestFile";
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}"].patch
+    transform: $["operationId"] = "LoadTestRun_BeginTestRun";
+    
+  - from: swagger-document
     where: '$.paths.*[?(@.tags=="Test")]'
     transform: >
      $["operationId"] = $["operationId"].replace("LoadTestAdministration_", "Administration_");
