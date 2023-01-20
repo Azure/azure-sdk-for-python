@@ -35,9 +35,9 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 # ID to be assigned to test
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-sdk-test-id"
 
-result = client.load_test_administration.create_or_update_test(
+result = client.administration.create_or_update_test(
     TEST_ID,
     {
         "description": "",
@@ -81,5 +81,4 @@ result = client.load_test_administration.create_or_update_test(
     }
 )
 
-print(result["testId"])
 print(result)

@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
-    _get_latest,
+    _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._data_utils import (
@@ -427,8 +427,14 @@ class DataOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
         """
-        result = _get_latest(name, self._operation, self._resource_group_name, self._workspace_name, self._registry_name)
-        return Data._from_rest_object(result)
+        latest_version = _get_latest_version_from_container(
+            name,
+            self._container_operation,
+            self._resource_group_name,
+            self._workspace_name,
+            self._registry_name
+            )
+        return self.get(name, version=latest_version)
 
 
 def _assert_local_path_matches_asset_type(

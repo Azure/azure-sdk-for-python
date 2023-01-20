@@ -13,6 +13,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .on_behalf_of import OnBehalfOfCredential
 from .shared_cache import SharedTokenCacheCredential
+from .azd_cli import AzureDeveloperCliCredential
 from .azure_cli import AzureCliCredential
 from .device_code import DeviceCodeCredential
 from .user_password import UsernamePasswordCredential
@@ -23,6 +24,7 @@ from .client_assertion import ClientAssertionCredential
 __all__ = [
     "AuthorizationCodeCredential",
     "AzureCliCredential",
+    "AzureDeveloperCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
