@@ -930,9 +930,7 @@ class ReceiveClient(AMQPClient):
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = self.do_work()
-                if time.time() - self._generator_timeout  >= 5: 
-                # self._generator_timeout -= 1
-                # if self._generator_timeout == 0:
+                if (time.time() - self._generator_timeout  >= 1.0) and self._received_messages.empty(): 
                     self._timeout_reached = True
                 while not self._received_messages.empty():
                     self._generator_timeout = time.time()
@@ -943,9 +941,7 @@ class ReceiveClient(AMQPClient):
                     # self.settle_messages(message[1],"accepted")
                     # self._complete_message(message, auto_complete)
         except:
-            # self.settle_messages(message[1],"accepted")
-            # self._complete_message(message, auto_complete)
-            # self.auto_complete = auto_complete
+      
             if self._shutdown:
                 self.close()
 

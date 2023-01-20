@@ -839,7 +839,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :type on_message_received: callable[~uamqp.message.Message]
         """
         self._message_received_callback = on_message_received
-        return self._message_generator_async()
+        return await self._message_generator_async()
 
     async def _message_generator_async(self):
         """Iterate over processed messages in the receive queue.
@@ -855,11 +855,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         try:
             # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving and self._received_messages.empty() and not self._timeout_reached:
+                self._timeout_count = time.time()
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = await self.do_work_async()
-                self._timeout_count = self._timeout_count-1
-                if self._timeout_count == 0: 
+                if time.time() - self._timeout_count == 0.5 and self._received_messages.empty(): 
                     self._timeout_reached = True
                 while not self._received_messages.empty():
                     self._timeout_count = 5
@@ -869,9 +869,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                     # self.settle_messages(message[1],"accepted")
                     # self._complete_message(message, auto_complete)
         finally:
-            # self.settle_messages(message[1],"accepted")
-            # self._complete_message(message, auto_complete)
-            # self.auto_complete = auto_complete
+            # what goes here/ does it ever reach here
+       
             if self._shutdown:
                 self.close()
 
