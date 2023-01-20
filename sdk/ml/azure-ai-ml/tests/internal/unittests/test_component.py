@@ -41,6 +41,15 @@ class TestComponent:
         validation_result = validate_component(yaml_path)
         assert validation_result.passed, repr(validation_result)
 
+    def test_component_inputs_with_bool_and_date_value(self):
+        yaml_path = r"tests/test_configs/internal/command-component/command-linux/" \
+                    r"component_with_bool_and_data_input/component.yaml"
+        component = load_component(yaml_path)
+        assert component.inputs["bool_input"].default == "true"
+        assert component.inputs["enum_input"].default == "true"
+        assert component.inputs["enum_input"].enum == ["true", "false"]
+        assert component.inputs["date_input"].default == "2023-01-01"
+
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
         yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
@@ -200,9 +209,9 @@ class TestComponent:
             # enum will be transformed to string
             if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
-                    input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
+                    input_port["enum"] = list(map(lambda x: str(x).lower() if isinstance(x, bool) else str(x), input_port["enum"]))
                 if "default" in input_port:
-                    input_port["default"] = str(input_port["default"])
+                    input_port["default"] = str(input_port["default"]).lower() if isinstance(input_port["default"], bool) else str(input_port["default"])
 
         # code will be dumped as absolute path
         if "code" in expected_dict:
@@ -585,7 +594,7 @@ class TestComponent:
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
                 # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
-                "param_string_with_yes_value": {"default": "True", "type": "string"},
+                "param_string_with_yes_value": {"default": "true", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
             },
             "outputs": {

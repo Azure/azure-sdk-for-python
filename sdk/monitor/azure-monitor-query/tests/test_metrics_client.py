@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from datetime import timedelta
+from unittest import mock
 
 from azure.monitor.query import MetricsQueryClient, MetricAggregationType, Metric
 from devtools_testutils import AzureRecordedTestCase
@@ -67,6 +68,24 @@ class TestMetricsClient(AzureRecordedTestCase):
         assert metrics[0].__class__ == Metric
         assert metrics[METRIC_NAME].__class__ == Metric
         assert metrics[METRIC_NAME] == metrics[0]
+
+    def test_metrics_list_with_commas(self):
+        """Commas in metric names should be encoded as %2."""
+
+        with mock.patch("azure.monitor.query._generated.metrics.operations.MetricsOperations.list") as mock_list:
+            mock_list.return_value = {"foo": "bar"}
+            client = self.create_client_from_credential(MetricsQueryClient, self.get_credential(MetricsQueryClient))
+            client.query_resource(
+                "resource",
+                metric_names=["metric1,metric2", "foo,test,test"],
+                timespan=timedelta(days=1),
+                granularity=timedelta(minutes=5),
+                aggregations=[MetricAggregationType.COUNT]
+            )
+
+        assert "metricnames" in mock_list.call_args[1]
+        assert mock_list.call_args[1]['metricnames'] == "metric1%2metric2,foo%2test%2test"
+
 
     def test_metrics_namespaces(self, recorded_test, monitor_info):
         client = self.create_client_from_credential(MetricsQueryClient, self.get_credential(MetricsQueryClient))
