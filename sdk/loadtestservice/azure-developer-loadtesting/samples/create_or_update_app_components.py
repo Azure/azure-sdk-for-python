@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_app_component.py
+FILE: create_or_update_app_components.py
 
 DESCRIPTION:
     This sample shows how to create or update app component
@@ -17,7 +17,7 @@ USAGE:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
-    4)  SUBSCRIPTION_ID - in which resource to connect is/are present
+    4)  RESOURCE_ID - resource id of resource to connect
     5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 from azure.developer.loadtesting import LoadTestingClient
@@ -32,29 +32,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
-SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
+RESOURCE_ID = os.environ["RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-sdk-test-id"
 APP_COMPONENT = "my-new-app-component"
 
-result = client.load_test_administration.create_or_update_app_components(
-    APP_COMPONENT,
+result = client.administration.create_or_update_app_components(
+    TEST_ID,
     {
-        "testId": TEST_ID,
-        "value": {
-            f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web"
-            f"/sites/App-Service-Sample-Demo": {
-                "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers"
-                              f"/Microsoft.Web/sites/App-Service-Sample-Demo",
+        "components": {
+            RESOURCE_ID: {
+                "resourceId": RESOURCE_ID,
                 "resourceName": "App-Service-Sample-Demo",
                 "resourceType": "Microsoft.Web/sites",
-             }
+                "kind": "web",
+            }
         },
     },
 )
 
 print(result)
-print(result["testRunId"])
