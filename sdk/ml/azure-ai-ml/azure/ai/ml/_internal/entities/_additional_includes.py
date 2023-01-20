@@ -7,12 +7,11 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Optional, Union, List, Tuple, Iterable, Any
+from typing import Optional, Union
 
 import yaml
 
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_local_paths
-from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
@@ -90,13 +89,13 @@ class _AdditionalIncludes:
             _general_copy(src, dst)
         else:
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
-            # for same folder, the expected behavior is merging            
+            # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
             local_paths, _ = get_local_paths(source_path=str(src), ignore_file=(ignore_file or self._ignore_file))
-            for path, _ in local_paths:
+            for path in local_paths:
                 dst_root = Path(dst) / Path(path).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                # if there is nothing to copy under current dst_root, no need to create this folder         
+                # if there is nothing to copy under current dst_root, no need to create this folder      
                 if dst_root_mkdir_flag is False:
                     dst_root.mkdir(parents=True)
                 _general_copy(path, dst_root / Path(path).name)
@@ -202,7 +201,7 @@ class _AdditionalIncludes:
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             local_paths, _ = get_local_paths(source_path=str(folder_to_zip), ignore_file=self._ignore_file)
-            for path, _ in local_paths:
+            for path in local_paths:
                 zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
