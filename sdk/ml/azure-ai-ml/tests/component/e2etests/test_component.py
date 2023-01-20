@@ -511,9 +511,6 @@ class TestComponent(AzureRecordedTestCase):
         tensorflow_component_resource = client.components.create_or_update(component_entity)
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
-    @pytest.mark.skip(
-        "Could not rerecord the test , errors: (UserError) Failed to update component test_81585734883"
-    )
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
         params_override = [{"name": component_name}]
