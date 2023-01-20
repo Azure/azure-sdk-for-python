@@ -3,20 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
-from devtools_testutils import EnvironmentVariableLoader
-import inspect
 
-AppConfigProviderPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://fake-endpoint.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_endpoint_string="https://fake-endpoint.azconfig.io",
-    appconfiguration_client_id="fake-client-id",
-    appconfiguration_client_secret="fake-client-secret",
-    appconfiguration_tenant_id="fake-tenant-id",
-)
-
+from preparers import AppConfigProviderPreparer, trim_kwargs_from_test_function
 
 def app_config_decorator_async(func, **kwargs):
     @AppConfigProviderPreparer()
@@ -44,17 +32,3 @@ def app_config_decorator_aad_async(func, **kwargs):
 
         await func(*args, **trimmed_kwargs)
     return wrapper
-
-def trim_kwargs_from_test_function(fn, kwargs):
-    # the next function is the actual test function. the kwargs need to be trimmed so
-    # that parameters which are not required will not be passed to it.
-    if not getattr(fn, '__is_preparer', False):
-        try:
-            args, _, kw, _, _, _, _ = inspect.getfullargspec(fn)
-        except AttributeError:
-            args, _, kw, _ = inspect.getargspec(
-                fn)  # pylint: disable=deprecated-method
-        if kw is None:
-            args = set(args)
-            for key in [k for k in kwargs if k not in args]:
-                del kwargs[key]
