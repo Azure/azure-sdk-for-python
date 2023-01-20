@@ -219,13 +219,10 @@ if __name__ == '__main__':
     Analyze dependencies in Python packages. First, all declared dependencies
     and the libraries that declare them will be discovered (visible with
     --verbose). Next, all declared dependency version specs will be analyzed to
-    ensure they are consistent across all libraries. Finally, all declared
-    dependency version specs will be compared to the frozen version specs in
-    shared_requirements.txt, or if --freeze is provided, all declared dependency
+    ensure that none of requirements are unknown. Finally, all declared dependency
     version specs will be frozen to shared_requirements.txt.
     ''')
     parser.add_argument('--verbose', help='verbose output', action='store_true')
-    parser.add_argument('--freeze', help='freeze dependencies after analyzing (otherwise, validate dependencies against frozen list)', action='store_true')
     parser.add_argument('--out', metavar='FILE', help='write HTML-formatted report to FILE')
     parser.add_argument('--dump', metavar='FILE', help='write JSONP-formatted dependency data to FILE')
     parser.add_argument('--wheeldir', metavar='DIR', help='analyze wheels in DIR rather than source packages in this repository')
@@ -267,6 +264,7 @@ if __name__ == '__main__':
 
     inconsistent = []
     for requirement in sorted(dependencies.keys()):
+        breakpoint()
         specs = dependencies[requirement]
         num_specs = len(specs)
         if num_specs == 1:
