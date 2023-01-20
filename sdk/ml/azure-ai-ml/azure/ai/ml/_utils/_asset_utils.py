@@ -95,7 +95,7 @@ class IgnoreFile(object):
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Creates path specification based on ignore list."""
-        return [GitWildMatchPattern(ignore) for ignore in set(self._get_ignore_list())]
+        return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
@@ -115,13 +115,14 @@ class IgnoreFile(object):
                 # 2 paths are on different drives
                 return True
 
-        file_path = str(file_path)
         norm_file = normalize_file(file_path)
+        matched = False
         for pattern in self._path_spec:
             if pattern.include is not None:
-                if norm_file in pattern.match((norm_file,)):
-                    return bool(pattern.include)
-        return False
+                if pattern.match_file(norm_file) is not None:
+                    matched = pattern.include
+
+        return matched
 
     @property
     def path(self) -> Union[Path, str]:
