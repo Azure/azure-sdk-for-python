@@ -198,7 +198,11 @@ class NodeIOMixin:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
         updated_rest_data_outputs = {}
         for name, val in rest_data_outputs.items():
-            if isinstance(val, RestJobOutput):
+            # rest_data_outputs consist of two part:
+            # 1) output doesn't have binding(the output may be registered or not)
+            # 2) output has binding but need to be registered
+            # we select the outputs that need to be registered using RestJobOutput format
+            if val.asset_name:
                 updated_rest_data_outputs[name] = val
             else:
                 updated_rest_data_outputs[name] = val.as_dict()
