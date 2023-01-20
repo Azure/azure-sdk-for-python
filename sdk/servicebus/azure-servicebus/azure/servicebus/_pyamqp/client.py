@@ -926,17 +926,17 @@ class ReceiveClient(AMQPClient):
         try:
             # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving and self._received_messages.empty() and not self._timeout_reached:
-                # self._generator_timeout = time.time()
+                self._generator_timeout = time.time()
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = self.do_work()
-                # if time.time() - self._generator_timeout  >= 5: 
-                self._generator_timeout -= 1
-                if self._generator_timeout == 0:
+                if time.time() - self._generator_timeout  >= 5: 
+                # self._generator_timeout -= 1
+                # if self._generator_timeout == 0:
                     self._timeout_reached = True
                 while not self._received_messages.empty():
-                    # self._generator_timeout = time.time()
-                    self._generator_timeout = 3
+                    self._generator_timeout = time.time()
+                    # self._generator_timeout = 3
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
