@@ -164,7 +164,7 @@ def foo(
     ...
 ```
 
-- Do use `Optional` if a parameter can be typed as `Any` or `None`. A `Union[Any, None]` is not equal to `Any`.
+- Do use `Optional` if a parameter can be typed as `Any` or `None`. `Optional[Any]`, or `Union[Any, None]`, is __not__ equal to `Any`.
 
 ```python
 from typing import Optional, Any
