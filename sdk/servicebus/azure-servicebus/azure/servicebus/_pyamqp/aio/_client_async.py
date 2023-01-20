@@ -855,14 +855,14 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         try:
             # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving and self._received_messages.empty() and not self._timeout_reached:
-                self._timeout_count = time.time()
+                self._generator_timeout  = time.time()
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = await self.do_work_async()
-                if (time.time() - self._timeout_count == 1.0) and self._received_messages.empty(): 
+                if (time.time() - self._generator_timeout  == 1.0) and self._received_messages.empty(): 
                     self._timeout_reached = True
                 while not self._received_messages.empty():
-                    self._timeout_count = 5
+                    self._generator_timeout  = time.time()
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
