@@ -1242,13 +1242,13 @@
           "isAnonymous": true,
           "isArchived": false,
           "componentSpec": {
-            "experiment_name": "pipeline_with_do_while_node",
             "settings": {
               "default_datastore": "azureml:workspaceblobstore",
               "default_compute": "azureml:cpu-cluster",
               "continue_on_step_failure": false,
               "force_rerun": true
             },
+            "experiment_name": "pipeline_with_do_while_node",
             "name": "azureml_anonymous",
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json",
