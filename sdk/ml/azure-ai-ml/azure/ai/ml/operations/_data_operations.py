@@ -274,11 +274,13 @@ class DataOperations(_ScopeDependentOperations):
                         **self._scope_kwargs,
                     ).result()
                     if self._registry_name
-                    else self._operation.create_or_update( name=name,
-                    version=version,
-                    workspace_name=self._workspace_name,
-                    body=data_version_resource,
-                    **self._scope_kwargs,)
+                    else self._operation.create_or_update( 
+                        name=name,
+                        version=version,
+                        workspace_name=self._workspace_name,
+                        body=data_version_resource,
+                        **self._scope_kwargs,
+                    )
                 )
 
             if not result and self._registry_name:
