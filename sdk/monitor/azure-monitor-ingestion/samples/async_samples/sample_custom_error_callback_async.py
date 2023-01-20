@@ -5,6 +5,7 @@ import asyncio
 import os
 
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.ingestion import UploadLogsError
 from azure.monitor.ingestion.aio import LogsIngestionClient
 
 
@@ -28,12 +29,12 @@ async def send_logs():
     failed_logs = []
 
     # Sample callback that stores the logs that failed to upload.
-    async def on_error(error, logs):
-        print("Log chunk failed to upload with error: ", error)
-        failed_logs.extend(logs)
+    async def on_error(error: UploadLogsError) -> None:
+        print("Log chunk failed to upload with error: ", error.error)
+        failed_logs.extend(error.failed_logs)
 
     # Sample callback that just ignores the error.
-    async def on_error_pass(*_):
+    async def on_error_pass(*_) -> None:
         pass
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
