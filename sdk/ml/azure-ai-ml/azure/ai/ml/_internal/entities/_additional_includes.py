@@ -11,7 +11,7 @@ from typing import Optional, Union, List, Tuple, Iterable, Any
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile
+from azure.ai.ml._utils._asset_utils import IgnoreFile, get_local_paths
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
@@ -23,89 +23,6 @@ ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 ADDITIONAL_INCLUDES_KEY = "additional_includes"
 ARTIFACT_KEY = "artifact"
-
-
-def traverse_directory(
-    root: str,
-    files: List[str],
-    source: str,
-    prefix: str,
-    ignore_file: IgnoreFile = IgnoreFile(),
-) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
-    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
-    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
-        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
-    :param root: Root directory path
-    :type root: str
-    :param files: List of all file paths in the directory
-    :type files: List[str]
-    :param source: Local path to project directory
-    :type source: str
-    :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
-    :type prefix: str
-    :param ignore_file: The .amlignore or .gitignore file in the project directory
-    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
-    :return: Zipped list of tuples representing the local path and remote destination path for each file
-    :rtype: Iterable[Tuple[str, Union[str, Any]]]
-    """
-    # Normalize Windows paths
-    root = convert_windows_path_to_unix(root)
-    source = convert_windows_path_to_unix(source)
-    working_dir = convert_windows_path_to_unix(os.getcwd())
-    project_dir = root[len(str(working_dir)) :] + "/"
-    file_paths = [
-        convert_windows_path_to_unix(os.path.join(root, name))
-        for name in files
-        if not ignore_file.is_file_excluded(os.path.join(root, name))
-    ]  # get all files not excluded by the ignore file
-    file_paths_including_links = {fp: None for fp in file_paths}
-
-    for path in file_paths:
-        target_prefix = ""
-        symlink_prefix = ""
-
-        # check for symlinks to get their true paths
-        if os.path.islink(path):
-            target_absolute_path = os.path.join(working_dir, os.readlink(path))
-            target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
-
-            # follow and add child links if the directory is a symlink
-            if os.path.isdir(target_absolute_path):
-                symlink_prefix = path.replace(root + "/", "")
-
-                for r, _, f in os.walk(target_absolute_path, followlinks=True):
-                    target_file_paths = {
-                        os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
-                        for name in f
-                    }  # for each symlink, store its target_path as key and symlink path as value
-                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
-            else:
-                file_path_info = {
-                    target_absolute_path: path.replace(root + "/", "")
-                }  # for each symlink, store its target_path as key and symlink path as value
-                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
-            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
-
-    file_paths = sorted(
-        file_paths_including_links
-    )  # sort files to keep consistent order in case of repeat upload comparisons
-    dir_parts = [convert_windows_path_to_unix(os.path.relpath(root, source)) for _ in file_paths]
-    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
-    blob_paths = []
-
-    for (dir_part, name) in zip(dir_parts, file_paths):
-        if file_paths_including_links.get(
-            name
-        ):  # for symlinks, use symlink name and structure in directory to create remote upload path
-            blob_path = prefix + dir_part + file_paths_including_links.get(name)
-        else:
-            blob_path = prefix + dir_part + name.replace(root + "/", "")
-        blob_paths.append(blob_path)
-
-    return zip(file_paths, blob_paths)
 
 
 class _AdditionalIncludes:
@@ -173,19 +90,16 @@ class _AdditionalIncludes:
             _general_copy(src, dst)
         else:
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
-            # for same folder, the expected behavior is merging
+            # for same folder, the expected behavior is merging            
             # ignore will be also applied during this process
-            for root, _, files in os.walk(src):
-                dst_root = Path(dst) / Path(root).relative_to(src)
+            local_paths, _ = get_local_paths(source_path=str(src), ignore_file=(ignore_file or self._ignore_file))
+            for path, _ in local_paths:
+                dst_root = Path(dst) / Path(path).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(
-                    root, files, str(src), "", ignore_file=ignore_file or self._ignore_file
-                ):
-                    # if there is nothing to copy under current dst_root, no need to create this folder
-                    if dst_root_mkdir_flag is False:
-                        dst_root.mkdir(parents=True)
-                        dst_root_mkdir_flag = True
-                    _general_copy(path, dst_root / Path(path).name)
+                # if there is nothing to copy under current dst_root, no need to create this folder         
+                if dst_root_mkdir_flag is False:
+                    dst_root.mkdir(parents=True)
+                _general_copy(path, dst_root / Path(path).name)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -287,9 +201,9 @@ class _AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
-                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
+            local_paths, _ = get_local_paths(source_path=str(folder_to_zip), ignore_file=self._ignore_file)
+            for path, _ in local_paths:
+                zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
         """Clean up potential tmp folder generated during resolve as it can be
