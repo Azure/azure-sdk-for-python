@@ -67,7 +67,7 @@ These two clients also have there asynchronous counterparts, which are
 
 ### Load Test Administration Client
 
-The `LoadTestAdministrationClient` clients is used to administer and configure the load tests, app components and metrics.
+The `LoadTestingClient.administration` is used to administer and configure the load tests, app components and metrics.
 
 #### Test
 
