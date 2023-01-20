@@ -32,6 +32,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
@@ -268,6 +269,13 @@ class MLClient(object):
         )
 
         self._service_client_10_2022 = ServiceClient102022(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_12_2022_preview = ServiceClient122022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
