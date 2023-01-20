@@ -859,7 +859,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = await self.do_work_async()
-                if time.time() - self._timeout_count == 0.5 and self._received_messages.empty(): 
+                if (time.time() - self._timeout_count == 1.0) and self._received_messages.empty(): 
                     self._timeout_reached = True
                 while not self._received_messages.empty():
                     self._timeout_count = 5
