@@ -96,6 +96,13 @@ class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
 
 
+class ShareFileRequestIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareFileRequestIntent."""
+
+    NONE = "none"
+    BACKUP = "backup"
+
+
 class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ShareRootSquash."""
 

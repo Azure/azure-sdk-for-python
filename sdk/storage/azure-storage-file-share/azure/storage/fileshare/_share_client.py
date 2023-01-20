@@ -66,6 +66,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :keyword str file_request_intent: File request intent. Only needed for OAuth.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -93,8 +94,6 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
 
         path_snapshot = None
         path_snapshot, sas_token = parse_query(parsed_url.query)
@@ -112,8 +111,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         self.share_name = share_name
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
+        self.file_request_intent = kwargs.pop('file_request_intent', None)
         super(ShareClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
@@ -248,7 +248,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, api_version=self.api_version,
+            credential=self.credential, file_request_intent=self.file_request_intent, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             _location_mode=self._location_mode)
 
@@ -269,7 +269,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
         return ShareFileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
-            credential=self.credential, api_version=self.api_version,
+            credential=self.credential, file_request_intent=self.file_request_intent, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode)
 

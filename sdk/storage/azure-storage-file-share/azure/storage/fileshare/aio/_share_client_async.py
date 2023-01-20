@@ -62,6 +62,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :keyword str file_request_intent: File request intent. Only needed for OAuth.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -84,13 +85,14 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+        self.file_request_intent = kwargs.pop('file_request_intent', None)
         super(ShareClient, self).__init__(
             account_url,
             share_name=share_name,
             snapshot=snapshot,
             credential=credential,
             **kwargs)
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def get_directory_client(self, directory_path=None):
@@ -110,8 +112,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path or "", snapshot=self.snapshot,
-            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode)
+            credential=self.credential, file_request_intent=self.file_request_intent, api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
+            _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
         # type: (str) -> ShareFileClient
@@ -130,7 +133,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         return ShareFileClient(
             self.url, share_name=self.share_name, file_path=file_path, snapshot=self.snapshot,
-            credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
+            credential=self.credential, file_request_intent=self.file_request_intent, api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode)
 
     @distributed_trace_async()
