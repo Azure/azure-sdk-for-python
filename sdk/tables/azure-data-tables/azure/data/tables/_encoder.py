@@ -29,12 +29,16 @@ class TableEntityEncoder:
         """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
         removing int validation.
         """
+        # Should put True False check at first, otherwise could be detected as other types, like isinstance(True, int) == True
+        # New found: 1 in [True, False] == True
+        if isinstance(value, bool):
+            # Update: return edmtype
+            return EdmType.BOOLEAN, value
         if isinstance(value, str):
             return EdmType.STRING, value
         if isinstance(value, int):
-            return None, value  # TODO: Test what happens if the supplied value exceeds int32.
-        if value in [True, False]:
-            return None, value
+            # Update: return edmtype
+            return EdmType.INT32, value  # TODO: Test what happens if the supplied value exceeds int32.
         if isinstance(value, float):
             # The default JSONEncoder will automatically convert to 'NaN', 'Infinity' and '-Infinity'.
             return EdmType.DOUBLE, value
@@ -49,12 +53,12 @@ class TableEntityEncoder:
             except AttributeError:
                 pass
             return EdmType.DATETIME, _to_utc_datetime(value)
+        # To support value in tuple
         try:
             if len(value) == 2:
-                if value[1] == EdmType.INT64:  # TODO: Test that this works with either string or enum input.
-                    return value[1], str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
-                _, encoded = self.encode_property(name, value[0])
-                return value[1], encoded
+                if value[1] == EdmType.INT64:  # TODO: Test if this works with either string or enum input.
+                    return EdmType.INT64, str(value[0])  # TODO: Test what happens if the supplied value exceeds int64
+                return self.encode_property(name, value[0])
         except TypeError:
             pass
         if name:
@@ -76,7 +80,7 @@ class TableEntityEncoder:
             if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
                 encoded[key] = value
                 continue
-            edm_type, value = self.encode_property(key, value)
+            edm_type, value = self.encode_property(key, value) # Expect to get EdmType instead of str as first return value
             if edm_type:
                 encoded[key + _ODATA_SUFFIX] = edm_type.value
             encoded[key] = value
