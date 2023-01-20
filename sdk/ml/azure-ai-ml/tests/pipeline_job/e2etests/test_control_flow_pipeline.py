@@ -44,7 +44,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         my_job = load_job(
-            "./tests/test_configs/pipeline_jobs/control_flow/if_else/simple_pipeline_1.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/simple_pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(my_job, client)
@@ -124,7 +124,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/pipeline_jobs/do_while/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -138,7 +138,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/pipeline_jobs/do_while/pipeline_with_primitive_inputs.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline_with_primitive_inputs.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
