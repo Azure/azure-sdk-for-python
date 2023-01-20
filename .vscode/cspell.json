@@ -27,7 +27,7 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
     "**/assets.json",
-
+    "**/pyproject.toml",
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
@@ -95,9 +95,13 @@
     ".gitignore",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
+    "tomli",
+    "sdkrel",
     "qnamaker",
     "mindependency",
     "automl",
