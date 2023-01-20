@@ -4,7 +4,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import logging
+from ci_tools.functions import get_config_setting
+import os
 
 PYLINT_OPT_OUT = [
     "azure-applicationinsights",
@@ -83,9 +84,6 @@ MYPY_OPT_OUT = [
     "azure-confidentialledger",
     "azure-containerregistry",
     "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
     "azure-eventhub-checkpointstoreblob",
@@ -138,11 +136,6 @@ PYRIGHT_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
-    "azure-core",
-    "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
@@ -287,11 +280,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-communication-sms",
     "azure-confidentialledger",
     "azure-containerregistry",
-    "azure-core",
-    "azure-mgmt-core",
-    "azure-core-experimental",
-    "azure-core-tracing-opencensus",
-    "azure-core-tracing-opentelemetry",
     "azure-cosmos",
     "azure-developer-devcenter",
     "azure-iot-deviceupdate",
@@ -337,7 +325,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-messaging-webpubsubservice",
 ]
 
-
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
 IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
@@ -361,30 +348,52 @@ IGNORE_PACKAGES = [
 ]
 
 
-def filter_tox_environment_string(namespace_argument: str, package_name: str) -> str:
+def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
+    if package_path.endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
+
+    if package_path == ".":
+        package_path = os.getcwd()
+
+    enabled = default
+    package_name = os.path.basename(package_path)
+
+    # check the original exclusion lists for the package name
+    exclusions_for_env = []
+    try:
+        exclusions_for_env = globals()[f"{check.strip().upper()}_OPT_OUT"]
+    except Exception as e:
+        pass
+
+    if package_name in exclusions_for_env:
+        enabled = False
+
+    # now pull the new pyproject.toml configuration    
+    config = get_config_setting(package_path, check.strip().lower(), True)
+    
+    return (config and enabled)
+
+
+def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:
     """
     Takes an incoming comma separated list of tox environments and package name. Resolves whether or not
     each given tox environment should run, given comparison to single unified exclusion file in `environment_exclusions`.
 
-    :param namespace_argument: A namespace argument.
-    :param package_name: The name of the package. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
+    :param namespace_argument: A namespace argument. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
+    :param package_path: The path to the package.
     """
+    if package_path.endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
+
+    package_name = os.path.basename(package_path)
+
     if namespace_argument:
         tox_envs = namespace_argument.strip().split(",")
         filtered_set = []
 
         for tox_env in tox_envs:
-            exclusions_for_env = []
-            try:
-                exclusions_for_env = globals()[f"{tox_env.strip().upper()}_OPT_OUT"]
-            except Exception as e:
-                pass
-
-            if exclusions_for_env:
-                if package_name in exclusions_for_env:
-                    continue
-
-            filtered_set.append(tox_env)
+            if is_check_enabled(package_path, tox_env, True):
+                filtered_set.append(tox_env)
         return ",".join(filtered_set)
 
     return namespace_argument
