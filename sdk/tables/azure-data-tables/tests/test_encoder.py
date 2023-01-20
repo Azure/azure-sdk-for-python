@@ -103,9 +103,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 1,
-            "Data1@odata.type": "Edm.Int32", # TODO: int32, bool and string can auto converted by service, should polish this part
-            "Data2": True,
-            "Data2@odata.type": "Edm.Boolean"
+            "Data2": True
         }
         entity2 = {"PartitionKey": "PK", "RowKey": 1}
         expected_entity2 = {
@@ -120,12 +118,12 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
         entity4 = {"PartitionKey": "PK", "RowKey": 3.14}
         expected_entity4 = {
             "PartitionKey": "PK",
-            "RowKey": "3.14",
+            "RowKey": "3.14"
         }
         # TableEntity keys in complex type datetime, UUID and binary.
         entity5 = {
             "PartitionKey": datetime.now(),
-            "RowKey": uuid.uuid4(),
+            "RowKey": uuid.uuid4()
         }
         expected_entity5 = {
             "PartitionKey": _to_utc_datetime(entity5["PartitionKey"]),
@@ -133,11 +131,11 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
         }
         entity6 = {
             "PartitionKey": b"binarydata",
-            "RowKey": 1234,
+            "RowKey": 1234
         }
         expected_entity6 = {
             "PartitionKey": str(_encode_base64(entity6["PartitionKey"])),
-            "RowKey": "1234",
+            "RowKey": "1234"
         }
         
         encoder = MyKeysEncoder()
@@ -204,9 +202,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 12345,
-            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
-            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": _to_utc_datetime(entity["Data4"]),
@@ -214,10 +210,8 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data5": str(entity["Data5"]),
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
-            "Data6@odata.type": "Edm.String",
             "Data7": 3.14,
-            "Data7@odata.type": "Edm.Double",
-
+            "Data7@odata.type": "Edm.Double"
         }
         encoder = MyKeysEncoder()
         entity = encoder.encode_entity(entity)
@@ -251,9 +245,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 12345,
-            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
-            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": _to_utc_datetime(entity1["Data4"][0]),
@@ -261,11 +253,10 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data5": str(entity1["Data5"][0]),
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
-            "Data6@odata.type": "Edm.String",
             "Data7": 3.14,
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
-            "Data8@odata.type": "Edm.Int64",
+            "Data8@odata.type": "Edm.Int64"
         }
         entity2 = {
             "PartitionKey": "PK2",
@@ -273,15 +264,34 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data1": (12345, EdmType.INT32),
             "Data2": (False, "Edm.Boolean"),
             "Data3": EntityProperty(value=b"testdata", edm_type=EdmType.BINARY),
-            "Data4": EntityProperty(_to_utc_datetime(entity1["Data4"][0]), "Edm.DateTime"),
-            "Data5": EntityProperty(str(entity1["Data5"][0]), "Edm.Guid"),
+            "Data4": EntityProperty(entity1["Data4"][0], "Edm.DateTime"),
+            "Data5": EntityProperty(entity1["Data5"][0], "Edm.Guid"),
             "Data6": ("Foobar", EdmType.STRING),
             "Data7": EntityProperty(3.14, "Edm.Double"),
             "Data8": ("1152921504606846976", "Edm.Int64")
         }
+        expected_entity2 = {
+            "PartitionKey": "PK2",
+            "RowKey": "RK2",
+            "Data1": 12345,
+            "Data2": False,
+            "Data3": _encode_base64(b"testdata"),
+            "Data3@odata.type": "Edm.Binary",
+            "Data4": _to_utc_datetime(entity1["Data4"][0]),
+            "Data4@odata.type": "Edm.DateTime",
+            "Data5": str(entity1["Data5"][0]),
+            "Data5@odata.type": "Edm.Guid",
+            "Data6": "Foobar",
+            "Data7": 3.14,
+            "Data7@odata.type": "Edm.Double",
+            "Data8": "1152921504606846976",
+            "Data8@odata.type": "Edm.Int64"
+        }
         encoder = TableEntityEncoder()
         encoded_entity = encoder.encode_entity(entity1)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
+        encoded_entity = encoder.encode_entity(entity2)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity2, sort_keys=True)
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
             client.create_entity(entity1)
@@ -322,9 +332,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "PartitionKey": "PK",
             "RowKey": "RK",
             "Data1": 12345,
-            "Data1@odata.type": "Edm.Int32",
             "Data2": False,
-            "Data2@odata.type": "Edm.Boolean",
             "Data3": _encode_base64(b"testdata"),
             "Data3@odata.type": "Edm.Binary",
             "Data4": entity["Data4"],
@@ -332,7 +340,6 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data5": entity["Data5"],
             "Data5@odata.type": "Edm.Guid",
             "Data6": "Foobar",
-            "Data6@odata.type": "Edm.String",
             "Data7": "3.14",
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",

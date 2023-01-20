@@ -29,16 +29,12 @@ class TableEntityEncoder:
         """This is a migration of the old add_entity_properties method in serialize.py, with some simplications like
         removing int validation.
         """
-        # Should put True False check at first, otherwise could be detected as other types, like isinstance(True, int) == True
-        # New found: 1 in [True, False] == True
         if isinstance(value, bool):
-            # Update: return edmtype
-            return EdmType.BOOLEAN, value
+            return None, value
         if isinstance(value, str):
-            return EdmType.STRING, value
+            return None, value
         if isinstance(value, int):
-            # Update: return edmtype
-            return EdmType.INT32, value  # TODO: Test what happens if the supplied value exceeds int32.
+            return None, value  # TODO: Test what happens if the supplied value exceeds int32.
         if isinstance(value, float):
             # The default JSONEncoder will automatically convert to 'NaN', 'Infinity' and '-Infinity'.
             return EdmType.DOUBLE, value
@@ -78,9 +74,14 @@ class TableEntityEncoder:
                     encoded[key] = self.prepare_key(value)
                 continue
             if _ODATA_SUFFIX in key or key + _ODATA_SUFFIX in entity:
+                if value in ["Edm.String", "Edm.Int32", "Edm.Boolean"]:
+                    continue
                 encoded[key] = value
                 continue
-            edm_type, value = self.encode_property(key, value) # Expect to get EdmType instead of str as first return value
+            edm_type, value = self.encode_property(key, value)
+            # The edm type is decided by value
+            # For example, when value=EntityProperty(str(uuid.uuid4), "Edm.Guid"),
+            # the type is string instead of Guid after encoded
             if edm_type:
                 encoded[key + _ODATA_SUFFIX] = edm_type.value
             encoded[key] = value
