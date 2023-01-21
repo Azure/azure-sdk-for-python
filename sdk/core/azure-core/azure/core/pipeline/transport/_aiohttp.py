@@ -261,6 +261,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
+                expect100=stream_response,
                 **config
             )
             if _is_rest(request):
