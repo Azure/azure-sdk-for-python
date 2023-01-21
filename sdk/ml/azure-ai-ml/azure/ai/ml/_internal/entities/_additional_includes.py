@@ -88,14 +88,17 @@ class _AdditionalIncludes:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            # use os.walk to replace shutil.copytree, which may raise FileExistsError
-            # for same folder, the expected behavior is merging
-            # ignore will be also applied during this process
-            local_paths, _ = get_local_paths(source_path=str(src), ignore_file=(ignore_file or self._ignore_file))
+            # use os.walk to replace shutil.copytree, which may raise
+            # FileExistsError for same folder, the expected behavior
+            # is merging ignore will be also applied during this process
+            local_paths, _ = get_local_paths(
+                source_path=str(src),
+                ignore_file=(ignore_file or self._ignore_file)
+            )
             for path in local_paths:
                 dst_root = Path(dst) / Path(path).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                # if there is nothing to copy under current dst_root, no need to create this folder      
+                # if there is nothing to copy under current dst_root, no need to create this folder   
                 if dst_root_mkdir_flag is False:
                     dst_root.mkdir(parents=True)
                 _general_copy(path, dst_root / Path(path).name)
