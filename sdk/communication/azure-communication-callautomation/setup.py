@@ -11,7 +11,7 @@ import re
 # up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
 
 PACKAGE_NAME = "azure-communication-callautomation"
-PACKAGE_PPRINT_NAME = "Communication CallAutomation"
+PACKAGE_PPRINT_NAME = "Communication Call Automation"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -45,6 +45,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -66,5 +68,9 @@ setup(
     ],
     extras_require={
         ":python_version<'3.8'": ["typing-extensions"]
+    },
+    project_urls = {
+        'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
+        'Source': 'https://github.com/Azure/azure-sdk-for-python',
     }
 )
