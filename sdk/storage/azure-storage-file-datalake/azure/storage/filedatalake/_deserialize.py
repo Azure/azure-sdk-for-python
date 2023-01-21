@@ -84,7 +84,7 @@ def get_datalake_service_properties(datalake_properties):
     return datalake_properties
 
 
-def from_blob_properties(blob_properties):
+def from_blob_properties(blob_properties, **additional_args):
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
@@ -99,9 +99,9 @@ def from_blob_properties(blob_properties):
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
     file_props.content_settings = blob_properties.content_settings
 
-    # TODO: This is definitely not how we want to do this
-    if blob_properties.has_key('encryption_context'):
-        file_props.encryption_context = blob_properties.encryption_context
+    # Parse additional Datalake-only properties
+    file_props.encryption_context = additional_args.pop('encryption_context', None)
+    
     return file_props
 
 

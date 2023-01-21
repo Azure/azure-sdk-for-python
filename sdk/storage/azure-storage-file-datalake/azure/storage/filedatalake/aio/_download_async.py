@@ -24,7 +24,12 @@ class StorageStreamDownloader(object):
     def __init__(self, downloader):
         self._downloader = downloader
         self.name = self._downloader.name
-        self.properties = from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
+
+        # Parse additional Datalake-only properties
+        additional_args = dict()
+        additional_args['encryption_context'] = self._downloader._response.response.headers.get('x-ms-encryption-context')  # pylint: disable=line-too-long,protected-access
+
+        self.properties = from_blob_properties(self._downloader.properties, **additional_args)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):

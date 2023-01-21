@@ -365,11 +365,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         self._response = self._initial_request()
         self.properties = self._response.properties
-
-        # TODO: This is definitely not how we want to do this
-        if('x-ms-encryption-context' in self._response.response.headers):
-            self.properties['encryption_context'] = self._response.response.headers['x-ms-encryption-context']
-
         self.properties.name = self.name
         self.properties.container = self.container
 
