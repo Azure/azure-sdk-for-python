@@ -145,11 +145,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
-        self.file_request_intent = kwargs.pop('file_request_intent', None)
         super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, **kwargs
         )
+        self.file_request_intent = kwargs.pop('file_request_intent', None)
         self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 

@@ -45,6 +45,7 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
                         'S-1-5-21-397955417-626881126-188441444-3053964)'
+TEST_INTENT = "backup"
 # ------------------------------------------------------------------------------
 
 
@@ -246,6 +247,34 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Act
         resp = file_client.create_file(1024, file_attributes="hidden")
+
+        # Assert
+        props = file_client.get_file_properties()
+        assert props is not None
+        assert props.lease is not None
+        assert props.lease.state is not None
+        assert props.lease.status is not None
+        assert props.etag == resp['etag']
+        assert props.last_modified == resp['last_modified']
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_file_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            file_request_intent=TEST_INTENT)
+
+        # Act
+        resp = file_client.create_file(1024)
 
         # Assert
         props = file_client.get_file_properties()
@@ -622,6 +651,30 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_get_file_properties_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            file_request_intent=TEST_INTENT)
+
+        # Act
+        resp = file_client.create_file(1024)
+        properties = file_client.get_file_properties()
+
+        # Assert
+        assert properties is not None
+        assert properties.size == len(self.short_byte_data)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_get_file_properties_with_invalid_lease_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -751,6 +804,35 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
 
         # Act
+        file_client.set_file_metadata(metadata)
+
+        # Assert
+        md = file_client.get_file_properties().metadata
+        assert 3 == len(md)
+        assert md['hello'] == 'world'
+        assert md['number'] == '42'
+        assert md['UP'] == 'UPval'
+        assert not 'up' in md
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_set_file_metadata_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            file_request_intent=TEST_INTENT)
+        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+
+        # Act
+        file_client.create_file(1024)
         file_client.set_file_metadata(metadata)
 
         # Assert
