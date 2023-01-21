@@ -98,7 +98,7 @@ class _AdditionalIncludes:
             for path in local_paths:
                 dst_root = Path(dst) / Path(path).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                # if there is nothing to copy under current dst_root, no need to create this folder   
+                # if there is nothing to copy under current dst_root, no need to create this folder
                 if dst_root_mkdir_flag is False:
                     dst_root.mkdir(parents=True)
                 _general_copy(path, dst_root / Path(path).name)
