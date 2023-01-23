@@ -50,6 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class HTTPRequestType(Protocol):
+    """Protocol compatible with new rest request and legacy transport request"""
     headers: MutableMapping[str, str]
     url: str
     method: str
@@ -57,9 +58,18 @@ class HTTPRequestType(Protocol):
 
 
 class HTTPResponseType(Protocol):
-    headers: MutableMapping[str, str]
-    status_code: int
-    content_type: str
+    """Protocol compatible with new rest response and legacy transport response"""
+    @property
+    def headers(self) -> MutableMapping[str, str]:
+        ...
+
+    @property
+    def status_code(self) -> int:
+        ...
+
+    @property
+    def content_type(self) -> Optional[str]:
+        ...
 
     def text(self, encoding: Optional[str] = None) -> str:
         ...
