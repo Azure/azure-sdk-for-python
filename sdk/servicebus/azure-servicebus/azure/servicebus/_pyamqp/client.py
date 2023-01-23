@@ -766,7 +766,7 @@ class ReceiveClient(AMQPClient):
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
         self._timeout_reached = False
-        self._generator_timeout = 3
+        self._generator_timeout = 0
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -924,31 +924,26 @@ class ReceiveClient(AMQPClient):
         receiving = True
         message = None
         try:
+            # should this be outside or inside?
+            self._generator_timeout = time.time()
             # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving and self._received_messages.empty() and not self._timeout_reached:
-                self._generator_timeout = time.time()
                 # while receiving and self._received_messages.empty():
                 # while receiving and self._received_messages.empty() and not self._timeout_reached:
                 receiving = self.do_work()
-                if (time.time() - self._generator_timeout  >= 1.0) and self._received_messages.empty(): 
+                if (time.time() - self._generator_timeout  >= 0.5) and self._received_messages.empty(): 
                     self._timeout_reached = True
                 while not self._received_messages.empty():
                     self._generator_timeout = time.time()
-                    # self._generator_timeout = 3
                     message = self._received_messages.get()
                     self._received_messages.task_done()
                     yield message
-                    # self.settle_messages(message[1],"accepted")
                     # self._complete_message(message, auto_complete)
         except:
       
             if self._shutdown:
                 self.close()
 
-    # def _complete_message(self, message, auto):  # pylint: disable=no-self-use
-    #     if not message or not auto:
-    #         return
-    #     message.accept()
 
     @overload
     def settle_messages(
