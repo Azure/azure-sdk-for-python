@@ -729,6 +729,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
+            self._timeout_reached = True
             return False
         return True
 
@@ -854,13 +855,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         message = None
         try:
             # need something to break out of this loop (created an arbitrary timeout for now)
-            while receiving and self._received_messages.empty() and not self._timeout_reached:
-                self._generator_timeout  = time.time()
-                # while receiving and self._received_messages.empty():
-                # while receiving and self._received_messages.empty() and not self._timeout_reached:
-                receiving = await self.do_work_async()
-                if (time.time() - self._generator_timeout  == 1.0) and self._received_messages.empty(): 
-                    self._timeout_reached = True
+            while receiving and not self._timeout_reached:
+
+                while receiving and self._received_messages.empty() and not self._timeout_reached:
+                    receiving = await self.do_work_async()
                 while not self._received_messages.empty():
                     self._generator_timeout  = time.time()
                     message = self._received_messages.get()

@@ -229,7 +229,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             if self.max_wait_time and self.receiver and self.receiver._handler:
                 # TODO: What did the previous _handler.timeout represent here?
                 original_timeout = self.receiver._handler._idle_timeout
-                self.receiver._handler._timeout = self.max_wait_time * 1000
+                self.receiver._handler._timeout = self.max_wait_time * 1
             try:
                 self.receiver._receive_context.set()
                 message = await self.receiver._inner_anext()
@@ -380,7 +380,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            #timeout=self._max_wait_time * 1000 if self._max_wait_time else 0, TODO: This is not working
+            idle_timeout=self._max_wait_time * 1 if self._max_wait_time else 0, # TODO: This is not working
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
