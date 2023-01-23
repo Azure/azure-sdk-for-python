@@ -107,6 +107,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials = []  # type: List[AsyncTokenCredential]
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
@@ -122,8 +124,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
-        if not exclude_azd_cli_credential:
-            credentials.append(AzureDeveloperCliCredential())
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_powershell_credential:
