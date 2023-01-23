@@ -49,7 +49,6 @@ class OutboundRule:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any) -> "OutboundRule":
-        print("in outbound rule from rest obj, rest obj = ", rest_obj.category)
         if type(rest_obj)==RestFqdnOutboundRule:
             rule = FqdnDestination(destination=rest_obj.destination)
             rule.category = rest_obj.category
@@ -130,17 +129,6 @@ class ManagedNetwork:
     ) -> None:
         self.isolation_mode = isolation_mode
         self.outbound_rules = outbound_rules
-
-    def _to_dict(self) -> Dict:
-        return {
-            "need": "to implement to_dict for ManagedNetwork"
-        }
-        # pylint: disable=no-member
-        #return ManagedNetworkSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        # NEED TO return a dict of the object, which means need to create Schema object 
-        # like above but cannot import schema due to circular import (schema imports
-        # ManagedNetwork), what is the correct way to do this here?
-
 
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (

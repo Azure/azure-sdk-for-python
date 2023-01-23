@@ -40,7 +40,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -77,7 +77,7 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -117,7 +117,7 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -154,7 +154,7 @@ def build_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -193,7 +193,7 @@ def build_list_by_resource_group_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -232,7 +232,7 @@ def build_diagnose_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -272,7 +272,7 @@ def build_list_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -309,7 +309,7 @@ def build_resync_keys_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -344,7 +344,7 @@ def build_list_by_subscription_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -382,7 +382,7 @@ def build_list_notebook_access_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -419,7 +419,7 @@ def build_prepare_notebook_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -456,7 +456,7 @@ def build_list_storage_account_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -493,7 +493,7 @@ def build_list_notebook_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -530,7 +530,7 @@ def build_list_outbound_network_dependencies_endpoints_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -607,7 +607,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -656,7 +656,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'Workspace')
@@ -725,7 +725,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
@@ -781,7 +781,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -837,7 +837,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -888,7 +888,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'WorkspaceUpdateParameters')
@@ -957,7 +957,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Workspace]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Workspace"]
@@ -1020,7 +1020,7 @@ class WorkspacesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
@@ -1098,7 +1098,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if parameters is not None:
@@ -1180,7 +1180,7 @@ class WorkspacesOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.DiagnoseResponseResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DiagnoseResponseResult"]
@@ -1249,7 +1249,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_list_keys_request(
@@ -1297,7 +1297,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_resync_keys_request_initial(
@@ -1354,7 +1354,7 @@ class WorkspacesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -1408,7 +1408,7 @@ class WorkspacesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.WorkspaceListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.WorkspaceListResult"]
         error_map = {
@@ -1495,7 +1495,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_list_notebook_access_token_request(
@@ -1543,7 +1543,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_prepare_notebook_request_initial(
@@ -1607,7 +1607,7 @@ class WorkspacesOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.NotebookResourceInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NotebookResourceInfo"]
         lro_delay = kwargs.pop(
@@ -1672,7 +1672,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_list_storage_account_keys_request(
@@ -1732,7 +1732,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_list_notebook_keys_request(
@@ -1796,7 +1796,7 @@ class WorkspacesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
 
         
         request = build_list_outbound_network_dependencies_endpoints_request(

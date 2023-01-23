@@ -552,7 +552,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-12-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "location": "[parameters('location')]",
