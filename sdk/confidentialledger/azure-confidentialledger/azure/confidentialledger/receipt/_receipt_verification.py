@@ -32,11 +32,14 @@ def verify_receipt(receipt: Dict[str, Any], service_cert: str) -> None:
     certificate.
 
     :param receipt: Receipt dictionary containing the content of an Azure
-    Confidential Ledger write transaction receipt.
+     Confidential Ledger write transaction receipt.
     :type receipt: Dict[str, Any]
+
     :param service_cert: String containing the PEM-encoded
-    certificate of the Confidential Ledger service identity.
+     certificate of the Confidential Ledger service identity.
     :type service_cert: str
+
+    :raises ValueError: If the receipt verification has failed.
     """
 
     # Validate receipt content and convert it into a Receipt model
