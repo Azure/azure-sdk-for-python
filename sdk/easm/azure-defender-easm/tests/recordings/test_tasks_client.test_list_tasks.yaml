@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: GET
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/tasks?skip=0&api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"totalElements":7,"totalPages":1,"last":true,"numberOfElements":7,"first":true,"size":7,"number":0,"content":[{"id":"a23b2f6b-a1ce-4b89-9bfd-97339d39c847","startedAt":"2023-01-05T16:24:44.328+00:00","completedAt":"2023-01-05T16:24:44.472+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"7c9f7e07-fb44-49a2-91af-14596c5bd17a","startedAt":"2023-01-05T16:23:20.022+00:00","completedAt":"2023-01-05T16:23:20.182+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"66f70729-91ea-4fdc-80ec-6a909119a696","startedAt":"2023-01-05T16:22:54.595+00:00","completedAt":"2023-01-05T16:22:54.744+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"529823cf-87a7-47d4-a858-78f5b88bed21","startedAt":"2023-01-05T16:22:13.320+00:00","completedAt":"2023-01-05T16:22:13.453+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"3758ff36-1c73-4da7-ae0e-13f8d9b1036f","startedAt":"2023-01-05T16:21:48.911+00:00","completedAt":"2023-01-05T16:21:49.081+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"fc8f3281-fbff-4ce5-8c89-ca45d999c56f","startedAt":"2023-01-05T15:54:22.168+00:00","completedAt":"2023-01-05T15:54:22.310+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null},{"id":"28919a75-8b64-401e-b6ba-32d3096eb063","startedAt":"2023-01-05T15:52:21.667+00:00","completedAt":"2023-01-05T15:52:21.808+00:00","lastPolledAt":null,"state":"complete","phase":"complete","reason":null}]}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '1568'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 20:44:20 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=MWQ4MTNkNzMtMTMxYi00YzJlLThiYmQtNzM5Mzg4NDdiZTBj; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1

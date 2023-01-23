@@ -1,0 +1,88 @@
+interactions:
+- request:
+    body: '{"metric": "savedfilter_metric_40610"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '38'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: POST
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/reports/assets:snapshot?api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"displayName":"ASI: CVE-2020-9490 - Push Diary Crash on Specifically
+        Crafted HTTP/2 Header","metric":"savedfilter_metric_40610","labelName":null,"updatedAt":"2023-01-05T03:09:08.000+00:00","description":"#####
+        Description \nIn Apache HTTP Server versions 2.4.20 to 2.4.43, a specially
+        crafted value for the ''Cache-Digest'' header in a HTTP/2 request would result
+        in a crash when the server actually tries to HTTP/2 PUSH a resource afterwards.
+        This vulnerability has been remedied in Apache HTTP Server 2.4.44. \n\n#####
+        Related Intelligence\nCVE: [CVE-2020-9490](https://nvd.nist.gov/vuln/detail/CVE-2020-9490)\nSecurity
+        Advisory: [Apache Security Advisory](https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2020-9490)\n\n#####
+        Remediation\nThis vulnerability was fixed in Apache HTTP Server version 2.4.44.
+        It is advised that users of unpatched servers upgrade to the latest version
+        as soon as possible. Configuring the HTTP/2 feature via \"H2Push off\" will
+        mitigate this vulnerability for unpatched servers.","assets":{"totalElements":3,"totalPages":1,"last":true,"numberOfElements":3,"first":true,"size":20,"number":0,"content":[{"id":"host$$scala.tacobell.com","name":"scala.tacobell.com","displayName":"scala.tacobell.com","kind":"host","uuid":"ce5e21b2-f3a1-e727-6af2-c7e25d870637","asset":{"host":"scala.tacobell.com","domain":"tacobell.com","ipAddresses":[],"webComponents":[{"name":"AlmaLinux","type":"Operating
+        System","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon Elastic
+        Load Balancing","type":"Service","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon
+        Web Services","type":"Hosting Provider","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Apache","type":"Server","version":"2.4.37","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"OpenSSL","type":"Server
+        Module","version":"1.1.1k","ruleid":[],"cve":[],"ports":[],"sources":[]}],"headers":[],"attributes":[],"cookies":[],"sslCerts":[],"parentHosts":[],"childHosts":[],"services":[],"cnames":[],"sources":[],"firstSeen":"2017-03-10T03:39:10.000+00:00","lastSeen":"2023-01-03T22:38:31.000+00:00","resourceUrls":[],"scanMetadata":[],"asns":[],"ipBlocks":[],"responseBodies":[],"domainAsset":{"domain":"tacobell.com","registrarIanaIds":[],"registrantContacts":[],"registrantOrgs":[{"value":"Yum
+        Brands, Inc.","sources":[],"recent":true}],"adminContacts":[],"technicalContacts":[],"alexaInfos":[],"nameServers":[],"mailServers":[],"whoisServers":[],"domainStatuses":[],"registrarCreatedAt":[],"registrarUpdatedAt":[],"registrarExpiresAt":[],"soaRecords":[],"registrarNames":[{"value":"CSC
+        Corporate Domains, Inc.","sources":[],"recent":true}],"sources":[],"firstSeen":"2017-03-10T03:39:10.000+00:00","lastSeen":"2023-01-03T22:38:31.000+00:00","parkedDomain":[],"registrantNames":[],"adminNames":[],"technicalNames":[],"adminOrgs":[],"technicalOrgs":[],"registrantPhones":[],"adminPhones":[],"technicalPhones":[]},"nsRecord":[],"mxRecord":[],"webserver":[],"location":[],"nxdomain":[],"sslServerConfig":[],"isWildcard":[],"banners":[],"ipv4":[],"ipv6":[]},"createdDate":"2017-03-10T03:39:10.000+00:00","updatedDate":"2023-01-03T22:38:31.000+00:00","state":null,"externalId":null,"labels":null,"wildcard":false,"discoGroupName":null,"auditTrail":[{"id":null,"name":"tacobell.com","displayName":null,"kind":"domain","reason":null}],"reason":null},{"id":"page$$http://scala.tacobell.com/","name":"http://scala.tacobell.com/","displayName":"http://scala.tacobell.com/","kind":"page","uuid":"353e0018-24b7-3431-aea2-404712ed591f","asset":{"url":"http://scala.tacobell.com/","ipAddresses":[],"successful":[],"httpResponseCodes":[],"httpResponseMessages":[],"responseTimes":[],"frames":[],"windows":[],"nonHtmlFrames":[],"undirectedContent":[],"contentTypes":[],"contentLengths":[],"windowNames":[],"charsets":[],"titles":[],"languages":[],"responseHeaders":[],"cookies":[],"webComponents":[{"name":"AlmaLinux","type":"Operating
+        System","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon Elastic
+        Load Balancing","type":"Service","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon
+        Web Services","type":"Hosting Provider","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Apache","type":"Server","version":"2.4.37","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"OpenSSL","type":"Server
+        Module","version":"1.1.1k","ruleid":[],"cve":[],"ports":[],"sources":[]}],"attributes":[],"assetSecurityPolicies":[],"responseBodyMinhashSignatures":[],"fullDomMinhashSignatures":[],"responseBodyHashSignatures":[],"errors":[],"sslCerts":[],"sources":[],"firstSeen":"2018-10-09T11:05:54.365+00:00","lastSeen":"2023-01-03T22:37:40.331+00:00","redirectUrls":[],"finalUrls":[],"finalResponseCodes":[],"parkedPage":[],"resourceUrls":[],"guids":[],"finalIpAddresses":[],"asns":[],"ipBlocks":[],"finalAsns":[],"finalIpBlocks":[],"responseBodies":[],"domainAsset":{"domain":"tacobell.com","registrarIanaIds":[],"registrantContacts":[],"registrantOrgs":[{"value":"Yum
+        Brands, Inc.","sources":[],"recent":true}],"adminContacts":[],"technicalContacts":[],"alexaInfos":[],"nameServers":[],"mailServers":[],"whoisServers":[],"domainStatuses":[],"registrarCreatedAt":[],"registrarUpdatedAt":[],"registrarExpiresAt":[],"soaRecords":[],"registrarNames":[{"value":"CSC
+        Corporate Domains, Inc.","sources":[],"recent":true}],"sources":[],"firstSeen":"2018-10-09T11:05:54.365+00:00","lastSeen":"2023-01-03T22:37:40.331+00:00","parkedDomain":[],"registrantNames":[],"adminNames":[],"technicalNames":[],"adminOrgs":[],"technicalOrgs":[],"registrantPhones":[],"adminPhones":[],"technicalPhones":[]},"location":[],"services":[],"cnames":[],"cdns":[],"domain":"tacobell.com","sslServerConfig":[],"gdprAssetSecurityPolicies":[],"ipv4":[],"ipv6":[]},"createdDate":"2018-10-09T11:05:54.365+00:00","updatedDate":"2023-01-03T22:37:40.331+00:00","state":null,"externalId":null,"labels":null,"wildcard":false,"discoGroupName":null,"auditTrail":[{"id":null,"name":"tacobell.com","displayName":null,"kind":"domain","reason":null},{"id":null,"name":"scala.tacobell.com","displayName":null,"kind":"host","reason":null},{"id":null,"name":"scala.tacobell.com","displayName":null,"kind":"host","reason":null}],"reason":null},{"id":"page$$https://scala.tacobell.com/","name":"https://scala.tacobell.com/","displayName":"https://scala.tacobell.com/","kind":"page","uuid":"f3c74e39-4ea2-b672-6c14-e658c0394f62","asset":{"url":"https://scala.tacobell.com/","ipAddresses":[],"successful":[],"httpResponseCodes":[],"httpResponseMessages":[],"responseTimes":[],"frames":[],"windows":[],"nonHtmlFrames":[],"undirectedContent":[],"contentTypes":[],"contentLengths":[],"windowNames":[],"charsets":[],"titles":[],"languages":[],"responseHeaders":[],"cookies":[],"webComponents":[{"name":"AlmaLinux","type":"Operating
+        System","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon Elastic
+        Load Balancing","type":"Service","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Amazon
+        Web Services","type":"Hosting Provider","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"Apache","type":"Server","version":"2.4.37","ruleid":[],"cve":[],"ports":[],"sources":[]},{"name":"OpenSSL","type":"Server
+        Module","version":"1.1.1k","ruleid":[],"cve":[],"ports":[],"sources":[]}],"attributes":[],"assetSecurityPolicies":[],"responseBodyMinhashSignatures":[],"fullDomMinhashSignatures":[],"responseBodyHashSignatures":[],"errors":[],"sslCerts":[],"sources":[],"firstSeen":"2018-12-05T07:29:47.491+00:00","lastSeen":"2023-01-03T20:34:28.288+00:00","redirectUrls":[],"finalUrls":[],"finalResponseCodes":[],"parkedPage":[],"resourceUrls":[],"guids":[],"finalIpAddresses":[],"asns":[],"ipBlocks":[],"finalAsns":[],"finalIpBlocks":[],"responseBodies":[],"domainAsset":{"domain":"tacobell.com","registrarIanaIds":[],"registrantContacts":[],"registrantOrgs":[{"value":"Yum
+        Brands, Inc.","sources":[],"recent":true}],"adminContacts":[],"technicalContacts":[],"alexaInfos":[],"nameServers":[],"mailServers":[],"whoisServers":[],"domainStatuses":[],"registrarCreatedAt":[],"registrarUpdatedAt":[],"registrarExpiresAt":[],"soaRecords":[],"registrarNames":[{"value":"CSC
+        Corporate Domains, Inc.","sources":[],"recent":true}],"sources":[],"firstSeen":"2018-12-05T07:29:47.491+00:00","lastSeen":"2023-01-03T20:34:28.288+00:00","parkedDomain":[],"registrantNames":[],"adminNames":[],"technicalNames":[],"adminOrgs":[],"technicalOrgs":[],"registrantPhones":[],"adminPhones":[],"technicalPhones":[]},"location":[],"services":[],"cnames":[],"cdns":[],"domain":"tacobell.com","sslServerConfig":[],"gdprAssetSecurityPolicies":[],"ipv4":[],"ipv6":[]},"createdDate":"2018-12-05T07:29:47.491+00:00","updatedDate":"2023-01-03T20:34:28.288+00:00","state":null,"externalId":null,"labels":null,"wildcard":false,"discoGroupName":null,"auditTrail":[{"id":null,"name":"tacobell.com","displayName":null,"kind":"domain","reason":null},{"id":null,"name":"scala.tacobell.com","displayName":null,"kind":"host","reason":null},{"id":null,"name":"scala.tacobell.com","displayName":null,"kind":"host","reason":null}],"reason":null}],"mark":null}}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '9082'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 19:56:11 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=Mjg1YzU4OTYtZWIxYi00NDRlLTkyNzYtMTQyYjA3NDA4OGMw; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1

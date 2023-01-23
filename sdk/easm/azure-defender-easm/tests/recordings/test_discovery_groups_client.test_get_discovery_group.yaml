@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: GET
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/discoGroups/test_group?api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"id":"test_group","name":"test_group","displayName":"test_group","description":"test
+        description","tier":"advanced","frequencyMilliseconds":null,"seeds":[{"kind":"domain","name":"hellointernet.fm"}],"names":[],"excludes":[],"latestRun":{"submittedDate":null,"startedDate":null,"completedDate":null,"tier":null,"state":"pending","totalAssetsFoundCount":0,"seeds":null,"excludes":null,"names":null},"createdDate":"2022-09-28T15:38:59.000+00:00","templateId":null}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '462'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 19:10:45 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=NzkxMmFkNTEtZjE0OS00YWZhLTkxMjItMWJhZDY3YjQyNjA1; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1

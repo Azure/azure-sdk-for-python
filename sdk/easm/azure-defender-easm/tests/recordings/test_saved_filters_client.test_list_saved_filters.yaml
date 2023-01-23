@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: GET
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/savedFilters?skip=0&api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"totalElements":7,"totalPages":1,"last":true,"numberOfElements":7,"first":true,"size":7,"number":0,"content":[{"id":"44503","name":null,"displayName":null,"filter":"state
+        ! \"Approved\"","description":"test"},{"id":"44504","name":null,"displayName":null,"filter":"state
+        ! \"Approved\"","description":"test"},{"id":"44505","name":null,"displayName":null,"filter":"state
+        ! \"Approved\"","description":"test"},{"id":"testID","name":"testID","displayName":"testID","filter":"state
+        ! \"Approved\"","description":"test"},{"id":"sf1","name":"sf1","displayName":"sf1","filter":"ip
+        address = \"151.101.192.67\"","description":"Monitored Addresses"},{"id":"smoke_test_delete_data_connection","name":"smoke_test_delete_data_connection","displayName":"smoke_test_delete_data_connection","filter":"name
+        = \"example.org\"","description":"test saved filter"},{"id":"smoke_test_put_saved_filter","name":"smoke_test_put_saved_filter","displayName":"smoke_test_put_saved_filter","filter":"name
+        = \"example.org\"","description":"test saved filter"}]}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '1032'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 18:53:21 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=ZDE4YzNiYWEtYWQwMS00ZDU3LTlkYTQtZWFiNTAwNzYwOGZj; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1

@@ -1,0 +1,55 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: POST
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/discoGroups/test_group:run?api-version=2022-11-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      date:
+      - Thu, 05 Jan 2023 19:11:00 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=NWU3M2E4N2YtZTNiYS00NjhmLWEwMGQtM2ExNWNlN2FlOTNl; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-riskiq-requestid:
+      - c85bd551-e388-49a7-9e8c-ea45946b4099
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 204
+      message: ''
+version: 1

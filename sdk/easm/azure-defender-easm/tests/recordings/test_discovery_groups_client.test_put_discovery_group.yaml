@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: '{"description": "test description", "seeds": [{"kind": "domain", "name":
+      "example.org"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: PUT
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/discoGroups/smoke_test_put_discovery_group?api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"id":"smoke_test_put_discovery_group","name":"smoke_test_put_discovery_group","displayName":"smoke_test_put_discovery_group","description":"test
+        description","tier":"advanced","frequencyMilliseconds":null,"seeds":[{"kind":"domain","name":"example.org"}],"names":[],"excludes":[],"latestRun":null,"createdDate":"2023-01-05T19:08:47.000+00:00","templateId":null}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '361'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 19:10:55 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=N2MzOTAxMjAtMmQ0OC00YjQ0LWJjYTgtZWRhNTI4ZmRkZDA0; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1

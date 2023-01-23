@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-defender-easm/1.0.0b1 Python/3.10.6 (macOS-12.6.2-arm64-arm-64bit)
+    method: POST
+    uri: https://eastus.easm.defender.microsoft.com/subscriptions/59af3bf1-d118-4916-808e-923509b34a94/resourceGroups/nate-test-rg/workspaces/testSdkWorkspace9271133/reports/assets:billable?api-version=2022-11-01-preview
+  response:
+    body:
+      string: '{"assetSummaries":[{"date":"2022-12-05","total":87,"assetBreakdown":[{"kind":"host","count":86},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-06","total":86,"assetBreakdown":[{"kind":"host","count":85},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-07","total":85,"assetBreakdown":[{"kind":"host","count":84},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-08","total":85,"assetBreakdown":[{"kind":"host","count":84},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-09","total":85,"assetBreakdown":[{"kind":"host","count":84},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-10","total":85,"assetBreakdown":[{"kind":"host","count":84},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-11","total":84,"assetBreakdown":[{"kind":"host","count":83},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-12","total":84,"assetBreakdown":[{"kind":"host","count":83},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-13","total":81,"assetBreakdown":[{"kind":"host","count":80},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-14","total":77,"assetBreakdown":[{"kind":"host","count":76},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-15","total":77,"assetBreakdown":[{"kind":"host","count":76},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-16","total":76,"assetBreakdown":[{"kind":"host","count":75},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-17","total":76,"assetBreakdown":[{"kind":"host","count":75},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-18","total":78,"assetBreakdown":[{"kind":"host","count":77},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-19","total":78,"assetBreakdown":[{"kind":"host","count":77},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-20","total":79,"assetBreakdown":[{"kind":"host","count":78},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-21","total":78,"assetBreakdown":[{"kind":"host","count":77},{"kind":"domain","count":0},{"kind":"ipAddress","count":1}]},{"date":"2022-12-22","total":113,"assetBreakdown":[{"kind":"host","count":79},{"kind":"domain","count":33},{"kind":"ipAddress","count":1}]},{"date":"2022-12-23","total":1301,"assetBreakdown":[{"kind":"host","count":1266},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-24","total":1307,"assetBreakdown":[{"kind":"host","count":1272},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-25","total":1306,"assetBreakdown":[{"kind":"host","count":1271},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-26","total":1315,"assetBreakdown":[{"kind":"host","count":1280},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-27","total":1310,"assetBreakdown":[{"kind":"host","count":1275},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-28","total":1302,"assetBreakdown":[{"kind":"host","count":1267},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-29","total":1294,"assetBreakdown":[{"kind":"host","count":1259},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-30","total":1295,"assetBreakdown":[{"kind":"host","count":1260},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2022-12-31","total":1296,"assetBreakdown":[{"kind":"host","count":1261},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2023-01-01","total":1278,"assetBreakdown":[{"kind":"host","count":1243},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2023-01-02","total":1267,"assetBreakdown":[{"kind":"host","count":1232},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2023-01-03","total":1257,"assetBreakdown":[{"kind":"host","count":1222},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2023-01-04","total":1247,"assetBreakdown":[{"kind":"host","count":1212},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]},{"date":"2023-01-05","total":1247,"assetBreakdown":[{"kind":"host","count":1212},{"kind":"domain","count":34},{"kind":"ipAddress","count":1}]}]}'
+    headers:
+      cache-control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      connection:
+      - keep-alive
+      content-length:
+      - '4508'
+      content-type:
+      - application/json
+      date:
+      - Thu, 05 Jan 2023 19:56:08 GMT
+      expires:
+      - '0'
+      pragma:
+      - no-cache
+      server:
+      - digitalfootprint-web
+      set-cookie:
+      - df=ODQ5MjYwMzEtNmVkOS00NTkzLWEzNjktMmEyYjA2ZGRlYzM0; Path=/; Secure; HttpOnly;
+        SameSite=Lax
+      strict-transport-security:
+      - max-age=31536000 ; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - origin,access-control-request-method,access-control-request-headers,accept-encoding
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+      x-ms-ui-version:
+      - sdk
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: ''
+version: 1
