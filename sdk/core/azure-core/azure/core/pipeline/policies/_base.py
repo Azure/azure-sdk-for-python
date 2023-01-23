@@ -45,13 +45,13 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
 
 
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
+HTTPRequestTypeVar = TypeVar("HTTPRequestTypeVar")
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
@@ -62,10 +62,15 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def __init__(self):
-        self.next: Union[HTTPPolicy, "HttpTransport"] = None
+        self.next: Union[
+            "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]",
+            "HttpTransport[HTTPRequestTypeVar, HTTPResponseTypeVar]",
+        ] = None
 
     @abc.abstractmethod
-    def send(self, request: "PipelineRequest") -> "PipelineResponse":
+    def send(
+        self, request: PipelineRequest[HTTPRequestTypeVar]
+    ) -> PipelineResponse[HTTPRequestTypeVar, HTTPResponseTypeVar]:
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
@@ -77,7 +82,7 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
         """
 
 
-class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
+class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     """Represents a sans I/O policy.
 
     SansIOHTTPPolicy is a base class for policies that only modify or
@@ -89,7 +94,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: "PipelineRequest") -> Union[None, Awaitable[None]]:
+    def on_request(
+        self, request: PipelineRequest[HTTPRequestTypeVar]
+    ) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -97,7 +104,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     def on_response(
-        self, request: PipelineRequest, response: PipelineResponse
+        self,
+        request: PipelineRequest[HTTPRequestTypeVar],
+        response: PipelineResponse[HTTPRequestTypeVar, HTTPResponseTypeVar],
     ) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 
@@ -109,7 +118,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
     # pylint: disable=no-self-use
     def on_exception(
-        self, request: PipelineRequest  # pylint: disable=unused-argument
+        self,
+        request: PipelineRequest[HTTPRequestTypeVar],  # pylint: disable=unused-argument
     ) -> None:
         """Is executed if an exception is raised while executing the next policy.
 
@@ -144,8 +154,8 @@ class RequestHistory:
 
     def __init__(
         self,
-        http_request: HTTPRequestType,
-        http_response: Optional[HTTPResponseType] = None,
+        http_request: HTTPRequestTypeVar,
+        http_response: Optional[HTTPResponseTypeVar] = None,
         error: Optional[Exception] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
