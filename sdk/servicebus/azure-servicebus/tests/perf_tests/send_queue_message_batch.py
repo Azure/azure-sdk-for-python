@@ -17,7 +17,7 @@ class SendQueueMessageBatchTest(_SendQueueTest):
 
     def run_sync(self):
         batch = self.sender.create_message_batch()
-        for i in range(self.args.num_messages):
+        for i in range(self.args.batch_size):
             try:
                 batch.add_message(ServiceBusMessage(self.data))
             except ValueError:
@@ -25,11 +25,13 @@ class SendQueueMessageBatchTest(_SendQueueTest):
                 self.sender.send_messages(batch)
                 batch = self.sender.create_message_batch()
                 batch.add_message(ServiceBusMessage(self.data))
-        self.sender.send_messages(batch)
+        if len(batch):
+            self.sender.send_messages(batch)
+        return self.args.batch_size
 
     async def run_async(self):
         batch = await self.async_sender.create_message_batch()
-        for i in range(self.args.num_messages):
+        for i in range(self.args.batch_size):
             try:
                 batch.add_message(ServiceBusMessage(self.data))
             except ValueError:
@@ -37,4 +39,6 @@ class SendQueueMessageBatchTest(_SendQueueTest):
                 await self.async_sender.send_messages(batch)
                 batch = await self.async_sender.create_message_batch()
                 batch.add_message(ServiceBusMessage(self.data))
-        await self.async_sender.send_messages(batch)
+        if len(batch):
+            await self.async_sender.send_messages(batch)
+        return self.args.batch_size

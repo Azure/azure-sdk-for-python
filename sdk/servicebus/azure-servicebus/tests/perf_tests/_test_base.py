@@ -42,6 +42,7 @@ class _ServiceTest(PerfStressTest):
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
         parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
+        parser.add_argument('--batch-size', nargs='?', type=int, help='The number of events that should be included in each batch. Defaults to 100', default=100)
         parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
         parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
 
@@ -173,16 +174,15 @@ class _ReceiveQueueTest(_QueueTest):
 class _ReceiveTopicTest(_TopicTest):
     def __init__(self, arguments):
         super().__init__(arguments)
+        subscription_name = self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
         mode = ServiceBusReceiveMode.PEEK_LOCK if self.args.peeklock else ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        self.receiver = self.service_client.get_topic_receiver(
+        self.receiver = self.service_client.get_subscription_receiver(
             topic_name=self.topic_name,
-            receive_mode=mode,
-            prefetch_count=self.args.num_messages,
+            subscription_name=subscription_name,
             max_wait_time=self.args.max_wait_time or None)
-        self.async_receiver = self.async_service_client.get_topic_receiver(
+        self.async_receiver = self.async_service_client.get_subscription_receiver(
             topic_name=self.topic_name,
-            receive_mode=mode,
-            prefetch_count=self.args.num_messages,
+            subscription_name=subscription_name,
             max_wait_time=self.args.max_wait_time or None)
 
     async def _preload_topic(self):
@@ -198,7 +198,9 @@ class _ReceiveTopicTest(_TopicTest):
                     print("Loaded {} messages".format(i))
                     batch = await sender.create_message_batch()
                     batch.add_message(ServiceBusMessage(data))
-            await sender.send_messages(batch)
+            if len(batch):
+                await sender.send_messages(batch)
+            print(f"Finished loading messages to topic")
 
     async def global_setup(self):
         await super().global_setup()

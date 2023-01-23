@@ -7,7 +7,7 @@ from ._test_base import _SendTopicTest
 
 from azure_devtools.perfstress_tests import get_random_bytes
 
-from azure.servicebus import ServiceBusMessage
+from azure.servicebus import ServiceBusMessage, ServiceBusMessageBatch
 
 
 class SendTopicMessageBatchTest(_SendTopicTest):
@@ -17,7 +17,7 @@ class SendTopicMessageBatchTest(_SendTopicTest):
 
     def run_sync(self):
         batch = self.sender.create_message_batch()
-        for i in range(self.args.num_messages):
+        for i in range(self.args.batch_size):
             try:
                 batch.add_message(ServiceBusMessage(self.data))
             except ValueError:
@@ -25,16 +25,27 @@ class SendTopicMessageBatchTest(_SendTopicTest):
                 self.sender.send_messages(batch)
                 batch = self.sender.create_message_batch()
                 batch.add_message(ServiceBusMessage(self.data))
-        self.sender.send_messages(batch)
+        if len(batch):
+            self.sender.send_messages(batch)
+        return self.args.batch_size
 
     async def run_async(self):
         batch = await self.async_sender.create_message_batch()
-        for i in range(self.args.num_messages):
+        print(f"trying to send {self.args.batch_size}")
+        count = 0
+        for i in range(self.args.batch_size):
             try:
                 batch.add_message(ServiceBusMessage(self.data))
+                count += 1
+                print(f"added {count}")
             except ValueError:
                 # Batch full
                 await self.async_sender.send_messages(batch)
+                print(f"Value error, sending {count}")
                 batch = await self.async_sender.create_message_batch()
+                count += 1
                 batch.add_message(ServiceBusMessage(self.data))
-        await self.async_sender.send_messages(batch)
+        if len(batch):
+            print(f"send a batch with {len(batch)}")
+            await self.async_sender.send_messages(batch)
+        return self.args.batch_size
