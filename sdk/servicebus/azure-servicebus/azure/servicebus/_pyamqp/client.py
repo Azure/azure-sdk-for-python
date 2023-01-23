@@ -808,6 +808,7 @@ class ReceiveClient(AMQPClient):
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
+            self._timeout_reached = True
             self._shutdown = True
             return False
         return True
@@ -923,16 +924,34 @@ class ReceiveClient(AMQPClient):
         # self._last_activity_timestamp = None
         receiving = True
         message = None
+
+
+        # idle_timeout is _timeout in uamqp
+
+        # if self._last_activity_timestamp and not self._was_message_received:
+        #     # If no messages are coming through, back off a little to keep CPU use low.
+        #     time.sleep(0.05)
+        #     if self._timeout > 0:
+        #         timespan = now - self._last_activity_timestamp
+        #         if timespan >= self._timeout:
+        #             self._timeout_reached = True        
+
+        # ^^ this is theoretically handled in the connection bc we check idle_timeout to close the conenction, so we should shutdown there and receiving would be false
+
+
         try:
             # should this be outside or inside?
-            self._generator_timeout = time.time()
+            # self._generator_timeout = time.time()
             # need something to break out of this loop (created an arbitrary timeout for now)
-            while receiving and self._received_messages.empty() and not self._timeout_reached:
-                # while receiving and self._received_messages.empty():
-                # while receiving and self._received_messages.empty() and not self._timeout_reached:
-                receiving = self.do_work()
-                if (time.time() - self._generator_timeout  >= 0.5) and self._received_messages.empty(): 
-                    self._timeout_reached = True
+            while receiving and not self._timeout_reached:
+
+                while receiving and self._received_messages.empty() and not self._timeout_reached:
+                    receiving = self.do_work()
+
+
+                    # if (time.time() - self._generator_timeout  >= 0.5) and self._received_messages.empty(): 
+                    #     self._timeout_reached = True
+
                 while not self._received_messages.empty():
                     self._generator_timeout = time.time()
                     message = self._received_messages.get()

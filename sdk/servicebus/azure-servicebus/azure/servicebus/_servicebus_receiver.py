@@ -234,7 +234,7 @@ class ServiceBusReceiver(
             if max_wait_time:
                 # _timeout to _idle_timeout
                 original_timeout = self._handler._idle_timeout
-                self._handler._idle_timeout = max_wait_time * 1000
+                self._handler._idle_timeout = max_wait_time * 1
             try:
                 message = self._inner_next()
                 links = get_receive_links(message)
@@ -375,7 +375,7 @@ class ServiceBusReceiver(
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
+            idle_timeout=self._max_wait_time * 1 if self._max_wait_time else 0,
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
