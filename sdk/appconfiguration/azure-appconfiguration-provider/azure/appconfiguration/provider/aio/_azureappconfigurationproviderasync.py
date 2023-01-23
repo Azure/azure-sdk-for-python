@@ -264,12 +264,12 @@ class AzureAppConfigurationProvider:
         await self._client.close()
 
     async def __aenter__(self):
-        await self.client.__aenter__()
+        await self._client.__aenter__()
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        await self.client.__aexit__(*args)
+        await self._client.__aexit__(*args)
         for client in self._secret_clients.values():
             await client.__aexit__()
