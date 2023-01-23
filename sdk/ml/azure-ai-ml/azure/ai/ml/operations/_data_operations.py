@@ -219,7 +219,7 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
-       
+
         try:
             name = data.name
             if not data.version and self._registry_name:
@@ -236,24 +236,30 @@ class DataOperations(_ScopeDependentOperations):
             sas_uri = None
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
-                        service_client=self._service_client,
-                        name=name,
-                        version=version,
-                        resource_group=self._resource_group_name,
-                        registry=self._registry_name,
-                        body=get_asset_body_for_registry_storage(self._registry_name, "dat", name, version),
-                    )
+                    service_client=self._service_client,
+                    name=name,
+                    version=version,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name, "dat", name, version),
+                )
                 if not sas_uri:
-                    module_logger.debug("Getting the existing asset name: %s, version: %s", name, version)
+                    module_logger.debug(
+                        "Getting the existing asset name: %s, version: %s",
+                        name, version)
                     return self.get(name=name, version=version)
             referenced_uris = self._validate(data)
             if referenced_uris:
                 data._referenced_uris = referenced_uris
 
-            data, _ = _check_and_upload_path(artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA)
+            data, _ = _check_and_upload_path(artifact=data,
+                                             asset_operations=self,
+                                             sas_uri=sas_uri,
+                                             artifact_type=ErrorTarget.DATA)
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
-           
+
             if auto_increment_version:
                 result = _create_or_update_autoincrement(
                     name=data.name,
@@ -265,26 +271,23 @@ class DataOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             else:
-                result = (
-                    self._operation.begin_create_or_update( 
-                        name=name,
-                        version=version,
-                        registry_name=self._registry_name,
-                        body=data_version_resource,
-                        **self._scope_kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._operation.create_or_update( 
-                        name=name,
-                        version=version,
-                        workspace_name=self._workspace_name,
-                        body=data_version_resource,
-                        **self._scope_kwargs,
-                    )
-                )
+                result = (self._operation.begin_create_or_update(
+                    name=name,
+                    version=version,
+                    registry_name=self._registry_name,
+                    body=data_version_resource,
+                    **self._scope_kwargs,
+                ).result() if self._registry_name else
+                          self._operation.create_or_update(
+                              name=name,
+                              version=version,
+                              workspace_name=self._workspace_name,
+                              body=data_version_resource,
+                              **self._scope_kwargs,
+                          ))
 
             if not result and self._registry_name:
-                    result = self._get(name=name, version=version)
+                result = self._get(name=name, version=version)
 
             return Data._from_rest_object(result)
         except Exception as ex:
