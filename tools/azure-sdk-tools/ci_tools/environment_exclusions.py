@@ -298,7 +298,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-mixedreality-authentication",
     "azure-ai-ml",
     "azure-iot-modelsrepository",
-    "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
     "azure-monitor-query",
     "azure-purview-administration",
