@@ -861,7 +861,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="v3.1",
         args_mapping={
-            "2022-10-01-preview": ["fhir_version", "document_type", "autodetect_default_language"],
+            "2022-10-01-preview": ["fhir_version", "document_type", "auto_detect_language"],
             "2022-05-01": ["display_name"]
         }
     )
@@ -869,7 +869,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -906,12 +906,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
@@ -951,7 +952,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-05-01
             The *display_name* keyword argument.
         .. versionadded:: 2022-10-01-preview
-            The *fhir_version*, *document_type*, and *autodetect_default_language* keyword arguments.
+            The *fhir_version*, *document_type*, and *auto_detect_language* keyword arguments.
 
         .. admonition:: Example:
 
@@ -984,8 +985,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     self._healthcare_result_callback
                 )
             )
-
-        docs = _validate_input(documents, "language", language_arg)
+        if auto_detect_language is True:
+            docs = _validate_input(documents, "language", "auto")
+        else:
+            docs = _validate_input(documents, "language", language_arg)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
             "cls",
@@ -1008,7 +1011,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextJobsInput(
                             analysis_input=input_docs,
                             display_name=display_name,
-                            default_language=autodetect_default_language,
+                            default_language=language_arg if auto_detect_language is True else None,
                             tasks=[
                                 models.HealthcareLROTask(
                                     task_name="0",
@@ -1094,7 +1097,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         version_method_added="v3.1",
         custom_wrapper=check_for_unsupported_actions_types,
         args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
+            "2022-10-01-preview": ["auto_detect_language"],
         }
     )
     async def begin_analyze_actions(
@@ -1116,7 +1119,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ]
         ],
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         display_name: Optional[str] = None,
         language: Optional[str] = None,
@@ -1173,12 +1176,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -1215,7 +1219,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-10-01-preview
             The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
             *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
-            The *autodetect_default_language* keyword argument.
+            The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1253,9 +1257,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         input_model_cls = \
             models.MultiLanguageAnalysisInput if is_language_api(self._api_version) else models.MultiLanguageBatchInput
-        docs = input_model_cls(
-            documents=_validate_input(documents, "language", language_arg)
-        )
+        if auto_detect_language is True:
+            docs = input_model_cls(
+                documents=_validate_input(documents, "language", "auto")
+            )
+        else:
+            docs = input_model_cls(
+                documents=_validate_input(documents, "language", language_arg)
+            )
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
@@ -1287,7 +1296,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextJobsInput(
                             analysis_input=docs,
                             display_name=display_name,
-                            default_language=autodetect_default_language,
+                            default_language=language_arg if auto_detect_language is True else None,
                             tasks=generated_tasks
                         ),
                         cls=response_cls,
@@ -1364,7 +1373,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-05-01",
         args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
+            "2022-10-01-preview": ["auto_detect_language"],
         }
     )
     async def begin_recognize_custom_entities(
@@ -1373,7 +1382,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         project_name: str,
         deployment_name: str,
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -1399,12 +1408,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1437,7 +1447,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-05-01
             The *begin_recognize_custom_entities* client method.
         .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
+            The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1484,7 +1494,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                             disable_service_logs=disable_service_logs
                         )
                     ],
-                    autodetect_default_language=autodetect_default_language,
+                    auto_detect_language=auto_detect_language,
                     display_name=display_name,
                     show_stats=show_stats,
                     language=language,
@@ -1501,7 +1511,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-05-01",
         args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
+            "2022-10-01-preview": ["auto_detect_language"],
         }
     )
     async def begin_single_label_classify(
@@ -1510,7 +1520,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         project_name: str,
         deployment_name: str,
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -1535,12 +1545,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1569,7 +1580,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-05-01
             The *begin_single_label_classify* client method.
         .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
+            The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1615,7 +1626,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval_arg,
-                    autodetect_default_language=autodetect_default_language,
+                    auto_detect_language=auto_detect_language,
                     display_name=display_name,
                     show_stats=show_stats,
                     language=language,
@@ -1631,7 +1642,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-05-01",
         args_mapping={
-            "2022-10-01-preview": ["autodetect_default_language"],
+            "2022-10-01-preview": ["auto_detect_language"],
         }
     )
     async def begin_multi_label_classify(
@@ -1640,7 +1651,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         project_name: str,
         deployment_name: str,
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -1665,12 +1676,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1699,7 +1711,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. versionadded:: 2022-05-01
             The *begin_multi_label_classify* client method.
         .. versionadded:: 2022-10-01-preview
-            The *autodetect_default_language* keyword argument.
+            The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1745,7 +1757,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval_arg,
-                    autodetect_default_language=autodetect_default_language,
+                    auto_detect_language=auto_detect_language,
                     display_name=display_name,
                     show_stats=show_stats,
                     language=language,
@@ -1867,7 +1879,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -1894,12 +1906,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
         :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
@@ -1979,7 +1992,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval_arg,
-                    autodetect_default_language=autodetect_default_language,
+                    auto_detect_language=auto_detect_language,
                     display_name=display_name,
                     show_stats=show_stats,
                     language=language,
@@ -1999,7 +2012,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
-        autodetect_default_language: Optional[str] = None,
+        auto_detect_language: Optional[bool] = None,
         continuation_token: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         display_name: Optional[str] = None,
@@ -2028,12 +2041,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            For automatic language detection, use "auto" (Only supported by API version
-            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
-            automatic language detection.
+        :keyword bool auto_detect_language: If True, the service will automatically detect the
+            language of each text document (Only supported by API version 2022-10-01-preview and newer).
+            Optionally use the `language` keyword argument to provide a default/fallback language
+            to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
         :keyword Optional[str] model_version: The model version to use for the analysis.
@@ -2111,7 +2125,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         )
                     ],
                     polling_interval=polling_interval_arg,
-                    autodetect_default_language=autodetect_default_language,
+                    auto_detect_language=auto_detect_language,
                     display_name=display_name,
                     show_stats=show_stats,
                     language=language,

@@ -399,7 +399,7 @@ class RecognizeEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -450,7 +450,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -509,7 +509,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         FHIR compatible object for consumption in other Healthcare tools. For additional
         information see https://www.hl7.org/fhir/overview.html."""
     detected_language: Optional[str] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the detected language for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1064,7 +1064,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1110,7 +1110,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1164,7 +1164,7 @@ class AnalyzeSentimentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1437,12 +1437,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     For automatic language detection, use "auto" (Only supported by long-running
-     operation APIs with API version 2022-10-01-preview or newer). If
-     not set, uses "en" for English as default.
-
-    .. versionadded:: 2022-10-01-preview
-        The 'auto' option for language.
+     If not set, uses "en" for English as default.
     """
 
     id: str  # pylint: disable=redefined-builtin
@@ -1452,9 +1447,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     language: Optional[str] = None
     """This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     For automatic language detection, use "auto" (Only supported by long-running
-     operation APIs with API version 2022-10-01-preview or newer). If
-     not set, uses "en" for English as default."""
+     If not set, uses "en" for English as default."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -2325,7 +2318,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2454,7 +2447,7 @@ class ClassifyDocumentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2788,7 +2781,7 @@ class ExtractSummaryResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2895,7 +2888,7 @@ class AbstractSummaryResult(DictMixin):
     """Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate."""
     detected_language: Optional[DetectedLanguage] = None
-    """If 'language' is set to 'auto' for the document in the request this
+    """If automatic language detection is enabled, then this
         field will contain the DetectedLanguage for the document."""
     statistics: Optional[TextDocumentStatistics] = None
     """If `show_stats=True` was specified in the request this
