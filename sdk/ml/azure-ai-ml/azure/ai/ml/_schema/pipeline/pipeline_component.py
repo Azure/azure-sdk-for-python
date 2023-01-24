@@ -189,6 +189,11 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
+        # pipeline jobs post process is required before init of pipeline component: it converts control node dict
+        # to entity.
+        # however @post_load invocation order is not guaranteed, so we need to call it explicitly here.
+        _post_load_pipeline_jobs(self.context, data)
+
         return PipelineComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             **data,
