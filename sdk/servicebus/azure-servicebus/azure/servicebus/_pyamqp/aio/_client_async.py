@@ -847,31 +847,30 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         :rtype: generator[~uamqp.message.Message]
         """
-        # self.open()
-        # auto_complete = self.auto_complete
-        # self.auto_complete = False
-        # self._last_activity_timestamp = None
+  
+        auto_complete = self.auto_complete
+        self.auto_complete = False
         receiving = True
         message = None
         try:
-            # need something to break out of this loop (created an arbitrary timeout for now)
             while receiving:
+                receiving = await self.do_work_async()
+                message = self._received_messages.get(timeout=self._timeout)
+                if not self._received_messages.empty():
+                    self._received_messages.task_done()
+                yield message
+                await self._complete_message_async(message, auto_complete)
+        except:
 
-                # while receiving and self._received_messages.empty() and not self._timeout_reached:
-                    receiving = await self.do_work_async()
-                # while not self._received_messages.empty():
-                    # self._generator_timeout  = time.time()
-                    message = self._received_messages.get(timeout=self._timeout)
-                    if not self._received_messages.empty():
-                        self._received_messages.task_done()
-                    yield message
-                    # self.settle_messages(message[1],"accepted")
-                    # self._complete_message(message, auto_complete)
-        finally:
-            # what goes here/ does it ever reach here
-       
             if self._shutdown:
                 self.close()
+
+    async def _complete_message_async(self, message, auto):
+        if not message or not auto:
+            return
+        # this is off here, message delivery id?
+        await self.settle_messages_async(message[0][1], "accepted")
+
 
     @overload
     async def settle_messages_async(

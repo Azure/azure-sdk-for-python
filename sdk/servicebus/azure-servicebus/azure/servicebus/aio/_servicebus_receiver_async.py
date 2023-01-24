@@ -371,6 +371,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             hostname,
             self._get_source(),
             auth=auth,
+            auto_complete=False,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,

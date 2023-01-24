@@ -767,7 +767,7 @@ class ReceiveClient(AMQPClient):
         self._link_credit = kwargs.pop("link_credit", 300)
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
-        self._generator_timeout = 0
+        self.auto_complete = kwargs.pop("auto_complete", True)
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -918,27 +918,11 @@ class ReceiveClient(AMQPClient):
 
         :rtype: generator[~uamqp.message.Message]
         """
-        # self.open()
-        # auto_complete = self.auto_complete
-        # self.auto_complete = False
-        # self._last_activity_timestamp = None
+
+        auto_complete = self.auto_complete
+        self.auto_complete = False
         receiving = True
         message = None
-
-
-        # idle_timeout is _timeout in uamqp
-
-        # if self._last_activity_timestamp and not self._was_message_received:
-        #     # If no messages are coming through, back off a little to keep CPU use low.
-        #     time.sleep(0.05)
-        #     if self._timeout > 0:
-        #         timespan = now - self._last_activity_timestamp
-        #         if timespan >= self._timeout:
-        #             self._timeout_reached = True        
-
-        # ^^ this is theoretically handled in the connection bc we check idle_timeout to close the conenction, so we should shutdown there and receiving would be false
-
-        # timeout on python queue itself -- if you don't receive something in a certain amount of time you can timoeut 
         try:
 
             while receiving:
@@ -950,14 +934,19 @@ class ReceiveClient(AMQPClient):
                     self._received_messages.task_done()
                 yield message
                 
-                    # self._complete_message(message, auto_complete)
+                self._complete_message(message, auto_complete)
         except:
 
             # do we want to close receiver straight out, or as below, only when we have shutdown
       
             if self._shutdown:
                 self.close()
-
+    
+    def _complete_message(self, message, auto):
+        if not message or not auto:
+            return
+        # this is off here, message delivery id?
+        self.settle_messages(message[0][1], "accepted")
 
     @overload
     def settle_messages(
