@@ -5,10 +5,10 @@
 
 import asyncio
 
-from ._test_base import _ReceiveTopicTest
+from ._test_base import _TopicReceiveTest
 
 
-class ReceiveTopicMessageStreamTest(_ReceiveTopicTest):
+class ReceiveTopicMessageStreamTest(_TopicReceiveTest):
     def run_sync(self):
         count = 0
         if self.args.peeklock:
