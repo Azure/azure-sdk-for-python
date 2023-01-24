@@ -765,6 +765,7 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+        self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
         self._generator_timeout = 0
         super(ReceiveClient, self).__init__(hostname, **kwargs)
@@ -808,7 +809,6 @@ class ReceiveClient(AMQPClient):
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
-            self._timeout_reached = True
             self._shutdown = True
             return False
         return True
@@ -938,27 +938,22 @@ class ReceiveClient(AMQPClient):
 
         # ^^ this is theoretically handled in the connection bc we check idle_timeout to close the conenction, so we should shutdown there and receiving would be false
 
-
+        # timeout on python queue itself -- if you don't receive something in a certain amount of time you can timoeut 
         try:
-            # should this be outside or inside?
-            # self._generator_timeout = time.time()
-            # need something to break out of this loop (created an arbitrary timeout for now)
-            while receiving and not self._timeout_reached:
 
-                while receiving and self._received_messages.empty() and not self._timeout_reached:
-                    receiving = self.do_work()
+            while receiving:
 
+                receiving = self.do_work()
 
-                    # if (time.time() - self._generator_timeout  >= 0.5) and self._received_messages.empty(): 
-                    #     self._timeout_reached = True
-
-                while not self._received_messages.empty():
-                    self._generator_timeout = time.time()
-                    message = self._received_messages.get()
+                message = self._received_messages.get(timeout=self._timeout)
+                if not self._received_messages.empty():
                     self._received_messages.task_done()
-                    yield message
+                yield message
+                
                     # self._complete_message(message, auto_complete)
         except:
+
+            # do we want to close receiver straight out, or as below, only when we have shutdown
       
             if self._shutdown:
                 self.close()
