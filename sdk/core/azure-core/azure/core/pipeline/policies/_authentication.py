@@ -79,7 +79,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
-    def on_request(self, request: "PipelineRequest"):
+    def on_request(self, request: "PipelineRequest") -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
