@@ -544,7 +544,7 @@ class WebSocketTransportAsync(
                     )
                 raise ConnectionError("Failed to establish websocket connection: " + str(exc))
             self.connected = True
-        except ImportError as exc:
+        except ModuleNotFoundError as exc:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             ) from exc
