@@ -12,8 +12,6 @@
 - bumped version to stable `1.0.0`
 - updated README.md
 
-### Bug Fixes
-
 ## 1.0.0b3 (2023-01-01)
 
 ### Features Added 
